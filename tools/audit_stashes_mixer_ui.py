@@ -65,7 +65,8 @@ def method(start, finish):
 
 content = method("DrawStashContentMix", "DrawStashMedicalComposition")
 medical = method("DrawStashMedicalComposition", "DrawStashMedicalQuantityCards")
-selector = method("DrawStashMedicalModeSelector", "DrawStashMedicalQuantityCards")
+pair = method("DrawStashMedicalPairShares", "DrawStashAntiRadWeightSwitch")
+anti_weight = method("DrawStashAntiRadWeightSwitch", "DrawStashMedicalQuantityCards")
 quantity = method("DrawStashMedicalQuantityCards", "DrawStashQuantityDualRail")
 quantity_rail = method("DrawStashQuantityDualRail", "DrawStashGear")
 gear = method("DrawStashGear", "DrawStashPoolBar")
@@ -85,7 +86,7 @@ assert '"StashMedicalQuantity" => StashMedicalQuantityHeight' not in source
 assert "DrawStashMedicalQuantityCards(dc, left, width," in medical
 assert "DrawStashMedicalWeightPreview(" not in coverage
 assert "DrawStashMedicalWeightPreview(" not in medical
-assert "wide ? 229.0 : 386.0" in medical
+assert "wide ? 541.0 : 850.0" in medical
 assert "cardWidth, 98.0" in quantity
 assert "DrawStashQuantityDualRail(dc, P(family.Min), P(family.Max)" in quantity
 assert "DrawHalf(min, minRail, 0.0, 6.0, true);" in quantity_rail
@@ -106,12 +107,32 @@ for medical_id in ("loot.stashMedkitMinCount", "loot.stashMedkitMaxCount",
                    "loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount"):
     entry = next(p for p in catalog["parameters"] if p["id"] == medical_id)
     assert "MAX" in entry["interaction"] and "MIN" in entry["interaction"]
-assert "DrawStashMedicalModeSelector(dc, i, card," in medical
-assert '"WEIGHT"' in selector and '"CHANCE"' in selector
-assert "_stashMedicalShowChance[selector.Index] = selector.Chance;" in source
+assert "DrawStashMedicalPairShares(dc," in medical
+assert "DrawStashAntiRadWeightSwitch(dc," in medical
+assert '"CHANCE · % OF SOURCE"' in medical
+assert '"WEIGHT · NATIVE POOLS"' in medical
+assert 'var chanceColumns = wide ? 4 : 2;' in medical
+assert 'var weightColumns = wide ? 3 : 2;' in medical
+assert 'percentageReadout: true, dialAccent: source.Color' in medical
+assert 'DrawSourceKnob(dc, P("loot.stashMedicalBandageBias")' in medical
+assert 'DrawSourceKnob(dc, P("loot.stashMedicalMedkitBias")' in medical
+assert 'DrawSourceKnob(dc, P("loot.stashMedicalArmyMedkitBias")' in medical
+assert 'g.Prototype == "StashMedicine_Smart"' in pair
+assert 'g.RankIndex is 2 or 3' in pair
+assert 'group.EffectiveSelection(StashPreviewBaseline.Value, state,' in pair
+assert 'group.Items.Single(item => item.ItemSid == sid)' in pair
+assert 'StashMedicalPalette[1]' in pair and 'StashMedicalPalette[2]' in pair
+assert "AddHorizontalTarget(p, rect, rect, value, value);" in anti_weight
+assert '"loot.stashMedicalAntiRadBias"' in anti_weight
+assert 'var value = i == 0 ? 0.0 : 1.0;' in anti_weight
+assert "_stashMedicalShowChance" not in source
+assert "_stashMedicalModes" not in source
+assert 'target.Parameter.Id == "loot.stashMedicalAntiRadBias"' in source
+assert '"OFF"' in anti_weight and '"ON"' in anti_weight
+assert "_stashMedicalShowChance" not in source
 assert "DrawStashQuantityDots(" not in source
 assert "DrawStashMedicalSourcePreview(" not in source
-assert '=> width >= 700.0 ? 345.0 : 607.0;' in source
+assert '=> width >= 700.0 ? 653.0 : 1067.0;' in source
 assert 'P("loot.stashGearCoveragePercent")' in gear
 for key in ("Weapon", "Armor", "Artifact", "Attachment"):
     assert '"loot.stashGear' + key + 'Weight"' in gear
@@ -145,11 +166,11 @@ assert "DrawStashWeightMixer(dc," in content
 assert "DrawStashBasicNativePools(dc," in content
 assert "DrawStashRewardGraphRow(dc, P(entries[i].Id)" not in medical
 assert "DrawStashMedicalSourcePreview(" not in source
-assert "DrawSourceKnob(dc, P(chance ? entry.ChanceId : entry.WeightId)" in medical
-assert "percentageReadout: chance, dialAccent: entry.Tone" in medical
+assert "DrawSourceKnob(dc, P(source.Id), source.Label, card," in medical
+assert "percentageReadout: true, dialAccent: source.Color" in medical
 assert "StashMedicalPalette[0]" in medical and "StashMedicalPalette[3]" in medical
 assert '"MEDICAL COMPOSITION"' in medical
-assert "DrawStashMedicalModeSelector" in medical
+assert "DrawStashMedicalModeSelector" not in source
 assert "DrawStashGearMode(" not in gear
 assert 'P("loot.stashGearBonusChance")' in gear
 assert 'AddHorizontalTarget(chance,' in gear

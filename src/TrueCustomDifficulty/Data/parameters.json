@@ -6355,8 +6355,8 @@
       "id": "loot.stashMedicalAntiRadBias",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Anti-Rad Stash Weight",
-      "description": "Scales only authored Weight for this medical item in eligible TCD stash/SmartLoot branches. Weight is relative selection, not a drop probability; independent Chance Scale has its own control.",
+      "label": "Anti-Rad SmartLoot Weight",
+      "description": "Two-state visual editor for authored singleton Anti-Rad SmartLoot Weight pools: OFF writes Weight 0; ON writes source multiplier 1. The Anti-Rad Chance control is independent. Legacy numeric preset values above 1 stay intact until this two-state control is operated.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -6388,14 +6388,14 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "Weight applies only where the source actually contains Weight.",
+          "Audited Anti-Rad Weight SmartLoot groups contain one candidate each: 0 disables the Weight branch; positive values do not rebalance a competitor. Chance-only Anti-Rad is independent. Numeric backend remains 0–3× for older presets; UI intentionally offers only 0 or 1.",
           "Existing Chance rows are unaffected by this control.",
           "0× disables the matching Weight entries, not separate Chance rolls. Source eligibility and excluded quest/unique stashes remain unchanged."
         ]
       },
-      "rationale": "Control native relative Weight independently from item-specific Chance.",
-      "logic": "0×–3× of native Weight; 1× retains authored source. A weighted pool's outcome remains relative to its other entries.",
-      "interaction": "Medical Weight Mix rotary knob; does not change native Chance.",
+      "rationale": "This source's native Anti-Rad Weight groups have no competing candidate, so a continuous 0–3× relative-bias knob would misleadingly imply a competition. OFF/ON is source-grounded; it does not disable separate Chance items.",
+      "logic": "OFF = numeric Weight factor 0 in native Anti-Rad SmartLoot Weight groups; ON = factor 1. Old nonzero numeric preset values remain preserved until the user clicks OFF/ON.",
+      "interaction": "Compact two-state OFF/ON switch in WEIGHT · NATIVE POOLS; 0/1 edits original numeric stashMedicalAntiRadBias. Hover/click, arrow/Home/End, wheel and right-click reset. Separate native Chance knob stays visible.",
       "exposeInUi": true
     },
     {

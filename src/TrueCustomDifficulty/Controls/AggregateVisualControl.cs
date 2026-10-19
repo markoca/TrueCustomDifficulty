@@ -39,11 +39,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private bool _radRingHadScrub;
     private bool _radRingCompleted;
 
-    // Per-item visual mode; native Weight and Chance values always stay independent.
-    private readonly bool[] _stashMedicalShowChance = new bool[4];
-    private readonly List<(Rect Hit, int Index, bool Chance)> _stashMedicalModes = new();
-    private int _stashMedicalHoveredMode = -1;
-    private bool _stashMedicalHoveredChance;
     private HitTarget? _dragTarget;
     private HitTarget? _hoverTarget;
     private int _hoverCouponMarker = -1;
@@ -2657,6 +2652,18 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             dc.DrawText(combined, new Point(
                 center.X - combined.WidthIncludingTrailingWhitespace / 2.0, currentTop));
         }
+        else if (percentageReadout)
+        {
+            // Percentage units remain neutral like other source-native controls:
+            // only a modified numeric token becomes gold.
+            var rendered = CreateText(currentLabel,
+                prominent ? (modified ? 18.2 : 17.0) : (modified ? 16.2 : 15.0),
+                active ? text : muted, FontWeights.Bold, card.Width - 12.0);
+            if (modified)
+                rendered.SetForegroundBrush(accent, 0, Math.Max(0, currentLabel.Length - 1));
+            dc.DrawText(rendered, new Point(
+                center.X - rendered.WidthIncludingTrailingWhitespace / 2.0, currentTop));
+        }
         else
         {
             DrawCenteredText(dc, currentLabel, new Point(center.X, currentTop),
@@ -4638,77 +4645,180 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     }
 
 
-    // Mode selects which independent, persisted native field is edited.
+    // Native selectors are separate sources: Chance is never a normalized
+    // four-medical-item share; Weight only competes within each actual group.
     private void DrawStashMedicalComposition(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
         DrawHeader(dc, "MEDICAL COMPOSITION", "", text, muted, accent);
-        _stashMedicalModes.Clear();
         var width = Math.Min(778.0, Math.Max(1.0, ActualWidth - 30.0));
         var left = (ActualWidth - width) / 2.0;
         var wide = width >= 670.0;
-        var columns = wide ? 4 : 2;
         const double gap = 8.0;
         const double inset = 12.0;
         const double cardHeight = 146.0;
-        var cardWidth = Math.Max(1.0,
-            (width - 2.0 * inset - (columns - 1) * gap) / columns);
-        var entries = new (string Label, string WeightId, string ChanceId, Brush Tone)[]
+
+        DrawText(dc, "CHANCE · % OF SOURCE",
+            new Point(left + 12.0, 36.0), 10.1, text, FontWeights.Bold);
+        var chances = new (string Label, string Id, Brush Color)[]
         {
-            ("BANDAGES", "loot.stashMedicalBandageBias",
-                "loot.stashMedicalBandageChanceScale", StashMedicalPalette[0]),
-            ("MEDKITS", "loot.stashMedicalMedkitBias",
-                "loot.stashMedicalMedkitChanceScale", StashMedicalPalette[1]),
-            ("ARMY MEDKITS", "loot.stashMedicalArmyMedkitBias",
-                "loot.stashMedicalArmyMedkitChanceScale", StashMedicalPalette[2]),
-            ("ANTI-RAD", "loot.stashMedicalAntiRadBias",
-                "loot.stashMedicalAntiRadChanceScale", StashMedicalPalette[3])
+            ("BANDAGES", "loot.stashMedicalBandageChanceScale", StashMedicalPalette[0]),
+            ("MEDKITS", "loot.stashMedicalMedkitChanceScale", StashMedicalPalette[1]),
+            ("ARMY MEDKITS", "loot.stashMedicalArmyMedkitChanceScale", StashMedicalPalette[2]),
+            ("ANTI-RAD", "loot.stashMedicalAntiRadChanceScale", StashMedicalPalette[3])
         };
-        for (var i = 0; i < entries.Length; i++)
+        var chanceColumns = wide ? 4 : 2;
+        var chanceWidth = (width - 2 * inset - (chanceColumns - 1) * gap) / chanceColumns;
+        for (var i = 0; i < chances.Length; i++)
         {
-            var entry = entries[i];
-            var x = left + inset + (i % columns) * (cardWidth + gap);
-            var y = 53.0 + (i / columns) * (cardHeight + gap);
-            var card = new Rect(x, y, cardWidth, cardHeight);
-            var chance = _stashMedicalShowChance[i];
-            DrawSourceKnob(dc, P(chance ? entry.ChanceId : entry.WeightId),
-                entry.Label, card, text, muted, border, accent, panel,
-                percentageReadout: chance, dialAccent: entry.Tone, dialScale: .74);
-            DrawStashMedicalModeSelector(dc, i, card, entry.WeightId,
-                entry.ChanceId, chance, entry.Tone, muted, border);
+            var source = chances[i];
+            var card = new Rect(left + inset + i % chanceColumns * (chanceWidth + gap),
+                53.0 + i / chanceColumns * (cardHeight + gap),
+                chanceWidth, cardHeight);
+            DrawSourceKnob(dc, P(source.Id), source.Label, card,
+                text, muted, border, accent, panel,
+                percentageReadout: true, dialAccent: source.Color, dialScale: .74);
         }
+
+        var weightHeading = wide ? 213.0 : 367.0;
+        DrawText(dc, "WEIGHT · NATIVE POOLS",
+            new Point(left + 12.0, weightHeading), 10.1, text, FontWeights.Bold);
+        var weightTop = wide ? 230.0 : 384.0;
+        var weightColumns = wide ? 3 : 2;
+        var weightWidth = (width - 2 * inset - (weightColumns - 1) * gap) / weightColumns;
+        // Basic Bandages compete against foods/drinks (sometimes coupons);
+        // Medkits and Army Medkits compete WITH EACH OTHER in SmartLoot.
+        var bandage = new Rect(left + inset, weightTop, weightWidth, cardHeight);
+        var medkit = new Rect(left + inset + (wide ? 1 : 0) * (weightWidth + gap),
+            weightTop + (wide ? 0 : cardHeight + gap), weightWidth, cardHeight);
+        var army = new Rect(medkit.Right + gap, medkit.Top, weightWidth, cardHeight);
+        var competition = new Rect(medkit.Left - 4.0, medkit.Top - 4.0,
+            army.Right - medkit.Left + 8.0, cardHeight + 8.0);
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .46),
+            new Pen(CloneWithOpacity(border, .76), .9), competition, 4.0, 4.0);
+        DrawSourceKnob(dc, P("loot.stashMedicalBandageBias"), "BANDAGES · BASIC",
+            bandage, text, muted, border, accent, panel,
+            dialAccent: StashMedicalPalette[0], dialScale: .74);
+        DrawSourceKnob(dc, P("loot.stashMedicalMedkitBias"), "MEDKITS",
+            medkit, text, muted, border, accent, panel,
+            dialAccent: StashMedicalPalette[1], dialScale: .74);
+        DrawSourceKnob(dc, P("loot.stashMedicalArmyMedkitBias"), "ARMY MEDKITS",
+            army, text, muted, border, accent, panel,
+            dialAccent: StashMedicalPalette[2], dialScale: .74);
+
+        var previewTop = wide ? 384.0 : 692.0;
+        DrawStashMedicalPairShares(dc,
+            new Rect(left + inset, previewTop, Math.Min(540.0, width - 2 * inset), 60.0),
+            text, muted, border, panel);
+
+        DrawStashAntiRadWeightSwitch(dc,
+            new Rect(left + inset, wide ? 452.0 : 760.0,
+                Math.Min(360.0, width - 2 * inset), 56.0),
+            text, muted, border, accent, panel);
+
         DrawText(dc, "QUANTITY",
-            new Point(left + 12.0, wide ? 208.0 : 365.0),
+            new Point(left + 12.0, wide ? 520.0 : 829.0),
             10.8, text, FontWeights.Bold);
         DrawStashMedicalQuantityCards(dc, left, width,
-            wide ? 229.0 : 386.0, wide, text, muted, border, panel);
+            wide ? 541.0 : 850.0, wide, text, muted, border, panel);
     }
 
-    private void DrawStashMedicalModeSelector(
-        DrawingContext dc, int index, Rect card,
-        string weightId, string chanceId, bool chance,
-        Brush tone, Brush muted, Brush border)
+    // Read-only comparison of actual two-candidate SmartLoot Weight pools.
+    // Do NOT sum all medical Weight items across unrelated source groups.
+    private void DrawStashMedicalPairShares(
+        DrawingContext dc, Rect outer, Brush text, Brush muted,
+        Brush border, Brush panel)
     {
-        var half = Math.Min(65.0, (card.Width - 16.0) / 2.0);
-        var x = card.Left + (card.Width - half * 2.0) / 2.0;
-        for (var mode = 0; mode < 2; mode++)
+        var state = CurrentStashEffectiveState();
+        var groups = StashSourceGroups.Value
+            .Where(g => g.IsSmart && g.Prototype == "StashMedicine_Smart"
+                && g.Field == "Weight" && g.RankIndex is 2 or 3
+                && g.Items.Count == 2
+                && g.Items.Any(i => i.ItemSid == "Medkit")
+                && g.Items.Any(i => i.ItemSid == "ArmyMedkit"))
+            .OrderBy(g => g.RankIndex).ToArray();
+        if (groups.Length != 2 || groups[0].RankIndex != 2 || groups[1].RankIndex != 3)
+            throw new InvalidDataException("Native Medkit/ArmyMedkit paired pools drifted.");
+
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .48),
+            new Pen(CloneWithOpacity(border, .54), .8), outer, 3.0, 3.0);
+        for (var i = 0; i < groups.Length; i++)
         {
-            var isChance = mode == 1;
-            var selected = chance == isChance;
-            var rect = new Rect(x + mode * half, card.Top + 36.0, half, 21.0);
-            var enabled = P(isChance ? chanceId : weightId)?.IsControlEnabled == true;
-            var hover = _stashMedicalHoveredMode == index
-                && _stashMedicalHoveredChance == isChance;
-            DrawCenteredText(dc, isChance ? "CHANCE" : "WEIGHT",
-                new Point(rect.Left + rect.Width / 2.0, rect.Top + 2.0),
-                9.1, enabled && (selected || hover) ? Brushes.White : muted,
-                selected ? FontWeights.Bold : FontWeights.SemiBold);
-            dc.DrawLine(new Pen(selected ? tone : border, selected ? 2.0 : .8),
-                new Point(rect.Left + 7.0, rect.Bottom - 1.0),
-                new Point(rect.Right - 7.0, rect.Bottom - 1.0));
-            if (enabled) _stashMedicalModes.Add((rect, index, isChance));
+            var group = groups[i];
+            double Weight(string sid) => StashEffectiveState.Number(
+                group.EffectiveSelection(StashPreviewBaseline.Value, state,
+                    group.Items.Single(item => item.ItemSid == sid)));
+            var medkit = Math.Max(0, Weight("Medkit"));
+            var army = Math.Max(0, Weight("ArmyMedkit"));
+            var total = medkit + army;
+            var share = total > Epsilon ? medkit / total : 0.0;
+            var top = outer.Top + 5.0 + i * 27.0;
+            DrawText(dc, i == 0 ? "VETERAN" : "MASTER",
+                new Point(outer.Left + 9.0, top), 9.0, muted, FontWeights.SemiBold);
+            var rail = new Rect(outer.Left + 94.0, top + 3.0,
+                Math.Max(1.0, outer.Width - 206.0), 9.0);
+            dc.DrawRoundedRectangle(CloneWithOpacity(border, .50), null,
+                rail, 2.0, 2.0);
+            if (total > Epsilon)
+            {
+                var cut = rail.Width * share;
+                if (cut > Epsilon)
+                    dc.DrawRectangle(StashMedicalPalette[1], null,
+                        new Rect(rail.Left, rail.Top, cut, rail.Height));
+                if (rail.Width - cut > Epsilon)
+                    dc.DrawRectangle(StashMedicalPalette[2], null,
+                        new Rect(rail.Left + cut, rail.Top, rail.Width - cut, rail.Height));
+            }
+            DrawRightAlignedText(dc, total <= Epsilon ? "OFF" :
+                    $"{share * 100.0:0.#}% / {(1.0 - share) * 100.0:0.#}%",
+                new Point(outer.Right - 8.0, top), 9.0, text, FontWeights.SemiBold);
         }
+    }
+
+    // All audited native Anti-Rad Weight rows are solo SmartLoot groups.
+    // The two-state UI intentionally writes ONLY 0 or 1, preserving the
+    // existing numeric backend ID and any untouched legacy preset values.
+    // Its separate native Chance source remains wholly independent.
+    private void DrawStashAntiRadWeightSwitch(
+        DrawingContext dc, Rect card, Brush text, Brush muted,
+        Brush border, Brush accent, Brush panel)
+    {
+        var p = P("loot.stashMedicalAntiRadBias");
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .58),
+            new Pen(CloneWithOpacity(border, .68), .9), card, 3.0, 3.0);
+        var enabled = p?.IsControlEnabled == true;
+        DrawText(dc, "ANTI-RAD · SMARTLOOT WEIGHT",
+            new Point(card.Left + 12.0, card.Top + 8.0), 10.0,
+            enabled ? text : muted, FontWeights.SemiBold);
+        if (p is null) return;
+        var on = p.CurrentNumber > Epsilon;
+        var cellWidth = Math.Min(65.0, (card.Width - 24.0) / 2.0);
+        var x = card.Right - 12.0 - 2.0 * cellWidth;
+        for (var i = 0; i < 2; i++)
+        {
+            var value = i == 0 ? 0.0 : 1.0;
+            var selected = i == (on ? 1 : 0);
+            var rect = new Rect(x + i * cellWidth, card.Top + 7.0, cellWidth, 35.0);
+            var hovered = enabled && _hoverTarget?.Kind == HitKind.Horizontal
+                && ReferenceEquals(_hoverTarget.Parameter, p)
+                && Math.Abs(_hoverTarget.VisualMinimum - value) < Epsilon;
+            dc.DrawRoundedRectangle(
+                selected ? CloneWithOpacity(StashMedicalPalette[3], .2) :
+                    CloneWithOpacity(panel, .38),
+                new Pen(hovered ? Brushes.White : selected ? StashMedicalPalette[3] :
+                    CloneWithOpacity(border, .7), hovered ? 1.6 : .9),
+                rect, 3.0, 3.0);
+            DrawCenteredText(dc, i == 0 ? "OFF" : "ON",
+                new Point(rect.Left + rect.Width / 2.0, rect.Top + 8.0),
+                10.1, enabled ? text : muted, FontWeights.SemiBold);
+            AddHorizontalTarget(p, rect, rect, value, value);
+        }
+        // A hidden 2× value from a legacy preset is treated as ON,
+        // without altering it until the user actually operates this switch.
+        if (enabled && p.IsValueModifiedFromReference())
+            dc.DrawRectangle(accent, null,
+                new Rect(card.Left + 8.0, card.Top + 7.0, 3.0, 13.0));
     }
 
     // Two independently editable handles on ONE two-way rail per item.
@@ -5916,31 +6026,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         Focus();
 
         var point = e.GetPosition(this);
-        if (Family == "StashMedicalComposition")
-        {
-            var selector = _stashMedicalModes.FirstOrDefault(m => m.Hit.Contains(point));
-            if (selector.Hit.Width > 0.0)
-            {
-                var id = selector.Index switch
-                {
-                    0 => selector.Chance ? "loot.stashMedicalBandageChanceScale" : "loot.stashMedicalBandageBias",
-                    1 => selector.Chance ? "loot.stashMedicalMedkitChanceScale" : "loot.stashMedicalMedkitBias",
-                    2 => selector.Chance ? "loot.stashMedicalArmyMedkitChanceScale" : "loot.stashMedicalArmyMedkitBias",
-                    _ => selector.Chance ? "loot.stashMedicalAntiRadChanceScale" : "loot.stashMedicalAntiRadBias"
-                };
-                var p = P(id);
-                if (p?.IsControlEnabled == true)
-                {
-                    _stashMedicalShowChance[selector.Index] = selector.Chance;
-                    _selectedParameter = p;
-                    _selectedHitKind = HitKind.Knob;
-                    RaiseParameterSelected(p);
-                    InvalidateVisual();
-                    e.Handled = true;
-                    return;
-                }
-            }
-        }
         var couponMarker = Family == "CouponFlow"
             ? _couponMarkers.FirstOrDefault(m => m.Hit.Contains(point)) : default;
         if (couponMarker.Parameter is { IsControlEnabled: true })
@@ -6008,24 +6093,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         base.OnMouseMove(e);
 
         var point = e.GetPosition(this);
-        if (Family == "StashMedicalComposition" && _dragTarget is null)
-        {
-            var selector = _stashMedicalModes.FirstOrDefault(m => m.Hit.Contains(point));
-            var hoverIndex = selector.Hit.Width > 0.0 ? selector.Index : -1;
-            if (_stashMedicalHoveredMode != hoverIndex
-                || hoverIndex >= 0 && _stashMedicalHoveredChance != selector.Chance)
-            {
-                _stashMedicalHoveredMode = hoverIndex;
-                _stashMedicalHoveredChance = selector.Chance;
-                InvalidateVisual();
-            }
-            if (hoverIndex >= 0)
-            {
-                SetHoverTarget(null);
-                Cursor = Cursors.Hand;
-                return;
-            }
-        }
         if (Family == "CouponFlow" && _dragTarget is null)
         {
             var marker = _couponMarkers.FirstOrDefault(m => m.Hit.Contains(point));
@@ -6120,8 +6187,12 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         if (direction == 0)
             return;
 
-        target.Parameter.CurrentNumber = Snap(target.Parameter,
-            target.Parameter.CurrentNumber + direction * target.Parameter.TickFrequency);
+        if (Family == "StashMedicalComposition"
+            && target.Parameter.Id == "loot.stashMedicalAntiRadBias")
+            target.Parameter.SnapCurrentNumberToMarker(direction > 0 ? 1.0 : 0.0);
+        else
+            target.Parameter.CurrentNumber = Snap(target.Parameter,
+                target.Parameter.CurrentNumber + direction * target.Parameter.TickFrequency);
         EnforceFamilyConstraints(target.Parameter);
         _status.ClearTransient();
         InvalidateVisual();
@@ -6153,11 +6224,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     protected override void OnMouseLeave(MouseEventArgs e)
     {
         base.OnMouseLeave(e);
-        if (_stashMedicalHoveredMode >= 0)
-        {
-            _stashMedicalHoveredMode = -1;
-            InvalidateVisual();
-        }
         if (_hoverCouponMarker >= 0)
         {
             _hoverCouponMarker = -1;
@@ -6348,6 +6414,26 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         if (!_selectedParameter.IsSlider && !isChoice && !isRangeMin && !isRangeMax)
             return;
 
+        // Anti-Rad singleton Weight is a two-state source switch, not a
+        // continuous selection-share knob. Arrow/Home/End remain accessible.
+        if (Family == "StashMedicalComposition"
+            && _selectedParameter.Id == "loot.stashMedicalAntiRadBias")
+        {
+            var nextState = e.Key switch
+            {
+                Key.Up or Key.Right or Key.Add or Key.OemPlus or Key.PageUp or Key.End => 1.0,
+                Key.Down or Key.Left or Key.Subtract or Key.OemMinus or Key.PageDown or Key.Home => 0.0,
+                _ => -1.0
+            };
+            if (nextState >= 0.0)
+            {
+                _selectedParameter.SnapCurrentNumberToMarker(nextState);
+                _status.ClearTransient();
+                InvalidateVisual();
+                e.Handled = true;
+                return;
+            }
+        }
         var stepCount = e.Key switch
         {
             Key.Up or Key.Right or Key.Add or Key.OemPlus => 1,
@@ -6993,7 +7079,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private double StashContentMixHeight(double width)
         => width >= 700.0 ? 839.0 : 1185.0;
     private static double StashMedicalCompositionHeight(double width)
-        => width >= 700.0 ? 345.0 : 607.0;
+        => width >= 700.0 ? 653.0 : 1067.0;
     // Paint width is ActualWidth - 30 DIP. At host widths 540–569 DIP
     // the FOUR-knob mixer still paints in two rows and needs 612 DIP.
     private static double StashGearHeight(double width)

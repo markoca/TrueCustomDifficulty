@@ -143,7 +143,10 @@ assert "DrawStashGearMode(" not in ui
 assert '\"StashGear\" => StashGearHeight(width)' in ui
 assert '\"StashMedicalComposition\" => StashMedicalCompositionHeight(width)' in ui
 assert '\"StashMedicalQuantity\" => StashMedicalQuantityHeight(width)' not in ui
-assert 'DrawStashMedicalModeSelector(dc,' in ui
+assert 'DrawStashMedicalPairShares(dc,' in ui
+assert 'DrawStashAntiRadWeightSwitch(dc,' in ui
+assert 'DrawStashMedicalModeSelector(' not in ui
+assert '=> width >= 700.0 ? 653.0 : 1067.0;' in ui
 assert 'DrawStashQuantityDualRail(dc,' in ui
 assert 'value < -.5 ? "0"' in ui and '"VANILLA"' in ui
 assert "IsStashMedicalSelectionDisabled(" in writer

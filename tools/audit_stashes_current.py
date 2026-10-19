@@ -71,6 +71,55 @@ for name, expected in families.items():
     actual = re.findall(r'"(loot\.[A-Za-z0-9.]+)"', match.group(1))
     assert actual == expected, f"Missing/misordered UI family controls: {name}: {actual}"
 assert set(stash) == set(rewards + mix + medical + bonus)
+# Medical Weight is never a fabricated four-medical-item selection.
+assert 'DrawStashMedicalPairShares(dc,' in ui
+assert 'DrawStashAntiRadWeightSwitch(dc,' in ui
+assert '_stashMedicalShowChance' not in ui
+assert '"CHANCE · % OF SOURCE"' in ui
+assert 'g.Prototype == "StashMedicine_Smart"' in ui
+assert 'g.RankIndex is 2 or 3' in ui
+assert 'group.EffectiveSelection(StashPreviewBaseline.Value, state,' in ui
+assert 'AddHorizontalTarget(p, rect, rect, value, value);' in ui
+assert 'target.Parameter.Id == "loot.stashMedicalAntiRadBias"' in ui
+assert '=> width >= 700.0 ? 653.0 : 1067.0;' in ui
+anti = stash["loot.stashMedicalAntiRadBias"]
+assert anti["slider"] == {"min": 0, "max": 3, "step": 0.25, "stepMode": "absolute"}
+assert "two-state" in anti["interaction"].lower()
+assert "Chance" in anti["description"]
+# Audited native game 2.0.5 groups, not a fabricated 4-item medicine pool.
+with (data / "smartloot-world-source-entries.csv").open(
+        newline="", encoding="utf-8") as handle:
+    smart_rows = list(csv.DictReader(handle))
+smart_groups = {}
+for row in smart_rows:
+    key = (row["Prototype"], row["RankIndex"],
+           row["Group"], row["GroupIndex"])
+    smart_groups.setdefault(key, []).append(row)
+anti_groups = [group for group in smart_groups.values()
+    if any(row["ItemSID"] in ("AntiRad", "Antirad")
+           and row["Weight"] for row in group)]
+assert anti_groups, "No source Anti-Rad Weight evidence"
+assert all(len(group) == 1 for group in anti_groups), (
+    "Anti-Rad now has a competing source candidate; review OFF/ON control")
+for rank, medkit, army in (("2", 5.0, 1.0), ("3", 4.0, 1.0)):
+    matches = [group for key, group in smart_groups.items()
+        if key[0] == "StashMedicine_Smart" and key[1] == rank
+        and {row["ItemSID"] for row in group} == {"Medkit", "ArmyMedkit"}]
+    assert len(matches) == 1, ("Expected exactly one medkit pair", rank)
+    values = {row["ItemSID"]: float(row["Weight"]) for row in matches[0]}
+    assert values == {"Medkit": medkit, "ArmyMedkit": army}, (
+        "Native Medkit/ArmyMedkit group drift", rank, values)
+basic_groups = baseline["special"]["cheapStashProduction"]["templateCategories"]
+hard_weight = {x["fields"]["ItemPrototypeSID"]: x["fields"].get("Weight")
+    for x in basic_groups[1]["items"]}
+assert hard_weight == {"Milk": "1", "Bread": "5", "Sausage": "5",
+                      "CannedFood": "3", "Bandage": "2"}
+assert all("ArmyMedkit" not in {x["fields"]["ItemPrototypeSID"]
+    for x in g["items"] if "Weight" in x["fields"]}
+    for tier in ("cheapStashProduction", "mediumStashAmmoProduction",
+                 "expensiveStashProduction")
+    for g in baseline["special"][tier]["templateCategories"])
+
 assert '"StashRewardProfile" => new[]' not in ui
 assert 'case "StashRewardProfile":' not in ui
 assert 'DrawCompactStashRewards(' not in ui
