@@ -1,3 +1,46 @@
+## 2026-10-19 — CURRENT RC player-facing labels (41 approved)
+
+Authoritative labels for this release candidate supersede older terminology in historical sections below. 36 player-facing catalog labels, four WPF headings (STASH LOOT MIX, LOOT POOLS, BASIC · LOOT PREVIEW, HUMAN ENEMY COMBAT), and GEAR WEAR were approved, with catalog groups Item Values, Gear Wear, Damage by Anomaly and Human Squad Size aligned. All 283 parameter identities, CFG routes, values, preset schemas, and slider geometry are unchanged.
+
+- `combat.npcHealth` → **Human Enemy HP**
+- `combat.npcAttackCooldown` → **Enemy Attack Rate**
+- `combat.playerWeaponDamage` → **Weapon Damage**
+- `combat.playerHeadshotMultiplier` → **Headshot Damage**
+- `combat.weaponJamming` → **Weapon Jam Rate**
+- `combat.psySpawnCycleDelay` → **Phantom Spawn Interval**
+- `survival.hungerRate` → **Hunger Rate**
+- `survival.sleepinessRate` → **Fatigue Rate**
+- `survival.sleepEligibilityThreshold` → **Sleep Threshold**
+- `health.maxHP` → **Max Health**
+- `health.baseRegen` → **Passive HP Regen**
+- `health.regenDelay` → **Regen Delay**
+- `stamina.maxSP` → **Max Stamina**
+- `stamina.vaultMaxHeight` → **Vault Height**
+- `stamina.regeneration` → **Stamina Regen**
+- `loot.npcCorpseBonus` → **Extra Corpse Loot**
+- `loot.npcWeaponAmmoSupply` → **Bonus Ammo Drops**
+- `loot.destructibleAmmoQuantity` → **Ammo per Box**
+- `loot.destructibleGrenadeQuantity` → **Grenades per Box**
+- `loot.ammoBoxWeight918` → **Ammo Type Mix**
+- `loot.stashGearCoveragePercent` → **Bonus Gear Coverage**
+- `loot.expensiveStashMoneyChance` → **Rare Stash Coupon Chance**
+- `economy.buyCondition` → **Prices Traders Pay**
+- `economy.sellCondition` → **Prices You Pay**
+- `economy.traderMinBuyCondition` → **Minimum Sellable Condition**
+- `economy.itemValueFloor` → **Broken Gear Value**
+- `economy.traderAmmoStock` → **Trader Ammo Supply**
+- `economy.medicStock` → **Medic Supplies**
+- `economy.consumableCost` → **Item Values**
+- `economy.fastTravelCost` → **Guide Travel Fees**
+- `equipment.weaponWearPerShot` → **Weapon Wear per Shot**
+- `environment.electroAnomalyDamage` → **Damage by Anomaly**
+- `environment.psyAnomalyIntensity` → **Psy Drain Strength**
+- `alife.humanGroupSize.newbie` → **Human Squad Size**
+- `advanced.radiationMechanics` → **Radiation Stamina Penalty**
+- `survival.starvationStaminaDrain` → **Starvation Action Cost**
+
+Trader buy-from-player = Prices Traders Pay; trader sell-to-player = Prices You Pay. Bonus Ammo Drops is bonus corpse ammo (not weapon-loaded ammo). Ammo Type Mix affects relative weights, not guaranteed drops. Bonus Gear Coverage selects eligible stash actors; Starvation Action Cost changes action stamina expense, not passive drain.
+
 ## 2026-10-19 — CURRENT: verified Wine launch for NATIVE-free Stashes cards
 
 The active `DrawStashChanceTier` has **no `NATIVE` text or native-percent renderer**. Repeated screenshots showing the obsolete caption indicate that the displayed executable/window has not yet been proven to come from current `main`; they are not grounds to reintroduce or merely hide the same row a second time. **Use `bash run-latest.sh` from the project root** for the one-step `git pull --ff-only origin main` → clean publish → source/binary integrity check → Wine launch. A running old app blocks the workflow instead of being silently reused.

@@ -150,7 +150,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
 
         _targets.Clear();
 
-        DrawCenteredText(dc, "ANOMALY DAMAGE",
+        DrawCenteredText(dc, "DAMAGE BY ANOMALY",
             new Point(ActualWidth / 2.0, 21.0), VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
 
         // One shared frame for GLOBAL and all eleven native source sliders.

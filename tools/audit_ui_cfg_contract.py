@@ -22,7 +22,7 @@ AGGREGATES = {
                    "loot.stashGearWeaponWeight", "loot.stashGearArmorWeight",
                    "loot.stashGearArtifactWeight", "loot.stashGearAttachmentWeight",
                    "loot.stashGearBonusChance"],
-    "Breakable Box Ammo Distribution": [
+    "Ammo Type Mix": [
         "loot.ammoBoxWeight918","loot.ammoBoxWeight045","loot.ammoBoxWeight545","loot.ammoBoxWeight012",
     ],
     "Stash Ammo Amounts": [
@@ -35,7 +35,7 @@ AGGREGATES = {
         "loot.mutant.poltergeistChance","loot.mutant.pseudodogChance","loot.mutant.pseudogiantChance",
         "loot.mutant.snorkChance","loot.mutant.tushkanChance",
     ],
-    "Individual Anomaly Damage": [
+    "Damage by Anomaly": [
         "environment.electroAnomalyDamage","environment.chemicalAnomalyDamage","environment.fireAnomalyDamage",
         "environment.carouselAnomalyDamage","environment.toxicCloudDamage","environment.steamAnomalyDamage",
         "environment.clickerHealthDamage","environment.razorHealthDamage","environment.soapBubbleHealthDamage",
@@ -52,7 +52,7 @@ AGGREGATES = {
         "stamina.sprintCost","stamina.jumpCost","stamina.vaultCost","stamina.meleeNormalCost",
         "stamina.meleeStrongCost","stamina.butstockCost","stamina.aimRegenCoef",
     ],
-    "Item Price Scalers": [
+    "Item Values": [
         "economy.consumableCost","economy.ammoCost","economy.armorCost",
         "economy.weaponCost","economy.artifactCost","economy.mutantPartValue",
     ],

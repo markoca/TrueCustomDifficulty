@@ -176,7 +176,7 @@ public sealed class ParameterViewModel : ObservableObject
     // Economy is a three-section dashboard in the UI. Its original catalog
     // groups remain untouched for native CFG provenance and preset round-trips.
     public string Group => Id == "environment.anomalyDamage"
-        ? "Individual Anomaly Damage"
+        ? "Damage by Anomaly"
         : Definition.Tab != "economy" ? Definition.Group : Id switch
     {
         "economy.startingMoney" or "economy.mainQuestReward"

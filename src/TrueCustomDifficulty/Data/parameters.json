@@ -214,7 +214,7 @@
       "id": "combat.npcHealth",
       "tab": "combat",
       "group": "Human Enemies",
-      "label": "Human Enemy Health",
+      "label": "Human Enemy HP",
       "description": "Changes how much damage human enemies can take before they die.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -304,7 +304,7 @@
       "id": "combat.npcAttackCooldown",
       "tab": "combat",
       "group": "Human Enemies",
-      "label": "Human Attack Frequency",
+      "label": "Enemy Attack Rate",
       "description": "Controls how frequently human enemies can make another attack.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -433,7 +433,7 @@
       "id": "combat.playerWeaponDamage",
       "tab": "combat",
       "group": "Your Weapons",
-      "label": "Your Weapon Damage",
+      "label": "Weapon Damage",
       "description": "Changes the base damage dealt by your weapons.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -477,7 +477,7 @@
       "id": "combat.playerHeadshotMultiplier",
       "tab": "combat",
       "group": "Your Weapons",
-      "label": "Your Headshot Damage",
+      "label": "Headshot Damage",
       "description": "Scales the damage multiplier applied to your headshots; 1x is normal and 2x doubles the configured headshot damage.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -521,7 +521,7 @@
       "id": "combat.weaponJamming",
       "tab": "combat",
       "group": "Your Weapons",
-      "label": "Weapon Jamming Frequency",
+      "label": "Weapon Jam Rate",
       "description": "Changes how often worn weapons jam.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -1377,7 +1377,7 @@
       "id": "combat.psySpawnCycleDelay",
       "tab": "combat",
       "group": "Psy Combat",
-      "label": "Psy Phantom Spawn-Cycle Delay",
+      "label": "Phantom Spawn Interval",
       "description": "Controls how long Psy encounters using the Master override wait before another phantom spawn cycle can begin.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -1582,7 +1582,7 @@
       "id": "survival.hungerRate",
       "tab": "survival",
       "group": "Hunger",
-      "label": "Hunger Build-up Rate",
+      "label": "Hunger Rate",
       "description": "Changes how quickly you become hungry.",
       "control": "slider",
       "valueKind": "raw",
@@ -1849,7 +1849,7 @@
       "id": "survival.sleepinessRate",
       "tab": "survival",
       "group": "Fatigue / Sleepiness",
-      "label": "Fatigue Build-up Rate",
+      "label": "Fatigue Rate",
       "description": "Changes how quickly you become tired and need sleep.",
       "control": "slider",
       "valueKind": "raw",
@@ -3229,7 +3229,7 @@
       "id": "survival.sleepEligibilityThreshold",
       "tab": "survival",
       "group": "Sleeping",
-      "label": "Sleep Becomes Available At",
+      "label": "Sleep Threshold",
       "description": "Controls how tired the player must be before normal sleeping is allowed.",
       "control": "slider",
       "valueKind": "raw",
@@ -3603,7 +3603,7 @@
       "id": "health.maxHP",
       "tab": "health",
       "group": "Core Health",
-      "label": "Player Max Health",
+      "label": "Max Health",
       "description": "Changes your maximum health. The game's full-health feedback stays in sync with the new maximum.",
       "control": "slider",
       "valueKind": "raw",
@@ -3655,7 +3655,7 @@
       "id": "health.baseRegen",
       "tab": "health",
       "group": "Core Health",
-      "label": "Passive Health Recovery",
+      "label": "Passive HP Regen",
       "description": "Controls ordinary passive health recovery on the player. Vanilla sets this to zero, so by default you do not slowly heal just by standing around.",
       "control": "slider",
       "valueKind": "raw",
@@ -3700,7 +3700,7 @@
       "id": "health.regenDelay",
       "tab": "health",
       "group": "Core Health",
-      "label": "Health Recovery Delay",
+      "label": "Regen Delay",
       "description": "Vanilla player VitalParams define RegenHPDelayTimeSeconds = 5.",
       "control": "slider",
       "valueKind": "raw",
@@ -4521,7 +4521,7 @@
       "id": "stamina.maxSP",
       "tab": "stamina",
       "group": "Core Stamina",
-      "label": "Maximum Stamina",
+      "label": "Max Stamina",
       "description": "Vanilla maximum stamina is 100. This changes the size of your stamina pool, not how fast it recovers or how much actions cost.",
       "rationale": "Changes your maximum stamina pool. Vanilla is 100.",
       "logic": "",
@@ -4923,7 +4923,7 @@
       "id": "stamina.vaultMaxHeight",
       "tab": "stamina",
       "group": "Traversal",
-      "label": "Maximum Vault Height",
+      "label": "Vault Height",
       "description": "Changes the tallest obstacle you can vault over. The WAIST / EYES / ABOVE EYES markers are simple player-friendly height references.",
       "rationale": "Changes the tallest obstacle you can vault over. The WAIST / EYES / ABOVE EYES markers are simple player-friendly height references.",
       "logic": "Higher values let the vault search accept taller obstacles; lower values restrict vaulting to lower obstacles. The slider is capped at 300 to keep the requested range around vanilla through slightly-above-eye/head traversal rather than turning this into extreme parkour.",
@@ -5083,7 +5083,7 @@
       "id": "stamina.regeneration",
       "tab": "stamina",
       "group": "Core Stamina",
-      "label": "Base Stamina Recovery",
+      "label": "Stamina Regen",
       "description": "Controls the player's base stamina regeneration rate.",
       "control": "slider",
       "valueKind": "raw",
@@ -5567,7 +5567,7 @@
       "id": "loot.npcCorpseBonus",
       "tab": "loot",
       "group": "NPC Loot & Equipment",
-      "label": "Extra NPC Corpse Loot",
+      "label": "Extra Corpse Loot",
       "description": "Chooses the extra smart-loot package added to human NPC corpses: Medicine + Ammo, Water, or None.",
       "control": "choiceSlider",
       "valueKind": "smartLootPreset",
@@ -5653,7 +5653,7 @@
       "id": "loot.npcWeaponAmmoSupply",
       "tab": "loot",
       "group": "NPC Loot & Equipment",
-      "label": "NPC Ammo Drops",
+      "label": "Bonus Ammo Drops",
       "description": "Scales the generic NPC_Ammo_Smart bonus ammunition stacks on ordinary NPC corpses. This is not NPC weapon-attached ammo and not Breakable Box Ammo.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -6701,7 +6701,7 @@
       "id": "loot.stashGearCoveragePercent",
       "tab": "stashes",
       "group": "Stash Gear",
-      "label": "Eligible Stash Coverage",
+      "label": "Bonus Gear Coverage",
       "description": "Select the build-time percentage of 800 base and 108 DLC1 eligible physical stash actors. Each selected actor receives a private progression-gated generator with up to two possible distinct bonus items when class weights permit; Bonus Chance is a separate native item roll, not this percentage.",
       "control": "slider",
       "valueKind": "integer",
@@ -6766,25 +6766,48 @@
         "rawFormat": "0.0x",
         "valueLabel": "Relative mix weight"
       },
-      "vanilla": {"All": 1.0},
-      "default": {"mode": "fixedVanilla"},
-      "slider": {"min": 0, "max": 3, "step": 0.1, "stepMode": "absolute"},
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
       "targets": [
-        {"scope": "baseGame", "file": "GameData/ItemGeneratorPrototypes.cfg", "prototype": "TCD_ExtraGear_{ActorSID}_{Rank}", "path": "ItemGenerator[0].PossibleItems[0]", "operation": "conditionalAdd"},
-        {"scope": "dlc1", "file": "GameData/ItemGeneratorPrototypes.cfg", "prototype": "TCD_ExtraGear_{ActorSID}_{Rank}", "path": "ItemGenerator[0].PossibleItems[0]", "operation": "conditionalAdd"}
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_ExtraGear_{ActorSID}_{Rank}",
+          "path": "ItemGenerator[0].PossibleItems[0]",
+          "operation": "conditionalAdd"
+        },
+        {
+          "scope": "dlc1",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_ExtraGear_{ActorSID}_{Rank}",
+          "path": "ItemGenerator[0].PossibleItems[0]",
+          "operation": "conditionalAdd"
+        }
       ],
-      "support": {"status": "runtime_test_required", "notes": [
-        "The relative category mix is allocated by stable actor/rank hash at build time; it does not modify native Weight or guarantee an item.",
-        "Each selected generator has exactly one item with a shared user-configured native Chance (50% default) and MinCount/MaxCount 1; in-game semantics need testing.",
-        "Quest/Weird/special/unique items are excluded. If all three weights are zero, no extra generators are emitted."
-      ]},
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The relative category mix is allocated by stable actor/rank hash at build time; it does not modify native Weight or guarantee an item.",
+          "Each selected generator has exactly one item with a shared user-configured native Chance (50% default) and MinCount/MaxCount 1; in-game semantics need testing.",
+          "Quest/Weird/special/unique items are excluded. If all three weights are zero, no extra generators are emitted."
+        ]
+      },
       "rationale": "Directly distribute extra gear item classes without treating Weight as whole-stash drop probability.",
       "logic": "Use this relative 0–3x build-time weight to select up to two different class candidates without replacement on each active native rank branch; 0 excludes this class. Source-approved candidates cannot exceed the rank tier; only one item may be authored per selected class.",
       "interaction": "Compact shared Bonus Mix knob with 0–3x in 0.1x increments; zero excludes class; original shared dial geometry and input controls retained.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },
-
     {
       "id": "loot.stashGearArmorWeight",
       "tab": "stashes",
@@ -6798,25 +6821,48 @@
         "rawFormat": "0.0x",
         "valueLabel": "Relative mix weight"
       },
-      "vanilla": {"All": 1.0},
-      "default": {"mode": "fixedVanilla"},
-      "slider": {"min": 0, "max": 3, "step": 0.1, "stepMode": "absolute"},
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
       "targets": [
-        {"scope": "baseGame", "file": "GameData/ItemGeneratorPrototypes.cfg", "prototype": "TCD_ExtraGear_{ActorSID}_{Rank}", "path": "ItemGenerator[0].PossibleItems[0]", "operation": "conditionalAdd"},
-        {"scope": "dlc1", "file": "GameData/ItemGeneratorPrototypes.cfg", "prototype": "TCD_ExtraGear_{ActorSID}_{Rank}", "path": "ItemGenerator[0].PossibleItems[0]", "operation": "conditionalAdd"}
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_ExtraGear_{ActorSID}_{Rank}",
+          "path": "ItemGenerator[0].PossibleItems[0]",
+          "operation": "conditionalAdd"
+        },
+        {
+          "scope": "dlc1",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_ExtraGear_{ActorSID}_{Rank}",
+          "path": "ItemGenerator[0].PossibleItems[0]",
+          "operation": "conditionalAdd"
+        }
       ],
-      "support": {"status": "runtime_test_required", "notes": [
-        "The relative category mix is allocated by stable actor/rank hash at build time; it does not modify native Weight or guarantee an item.",
-        "Each selected generator has exactly one item with a shared user-configured native Chance (50% default) and MinCount/MaxCount 1; in-game semantics need testing.",
-        "Quest/Weird/special/unique items are excluded. If all three weights are zero, no extra generators are emitted."
-      ]},
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The relative category mix is allocated by stable actor/rank hash at build time; it does not modify native Weight or guarantee an item.",
+          "Each selected generator has exactly one item with a shared user-configured native Chance (50% default) and MinCount/MaxCount 1; in-game semantics need testing.",
+          "Quest/Weird/special/unique items are excluded. If all three weights are zero, no extra generators are emitted."
+        ]
+      },
       "rationale": "Directly distribute extra gear item classes without treating Weight as whole-stash drop probability.",
       "logic": "Use this relative 0–3x build-time weight to select up to two different class candidates without replacement on each active native rank branch; 0 excludes this class. Source-approved candidates cannot exceed the rank tier; only one item may be authored per selected class.",
       "interaction": "Compact shared Bonus Mix knob with 0–3x in 0.1x increments; zero excludes class; original shared dial geometry and input controls retained.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },
-
     {
       "id": "loot.stashGearArtifactWeight",
       "tab": "stashes",
@@ -6830,18 +6876,42 @@
         "rawFormat": "0.0x",
         "valueLabel": "Relative mix weight"
       },
-      "vanilla": {"All": 1.0},
-      "default": {"mode": "fixedVanilla"},
-      "slider": {"min": 0, "max": 3, "step": 0.1, "stepMode": "absolute"},
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
       "targets": [
-        {"scope": "baseGame", "file": "GameData/ItemGeneratorPrototypes.cfg", "prototype": "TCD_ExtraGear_{ActorSID}_{Rank}", "path": "ItemGenerator[0].PossibleItems[0]", "operation": "conditionalAdd"},
-        {"scope": "dlc1", "file": "GameData/ItemGeneratorPrototypes.cfg", "prototype": "TCD_ExtraGear_{ActorSID}_{Rank}", "path": "ItemGenerator[0].PossibleItems[0]", "operation": "conditionalAdd"}
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_ExtraGear_{ActorSID}_{Rank}",
+          "path": "ItemGenerator[0].PossibleItems[0]",
+          "operation": "conditionalAdd"
+        },
+        {
+          "scope": "dlc1",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_ExtraGear_{ActorSID}_{Rank}",
+          "path": "ItemGenerator[0].PossibleItems[0]",
+          "operation": "conditionalAdd"
+        }
       ],
-      "support": {"status": "runtime_test_required", "notes": [
-        "The relative category mix is allocated by stable actor/rank hash at build time; it does not modify native Weight or guarantee an item.",
-        "Each selected generator has exactly one item with a shared user-configured native Chance (50% default) and MinCount/MaxCount 1; in-game semantics need testing.",
-        "Quest/Weird/special/unique items are excluded. If all three weights are zero, no extra generators are emitted."
-      ]},
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The relative category mix is allocated by stable actor/rank hash at build time; it does not modify native Weight or guarantee an item.",
+          "Each selected generator has exactly one item with a shared user-configured native Chance (50% default) and MinCount/MaxCount 1; in-game semantics need testing.",
+          "Quest/Weird/special/unique items are excluded. If all three weights are zero, no extra generators are emitted."
+        ]
+      },
       "rationale": "Directly distribute extra gear item classes without treating Weight as whole-stash drop probability.",
       "logic": "Use this relative 0–3x build-time weight to select up to two different class candidates without replacement on each active native rank branch; 0 excludes this class. Source-approved candidates cannot exceed the rank tier; only one item may be authored per selected class.",
       "interaction": "Compact shared Bonus Mix knob with 0–3x in 0.1x increments; zero excludes class; original shared dial geometry and input controls retained.",
@@ -6856,21 +6926,49 @@
       "description": "Relative build-time weight of standalone attachment bonuses. T1 uses only source-confirmed attachments compatible with a T1 weapon; T2–T4 keep their existing progression tiers. A matching weapon need not be inside the stash. This is not a drop chance.",
       "control": "slider",
       "valueKind": "multiplier",
-      "display": {"primary": "multiplier", "rawFormat": "0.0x", "valueLabel": "Relative mix weight"},
-      "vanilla": {"All": 0.0},
-      "default": {"mode": "fixedVanilla"},
-      "slider": {"min": 0, "max": 3, "step": 0.1, "stepMode": "absolute"},
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.0x",
+        "valueLabel": "Relative mix weight"
+      },
+      "vanilla": {
+        "All": 0
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
       "targets": [
-        {"scope": "baseGame", "file": "GameData/ItemGeneratorPrototypes.cfg", "prototype": "TCD_ExtraGear_{ActorSID}_{Rank}", "path": "ItemGenerator[0].PossibleItems[0].ItemGeneratorPrototypeSID", "operation": "conditionalAdd"},
-        {"scope": "dlc1", "file": "GameData/ItemGeneratorPrototypes.cfg", "prototype": "TCD_ExtraGear_{ActorSID}_{Rank}", "path": "ItemGenerator[0].PossibleItems[0].ItemGeneratorPrototypeSID", "operation": "conditionalAdd"}
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_ExtraGear_{ActorSID}_{Rank}",
+          "path": "ItemGenerator[0].PossibleItems[0].ItemGeneratorPrototypeSID",
+          "operation": "conditionalAdd"
+        },
+        {
+          "scope": "dlc1",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_ExtraGear_{ActorSID}_{Rank}",
+          "path": "ItemGenerator[0].PossibleItems[0].ItemGeneratorPrototypeSID",
+          "operation": "conditionalAdd"
+        }
       ],
-      "support": {"status": "runtime_test_required", "notes": [
-        "T2 (Experienced), T3 (Veteran), T4 (Master) source-audited tier progression; no T1 safe attachment candidates.",
-        "Initial pool contains 19 ordinary attachment models from native single-item Stash_* generators; the other safe-world entries require separate source approval.",
-        "Weapon fitting is NOT checked; attachments are independent inventory items rather than attached to a weapon.",
-        "Bonus Chance gates the outer SubItemGenerator; unchanged nested source Chance may further affect appearances.",
-        "Default weight 0x preserves existing three-category presets."
-      ]},
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "T2 (Experienced), T3 (Veteran), T4 (Master) source-audited tier progression; no T1 safe attachment candidates.",
+          "Initial pool contains 19 ordinary attachment models from native single-item Stash_* generators; the other safe-world entries require separate source approval.",
+          "Weapon fitting is NOT checked; attachments are independent inventory items rather than attached to a weapon.",
+          "Bonus Chance gates the outer SubItemGenerator; unchanged nested source Chance may further affect appearances.",
+          "Default weight 0x preserves existing three-category presets."
+        ]
+      },
       "rationale": "Progression-gated attachment bonus as a fourth independent class, not weapon pairing.",
       "logic": "Use this relative 0–3x build-time weight to select up to two different class candidates without replacement on each active native rank branch; 0 excludes this class. Source-approved candidates cannot exceed the rank tier; only one item may be authored per selected class.",
       "interaction": "Compact shared Bonus Mix knob with 0–3x in 0.1x increments; zero excludes class; original shared dial geometry and input controls retained.",
@@ -6890,9 +6988,18 @@
         "rawFormat": "0",
         "valueLabel": "Bonus item Chance percent"
       },
-      "vanilla": {"All": 50},
-      "default": {"mode": "fixedVanilla"},
-      "slider": {"min": 0, "max": 100, "step": 1, "stepMode": "absolute"},
+      "vanilla": {
+        "All": 50
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "stepMode": "absolute"
+      },
       "targets": [
         {
           "scope": "baseGame",
@@ -7211,7 +7318,7 @@
       "id": "loot.destructibleAmmoQuantity",
       "tab": "loot",
       "group": "Breakable Containers",
-      "label": "Ammo from Breakable Boxes",
+      "label": "Ammo per Box",
       "description": "Changes how much ammunition you get from breakable ammo boxes. Ammo Box Distribution separately changes which ammo families are more common.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -7295,7 +7402,7 @@
       "id": "loot.ammoBoxWeight918",
       "tab": "loot",
       "group": "Breakable Containers",
-      "label": "Breakable Box Ammo Distribution",
+      "label": "Ammo Type Mix",
       "description": "Changes which ammo families are favored in breakable ammo boxes.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -7484,7 +7591,7 @@
       "id": "loot.destructibleGrenadeQuantity",
       "tab": "loot",
       "group": "Breakable Containers",
-      "label": "Grenades from Breakable Boxes",
+      "label": "Grenades per Box",
       "description": "Changes how many grenades you get from dedicated breakable grenade boxes. F1 boxes contain F1 grenades and RGD-5 boxes contain RGD-5 grenades; grenade type remains vanilla.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -8109,7 +8216,7 @@
       "id": "loot.expensiveStashMoneyChance",
       "tab": "stashes",
       "group": "Stash Content",
-      "label": "Rare Stash Coupon Rewards",
+      "label": "Rare Stash Coupon Chance",
       "description": "Changes how likely an eligible Rare stash is to contain coupon rewards. The game still chooses the reward tier from vanilla progression.",
       "control": "slider",
       "valueKind": "probability",
@@ -8206,7 +8313,7 @@
       "id": "economy.buyCondition",
       "tab": "economy",
       "group": "Trading",
-      "label": "Trader Buy-From-You Pricing",
+      "label": "Prices Traders Pay",
       "description": "Changes the difficulty-profile BuyCondition used when a trader buys an item from you. Harder vanilla difficulties lower this setting.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -8250,7 +8357,7 @@
       "id": "economy.sellCondition",
       "tab": "economy",
       "group": "Trading",
-      "label": "Trader Sell-To-You Pricing",
+      "label": "Prices You Pay",
       "description": "Changes the difficulty-profile SellCondition used when a trader sells an item to you. Harder vanilla difficulties raise this setting.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -8294,7 +8401,7 @@
       "id": "economy.traderMinBuyCondition",
       "tab": "economy",
       "group": "Trading",
-      "label": "Trader Minimum Buy Condition",
+      "label": "Minimum Sellable Condition",
       "description": "Sets the minimum condition a weapon or armor must have before traders will buy it from you. 0% allows completely broken gear; 40% is vanilla.",
       "control": "slider",
       "valueKind": "probability",
@@ -8341,7 +8448,7 @@
       "id": "economy.itemValueFloor",
       "tab": "economy",
       "group": "Trading",
-      "label": "Item Value at 0% Durability",
+      "label": "Broken Gear Value",
       "description": "Sets how much of an item's base value remains when durability reaches 0%. Vanilla is 10%; the game's documented curve gives 55% value at 50% durability and 100% value at full durability.",
       "control": "slider",
       "valueKind": "raw",
@@ -8382,7 +8489,7 @@
       "id": "economy.traderAmmoStock",
       "tab": "economy",
       "group": "Trader Stock",
-      "label": "Trader Ammo Stock Amount",
+      "label": "Trader Ammo Supply",
       "description": "Changes how much ammo regular traders carry. Ammo types, progression requirements, and restock behavior stay vanilla.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -8429,7 +8536,7 @@
       "id": "economy.medicStock",
       "tab": "economy",
       "group": "Trader Stock",
-      "label": "Medic Stock Amount",
+      "label": "Medic Supplies",
       "description": "Changes how many medical supplies medics carry for sale. Item availability, progression requirements, and restock timing stay vanilla.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -8474,8 +8581,8 @@
     {
       "id": "economy.consumableCost",
       "tab": "economy",
-      "group": "Item Price Scalers",
-      "label": "Item Price Scalers",
+      "group": "Item Values",
+      "label": "Item Values",
       "description": "Changes base item value by item category.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -8519,7 +8626,7 @@
     {
       "id": "economy.ammoCost",
       "tab": "economy",
-      "group": "Item Price Scalers",
+      "group": "Item Values",
       "label": "Ammo Cost",
       "description": "The in-game difficulty presets expose Ammo_Cost directly and keep it at 1.00 on all four vanilla difficulties.",
       "control": "slider",
@@ -8564,7 +8671,7 @@
     {
       "id": "economy.armorCost",
       "tab": "economy",
-      "group": "Item Price Scalers",
+      "group": "Item Values",
       "label": "Armor Cost",
       "description": "The in-game difficulty presets expose Armor_Cost directly and keep it at 1.00 on all four vanilla difficulties.",
       "control": "slider",
@@ -8609,7 +8716,7 @@
     {
       "id": "economy.weaponCost",
       "tab": "economy",
-      "group": "Item Price Scalers",
+      "group": "Item Values",
       "label": "Weapon Cost",
       "description": "The in-game difficulty presets expose Weapon_Cost directly and keep it at 1.00 on all four vanilla difficulties.",
       "control": "slider",
@@ -8654,7 +8761,7 @@
     {
       "id": "economy.artifactCost",
       "tab": "economy",
-      "group": "Item Price Scalers",
+      "group": "Item Values",
       "label": "Artifact Cost",
       "description": "The in-game difficulty presets expose Artifact_Cost directly and keep it at 1.00 on all four vanilla difficulties.",
       "control": "slider",
@@ -8699,7 +8806,7 @@
     {
       "id": "economy.mutantPartValue",
       "tab": "economy",
-      "group": "Item Price Scalers",
+      "group": "Item Values",
       "label": "Mutant Parts Cost",
       "description": "Changes the base coupon value of all mutant parts together while keeping rare trophies more valuable than common ones.",
       "control": "slider",
@@ -8844,7 +8951,7 @@
       "id": "economy.fastTravelCost",
       "tab": "economy",
       "group": "Services",
-      "label": "Fast Travel Cost",
+      "label": "Guide Travel Fees",
       "description": "Scales guide fast-travel prices while preserving the vanilla price differences between destinations.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -9269,7 +9376,7 @@
     {
       "id": "equipment.armorDurability",
       "tab": "equipment",
-      "group": "Equipment Wear",
+      "group": "Gear Wear",
       "label": "Armor Durability",
       "description": "Changes how quickly armor loses condition. Higher settings make armor last longer; lower settings make it wear out faster.",
       "control": "slider",
@@ -9488,7 +9595,7 @@
       "id": "advanced.radiationMechanics",
       "tab": "master",
       "group": "Radiation",
-      "label": "Master Radiation Penalty",
+      "label": "Radiation Stamina Penalty",
       "description": "Enables the additional Master radiation penalty rather than changing radiation accumulation or radiation damage itself.",
       "control": "toggle",
       "valueKind": "listMembership",
@@ -9601,7 +9708,7 @@
       "id": "survival.starvationStaminaDrain",
       "tab": "master",
       "group": "Starvation",
-      "label": "Starvation Stamina Drain",
+      "label": "Starvation Action Cost",
       "description": "Changes the extra stamina cost of actions while the Master starvation penalty is active. Vanilla adds +200%.",
       "control": "slider",
       "valueKind": "raw",
@@ -10643,8 +10750,8 @@
     {
       "id": "environment.electroAnomalyDamage",
       "tab": "environment",
-      "group": "Individual Anomaly Damage",
-      "label": "Individual Anomaly Damage",
+      "group": "Damage by Anomaly",
+      "label": "Damage by Anomaly",
       "description": "Changes damage separately for each supported anomaly.",
       "control": "slider",
       "valueKind": "raw",
@@ -10687,7 +10794,7 @@
     {
       "id": "environment.chemicalAnomalyDamage",
       "tab": "environment",
-      "group": "Individual Anomaly Damage",
+      "group": "Damage by Anomaly",
       "label": "Chemical Base Damage",
       "description": "Fine-tunes Chemical damage without changing the other anomalies. Vanilla base damage is 30. Global Anomaly Damage still affects it too.",
       "control": "slider",
@@ -10731,7 +10838,7 @@
     {
       "id": "environment.fireAnomalyDamage",
       "tab": "environment",
-      "group": "Individual Anomaly Damage",
+      "group": "Damage by Anomaly",
       "label": "Fire Base Damage",
       "description": "Fine-tunes Fire damage without changing the other anomalies. Vanilla base damage is 60. Global Anomaly Damage still affects it too.",
       "control": "slider",
@@ -10775,7 +10882,7 @@
     {
       "id": "environment.carouselAnomalyDamage",
       "tab": "environment",
-      "group": "Individual Anomaly Damage",
+      "group": "Damage by Anomaly",
       "label": "Carousel Base Damage",
       "description": "Fine-tunes Carousel damage without changing the other anomalies. Vanilla base damage is 105. Global Anomaly Damage still affects it too.",
       "control": "slider",
@@ -10819,7 +10926,7 @@
     {
       "id": "environment.toxicCloudDamage",
       "tab": "environment",
-      "group": "Individual Anomaly Damage",
+      "group": "Damage by Anomaly",
       "label": "Toxic Cloud Base Damage",
       "description": "Fine-tunes Toxic Cloud damage without changing the other anomalies. Vanilla base damage is 25. Global Anomaly Damage still affects it too.",
       "control": "slider",
@@ -10863,7 +10970,7 @@
     {
       "id": "environment.steamAnomalyDamage",
       "tab": "environment",
-      "group": "Individual Anomaly Damage",
+      "group": "Damage by Anomaly",
       "label": "Steam Base Damage",
       "description": "Fine-tunes Steam damage without changing the other anomalies. Vanilla base damage is 60. Global Anomaly Damage still affects it too.",
       "control": "slider",
@@ -11000,7 +11107,7 @@
     {
       "id": "environment.clickerHealthDamage",
       "tab": "environment",
-      "group": "Individual Anomaly Damage",
+      "group": "Damage by Anomaly",
       "label": "Clicker Health Damage",
       "description": "Controls the direct health damage dealt by a Clicker hit without changing the anomaly's equipment corrosion or behavior.",
       "control": "slider",
@@ -11044,7 +11151,7 @@
     {
       "id": "environment.razorHealthDamage",
       "tab": "environment",
-      "group": "Individual Anomaly Damage",
+      "group": "Damage by Anomaly",
       "label": "Glass Shards Health Damage",
       "description": "Scales Glass Shards health damage at both movement-speed tiers while preserving the stronger high-speed hit.",
       "control": "slider",
@@ -11145,7 +11252,7 @@
     {
       "id": "environment.soapBubbleHealthDamage",
       "tab": "environment",
-      "group": "Individual Anomaly Damage",
+      "group": "Damage by Anomaly",
       "label": "Soap Bubble Health Damage",
       "description": "Controls the direct Chemical Burn health damage of the Soap Bubble anomaly.",
       "control": "slider",
@@ -11191,7 +11298,7 @@
     {
       "id": "environment.fireballHealthDamage",
       "tab": "environment",
-      "group": "Individual Anomaly Damage",
+      "group": "Damage by Anomaly",
       "label": "Fireball Health Damage",
       "description": "Controls the direct Burn health damage of the Fireball anomaly.",
       "control": "slider",
@@ -11237,7 +11344,7 @@
     {
       "id": "environment.diamondHealthDamage",
       "tab": "environment",
-      "group": "Individual Anomaly Damage",
+      "group": "Damage by Anomaly",
       "label": "Diamond Health Damage",
       "description": "Controls the direct Strike health damage applied by the Diamond anomaly.",
       "control": "slider",
@@ -11332,7 +11439,7 @@
       "id": "environment.psyAnomalyIntensity",
       "tab": "environment",
       "group": "Special Anomaly Effects",
-      "label": "Psy Anomaly Intensity",
+      "label": "Psy Drain Strength",
       "description": "Scales the Psy anomaly's continuous negative Psy-point effect without changing its other behavior.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -12046,8 +12153,8 @@
     {
       "id": "equipment.weaponWearPerShot",
       "tab": "equipment",
-      "group": "Equipment Wear",
-      "label": "Player Weapon Wear Per Shot",
+      "group": "Gear Wear",
+      "label": "Weapon Wear per Shot",
       "description": "Changes how quickly player weapons lose condition when fired, while keeping each weapon's own vanilla wear rate relative to the others.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -12663,8 +12770,8 @@
     {
       "id": "alife.humanGroupSize.newbie",
       "tab": "alife",
-      "group": "Human Group Size",
-      "label": "Human Group Size",
+      "group": "Human Squad Size",
+      "label": "Human Squad Size",
       "description": "Changes the largest human squad that can spawn at each player rank.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -12710,7 +12817,7 @@
     {
       "id": "alife.humanGroupSize.experienced",
       "tab": "alife",
-      "group": "Human Group Size",
+      "group": "Human Squad Size",
       "label": "Experienced Human Group Size",
       "description": "Changes the largest human squad that can spawn while the player is at Experienced rank. It does not change lair population or respawn speed.",
       "control": "slider",
@@ -12757,7 +12864,7 @@
     {
       "id": "alife.humanGroupSize.veteran",
       "tab": "alife",
-      "group": "Human Group Size",
+      "group": "Human Squad Size",
       "label": "Veteran Human Group Size",
       "description": "Changes the largest human squad that can spawn while the player is at Veteran rank. It does not change lair population or respawn speed.",
       "control": "slider",
@@ -12804,7 +12911,7 @@
     {
       "id": "alife.humanGroupSize.master",
       "tab": "alife",
-      "group": "Human Group Size",
+      "group": "Human Squad Size",
       "label": "Master Human Group Size",
       "description": "Changes the largest human squad that can spawn while the player is at Master rank. It does not change lair population or respawn speed.",
       "control": "slider",

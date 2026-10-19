@@ -101,7 +101,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
             new Rect(2, 2, Math.Max(0, ActualWidth - 4), Math.Max(0, ActualHeight - 4)),
             panel, border, accent, border, 8, accentEdge: true, technicalMarks: true);
         _hits.Clear();
-        Center(dc, "ITEM VALUE LAYERS", ActualWidth / 2.0, 21,
+        Center(dc, "ITEM VALUES", ActualWidth / 2.0, 21,
             VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
 
         // Every live source has an audited 0–2x native range. All six columns

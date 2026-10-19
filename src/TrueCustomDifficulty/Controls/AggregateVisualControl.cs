@@ -632,7 +632,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawHeader(dc, "SERVICE PRICES", "", text, muted, accent);
         var channels = new (string Id, string Label)[]
         {
-            ("economy.fastTravelCost", "FAST TRAVEL"),
+            ("economy.fastTravelCost", "GUIDE TRAVEL FEES"),
             ("economy.upgradeCost", "UPGRADES"),
             ("economy.repairCostBase", "BASE REPAIR")
         };
@@ -664,8 +664,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawHeader(dc, "TRADER STOCK", "", text, muted, accent);
         var channels = new (string Id, string Label)[]
         {
-            ("economy.traderAmmoStock", "AMMO STOCK"),
-            ("economy.medicStock", "MEDIC STOCK")
+            ("economy.traderAmmoStock", "AMMO SUPPLY"),
+            ("economy.medicStock", "MEDIC SUPPLIES")
         };
         const double cellWidth = 194.0;
         const double gap = 12.0;
@@ -973,7 +973,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawSourceKnob(dc, P("environment.razorBleeding"), "GLASS SHARDS",
             new Rect(left, top, knobWidth, 181.0),
             text, muted, border, accent, panel);
-        DrawSourceKnob(dc, P("environment.psyAnomalyIntensity"), "INTENSITY",
+        DrawSourceKnob(dc, P("environment.psyAnomalyIntensity"), "STRENGTH",
             new Rect(left + knobWidth + gap, top, knobWidth, 181.0),
             text, muted, border, accent, panel);
     }
@@ -1208,7 +1208,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawHorizontalTrackCard(dc, medical, "MEDICAL DROPS",
             new Rect(margin, 155.0, half, 72.0),
             text, muted, border, accent, panel, pairedValueFormatting: true);
-        DrawHorizontalTrackCard(dc, ammo, "NPC AMMO DROPS",
+        DrawHorizontalTrackCard(dc, ammo, "BONUS AMMO DROPS",
             new Rect(margin + half + gap, 155.0, half, 72.0),
             text, muted, border, accent, panel, pairedValueFormatting: true);
 
@@ -1629,14 +1629,14 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 new Rect(16.0, 51.0, cell, 105.0),
                 text, muted, border, accent, panel);
         if (P("stamina.regeneration") is { } recovery)
-            DrawCoreResourceRuler(dc, recovery, "BASE RECOVERY", "stamina/s",
+            DrawCoreResourceRuler(dc, recovery, "STAMINA REGEN", "stamina/s",
                 new Rect(16.0 + cell + gap, 51.0, cell, 105.0),
                 text, muted, border, accent, panel);
 
         DrawText(dc, "MOVEMENT LIMITS", new Point(19.0, 173.0),
             10.2, muted, FontWeights.Bold);
         DrawMovementLimitRuler(dc, P("stamina.vaultMaxHeight"),
-            "MAXIMUM VAULT HEIGHT", "uu",
+            "VAULT HEIGHT", "uu",
             new Rect(16.0, 191.0, cell, 116.0),
             text, muted, border, accent, panel, vaultHeight: true);
         DrawMovementLimitRuler(dc, P("stamina.maxCarryWeight"),
@@ -2078,7 +2078,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var toggle = P(isLowHealth
             ? "advanced.lowHealthMechanics" : "advanced.radiationMechanics");
         DrawMasterBundleToggle(dc, toggle,
-            isLowHealth ? "LOW HEALTH MECHANICS" : "RADIATION MECHANICS",
+            isLowHealth ? "LOW HEALTH MECHANICS" : "RADIATION STAMINA PENALTY",
             text, muted, border, accent, panel);
 
         var source = P(isLowHealth
@@ -2338,11 +2338,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // The two primary health parameters share one card layout.
         // Only their native units and number precision differ.
         if (P("health.maxHP") is { } hp)
-            DrawCoreResourceRuler(dc, hp, "MAX HEALTH", "HP",
+            DrawCoreResourceRuler(dc, hp, "MAX HP", "HP",
                 new Rect(16.0, 51.0, half, 105.0),
                 text, muted, border, accent, panel);
         if (P("health.baseRegen") is { } passiveRecovery)
-            DrawCoreResourceRuler(dc, passiveRecovery, "PASSIVE RECOVERY", "HP/s",
+            DrawCoreResourceRuler(dc, passiveRecovery, "PASSIVE HP REGEN", "HP/s",
                 new Rect(16.0 + half + gap, 51.0, half, 105.0),
                 text, muted, border, accent, panel);
 
@@ -2350,7 +2350,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             10.2, muted, FontWeights.Bold);
         var sources = new (string Id, string Label)[]
         {
-            ("health.regenDelay", "RECOVERY DELAY"),
+            ("health.regenDelay", "REGEN DELAY"),
             ("health.regenerationScalar", "RECOVERY MULTIPLIER"),
             ("health.lowHealthRegen", "LOW-HP RECOVERY RATE")
         };
@@ -2497,7 +2497,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         {
             ("combat.playerWeaponDamage", "WEAPON DAMAGE"),
             ("combat.playerHeadshotMultiplier", "HEADSHOT DAMAGE"),
-            ("combat.weaponJamming", "JAM FREQUENCY")
+            ("combat.weaponJamming", "JAM RATE")
         };
         const double gap = 12.0;
         const double margin = 18.0;
@@ -2790,7 +2790,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         Brush accent,
         Brush panel)
     {
-        DrawHeader(dc, "HUMAN COMBAT PROFILE", "", text, muted, accent);
+        DrawHeader(dc, "HUMAN ENEMY COMBAT", "", text, muted, accent);
 
         var health = P("combat.npcHealth");
         var damage = P("combat.npcWeaponDamage");
@@ -2827,7 +2827,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         // Keep axis names and real source ticks. The profile readouts explain
         // the current values, not another editable setting.
-        DrawCenteredText(dc, "ENEMY HEALTH",
+        DrawCenteredText(dc, "ENEMY HP",
             new Point(plot.Left + plot.Width / 2.0, plot.Bottom + 29.0),
             10.0, text, FontWeights.SemiBold);
         var axisX = plot.Left - 61.0;
@@ -2901,7 +2901,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // controls reuse the project-wide 270-degree source-knob grammar.
         var knobs = new (ParameterViewModel Source, string Label)[]
         {
-            (frequency, "ATTACK FREQUENCY"),
+            (frequency, "ENEMY ATTACK RATE"),
             (accuracy, "FIRE ACCURACY"),
             (explosion, "EXPLOSION DAMAGE")
         };
@@ -2950,7 +2950,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawingContext dc, Brush text, Brush muted, Brush border, Brush soft,
         Brush accent, Brush panel)
     {
-        DrawHeader(dc, "EQUIPMENT WEAR", "", text, muted, accent);
+        DrawHeader(dc, "GEAR WEAR", "", text, muted, accent);
         var channels = new (string Id, string Label)[]
         {
             ("equipment.armorDurability", "ARMOR DURABILITY"),
@@ -3530,7 +3530,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         var width = Math.Min(740.0, ActualWidth - 34.0);
         var left = (ActualWidth - width) / 2.0;
-        DrawCompactTrack(dc, threshold, "SLEEP UNLOCKS AT",
+        DrawCompactTrack(dc, threshold, "SLEEP THRESHOLD",
             $"{threshold.CurrentNumber:0} FATIGUE PTS",
             $"{threshold.Minimum:0} PTS", $"{threshold.Maximum:0} PTS",
             new Rect(left, 54.0, width, 82.0),
@@ -3667,11 +3667,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var cell = (width - gap) / 2.0;
         var left = (ActualWidth - width) / 2.0;
         DrawTradingMeter(dc, P("economy.buyCondition"),
-            "YOU SELL TO TRADERS",
+            "PRICES TRADERS PAY",
             new Rect(left, 52.0, cell, 92.0), false,
             text, muted, border, accent, panel);
         DrawTradingMeter(dc, P("economy.sellCondition"),
-            "YOU BUY FROM TRADERS",
+            "PRICES YOU PAY",
             new Rect(left + cell + gap, 52.0, cell, 92.0), true,
             text, muted, border, accent, panel);
         IndustrialChrome.DrawEngravedSeparator(dc, left + 8.0, left + width - 8.0,
@@ -3679,11 +3679,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawText(dc, "TRADE ACCEPTANCE", new Point(left, 158),
             10.2, muted, FontWeights.Bold);
         DrawEconomyCard(dc, P("economy.traderMinBuyCondition"),
-            "MINIMUM ACCEPTED CONDITION",
+            "MIN. SELLABLE CONDITION",
             new Rect(left, 180.0, cell, 80.0),
             text, muted, border, accent, panel);
         DrawEconomyCard(dc, P("economy.itemValueFloor"),
-            "BROKEN ITEM VALUE",
+            "BROKEN GEAR VALUE",
             new Rect(left + cell + gap, 180.0, cell, 80.0),
             text, muted, border, accent, panel);
     }
@@ -4171,7 +4171,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // row even below MasterCardBank's unrelated 672-DIP breakpoint.
         var effects = new (string Id, string Label, Func<double, string> Format)[]
         {
-            ("survival.starvationStaminaDrain", "EXTRA STAMINA COST", MasterPositivePercent),
+            ("survival.starvationStaminaDrain", "STARVATION ACTION COST", MasterPositivePercent),
             ("survival.starvationHealthRegenPenalty", "HEALTH RECOVERY BLOCKED", MasterPercent)
         };
         const double effectGap = 12.0;
@@ -4611,7 +4611,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
-        DrawHeader(dc, "STASH CONTENT MIX", "", text, muted, accent);
+        DrawHeader(dc, "STASH LOOT MIX", "", text, muted, accent);
         var width = Math.Min(778.0, Math.Max(1.0, ActualWidth - 30.0));
         var left = (ActualWidth - width) / 2.0;
         var wide = width >= 670.0;
@@ -5051,7 +5051,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var coverage = P("loot.stashGearCoveragePercent");
         if (coverage is null) return;
         const double y = 99.0;
-        DrawText(dc, "ELIGIBLE STASHES", new Point(left + 2.0, y),
+        DrawText(dc, "BONUS GEAR COVERAGE", new Point(left + 2.0, y),
             11.0, coverage.IsControlEnabled ? text : muted, FontWeights.SemiBold);
         DrawStashNumericReadout(dc, $"{(int)Math.Round(coverage.CurrentNumber)}%",
             new Point(left + width - 4.0, y - 1.0), 13.0,
@@ -5350,7 +5350,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     {
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, .60),
             new Pen(CloneWithOpacity(border, .66), .9), card, 4.0, 4.0);
-        DrawText(dc, "NATIVE SOURCE POOLS",
+        DrawText(dc, "LOOT POOLS",
             new Point(card.Left + 11.0, card.Top + 7.0),
             10.4, text, FontWeights.Bold);
         DrawRightAlignedText(dc, "WEIGHT ONLY WITHIN EACH POOL",
@@ -5461,10 +5461,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawText(dc, "YIELD PER BOX", new Point(margin, 47.0),
             10.2, muted, FontWeights.Bold);
         DrawHorizontalTrackCard(dc, ammoYield,
-            "AMMO YIELD", new Rect(margin, 66.0, cell, 72.0),
+            "AMMO PER BOX", new Rect(margin, 66.0, cell, 72.0),
             text, muted, border, accent, panel, pairedValueFormatting: true);
         DrawHorizontalTrackCard(dc, P("loot.destructibleGrenadeQuantity"),
-            "GRENADE YIELD", new Rect(margin + cell + gap, 66.0, cell, 72.0),
+            "GRENADES PER BOX", new Rect(margin + cell + gap, 66.0, cell, 72.0),
             text, muted, border, accent, panel, pairedValueFormatting: true);
 
         // Live, source-exact read-only output counts for EACH of the eight
@@ -5553,7 +5553,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             (Caliber: "12 GA", MinCount: 5, MaxCount: 10, Weight: weight012)
         });
 
-        DrawText(dc, "AMMO FAMILY WEIGHTS", new Point(margin, 279.0),
+        DrawText(dc, "AMMO TYPE MIX", new Point(margin, 279.0),
             10.2, muted, FontWeights.Bold);
         // One compact row of four native 0..3x source knobs. The 620-DIP
         // Combat knob bank would be too narrow here, so this bank may use

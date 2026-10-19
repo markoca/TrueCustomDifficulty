@@ -1898,7 +1898,7 @@ public sealed class MainViewModel : ObservableObject
             return parameter.Group switch
             {
                 "Global Anomaly Damage" => 0,
-                "Individual Anomaly Damage" => 100,
+                "Damage by Anomaly" => 100,
                 "Flycatcher Slowdown" => 200,
                 "Special Anomaly Effects" => 300,
                 _ => 400

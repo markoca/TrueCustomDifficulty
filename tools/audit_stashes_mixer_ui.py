@@ -550,7 +550,7 @@ assert "PlayerRank" not in basic_preview[1]["fields"]
 
 assert '"LOOT PRIORITY · ALL TIERS"' in content
 assert '"BASIC  ·  WEIGHT MIX"' not in content
-assert '"BASIC · LOOT EXAMPLE"' in coverage
+assert '"BASIC · LOOT PREVIEW"' in coverage
 native_preview_method = coverage.split("private void DrawStashBasicNativePools(", 1)[1].split("private void DrawStashChanceTier(", 1)[0]
 assert '"NOVICE / STALKER"' not in native_preview_method
 assert 'rankCaption: "RANK: EXPERIENCED"' not in native_preview_method

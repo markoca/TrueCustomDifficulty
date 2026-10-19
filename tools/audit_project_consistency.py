@@ -931,7 +931,7 @@ elif not _env_parameters["environment.anomalyDamage"].get("exposeInUi", True):
 else:
     note("Global vs Individual anomaly scopes are separate; historic numeric sort indices retired")
 
-verify_current_editor("Individual Anomaly Damage", "AnomalyDamageRadar", ("environment.electroAnomalyDamage", "environment.chemicalAnomalyDamage", "environment.fireAnomalyDamage", "environment.carouselAnomalyDamage", "environment.toxicCloudDamage", "environment.steamAnomalyDamage", "environment.clickerHealthDamage", "environment.razorHealthDamage", "environment.soapBubbleHealthDamage", "environment.fireballHealthDamage",), "individualAnomalyDamageParameterIds.Contains(p.Id)", ("IsIndividualAnomalyDamageAnchor", "IsIndividualAnomalyDamageMember"))
+verify_current_editor("Damage by Anomaly", "AnomalyDamageRadar", ("environment.electroAnomalyDamage", "environment.chemicalAnomalyDamage", "environment.fireAnomalyDamage", "environment.carouselAnomalyDamage", "environment.toxicCloudDamage", "environment.steamAnomalyDamage", "environment.clickerHealthDamage", "environment.razorHealthDamage", "environment.soapBubbleHealthDamage", "environment.fireballHealthDamage",), "individualAnomalyDamageParameterIds.Contains(p.Id)", ("IsIndividualAnomalyDamageAnchor", "IsIndividualAnomalyDamageMember"))
 
 # Stash Ammo is now a single source-backed native editor inside StashContentMix.
 # The retired StashAmmoRadar flags must not be required by the current audit.
@@ -1143,7 +1143,7 @@ for _pid in _abd_all_ids:
 _abd_anchor = _abd_rows_by_id.get("loot.ammoBoxWeight918")
 if _abd_anchor and (
     not _abd_anchor.get("exposeInUi", True)
-    or _abd_anchor.get("label") != "Breakable Box Ammo Distribution"
+    or _abd_anchor.get("label") != "Ammo Type Mix"
     or any(_abd_rows_by_id[pid].get("exposeInUi", True)
            for pid in _abd_weight_ids[1:] if pid in _abd_rows_by_id)
 ):
@@ -1182,7 +1182,7 @@ else:
             _abd_errors.append(f"live aggregate source missing {_token!r}")
     # The only Loot knob bank must be the existing four independently mapped
     # ammo-family weights. Yield controls and the two pool previews are not knobs.
-    _abd_knob_start = _abd_control_text.find('DrawText(dc, "AMMO FAMILY WEIGHTS"')
+    _abd_knob_start = _abd_control_text.find('DrawText(dc, "AMMO TYPE MIX"')
     _abd_knob_end = _abd_control_text.find('DrawText(dc, "AMMO POOL COMPOSITION"', _abd_knob_start)
     _abd_knob_code = (
         _abd_control_text[_abd_knob_start:_abd_knob_end]
@@ -1539,7 +1539,7 @@ elif not _survival_doc.exists():
 else:
     note("survival current deep audit: 31 visible / 29 confirmed + 2 runtime-pending; 82 native writer leaves; hunger sign/order preserved")
 
-verify_current_editor("Item Price Scalers", "ItemPriceScalersRadar", ("economy.consumableCost", "economy.ammoCost", "economy.armorCost", "economy.weaponCost", "economy.artifactCost", "economy.mutantPartValue",), "itemPriceScalerParameterIds.Contains(p.Id)", ("IsItemPriceScalerAnchor", "IsItemPriceScalerMember"))
+verify_current_editor("Item Values", "ItemPriceScalersRadar", ("economy.consumableCost", "economy.ammoCost", "economy.armorCost", "economy.weaponCost", "economy.artifactCost", "economy.mutantPartValue",), "itemPriceScalerParameterIds.Contains(p.Id)", ("IsItemPriceScalerAnchor", "IsItemPriceScalerMember"))
 
 # Economy deep audit release gate (v0.2.48).
 _economy_doc = DOCS / "ECONOMY-CONTROL-DEEP-AUDIT.md"
@@ -1582,7 +1582,7 @@ if len(_economy_ui) != 17 or len(_economy_confirmed) != 12 or len(_economy_runti
     fail(f"economy deep audit status split drifted: total={len(_economy_ui)} confirmed={len(_economy_confirmed)} runtime={sorted(_economy_runtime_actual)}; expected 17/12/5")
 elif len(_economy_points) != 405:
     fail(f"economy writer surface drifted: {len(_economy_points)} edit points; expected 405")
-elif _economy_buy.get("label") != "Trader Buy-From-You Pricing" or _economy_sell.get("label") != "Trader Sell-To-You Pricing":
+elif _economy_buy.get("label") != "Prices Traders Pay" or _economy_sell.get("label") != "Prices You Pay":
     fail("economy trader Buy/Sell player-direction labels drifted")
 elif _economy_diff_mismatch:
     fail(f"economy difficulty-profile vanilla/source baselines drifted: {_economy_diff_mismatch}")
@@ -1792,7 +1792,7 @@ if (_equipment_tab != {"id": "equipment", "label": "Equipment", "order": 70}
     or any(p.get("tab") != "equipment" for p in _equipment_ui)
     or any(p.get("tab") == "equipment" and not (p.get("id") or "").startswith("equipment.")
            for p in parameters)
-    or {p.get("group") for p in _equipment_ui} != {"Equipment Wear", "Item Weight"}):
+    or {p.get("group") for p in _equipment_ui} != {"Gear Wear", "Item Weight"}):
     fail("Equipment tab navigation/group membership drifted from source catalog")
 _equipment_confirmed = [p for p in _equipment_ui if p.get("support", {}).get("status") == "confirmed"]
 _equipment_runtime = [p for p in _equipment_ui if p.get("support", {}).get("status") == "runtime_test_required"]
@@ -4194,7 +4194,7 @@ _anomaly_combined_required = (
 )
 _anomaly_combined_vm_required = (
     'Id == "environment.anomalyDamage"',
-    '? "Individual Anomaly Damage"',
+    '? "Damage by Anomaly"',
     '&& !Id.Equals("environment.anomalyDamage", StringComparison.Ordinal)',
 )
 if (_anomaly_knob_slider.get('min') != 0
@@ -4280,7 +4280,7 @@ else:
 _stock_knob_source = _knob_source
 if (not all(v in _stock_knob_source for v in (
     'private void DrawTraderStockKnobs(',
-    '("economy.traderAmmoStock", "AMMO STOCK")',
+    '("economy.traderAmmoStock", "AMMO SUPPLY")',
     '("economy.medicStock", "MEDIC STOCK")',
     '"TraderStockBoard" => 242.0',
 )) or not knob_wheel_gate_contains(_stock_knob_source, "TraderStockBoard") or any('2026-10-11 — Trader Stock native knobs' not in d
@@ -4545,8 +4545,8 @@ if (not all(f'P("{pid}")' in _compact_health
                for pid in ('health.regenDelay', 'health.regenerationScalar',
                            'health.lowHealthRegen'))
     or not all(pid in _seven_src for pid in _compact_health_ids)
-    or 'DrawCoreResourceRuler(dc, hp, "MAX HEALTH", "HP",' not in _compact_health
-    or 'DrawCoreResourceRuler(dc, passiveRecovery, "PASSIVE RECOVERY", "HP/s",' not in _compact_health
+    or 'DrawCoreResourceRuler(dc, hp, "MAX HP", "HP",' not in _compact_health
+    or 'DrawCoreResourceRuler(dc, passiveRecovery, "PASSIVE HP REGEN", "HP/s",' not in _compact_health
     or 'DrawHorizontalTrackCard(dc, P(sources[i].Id)' not in _compact_health
     or 'var columns = ActualWidth >= 700.0 ? 3 : 2;' not in _compact_health
     or '"CoreHealthDashboard" => width >= 700.0 ? 282.0 : 365.0' not in _seven_src
@@ -5194,10 +5194,10 @@ if _loot_param is None or _loot_param.get("label") != "Ammo Boxes Removed":
     fail("Loot world-ammo parameter must not display redundant World Loot Removal label")
 _npc_preview_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs").read_text(encoding="utf-8")
 _npc_ammo_def = next((p for p in parameters if p.get("id") == "loot.npcWeaponAmmoSupply"), None)
-if _npc_ammo_def is None or _npc_ammo_def.get("label") != "NPC Ammo Drops":
+if _npc_ammo_def is None or _npc_ammo_def.get("label") != "Bonus Ammo Drops":
     fail("NPC ammo drops source label changed")
 if any(_tok not in _npc_preview_source for _tok in (
-    'DrawHorizontalTrackCard(dc, ammo, "NPC AMMO DROPS",',
+    'DrawHorizontalTrackCard(dc, ammo, "BONUS AMMO DROPS",',
     'DrawText(dc, "BONUS AMMO PREVIEW",',
     "Math.Min(516.0, sampleCard.Width - 22.0)",
     "var cell = Math.Min(112.0, (width - 22.0 - (count - 1) * gap) / count);",

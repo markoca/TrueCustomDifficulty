@@ -280,7 +280,7 @@ public sealed partial class AggregateVisualControl
                 "Veteran Basic source Weight categories changed.");
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, .66),
             new Pen(CloneWithOpacity(border, .66), .9), outer, 4.0, 4.0);
-        DrawText(dc, "BASIC · LOOT EXAMPLE",
+        DrawText(dc, "BASIC · LOOT PREVIEW",
             new Point(outer.Left + 12.0, outer.Top + 3.0),
             10.6, text, FontWeights.Bold);
         var inner = new Rect(outer.Left + 12.0, outer.Top + 21.0,
