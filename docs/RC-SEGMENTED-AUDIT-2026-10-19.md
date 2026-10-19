@@ -69,3 +69,36 @@ WINEPREFIX="$HOME/.wine-s2" WINEDEBUG=-all ./tests/run-wine.sh LootSpecialGenera
 ```
 
 **Disposition:** Gate 01 remains **BLOCKED / NOT RUN** for CI and real-binary contracts. No application-source correction or PASS is claimed. Next: inspect the final rerun jobs (step arrays/logs); use the first actual failing test if execution begins, or diagnose GitHub Actions administrative status outside code if zero-duration failure repeats.
+
+
+## Gate 01 — independent source checks executed (2026-10-19)
+
+This subsection records **checks actually executed against the connected GitHub main-branch file contents**, using a self-contained JavaScript comparison in the connector execution environment. It does **not** claim that any Python audit script, .NET build, WPF renderer, Windows production writer, Wine executable or game binary was run. These checks read source files directly through GitHub, parse embedded JSON/CSV and compare the catalog to the writer baseline and reviewed wording ledger.
+
+**Actual executed scope:**
+
+| Independent source-level assertion | Result |
+| --- | --- |
+| Parameter ID uniqueness/exposure: 287 unique, 182 visible, 105 non-UI | **PASS** |
+| RC review CSV header, unique IDs, all 182 visible reviewed | **PASS** |
+| All 182 frozen label/rationale/logic/interaction fields identical to current catalog | **PASS** |
+| Both authoritative UI documentation files retain the 182-control freeze marker | **PASS** |
+| CFG writer baseline version 2.0.5, 287 expected IDs, no deferred IDs | **PASS** |
+| 1,238 direct CFG leaves across 217 source IDs | **PASS** |
+| No orphan or multiply owned concrete CFG leaf; direct scope/file/operation matches parameter targets | **PASS** |
+| Exactly 70 special IDs, disjoint from 217 direct IDs, total writer coverage 287/287 | **PASS** |
+| All 21 named special production writer methods have method references in inspected main/partial service sources | **PASS** |
+| All 12 embedded factory preset JSONs each contain exactly the 287 catalog IDs | **PASS** |
+| Independently mirrored direct source-transform arithmetic from `tools/audit_final_cfg_mapping.py`: no modified-but-ineffective direct CFG values across all twelve factories | **PASS**, **0 inert** |
+| The 11 allowed direct transform operation names are all recognized | **PASS** |
+| All 20 special-writer embedded data resources present in the main tree | **PASS** |
+| All 20 matching resources included by the WPF project file | **PASS** |
+| Direct `Write` path, transform, assignment, output emission and missing-output guard are present in production source | **PASS** |
+
+Factory modified-source evaluation used the exact operation semantics documented by the Python audit (including half-up integer rounding, zero preservation, difficulty SID filtering and parent-toggle suppression). Direct changed-source counts across the twelve factories: Immersive 164; Tactical 175; Field Medic 173; Mutant Hunter 184; Anomaly Runner 181; Wanderer 179; Mercenary 173; Smuggler 177; Scavenger 189; Outcast 192; Hardcore 197; Hardcore+ 205. These numbers are **static mapped source calculations**, not a count of CFGs produced by an executed C# writer. No preset in this test had an ineffective modified direct source.
+
+**Actual hosted GitHub Actions attempt:** [run 39320831462](https://github.com/markoca/TrueCustomDifficulty/actions/runs/39320831462), `e622a2923d485488d63fdcd6ccdcd424e103f8b2`, failed on rerun attempt 2: all 14 jobs failed, none executed any steps, and GitHub reported 0 ms runtime on both platforms for all 28 job attempts (24 Windows, 4 Ubuntu). The underlying GitHub-side failure reason cannot be determined from these data. Treat **CI as BLOCKED, not tests FAIL**.
+
+**Actual execution blockers:** tool container has no `dotnet`, no `wine`, does not mount the maintainer's `/home/marko/s2tools/TrueCustomDifficulty/` checkout, and cannot resolve GitHub DNS to clone. Hence the original Python audit suite, Linux cross-build, actual C# writer contracts and user-machine Wine/game test remain **NOT RUN** here. The independent source checks above provide bounded evidence but must not be substituted for those native executables.
+
+**Gate 01 disposition:** **PARTIAL SOURCE PASS / BUILD & RUNTIME BLOCKED**. No production-code defect has been substantiated from the CI failures. When independent Windows/.NET execution is possible, record the concrete return codes/fixtures before changing this gate to PASS.
