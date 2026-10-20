@@ -11,6 +11,13 @@ namespace LootSpecialGeneratorsContract;
 
 internal static partial class Program
 {
+    // CfgPatchWriterService.Render builds lines via StringBuilder.AppendLine,
+    // which emits CRLF when executed on Windows/Wine. .NET Regex "$" with
+    // Multiline does not discard the CR before LF; normalize test INPUT
+    // only, never modify the staged production CFG output on disk.
+    private static string ReadNormalizedStashGearCfg(string path)
+        => File.ReadAllText(path).Replace("\r", "", StringComparison.Ordinal);
+
     static void VerifyStashGearCoverage()
     {
         const string actorPattern = @"PrototypeSID = TCD_ExtraGear_([0-9A-F]{32})_[NEVM]";
@@ -89,7 +96,7 @@ internal static partial class Program
                     && !baseMatched.Overlaps(BaseProtectedActorIds.Value),
                     "Reserved Trophy / quest stash was touched by gear coverage");
                 var itemConfig = OutputPath(dir, "GameData/ItemGeneratorPrototypes.cfg");
-                var itemText = File.ReadAllText(itemConfig);
+                var itemText = ReadNormalizedStashGearCfg(itemConfig);
                 Check(!itemText.Contains("TCD_GamePass_Stash_ItemGenerator_CheapNoFresh",
                     StringComparison.Ordinal),
                     "Extra Stash Gear alone must not clone the DLC CheapNoFresh shared pool");
@@ -136,7 +143,10 @@ internal static partial class Program
                     Check(itemSids.Length + attachmentRefs.Length == 2
                         && categoryNames.Length == 2
                         && categoryNames.Distinct(StringComparer.Ordinal).Count() == 2,
-                        "Default bonus generator must offer two different item categories");
+                        "Default bonus generator must offer two different item categories: "
+                        + lines[from].Trim() + ", item SIDs=" + itemSids.Length
+                        + ", nested refs=" + attachmentRefs.Length
+                        + ", categories=" + string.Join(",", categoryNames));
                     Check(itemSids.All(id => progression.TryGetValue(id, out var item)
                             && item.Tier <= maxTier)
                         && attachmentRefs.All(id => attachments.TryGetValue(id, out var entry)
@@ -198,7 +208,8 @@ internal static partial class Program
                 chance.SnapCurrentNumberToMarker(desiredChance);
                 var dir = Path.Combine(root, "forced-" + kind);
                 new CfgPatchWriterService().Write(vm, Catalog, null, dir);
-                var output = File.ReadAllText(OutputPath(dir, "GameData/ItemGeneratorPrototypes.cfg"));
+                var output = ReadNormalizedStashGearCfg(
+                    OutputPath(dir, "GameData/ItemGeneratorPrototypes.cfg"));
                 var ids = Regex.Matches(output, @"(?m)^\s*ItemPrototypeSID = (\S+)$")
                     .Select(m => m.Groups[1].Value)
                     .Where(progression.ContainsKey).ToArray();
