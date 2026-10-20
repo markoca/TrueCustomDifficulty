@@ -354,7 +354,7 @@ internal static partial class Program
             foreach (var (group, item) in rareChanceRows)
             {
                 var path = "TCD_" + group.Prototype + "/"
-                    + group.GroupPath.Replace(".", "/["
+                    + group.GroupPath.Replace(".", "/") + "/["
                     + item.Index + "]/Chance";
                 Check(tier.TryGetValue(path, out var actual)
                     && Math.Abs(Num(actual!) - Num(item.SourceRaw)) < 1e-7,
@@ -376,7 +376,7 @@ internal static partial class Program
         foreach (var (group, item) in weightRows)
         {
             var path = "TCD_" + group.Prototype + "/"
-                + group.GroupPath.Replace(".", "/["
+                + group.GroupPath.Replace(".", "/") + "/["
                 + item.Index + "]/";
             Check(smart!.TryGetValue(path + "Weight", out var weight)
                 && Math.Abs(Num(weight!)) < 1e-7,
@@ -400,7 +400,7 @@ internal static partial class Program
         foreach (var (group, item) in chanceRows)
         {
             var path = "TCD_" + group.Prototype + "/"
-                + group.GroupPath.Replace(".", "/["
+                + group.GroupPath.Replace(".", "/") + "/["
                 + item.Index + "]/";
             Check(!smart!.ContainsKey(path + "Chance")
                   && !smart.ContainsKey(path + "MinCount")
