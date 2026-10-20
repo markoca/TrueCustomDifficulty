@@ -283,7 +283,7 @@ public sealed class PresetDirectoryService
         Directory.CreateDirectory(directory);
 
         var readmePath = Path.Combine(directory, "README.md");
-        WriteEmbedded(ReadmeResourceName, readmePath);
+        EnsureReadmeIfPossible(readmePath);
 
         // v0.9.26.51 factory-preset migration:
         // the four old shipped presets are intentionally retired from the application.
@@ -505,6 +505,29 @@ public sealed class PresetDirectoryService
         for (var suffix = 1; File.Exists(destination); suffix++)
             destination = Path.Combine(archived, $"RC - CFG Signal ({suffix}).json");
         File.Move(previous, destination);
+    }
+
+    private static void EnsureReadmeIfPossible(string readmePath)
+    {
+        // README is documentation, not runtime state. Never rewrite an existing
+        // file: Windows installs may carry read-only/archive attributes or ACLs.
+        if (File.Exists(readmePath))
+            return;
+
+        try
+        {
+            WriteEmbedded(ReadmeResourceName, readmePath);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            // A read-only installation can still run from its embedded factory
+            // presets. Missing optional documentation must not abort startup.
+        }
+        catch (IOException)
+        {
+            // Treat only the README as best-effort; required preset writes below
+            // still fail normally if the Presets directory itself is unusable.
+        }
     }
 
     private static void WriteEmbedded(string resourceName, string destinationPath)

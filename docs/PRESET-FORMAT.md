@@ -1,3 +1,7 @@
+## 2026-10-20 — Windows startup: Presets README is best-effort
+
+`Presets/README.md` is documentation only and must never block application startup. `PresetDirectoryService` now leaves an existing README untouched and only tries to seed the embedded copy when the file is absent. `UnauthorizedAccessException` and `IOException` from that optional README write are ignored; required factory-preset migrations and writes still fail normally if the actual preset directory is unusable. This specifically prevents a read-only or ACL-protected `C:\TrueCustomDifficulty\Presets\README.md` from surfacing as a misleading parameter-catalog load failure on Windows.
+
 ## 2026-10-20 — RC candidate cleanup: diagnostic profile retired from app
 
 The **RC - CFG Signal** diagnostic is no longer shipped, embedded or auto-created by the application. The preset picker contains the **12 official factory roles** plus any unrelated user profiles. During the first run after updating, the exact byte-for-byte stock diagnostic file is deleted. A user-edited diagnostic file is **moved without overwriting** into `Presets/Archived/` (with a numbered name if necessary), so it disappears from the picker without losing user changes. The 13-signal CFG contract remains in `tests/RCSignalPatchContract/Fixtures/RC-CFG-Signal.json`, embedded **only in the test assembly**, not in the published EXE. This is release-candidate cleanup, **not** proof of a passing post-change build, Wine UI test, game-load test or in-game effects.

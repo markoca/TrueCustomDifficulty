@@ -1994,6 +1994,19 @@ _factory_service_text = (ROOT / "src" / "TrueCustomDifficulty" / "Services" / "P
 _factory_csproj_text = (ROOT / "src" / "TrueCustomDifficulty" / "TrueCustomDifficulty.csproj").read_text(encoding="utf-8")
 _factory_errors = []
 
+# Presets/README.md is non-essential documentation. Windows read-only copies
+# must not make PresetDirectoryService.Ensure() fail before the catalog/UI load.
+if 'EnsureReadmeIfPossible(readmePath);' not in _factory_service_text:
+    _factory_errors.append("preset README is not guarded as best-effort")
+if 'WriteEmbedded(ReadmeResourceName, readmePath);' not in _factory_service_text:
+    _factory_errors.append("preset README helper no longer seeds missing documentation")
+if 'if (File.Exists(readmePath))' not in _factory_service_text:
+    _factory_errors.append("existing preset README can still be rewritten")
+if 'catch (UnauthorizedAccessException)' not in _factory_service_text:
+    _factory_errors.append("read-only preset README can still abort startup")
+if 'catch (IOException)' not in _factory_service_text:
+    _factory_errors.append("optional preset README I/O can still abort startup")
+
 _factory_json_files = sorted(p.stem for p in _factory_preset_dir.glob("*.json"))
 if _factory_json_files != sorted(_factory_preset_names):
     _factory_errors.append(f"shipped preset files={_factory_json_files}")
