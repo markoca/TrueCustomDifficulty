@@ -253,7 +253,7 @@ public sealed partial class AggregateVisualControl
                 ? outer.Left + (outer.Width - cardWidth) / 2.0
                 : outer.Left + inset + (i % columns) * (cardWidth + gap);
             var y = outer.Top + (i / columns) * (cardHeight + gap);
-            // True 0..1x bounds / 0.1x steps, original at 1x. Reducing one
+            // True 0..1x bounds / 0.05x steps, original at 1x. Reducing one
             // category boosts other positive categories' RELATIVE share.
             DrawSourceKnob(dc, P(GlobalStashParameterIds[kind]),
                 GlobalStashCategoryNames[kind],

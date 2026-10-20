@@ -331,7 +331,19 @@ assert sorted({category[row["fields"]["ItemPrototypeSID"]]
 for pid in ("loot.stashMixAmmo", "loot.stashMixGrenades", "loot.stashMixCoupons"):
     assert next(p for p in catalog["parameters"] if p["id"] == pid)["exposeInUi"] is False
 for pid in ("loot.stashMixMedical", "loot.stashMixFood", "loot.stashMixDrinks"):
-    assert next(p for p in catalog["parameters"] if p["id"] == pid)["exposeInUi"] is True
+    source_entry = next(p for p in catalog["parameters"] if p["id"] == pid)
+    assert source_entry["exposeInUi"] is True
+    assert source_entry["slider"] == {
+        "min": 0, "max": 1, "step": 0.05, "stepMode": "absolute"
+    }
+    assert "0.05–1x reduces" in source_entry["description"]
+# All 21 native 0.05x stops are on the same source grid used for knob
+# painting, dragging, wheel and keyboard; no renderer-specific rounding.
+assert [round(i * 0.05, 2) for i in range(21)][-1] == 1.0
+assert "0.05x steps" in coverage
+assert "var nativeStep = Math.Max(Epsilon, parameter.TickFrequency);" in source
+assert "target.Parameter.CurrentNumber = Snap(target.Parameter, value);" in source
+assert 'parameter.CurrentNumber:0.##}x' in source
 
 base = native_group_weights(exp, [1] * 6)
 assert base == [0, 2, 13, 1, 0, 1.77], base
@@ -339,6 +351,11 @@ assert math.isclose(sum(base), 17.77, abs_tol=1e-9)
 assert math.isclose(100 * base[2] / sum(base), 73.157, abs_tol=0.01)
 hard_default = native_group_weights(hard, [1] * 6)
 assert hard_default == [0, 2, 13, 1, 0, 0], hard_default
+# A real half-tenth adjustment changes only native Weight shares.
+fine_medical = native_group_weights(hard, [1, 0.05, 1, 1, 1, 1])
+assert math.isclose(fine_medical[1], 0.1, abs_tol=1e-9)
+assert math.isclose(sum(fine_medical), 14.1, abs_tol=1e-9)
+assert math.isclose(100 * fine_medical[1] / sum(fine_medical), 100 / 141, abs_tol=1e-9)
 assert sum(hard_default) == 16
 food_disabled = native_group_weights(exp, [1, 1, 0, 1, 1, 1])
 assert food_disabled[2] == 0 and food_disabled[1] == 2
@@ -433,6 +450,7 @@ print("PENDING: local .NET build, Wine layout/behavior, in-game stash runtime re
 # Static source auditing ensures both UI and tier/SmartLoot producers take the
 # SAME shared transformation. It cannot replace running the Windows harness.
 effective = (root / "src/TrueCustomDifficulty/Services/StashEffectiveState.cs").read_text()
+assert "return FormatLikeSource(result, raw);" in effective
 writer = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.cs").read_text()
 smart = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashSmartLoot.cs").read_text()
 tuning = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashTuning.cs").read_text()

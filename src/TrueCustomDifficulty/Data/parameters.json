@@ -5909,7 +5909,7 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Medical Stash Priority",
-      "description": "Global relative medical Weight multiplier across all eligible stash groups and ranks. 1x keeps native Weight, 0x zeros supported Weight entries, 0.1–1x reduces the source Weight compared with unchanged categories. Native Chance entries are not changed by this knob; native bonus Chance has separate controls where exposed.",
+      "description": "Global relative medical Weight multiplier across all eligible stash groups and ranks. 1x keeps native Weight, 0x zeros supported Weight entries, 0.05–1x reduces the source Weight compared with unchanged categories. Native Chance entries are not changed by this knob; native bonus Chance has separate controls where exposed.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -5926,7 +5926,7 @@
       "slider": {
         "min": 0,
         "max": 1,
-        "step": 0.1,
+        "step": 0.05,
         "stepMode": "absolute"
       },
       "targets": [
@@ -5963,7 +5963,7 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Food Stash Priority",
-      "description": "Global relative food Weight multiplier across all eligible stash groups and ranks. 1x keeps native Weight, 0x zeros supported Weight entries, 0.1–1x reduces the source Weight compared with unchanged categories. Native Chance entries are not changed by this knob; native bonus Chance has separate controls where exposed.",
+      "description": "Global relative food Weight multiplier across all eligible stash groups and ranks. 1x keeps native Weight, 0x zeros supported Weight entries, 0.05–1x reduces the source Weight compared with unchanged categories. Native Chance entries are not changed by this knob; native bonus Chance has separate controls where exposed.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -5980,7 +5980,7 @@
       "slider": {
         "min": 0,
         "max": 1,
-        "step": 0.1,
+        "step": 0.05,
         "stepMode": "absolute"
       },
       "targets": [
@@ -6017,7 +6017,7 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Drinks Stash Priority",
-      "description": "Global relative drinks Weight multiplier across all eligible stash groups and ranks. 1x keeps native Weight, 0x zeros supported Weight entries, 0.1–1x reduces the source Weight compared with unchanged categories. Native Chance entries are not changed by this knob; native bonus Chance has separate controls where exposed.",
+      "description": "Global relative drinks Weight multiplier across all eligible stash groups and ranks. 1x keeps native Weight, 0x zeros supported Weight entries, 0.05–1x reduces the source Weight compared with unchanged categories. Native Chance entries are not changed by this knob; native bonus Chance has separate controls where exposed.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -6034,7 +6034,7 @@
       "slider": {
         "min": 0,
         "max": 1,
-        "step": 0.1,
+        "step": 0.05,
         "stepMode": "absolute"
       },
       "targets": [

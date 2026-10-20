@@ -27,6 +27,18 @@ assert Counter(p["group"] for p in stash.values()) == {
     "Stash Gear": 7,
 }
 assert sum(p.get("exposeInUi", True) for p in stash.values()) == 34
+# Three visible native Basic loot-mix knobs use 0.05x; hidden legacy
+# Weight controls retain 0.10x. No new source IDs or extra UI rows.
+for pid in ("loot.stashMixMedical", "loot.stashMixFood", "loot.stashMixDrinks"):
+    assert stash[pid]["slider"] == {
+        "min": 0, "max": 1, "step": 0.05, "stepMode": "absolute"
+    }
+    assert stash[pid]["exposeInUi"] is True
+for pid in ("loot.stashMixAmmo", "loot.stashMixGrenades", "loot.stashMixCoupons"):
+    assert stash[pid]["slider"] == {
+        "min": 0, "max": 1, "step": 0.1, "stepMode": "absolute"
+    }
+    assert stash[pid]["exposeInUi"] is False
 
 ui = read(src / "Controls/AggregateVisualControl.cs")
 vm = read(src / "ViewModels/MainViewModel.cs")
