@@ -1,34 +1,20 @@
 #!/usr/bin/env python3
-"""Guard custom preset storage against Windows app-folder permission regressions."""
+"""Guard the single portable Presets directory and Windows-safe save path."""
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
-storage = (ROOT / "src/TrueCustomDifficulty/Services/UserPresetStorageService.cs").read_text(encoding="utf-8")
 preset = (ROOT / "src/TrueCustomDifficulty/Services/PresetService.cs").read_text(encoding="utf-8")
+storage_path = ROOT / "src/TrueCustomDifficulty/Services/UserPresetStorageService.cs"
 
-required_vm = [
-    "private readonly UserPresetStorageService _userPresetStorage = new();",
-    "InitialDirectory = _userPresetStorage.EnsureDirectory()",
-    "var userItems = _userPresetStorage.List();",
-    ".Where(item => !userNames.Contains(item.Name))",
-    ".Concat(userItems)",
-]
-missing = [token for token in required_vm if token not in vm]
-assert not missing, "User-preset UI/list wiring drifted: " + ", ".join(missing)
-assert vm.count("InitialDirectory = _userPresetStorage.EnsureDirectory()") == 2,     "Save and Load dialogs must both default to per-user Presets"
+assert "_userPresetStorage" not in vm, "LocalAppData user-preset storage returned to MainViewModel"
+assert "UserPresetStorageService" not in vm, "LocalAppData user-preset service returned to MainViewModel"
+assert vm.count("InitialDirectory = _presetDirectoryService.Ensure()") == 2,     "Save and Load dialogs must both default to the portable Presets directory"
+assert "var items = _presetDirectoryService.List();" in vm,     "Preset picker must read the same portable Presets directory"
+assert not storage_path.exists(), "Obsolete LocalAppData preset service still exists"
 
-required_storage = [
-    "Environment.SpecialFolder.LocalApplicationData",
-    '"TrueCustomDifficulty"',
-    '"Presets"',
-    'Directory.EnumerateFiles(_directory, "*.json"',
-]
-missing = [token for token in required_storage if token not in storage]
-assert not missing, "User preset storage contract drifted: " + ", ".join(missing)
+assert "File.WriteAllText(fullPath, json);" in preset,     "Preset save must write the completed JSON directly to the selected target"
+assert "File.Move(tempPath, fullPath, overwrite: true)" not in preset,     "Privileged Windows temp-file replacement path returned"
+assert 'Guid.NewGuid().ToString("N") + ".tmp"' not in preset,     "Preset save unexpectedly creates temporary rename files"
 
-assert 'InitialDirectory = _presetDirectoryService.Ensure()' not in vm,     "Preset dialogs returned to the portable application Presets directory"
-assert 'Guid.NewGuid().ToString("N") + ".tmp"' in preset,     "Preset save must use unique temp files"
-assert "catch (UnauthorizedAccessException) { }" in preset,     "Preset temp cleanup must not mask the actual save error"
-
-print("[PASS] custom presets default to per-user storage and remain merged into the picker")
+print("[PASS] factory and custom presets use one portable Presets directory")

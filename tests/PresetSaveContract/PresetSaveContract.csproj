@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="../../src/TrueCustomDifficulty/Services/UserPresetStorageService.cs" Link="UserPresetStorageService.cs" />
-    <Compile Include="../../src/TrueCustomDifficulty/Models/PresetListItem.cs" Link="PresetListItem.cs" />
+    <Compile Include="../../src/TrueCustomDifficulty/Services/PresetService.cs" Link="PresetService.cs" />
+    <Compile Include="../../src/TrueCustomDifficulty/Models/PresetFile.cs" Link="PresetFile.cs" />
   </ItemGroup>
 </Project>

@@ -1,8 +1,8 @@
-## 2026-10-20 — CURRENT Windows custom preset storage
+## 2026-10-20 — CURRENT portable Presets storage
 
-**Custom preset saves are user data, not application files.** Save Preset and Load Preset now default to `%LOCALAPPDATA%\TrueCustomDifficulty\Presets` on Windows instead of the portable `Presets` directory beside the EXE. The shipped factory presets and any legacy portable JSONs remain readable and continue to appear in the preset picker. When a user preset has the same display name as a portable preset, the per-user copy wins in the picker so a saved customization is not shadowed by a read-only factory/legacy file.
+**All factory and custom presets live in the single portable `Presets` directory beside the EXE.** Save Preset and Load Preset both default to `<app>\Presets`; the preset picker reads that same directory. No custom preset is redirected to LocalAppData.
 
-Preset JSON format, control values, factory preset contents, preset migrations and gameplay behavior are unchanged. Saving uses a unique temporary file and atomic replacement; cleanup of a failed temp file is best-effort so a secondary permission error cannot hide the real save failure. The application does not request elevation or modify Windows ACLs.
+Windows preset saving serializes the complete JSON first and then writes the target file directly. Do not use the previous temp-file `File.Move(..., overwrite: true)` replacement path: on some otherwise writable Windows folders it can fail with `ERROR_PRIVILEGE_NOT_HELD` / “A required privilege is not held by the client.” Preset JSON format, factory contents, migrations, control values and gameplay behavior are unchanged. The application does not elevate itself or alter ACLs.
 
 ## 2026-10-20 — CURRENT direct ~mods build destination
 

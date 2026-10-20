@@ -1,20 +1,26 @@
-# Custom preset storage
+# Preset storage
 
-Custom True Custom Difficulty presets are mutable user data.
+True Custom Difficulty uses one portable preset location:
 
-On Windows, **Save Preset** and **Load Preset** default to:
+`<TrueCustomDifficulty>\Presets`
 
-`%LOCALAPPDATA%\TrueCustomDifficulty\Presets`
+The 12 factory profiles, custom presets saved by the user, and legacy portable presets all live in that directory. **Save Preset** and **Load Preset** both default there, and the preset picker reads the same directory. Custom presets are not redirected to `%LOCALAPPDATA%`.
 
-The application-side `Presets` directory remains the source for the 12 shipped factory profiles and for legacy portable user JSONs that may already exist there. Both locations are merged into the preset picker. If the same preset name exists in both places, the per-user copy is shown.
+## Windows save behavior
 
-This prevents a protected or read-only application directory from blocking Save Preset. It also keeps the program portable enough to read older preset files without requiring administrator privileges.
+Preset JSON is fully serialized in memory before the destination file is touched, then written directly with `File.WriteAllText`.
 
-The JSON schema and gameplay semantics are unchanged.
+The previous implementation wrote a temporary file and used `File.Move(temp, target, overwrite: true)`. On some Windows folders that replacement operation can fail with:
 
-Verification:
+`A required privilege is not held by the client.`
+
+That privileged rename/replace path is no longer used for presets.
+
+The application still requires ordinary write permission to its `Presets` directory. It does not request administrator rights and does not change filesystem ACLs.
+
+## Verification
 
 ```bash
 python3 tools/audit_preset_storage_contract.py
-dotnet run --project tests/UserPresetStorageContract/UserPresetStorageContract.csproj
+dotnet run --project tests/PresetSaveContract/PresetSaveContract.csproj
 ```

@@ -25,25 +25,13 @@ public sealed class PresetService
         if (!string.IsNullOrWhiteSpace(directory))
             Directory.CreateDirectory(directory);
 
-        var tempPath = fullPath + "." + Guid.NewGuid().ToString("N") + ".tmp";
-        try
-        {
-            var json = JsonSerializer.Serialize(preset, Options);
-            File.WriteAllText(tempPath, json);
-            File.Move(tempPath, fullPath, overwrite: true);
-        }
-        finally
-        {
-            // Cleanup is best-effort and must never replace the real save
-            // exception with a secondary temp-file permission error.
-            try
-            {
-                if (File.Exists(tempPath))
-                    File.Delete(tempPath);
-            }
-            catch (IOException) { }
-            catch (UnauthorizedAccessException) { }
-        }
+        // Serialize completely before touching the target file. On Windows,
+        // replacing a temp file with File.Move(..., overwrite: true) can fail
+        // with ERROR_PRIVILEGE_NOT_HELD on otherwise writable user folders.
+        // Presets are small text files, so write the completed JSON directly
+        // to the requested portable Presets path instead.
+        var json = JsonSerializer.Serialize(preset, Options);
+        File.WriteAllText(fullPath, json);
     }
 
     public PresetFile Load(string path)

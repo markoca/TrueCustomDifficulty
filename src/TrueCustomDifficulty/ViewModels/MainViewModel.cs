@@ -13,7 +13,6 @@ public sealed class MainViewModel : ObservableObject
     private readonly ParameterCatalog _catalog;
     private readonly PresetService _presetService = new();
     private readonly PresetDirectoryService _presetDirectoryService = new();
-    private readonly UserPresetStorageService _userPresetStorage = new();
     private readonly ModBuildService _modBuildService = new();
     private readonly ModDestinationSettingsService _modDestinationSettings = new();
     private readonly GameInstallInfo? _gameInstall;
@@ -1304,19 +1303,7 @@ public sealed class MainViewModel : ObservableObject
 
     private void RefreshPresetList(string? selectPath = null)
     {
-        // Factory/legacy portable presets remain readable beside the EXE.
-        // New user presets live in LocalAppData so a read-only application
-        // directory never prevents Save Preset on Windows.
-        var userItems = _userPresetStorage.List();
-        var userNames = userItems
-            .Select(item => item.Name)
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-        var items = _presetDirectoryService.List()
-            .Where(item => !userNames.Contains(item.Name))
-            .Concat(userItems)
-            .ToList();
-
+        var items = _presetDirectoryService.List();
         AvailablePresets.Clear();
         foreach (var item in items)
             AvailablePresets.Add(item);
@@ -1425,10 +1412,7 @@ public sealed class MainViewModel : ObservableObject
             DefaultExt = ".json",
             AddExtension = true,
             FileName = "custom-preset.json",
-            // Custom presets are mutable user state, not application files.
-            // Default to per-user storage instead of the potentially protected
-            // portable Presets directory beside the executable.
-            InitialDirectory = _userPresetStorage.EnsureDirectory()
+            InitialDirectory = _presetDirectoryService.Ensure()
         };
         if (dialog.ShowDialog() != true)
             return;
@@ -1475,7 +1459,7 @@ public sealed class MainViewModel : ObservableObject
             Title = "Load True Custom Difficulty preset",
             Filter = "JSON preset (*.json)|*.json",
             DefaultExt = ".json",
-            InitialDirectory = _userPresetStorage.EnsureDirectory()
+            InitialDirectory = _presetDirectoryService.Ensure()
         };
         if (dialog.ShowDialog() != true)
             return;
