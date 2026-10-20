@@ -1,5 +1,18 @@
 # CFG writer audit — current acceptance scope
 
+## Verified CFG writer execution — 2026-10-20
+
+**Automated writer acceptance: 13/13 PASS (0 FAIL)** on `f7f190fee560e651045489f200784ee8f7dd3a28`. This was independently executed on Linux/CachyOS through `tests/run-wine.sh` using `python3 tools/pre_release.py writer --wine --output audit/pre-release/cfg-writer-output`. The user-provided audit receipt is `summary(20261020-093645).json`, run **2026-10-20 09:32:59–09:35:50 UTC**, with exit code **0** for each of:
+
+- `CombatPatchContract`, `HealthStaminaPatchContract`, `SurvivalPatchContract`, `EconomyPatchContract`, `EquipmentPatchContract`, `EnvironmentPatchContract`, `ALifePatchContract`;
+- `LootDirectPatchContract`, `LootSpecialGeneratorsContract`, `LootWorldRemovalsContract`, `LootWorldPlacementContract`;
+- `AllControlsPatchContract` (the 270 mounted source IDs) and `RCSignalPatchContract`.
+
+**Scope and status accounting:** This **closes the selected automated production CFG-writer execution suite** on the tested commit. The JSON top-level `result` is **`INCOMPLETE`**, not `PASS`, because the wider release/manual gate remains unexecuted; it does **not** indicate a writer-test failure. The same receipt marks as **NOT RUN**: S.T.A.L.K.E.R. 2 BPatch loading and gameplay, Wine UI design-lock acceptance, and Build Mod PAK/UTOC/UCAS packaging plus in-game load order. Original decoded source ZIP parity checks also remain **NOT RUN** in that report because matching archives were not supplied to this run. Do not infer game behavior, mod packaging, external source archives, visual UI acceptance, or broader release readiness from 13/13 writer PASS.
+
+The earlier independent static `cfg-routes` audit was **6/6 PASS**, confirmed in a separate submitted receipt at `de68d51`; that receipt is **not** a fresh 6/6 re-run on `f7f190f`. There is no outstanding FAIL in the 13 selected executable writer suites. Historical 12/13 and parser-fix narratives below are chronological records and do not override this verified outcome.
+
+
 **Effective 2026-10-20.** This document supersedes earlier RC instructions that required Wine, GitHub Actions, WPF visual tests or gameplay testing for this **CFG writer audit**. Those activities may be useful for other work, but they are not acceptance gates here.
 
 ## What we check
