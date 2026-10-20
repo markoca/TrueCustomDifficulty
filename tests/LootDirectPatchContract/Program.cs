@@ -203,15 +203,19 @@ internal static class Program
                 && p.IsValueModifiedFromReference()).Select(p => p.Id).ToHashSet(StringComparer.Ordinal);
             Check(current.SetEquals(selected.Keys), type + ": accidentally changed unrelated Loot backing");
 
-            // A modified coupon backing highlights the Stash Reward Profile's
-            // ammo visual anchor, but that anchor's own 1x source is untouched.
-            // The writer must not interpret aggregate highlight as an ammo
-            // source change and activate its expensive special fanout.
+            // Rare Coupon Chance belongs to the current Stash Content Mix
+            // aggregate, not the retired Stash Reward Profile. Its change
+            // highlights the actual anchor, without editing the independent
+            // Basic/Standard/Rare Ammo Quantity backing or creating ammo clones.
             if (selected.ContainsKey(Money))
             {
-                var visual = vm.AllParameters.Single(p => p.Id == "loot.cheapStashAmmoQuantity");
-                Check(visual.IsModified && !visual.IsValueModifiedFromReference(),
-                    "Expected highlighted but SOURCE-vanilla stash aggregate anchor");
+                var anchor = vm.AllParameters.Single(p => p.Id == "loot.stashMixMedical");
+                var ammo = vm.AllParameters.Single(p => p.Id == "loot.cheapStashAmmoQuantity");
+                Check(anchor.IsVisualAggregateAnchor && anchor.IsModified
+                      && !anchor.IsValueModifiedFromReference()
+                      && ammo.IsVisualAggregateMember
+                      && !ammo.IsModified && !ammo.IsValueModifiedFromReference(),
+                    "Rare Coupon Chance must highlight only the current Stash Content Mix aggregate");
             }
 
             var sid = Catalog.DifficultyProfiles[difficulty].Sid;

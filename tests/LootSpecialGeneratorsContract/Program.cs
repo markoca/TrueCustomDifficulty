@@ -899,8 +899,20 @@ internal static partial class Program
             foreach(var (id,target) in changes)
             {
                 var par=vm.AllParameters.Single(x=>x.Id==id);
-                Check(par.IsSlider && par.IsControlEnabled && !par.IsValueModifiedFromReference(),
-                      label+": not a live vanilla source "+id);
+                // The visible Basic Ammo Quantity editor is authoritative:
+                // editing it synchronizes Standard and Rare CFG source values
+                // before this fixture reaches their explicit entries. Accept
+                // only the exact already-requested value, never a conflicting
+                // second value or an unrelated premodified source.
+                var alreadySynced = (id is "loot.mediumStashAmmoQuantity"
+                                     or "loot.expensiveStashAmmoQuantity")
+                    && changes.TryGetValue("loot.cheapStashAmmoQuantity", out var ownerTarget)
+                    && Math.Abs(ownerTarget-target)<0.0000001
+                    && par.IsValueModifiedFromReference()
+                    && Math.Abs(par.CurrentNumber-target)<0.0000001;
+                Check(par.IsSlider && par.IsControlEnabled
+                      && (!par.IsValueModifiedFromReference() || alreadySynced),
+                    label+": unexpected premodified CFG source "+id);
                 par.SnapCurrentNumberToMarker(target);
                 Check(Math.Abs(par.CurrentNumber-target)<0.0000001 &&
                       par.IsValueModifiedFromReference(),label+": source did not change "+id);

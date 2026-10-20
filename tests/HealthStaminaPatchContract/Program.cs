@@ -110,12 +110,13 @@ internal static class Program
 
     private static void MovementLimitsAndExhaustionNamingCase()
     {
-        // Pin the UI-only design changes without changing the writer contract:
-        // the six exhaustion inputs retain their stable CFG source identities.
+        // The current UI-DESIGN-LOCK and VISUAL-CONTROL-SYSTEM threshold
+        // names supersede the retired Sprint Locks / Recovery Kicks In labels.
+        // Preserve all six original CFG IDs and writer targets.
         var labels = new (string Id, string Label)[]
         {
-            ("stamina.sprintDisableThreshold", "Sprint Locks"),
-            ("stamina.lowRecoveryThreshold", "Recovery Kicks In"),
+            ("stamina.sprintDisableThreshold", "Sprint Stops Below"),
+            ("stamina.lowRecoveryThreshold", "Boost Starts Below"),
             ("stamina.aimRegenCoef", "Aiming Regen Penalty"),
             ("stamina.sprintRecoveryDelay", "Exhaustion Regen Delay"),
             ("stamina.lowRecoveryStrength", "Boost Strength"),
