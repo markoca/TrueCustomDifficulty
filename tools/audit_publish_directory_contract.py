@@ -23,6 +23,8 @@ assert 'PUBLISH_BACKUP="$(mktemp -d "$PUBLISH_DIR/' in script
 assert 'TRANSACTION_STARTED=1' in script
 assert 'tools|Presets|Output|BUILD-INFO.txt' in script
 assert 'mv -- "$PUBLISH_STAGING/$name" "$PUBLISH_DIR/$name"' in script
+assert 'cp -- "$ROOT/tools/README.txt" "$PUBLISH_DIR/tools/README.txt"' in script
+assert 'if [[ ! -e "$PUBLISH_DIR/tools/README.txt" ]]; then' in script
 
 with tempfile.TemporaryDirectory(prefix="tcd-publish-inode-") as tmp:
     work = Path(tmp)
@@ -37,6 +39,11 @@ with tempfile.TemporaryDirectory(prefix="tcd-publish-inode-") as tmp:
         encoding="utf-8",
     )
     (project / "Presets/README.md").write_text("SOURCE README\n", encoding="utf-8")
+    source_tools = fixture / "tools"
+    source_tools.mkdir()
+    (source_tools / "README.txt").write_text(
+        "SOURCE TOOL INSTRUCTIONS\n", encoding="utf-8"
+    )
     fakebin = work / "bin"
     fakebin.mkdir()
     dotnet = fakebin / "dotnet"
@@ -123,6 +130,10 @@ fi
     one = run()
     assert one.returncode == 0, one.stdout + one.stderr
     check_state()
+    # The first publish supplies only the README; user-owned binaries survive.
+    runtime_tools_readme = dest / "tools/README.txt"
+    assert runtime_tools_readme.read_text(encoding="utf-8") == "SOURCE TOOL INSTRUCTIONS\n"
+    runtime_tools_readme.write_text("USER EDITED TOOLS README\n", encoding="utf-8")
     assert (dest / "TrueCustomDifficulty.exe").read_bytes() == b"EXE BUILD 1\n"
     assert (dest / "RuntimeSidecar.dll").read_bytes() == b"SIDECAR 1\n"
     assert (dest / "runtimes/NativeResource.dat").read_bytes() == b"NATIVE 1\n"
@@ -132,6 +143,7 @@ fi
     two = run(FAKE_DOTNET_BUILD_ID="2")
     assert two.returncode == 0, two.stdout + two.stderr
     check_state()
+    assert runtime_tools_readme.read_text(encoding="utf-8") == "USER EDITED TOOLS README\n"
     assert (dest / "TrueCustomDifficulty.exe").read_bytes() == b"EXE BUILD 2\n"
     assert (dest / "RuntimeSidecar.dll").read_bytes() == b"SIDECAR 2\n"
     assert (dest / "runtimes/NativeResource.dat").read_bytes() == b"NATIVE 2\n"
@@ -141,17 +153,20 @@ fi
     missing = run(FAKE_DOTNET_NO_EXE="1", FAKE_DOTNET_BUILD_ID="3")
     assert missing.returncode != 0
     check_state()
+    assert runtime_tools_readme.read_text(encoding="utf-8") == "USER EDITED TOOLS README\n"
     assert (dest / "TrueCustomDifficulty.exe").read_bytes() == previous_exe
     assert (dest / "BUILD-INFO.txt").read_bytes() == previous_receipt
 
     collision = run(FAKE_DOTNET_COLLIDE="1", FAKE_DOTNET_BUILD_ID="4")
     assert collision.returncode != 0
     check_state()
+    assert runtime_tools_readme.read_text(encoding="utf-8") == "USER EDITED TOOLS README\n"
     assert (dest / "TrueCustomDifficulty.exe").read_bytes() == previous_exe
     assert (dest / "BUILD-INFO.txt").read_bytes() == previous_receipt
 
 print("PASS: publish/win-x64 retains its inode, portable tools/presets/output,"
       " and unrelated user files after repeat publish.")
+print("PASS: user-facing tools/README.txt is seeded once and never overwrites edits.")
 print("PASS: runtime artifacts and BUILD-INFO update together;"
       " bad/unsafe dotnet output leaves the last good build intact.")
 print("NOT TESTED: real .NET 10 WPF publish output or Dolphin rendering.")

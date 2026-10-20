@@ -1,12 +1,86 @@
-## Ordinary stash actor region labels
+# True Custom Difficulty — tools
 
-831 ordinary physical stash actors now use 22 locally vendored world-coordinate polygons (source: MIT-licensed StalkerMap), **not** item-generator prefix guesses. Regenerate `python3 tools/generate_stash_actor_regions.py`, audit `python3 tools/audit_stash_actor_regions.py` or `python3 tools/generate_stash_actor_regions.py --check`. The static pre-release suite includes the audit. See `docs/STASH-REGIONS.md` for sources, 21 naming conflicts and 2 unassigned border cases. No gameplay changes.
+The `tools/` folder serves **two different purposes**. In a published portable installation it holds **user-supplied executables**; in the source repository it also contains **first-party development and audit scripts**. These are not interchangeable.
 
-## Source-backed spawn-referenced item SID inventory
+## Player setup: download the required build tools
 
-`docs/SPAWNABLE-ITEM-SIDS.md` lists every item SID backed by a base/DLC1 ItemPrototypes definition and a spawn-related CFG reference; the companion `src/TrueCustomDifficulty/Data/spawnable-item-sids.csv` retains the evidence paths and item type per SID. It is **not** an unconditional in-game spawn list; quest/rank/other gates still apply. The 7.62×39 cut ammo family (`A762D/A762A/A762E`) is excluded.
+**Build Difficulty** requires these two third-party Windows x64 executables for builds containing CFG edits. The project does **not** bundle or download them.
 
-To regenerate from locally supplied extracted CFG archives (ZIPs are not committed to GitHub):
+| Tool | Official source | What True Custom Difficulty uses it for |
+| --- | --- | --- |
+| **repak.exe** | [Project](https://github.com/trumank/repak) · [Releases](https://github.com/trumank/repak/releases) | Pack the generated CFG/BPatch files as a PAK V11 archive, mount point `../../../` |
+| **retoc.exe** | [Project](https://github.com/trumank/retoc) · [Releases](https://github.com/trumank/retoc/releases) | Create the matching Unreal Engine 5.5 `.utoc`/`.ucas` IoStore files |
+
+Download the Windows x64 versions from the linked original releases. Extract the actual executables and rename them to the exact filenames above if required.
+
+```text
+publish/win-x64/
+├── TrueCustomDifficulty.exe
+├── tools/
+│   ├── README.txt
+│   ├── repak.exe          ← supplied by the user
+│   └── retoc.exe          ← supplied by the user
+├── Presets/
+└── Output/
+```
+
+The application resolves this directory via `AppContext.BaseDirectory/tools` and invokes `repak pack ... --mount-point ../../../ --version V11` and `retoc to-zen ... --version UE5_5`. When no CFG edits are generated, the build pipeline may finish without either packer. If a required executable is missing for a non-empty build, the app reports its expected path.
+
+**Important:** These tools are for True Custom Difficulty's build workflow only. Unlike Localization Workbench, this application does **not** need `UAssetGUI.exe`, `S2HOCMM.exe`, or `Mappings.usmap`. Workbench's published version baselines do not establish version compatibility with this project. The published `tools/README.txt` contains the same installation information in a plain-text format modeled on [Localization Workbench's tools README](https://github.com/markoca/STALKER2LocalizationTool/blob/main/tools/README.txt).
+
+### Publish behavior
+
+`./publish.sh` publishes a Windows x64 app into `publish/win-x64/`, **preserves** existing `tools/`, `Presets/`, and `Output/`, and copies `tools/README.txt` into the portable tools folder only if absent. An edited README or user-provided binary is not replaced. The repository does not ship, download, or commit third-party binaries.
+
+## Developer tools (source checkout only)
+
+Execute the scripts below **from the repository root**, not from the published `tools/` directory. Use Python 3 for Python-based audits. Many source-oriented checks require the original, independently supplied S.T.A.L.K.E.R. 2 CFG dumps; these archives are not included in the repository.
+
+### Main test and audit entry point
+
+```bash
+python3 tools/pre_release.py list
+python3 tools/pre_release.py static --output audit/pre-release/static
+python3 tools/pre_release.py cfg-routes --output audit/pre-release/cfg-routes
+python3 tools/pre_release.py source --output audit/pre-release/source
+# On Linux with supported .NET/Windows targeting + Wine:
+python3 tools/pre_release.py writer --wine --output audit/pre-release/writer
+```
+
+- `static` — source/catalog/UI/preset and project-consistency checks. It does not execute the production C# writer.
+- `cfg-routes` — source-to-CFG route/value/ownership mapping. Static evidence is **not** executed BPatch output.
+- `source` — source provenance and native CFG checks; some require supplied base-game/DLC CFG archives.
+- `writer` — the production C# writer contract projects; `--wine` selects the Linux/Wine harness. A writer PASS still does **not** verify mod loading or gameplay.
+- `all` — orchestrated test modes; manual game validation remains separate.
+
+For the detailed test matrix and evidence rules see [release testing](../docs/RELEASE-TESTING.md) and [CFG writer audit scope](../docs/CFG-WRITER-AUDIT-SCOPE.md).
+
+### Useful focused commands
+
+```bash
+python3 tools/audit_project_consistency.py
+python3 tools/audit_ui_cfg_contract.py
+python3 tools/audit_stashes_current.py
+python3 tools/audit_stashes_mixer_ui.py
+python3 tools/audit_factory_profile_role_coverage.py
+python3 tools/audit_publish_directory_contract.py
+python3 tools/audit_final_cfg_mapping.py --out audit/final-cfg-mapping
+```
+
+The `audit_publish_directory_contract.py` test uses a **fake** .NET publish executable to test repeated publication, safe rollback and preservation of user files. It does not build the WPF application or verify Wine behavior. The other static scripts likewise cannot prove in-game loot probabilities, gameplay effects, or installed mod load order.
+
+### Inventory, generators, and committed evidence
+
+| Area | Source-only tools or evidence | Further documentation |
+| --- | --- | --- |
+| Spawn-referenced item SIDs | `generate_spawn_item_sids.py`, `audit_spawn_item_sids.py` | [Spawnable item SID inventory](../docs/SPAWNABLE-ITEM-SIDS.md) |
+| Ordinary stash actor regions | `generate_stash_actor_regions.py`, `audit_stash_actor_regions.py`, `data/stalker2-community-regions.json` | [Stash regions](../docs/STASH-REGIONS.md) |
+| Regular stash provenance | `audit_regular_stash_actor_dump.py`, `audit_regular_stash_source_inventory.py`, `regular-stash-source-inventory.json` | [Generator evidence index](../docs/generators/README.md) |
+| Production CFG routing | `audit_final_cfg_mapping.py`, `final_cfg_mapping_inventory.json` | [CFG writer audit scope](../docs/CFG-WRITER-AUDIT-SCOPE.md) |
+| Role/preset decisions | `audit_factory_profile_role_coverage.py`, `factory_profile_role_coverage_2026_10_19.json`, `factory_preset_*.json` | [Factory presets](../docs/FACTORY-PRESETS.md) |
+| Additional audits | `audit_*.py`, `test_*.py`, `generate_*.py` | [Documentation index](../docs/README.md) |
+
+Example: to regenerate the source-backed spawn SID inventory with locally supplied extracted CFG ZIPs:
 
 ```bash
 python3 tools/generate_spawn_item_sids.py \
@@ -15,99 +89,8 @@ python3 tools/generate_spawn_item_sids.py \
 python3 tools/audit_spawn_item_sids.py
 ```
 
-The static audit also runs with `python3 tools/pre_release.py static`. It checks internal consistency only, not actual gameplay drops.
+Generated audit receipts, logs, fixtures, and reports belong under the ignored `audit/` working directory (unless the specific tool documents a different output). Do not mistake source validation or generated file checks for verified in-game behavior.
 
-# External tools
+## Development rules
 
-## Reproduce regular-world stash allowlist from supplied CFG dump
-
-Run `python tools/audit_regular_stash_actor_dump.py "STALKER2-GameData-CFG(20261016-142306).zip" --output /tmp/ordinary-stashes.csv --excluded-output /tmp/special-stashes.csv`. The verified user dump contains 902 main-world SmartLoot ItemContainers: 831 ordinary candidates and 71 protected blueprint/unique/quest-linked actors. The corresponding source-backed actor list and all 991 `StashPrototypes.cfg` world item rows are now embedded resources in `src/TrueCustomDifficulty/Data/`. Run `python tools/audit_regular_stash_source_inventory.py` and Windows `tests/LootSpecialGeneratorsContract` to check source semantics; do not claim game success without runtime verification.
-
-## Regular stash source inventory
-
-Run `python tools/audit_regular_stash_source_inventory.py` at the repository root to verify `tools/regular-stash-source-inventory.json` against the source-derived ItemGenerator and SmartLoot catalogs. This is a fail-closed source inventory for six regular stash categories (ammo, medical, food, drinks, grenades, coupons), **not** an active SmartLoot patch or a game runtime test. Source-level consumer edges must be added before introducing any actor-specific quest-safe CFG writer extensions.
-
-
-## Final source-to-BPatch contract (2026-10-15)
-
-Run `python tools/audit_final_cfg_mapping.py --out audit/final-cfg-mapping`. This validates the **248/248 catalog routes** (213 direct/1,230 concrete leaves, 35 special routes), exact current CFG target ownership, source evidence statuses, production dispatch methods, embedded manifest presence, difficulty/DLC guards, and **all twelve shipped factory profiles' direct changes** against source integer rounding. The `mapping.json`/`mapping.csv` output indexes each ID; the committed `tools/final_cfg_mapping_inventory.json` gives the source-by-source coverage. The independent Windows `tests/AllControlsPatchContract` project exercises the real WPF production writer for all **235** player-editable dimensions. See `docs/FINAL-CFG-MAPPING-AUDIT-2026-10-15.md` for what these checks **cannot** establish about game runtime.
-
-This source directory contains first-party audit/test scripts. The published tools/ folder is for optional manually supplied external packer binaries.
-
-True Custom Difficulty does **not** bundle or download third-party executables. Users supply them manually.
-
-Published layout:
-
-```text
-TrueCustomDifficulty.exe
-tools/
-  repak.exe
-  retoc.exe
-```
-
-## Required for Build Mod
-
-A non-empty v0.1.51 build requires both tools:
-
-- **repak** packs the generated BPatch CFG files into `TrueCustomDifficulty_P.pak` using PAK V11 and mount point `../../../`.
-- **retoc** creates the matching UE5.5 `TrueCustomDifficulty_P.utoc` and `TrueCustomDifficulty_P.ucas` companion container.
-
-The application does not download either executable. If one is missing, Build Mod stops with a clear error and does not publish a partial output.
-
-The same tools may also be used manually for extraction/development/maintenance workflows, but those workflows are outside the normal player build path.
-
-## Override verification harness
-
-Override mapping evidence is documented in `../OVERRIDE-VERIFICATION-HARNESS.md`; there is no automated verification harness in this repository.
-
-## WPF aggregate / toggle visibility regression
-
-UI aggregate bindings are maintained directly in WPF source and the UI documentation.
-
-## Mixer fader pilot regression
-
-The mixer contract is described in the UI design documentation; publishing does not run any UI test scripts.
-
-## CFG placement audit
-
-`python tools/audit_cfg_placement.py --output docs/cfg-placement/v0.2.53` verifies all catalog parameters against their concrete CFG writer routes. It is intentionally static and does not launch the application.
-
-## Pre-release test runner
-
-Run `python tools/pre_release.py list` in the repository root to view the registered tests. The `static`, `source`, `writer` and `all` modes, their platform requirements, evidence reports and mandatory manual game checks are described in [Pre-release testing](../docs/RELEASE-TESTING.md). Test logs and fixtures are written to ignored `audit/pre-release/` and do not form part of the runtime release.
-
-### Original CFG ancestry and special arrays
-
-`audit_cfg_source_values.py` now checks physically declared source
-`{refkey=...}` ancestor values, reporting `inherited_exact`
-separately from directly authored fields. Wrong, missing or cyclical
-ancestry is not silently accepted. The CI-backed
-`test_cfg_source_inheritance.py` validates this behavior.
-`audit_combat_source_structures.py` checks the exact 68 Combat
-source routes plus 14 Master agents / 66 cooldown tags / 2 PSY
-effects using actual supplied CFG ZIPs. These are source facts,
-not game-engine BPatch runtime tests.
-
-### Health/Stamina direct CFG source and real writer
-
-`audit_health_stamina_source.py` compares 69 source edit points against the original decoded GameData/DLC1 CFG archives, including one `Player→[0]` inherited VaultingParams value. `tests/HealthStaminaPatchContract` executes 46 real WPF model-to-CFG writer scenarios on Windows CI and stores generated patch evidence. Both are registered in `pre_release.py`; neither runs the game.
-
-C2 writer scenario breakdown: 41 live Health/Stamina parameter/difficulty cases plus five Master mechanics toggle full-list replacement cases = 46; five original Stamina speed-state CFG definitions are source-only and are not loaded into the app.
-
-### Phase 9 Survival coverage
-
-`tests/SurvivalPatchContract` checks 59 production C# ViewModel-to-BPatch outputs on Windows. `pre_release.py source` now includes the original-source check for all 139 `survival.*` edit points. Neither source static parity nor generated CFG data proves in-game behavior. Details: [Survival Phase 9](../docs/DEEP-CFG-AUDIT-PHASE9-SURVIVAL-2026-10-09.md).
-## Original consumable effect source verification
-
-`python3 tools/audit_consumable_effect_source.py --base-zip "/path/to/STALKER2-GameData-CFG.zip"`
-
-This compares Energy Drink's 5/15/45-second effects (native -100%/-30% SPDrain and regeneration), the regular/Limited/Weird Kettle lists, inherited eight-action scope, and Water duration sources with the original decoded CFG and the production writer baseline. The tool is a source-and-structure check, **not** gameplay stacking proof. It also runs in the source phase of `tools/pre_release.py`.
-
-
-## Water and Energy short-duration controls
-
-`tools/audit_consumable_effect_source.py --base-zip <original GameData ZIP>` verifies Water 30/5s and Energy 45/15/5s source identity and variant membership. `tools/audit_project_consistency.py` and `tools/audit_ui_cfg_contract.py` verify the three independent source-backed hidden aggregate controls and unique direct CFG route ownership. `tests/SurvivalPatchContract` executes the real WPF model and writer on Windows, including live maximum/cascades for the three short durations. Structural source tests do not prove UE runtime effect stacking.
-
-## Global Drink Duration Override — 2026-10-10
-
-The single universal-minimal `OVERRIDE LIMITS` checkbox in the native ConsumableMixer duration header is saved as preset-root `drinkDurationOverride` (default OFF), not a fake CFG source. OFF preserves per-drink native maxima and source-specific child caps; ON uses the existing common 270s timeline as a ceiling for all five primary and three secondary duration editors, independently. See both UI catalogs. The real Windows `tests/SurvivalPatchContract` exercises all eight values at 180s, the production writer and preset serialization. `tools/audit_project_consistency.py` guards the live binding/render/input code.
+Keep `docs/UI-DESIGN-LOCK.md` and `docs/VISUAL-CONTROL-SYSTEM.md` synchronized with live UI controls and the parameter catalog. Treat `main` as the source of truth; code, applicable audits and documentation must change together. Neither repository audits nor `./publish.sh` install third-party binaries.

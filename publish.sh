@@ -212,7 +212,12 @@ for name in "${RUNTIME_NAMES[@]}"; do
 done
 
 mkdir -p -- "$PUBLISH_DIR/tools" "$PUBLISH_DIR/Presets" "$PUBLISH_DIR/Output"
-# Only initialize README if absent. Never reset user-edited portable state.
+# Seed user-facing documentation like Localization Workbench. Preserve an
+# existing user-edited README and never overwrite supplied repak/retoc binaries.
+if [[ ! -e "$PUBLISH_DIR/tools/README.txt" ]]; then
+    cp -- "$ROOT/tools/README.txt" "$PUBLISH_DIR/tools/README.txt"
+fi
+# Only initialize preset README if absent. Never reset user-edited portable state.
 if [[ ! -e "$PUBLISH_DIR/Presets/README.md" ]]; then
     cp -- "$ROOT/src/TrueCustomDifficulty/Presets/README.md" "$PUBLISH_DIR/Presets/README.md"
 fi
