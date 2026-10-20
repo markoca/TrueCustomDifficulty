@@ -1405,6 +1405,21 @@ public sealed class MainViewModel : ObservableObject
     {
         NormalizeEditorConstraints();
 
+        string presetDirectory;
+        try
+        {
+            presetDirectory = _presetDirectoryService.EnsureWritable();
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.ComponentModel.Win32Exception)
+        {
+            MessageBox.Show(
+                $"Preset folder permissions could not be repaired.\n\n{ex.Message}",
+                AppName,
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+            return;
+        }
+
         var dialog = new SaveFileDialog
         {
             Title = "Save True Custom Difficulty preset",
@@ -1412,9 +1427,7 @@ public sealed class MainViewModel : ObservableObject
             DefaultExt = ".json",
             AddExtension = true,
             FileName = "custom-preset.json",
-            // Save requires create-file rights, not merely the ability to
-            // overwrite already-existing factory JSONs.
-            InitialDirectory = _presetDirectoryService.EnsureWritable()
+            InitialDirectory = presetDirectory
         };
         if (dialog.ShowDialog() != true)
             return;
