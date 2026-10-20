@@ -1412,7 +1412,9 @@ public sealed class MainViewModel : ObservableObject
             DefaultExt = ".json",
             AddExtension = true,
             FileName = "custom-preset.json",
-            InitialDirectory = _presetDirectoryService.Ensure()
+            // Save requires create-file rights, not merely the ability to
+            // overwrite already-existing factory JSONs.
+            InitialDirectory = _presetDirectoryService.EnsureWritable()
         };
         if (dialog.ShowDialog() != true)
             return;

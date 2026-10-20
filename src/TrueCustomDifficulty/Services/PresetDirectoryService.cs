@@ -1,6 +1,9 @@
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
+using System.Security.Principal;
 using System.Text;
 using TrueCustomDifficulty.Models;
 
@@ -307,6 +310,133 @@ public sealed class PresetDirectoryService
         RetireRcSignalPreset(directory);
 
         return directory;
+    }
+
+    /// <summary>
+    /// Returns the portable Presets directory after proving that the current
+    /// Windows user can create a brand-new file there. Existing-file overwrite
+    /// permission is not enough for Save Preset.
+    /// </summary>
+    public string EnsureWritable()
+    {
+        var directory = Ensure();
+        if (TryCreatePermissionProbe(directory, out _))
+            return directory;
+
+        if (!OperatingSystem.IsWindows())
+            throw new UnauthorizedAccessException(
+                $"True Custom Difficulty cannot create new files in '{directory}'.");
+
+        GrantCurrentUserModifyPermission(directory);
+
+        if (!TryCreatePermissionProbe(directory, out var failure))
+        {
+            throw new UnauthorizedAccessException(
+                $"True Custom Difficulty could not obtain permission to create new preset files in '{directory}'.",
+                failure);
+        }
+
+        return directory;
+    }
+
+    private static bool TryCreatePermissionProbe(string directory, out Exception? failure)
+    {
+        var probe = Path.Combine(directory, ".tcd-create-probe-" + Guid.NewGuid().ToString("N") + ".tmp");
+        failure = null;
+
+        try
+        {
+            using (var stream = new FileStream(
+                       probe,
+                       FileMode.CreateNew,
+                       FileAccess.Write,
+                       FileShare.None))
+            {
+                stream.WriteByte(0);
+            }
+
+            return true;
+        }
+        catch (Exception ex) when (IsCreatePermissionFailure(ex))
+        {
+            failure = ex;
+            return false;
+        }
+        finally
+        {
+            try
+            {
+                if (File.Exists(probe))
+                    File.Delete(probe);
+            }
+            catch
+            {
+                // The probe only establishes create-file permission. Cleanup is
+                // best-effort and must not hide the permission result.
+            }
+        }
+    }
+
+    private static bool IsCreatePermissionFailure(Exception ex)
+    {
+        if (ex is UnauthorizedAccessException)
+            return true;
+
+        // Windows: ERROR_ACCESS_DENIED (5) and
+        // ERROR_PRIVILEGE_NOT_HELD (1314 / 0x522).
+        return ex is IOException && (ex.HResult & 0xFFFF) is 5 or 1314;
+    }
+
+    private static void GrantCurrentUserModifyPermission(string directory)
+    {
+        var sid = WindowsIdentity.GetCurrent().User?.Value;
+        if (string.IsNullOrWhiteSpace(sid))
+            throw new IOException("Windows could not resolve the current user SID for the Presets folder.");
+
+        // First try without elevation. The directory is normally owned by the
+        // logged-in user, so changing its DACL often needs no UAC prompt.
+        if (RunIcaclsGrant(directory, sid, elevate: false))
+            return;
+
+        try
+        {
+            // If the existing ACL itself blocks the change, ask Windows once
+            // for elevation and grant Modify only on this Presets directory.
+            if (RunIcaclsGrant(directory, sid, elevate: true))
+                return;
+        }
+        catch (Win32Exception ex) when (ex.NativeErrorCode == 1223)
+        {
+            throw new UnauthorizedAccessException(
+                "Windows permission approval was cancelled. Save Preset needs create-file permission for the portable Presets folder.",
+                ex);
+        }
+
+        throw new UnauthorizedAccessException(
+            $"Windows could not grant the current user Modify permission for '{directory}'.");
+    }
+
+    private static bool RunIcaclsGrant(string directory, string sid, bool elevate)
+    {
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = "icacls.exe",
+            UseShellExecute = elevate,
+            CreateNoWindow = !elevate
+        };
+
+        if (elevate)
+            startInfo.Verb = "runas";
+
+        startInfo.ArgumentList.Add(directory);
+        startInfo.ArgumentList.Add("/grant:r");
+        startInfo.ArgumentList.Add($"*{sid}:(OI)(CI)M");
+        startInfo.ArgumentList.Add("/Q");
+
+        using var process = Process.Start(startInfo)
+            ?? throw new IOException("Windows could not start icacls.exe to repair Presets permissions.");
+        process.WaitForExit();
+        return process.ExitCode == 0;
     }
 
     public IReadOnlyList<PresetListItem> List()

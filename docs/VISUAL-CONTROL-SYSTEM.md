@@ -2,7 +2,7 @@
 
 **All factory and custom presets live in the single portable `Presets` directory beside the EXE.** Save Preset and Load Preset both default to `<app>\Presets`; the preset picker reads that same directory. No custom preset is redirected to LocalAppData.
 
-Windows preset saving serializes the complete JSON first and then writes the target file directly. Do not use the previous temp-file `File.Move(..., overwrite: true)` replacement path: on some otherwise writable Windows folders it can fail with `ERROR_PRIVILEGE_NOT_HELD` / “A required privilege is not held by the client.” Preset JSON format, factory contents, migrations, control values and gameplay behavior are unchanged. The application does not elevate itself or alter ACLs.
+Windows preset saving serializes the complete JSON first and then writes the target file directly. Do not use the previous temp-file `File.Move(..., overwrite: true)` replacement path. Before Save Preset opens, the app must also prove **new-file creation** in `Presets` rather than assuming that successful overwrite of an existing JSON implies directory create permission. If the create probe is denied, grant the current Windows SID **Modify** on `Presets` only via `icacls /grant:r` with object/container inheritance; try unelevated first and request UAC only when Windows refuses the ACL update. Re-probe after the ACL change and fail clearly if create permission is still absent. Preset JSON format, factory contents, migrations, control values and gameplay behavior are unchanged.
 
 ## 2026-10-20 — CURRENT direct ~mods build destination
 

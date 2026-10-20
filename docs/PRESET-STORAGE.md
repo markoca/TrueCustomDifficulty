@@ -16,7 +16,9 @@ The previous implementation wrote a temporary file and used `File.Move(temp, tar
 
 That privileged rename/replace path is no longer used for presets.
 
-The application still requires ordinary write permission to its `Presets` directory. It does not request administrator rights and does not change filesystem ACLs.
+Before opening **Save Preset**, the application now verifies that it can create a brand-new file in `Presets`. This is intentionally different from overwriting an existing JSON: Windows can allow file writes while denying **Create files / write data** on the directory itself.
+
+If creation is denied, True Custom Difficulty grants the current Windows user **Modify** permission on the portable `Presets` directory only, with inheritance for files/subfolders. It first tries the ACL repair without elevation; if Windows refuses the ACL change, it invokes the built-in `icacls.exe` through a one-time UAC approval. It does not grant permissions on the whole application directory, the game directory, or other user files.
 
 ## Verification
 
