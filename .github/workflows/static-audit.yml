@@ -28,7 +28,7 @@ jobs:
       - name: Four native Food Hunger Relief source, UI, and preset audit
         run: python tools/audit_food_satiety_source.py
 
-      - name: Current 287-source CFG to actual BPatch writer route and factory-output audit
+      - name: Current 285-source CFG to actual BPatch writer route and factory-output audit
         run: python tools/audit_final_cfg_mapping.py --out audit/final-cfg-mapping
 
       - name: Incremental CFG destination audit for 35 Stashes and 4 Food sources
@@ -76,7 +76,7 @@ jobs:
       - name: RC rationale readability and in-game meaning
         run: python tools/audit_rc_rationale_readability.py
 
-      - name: Full 182-control RC label and redundancy review
+      - name: Full 180-control RC label and redundancy review
         run: python tools/audit_rc_final_copy.py
 
       - name: Build Difficulty activity rail contract

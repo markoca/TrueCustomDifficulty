@@ -38,10 +38,10 @@ def main() -> int:
     survival_test = read(ROOT / "tests" / "SurvivalPatchContract" / "Program.cs")
     factory_files = list((SRC / "Presets").glob("*.json"))
 
-    require(len(catalog["parameters"]) == len(params) == 287, "source count / duplicate IDs")
-    require(sum(p.get("exposeInUi", True) for p in params.values()) == 182,
+    require(len(catalog["parameters"]) == len(params) == 285, "source count / duplicate IDs")
+    require(sum(p.get("exposeInUi", True) for p in params.values()) == 180,
             "current visible-source census")
-    require(baseline["supportedParameterCount"] == 287 and len(edit_points) == 1238,
+    require(baseline["supportedParameterCount"] == 285 and len(edit_points) == 1230,
             "current full direct CFG-writer census")
     require("MaxHungerPoints = 100" in read(DOCS / "SURVIVAL-MAPPING.md"),
             "source documented hunger ceiling must remain 100")
@@ -98,7 +98,7 @@ def main() -> int:
     require(len(factory_files) == 12, "expected 12 factory playstyle profiles")
     for preset_file in factory_files:
         profile = json.loads(read(preset_file))
-        require(len(profile["values"]) == 287, f"{preset_file.name}: incomplete source keys")
+        require(len(profile["values"]) == 285, f"{preset_file.name}: incomplete source keys")
         for pid, _, reference, _, _, _, _ in FOOD:
             require(profile["values"][pid] == {"kind": "slider", "number": reference},
                     f"{preset_file.name}: do not pre-tune food strength without a balance request")

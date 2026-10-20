@@ -396,8 +396,6 @@ public sealed class MainViewModel : ObservableObject
             "combat.npcHealth",
             "combat.npcHealth",
             "combat.npcWeaponDamage",
-            "combat.npcAttackCooldown",
-            "combat.npcHipAccuracy",
             "combat.explosionDamage");
 
         WireVisualAggregate(
@@ -1332,15 +1330,6 @@ public sealed class MainViewModel : ObservableObject
         }
     }
 
-    private static bool RequiresAttackFrequencyPresetMigration(string? toolVersion)
-    {
-        if (string.IsNullOrWhiteSpace(toolVersion))
-            return true;
-
-        return !Version.TryParse(toolVersion, out var parsed)
-            || parsed < new Version(0, 1, 96);
-    }
-
     private static bool RequiresPositiveTreatmentMagnitudePresetMigration(string? toolVersion)
     {
         if (string.IsNullOrWhiteSpace(toolVersion))
@@ -1514,7 +1503,6 @@ public sealed class MainViewModel : ObservableObject
                     .DrinkDurationOverrideEnabled = preset.DrinkDurationOverride;
                 parametersById["health.bandageHealing"]
                     .MedicalOverrideEnabled = preset.MedicalOverride;
-                var migrateAttackFrequency = RequiresAttackFrequencyPresetMigration(preset.ToolVersion);
                 var migratePositiveTreatmentMagnitude = RequiresPositiveTreatmentMagnitudePresetMigration(preset.ToolVersion);
                 var migratePositiveAimingPenaltyMagnitude = RequiresPositiveAimingPenaltyMagnitudePresetMigration(preset.ToolVersion);
                 var migratePositiveHungerPenaltyMagnitude = RequiresPositiveHungerPenaltyMagnitudePresetMigration(preset.ToolVersion);
@@ -1599,25 +1587,7 @@ public sealed class MainViewModel : ObservableObject
                     if (!parametersById.TryGetValue(pair.Key, out var parameter))
                         continue;
 
-                    if (migrateAttackFrequency
-                        && pair.Key == "combat.npcAttackCooldown"
-                        && pair.Value.Number is > 0.0000001)
-                    {
-                        // Before v0.1.96 these controls stored the raw cooldown multiplier.
-                        // v0.1.96 presents an intuitive frequency multiplier instead:
-                        // frequency = 1 / cooldown. Preserve the old preset's gameplay.
-                        var migrated = new PresetValue
-                        {
-                            Kind = pair.Value.Kind,
-                            Number = 1.0 / pair.Value.Number.Value,
-                            MinNumber = pair.Value.MinNumber,
-                            MaxNumber = pair.Value.MaxNumber,
-                            Boolean = pair.Value.Boolean,
-                            Text = pair.Value.Text
-                        };
-                        parameter.ApplyPresetValue(migrated);
-                    }
-                    else if (migratePositiveTreatmentMagnitude
+                    if (migratePositiveTreatmentMagnitude
                         && IsPositiveTreatmentMagnitudeParameter(pair.Key)
                         && pair.Value.Number is < 0.0)
                     {
@@ -1916,8 +1886,6 @@ public sealed class MainViewModel : ObservableObject
                 // Human Enemies
                 "combat.npcHealth" => 0,
                 "combat.npcWeaponDamage" => 10,
-                "combat.npcAttackCooldown" => 20,
-                "combat.npcHipAccuracy" => 30,
 
                 // Your Weapons
                 "combat.playerWeaponDamage" => 60,

@@ -36,14 +36,6 @@
       "kind": "slider",
       "number": 1.1
     },
-    "combat.npcAttackCooldown": {
-      "kind": "slider",
-      "number": 1.1
-    },
-    "combat.npcHipAccuracy": {
-      "kind": "slider",
-      "number": 0.7
-    },
     "combat.accumulatedDamageWeightMax": {
       "kind": "slider",
       "number": 0.6

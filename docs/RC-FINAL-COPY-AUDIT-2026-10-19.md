@@ -1,14 +1,16 @@
-# Final RC label & redundancy audit — 19 October 2026
+# Final RC label & redundancy audit — updated 20 October 2026
 
 ## Verdict and exact scope
 
-**The full copy/label pass is complete for all 182 player-visible controls across 11 tabs**. Of those, **104 control records** received player-facing copy corrections; **62 labels** were made shorter, consistent or more explicit. Other changes affect **62 HIGHER / LOWER** descriptions and **80 WORKS WITH** explanations. All **182 WHAT IT DOES** rationales were reviewed; **10** newer Psy/Stashes explanations from the concurrent RC pass are preserved alongside the targeted label and redundancy cleanup. This is a *copy/UI-meaning release gate*, not a claim of passing .NET, Wine, GitHub Actions or real-game tests.
+Two Human Enemies controls were retired on 2026-10-20: Attack Frequency and Shot Accuracy. The active ledger excludes them, preserving all other approved wording; the original 19 October review covered 182 controls before retirement. The live status counts and table below describe the current 180-row ledger.
 
-The 182-row signed-off copy inventory is [RC-FINAL-COPY-INDEX-2026-10-19.csv](RC-FINAL-COPY-INDEX-2026-10-19.csv): one entry for each exact `id`, tab, group, approved label, WHAT IT DOES, HIGHER / LOWER, WORKS WITH and retained/revised decision. `tools/audit_rc_final_copy.py` compares every entry back to the current parameter catalog, validates all 11 tab totals, bans technical jargon and gestures outside CONTROLS, and protects gameplay-critical semantics. This complements the original 36-label approval and 182-rationale audit checks, rather than silently replacing either.
+**The full copy/label pass is complete for all 180 player-visible controls across 11 tabs**. Of those, **102 control records** received player-facing copy corrections; **60 labels** were made shorter, consistent or more explicit. Other changes affect **60 HIGHER / LOWER** descriptions and **78 WORKS WITH** explanations. All **180 WHAT IT DOES** rationales were reviewed; **10** newer Psy/Stashes explanations from the concurrent RC pass are preserved alongside the targeted label and redundancy cleanup. This is a *copy/UI-meaning release gate*, not a claim of passing .NET, Wine, GitHub Actions or real-game tests.
+
+The 180-row signed-off copy inventory is [RC-FINAL-COPY-INDEX-2026-10-19.csv](RC-FINAL-COPY-INDEX-2026-10-19.csv): one entry for each exact `id`, tab, group, approved label, WHAT IT DOES, HIGHER / LOWER, WORKS WITH and retained/revised decision. `tools/audit_rc_final_copy.py` compares every entry back to the current parameter catalog, validates all 11 tab totals, bans technical jargon and gestures outside CONTROLS, and protects gameplay-critical semantics. This complements the original 35-label approval and 180-rationale audit checks, rather than silently replacing either.
 
 | Tab | Reviewed | Copy revised | Labels renamed |
 |---|---:|---:|---:|
-| combat | 17 | 8 | 5 |
+| combat | 15 | 6 | 3 |
 | survival | 35 | 16 | 11 |
 | health | 13 | 6 | 6 |
 | master | 20 | 8 | 6 |
@@ -19,7 +21,7 @@ The 182-row signed-off copy inventory is [RC-FINAL-COPY-INDEX-2026-10-19.csv](RC
 | equipment | 4 | 0 | 0 |
 | environment | 6 | 1 | 0 |
 | alife | 2 | 0 | 0 |
-| **Total** | **182** | **104** | **62** |
+| **Total** | **180** | **102** | **60** |
 
 ## Approved gamer-facing label changes
 
@@ -30,7 +32,6 @@ These labels are the full audited rename set. No source identifiers, CFG paths, 
 | Before | RC label |
 |---|---|
 | Human Enemy Gun Damage | **Enemy Gun Damage** |
-| Human Enemy Fire Accuracy | **Enemy Shot Accuracy** |
 | Repeated-Hit Protection - Maximum | **Peak Hit Protection** |
 | Repeated-Hit Protection - Minimum | **Minimum Hit Protection** |
 | Psy Equipment Durability Damage | **Psy Gear Damage** |

@@ -1,16 +1,24 @@
+## 2026-10-20 — CURRENT Combat control retirement (supersedes earlier Attack Frequency / Accuracy UI locks)
+
+**Retired, not replaced:** `combat.npcAttackCooldown` (Enemy Attack Rate / Attack Frequency) and `combat.npcHipAccuracy` (Enemy Shot Accuracy / Fire Accuracy) are no longer part of the playable control catalog, the Human Combat aggregate, any of the twelve shipped presets, or the production CFG writer baseline. These two scalar fields do not represent the full enemy attack-timing and aiming behavior systems; no invented one-knob proxy replaces them. Previously saved presets containing these retired IDs load with those keys ignored and omit them on resave. No generated CFG edit targets `NPCCombatDifficulty.NPC_AttackCooldown` or `NPCCombatDifficulty.HipAccuracyMultiplier` via these retired settings.
+
+**Active Human Enemies editor:** independent X/Y **ENEMY HP** and **ENEMY GUN DAMAGE** plot with exterior axis handles and an interactive joint, plus **one** compact **EXPLOSION DAMAGE** knob. Use the existing 270° knob grammar, neutral references, number-only gold modified values and the same wide/narrow responsive layout. Remove every inactive three-knob/fader/Attack Rate/Accuracy drawing, dependency, help hint and preset migration. Do not stretch the surviving knob to fill the empty bank. All other combat source targets, the Stamina Usage layout conventions, and hover/reset behavior stay unchanged.
+
+**Current authority:** **285** catalog/writer parameters, **180** player-visible controls (**15** Combat), **105** hidden; **12** shipped factory presets with **285** values each; **1230** direct CFG baseline edit points / **215** direct source IDs. The 2026-10-19 copy ledger is reduced to 180 current rows, without rewriting the historical wording decisions for other controls. Previous dated sections below remain design history wherever they conflict with this retirement.
+
 # Combat Control Deep Audit — Active Contract (2026-10-10)
 
-The current Combat catalog contains **30 source dimensions**: **26 confirmed direct mappings** and **4 PSY special routes**. Direct mappings expand to **64 concrete CFG edit points**: **48 difficulty-profile fields** and **16 mutant MaxHP edits**. This document supersedes earlier visible-count and special-writer inventories. Static mapping parity is not an in-game runtime result.
+After the 2026-10-20 retirement, the Combat catalog contains **28 source dimensions**: **24 confirmed direct mappings** and **4 PSY special routes**. Direct mappings expand to **56 concrete CFG edit points**: **40 difficulty-profile fields** and **16 mutant MaxHP edits**. This document supersedes earlier visible-count and special-writer inventories. Static mapping parity is not an in-game runtime result.
 
 ## Active visible controls
 
-The **17 control entries (13 confirmed + 4 PSY runtime-gated)** were an earlier inventory, **not a current on-screen visibility assertion**. The current Combat view filters PSY and Repeated-Hits UI entries; the source parameters remain in catalogs, presets, and CFG writers. The active Human Combat Profile owns Explosion Damage (`combat.explosionDamage`). `BlastDamageBoard` and `MutantCombatPressure` were unreferenced legacy visual families and are removed in the 2026-10-15 cleanup. `combat.mutantDamage` remains a CFG source but is currently suppressed as a standalone UI row; the Mutant Health composite still edits fourteen distinct HP multipliers. The precise Combat visible-editor inventory needs a separate reconciliation pass.
+The **17 control entries (13 confirmed + 4 PSY runtime-gated)** were the pre-retirement inventory, **not a current on-screen visibility assertion**. The current Combat view filters PSY and Repeated-Hits UI entries; the source parameters remain in catalogs, presets, and CFG writers. The active Human Combat Profile owns Explosion Damage (`combat.explosionDamage`). `BlastDamageBoard` and `MutantCombatPressure` were unreferenced legacy visual families and are removed in the 2026-10-15 cleanup. `combat.mutantDamage` remains a CFG source but is currently suppressed as a standalone UI row; the Mutant Health composite still edits fourteen distinct HP multipliers. The precise Combat visible-editor inventory needs a separate reconciliation pass.
 
-Human Attack Frequency (`combat.npcAttackCooldown`) remains functional. Its UI value is a rate multiplier that writes `NPCCombatDifficulty.NPC_AttackCooldown` using `inverseScale`. Human health, gun damage, accuracy, explosion damage, player lethality, repeated-hit protection, PSY and mutant health routes remain otherwise unchanged.
+Human Attack Frequency and Enemy Shot Accuracy are retired; no attack-pacing or shot-accuracy settings remain. Human HP, gun damage, explosion damage, player lethality, repeated-hit protection, PSY and mutant health routes remain otherwise unchanged.
 
 ## Writer evidence
 
-- All 12 direct difficulty scalars/booleans expand to four concrete difficulty edits each (48).
+- All 10 remaining direct difficulty scalars/booleans expand to four concrete difficulty edits each (40).
 - The 14 mutant health parameters cover 16 independent `VitalParams.MaxHP` targets.
 - The four PSY controls target two effects, `SpawnPSYPhantoms` and `SpawnPSYNPC`, through the existing PSY special writer.
 - No two direct Combat parameters own the same concrete writer target.

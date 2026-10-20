@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""RC copy freeze: compare every visible catalog field with the 182-row human review ledger.
+"""RC copy freeze: compare every visible catalog field with the 180-row human review ledger.
 
 Static provenance and UI wiring only; this is not a WPF render or game test.
 """
@@ -16,7 +16,7 @@ CATALOG = ROOT / "src/TrueCustomDifficulty/Data/parameters.json"
 LEDGER = ROOT / "docs/RC-FINAL-COPY-INDEX-2026-10-19.csv"
 SRC = ROOT / "src/TrueCustomDifficulty"
 TAB_COUNTS = {
-    "combat": 17, "survival": 35, "health": 13, "master": 20,
+    "combat": 15, "survival": 35, "health": 13, "master": 20,
     "stamina": 7, "loot": 27, "stashes": 34, "economy": 17,
     "equipment": 4, "environment": 6, "alife": 2,
 }
@@ -42,8 +42,8 @@ def main() -> int:
     catalog = json.loads(CATALOG.read_text(encoding="utf-8"))
     all_params = catalog["parameters"]
     visible = [p for p in all_params if p.get("exposeInUi", True)]
-    demand(len(all_params) == 287 and len(visible) == 182,
-           "current 287/182 catalog boundary changed; re-review all visible copy")
+    demand(len(all_params) == 285 and len(visible) == 180,
+           "current 285/180 catalog boundary changed; re-review all visible copy")
     demand(len({p["id"] for p in all_params}) == len(all_params), "duplicate catalog IDs")
     demand(dict(Counter(p["tab"] for p in visible)) == TAB_COUNTS,
            "visible per-tab inventory drifted; redo RC review")
@@ -52,9 +52,9 @@ def main() -> int:
         reader = csv.DictReader(handle)
         demand(reader.fieldnames == [*FIELDS, "decision"], "review ledger header changed")
         ledger = list(reader)
-    demand(len(ledger) == 182, "not all 182 visible settings have been reviewed")
+    demand(len(ledger) == 180, "not all 180 visible settings have been reviewed")
     by_id = {entry["id"]: entry for entry in ledger}
-    demand(len(by_id) == 182 and len({p["label"] for p in visible}) == 182,
+    demand(len(by_id) == 180 and len({p["label"] for p in visible}) == 180,
            "duplicate IDs or ambiguous visible labels")
     demand({p["id"] for p in visible} == set(by_id), "unreviewed/new/retired visible ID")
 
@@ -139,9 +139,9 @@ def main() -> int:
                "global player-help heading duplicated or removed: " + heading)
     for doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
         text = (ROOT / "docs" / doc).read_text(encoding="utf-8")
-        demand("CURRENT FINAL RC COPY FREEZE — 182 visible controls" in text,
+        demand("CURRENT FINAL RC COPY FREEZE — 180 visible controls" in text,
                doc + ": missing current RC copy authority")
-    print("PASS: reviewed every one of 182 player-visible controls across 11 tabs")
+    print("PASS: reviewed every one of 180 player-visible controls across 11 tabs")
     print("PASS: names, WHAT IT DOES, HIGHER / LOWER and WORKS WITH match copy ledger")
     print("PASS: no developer jargon, duplicate-value explanations or stray gestures")
     print("PASS: independent Priority/Chance/Quantity, Master, mutant, and trader meaning")

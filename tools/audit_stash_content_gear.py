@@ -28,7 +28,7 @@ medical = ["loot.stashMedical" + kind + "Bias" for kind in
 quantity = ["loot.stash" + kind + end + "Count" for kind in
             ("Medkit", "ArmyMedkit") for end in ("Min", "Max")]
 
-assert len(catalog["parameters"]) == baseline["supportedParameterCount"] == 287
+assert len(catalog["parameters"]) == baseline["supportedParameterCount"] == 285
 # A master checkbox is ONE routable source ID, not an extra duplicate.
 # Match exact production dispatch order and require unique members so a
 # superseded Stashes roster cannot silently pass on set equivalence alone.

@@ -10,7 +10,7 @@ catalog = json.loads((ROOT/"src/TrueCustomDifficulty/Data/parameters.json").read
 sources = {p["id"]:p for p in catalog["parameters"]}
 names = matrix["profiles"]
 assert len(names)==len(set(names))==12
-assert len(sources)==matrix["sourceCount"]==287
+assert len(sources)==matrix["sourceCount"]==285
 assert len(matrix["targets"])==49
 assert set(matrix["previousFactoryGitBlobs"])==set(names)
 service=(ROOT/"src/TrueCustomDifficulty/Services/PresetDirectoryService.cs").read_text(encoding="utf-8")
@@ -58,6 +58,6 @@ for index,name in enumerate(names):
                "loot.expensiveStashDrinksChance","loot.expensiveStashGrenadesChance"):
         assert 0<=get(id)<=1,(name,id)
     assert matrix["roleResults"][name]["newChanges"]>=30,name
-print("PASS: 12 factory roles / 287 catalog sources each / 49 curated control dimensions")
+print("PASS: 12 factory roles / 285 catalog sources each / 49 curated control dimensions")
 print("PASS: native bounds, absolute snaps, ordered stages, stash chance, exclusive gear/shuffle, pristine-only migration map")
 print("NOT TESTED: WPF publish, actual .NET preset import, BPatch, Wine or UE gameplay.")

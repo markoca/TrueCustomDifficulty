@@ -2766,7 +2766,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         dc.DrawGeometry(null, pen, new PathGeometry(new[] { figure }));
     }
 
-    // Two independently editable native CFG axes plus two more distinct controls.
+    // Two independently editable native CFG axes plus a separate explosion-damage control.
     // The crosshair is a visual pairing, not an effective DPS, TTK or hit-rate model.
     private static void DrawHumanAxisHandle(
         DrawingContext dc, Point center, Brush accent, Brush panel, bool hovered, bool selected)
@@ -2794,18 +2794,16 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         var health = P("combat.npcHealth");
         var damage = P("combat.npcWeaponDamage");
-        var frequency = P("combat.npcAttackCooldown");
-        var accuracy = P("combat.npcHipAccuracy");
         var explosion = P("combat.explosionDamage");
-        if (health is null || damage is null || frequency is null || accuracy is null || explosion is null)
+        if (health is null || damage is null || explosion is null)
         {
             DrawCenteredText(dc, "Human combat data unavailable.",
                 new Point(ActualWidth / 2.0, 165.0), 10.0, muted, FontWeights.SemiBold);
             return;
         }
 
-        // Tactical Control Console: bounded dual-axis source editor and a compact
-        // three-knob attack bank. The 2D plot still edits the native X/Y CFGs.
+        // Human HP and gun damage stay independent on the two-axis plot.
+        // Explosion damage retains its compact, independent source knob.
         var wide = HumanCombatWide(ActualWidth);
         const double profileWidth = 300.0;
         var bankWidth = Math.Min(802.0, Math.Max(1.0, ActualWidth - 26.0));
@@ -2897,33 +2895,21 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 new Rect(healthX - 18.0, damageY - 18.0, 36.0, 36.0),
                 plot, HitKind.HumanJoint, health.Minimum, health.Maximum, false));
 
-        // Real native multipliers, not synthetic combined stats. All three
-        // controls reuse the project-wide 270-degree source-knob grammar.
-        var knobs = new (ParameterViewModel Source, string Label)[]
-        {
-            (frequency, "ENEMY ATTACK RATE"),
-            (accuracy, "FIRE ACCURACY"),
-            (explosion, "EXPLOSION DAMAGE")
-        };
-        const double knobGap = 10.0;
+        // The only remaining secondary source: explosion damage.
         var knobBankLeft = wide ? profileLeft + profileWidth + 18.0 : bankLeft;
         var knobBankWidth = wide ? bankLeft + bankWidth - knobBankLeft : bankWidth;
-        var knobWidth = Math.Min(170.0, (knobBankWidth - 2.0 * knobGap) / 3.0);
-        var rowWidth = 3.0 * knobWidth + 2.0 * knobGap;
-        var rowLeft = knobBankLeft + (knobBankWidth - rowWidth) / 2.0;
+        var knobWidth = Math.Min(170.0, knobBankWidth);
         var knobTop = wide ? 94.0 : 389.0;
-
-        for (var i = 0; i < knobs.Length; i++)
-            DrawSourceKnob(dc, knobs[i].Source, knobs[i].Label,
-                new Rect(rowLeft + i * (knobWidth + knobGap), knobTop,
-                    knobWidth, 181.0),
-                text, muted, border, accent, panel);
+        DrawSourceKnob(dc, explosion, "EXPLOSION DAMAGE",
+            new Rect(knobBankLeft + (knobBankWidth - knobWidth) / 2.0,
+                knobTop, knobWidth, 181.0),
+            text, muted, border, accent, panel);
     }
 
     private static bool HumanCombatWide(double width) => width >= 790.0;
 
     // Match the responsive knob placement exactly: wide is a paired console,
-    // narrow stacks the three knobs BELOW the axis-labeled profile.
+    // narrow places the explosion knob BELOW the axis-labeled profile.
     private static double HumanCombatBoardHeight(double width)
         => HumanCombatWide(width) ? 366.0 : 589.0;
 
@@ -7500,8 +7486,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             {
                 "combat.npcHealth",
                 "combat.npcWeaponDamage",
-                "combat.npcAttackCooldown",
-                "combat.npcHipAccuracy",
                 "combat.explosionDamage"
             },
             "PlayerWeaponProfile" => new[]

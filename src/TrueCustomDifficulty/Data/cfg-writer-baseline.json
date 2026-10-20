@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.0.5",
-  "supportedParameterCount": 287,
+  "supportedParameterCount": 285,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -392,118 +392,6 @@
       ],
       "key": "Explosion_BaseDamage",
       "sourceRaw": "1.2",
-      "operation": "set",
-      "role": "",
-      "difficultySid": "Stalker"
-    },
-    {
-      "parameterId": "combat.npcAttackCooldown",
-      "scope": "baseGame",
-      "file": "GameData/DifficultyPrototypes.cfg",
-      "prototype": "Easy",
-      "nodePath": [
-        "NPCCombatDifficulty"
-      ],
-      "key": "NPC_AttackCooldown",
-      "sourceRaw": "1.0",
-      "operation": "inverseScale",
-      "role": "",
-      "difficultySid": "Easy"
-    },
-    {
-      "parameterId": "combat.npcAttackCooldown",
-      "scope": "baseGame",
-      "file": "GameData/DifficultyPrototypes.cfg",
-      "prototype": "Medium",
-      "nodePath": [
-        "NPCCombatDifficulty"
-      ],
-      "key": "NPC_AttackCooldown",
-      "sourceRaw": "1.0",
-      "operation": "inverseScale",
-      "role": "",
-      "difficultySid": "Medium"
-    },
-    {
-      "parameterId": "combat.npcAttackCooldown",
-      "scope": "baseGame",
-      "file": "GameData/DifficultyPrototypes.cfg",
-      "prototype": "Hard",
-      "nodePath": [
-        "NPCCombatDifficulty"
-      ],
-      "key": "NPC_AttackCooldown",
-      "sourceRaw": "1.0",
-      "operation": "inverseScale",
-      "role": "",
-      "difficultySid": "Hard"
-    },
-    {
-      "parameterId": "combat.npcAttackCooldown",
-      "scope": "baseGame",
-      "file": "GameData/DifficultyPrototypes.cfg",
-      "prototype": "Stalker",
-      "nodePath": [
-        "NPCCombatDifficulty"
-      ],
-      "key": "NPC_AttackCooldown",
-      "sourceRaw": "1.0",
-      "operation": "inverseScale",
-      "role": "",
-      "difficultySid": "Stalker"
-    },
-    {
-      "parameterId": "combat.npcHipAccuracy",
-      "scope": "baseGame",
-      "file": "GameData/DifficultyPrototypes.cfg",
-      "prototype": "Easy",
-      "nodePath": [
-        "NPCCombatDifficulty"
-      ],
-      "key": "HipAccuracyMultiplier",
-      "sourceRaw": "1.0",
-      "operation": "set",
-      "role": "",
-      "difficultySid": "Easy"
-    },
-    {
-      "parameterId": "combat.npcHipAccuracy",
-      "scope": "baseGame",
-      "file": "GameData/DifficultyPrototypes.cfg",
-      "prototype": "Medium",
-      "nodePath": [
-        "NPCCombatDifficulty"
-      ],
-      "key": "HipAccuracyMultiplier",
-      "sourceRaw": "1.0",
-      "operation": "set",
-      "role": "",
-      "difficultySid": "Medium"
-    },
-    {
-      "parameterId": "combat.npcHipAccuracy",
-      "scope": "baseGame",
-      "file": "GameData/DifficultyPrototypes.cfg",
-      "prototype": "Hard",
-      "nodePath": [
-        "NPCCombatDifficulty"
-      ],
-      "key": "HipAccuracyMultiplier",
-      "sourceRaw": "1.0",
-      "operation": "set",
-      "role": "",
-      "difficultySid": "Hard"
-    },
-    {
-      "parameterId": "combat.npcHipAccuracy",
-      "scope": "baseGame",
-      "file": "GameData/DifficultyPrototypes.cfg",
-      "prototype": "Stalker",
-      "nodePath": [
-        "NPCCombatDifficulty"
-      ],
-      "key": "HipAccuracyMultiplier",
-      "sourceRaw": "1.0",
       "operation": "set",
       "role": "",
       "difficultySid": "Stalker"

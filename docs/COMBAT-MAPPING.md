@@ -1,5 +1,14 @@
 # Combat Mapping
 
+## 2026-10-20 — CURRENT Combat control retirement (supersedes earlier Attack Frequency / Accuracy UI locks)
+
+**Retired, not replaced:** `combat.npcAttackCooldown` (Enemy Attack Rate / Attack Frequency) and `combat.npcHipAccuracy` (Enemy Shot Accuracy / Fire Accuracy) are no longer part of the playable control catalog, the Human Combat aggregate, any of the twelve shipped presets, or the production CFG writer baseline. These two scalar fields do not represent the full enemy attack-timing and aiming behavior systems; no invented one-knob proxy replaces them. Previously saved presets containing these retired IDs load with those keys ignored and omit them on resave. No generated CFG edit targets `NPCCombatDifficulty.NPC_AttackCooldown` or `NPCCombatDifficulty.HipAccuracyMultiplier` via these retired settings.
+
+**Active Human Enemies editor:** independent X/Y **ENEMY HP** and **ENEMY GUN DAMAGE** plot with exterior axis handles and an interactive joint, plus **one** compact **EXPLOSION DAMAGE** knob. Use the existing 270° knob grammar, neutral references, number-only gold modified values and the same wide/narrow responsive layout. Remove every inactive three-knob/fader/Attack Rate/Accuracy drawing, dependency, help hint and preset migration. Do not stretch the surviving knob to fill the empty bank. All other combat source targets, the Stamina Usage layout conventions, and hover/reset behavior stay unchanged.
+
+**Current authority:** **285** catalog/writer parameters, **180** player-visible controls (**15** Combat), **105** hidden; **12** shipped factory presets with **285** values each; **1230** direct CFG baseline edit points / **215** direct source IDs. The 2026-10-19 copy ledger is reduced to 180 current rows, without rewriting the historical wording decisions for other controls. Previous dated sections below remain design history wherever they conflict with this retirement.
+
+
 > **Current inventory:** This document describes the original difficulty-layer Combat map. The 2026-10-09 deep audit covers **30 active Combat parameters**, including 14 mutant-health dimensions / 16 nested `MaxHP` edit points. See [Phase 3 Combat audit](DEEP-CFG-AUDIT-PHASE3-COMBAT-2026-10-09.md) for current catalog/writer checks, special-writer boundaries and open runtime tests; the historical sections below remain as source semantics, not current UI counts.
 
 
@@ -27,7 +36,7 @@ This document records only combat controls that map to fields already present in
 | `NPC_AttackCooldown` | 1.00 | 1.00 | 1.00 | 1.00 |
 | `HipAccuracyMultiplier` | 1.00 | 1.00 | 1.00 | 1.00 |
 
-`NPC_AttackCooldown` and `HipAccuracyMultiplier` are valid fields in every vanilla profile even though vanilla leaves them neutral. They are therefore useful custom-difficulty controls, but they should not be described as vanilla difficulty differences. The UI calls `HipAccuracyMultiplier` **Human Enemy Fire Accuracy** for readability. Starting with v0.1.96, the cooldown field is presented as **Human Attack Frequency**: the UI frequency multiplier is inverted when written (`raw cooldown = vanilla cooldown / UI frequency`) so moving the slider upward always means more frequent attacks.
+`NPC_AttackCooldown` and `HipAccuracyMultiplier` remain documented here as original game-source fields, but neither is an active True Custom Difficulty control as of 2026-10-20. Enemy attack pacing and accuracy depend on deeper gameplay systems and are not represented by these two simple dials.
 
 ## Accumulated incoming-damage handling
 

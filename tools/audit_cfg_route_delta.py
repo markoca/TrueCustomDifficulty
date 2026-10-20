@@ -43,8 +43,8 @@ def main() -> int:
 
     require(old["counts"]["catalog"] == 248 and len(previous) == 248,
             "Frozen 248-source audited inventory changed")
-    require(len(definitions) == baseline["supportedParameterCount"] == 287,
-            "Current catalog must have 287 registered sources")
+    require(len(definitions) == baseline["supportedParameterCount"] == 285,
+            "Current catalog must have 285 registered sources")
     food = {"survival.breadSatiety", "survival.sausageSatiety",
             "survival.cannedFoodSatiety", "survival.milkSatiety"}
     require(len(added) == 39 and food.issubset(added)
@@ -53,7 +53,7 @@ def main() -> int:
             "Frozen 248 -> 35 Stashes + 4 Food direct source boundary drift")
     require(added & direct == food,
             "Only new food satiety effects may add direct source routes")
-    require(len(direct) == 217 and len(baseline["editPoints"]) == 1238,
+    require(len(direct) == 215 and len(baseline["editPoints"]) == 1230,
             "Old direct and new food leaf count drift")
     # Reuse earlier source audit, but prove that the previously verified leaf
     # identities have not drifted. Counts alone can hide silent reassignment.

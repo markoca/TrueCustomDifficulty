@@ -25,11 +25,27 @@ def verify() -> None:
     for point in points:
         grouped[point["parameterId"]].append(point)
 
-    assert len(combat) == 30, f"Combat catalog changed: {len(combat)}"
-    assert len(grouped) == 26, f"Direct Combat parameter count changed: {len(grouped)}"
-    assert len(points) == 64, f"Concrete direct Combat route count changed: {len(points)}"
-    assert sum(e["file"] == "GameData/DifficultyPrototypes.cfg" for e in points) == 48
+    assert len(combat) == 28, f"Combat catalog changed: {len(combat)}"
+    assert len(grouped) == 24, f"Direct Combat parameter count changed: {len(grouped)}"
+    assert len(points) == 56, f"Concrete direct Combat route count changed: {len(points)}"
+    assert sum(e["file"] == "GameData/DifficultyPrototypes.cfg" for e in points) == 40
     assert sum(e["file"] == "GameData/ObjPrototypes.cfg" for e in points) == 16
+
+    # Retired systems are not represented by oversimplified single-source controls.
+    retired = {"combat.npcAttackCooldown", "combat.npcHipAccuracy"}
+    assert retired.isdisjoint(combat) and retired.isdisjoint(grouped), (
+        "Attack pacing or accuracy was reintroduced into shipped Combat routes"
+    )
+    for factory in (ROOT / "src/TrueCustomDifficulty/Presets").glob("*.json"):
+        values = json.loads(factory.read_text(encoding="utf-8"))["values"]
+        assert retired.isdisjoint(values), factory.name + ": retired preset controls"
+    for source in ("Controls/AggregateVisualControl.cs",
+                   "ViewModels/ParameterViewModel.cs",
+                   "ViewModels/MainViewModel.cs"):
+        body = (ROOT / "src/TrueCustomDifficulty" / source).read_text(encoding="utf-8")
+        assert not any(identifier in body for identifier in retired), (
+            source + ": retired control still wired into UI"
+        )
 
     direct_ids = set(grouped)
     special_ids = set(combat) - direct_ids
@@ -106,8 +122,8 @@ def verify() -> None:
         assert all(any(f"[OverrideEffectPrototypeSID={effect}]" in t["path"]
                        for t in targets) for effect in effects)
 
-    print("Combat static contract PASS: 30 controls (26 direct + 4 PSY special),")
-    print("  64 direct routes (48 difficulty fields + 16 nested mutant MaxHP).")
+    print("Combat static contract PASS: 28 sources (24 direct + 4 PSY special),")
+    print("  56 direct routes (40 difficulty fields + 16 nested mutant MaxHP).")
     print("  2 PSY effects / 4 controls; no retired mutant pacing routes.")
     print("  No direct ownership collision, target-path drift or vanilla marker drift.")
     print("NOT VERIFIED: original decoded CFG, BPatch runtime and gameplay effects.")

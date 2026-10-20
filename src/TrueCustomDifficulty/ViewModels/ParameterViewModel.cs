@@ -76,7 +76,7 @@ public sealed class ParameterViewModel : ObservableObject
             {
                 var instruction = VisualAggregateFamily switch
                 {
-                    "HumanCombatProfile" => "Drag the bottom ring for enemy HP, the left ring for enemy gun damage, or the center for both. The three knobs change attack rate, accuracy and explosion damage.",
+                    "HumanCombatProfile" => "Drag the bottom ring for enemy HP, the left ring for enemy gun damage, or the center for both. The Explosion Damage knob changes blast damage separately.",
                     "EquipmentWearBalance" => "Drag the bottom ring for armor durability, the left ring for weapon wear, or the center for both.",
                     "FlycatcherSlowdown" => "Drag the bottom ring to change movement speed, the left ring for turning speed, or the center to adjust both.",
                     "HungerLadder" => "Use the upper tracks for hunger buildup and the well-fed stamina bonus. Move stage markers for hunger penalties, and use the food sliders below to set how many hunger points each item removes.",
@@ -396,8 +396,6 @@ public sealed class ParameterViewModel : ObservableObject
 
         ["combat.npcHealth"] = "HumanCombatProfile",
         ["combat.npcWeaponDamage"] = "HumanCombatProfile",
-        ["combat.npcAttackCooldown"] = "HumanCombatProfile",
-        ["combat.npcHipAccuracy"] = "HumanCombatProfile",
 
         ["combat.playerWeaponDamage"] = "PlayerWeaponProfile",
         ["combat.playerHeadshotMultiplier"] = "PlayerWeaponProfile",
@@ -672,12 +670,9 @@ public sealed class ParameterViewModel : ObservableObject
         && (IsVisualAggregateAnchor || (_dependencyEnabledProvider?.Invoke() ?? true));
     public string ToggleStateLabel => CurrentBoolean ? "ON" : "OFF";
     public double Minimum => Definition.Slider?.Min ?? 0;
-    // Combat UI hard limits: preserve these gameplay-safe maximums even if an old
-    // preset or a future catalog update reintroduces the former 4x / >1x ranges.
+    // Preserve confirmed health bounds in the Combat source editor.
     private double StaticMaximum => Id switch
     {
-        "combat.npcAttackCooldown" => Math.Min(2.0, Definition.Slider?.Max ?? 2.0),
-        "combat.npcHipAccuracy" => Math.Min(1.0, Definition.Slider?.Max ?? 1.0),
         _ when Id.StartsWith("combat.mutantHealth.", StringComparison.Ordinal) =>
             Math.Min(2.0, Definition.Slider?.Max ?? 2.0),
         _ => Definition.Slider?.Max ?? 1.0
@@ -1014,8 +1009,6 @@ public sealed class ParameterViewModel : ObservableObject
             // Combat: keep true scalers as scalers, but say what is being scaled.
             "combat.npcHealth" => Times(CurrentNumber, "HP"),
             "combat.npcWeaponDamage" => Times(CurrentNumber, "gun dmg"),
-            "combat.npcAttackCooldown" => Times(CurrentNumber, "attack rate"),
-            "combat.npcHipAccuracy" => Times(CurrentNumber, "accuracy"),
             "combat.mutantDamage" => Times(CurrentNumber, "hit dmg"),
             "combat.playerWeaponDamage" => Times(CurrentNumber, "weapon dmg"),
             "combat.playerHeadshotMultiplier" => Times(CurrentNumber, "headshot dmg"),

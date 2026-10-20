@@ -29,6 +29,10 @@ internal static class Program
                 Directory.CreateDirectory(_keepRoot);
             }
 
+            Check(!Catalog.Parameters.Any(p => p.Id is "combat.npcAttackCooldown" or "combat.npcHipAccuracy"),
+                "Retired human attack-pacing and accuracy settings must not ship in the catalog");
+            Check(!Source.EditPoints.Any(p => p.ParameterId is "combat.npcAttackCooldown" or "combat.npcHipAccuracy"),
+                "Retired settings must not have writer edit points");
             TestMutantHitDamageReferenceMarkers();
 
             Case("Master-no-changes", "Master", _ => { }, (_, result) =>
@@ -61,8 +65,8 @@ internal static class Program
                         "PSY-only patch unexpectedly added mutant branch");
                 });
 
-            // Phase 5: prove live UI VM values reach all 52 difficulty-specific
-            // direct edit routes, including human attack pacing, toggles and
+            // Phase 5: prove live UI VM values reach remaining difficulty-specific
+            // direct edit routes, including human HP/damage, toggles and
             // value-ordered repeated-hit sliders.
             foreach (var difficulty in new[] { "Novice", "Stalker", "Veteran", "Master" })
             {
@@ -169,8 +173,6 @@ internal static class Program
     [
         new("combat.npcHealth", "NPCCombatDifficulty", "NPC_HP", "set", 1.7),
         new("combat.npcWeaponDamage", "NPCCombatDifficulty", "NPC_Weapon_BaseDamage", "set", 1.7),
-        new("combat.npcAttackCooldown", "NPCCombatDifficulty", "NPC_AttackCooldown", "inverseScale", 1.5),
-        new("combat.npcHipAccuracy", "NPCCombatDifficulty", "HipAccuracyMultiplier", "set", 0.5),
         new("combat.explosionDamage", "EnvironmentDifficulty", "Explosion_BaseDamage", "set", 1.5),
         new("combat.playerWeaponDamage", "EnvironmentDifficulty", "Weapon_BaseDamage", "set", 1.25),
         new("combat.playerHeadshotMultiplier", "NPCCombatDifficulty", "PlayerWeapon_HeadshotMultiplier", "set", 4.0),

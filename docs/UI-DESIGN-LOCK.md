@@ -1,8 +1,20 @@
+## 2026-10-20 — CURRENT Combat control retirement (supersedes earlier Attack Frequency / Accuracy UI locks)
+
+**Retired, not replaced:** `combat.npcAttackCooldown` (Enemy Attack Rate / Attack Frequency) and `combat.npcHipAccuracy` (Enemy Shot Accuracy / Fire Accuracy) are no longer part of the playable control catalog, the Human Combat aggregate, any of the twelve shipped presets, or the production CFG writer baseline. These two scalar fields do not represent the full enemy attack-timing and aiming behavior systems; no invented one-knob proxy replaces them. Previously saved presets containing these retired IDs load with those keys ignored and omit them on resave. No generated CFG edit targets `NPCCombatDifficulty.NPC_AttackCooldown` or `NPCCombatDifficulty.HipAccuracyMultiplier` via these retired settings.
+
+**Active Human Enemies editor:** independent X/Y **ENEMY HP** and **ENEMY GUN DAMAGE** plot with exterior axis handles and an interactive joint, plus **one** compact **EXPLOSION DAMAGE** knob. Use the existing 270° knob grammar, neutral references, number-only gold modified values and the same wide/narrow responsive layout. Remove every inactive three-knob/fader/Attack Rate/Accuracy drawing, dependency, help hint and preset migration. Do not stretch the surviving knob to fill the empty bank. All other combat source targets, the Stamina Usage layout conventions, and hover/reset behavior stay unchanged.
+
+**Current authority:** **285** catalog/writer parameters, **180** player-visible controls (**15** Combat), **105** hidden; **12** shipped factory presets with **285** values each; **1230** direct CFG baseline edit points / **215** direct source IDs. The 2026-10-19 copy ledger is reduced to 180 current rows, without rewriting the historical wording decisions for other controls. Previous dated sections below remain design history wherever they conflict with this retirement.
+
+## CURRENT FINAL RC COPY FREEZE — 180 visible controls
+
+## CURRENT RC rationale readability lock (180 visible)
+
 ## 2026-10-19 — RC detail-pane redundancy cleanup
 
 The per-parameter right-hand help pane ends after the single `CONTROLS` guide. Remove the repeated `TabSummary` footer from that pane: the selected tab already establishes context, while `WHAT IT DOES`, conditional value semantics, `WORKS WITH`, and `CONTROLS` provide specific guidance. Keep all gameplay caveats and the 182-entry frozen copy ledger intact. This is a layout-only text removal, not a change to controls, CFG routes or source semantics. WPF visual acceptance remains pending.
 
-## 2026-10-19 — CURRENT FINAL RC COPY FREEZE — 182 visible controls
+## 2026-10-19 — HISTORICAL FINAL RC COPY FREEZE — 182 visible controls
 
 **Authoritative RC wording:** all **182** exposed parameter labels, WHAT IT DOES rationales, HIGHER / LOWER notes and WORKS WITH notes are reviewed in `docs/RC-FINAL-COPY-INDEX-2026-10-19.csv` and enforced against `src/TrueCustomDifficulty/Data/parameters.json` by `tools/audit_rc_final_copy.py`. Exactly **104** of the visible controls received copy cleanup, including **62** shorter or more accurate labels. Previous copy and naming lists lower in this document are historical where superseded by this heading.
 
