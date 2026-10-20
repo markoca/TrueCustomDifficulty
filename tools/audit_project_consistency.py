@@ -1973,8 +1973,8 @@ if "_loadedPresetName = string.IsNullOrWhiteSpace(preset.Name)" not in _build_vm
     _build_name_errors.append("successful preset load does not capture preset name")
 if "TrueCustomDifficulty_P.pak" in _build_vm_text or "TrueCustomDifficulty_P.utoc" in _build_vm_text or "TrueCustomDifficulty_P.ucas" in _build_vm_text:
     _build_name_errors.append("build dialog still advertises retired static triplet names")
-if ('string.Join("\\n", installedFiles.Select(Path.GetFileName))' not in _build_vm_text
-    or '_modDeploymentService.Install(modsFolder!, result.Files)' not in _build_vm_text):
+if ('string.Join("\\n", result.Files.Select(Path.GetFileName))' not in _build_vm_text
+    or '_modBuildService.Build(this, _catalog, _gameInstall, modsFolder!, progress)' not in _build_vm_text):
     _build_name_errors.append("build dialog does not report actually installed final triplet files")
 
 if _build_name_errors:
@@ -5370,16 +5370,28 @@ if any(t not in _tcd_settings_xaml for t in ('~mods folder', 'Click="Browse_Clic
 if 'new SettingsWindow(settings.LoadPath())' not in _tcd_window_code:
     fail("Settings footer action not connected")
 if any(t not in _tcd_settings_service for t in (
-        '"user-settings.json"', 'JsonSerializer.Deserialize', 'File.Move(temp, SettingsPath, overwrite: true)',
+        '"user-settings.json"', 'JsonSerializer.Deserialize', 'File.Move(temp, destination, overwrite: true)',
+        'Environment.SpecialFolder.LocalApplicationData', 'SaveForCurrentUser(json)',
         'string.Equals(Path.GetFileName(full), "~mods"', 'Directory.Exists(full)')):
-    fail("Portable ~mods persistence / strict directory validation drifted")
+    fail("Portable/LocalAppData ~mods persistence or strict directory validation drifted")
 if any(t not in _tcd_deployment for t in (
         'ValidateBuiltFiles(builtFiles)', 'IsOwnedFile(existing)', 'File.Copy(file, staged)',
         'File.Move(existing, backup)', 'File.Move(backup, original)', 'files.Count == 0')):
     fail("Owned triplet staging / rollback / no-difference uninstall drifted")
-if any(t not in _tcd_build_vm for t in (
-        '_modDestinationSettings.RequireConfiguredPath()', '_modDeploymentService.Install(modsFolder!, result.Files)')):
-    fail("Build must require configured ~mods and install generated outputs")
+if '_modDestinationSettings.RequireConfiguredPath()' not in _tcd_build_vm:
+    fail("Build must require configured ~mods before packing")
+_tcd_builder = (ROOT / "src/TrueCustomDifficulty/Services/ModBuildService.cs").read_text(encoding="utf-8")
+if any(t not in _tcd_builder for t in (
+        '_deployment.Install(modsFolder, expected)',
+        '_deployment.Install(modsFolder, Array.Empty<string>())',
+        'ModDestinationSettingsService.ValidatePath(configuredModsFolder)')):
+    fail("Build worker must install validated temp triplets directly into configured ~mods")
+if any(t in _tcd_builder for t in (
+        'Path.Combine(AppContext.BaseDirectory, "Output")',
+        'new BuildProgressUpdate(4, "PUBLISHING OUTPUT")',
+        'new BuildProgressUpdate(4, "CLEARING OUTPUT")',
+        'CommitTriplet(', 'ReplaceOutputWithEmptyDirectory(')):
+    fail("Persistent application Output build state returned")
 if any('Footer Settings and direct ~mods difficulty installation' not in (DOCS / f).read_text(encoding="utf-8")
        for f in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md")):
     fail("UI design catalogs missing ~mods build destination contract")
@@ -5427,7 +5439,7 @@ for _needed in (
     if _needed not in _game_install_locator:
         fail("Game-install discovery fallback or DLC source detection drifted: " + _needed)
 _tcd_destination_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
-if "_modDestinationSettings.RequireConfiguredPath()" not in _tcd_destination_vm or "_modDeploymentService.Install(modsFolder!, result.Files)" not in _tcd_destination_vm:
+if "_modDestinationSettings.RequireConfiguredPath()" not in _tcd_destination_vm or "_modBuildService.Build(this, _catalog, _gameInstall, modsFolder!, progress)" not in _tcd_destination_vm:
     fail("Build Difficulty lost explicit user-selected ~mods deployment")
 for _catalog in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
     if "Remove unused game install path/provenance metadata" not in (DOCS / _catalog).read_text(encoding="utf-8"):

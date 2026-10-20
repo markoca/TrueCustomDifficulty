@@ -151,7 +151,7 @@ fi
 
 # Replace published *runtime artifacts*, not the published directory itself.
 # Removing and recreating the directory breaks open Dolphin tabs and destroys
-# user-supplied tools, customized Presets and previously built Output packages.
+# user-supplied tools, customized Presets and any legacy Output packages.
 if [[ -L "$PUBLISH_DIR" ]]; then
     echo "ERROR: Refusing to publish into a symlink: $PUBLISH_DIR" >&2
     exit 1
@@ -211,7 +211,7 @@ for name in "${RUNTIME_NAMES[@]}"; do
     INSTALLED_NAMES+=("$name")
 done
 
-mkdir -p -- "$PUBLISH_DIR/tools" "$PUBLISH_DIR/Presets" "$PUBLISH_DIR/Output"
+mkdir -p -- "$PUBLISH_DIR/tools" "$PUBLISH_DIR/Presets"
 # Seed user-facing documentation like Localization Workbench. Preserve an
 # existing user-edited README and never overwrite supplied repak/retoc binaries.
 if [[ ! -e "$PUBLISH_DIR/tools/README.txt" ]]; then

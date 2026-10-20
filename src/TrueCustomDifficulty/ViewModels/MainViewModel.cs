@@ -14,7 +14,6 @@ public sealed class MainViewModel : ObservableObject
     private readonly PresetService _presetService = new();
     private readonly PresetDirectoryService _presetDirectoryService = new();
     private readonly ModBuildService _modBuildService = new();
-    private readonly ModDeploymentService _modDeploymentService = new();
     private readonly ModDestinationSettingsService _modDestinationSettings = new();
     private readonly GameInstallInfo? _gameInstall;
     private string _selectedReferenceDifficulty;
@@ -1773,7 +1772,6 @@ public sealed class MainViewModel : ObservableObject
             return;
 
         ModBuildResult? result = null;
-        IReadOnlyList<string>? installedFiles = null;
         string? modsFolder = null;
         Exception? buildError = null;
 
@@ -1803,12 +1801,7 @@ public sealed class MainViewModel : ObservableObject
             // No expensive CFG writing, repak, retoc or file deployment work
             // may block the WPF dispatcher during a build.
             result = await Task.Run(() =>
-                _modBuildService.Build(this, _catalog, _gameInstall, progress));
-
-            BuildProgressStep = 5;
-            BuildProgressLabel = "INSTALLING";
-            installedFiles = await Task.Run(() =>
-                _modDeploymentService.Install(modsFolder!, result.Files));
+                _modBuildService.Build(this, _catalog, _gameInstall, modsFolder!, progress));
 
             BuildProgressStep = 6;
             BuildProgressLabel = "COMPLETE";
@@ -1837,7 +1830,7 @@ public sealed class MainViewModel : ObservableObject
             return;
         }
 
-        if (result is null || modsFolder is null || installedFiles is null)
+        if (result is null || modsFolder is null)
             return;
 
         if (!result.HasMod)
@@ -1857,7 +1850,7 @@ public sealed class MainViewModel : ObservableObject
             $"{result.ParameterCount} modified control(s)\n" +
             $"{result.EditCount} concrete CFG edit(s)\n\n" +
             $"Installed to:\n{modsFolder}\n\n" +
-            string.Join("\n", installedFiles.Select(Path.GetFileName)),
+            string.Join("\n", result.Files.Select(Path.GetFileName)),
             AppName,
             MessageBoxButton.OK,
             MessageBoxImage.Information);

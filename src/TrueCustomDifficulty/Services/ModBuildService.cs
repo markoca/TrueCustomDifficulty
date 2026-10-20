@@ -8,7 +8,8 @@ namespace TrueCustomDifficulty.Services;
 /// <summary>
 /// End-to-end player build pipeline:
 /// current UI state -> temporary minimal BPatch CFG tree -> repak .pak ->
-/// retoc companion IoStore container -> final .pak/.utoc/.ucas triplet in Output/.
+/// retoc companion IoStore container -> validated .pak/.utoc/.ucas triplet
+/// installed directly into the configured game ~mods folder.
 ///
 /// Third-party executables are never bundled or downloaded by the application.
 /// repak and retoc must be supplied by the user in the tools directory beside the app.
@@ -22,14 +23,16 @@ public sealed class ModBuildService
 
     private readonly CfgPatchWriterService _cfgWriter = new();
     private readonly ExternalToolsService _tools = new();
+    private readonly ModDeploymentService _deployment = new();
 
     public ModBuildResult Build(
         MainViewModel vm,
         ParameterCatalog catalog,
         GameInstallInfo? gameInstall,
+        string configuredModsFolder,
         IProgress<BuildProgressUpdate>? progress = null)
     {
-        var outputDirectory = Path.Combine(AppContext.BaseDirectory, "Output");
+        var modsFolder = ModDestinationSettingsService.ValidatePath(configuredModsFolder);
         var workRoot = Path.Combine(
             Path.GetTempPath(),
             "TrueCustomDifficulty",
@@ -47,16 +50,19 @@ public sealed class ModBuildService
 
             if (cfgResult.FileCount == 0)
             {
-                progress?.Report(new BuildProgressUpdate(4, "CLEARING OUTPUT"));
-                ReplaceOutputWithEmptyDirectory(outputDirectory);
-                progress?.Report(new BuildProgressUpdate(5, "INSTALLING"));
+                // No persistent build-output directory exists. An unchanged
+                // build means uninstall only our previous root-level triplet.
+                progress?.Report(new BuildProgressUpdate(4, "INSTALLING"));
+                var installedFiles = _deployment.Install(modsFolder, Array.Empty<string>());
+                progress?.Report(new BuildProgressUpdate(5, "VERIFYING INSTALL"));
                 return new ModBuildResult
                 {
-                    OutputDirectory = outputDirectory,
+                    OutputDirectory = modsFolder,
                     HasMod = false,
                     PatchFileCount = 0,
                     ParameterCount = 0,
-                    EditCount = 0
+                    EditCount = 0,
+                    Files = installedFiles
                 };
             }
 
@@ -84,19 +90,17 @@ public sealed class ModBuildService
 
             progress?.Report(new BuildProgressUpdate(3, "VERIFYING PACKAGE"));
             ValidateTriplet(expected);
-            progress?.Report(new BuildProgressUpdate(4, "PUBLISHING OUTPUT"));
-            CommitTriplet(outputDirectory, expected);
-            progress?.Report(new BuildProgressUpdate(5, "INSTALLING"));
 
-            var finalFiles = expected
-                .Select(path => Path.GetFileName(path))
-                .Where(name => !string.IsNullOrWhiteSpace(name))
-                .Select(name => Path.Combine(outputDirectory, name!))
-                .ToList();
+            // The complete triplet exists only in this temporary work root
+            // until deployment atomically replaces our owned files in ~mods.
+            progress?.Report(new BuildProgressUpdate(4, "INSTALLING"));
+            var finalFiles = _deployment.Install(modsFolder, expected);
+            progress?.Report(new BuildProgressUpdate(5, "VERIFYING INSTALL"));
+            ValidateTriplet(finalFiles);
 
             return new ModBuildResult
             {
-                OutputDirectory = outputDirectory,
+                OutputDirectory = modsFolder,
                 HasMod = true,
                 PatchFileCount = cfgResult.FileCount,
                 ParameterCount = cfgResult.ParameterCount,
@@ -262,89 +266,6 @@ public sealed class ModBuildService
         throw new InvalidDataException(
             "Packing did not produce a complete .pak/.utoc/.ucas triplet." + Environment.NewLine +
             string.Join(Environment.NewLine, messages));
-    }
-
-    private static void CommitTriplet(string outputDirectory, IReadOnlyList<string> sourceFiles)
-    {
-        var baseDirectory = AppContext.BaseDirectory;
-        var candidateDirectory = Path.Combine(
-            baseDirectory,
-            ".tcd-output-" + Guid.NewGuid().ToString("N"));
-        var backupDirectory = Path.Combine(
-            baseDirectory,
-            ".tcd-output-backup-" + Guid.NewGuid().ToString("N"));
-
-        Directory.CreateDirectory(candidateDirectory);
-
-        try
-        {
-            foreach (var source in sourceFiles)
-            {
-                var name = Path.GetFileName(source);
-                if (string.IsNullOrWhiteSpace(name))
-                    throw new InvalidDataException($"Invalid packed output path: {source}");
-
-                File.Copy(source, Path.Combine(candidateDirectory, name), overwrite: true);
-            }
-
-            var hadPreviousOutput = Directory.Exists(outputDirectory);
-            if (hadPreviousOutput)
-                Directory.Move(outputDirectory, backupDirectory);
-
-            try
-            {
-                Directory.Move(candidateDirectory, outputDirectory);
-            }
-            catch
-            {
-                if (hadPreviousOutput && Directory.Exists(backupDirectory) && !Directory.Exists(outputDirectory))
-                    Directory.Move(backupDirectory, outputDirectory);
-                throw;
-            }
-
-            TryDeleteDirectory(backupDirectory);
-        }
-        finally
-        {
-            TryDeleteDirectory(candidateDirectory);
-        }
-    }
-
-    private static void ReplaceOutputWithEmptyDirectory(string outputDirectory)
-    {
-        var baseDirectory = AppContext.BaseDirectory;
-        var candidateDirectory = Path.Combine(
-            baseDirectory,
-            ".tcd-output-empty-" + Guid.NewGuid().ToString("N"));
-        var backupDirectory = Path.Combine(
-            baseDirectory,
-            ".tcd-output-backup-" + Guid.NewGuid().ToString("N"));
-
-        Directory.CreateDirectory(candidateDirectory);
-
-        try
-        {
-            var hadPreviousOutput = Directory.Exists(outputDirectory);
-            if (hadPreviousOutput)
-                Directory.Move(outputDirectory, backupDirectory);
-
-            try
-            {
-                Directory.Move(candidateDirectory, outputDirectory);
-            }
-            catch
-            {
-                if (hadPreviousOutput && Directory.Exists(backupDirectory) && !Directory.Exists(outputDirectory))
-                    Directory.Move(backupDirectory, outputDirectory);
-                throw;
-            }
-
-            TryDeleteDirectory(backupDirectory);
-        }
-        finally
-        {
-            TryDeleteDirectory(candidateDirectory);
-        }
     }
 
     private static void TryDeleteDirectory(string? path)

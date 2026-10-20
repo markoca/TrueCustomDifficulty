@@ -78,21 +78,24 @@ for stage, label in [
     (1, "PACKING PAK"),
     (2, "BUILDING IOSTORE"),
     (3, "VERIFYING PACKAGE"),
-    (4, "PUBLISHING OUTPUT"),
-    (5, "INSTALLING"),
+    (4, "INSTALLING"),
+    (5, "VERIFYING INSTALL"),
 ]:
     assert f'new BuildProgressUpdate({stage}, "{label}")' in builder, label
-assert 'new BuildProgressUpdate(4, "CLEARING OUTPUT")' in builder
-assert 'progress?.Report(new BuildProgressUpdate(5, "INSTALLING"));' in builder
 assert "RunRepak(repakPath, stagingRoot, pakPath);" in builder
 assert "RunRetoc(retocPath, stagingRoot, utocPath);" in builder
-assert "CommitTriplet(outputDirectory, expected);" in builder
+assert "_deployment.Install(modsFolder, expected)" in builder
+assert "_deployment.Install(modsFolder, Array.Empty<string>())" in builder
+assert 'Path.Combine(AppContext.BaseDirectory, "Output")' not in builder
+assert 'new BuildProgressUpdate(4, "PUBLISHING OUTPUT")' not in builder
+assert 'new BuildProgressUpdate(4, "CLEARING OUTPUT")' not in builder
+assert "CommitTriplet(" not in builder and "ReplaceOutputWithEmptyDirectory(" not in builder
 
 assert "private async Task BuildAsync()" in vm and "if (IsBuilding)" in vm
 assert "new Progress<BuildProgressUpdate>" in vm
 assert "await Task.Run(() =>" in vm
-assert "_modBuildService.Build(this, _catalog, _gameInstall, progress)" in vm
-assert "_modDeploymentService.Install(modsFolder!, result.Files)" in vm
+assert "_modBuildService.Build(this, _catalog, _gameInstall, modsFolder!, progress)" in vm
+assert "_modDeploymentService" not in vm
 assert "update.CompletedStages < BuildProgressStep" in vm
 assert "IsBuilding = false;" in vm
 assert 'BuildProgressLabel = "WRITING CFG";' in vm

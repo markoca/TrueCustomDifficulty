@@ -37,7 +37,7 @@ if ! command -v wine >/dev/null 2>&1; then
 fi
 
 # Publish into an isolated, temporary directory. Do not write into the app's
-# portable publish/win-x64 directory or touch its tools/Presets/Output state.
+# portable publish/win-x64 directory or touch its tools/Presets/legacy Output state.
 OUTPUT="$(mktemp -d "${TMPDIR:-/tmp}/tcd-${TEST_NAME}-wine.XXXXXX")"
 trap 'rm -rf -- "$OUTPUT"' EXIT
 
