@@ -82,16 +82,20 @@ for name, expected in families.items():
 assert set(stash) == set(rewards + mix + medical + bonus)
 # Medical Weight is never a fabricated four-medical-item selection.
 assert 'DrawStashMedicalPairShares(dc,' in ui
-assert '_medicalWeightRankTargets.Add((rect, rank));' in ui
+assert '_medicalWeightRankTargets.Add((rect, rank));' not in ui
+assert '_medicalWeightPreviewRank' not in ui
+assert '_medicalWeightHoveredRank' not in ui
 assert ui.count('visualMaximum: 1.0') == 3
-assert '_medicalWeightPreviewRank = rank.Rank;' in ui
+assert 'var group = groups[0];' in ui
+assert 'groups.Length != 1' in ui
 assert '"ANTI-RAD · PRIORITY"' in ui
 assert 'var shareWidth = Math.Max(1.0, innerWidth * .64);' in ui
 assert 'DrawStashAntiRadWeightSwitch(dc,' in ui
 assert '_stashMedicalShowChance' not in ui
 assert '"DROP ROLLS · CHANCE %"' in ui
 assert 'g.Prototype == "StashMedicine_Smart"' in ui
-assert 'g.RankIndex is 2 or 3' in ui
+assert 'g.Field == "Weight" && g.RankIndex == 2' in ui
+assert 'g.RankIndex is 2 or 3' not in ui
 assert 'group.EffectiveSelection(StashPreviewBaseline.Value, state,' in ui
 assert 'AddHorizontalTarget(p, rect, rect, value, value);' in ui
 assert 'target.Parameter.Id == "loot.stashMedicalAntiRadBias"' in ui
@@ -168,6 +172,8 @@ assert 'UpdateStashChanceTooltip(point);' in ui
 assert '100% keeps each item\'s original Chance.' in ui
 assert 'per-entry Chance for Rare Coupons' in ui
 assert 'NATIVE shows actual resulting Chance' not in pvm
+assert 'DrawStashChanceTier(dc, "STANDARD STASH", "Medium", 10,' in ui
+assert 'DrawStashChanceTier(dc, "RARE STASH", "Expensive", 19,' in ui
 content_body = ui.split("private void DrawStashContentMix(", 1)[1].split("private void DrawStashMedicalComposition(", 1)[0]
 tier_body = read(src / "Controls/AggregateVisualControl.StashBranch.cs").split("private void DrawStashChanceTier(", 1)[1]
 assert '"NATIVE' not in tier_body, "Standard/Rare Chance renderer reintroduced a NATIVE label/value"

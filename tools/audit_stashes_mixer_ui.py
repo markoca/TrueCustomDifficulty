@@ -121,14 +121,14 @@ for medical_id in ("loot.stashMedkitMinCount", "loot.stashMedkitMaxCount",
     entry = next(p for p in catalog["parameters"] if p["id"] == medical_id)
     assert "MAX" in entry["interaction"] and "MIN" in entry["interaction"]
 assert 'var shareWidth = Math.Max(1.0, innerWidth * .64);' in medical
-assert '_medicalWeightRankTargets.Clear();' in medical
+assert '_medicalWeightRankTargets.Clear();' not in source
 assert 'innerWidth - shareWidth - gap' in medical
 assert 'previewTop + 2.0' in medical
-assert 'var group = groups.Single(g => g.RankIndex == _medicalWeightPreviewRank);' in pair
-assert 'const double rankWidth = 62.0;' in pair
+assert 'g.Field == "Weight" && g.RankIndex == 2' in pair
+assert 'const double rankWidth = 62.0;' not in pair
 assert 'var rail = new Rect(outer.Left + 9.0, outer.Top + 28.0,' in pair
 assert 'for (var i = 0; i < groups.Length; i++)' not in pair
-assert '_medicalWeightRankTargets.Add((rect, rank));' in pair
+assert '_medicalWeightRankTargets.Add((rect, rank));' not in source
 assert 'var medkitShare = total > Epsilon ? medkit / total : 0.0;' in pair
 assert 'DrawStashAntiRadWeightSwitch(dc,' in medical
 assert '"ANTI-RAD · PRIORITY"' in anti_weight
@@ -138,8 +138,11 @@ assert 'var dialMaximum = visualMaximum ?? parameter.Maximum;' in source
 assert source.count('visualMaximum: 1.0') == 3
 assert 'IsMedicalPriorityWeight(target.Parameter)' in source
 assert 'IsMedicalPriorityWeight(_selectedParameter)' in source
-assert '_medicalWeightPreviewRank = rank.Rank;' in source
-assert 'hoveredRank != _medicalWeightHoveredRank' in source
+assert '_medicalWeightPreviewRank' not in source
+assert '_medicalWeightHoveredRank' not in source
+assert '_medicalWeightRankTargets' not in source
+assert 'var group = groups[0];' in pair
+assert 'groups.Length != 1' in pair
 for pid in ("loot.stashMedicalBandageBias", "loot.stashMedicalMedkitBias",
             "loot.stashMedicalArmyMedkitBias"):
     entry = next(p for p in catalog["parameters"] if p["id"] == pid)
@@ -157,7 +160,7 @@ assert 'DrawSourceKnob(dc, P("loot.stashMedicalBandageBias")' in medical
 assert 'DrawSourceKnob(dc, P("loot.stashMedicalMedkitBias")' in medical
 assert 'DrawSourceKnob(dc, P("loot.stashMedicalArmyMedkitBias")' in medical
 assert 'g.Prototype == "StashMedicine_Smart"' in pair
-assert 'g.RankIndex is 2 or 3' in pair
+assert 'g.RankIndex is 2 or 3' not in pair
 assert 'group.EffectiveSelection(StashPreviewBaseline.Value, state,' in pair
 assert 'group.Items.Single(item => item.ItemSid == sid)' in pair
 assert 'StashMedicalPalette[1]' in pair and 'StashMedicalPalette[2]' in pair
@@ -234,11 +237,14 @@ assert "DrawStashNumericReadout" not in preview
 assert "MULTIPLIERS, NOT DROP ODDS" not in source
 assert "weights.Sum()" not in preview # normalized six source multipliers retired
 assert 'DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeChance",' in content
-assert 'DrawStashChanceTier(dc, "STANDARD", "Medium", 10,' in content
+assert 'DrawStashChanceTier(dc, "STANDARD STASH", "Medium", 10,' in content
+assert 'DrawStashChanceTier(dc, "RARE STASH", "Expensive", 19,' in content
+assert 'DrawStashChanceTier(dc, "STANDARD", "Medium", 10,' not in content
+assert 'DrawStashChanceTier(dc, "RARE", "Expensive", 19,' not in content
 assert "wide ? 441.0 : 595.0, width," in content
-assert "wide ? 140.0 : 236.0" in content
-assert "wide ? 589.0 : 839.0, width," in content
-assert "wide ? 236.0 : 332.0" in content
+assert "wide ? 122.0 : 200.0" in content
+assert "wide ? 571.0 : 803.0, width," in content
+assert "wide ? 200.0 : 278.0" in content
 assert "wide ? 295.0 : 449.0, width, 74.0" in content
 assert "var pairTop = wide ? 377.0 : 531.0;" in content
 assert '"WEIGHT APPLIES TO ALL TIERS"' not in content
@@ -257,7 +263,8 @@ assert "percentage: false" in content
 assert source.count("new SolidColorBrush(Color.FromRgb(") >= 6
 assert 'StashPreviewGroup("BASIC", 1)' in preview
 assert 'StashPreviewGroup("BASIC", 7)' in preview  # retained only in dormant source-inspection helper
-assert 'DrawStashPoolBar(dc, hard, "VETERAN"' in coverage
+assert 'DrawStashPoolBar(dc, hard, string.Empty, inner,' in coverage
+assert 'DrawStashPoolBar(dc, hard, "VETERAN"' not in coverage
 assert 'StashPreviewGroup("RARE", 11)' not in preview  # chance only, never a weight pool
 assert "StashChanceSample(" in preview
 assert '"SOURCE CHANCE FIELDS"' in preview
@@ -361,9 +368,9 @@ assert mixer_match is not None, "missing StashContentMix mixer"
 assert tuple(map(float, height_match.groups())) == (700.0, 839.0, 1185.0)
 assert tuple(map(float, mixer_match.groups())) == (141.0, 146.0, 300.0)
 assert "wide ? 441.0 : 595.0, width," in content
-assert "wide ? 140.0 : 236.0" in content
-assert "wide ? 589.0 : 839.0, width," in content
-assert "wide ? 236.0 : 332.0" in content
+assert "wide ? 122.0 : 200.0" in content
+assert "wide ? 571.0 : 803.0, width," in content
+assert "wide ? 200.0 : 278.0" in content
 assert "wide ? 295.0 : 449.0, width, 74.0" in content
 assert "var pairTop = wide ? 377.0 : 531.0;" in content
 assert '"WEIGHT APPLIES TO ALL TIERS"' not in content
@@ -556,11 +563,13 @@ assert '"NOVICE / STALKER"' not in native_preview_method
 assert 'rankCaption: "RANK: EXPERIENCED"' not in native_preview_method
 assert 'StashPreviewGroup("BASIC", 7)' not in native_preview_method
 assert 'StashPreviewGroup("BASIC", 1)' in native_preview_method
-assert 'DrawStashPoolBar(dc, hard, "VETERAN"' in native_preview_method
+assert 'DrawStashPoolBar(dc, hard, string.Empty, inner,' in native_preview_method
+assert 'DrawStashPoolBar(dc, hard, "VETERAN"' not in native_preview_method
 assert '"EASY/MEDIUM · EXPERIENCED"' not in coverage
 assert 'CreateText(label, 11.4, text' in coverage
 assert 'GlobalStashCategoryNames[kind], 10.2, text,' in coverage
 assert 'CreateText("NATIVE " + currentText, 10.4,' in coverage
+assert 'var compactOffset = string.IsNullOrWhiteSpace(caption) ? -8.0 : 0.0;' in source
 assert "row.Width < 440.0 ? 9.6 : 10.8" in source
 assert "row.Width >= 580.0 ? 10.0 : 8.9" in source
 
@@ -683,7 +692,8 @@ assert "var vanillaValues = rows.Select(" not in tier_preview
 assert "OnBindingChanged" in source and "Loaded += (_, _) => RebindParameters();" in source
 assert "CurrentNumber =" not in tier_preview
 assert "DrawStashNativeRollControl(" in coverage
-assert 'DrawStashPoolBar(dc, hard, "VETERAN"' in coverage
+assert 'DrawStashPoolBar(dc, hard, string.Empty, inner,' in coverage
+assert 'DrawStashPoolBar(dc, hard, "VETERAN"' not in coverage
 assert '"NOVICE / STALKER"' not in coverage
 assert 'StashPreviewGroup("BASIC", 1)' in coverage
 assert "dialAccent: StashMixPalette[kind], dialScale: .74" in coverage

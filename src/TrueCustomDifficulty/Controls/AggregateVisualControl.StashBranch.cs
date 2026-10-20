@@ -285,7 +285,7 @@ public sealed partial class AggregateVisualControl
             10.6, text, FontWeights.Bold);
         var inner = new Rect(outer.Left + 12.0, outer.Top + 21.0,
             Math.Max(1.0, outer.Width - 24.0), 43.0);
-        DrawStashPoolBar(dc, hard, "VETERAN", inner,
+        DrawStashPoolBar(dc, hard, string.Empty, inner,
             text, muted, border);
     }
 

@@ -1,3 +1,13 @@
+## 2026-10-20 — CURRENT Stashes preview and tier labels (supersedes earlier rank-toggle UI)
+
+**BASIC · LOOT PREVIEW:** retain exactly the existing read-only hard-difficulty Basic source pool (medical/food/drinks) and its true within-pool Weight shares. Remove the **VETERAN** text above the stacked bar; keep the color bar and item/share legend, nudged upward into the available space. No rank or difficulty picker and no invented loot odds.
+
+**Tier panels:** caption **STANDARD STASH** for the Medium internal tier and **RARE STASH** for the Expensive internal tier. This is display text only: original category Chance sources, eligibility, percentages, interaction rails, tier IDs, group checks, CFG writer and presets remain unchanged.
+
+**MEDICAL COMPOSITION → EFFECTIVE PICK:** show one compact, read-only Medkits/Army Medkits share bar calculated **only from the original Veteran / RankIndex 2 SmartLoot Weight pair** (5:1 at untouched source settings), without printing any rank name. Remove the Veteran/Master selector entirely, including its hover, click, state and hit targets; do **not** average ranks, alter the two source multipliers or simulate a whole-stash probability. The formerly selectable Master (4:1) view is no longer exposed. Keep the EFFECTIVE PICK heading, actual colored percentages, and adjacent Anti-Rad PRIORITY switch exactly where they are. The existing 60-DIP preview height, bounded 64% share width, responsive card geometry and source-value formatting remain compact and unchanged.
+
+**Parity gate:** the two current UI catalog locks, active WPF renderer, player-facing help, static Stashes audits and test expectations must all describe this same single-view display. Earlier documented visible rank tabs and bare STANDARD/RARE captions are historical and superseded.
+
 ## 2026-10-20 — CURRENT Combat control retirement (supersedes earlier Attack Frequency / Accuracy UI locks)
 
 **Retired, not replaced:** `combat.npcAttackCooldown` (Enemy Attack Rate / Attack Frequency) and `combat.npcHipAccuracy` (Enemy Shot Accuracy / Fire Accuracy) are no longer part of the playable control catalog, the Human Combat aggregate, any of the twelve shipped presets, or the production CFG writer baseline. These two scalar fields do not represent the full enemy attack-timing and aiming behavior systems; no invented one-knob proxy replaces them. Previously saved presets containing these retired IDs load with those keys ignored and omit them on resave. No generated CFG edit targets `NPCCombatDifficulty.NPC_AttackCooldown` or `NPCCombatDifficulty.HipAccuracyMultiplier` via these retired settings.

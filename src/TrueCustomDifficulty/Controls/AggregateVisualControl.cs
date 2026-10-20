@@ -30,10 +30,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private readonly List<HitTarget> _hitTargets = new();
     // Nine compact Standard/Rare Chance cards; tooltips are confined to their bounds.
     private readonly List<(Rect Area, bool AbsoluteChance)> _stashChanceTooltipAreas = new();
-    // A single source-realistic effective Weight bar with rank tabs.
-    private int _medicalWeightPreviewRank = 2;
-    private int _medicalWeightHoveredRank = -1;
-    private readonly List<(Rect Hit, int Rank)> _medicalWeightRankTargets = new();
+    // Medical effective-pick preview uses the single original Veteran source pool.
     private readonly VisualStatusMessage _status;
     private bool _fatigueReloadInteraction;
     // RAD inspection only: no runtime clock, no persisted field simulation.
@@ -4664,10 +4661,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             new Rect(left + 14.0 + pairWidth + pairGap, pairTop, pairWidth, 56.0),
             text, muted, border, accent, panel, percentage: false);
 
-        DrawStashChanceTier(dc, "STANDARD", "Medium", 10,
+        DrawStashChanceTier(dc, "STANDARD STASH", "Medium", 10,
             new Rect(left, wide ? 441.0 : 595.0, width,
                 wide ? 122.0 : 200.0), text, muted, border, accent, panel);
-        DrawStashChanceTier(dc, "RARE", "Expensive", 19,
+        DrawStashChanceTier(dc, "RARE STASH", "Expensive", 19,
             new Rect(left, wide ? 571.0 : 803.0, width,
                 wide ? 200.0 : 278.0), text, muted, border, accent, panel);
     }
@@ -4743,14 +4740,13 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             dialAccent: StashMedicalPalette[2], dialScale: .74,
             visualMaximum: 1.0);
 
-        // One rank-specific effective bar; Anti-Rad sits beside it on the right.
+        // One fixed-source effective bar; Anti-Rad sits beside it on the right.
         var previewTop = wide ? 384.0 : 692.0;
         var innerWidth = width - 2.0 * inset;
         var shareWidth = Math.Max(1.0, innerWidth * .64);
-        _medicalWeightRankTargets.Clear();
         DrawStashMedicalPairShares(dc,
             new Rect(left + inset, previewTop, shareWidth, 60.0),
-            text, muted, border, panel);
+            text, border, panel);
         DrawStashAntiRadWeightSwitch(dc,
             new Rect(left + inset + shareWidth + gap, previewTop + 2.0,
                 Math.Max(1.0, innerWidth - shareWidth - gap), 56.0),
@@ -4763,23 +4759,23 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             wide ? 473.0 : 782.0, wide, text, muted, border, panel);
     }
 
-    // A single rank-specific bar: never combine distinct rank pools.
+    // Show the original Veteran source pair only; no rank selector or blended rank odds.
     private void DrawStashMedicalPairShares(
-        DrawingContext dc, Rect outer, Brush text, Brush muted,
+        DrawingContext dc, Rect outer, Brush text,
         Brush border, Brush panel)
     {
         var state = CurrentStashEffectiveState();
         var groups = StashSourceGroups.Value
             .Where(g => g.IsSmart && g.Prototype == "StashMedicine_Smart"
-                && g.Field == "Weight" && g.RankIndex is 2 or 3
+                && g.Field == "Weight" && g.RankIndex == 2
                 && g.Items.Count == 2
                 && g.Items.Any(i => i.ItemSid == "Medkit")
                 && g.Items.Any(i => i.ItemSid == "ArmyMedkit"))
-            .OrderBy(g => g.RankIndex).ToArray();
-        if (groups.Length != 2 || groups[0].RankIndex != 2 || groups[1].RankIndex != 3)
-            throw new InvalidDataException("Native Medkit/ArmyMedkit paired pools drifted.");
+            .ToArray();
+        if (groups.Length != 1)
+            throw new InvalidDataException("Native Veteran Medkit/ArmyMedkit pair drifted.");
 
-        var group = groups.Single(g => g.RankIndex == _medicalWeightPreviewRank);
+        var group = groups[0];
         double Weight(string sid) => StashEffectiveState.Number(
             group.EffectiveSelection(StashPreviewBaseline.Value, state,
                 group.Items.Single(item => item.ItemSid == sid)));
@@ -4793,27 +4789,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawText(dc, "EFFECTIVE PICK",
             new Point(outer.Left + 9.0, outer.Top + 6.0),
             9.4, text, FontWeights.Bold);
-        // View-only rank selector: still exactly one effective Weight bar.
-        const double rankWidth = 62.0;
-        for (var i = 0; i < 2; i++)
-        {
-            var rank = i == 0 ? 2 : 3;
-            var rect = new Rect(outer.Right - 8.0 - (2 - i) * rankWidth,
-                outer.Top + 3.0, rankWidth, 20.0);
-            var selected = _medicalWeightPreviewRank == rank;
-            var hovered = _medicalWeightHoveredRank == rank;
-            dc.DrawRoundedRectangle(
-                selected ? CloneWithOpacity(StashMedicalPalette[1], .19)
-                    : CloneWithOpacity(panel, .25),
-                new Pen(hovered ? Brushes.White : selected
-                    ? StashMedicalPalette[1] : CloneWithOpacity(border, .55),
-                    hovered ? 1.4 : .8), rect, 3.0, 3.0);
-            DrawCenteredText(dc, i == 0 ? "VETERAN" : "MASTER",
-                new Point(rect.Left + rect.Width / 2.0, rect.Top + 3.0),
-                9.0, selected || hovered ? text : muted, FontWeights.SemiBold);
-            _medicalWeightRankTargets.Add((rect, rank));
-        }
-
         var rail = new Rect(outer.Left + 9.0, outer.Top + 28.0,
             Math.Max(1.0, outer.Width - 18.0), 11.0);
         dc.DrawRoundedRectangle(CloneWithOpacity(border, .50), null,
@@ -5264,7 +5239,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var total = totals.Sum();
         // Difficulty and player rank are independent authored CFG gates.
         var captionSize = row.Width < 440.0 ? 9.6 : 10.8;
-        if (rankCaption is null)
+        if (string.IsNullOrWhiteSpace(caption))
+        {
+            // The sole Basic preview has no rank caption; leave no blank label row.
+        }
+        else if (rankCaption is null)
             DrawText(dc, caption, new Point(row.Left, row.Top), captionSize,
                 text, FontWeights.SemiBold);
         else
@@ -5277,7 +5256,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 new Point(row.Left, row.Top));
             dc.DrawText(secondary, new Point(rightX, row.Top));
         }
-        var bar = new Rect(row.Left, row.Top + 15.0, row.Width, 11.0);
+        var compactOffset = string.IsNullOrWhiteSpace(caption) ? -8.0 : 0.0;
+        var bar = new Rect(row.Left, row.Top + 15.0 + compactOffset, row.Width, 11.0);
         dc.DrawRoundedRectangle(CloneWithOpacity(border, .28), null,
             bar, 2.0, 2.0);
         var labels = new[] { "AMMO", "MEDICAL", "FOOD", "DRINKS", "GRENADES", "COUPONS" };
@@ -5303,14 +5283,14 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             var x = row.Left + col * row.Width / present.Length;
             var slot = row.Width / present.Length;
             dc.DrawRectangle(StashMixPalette[kind], null,
-                new Rect(x, row.Top + 31.0, 7.0, 7.0));
+                new Rect(x, row.Top + 31.0 + compactOffset, 7.0, 7.0));
             // Larger captions on a wide editor, compact labels on narrow screens.
             var legendSize = row.Width >= 580.0 ? 10.0 : 8.9;
-            DrawText(dc, labels[kind], new Point(x + 10.0, row.Top + 28.0),
+            DrawText(dc, labels[kind], new Point(x + 10.0, row.Top + 28.0 + compactOffset),
                 legendSize, text, FontWeights.SemiBold);
             var share = total > Epsilon ? totals[kind] * 100.0 / total : 0.0;
             DrawRightAlignedText(dc, $"{share:0.#}%",
-                new Point(x + slot - 3.0, row.Top + 28.0),
+                new Point(x + slot - 3.0, row.Top + 28.0 + compactOffset),
                 row.Width >= 580.0 ? 10.1 : 9.1,
                 muted, FontWeights.SemiBold);
         }
@@ -6152,18 +6132,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         Focus();
 
         var point = e.GetPosition(this);
-        if (Family == "StashMedicalComposition")
-        {
-            var rank = _medicalWeightRankTargets.FirstOrDefault(x => x.Hit.Contains(point));
-            if (rank.Hit.Width > 0.0)
-            {
-                _medicalWeightPreviewRank = rank.Rank;
-                _medicalWeightHoveredRank = rank.Rank;
-                InvalidateVisual();
-                e.Handled = true;
-                return;
-            }
-        }
         var couponMarker = Family == "CouponFlow"
             ? _couponMarkers.FirstOrDefault(m => m.Hit.Contains(point)) : default;
         if (couponMarker.Parameter is { IsControlEnabled: true })
@@ -6251,22 +6219,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         var point = e.GetPosition(this);
         UpdateStashChanceTooltip(point);
-        if (Family == "StashMedicalComposition" && _dragTarget is null)
-        {
-            var rank = _medicalWeightRankTargets.FirstOrDefault(x => x.Hit.Contains(point));
-            var hoveredRank = rank.Hit.Width > 0.0 ? rank.Rank : -1;
-            if (hoveredRank != _medicalWeightHoveredRank)
-            {
-                _medicalWeightHoveredRank = hoveredRank;
-                InvalidateVisual();
-            }
-            if (hoveredRank >= 0)
-            {
-                SetHoverTarget(null);
-                Cursor = Cursors.Hand;
-                return;
-            }
-        }
         if (Family == "CouponFlow" && _dragTarget is null)
         {
             var marker = _couponMarkers.FirstOrDefault(m => m.Hit.Contains(point));
@@ -6417,11 +6369,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     {
         base.OnMouseLeave(e);
         ToolTip = null;
-        if (_medicalWeightHoveredRank >= 0)
-        {
-            _medicalWeightHoveredRank = -1;
-            InvalidateVisual();
-        }
         if (_hoverCouponMarker >= 0)
         {
             _hoverCouponMarker = -1;
