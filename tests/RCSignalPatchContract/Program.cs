@@ -6,11 +6,11 @@ using TrueCustomDifficulty.ViewModels;
 
 namespace RCSignalPatchContract;
 
-// Uses the real embedded diagnostic preset and the production C# CFG writer.
+// Test-only diagnostic vector: never embedded in the shipped application.
 // Staged BPatch success is NOT proof that STALKER 2 applied the patch in-game.
 internal static class Program
 {
-    private const string ResourceName = "TrueCustomDifficulty.QA.RC-CFG-Signal.json";
+    private const string ResourceName = "RCSignalPatchContract.Fixtures.RC-CFG-Signal.json";
     private const int ExpectedSources = 13;
 
     [STAThread]
@@ -28,8 +28,8 @@ internal static class Program
 
             var catalog = new ParameterCatalogService().Load();
             var baseline = new CfgWriterBaselineService().Load();
-            using var stream = typeof(MainViewModel).Assembly.GetManifestResourceStream(ResourceName)
-                ?? throw new InvalidDataException("Missing embedded RC CFG Signal preset");
+            using var stream = typeof(Program).Assembly.GetManifestResourceStream(ResourceName)
+                ?? throw new InvalidDataException("Missing test-only RC CFG Signal fixture");
             var preset = JsonSerializer.Deserialize<PresetFile>(stream)
                 ?? throw new InvalidDataException("Invalid embedded RC CFG Signal preset");
 

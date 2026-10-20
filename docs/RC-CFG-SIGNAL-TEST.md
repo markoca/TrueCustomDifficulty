@@ -1,7 +1,11 @@
+## 2026-10-20 — RC candidate cleanup: diagnostic profile retired from app
+
+The **RC - CFG Signal** diagnostic is no longer shipped, embedded or auto-created by the application. The preset picker contains the **12 official factory roles** plus any unrelated user profiles. During the first run after updating, the exact byte-for-byte stock diagnostic file is deleted. A user-edited diagnostic file is **moved without overwriting** into `Presets/Archived/` (with a numbered name if necessary), so it disappears from the picker without losing user changes. The 13-signal CFG contract remains in `tests/RCSignalPatchContract/Fixtures/RC-CFG-Signal.json`, embedded **only in the test assembly**, not in the published EXE. This is release-candidate cleanup, **not** proof of a passing post-change build, Wine UI test, game-load test or in-game effects.
+
 # RC - CFG Signal — controlled in-game mapping smoke test
 
 **Target:** S.T.A.L.K.E.R. 2 game/source baseline **2.0.5** (confirm the installed game version before testing).  
-**Preset:** `RC - CFG Signal` — one *opt-in*, deliberately extreme, **sparse** diagnostic preset, not one of the 12 gameplay-balanced factory roles.  
+**Fixture:** historical 13-signal *test-only* diagnostic in `tests/RCSignalPatchContract/Fixtures/RC-CFG-Signal.json`; **not** a shipped preset or one of the 12 factory roles.  
 **First use:** Friday, 2026-10-16, on an expendable test save / fresh New Game.  
 **Verdict rules:** generated BPatch != game-loaded BPatch != actual observable gameplay effect.
 
@@ -9,7 +13,7 @@
 
 ## Availability, reproducibility and safety
 
-The application seeds `Presets/RC - CFG Signal.json` from embedded `QA/RC - CFG Signal.json` on first launch **only if that filename does not exist**. It appears after the twelve factory-role presets in the picker. Changes made to the local QA preset are never silently overwritten, and the twelve shipped factory JSONs and their exact-stock migrations are unchanged. Delete **only** your own `Presets/RC - CFG Signal.json` to request a fresh embedded copy on the next launch; save any customized copy first.
+**Retired from the application on 2026-10-20.** The old auto-seeded diagnostic does not appear in the preset picker, and the production EXE contains no embedded RC fixture. Its 13 extreme inputs are retained solely at `tests/RCSignalPatchContract/Fixtures/RC-CFG-Signal.json` for isolated automated CFG writer tests. On upgrade the untouched stock file is deleted; edited copies are backed up under `Presets/Archived/` with no overwrite. A player must not rely on automatic seeding. The steps below document optional historical A/B testing and do not imply the latest RC has passed gameplay checks.
 
 The preset stores only the 13 test inputs below, `referenceDifficulty=Stalker`, and no override mode. Loading a sparse preset resets all other controls to their authored Stalker/vanilla references. This prevents unrelated tuning from masking the comparison. The input JSON format remains v1; editor Save creates a complete snapshot if you choose to save it.
 

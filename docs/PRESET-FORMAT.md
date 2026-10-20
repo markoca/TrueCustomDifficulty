@@ -1,8 +1,12 @@
+## 2026-10-20 — RC candidate cleanup: diagnostic profile retired from app
+
+The **RC - CFG Signal** diagnostic is no longer shipped, embedded or auto-created by the application. The preset picker contains the **12 official factory roles** plus any unrelated user profiles. During the first run after updating, the exact byte-for-byte stock diagnostic file is deleted. A user-edited diagnostic file is **moved without overwriting** into `Presets/Archived/` (with a numbered name if necessary), so it disappears from the picker without losing user changes. The 13-signal CFG contract remains in `tests/RCSignalPatchContract/Fixtures/RC-CFG-Signal.json`, embedded **only in the test assembly**, not in the published EXE. This is release-candidate cleanup, **not** proof of a passing post-change build, Wine UI test, game-load test or in-game effects.
+
 # Preset JSON format
 
 ### 2026-10-17 — Current factory/audit reconciliation
 
-The twelve official role presets remain v1 snapshots of 248 source-backed parameters; exact-stock migration protects edited factory files and all custom presets. The 2026-10-15 role-first rebalance is **HISTORICAL; SUPERSEDED** by the current full source-backed review and canonical A-Life mapping. RC CFG Signal is an opt-in diagnostic, not a thirteenth factory role. Static checks must not expect the retired role-first section to be labelled CURRENT. No factory values, migration rules or JSON schema change in this revision.
+The twelve official role presets remain v1 snapshots of 248 source-backed parameters; exact-stock migration protects edited factory files and all custom presets. The 2026-10-15 role-first rebalance is **HISTORICAL; SUPERSEDED** by the current full source-backed review and canonical A-Life mapping. RC CFG Signal was a diagnostic and is now retired from the application; it is not a thirteenth factory role. Static checks must not expect the retired role-first section to be labelled CURRENT. No factory values, migration rules or JSON schema change in this revision.
 
 ## CURRENT 2026-10-16 — Stashes graphs and backward-compatible zero-item caps
 

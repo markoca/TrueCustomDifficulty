@@ -1,6 +1,10 @@
+## 2026-10-20 — RC candidate cleanup: diagnostic profile retired from app
+
+The **RC - CFG Signal** diagnostic is no longer shipped, embedded or auto-created by the application. The preset picker contains the **12 official factory roles** plus any unrelated user profiles. During the first run after updating, the exact byte-for-byte stock diagnostic file is deleted. A user-edited diagnostic file is **moved without overwriting** into `Presets/Archived/` (with a numbered name if necessary), so it disappears from the picker without losing user changes. The 13-signal CFG contract remains in `tests/RCSignalPatchContract/Fixtures/RC-CFG-Signal.json`, embedded **only in the test assembly**, not in the published EXE. This is release-candidate cleanup, **not** proof of a passing post-change build, Wine UI test, game-load test or in-game effects.
+
 # RC – CFG Signal: testiranje u igri
 
-> **Profil:** `RC - CFG Signal` · **Base:** Stalker · **Ciljni CFG:** S.T.A.L.K.E.R. 2 2.0.5  
+> **Istorijski test-only fixture:** `tests/RCSignalPatchContract/Fixtures/RC-CFG-Signal.json` · **Base:** Stalker · **Ciljni CFG:** S.T.A.L.K.E.R. 2 2.0.5  
 > Ovo je isključivo **in-game** checklist-a. Štikliraj `[x]` tek kada je efekat stvarno opažen i ponovljen u igri — ne samo kada je BPatch generisan.
 
 **Commit / build:** ____________________  

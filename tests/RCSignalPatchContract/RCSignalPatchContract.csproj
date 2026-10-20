@@ -10,5 +10,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../../src/TrueCustomDifficulty/TrueCustomDifficulty.csproj" />
+    <EmbeddedResource Include="Fixtures\RC-CFG-Signal.json" LogicalName="RCSignalPatchContract.Fixtures.RC-CFG-Signal.json" />
   </ItemGroup>
 </Project>

@@ -60,7 +60,6 @@
     <EmbeddedResource Include="Data\blueprint-shuffle-manifest.csv" LogicalName="TrueCustomDifficulty.Data.blueprint-shuffle-manifest.csv" />
     <EmbeddedResource Include="Data\trader-min-buy-condition-manifest.csv" LogicalName="TrueCustomDifficulty.Data.trader-min-buy-condition-manifest.csv" />
     <EmbeddedResource Include="Presets\README.md" LogicalName="TrueCustomDifficulty.Presets.README.md" />
-    <EmbeddedResource Include="QA\RC - CFG Signal.json" LogicalName="TrueCustomDifficulty.QA.RC-CFG-Signal.json" />
     <EmbeddedResource Include="Presets\Immersive.json" LogicalName="TrueCustomDifficulty.Presets.Immersive.json" />
     <EmbeddedResource Include="Presets\Tactical.json" LogicalName="TrueCustomDifficulty.Presets.Tactical.json" />
     <EmbeddedResource Include="Presets\Scavenger.json" LogicalName="TrueCustomDifficulty.Presets.Scavenger.json" />

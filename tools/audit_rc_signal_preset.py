@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""RC CFG Signal: assert that the embedded sparse smoke preset is an honest,
-authoritative, strongly non-vanilla configuration; does NOT run the game."""
+"""Verify that the RC diagnostic remains a test-only CFG writer fixture,
+not a shipped/seeding preset. This does not run the game."""
 import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-QA = ROOT / "src/TrueCustomDifficulty/QA/RC - CFG Signal.json"
+QA = ROOT / "tests/RCSignalPatchContract/Fixtures/RC-CFG-Signal.json"
 CATALOG = ROOT / "src/TrueCustomDifficulty/Data/parameters.json"
 BASELINE = ROOT / "src/TrueCustomDifficulty/Data/cfg-writer-baseline.json"
 
@@ -35,7 +35,7 @@ assert (data["profileVersion"] == 1 and data["referenceDifficulty"] == "Stalker"
         and data["name"] == PROFILE_NAME and data["gameVersion"] == catalog["source"]["gameVersion"]
         and not data.get("drinkDurationOverride") and not data.get("medicalOverride"))
 assert set(data["values"]) == ids and len(ids) == 13
-assert len(by_id) == 248
+assert len(by_id) == 285
 for id, target in EXPECTED.items():
     definition = by_id[id]
     entry = data["values"][id]
@@ -71,18 +71,27 @@ dog = sorted((p for p in baseline["editPoints"]
 assert [int(p["sourceRaw"]) for p in dog] == [4, 6, 8, 12]
 assert [int(p["sourceRaw"]) * 3 for p in dog] == [12, 18, 24, 36]
 
-# No extra factory role: the 12 pristine stock files and their migration
-# allowlists must not be modified by the opt-in RC validation preset.
+# The executable must ship only its twelve role presets. The historical RC
+# diagnostic remains executable as a test-owned resource and is not seeded.
 factory_names = {p.stem for p in (ROOT / "src/TrueCustomDifficulty/Presets").glob("*.json")}
 assert len(factory_names) == 12 and PROFILE_NAME not in factory_names
 service = (ROOT / "src/TrueCustomDifficulty/Services/PresetDirectoryService.cs").read_text(encoding="utf-8")
 project = (ROOT / "src/TrueCustomDifficulty/TrueCustomDifficulty.csproj").read_text(encoding="utf-8")
-assert ('private const string RcSignalFileName = "RC - CFG Signal.json";' in service
-        and 'if (!File.Exists(rcSignalPath))' in service
-        and "WriteEmbedded(RcSignalResourceName, rcSignalPath)" in service
-        and "QA\\RC - CFG Signal.json" in project
-        and "TrueCustomDifficulty.QA.RC-CFG-Signal.json" in project)
+contract = (ROOT / "tests/RCSignalPatchContract/Program.cs").read_text(encoding="utf-8")
+contract_project = (ROOT / "tests/RCSignalPatchContract/RCSignalPatchContract.csproj").read_text(encoding="utf-8")
+assert not (ROOT / "src/TrueCustomDifficulty/QA/RC - CFG Signal.json").exists()
+assert 'QA\\RC - CFG Signal.json' not in project
+assert 'TrueCustomDifficulty.QA.RC-CFG-Signal.json' not in project
+assert "RcSignalResourceName" not in service
+assert 'RetireRcSignalPreset(directory);' in service
+assert 'File.Delete(previous);' in service
+assert 'File.Move(previous, destination);' in service
+assert 'Path.Combine(directory, "Archived")' in service
+assert 'RetiredRcSignalStockBlob = "12a9b6b5a1857815fa0627e5fdd67aa5527c574d"' in service
+assert 'Fixtures\\RC-CFG-Signal.json' in contract_project
+assert 'RCSignalPatchContract.Fixtures.RC-CFG-Signal.json' in contract_project
+assert 'typeof(Program).Assembly.GetManifestResourceStream(ResourceName)' in contract
 assert (ROOT / "docs/RC-CFG-SIGNAL-TEST.md").is_file()
-print("PASS: RC - CFG Signal: 13 source-backed extreme settings, vanilla contrast, "
-      "A-Life integer caps and pristine-safe opt-in preset seed.")
-print("NOT TESTED: production writer, IoStore packing, Unreal CFG merge or gameplay.")
+print("PASS: 13 source-backed extreme test signals; no production RC profile; "
+      "stock retirement with archival preservation of modified user copies.")
+print("NOT TESTED: Windows/Wine writer fixture run, IoStore or gameplay.")

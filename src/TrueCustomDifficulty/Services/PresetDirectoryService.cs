@@ -15,11 +15,10 @@ public sealed class PresetDirectoryService
 {
     private const string ReadmeResourceName = "TrueCustomDifficulty.Presets.README.md";
 
-    // One opt-in, deliberately exaggerated diagnostic preset. Keep it OUT of
-    // FactoryPresetNames: existing 12-role audit and exact-stock migrations
-    // must remain unchanged. The QA copy is seeded only when absent.
-    private const string RcSignalFileName = "RC - CFG Signal.json";
-    private const string RcSignalResourceName = "TrueCustomDifficulty.QA.RC-CFG-Signal.json";
+    // One-time RC cleanup: this test-only diagnostic used to be shipped.
+    // An exact stock copy can be deleted; player edits are archived safely.
+    private const string RetiredRcSignalFileName = "RC - CFG Signal.json";
+    private const string RetiredRcSignalStockBlob = "12a9b6b5a1857815fa0627e5fdd67aa5527c574d";
     private static readonly string[] FactoryPresetNames =
     {
         "Anomaly Runner",
@@ -303,11 +302,9 @@ public sealed class PresetDirectoryService
                 WriteEmbedded($"TrueCustomDifficulty.Presets.{name}.json", destination);
         }
 
-        // QA profiles are NOT factory roles. Never overwrite a tester's edited
-        // version or migrate it via the stock hash allowlists.
-        var rcSignalPath = Path.Combine(directory, RcSignalFileName);
-        if (!File.Exists(rcSignalPath))
-            WriteEmbedded(RcSignalResourceName, rcSignalPath);
+        // Remove the discontinued QA preset from the player's picker.
+        // Byte-identical shipped copies are deleted; edited copies archived.
+        RetireRcSignalPreset(directory);
 
         return directory;
     }
@@ -481,6 +478,33 @@ public sealed class PresetDirectoryService
         {
             return false;
         }
+    }
+
+    private static void RetireRcSignalPreset(string directory)
+    {
+        var previous = Path.Combine(directory, RetiredRcSignalFileName);
+        if (!File.Exists(previous))
+            return;
+
+        var bytes = File.ReadAllBytes(previous);
+        var prefix = Encoding.ASCII.GetBytes($"blob {bytes.Length}\0");
+        var combined = new byte[prefix.Length + bytes.Length];
+        Buffer.BlockCopy(prefix, 0, combined, 0, prefix.Length);
+        Buffer.BlockCopy(bytes, 0, combined, prefix.Length, bytes.Length);
+        var actualBlob = Convert.ToHexString(SHA1.HashData(combined));
+        if (actualBlob.Equals(RetiredRcSignalStockBlob, StringComparison.OrdinalIgnoreCase))
+        {
+            File.Delete(previous);
+            return;
+        }
+
+        // Keep customized copies recoverable, but out of the active picker.
+        var archived = Path.Combine(directory, "Archived");
+        Directory.CreateDirectory(archived);
+        var destination = Path.Combine(archived, RetiredRcSignalFileName);
+        for (var suffix = 1; File.Exists(destination); suffix++)
+            destination = Path.Combine(archived, $"RC - CFG Signal ({suffix}).json");
+        File.Move(previous, destination);
     }
 
     private static void WriteEmbedded(string resourceName, string destinationPath)
