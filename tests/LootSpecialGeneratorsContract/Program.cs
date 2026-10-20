@@ -241,9 +241,15 @@ internal static partial class Program
                 p.SnapCurrentNumberToMarker(value);
                 Check(p.IsValueModifiedFromReference(), name + ": source did not change");
                 AssertOnlyExpectedNonLootDefault(vm);
+                var edited = vm.AllParameters.Where(q => q.IsControlEnabled
+                    && q.IsValueModifiedFromReference()).Select(q => q.Id)
+                    .ToHashSet(StringComparer.Ordinal);
+                Check(edited.SetEquals(new[] { id }),
+                    name + ": unrelated modified source controls: " + string.Join(",", edited));
                 var result = new CfgPatchWriterService().Write(vm, Catalog, null, dir);
-                Check(result.ParameterCount == 2,
-                    name + ": unexpected modified parameter count");
+                Check(result.ParameterCount == 1,
+                    name + ": expected only the explicitly edited SmartLoot source, got "
+                    + result.ParameterCount);
                 var outp = ReadOutput(dir);
                 Check(outp.TryGetValue("GameData/StashPrototypes.cfg", out var smart),
                     name + ": missing SmartLoot prototype patch");
@@ -627,7 +633,9 @@ internal static partial class Program
                 Check(value.IsValueModifiedFromReference(), scenario.Name + ": unchanged control");
                 AssertOnlyExpectedNonLootDefault(vm);
                 var result = new CfgPatchWriterService().Write(vm, Catalog, null, dir);
-                Check(result.ParameterCount == 2, scenario.Name + ": wrong modified sources");
+                Check(result.ParameterCount == 1,
+                    scenario.Name + ": expected only the edited native direct-medical source, got "
+                    + result.ParameterCount);
                 var output = ReadOutput(dir);
                 Check(output.TryGetValue("GameData/ItemGeneratorPrototypes.cfg", out var doc),
                     scenario.Name + ": missing direct source CFG");
@@ -752,7 +760,21 @@ internal static partial class Program
                 var result=new CfgPatchWriterService().Write(vm,Catalog,
                     new GameInstallInfo {HasDlc1=true},dir);
                 var files=ReadOutput(dir);
-                Check(result.ParameterCount==2,label+": modified parameter count drift");
+                // Basic Ammo Quantity mirrors into Standard/Rare writer backings.
+                // The other DLC fixtures edit exactly one independent source.
+                var expectedSourceIds = label=="cheap-ammo-half"
+                    ? new[] { "loot.cheapStashAmmoQuantity",
+                              "loot.mediumStashAmmoQuantity",
+                              "loot.expensiveStashAmmoQuantity" }
+                    : values.Keys.ToArray();
+                var edited = vm.AllParameters.Where(p => p.IsControlEnabled
+                        && p.IsValueModifiedFromReference())
+                    .Select(p => p.Id).ToHashSet(StringComparer.Ordinal);
+                Check(edited.SetEquals(expectedSourceIds),
+                    label+": unrelated modified DLC1 source controls: " + string.Join(",", edited));
+                Check(result.ParameterCount==expectedSourceIds.Length,
+                    label+": native DLC1 modified parameter count drift ("
+                    +result.ParameterCount+" expected "+expectedSourceIds.Length+")");
                 Check(files.TryGetValue("DLCGameData/DLC1/SpawnActorPrototypes.cfg",out var dlc),
                     label+": missing DLC1 actor patch");
                 var actorSids=dlc!.Keys.Select(x=>x.Split('/')[0]).ToHashSet();
