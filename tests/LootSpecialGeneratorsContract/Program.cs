@@ -300,16 +300,16 @@ internal static partial class Program
                     ["loot.stashMixMedical"] = .5,
                     ["loot.stashMedicalBandageBias"] = 2,
                     ["loot.cheapStashGrenadeChance"] = .65,
-                    ["loot.stashMixGrenades"] = 1.5,
+                    ["loot.stashMixGrenades"] = .5,
                     ["loot.expensiveStashMoneyChance"] = .35,
-                    ["loot.stashMixCoupons"] = 1.75,
+                    ["loot.stashMixCoupons"] = .5,
                     ["loot.stashMedkitMaxCount"] = -1
                 }),
             (Name: "hard-bonus-zero", Difficulty: "Veteran", Dlc: true,
                 Changes: new Dictionary<string,double>
                 {
                     ["loot.stashMixMedical"] = 0,
-                    ["loot.stashMixFood"] = 3,
+                    ["loot.stashMixFood"] = .5,
                     ["loot.stashMixAmmo"] = .5,
                     ["loot.cheapStashGrenadeChance"] = .4,
                     ["loot.expensiveStashMoneyChance"] = .8
@@ -326,13 +326,24 @@ internal static partial class Program
                 foreach (var (id, target) in scenario.Changes)
                 {
                     var source = vm.AllParameters.Single(p => p.Id == id);
+                    Check(source.IsSlider && source.IsControlEnabled
+                          && !source.IsValueModifiedFromReference()
+                          && target >= source.Minimum - 0.0000001
+                          && target <= source.Maximum + 0.0000001,
+                        scenario.Name + ": fixture outside source range " + id
+                        + " (" + target + " versus "
+                        + source.Minimum + ".." + source.Maximum + ")");
                     source.SnapCurrentNumberToMarker(target);
-                    Check(source.IsValueModifiedFromReference(),
-                        scenario.Name + ": unchanged source " + id);
+                    Check(Math.Abs(source.CurrentNumber - target) < 0.0000001
+                          && source.IsValueModifiedFromReference(),
+                        scenario.Name + ": source clamped/unchanged " + id);
                 }
                 var modified = vm.AllParameters
                     .Where(p => p.IsValueModifiedFromReference())
                     .Select(p => p.Id).ToArray();
+                Check(modified.ToHashSet(StringComparer.Ordinal)
+                      .SetEquals(scenario.Changes.Keys),
+                    scenario.Name + ": unrelated source edits in parity fixture");
                 var difficultySid = Catalog.DifficultyProfiles[
                     scenario.Difficulty].Sid;
                 var snapshot = new StashEffectiveState(

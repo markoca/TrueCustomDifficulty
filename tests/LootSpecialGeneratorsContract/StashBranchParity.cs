@@ -99,10 +99,10 @@ internal static partial class Program
             basic.EffectiveSelection(Baseline, neutral, item)));
         Check(Math.Abs(sum - 17.77) < 1e-7,
             "Native Easy/Medium Experienced Weight total must be 17.77.");
-        var foodTriple = NativeState("Easy", ("loot.stashMixFood", 3));
+        var foodHalf = NativeState("Easy", ("loot.stashMixFood", .5));
         Check(Math.Abs(basic.Items.Sum(item => StashEffectiveState.Number(
-            basic.EffectiveSelection(Baseline, foodTriple, item))) - 43.77) < 1e-7,
-            "3x food bias must create 43.77, never synthetic category odds.");
+            basic.EffectiveSelection(Baseline, foodHalf, item))) - 11.27) < 1e-7,
+            "0.5x food Weight must yield 11.27, never synthetic drop odds.");
         var zero = NativeState("Easy", ("loot.stashMixFood", 0),
             ("loot.stashMixMedical", 0), ("loot.stashMixDrinks", 0),
             ("loot.stashMixCoupons", 0));
@@ -119,19 +119,19 @@ internal static partial class Program
             "ItemGenerator.[5].PossibleItems");
         var chance = NativeState("Easy",
             ("loot.cheapStashGrenadeChance", .8),
-            ("loot.stashMixGrenades", 3));
+            ("loot.stashMixGrenades", .5));
         Check(Math.Abs(NativeValue(grenade, chance) - .8) < 1e-9,
-            "Native RGD-5 Chance must remain .8 even when global Grenades Weight is 3x.");
+            "Native RGD-5 Chance must remain .8 even when global Grenades Weight is halved.");
         var rareEasy = NativeBranch(branches, "GamePass_Stash_ItemGenerator_Rare",
             "ItemGenerator.[11].PossibleItems");
         var rareHard = NativeBranch(branches, "GamePass_Stash_ItemGenerator_Rare",
             "ItemGenerator.[15].PossibleItems");
         var couponEasy = NativeState("Easy",
             ("loot.expensiveStashMoneyChance", .6),
-            ("loot.stashMixCoupons", 1.5));
+            ("loot.stashMixCoupons", .5));
         var couponHard = NativeState("Hard",
             ("loot.expensiveStashMoneyChance", .6),
-            ("loot.stashMixCoupons", 1.5));
+            ("loot.stashMixCoupons", .5));
         Check(rareEasy.AppliesTo(0, "Easy") && !rareEasy.AppliesTo(0, "Hard")
             && rareHard.AppliesTo(0, "Hard") && !rareHard.AppliesTo(0, "Easy")
             && Math.Abs(NativeValue(rareEasy, couponEasy) - .6) < 1e-9
@@ -174,7 +174,7 @@ internal static partial class Program
             var sid = chanceBranch.Items[0].ItemSid;
             var id = StashEffectiveState.ItemBiasId(sid)!;
             var weightedOff = NativeState("Easy", (id, 0));
-            var weightedTriple = NativeState("Easy", (id, 3));
+            var weightedHalf = NativeState("Easy", (id, .5));
             var item = chanceBranch.Items[0];
             var source = StashEffectiveState.Number(
                 chanceBranch.EffectiveSelection(Baseline, neutral, item));
@@ -182,7 +182,7 @@ internal static partial class Program
                       chanceBranch.EffectiveSelection(Baseline, weightedOff, item))
                       - source) < 1e-9
                 && Math.Abs(StashEffectiveState.Number(
-                      chanceBranch.EffectiveSelection(Baseline, weightedTriple, item))
+                      chanceBranch.EffectiveSelection(Baseline, weightedHalf, item))
                       - source) < 1e-9,
                 "Global Weight knob leaked into native Chance row: " + sid);
         }
@@ -194,10 +194,10 @@ internal static partial class Program
         // emitted field belonging to an actually affected native group.
         var cases = new[]
         {
-            (Name: "food-3x", Difficulty: "Novice", Dlc: false,
+            (Name: "food-half", Difficulty: "Novice", Dlc: false,
                 Changes: new Dictionary<string, double>
                 {
-                    ["loot.stashMixFood"] = 3
+                    ["loot.stashMixFood"] = .5
                 }),
             (Name: "all-category-zero", Difficulty: "Master", Dlc: false,
                 Changes: new Dictionary<string, double>
@@ -216,9 +216,9 @@ internal static partial class Program
                     ["loot.stashMedicalMedkitBias"] = 0,
                     ["loot.stashMedicalArmyMedkitBias"] = 2,
                     ["loot.cheapStashGrenadeChance"] = .8,
-                    ["loot.stashMixGrenades"] = 3,
+                    ["loot.stashMixGrenades"] = .5,
                     ["loot.expensiveStashMoneyChance"] = .6,
-                    ["loot.stashMixCoupons"] = 1.5,
+                    ["loot.stashMixCoupons"] = .5,
                     ["loot.stashMedkitMaxCount"] = -1
                 })
         };
@@ -247,14 +247,24 @@ internal static partial class Program
             foreach (var (id, target) in changes)
             {
                 var parameter = vm.AllParameters.Single(p => p.Id == id);
+                Check(parameter.IsSlider && parameter.IsControlEnabled
+                      && !parameter.IsValueModifiedFromReference()
+                      && target >= parameter.Minimum - 0.0000001
+                      && target <= parameter.Maximum + 0.0000001,
+                    name + ": fixture outside source range " + id
+                    + " (" + target + " versus "
+                    + parameter.Minimum + ".." + parameter.Maximum + ")");
                 parameter.SnapCurrentNumberToMarker(target);
-                Check(parameter.IsValueModifiedFromReference(),
-                    name + ": specified source did not change: " + id);
+                Check(Math.Abs(parameter.CurrentNumber - target) < 0.0000001
+                      && parameter.IsValueModifiedFromReference(),
+                    name + ": source clamped/unchanged " + id);
             }
             AssertOnlyExpectedNonLootDefault(vm);
             var modified = vm.AllParameters
                 .Where(p => p.IsValueModifiedFromReference())
                 .Select(p => p.Id).ToArray();
+            Check(modified.ToHashSet(StringComparer.Ordinal).SetEquals(changes.Keys),
+                name + ": collateral source changes in parity fixture");
             var snapshot = new StashEffectiveState(vm.AllParameters, modified,
                 Catalog.DifficultyProfiles[difficulty].Sid);
             new CfgPatchWriterService().Write(vm, Catalog,
