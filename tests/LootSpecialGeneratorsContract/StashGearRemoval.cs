@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using TrueCustomDifficulty.Services;
 using TrueCustomDifficulty.ViewModels;
@@ -68,9 +69,42 @@ internal static partial class Program
                 && !text.Contains("464E8FB14AEEC7B154602AB22BEA1EBC", StringComparison.Ordinal),
                 "Reserved Trophy or protected STC Malachite generator must remain untouched.");
 
+            // Normal UI state has a last-toggle-wins mutual exclusion.
+            // Both orders matter: neither feature should unexpectedly turn
+            // ON the other or allow both weapon-slot writers to operate.
             var conflict = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
-            conflict.AllParameters.Single(x => x.Id == "loot.stashGearEnabled").CurrentBoolean = true;
-            conflict.AllParameters.Single(x => x.Id == "loot.worldWeaponShuffle").CurrentBoolean = true;
+            var conflictGear = conflict.AllParameters.Single(x => x.Id == "loot.stashGearEnabled");
+            var conflictShuffle = conflict.AllParameters.Single(x => x.Id == "loot.worldWeaponShuffle");
+            Check(!conflictGear.CurrentBoolean && !conflictShuffle.CurrentBoolean,
+                "Both incompatible weapon features must initialize OFF.");
+            conflictGear.CurrentBoolean = true;
+            Check(conflictGear.CurrentBoolean && !conflictShuffle.CurrentBoolean,
+                "Enabling Extra Stash Gear should leave World Weapon Shuffle OFF.");
+            conflictShuffle.CurrentBoolean = true;
+            Check(conflictShuffle.CurrentBoolean && !conflictGear.CurrentBoolean,
+                "Switching World Weapon Shuffle ON must turn Extra Stash Gear OFF.");
+            conflictGear.CurrentBoolean = true;
+            Check(conflictGear.CurrentBoolean && !conflictShuffle.CurrentBoolean,
+                "Switching Extra Stash Gear ON must turn World Weapon Shuffle OFF.");
+
+            // The public UI cannot construct the invalid double-ON state.
+            // Force only the private boolean backing field to simulate a
+            // malformed external/legacy state without PropertyChanged UI
+            // normalization, and independently exercise the writer guard.
+            var boolField = typeof(ParameterViewModel).GetField(
+                "_currentBoolean", BindingFlags.Instance | BindingFlags.NonPublic);
+            Check(boolField is not null && boolField.FieldType == typeof(bool),
+                "Unable to construct a malformed dual-ON state for writer safety coverage.");
+            boolField!.SetValue(conflictShuffle, true);
+            Check(conflictGear.CurrentBoolean && conflictShuffle.CurrentBoolean,
+                "Malformed dual-ON state did not reach writer validation.");
+
+            // The guard must reject the unsafe combination before deleting
+            // or modifying any previously staged patch files.
+            Directory.CreateDirectory(conflictPath);
+            var sentinelPath = Path.Combine(conflictPath, "existing-output.sentinel");
+            const string sentinel = "Original staged output must survive rejected conflicting writer settings.";
+            File.WriteAllText(sentinelPath, sentinel);
             var blocked = false;
             try
             {
@@ -81,8 +115,12 @@ internal static partial class Program
             {
                 blocked = true;
             }
-            Check(blocked, "Overlapping World Weapon Shuffle and stash weapon removal must fail closed.");
-            Console.WriteLine("PASS Extra Gear: 13 safe authored weapons removed only when enabled; protected entries excluded; conflicting shuffle blocked.");
+            Check(blocked, "Malformed overlapping weapon-slot settings must fail closed in the writer.");
+            Check(File.Exists(sentinelPath)
+                  && File.ReadAllText(sentinelPath) == sentinel
+                  && Directory.EnumerateFiles(conflictPath, "*", SearchOption.AllDirectories).Count() == 1,
+                "Writer conflict rejection changed pre-existing staged output.");
+            Console.WriteLine("PASS Extra Gear: 13 safe authored weapons removed only when enabled; protected entries excluded; UI last-toggle wins and malformed dual-ON writer input is rejected without staging changes.");
         }
         finally
         {
