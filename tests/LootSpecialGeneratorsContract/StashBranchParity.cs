@@ -132,12 +132,25 @@ internal static partial class Program
         var couponHard = NativeState("Hard",
             ("loot.expensiveStashMoneyChance", .6),
             ("loot.stashMixCoupons", .5));
+        // These are original authored Rare coupon Chance entries, not
+        // the separate category Weight scale. Their 0.2f Easy and 0.1f
+        // Hard sources remain unchanged when the override SID mismatches.
+        Check(rareEasy.Field == "Chance" && rareHard.Field == "Chance"
+            && Math.Abs(StashEffectiveState.Number(rareEasy.Items[0].SourceRaw) - .2) < 1e-9
+            && Math.Abs(StashEffectiveState.Number(rareHard.Items[0].SourceRaw) - .1) < 1e-9,
+            "Rare Coupons original Easy/Hard Chance source values drifted.");
         Check(rareEasy.AppliesTo(0, "Easy") && !rareEasy.AppliesTo(0, "Hard")
             && rareHard.AppliesTo(0, "Hard") && !rareHard.AppliesTo(0, "Easy")
             && Math.Abs(NativeValue(rareEasy, couponEasy) - .6) < 1e-9
             && Math.Abs(NativeValue(rareHard, couponHard) - .6) < 1e-9
-            && Math.Abs(NativeValue(rareEasy, couponHard) - .3) < 1e-9,
-            "Rare Coupons Chance remains independently editable and difficulty-gated.");
+            && Math.Abs(NativeValue(rareEasy, couponHard) - .2) < 1e-9
+            && Math.Abs(NativeValue(rareHard, couponEasy) - .1) < 1e-9,
+            "Rare Coupons Chance must change only matching difficulty SIDs.");
+        var couponWeightOff = NativeState("Easy",
+            ("loot.expensiveStashMoneyChance", .6),
+            ("loot.stashMixCoupons", 0));
+        Check(Math.Abs(NativeValue(rareEasy, couponWeightOff) - .6) < 1e-9,
+            "Coupons Weight zero leaked into native Rare Coupons Chance.");
 
         var smartMixed = NativeBranch(branches, "StashMedicine_Smart",
             "ItemGenerators.[2].SmartLootParams.ConsumablesParams.[0].Items");
