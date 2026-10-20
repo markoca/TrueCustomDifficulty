@@ -72,10 +72,12 @@ internal static partial class Program
                 var result = new CfgPatchWriterService().Write(vm, Catalog, null, dir);
                 if (scenario.Name == "npc-ammo-stalker-water-inactive")
                 {
-                    // The fixed 100-HP Sleep Health Restore is the ONLY emitted
-                    // source. The edited ammo amount is saved but Water does not
-                    // enable NPC_Ammo_Smart, so it cannot count as applied.
-                    Check(result.ParameterCount == 1 && parameter.CurrentNumber == 3
+                    // An edited ammo multiplier remains saved, but the Stalker
+                    // Water package does not include NPC_Ammo_Smart. Since
+                    // Sleep HP now starts at native 300, there must be no
+                    // automatic fallback CFG edit masking dormant NPC ammo.
+                    Check(result.ParameterCount == 0 && result.EditCount == 0
+                        && result.FileCount == 0 && parameter.CurrentNumber == 3
                         && parameter.IsValueModifiedFromReference(),
                         "Water package incorrectly counted dormant NPC ammo tuning as applied");
                 }

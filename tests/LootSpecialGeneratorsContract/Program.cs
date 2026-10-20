@@ -817,13 +817,32 @@ internal static partial class Program
                         Check(gens![root+"[3]/PossibleItems/[0]/MinCount"]=="1",
                             label+": CheapNoFresh ammo 2 -> 1 source scaling failed");
                 }
-                if(label=="bandage-zero" || label=="medkit-zero")
+                if(label=="bandage-zero")
                 {
-                    Check(files.ContainsKey("GameData/StashPrototypes.cfg"),
-                        label+": base SmartLoot source clone missing");
+                    // The independently audited SmartLoot Bandage sources
+                    // have native Weight fields and NO Chance field. A 0%
+                    // Bandage Chance edit must alter the genuine CheapNoFresh
+                    // Chance row, without fabricating a SmartLoot clone or
+                    // rewriting any DLC1 StashPrototypeSID.
+                    Check(!files.ContainsKey("GameData/StashPrototypes.cfg"),
+                        label+": Chance-only edit fabricated a Weight-only SmartLoot clone");
+                    Check(!dlc.Keys.Any(x=>x.EndsWith("/StashPrototypeSID",
+                        StringComparison.Ordinal)),
+                        label+": Chance-only edit redirected an unaffected SmartLoot actor");
+                }
+                if(label=="medkit-zero")
+                {
+                    Check(files.TryGetValue("GameData/StashPrototypes.cfg",out var smart),
+                        label+": missing independently affected SmartLoot Medkit clone");
+                    const string medkit = "TCD_StashMedicine_Smart/ItemGenerators/[0]"
+                        + "/SmartLootParams/ConsumablesParams/[0]/Items/[0]/";
+                    foreach(var field in new[]{"Weight","MinCount","MaxCount"})
+                        Check(smart!.TryGetValue(medkit+field,out var raw)
+                            && Math.Abs(Num(raw!)) < 0.0000001,
+                            label+": actual Medkit SmartLoot not fully suppressed: "+field);
                     Check(dlc.Keys.Any(x=>x.EndsWith("/StashPrototypeSID",
                         StringComparison.Ordinal)),
-                        label+": DLC1 SmartLoot redirect missing");
+                        label+": DLC1 SmartLoot redirect missing for disabled Medkit");
                 }
             }
             finally
