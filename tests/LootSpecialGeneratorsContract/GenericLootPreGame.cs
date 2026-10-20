@@ -294,53 +294,118 @@ internal static partial class Program
             "loot.stashMixCoupons" => "Coupons",
             _ => throw new InvalidDataException(name + ": unsupported generic category")
         };
-        var source = expectedSource == "Coupons"
-            ? "GamePass_Stash_ItemGenerator_Rare"
-            : "GamePass_Stash_ItemGenerator_Cheap";
+        // The global Stash Content category knobs are *Weight* only.
+        // Cheap has source-backed category Weight entries for all categories
+        // except Grenades (native Chance-only); Rare Coupons have authored
+        // Chance entries that a Coupons Weight=0 change must not zero.
         var snapshot = new StashEffectiveState(
             new Dictionary<string, double> { [control] = value },
             new[] { control }, Catalog.DifficultyProfiles[difficulty].Sid);
-        var items = branches.Where(x => !x.IsSmart && x.Prototype == source)
+        var branchesForCategory = branches
+            .Where(x => !x.IsSmart
+                && x.Prototype == "GamePass_Stash_ItemGenerator_Cheap")
             .SelectMany(g => g.Items
                 .Where(x => StashEffectiveState.ItemBiasId(x.ItemSid) == control)
                 .Select(x => (Group: g, Item: x))).ToArray();
-        Check(items.Length > 0, name + ": no native source rows for category " + expectedSource);
-        foreach (var (group, item) in items)
+        Check(branchesForCategory.Length > 0,
+            name + ": no native Cheap rows for category " + expectedSource);
+        var nativeWeightRows = 0;
+        var preservedChanceRows = 0;
+        foreach (var (group, item) in branchesForCategory)
         {
             var path = "TCD_" + group.Prototype + "/"
                 + group.GroupPath.Replace(".", "/") + "/[" + item.Index + "]/";
             var expected = group.EffectiveSelection(Baseline, snapshot, item);
             Check(tier.TryGetValue(path + group.Field, out var actual)
                 && Math.Abs(Num(actual!) - Num(expected)) < 1e-7,
-                name + ": native tier Chance/Weight mismatch at " + path);
-            if (value == 0)
-                Check(Num(actual!) == 0,
-                    name + ": zero source factor retained positive selection " + path);
+                name + ": native tier " + group.Field + " mismatch at " + path);
+            if (group.Field == "Weight")
+            {
+                nativeWeightRows++;
+                Check(Math.Abs(Num(actual!)) < 1e-7,
+                    name + ": zero Weight multiplier retained positive Weight " + path);
+            }
+            else
+            {
+                Check(group.Field == "Chance"
+                    && Math.Abs(Num(actual!) - Num(item.SourceRaw)) < 1e-7,
+                    name + ": Weight-only control changed native Chance " + path);
+                preservedChanceRows++;
+            }
         }
+        Check(nativeWeightRows > 0 || expectedSource == "Grenades",
+            name + ": native Cheap Weight coverage disappeared");
+        if (expectedSource == "Grenades")
+            Check(nativeWeightRows == 0 && preservedChanceRows > 0,
+                name + ": Cheap Grenades source no longer Chance-only");
 
         if (control == "loot.stashMixCoupons")
         {
+            // Coupons have actual Cheap Weight rows but the Rare tier has
+            // 8 independent difficulty-scoped Chance entries (0.2f/0.1f).
+            var rareChanceRows = branches.Where(g => !g.IsSmart
+                    && g.Prototype == "GamePass_Stash_ItemGenerator_Rare"
+                    && g.Field == "Chance")
+                .SelectMany(g => g.Items
+                    .Where(item => StashEffectiveState.ItemBiasId(item.ItemSid) == control)
+                    .Select(item => (Group: g, Item: item))).ToArray();
+            Check(nativeWeightRows > 0 && rareChanceRows.Length == 8,
+                name + ": native coupon Weight/Chance inventory drift");
+            foreach (var (group, item) in rareChanceRows)
+            {
+                var path = "TCD_" + group.Prototype + "/"
+                    + group.GroupPath.Replace(".", "/["
+                    + item.Index + "]/Chance";
+                Check(tier.TryGetValue(path, out var actual)
+                    && Math.Abs(Num(actual!) - Num(item.SourceRaw)) < 1e-7,
+                    name + ": Coupons Weight changed native Rare Chance " + path);
+            }
             Check(!output.ContainsKey("GameData/StashPrototypes.cfg"),
                 name + ": no world SmartLoot coupon rows are indexed");
             return;
         }
+
         Check(output.TryGetValue("GameData/StashPrototypes.cfg", out var smart),
             name + ": parallel generic SmartLoot layer not emitted");
-        var sourceSmart = branches.Where(g => g.IsSmart)
+        var weightRows = branches.Where(g => g.IsSmart && g.Field == "Weight")
             .SelectMany(g => g.Items
                 .Where(item => StashEffectiveState.SmartItemBiasId(item.ItemSid) == control)
-                .Select(item => (Group: g, Item: item)))
-            .FirstOrDefault();
-        Check(sourceSmart.Group is not null,
-            name + ": SmartLoot category has no native source row");
-        var key = "TCD_" + sourceSmart.Group!.Prototype + "/"
-            + sourceSmart.Group.GroupPath.Replace(".", "/") + "/["
-            + sourceSmart.Item!.Index + "]/";
-        Check(smart!.TryGetValue(key + sourceSmart.Group.Field, out var smartSelection)
-            && Num(smartSelection!) == 0,
-            name + ": parallel SmartLoot selection not disabled at " + key);
-        foreach (var field in new[] { "MinCount", "MaxCount" })
-            Check(smart.TryGetValue(key + field, out var count) && Num(count!) == 0,
-                name + ": parallel SmartLoot " + field + " not disabled at " + key);
+                .Select(item => (Group: g, Item: item))).ToArray();
+        Check(weightRows.Length > 0,
+            name + ": no native SmartLoot Weight rows for " + expectedSource);
+        foreach (var (group, item) in weightRows)
+        {
+            var path = "TCD_" + group.Prototype + "/"
+                + group.GroupPath.Replace(".", "/["
+                + item.Index + "]/";
+            Check(smart!.TryGetValue(path + "Weight", out var weight)
+                && Math.Abs(Num(weight!)) < 1e-7,
+                name + ": native SmartLoot Weight not zeroed " + path);
+            foreach (var (field, raw) in new[]
+                { ("MinCount", item.MinCount), ("MaxCount", item.MaxCount) })
+            {
+                if (raw.Length == 0) continue;
+                Check(smart.TryGetValue(path + field, out var count)
+                    && Math.Abs(Num(count!)) < 1e-7,
+                    name + ": native SmartLoot disabled count not zero " + path + field);
+            }
+        }
+        // A native Chance-only SmartLoot row is independent of a global
+        // category Weight=0: the writer must not fabricate its Chance
+        // override, and must not suppress its original quantity.
+        var chanceRows = branches.Where(g => g.IsSmart && g.Field == "Chance")
+            .SelectMany(g => g.Items
+                .Where(item => StashEffectiveState.SmartItemBiasId(item.ItemSid) == control)
+                .Select(item => (Group: g, Item: item))).ToArray();
+        foreach (var (group, item) in chanceRows)
+        {
+            var path = "TCD_" + group.Prototype + "/"
+                + group.GroupPath.Replace(".", "/["
+                + item.Index + "]/";
+            Check(!smart!.ContainsKey(path + "Chance")
+                  && !smart.ContainsKey(path + "MinCount")
+                  && !smart.ContainsKey(path + "MaxCount"),
+                name + ": Weight-only knob rewrote native Chance-only SmartLoot " + path);
+        }
     }
 }
