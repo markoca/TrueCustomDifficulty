@@ -82,6 +82,14 @@ for name, expected in families.items():
 assert set(stash) == set(rewards + mix + medical + bonus)
 # Medical Weight is never a fabricated four-medical-item selection.
 assert 'DrawStashMedicalPairShares(dc,' in ui
+# Hover feedback must align to the actual converted MIN/MAX handle centers,
+# without projecting an unrelated glow through the two-state Anti-Rad cells.
+assert "ControlHoverGlow.Draw(dc, handle.Position," in ui
+assert "IsStashMedicalMax(source.Id)" in ui
+assert 'source.Id == "loot.stashMedicalAntiRadBias"' in ui
+assert "hovered ? CloneWithOpacity(StashMedicalPalette[3], .10)" in ui
+assert 'IsStashMedicalMax(_dragTarget.Parameter.Id)' in ui
+
 assert '_medicalWeightRankTargets.Add((rect, rank));' not in ui
 assert '_medicalWeightPreviewRank' not in ui
 assert '_medicalWeightHoveredRank' not in ui

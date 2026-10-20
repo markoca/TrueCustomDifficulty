@@ -98,6 +98,22 @@ assert "dc.DrawLine(activePen, new Point(xMin, y), new Point(xMax, y));" in quan
 assert "AddHorizontalTarget(min, fullHit, rail, 0.0, 5.0);" in quantity_rail
 assert "AddHorizontalTarget(max, fullHit, rail, 0.0, 5.0);" in quantity_rail
 assert "var overlap = Math.Abs(xMax - xMin) < 16.0;" in quantity_rail
+# Hover regression: shared numeric glow must not cover native medical controls.
+hover_renderer = source.split("private void DrawHoveredHandle(", 1)[1].split("// Anomalies are four independent", 1)[0]
+assert 'Family == "StashMedicalComposition"' in hover_renderer
+assert 'IsStashMedicalMin(source.Id)' in hover_renderer
+assert 'IsStashMedicalMax(source.Id)' in hover_renderer
+assert 'source.Id == "loot.stashMedicalAntiRadBias"' in hover_renderer
+assert "ControlHoverGlow.Draw(dc, handle.Position," in quantity_rail
+assert "ReferenceEquals(target.Parameter, handle.Parameter)" in quantity_rail
+assert "hovered ? Brushes.White : enabled ? tone : muted" in quantity_rail
+assert "hovered ? CloneWithOpacity(StashMedicalPalette[3], .10)" in anti_weight
+assert "var rect = new Rect(x + i * cellWidth, card.Top + 24.0, cellWidth, 25.0);" in anti_weight
+assert "AddHorizontalTarget(p, rect, rect, value, value);" in anti_weight
+assert 'target?.Parameter.Id == "loot.stashMedicalAntiRadBias"' in source
+assert "Cursor = Cursors.Hand;" in source
+assert 'IsStashMedicalMax(_dragTarget.Parameter.Id)' in source
+
 assert "ReferenceEquals(t.Parameter, min) && t.Kind == HitKind.Horizontal" in source
 assert "ReferenceEquals(t.Parameter, max) && t.Kind == HitKind.Horizontal" in source
 assert "dMin < dMax ? lower : upper" in source

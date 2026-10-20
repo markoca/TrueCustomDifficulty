@@ -446,6 +446,15 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             && target.Kind == HitKind.Horizontal
             && target.Parameter.Id is ("economy.buyCondition" or "economy.sellCondition"))
             return;
+        // Medical MIN/MAX use converted display values (MAX 0 stored = 5 shown),
+        // and separated Y centers when handles overlap. Their local renderer
+        // owns the precisely positioned glow. OFF/ON buttons use borders,
+        // never a projected numeric-value halo between the two cells.
+        if (Family == "StashMedicalComposition"
+            && (source.Id == "loot.stashMedicalAntiRadBias"
+                || IsStashMedicalMin(source.Id)
+                || IsStashMedicalMax(source.Id)))
+            return;
         var range = Math.Max(0.000001, target.VisualMaximum - target.VisualMinimum);
         // The two NPC condition handles share one rail except when they
         // nearly overlap, where both real centers are separated by 7 DIP.
@@ -4841,8 +4850,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             var hovered = enabled && _hoverTarget?.Kind == HitKind.Horizontal
                 && ReferenceEquals(_hoverTarget.Parameter, p)
                 && Math.Abs(_hoverTarget.VisualMinimum - value) < Epsilon;
+            // Highlight only the hovered button rectangle, not a circular
+            // halo projected from this source's 0/1 numeric value.
             dc.DrawRoundedRectangle(
                 selected ? CloneWithOpacity(StashMedicalPalette[3], .2) :
+                    hovered ? CloneWithOpacity(StashMedicalPalette[3], .10) :
                     CloneWithOpacity(panel, .38),
                 new Pen(hovered ? Brushes.White : selected ? StashMedicalPalette[3] :
                     CloneWithOpacity(border, .7), hovered ? 1.6 : .9),
@@ -4982,8 +4994,17 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         foreach (var handle in new[] { (Parameter: min, Position: minPoint),
                      (Parameter: max, Position: maxPoint) })
         {
-            var hovered = _hoverTarget is { Kind: HitKind.Horizontal } target
+            var hovered = enabled
+                && _hoverTarget is { Kind: HitKind.Horizontal } target
                 && ReferenceEquals(target.Parameter, handle.Parameter);
+            // The shared generic glow assumes CurrentNumber uses the display
+            // scale and the rail center. Medical MAX instead stores -1/0
+            // sentinels and overlapping handles can be offset by +/-7 DIP.
+            // Follow the exact point used to paint the hovered handle.
+            if (hovered)
+                ControlHoverGlow.Draw(dc, handle.Position,
+                    Application.Current?.TryFindResource("AccentBrush") as Brush ?? tone,
+                    hovered: true);
             dc.DrawEllipse(panel,
                 new Pen(hovered ? Brushes.White : enabled ? tone : muted,
                     hovered ? 2.8 : 1.8),
@@ -6251,9 +6272,14 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // the captured endpoint until mouse-up. A nearby opposite handle
         // must never appear to steal the current drag.
         HitTarget? target;
-        if (Family == "NpcLootLoadout" && _dragTarget is not null
-            && (_dragTarget.Kind == HitKind.RangeMin || _dragTarget.Kind == HitKind.RangeMax)
-            && e.LeftButton == MouseButtonState.Pressed)
+        if (_dragTarget is not null && e.LeftButton == MouseButtonState.Pressed
+            && ((Family == "NpcLootLoadout"
+                    && (_dragTarget.Kind == HitKind.RangeMin
+                        || _dragTarget.Kind == HitKind.RangeMax))
+                || (Family == "StashMedicalComposition"
+                    && _dragTarget.Kind == HitKind.Horizontal
+                    && (IsStashMedicalMin(_dragTarget.Parameter.Id)
+                        || IsStashMedicalMax(_dragTarget.Parameter.Id)))))
             target = _dragTarget;
         else
             target = FindTarget(point);
@@ -6269,6 +6295,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             HitKind.Toggle or HitKind.DrinkDurationOverride or HitKind.Choice => Cursors.Hand,
             _ => Cursors.Arrow
         };
+        if (Family == "StashMedicalComposition"
+            && target?.Parameter.Id == "loot.stashMedicalAntiRadBias")
+            Cursor = Cursors.Hand;
 
         if (_dragTarget is null || e.LeftButton != MouseButtonState.Pressed)
             return;

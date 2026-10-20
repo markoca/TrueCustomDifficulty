@@ -1,3 +1,11 @@
+## 2026-10-20 — CURRENT Stashes Medical hover correction
+
+**Medkits / Army Medkits MIN/MAX:** Retain the single 0–5 source-backed rail and 38-DIP shared hit zone. The common numeric hover projector is suppressed for these four source IDs: it cannot resolve the MAX -1/0 storage sentinels or the vertically separated centers of overlapping handles. Instead render the canonical hover halo directly at the hovered handle's actual displayed 0–5 X and +/-7 DIP Y position. The nearest-handle hit test and captured drag continue to select exactly one MIN or MAX and hold that hover until release. Do not illuminate the other endpoint, fixed readouts or reference markers.
+
+**ANTI-RAD · PRIORITY OFF/ON:** No circular numeric halo or yellow centerline crossing the two buttons. Highlight only the hovered cell itself using a subtle violet fill and white outline, while retaining the selected violet state and existing compact geometry. Pointer uses a hand over either enabled button. No change to source values, discrete OFF/ON semantics, preset round-trip, CFG writer, or independent Anti-Rad Chance. Shared Stamina Usage visual grammar remains authoritative.
+
+**Verification scope:** current WPF source + static Stashes regression assertions updated in the same commit. Local compiled/Wine/visual interaction tests remain necessary.
+
 ## 2026-10-20 — CURRENT Stashes preview and tier labels (supersedes earlier rank-toggle UI)
 
 **BASIC · LOOT PREVIEW:** retain exactly the existing read-only hard-difficulty Basic source pool (medical/food/drinks) and its true within-pool Weight shares. Remove the **VETERAN** text above the stacked bar; keep the color bar and item/share legend, nudged upward into the available space. No rank or difficulty picker and no invented loot odds.
