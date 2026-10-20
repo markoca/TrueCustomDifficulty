@@ -1410,8 +1410,10 @@ public sealed class MainViewModel : ObservableObject
         {
             presetDirectory = _presetDirectoryService.EnsureWritable();
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.ComponentModel.Win32Exception)
+        catch (Exception ex)
         {
+            // Permission preparation must never terminate the UI process.
+            // Surface any Windows/Wine/process/ACL failure as a normal dialog.
             MessageBox.Show(
                 $"Preset folder permissions could not be repaired.\n\n{ex.Message}",
                 AppName,

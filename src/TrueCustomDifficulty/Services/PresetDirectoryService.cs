@@ -389,26 +389,44 @@ public sealed class PresetDirectoryService
 
     private static void GrantCurrentUserModifyPermission(string directory)
     {
-        var sid = WindowsIdentity.GetCurrent().User?.Value;
-        if (string.IsNullOrWhiteSpace(sid))
-            throw new IOException("Windows could not resolve the current user SID for the Presets folder.");
-
-        // First try without elevation. The directory is normally owned by the
-        // logged-in user, so changing its DACL often needs no UAC prompt.
-        if (RunIcaclsGrant(directory, sid, elevate: false))
-            return;
-
+        string sid;
         try
         {
-            // If the existing ACL itself blocks the change, ask Windows once
-            // for elevation and grant Modify only on this Presets directory.
-            if (RunIcaclsGrant(directory, sid, elevate: true))
+            sid = WindowsIdentity.GetCurrent().User?.Value
+                ?? throw new IOException("Windows could not resolve the current user SID for the Presets folder.");
+        }
+        catch (Exception ex) when (ex is not UnauthorizedAccessException)
+        {
+            throw new UnauthorizedAccessException(
+                "Windows could not resolve the current user account needed to repair Presets permissions.",
+                ex);
+        }
+
+        var systemDirectory = Environment.GetFolderPath(Environment.SpecialFolder.System);
+        var icaclsPath = string.IsNullOrWhiteSpace(systemDirectory)
+            ? "icacls.exe"
+            : Path.Combine(systemDirectory, "icacls.exe");
+
+        // icacls is part of Windows. Nothing is bundled or needs installing.
+        // Try without elevation first; only request UAC if the ACL itself blocks us.
+        try
+        {
+            if (RunIcaclsGrant(icaclsPath, directory, sid, elevate: false))
+                return;
+
+            if (RunIcaclsGrant(icaclsPath, directory, sid, elevate: true))
                 return;
         }
         catch (Win32Exception ex) when (ex.NativeErrorCode == 1223)
         {
             throw new UnauthorizedAccessException(
-                "Windows permission approval was cancelled. Save Preset needs create-file permission for the portable Presets folder.",
+                "Windows permission approval was cancelled. Save Preset needs Modify permission for the portable Presets folder.",
+                ex);
+        }
+        catch (Exception ex)
+        {
+            throw new UnauthorizedAccessException(
+                $"Windows could not repair permissions for '{directory}'.",
                 ex);
         }
 
@@ -416,28 +434,27 @@ public sealed class PresetDirectoryService
             $"Windows could not grant the current user Modify permission for '{directory}'.");
     }
 
-    private static bool RunIcaclsGrant(string directory, string sid, bool elevate)
+    private static bool RunIcaclsGrant(string icaclsPath, string directory, string sid, bool elevate)
     {
         var startInfo = new ProcessStartInfo
         {
-            FileName = "icacls.exe",
+            FileName = icaclsPath,
             UseShellExecute = elevate,
-            CreateNoWindow = !elevate
+            CreateNoWindow = !elevate,
+            Arguments = $"{QuoteProcessArgument(directory)} /grant:r {QuoteProcessArgument($"*{sid}:(OI)(CI)M")} /Q"
         };
 
         if (elevate)
             startInfo.Verb = "runas";
 
-        startInfo.ArgumentList.Add(directory);
-        startInfo.ArgumentList.Add("/grant:r");
-        startInfo.ArgumentList.Add($"*{sid}:(OI)(CI)M");
-        startInfo.ArgumentList.Add("/Q");
-
         using var process = Process.Start(startInfo)
-            ?? throw new IOException("Windows could not start icacls.exe to repair Presets permissions.");
+            ?? throw new IOException("Windows could not start its built-in icacls.exe permission tool.");
         process.WaitForExit();
         return process.ExitCode == 0;
     }
+
+    private static string QuoteProcessArgument(string value)
+        => "\"" + value.Replace("\"", "\\\"", StringComparison.Ordinal) + "\"";
 
     public IReadOnlyList<PresetListItem> List()
     {
