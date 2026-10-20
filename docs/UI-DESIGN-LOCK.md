@@ -1,3 +1,9 @@
+## 2026-10-20 — CURRENT Windows custom preset storage
+
+**Custom preset saves are user data, not application files.** Save Preset and Load Preset now default to `%LOCALAPPDATA%\TrueCustomDifficulty\Presets` on Windows instead of the portable `Presets` directory beside the EXE. The shipped factory presets and any legacy portable JSONs remain readable and continue to appear in the preset picker. When a user preset has the same display name as a portable preset, the per-user copy wins in the picker so a saved customization is not shadowed by a read-only factory/legacy file.
+
+Preset JSON format, control values, factory preset contents, preset migrations and gameplay behavior are unchanged. Saving uses a unique temporary file and atomic replacement; cleanup of a failed temp file is best-effort so a secondary permission error cannot hide the real save failure. The application does not request elevation or modify Windows ACLs.
+
 ## 2026-10-20 — CURRENT direct ~mods build destination
 
 Build Difficulty persists generated mod archives **only** in the user-selected game `~mods`. The app directory has no active `Output/` build state. Packing uses OS-temporary staging; validated archives are transactionally installed into `~mods` before temporary cleanup. This supersedes every older catalog statement that describes `Output/` as a working or final build artifact. No gameplay control geometry or CFG semantics change.

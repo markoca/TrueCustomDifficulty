@@ -25,7 +25,7 @@ public sealed class PresetService
         if (!string.IsNullOrWhiteSpace(directory))
             Directory.CreateDirectory(directory);
 
-        var tempPath = fullPath + ".tmp";
+        var tempPath = fullPath + "." + Guid.NewGuid().ToString("N") + ".tmp";
         try
         {
             var json = JsonSerializer.Serialize(preset, Options);
@@ -34,8 +34,15 @@ public sealed class PresetService
         }
         finally
         {
-            if (File.Exists(tempPath))
-                File.Delete(tempPath);
+            // Cleanup is best-effort and must never replace the real save
+            // exception with a secondary temp-file permission error.
+            try
+            {
+                if (File.Exists(tempPath))
+                    File.Delete(tempPath);
+            }
+            catch (IOException) { }
+            catch (UnauthorizedAccessException) { }
         }
     }
 
