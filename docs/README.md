@@ -8,6 +8,10 @@
 - [Consumable medicines — Vinca/Cinnamon, Psi Block, Hercules source audit (2026-10-11)](CONSUMABLE-MEDICINE-CFG-AUDIT-2026-10-11.md): verified source mappings, six implemented UI/CFG editors and outstanding runtime safeguards.
 All project documentation lives under `docs/`. The repository root is intentionally reserved for build/run entry points.
 
+## Repository build entry point
+
+`publish.sh` is tracked as an executable file (`100755`). A normal checkout can run `./publish.sh` directly. Running `chmod +x publish.sh` remains harmless, but must not create a local Git mode change that blocks a later `git pull`.
+
 ## Production and architecture
 
 - [Production implementation](PRODUCTION-IMPLEMENTATION.md)

@@ -14,7 +14,7 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 PUBLISH_SCRIPT = ROOT / "publish.sh"
 script = PUBLISH_SCRIPT.read_text(encoding="utf-8")
-assert subprocess.run(
+assert os.access(PUBLISH_SCRIPT, os.X_OK), "publish.sh must be tracked executable; chmod +x must not dirty the checkout"\nassert subprocess.run(
     ["bash", "-n", str(PUBLISH_SCRIPT)], check=False, capture_output=True
 ).returncode == 0, "publish.sh failed bash syntax validation"
 assert 'rm -rf -- "$PUBLISH_DIR"' not in script
