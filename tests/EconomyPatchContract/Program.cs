@@ -51,7 +51,8 @@ internal static class Program
                 foreach (var difficulty in new[] { "Novice", "Stalker", "Master" })
                     TestDirect(id, difficulty);
             TestTraderThreshold();
-            Check(_passed == 34, "Expected exactly 34 Economy writer scenarios");
+            TestLinkedRoamingGuides();
+            Check(_passed == 39, "Expected exactly 39 Economy writer scenarios");
             Console.WriteLine($"PASS: {_passed} Economy production BPatch writer scenarios");
             Console.WriteLine("NOT VERIFIED: original CFG archives, DLC1-installed patches or game behavior");
             return 0;
@@ -128,6 +129,52 @@ internal static class Program
         finally
         {
             if (_keep is null && Directory.Exists(path)) Directory.Delete(path,recursive:true);
+        }
+    }
+
+    private static void TestLinkedRoamingGuides()
+    {
+        Check(RoamingGuideSourceDetector.ContainsRoamingGuideSource(
+            "../../../Stalker2/Content/GameLite/GameData/FastTravelEconomyPrototypes.cfg.bin"),
+            "2.1 CFG feature probe did not find source");
+        Check(!RoamingGuideSourceDetector.ContainsRoamingGuideSource(
+            "../../../Stalker2/Content/GameLite/GameData/FastTravelPrototypes.cfg.bin"),
+            "Legacy fast travel source falsely matched 2.1 feature probe");
+        foreach (var (scale, hasSource) in new[] { (0.0, true), (0.5, true),
+                 (1.0, true), (2.0, true), (0.5, false) })
+        {
+            var path = Path.Combine(_keep ?? Path.GetTempPath(), "TCD_RoamingGuide",
+                scale.ToString(CultureInfo.InvariantCulture) + "_" + hasSource);
+            try
+            {
+                var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+                vm.AllParameters.Single(p => p.Id == "economy.fastTravelCost")
+                    .SnapCurrentNumberToMarker(scale);
+                var result = new CfgPatchWriterService().Write(vm, Catalog,
+                    new GameInstallInfo { SupportsRoamingGuideEconomy = hasSource }, path);
+                var dest = ExpectedFile(path, "GameData/FastTravelEconomyPrototypes.cfg");
+                Check(File.Exists(dest) == (hasSource && scale != 1.0),
+                    "Roaming guide CFG version gate or vanilla no-op broken");
+                if (hasSource && scale != 1.0)
+                {
+                    var root = Parse(File.ReadAllText(dest)).Get("[1]");
+                    Check(root.Bpatch && root.Assignments.Count == 2,
+                        "Roaming economy must patch two fields in existing [1] root only");
+                    Approx(root.Value("GeneralCoefficient"), 1.3 * scale,
+                        "Roaming GeneralCoefficient");
+                    Approx(root.Value("MinPrice"), 100 * scale, "Roaming MinPrice");
+                    Check(result.FileCount == 2 && result.ParameterCount == 1,
+                        "Linked price knob did not emit exactly two CFG sources");
+                }
+                if (!hasSource)
+                    Check(!File.Exists(dest), "Pre-2.1 target unexpectedly emitted");
+                _passed++;
+            }
+            finally
+            {
+                if (_keep is null && Directory.Exists(path))
+                    Directory.Delete(path, recursive: true);
+            }
         }
     }
 

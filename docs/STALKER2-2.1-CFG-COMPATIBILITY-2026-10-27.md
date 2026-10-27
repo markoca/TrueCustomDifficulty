@@ -73,3 +73,13 @@ Test on the **2.1** game build with a clean save and controlled before/after com
 6. **DLC1**: check DLC1 stash/actor routes and artefact behavior with the installed DLC.
 
 Only the executable game can establish practical runtime compatibility. **Do not bump `gameVersion` to 2.1 or claim a complete 2.1 baseline until every direct and special source has been revalidated.**
+
+## 2026-10-27: single Guide Travel Fees control also covers roaming guides
+
+The existing `economy.fastTravelCost` remains one slider, without changing any UI layout, preset schema or parameter ID.
+
+For all versions, it continues to scale 182 paid `RequiredMoney` leaves in `GameData/FastTravelPrototypes.cfg`. On installed games where `repak list` confirms `GameData/FastTravelEconomyPrototypes.cfg[.bin]` exists, it additionally patches only the existing `[1]` (`SID = ALifeGuideEconomy`) prototype with `GeneralCoefficient = 1.3 × slider` and `MinPrice = 100 × slider`. Remaining regional, difficulty, reputation and rounding rules are unchanged. Thus 0× removes both the base coefficient and the source minimum price.
+
+Feature detection uses the game installation associated with the configured ~mods folder and cached top-level .pak source lists. An edited travel fee with an unidentifiable game installation fails explicitly; the 2.0/2.0.5 game receives no roaming CFG. On vanilla 1×, neither source is patched.
+
+The production C# EconomyPatchContract now includes five additional linked-source scenarios: 0×/0.5×/1×/2× for games with the new source and 0.5× for games without it. Runtime behavior still requires 2.1 in-game verification.

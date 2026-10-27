@@ -9065,7 +9065,7 @@
       "tab": "economy",
       "group": "Services",
       "label": "Guide Travel Fees",
-      "description": "Scales hub-guide fast-travel prices while preserving price differences between destinations. Roaming guides introduced in STALKER 2.1 use a separate economy and are not affected.",
+      "description": "Scales both hub-guide and roaming-guide travel fees when the installed game supports roaming guides, preserving native price differences.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -9100,9 +9100,9 @@
           "scaleNonZero preserves the zero-valued template/free entry while scaling all explicit paid-route prices together."
         ]
       },
-      "rationale": "Changes hub-guide travel fees while keeping differences between routes. Does not affect roaming guides in STALKER 2.1.",
+      "rationale": "Adjusts hub-guide fees and, on STALKER 2.1+, roaming-guide fees with the same slider.",
       "logic": "100% keeps vanilla guide prices. 50% halves paid routes, 200% doubles them, and 0% makes paid routes free.",
-      "interaction": "Hub-guide discounts and other travel pricing rules still apply. Roaming guides have separate fees in STALKER 2.1."
+      "interaction": "Roaming-guide base fees and minimum price scale with this slider on STALKER 2.1+. Native difficulty, reputation, region and rounding rules still apply."
     },
     {
       "id": "economy.upgradeCost",

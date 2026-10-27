@@ -3296,3 +3296,7 @@ The dedicated `loot.looseUniqueWeaponShuffle` control was already implemented in
 - Medical Items binds four HEAL, four BLEED and four RAD bars (`_medical`, `_bleeding`, `_radiation`) plus Food Healing. Keyboard reset must traverse all three groups.
 - Writer baseline currently contains 42 Health and 86 *exposed Survival* edit points in `cfg-writer-baseline.json` (the audit's exposed-parameter filter, not all Survival points). Future CFG additions must update the baseline and audit expectations together after verifying native prototype/path ownership; do not invent edit points to satisfy historical counts.
 - Energy Drink source facts: `EnergeticStaminaPerAction1` −30% for 15 s; `EnergeticStaminaPerAction2` −100% for 5 s; `Energetic_Limited`, `MeleeButstock`, and **Engine stacking** remain explicit source audit facts. These short effects stay independently editable from the main Energy regeneration duration.
+
+### 2026-10-27 — 2.1 unified guide price source
+
+The **existing** `economy.fastTravelCost` / Guide Travel Fees control is unchanged visually (one 270° knob, 0–2×, 0.01×). It writes both classic hub-guide route prices and (only if the game has the new 2.1 CFG) the roaming-guide `ALifeGuideEconomy` GeneralCoefficient/MinPrice. No new parameter, second knob, spacing, or visual group. See `docs/STALKER2-2.1-CFG-COMPATIBILITY-2026-10-27.md`.

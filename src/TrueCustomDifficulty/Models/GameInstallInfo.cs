@@ -8,4 +8,6 @@ public sealed class GameInstallInfo
 {
     public string RootPath { get; init; } = string.Empty;
     public bool HasDlc1 { get; init; }
+    // Checked against installed game sources, not the frozen catalog version.
+    public bool SupportsRoamingGuideEconomy { get; init; }
 }

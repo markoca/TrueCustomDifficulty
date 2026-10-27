@@ -150,6 +150,22 @@ public sealed partial class CfgPatchWriterService
             }
         }
 
+        // Linked roaming-guide price route exists only in the 2.1 source.
+        // The old hub guide fee source is still handled by the original direct loop.
+        if (gameInstall?.SupportsRoamingGuideEconomy == true
+            && modifiedById.TryGetValue("economy.fastTravelCost", out var guideFees))
+        {
+            var economy = GetDocument(documents, "GameData/FastTravelEconomyPrototypes.cfg");
+            // [1] SID = ALifeGuideEconomy, 2.1 source values: 1.3 and 100.
+            // Include the price floor so 0x means free roaming travel too.
+            economy.AddAssignment("[1]", Array.Empty<string>(), "GeneralCoefficient",
+                FormatLikeSource(1.3 * guideFees.CurrentNumber, "1.3"));
+            economy.AddAssignment("[1]", Array.Empty<string>(), "MinPrice",
+                FormatLikeSource(100.0 * guideFees.CurrentNumber, "100"));
+            writtenParameters.Add("economy.fastTravelCost");
+            editCount += 2;
+        }
+
         editCount += WriteAdditionalMechanics(
             baseline,
             modifiedById,

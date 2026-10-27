@@ -46,7 +46,16 @@ public sealed class ModBuildService
             Directory.CreateDirectory(stagingRoot);
             Directory.CreateDirectory(packedRoot);
 
-            var cfgResult = _cfgWriter.Write(vm, catalog, gameInstall, stagingRoot);
+            // A single Guide Travel Fees knob can target two game-version-dependent
+            // sources. Probe the installed base-game PAKs only when it is edited.
+            var writerInstall = gameInstall;
+            var guideFees = vm.AllParameters.FirstOrDefault(p => p.Id == "economy.fastTravelCost");
+            if (guideFees is not null && guideFees.IsControlEnabled
+                && guideFees.IsValueModifiedFromReference())
+                writerInstall = RoamingGuideSourceDetector.Resolve(
+                    gameInstall, modsFolder, _tools.Require("repak"));
+
+            var cfgResult = _cfgWriter.Write(vm, catalog, writerInstall, stagingRoot);
 
             if (cfgResult.FileCount == 0)
             {
