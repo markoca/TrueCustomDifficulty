@@ -9065,7 +9065,7 @@
       "tab": "economy",
       "group": "Services",
       "label": "Guide Travel Fees",
-      "description": "Scales guide fast-travel prices while preserving the vanilla price differences between destinations.",
+      "description": "Scales hub-guide fast-travel prices while preserving price differences between destinations. Roaming guides introduced in STALKER 2.1 use a separate economy and are not affected.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -9100,9 +9100,9 @@
           "scaleNonZero preserves the zero-valued template/free entry while scaling all explicit paid-route prices together."
         ]
       },
-      "rationale": "Makes guide travel cheaper or more expensive while preserving differences between routes.",
+      "rationale": "Changes hub-guide travel fees while keeping differences between routes. Does not affect roaming guides in STALKER 2.1.",
       "logic": "100% keeps vanilla guide prices. 50% halves paid routes, 200% doubles them, and 0% makes paid routes free.",
-      "interaction": "Guide discounts and other travel pricing rules still apply. This setting changes the route's starting fee."
+      "interaction": "Hub-guide discounts and other travel pricing rules still apply. Roaming guides have separate fees in STALKER 2.1."
     },
     {
       "id": "economy.upgradeCost",

@@ -1,0 +1,41 @@
+# STALKER 2.1 CFG compatibility — source audit (2026-10-27)
+
+## Inputs and limits
+
+Compared the user's decoded **2.0** and **2.1** GameData/DLC1 CFG dumps with the current `main` TCD production mapping (embedded baseline still declares **2.0.5**). These are source audits, **not proof of in-game patch application**. No gameplay writer transforms or stash drop rates have been altered by this audit.
+
+- 603 -> 605 CFGs; **22 existing changed**, **2 new**, **0 removed**.
+- 1,230 direct writer edit points in `src/TrueCustomDifficulty/Data/cfg-writer-baseline.json`.
+- Only two changed CFG files are direct writer sources: `GameData/CoreVariables.cfg` (**13 edit points**) and `DLCGameData/DLC1/ItemPrototypes.cfg` (**2 edit points**). All 15 exact prototype/node/key leaves retained their 2.0 values in 2.1; no changed direct source leaf was identified. Unchanged CFG files cannot contain changed source leaves.
+- Other changed files include `GameData/SpawnActorPrototypes.cfg` and `DLCGameData/DLC1/SpawnActorPrototypes.cfg`. These are used by special stash/loot writer manifest routes and must be checked **against the actor CSV manifests**, not simply marked safe because no direct edit point targets them.
+- Initial cross-check of the 24 removed actor IDs against five central stash actor manifests found **zero removed-ID overlaps**, but this is *not* exhaustive for other CSV routes. The command below performs broader manifest actor checks locally.
+- `GameData/FastTravelPrototypes.cfg` is **byte-identical**. Legacy `economy.fastTravelCost` scales 183 `RequiredMoney` leaves, preserving the free/zero entry.
+- Newly introduced `GameData/FastTravelEconomyPrototypes.cfg` defines `[1] SID = ALifeGuideEconomy` and `GeneralCoefficient = 1.3` for **roaming guides**. The existing hub-guide price knob **does not control these fees**. This is explicitly clarified in the parameter help/rationale. Avoid silently adding this 2.1-only CFG patch to a 2.0.5 baseline, which would break backwards compatibility.
+- New A-Life dynamic streaming parameters in `CoreVariables.cfg` / platform `SettingsVariables` are independent of existing TCD NPC group-size controls. A source pass does not demonstrate that runtime spawn/simulation timing remains identical.
+- Korshunov's isolated `AbilityPrototypes.cfg` melee change is not a TCD-owned direct edit.
+
+## Reproducible 2.0 -> 2.1 audit
+
+Run from the repository root with both original **outer** archives:
+
+```bash
+python3 tools/audit_game_21_cfg_compat.py \
+  --old "/path/STALKER2-2.0 cfg dump.zip" \
+  --new "/path/STALKER2-2.1 cfg dump.zip" \
+  --json-out audit/stalker2-21-cfg-compat.json
+```
+
+The tool verifies that mapped direct leaves in *changed* source files still exist with unchanged source values, checks the new ALifeGuideEconomy source, and scans existing actor IDs in bundled CSV manifests for removal or changed `StashPrototypeSID`, `ItemGeneratorSettings`, `EnableSmartLootIfPossible`, and `SpawnedPrototypeSID` fields. It fails when an owned source was removed/changed, prints a structured JSON report, and never edits the source data.
+
+## Required manual runtime regression
+
+Test on the **2.1** game build with a clean save and controlled before/after comparisons:
+
+1. **Hub guides**: base and modified `Guide Travel Fees` prices across two hub-to-hub routes; free routes remain free. **Roaming guides**: verify separately that the old knob does not change their fees.
+2. **Stashes**: one basic/standard/rare regular stash per relevant tier, on a fresh save and with altered medical/ammo/chance settings; check ordinary, named, unique, and scripted protection. Reuse the documented three early Richter stash locations when possible.
+3. **NPC corpse/Mutant loot**: compare modified vs base corpse ammo, medical loot and mutant part drops on identical combat encounters; specifically observe the new `EnableSmartLootIfPossible`-flagged actors.
+4. **Extra Stash Gear**: verify item tier, T1-compatible attachments, max two eligible gear items, no quest/unique items, and coverage percentage on a new build.
+5. **A-Life**: compare active NPC squad population and behavior when using Recommended and Dynamic streaming options; don't misinterpret unloaded NPCs as absent NPCs.
+6. **DLC1**: check DLC1 stash/actor routes and artefact behavior with the installed DLC.
+
+Only the executable game can establish practical runtime compatibility. **Do not bump `gameVersion` to 2.1 or claim a complete 2.1 baseline until every direct and special source has been revalidated.**
