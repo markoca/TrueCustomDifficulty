@@ -91,22 +91,29 @@ def actor_tokens():
 
 
 def actor_watch(src, wanted):
-    """Read actor roots; retain only fields owned or observed by stash/loot writers."""
+    """Index actual top-level actor roots and inspect only manifest-owned SIDs.
+
+    SpawnActorPrototypes has deeply nested structs. A flat regex stopping at the
+    first struct.end silently misses actor roots and can incorrectly PASS with
+    zero matched actors. The root SID is a 32-hex token in column zero.
+    """
     if not wanted:
         return {}
     z, name = src
     data = z.read(name)
-    block = re.compile(rb"(?ms)^([^\s]+) : struct\.begin[^\n]*\n(.*?)^struct\.end\s*$")
+    pattern = re.compile(rb"(?m)^([0-9A-Fa-f]{32})\s*:\s*struct\.begin[^\r\n]*")
+    matches = list(pattern.finditer(data))
     actors = {}
-    wanted_bytes = {sid.encode("ascii") for sid in wanted}
-    for match in block.finditer(data):
-        sid = match.group(1).upper()
-        if sid not in wanted_bytes:
+    for i, match in enumerate(matches):
+        sid = match.group(1).decode("ascii").upper()
+        if sid not in wanted:
             continue
-        body = match.group(2).decode("utf-8", errors="replace")
-        watched = tuple(line.strip() for line in body.splitlines()
-                        if any(word in line for word in WATCH))
-        actors[sid.decode("ascii")] = watched
+        stop = matches[i + 1].start() if i + 1 < len(matches) else len(data)
+        body = data[match.end():stop].decode("utf-8", errors="replace")
+        actors[sid] = tuple(
+            line.strip() for line in body.splitlines()
+            if any(word in line for word in WATCH)
+        )
     return actors
 
 
@@ -172,6 +179,8 @@ def run(old_path: Path, new_path: Path):
 
     # Check the ACTUAL production CSV inventories, not guessed actor IDs.
     owners = actor_tokens()
+    if not owners:
+        issues.append("Actor manifest inventory is EMPTY: cannot audit stash/loot compatibility")
     actor_stats = {}
     for filename in (
         "GameData/SpawnActorPrototypes.cfg",
@@ -193,6 +202,8 @@ def run(old_path: Path, new_path: Path):
                  "before": a[sid], "after": b[sid]} for sid in touched
             ],
         }
+        if not a or not b:
+            issues.append(f"{filename}: ZERO matched manifest actors; audit evidence is invalid")
         if lost:
             issues.append(f"{filename}: {len(lost)} manifest actors REMOVED")
         if touched:

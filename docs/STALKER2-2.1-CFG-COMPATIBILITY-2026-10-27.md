@@ -27,6 +27,40 @@ python3 tools/audit_game_21_cfg_compat.py \
 
 The tool verifies that mapped direct leaves in *changed* source files still exist with unchanged source values, checks the new ALifeGuideEconomy source, and scans existing actor IDs in bundled CSV manifests for removal or changed `StashPrototypeSID`, `ItemGeneratorSettings`, `EnableSmartLootIfPossible`, and `SpawnedPrototypeSID` fields. It fails when an owned source was removed/changed, prints a structured JSON report, and never edits the source data.
 
+## Audit correction (2026-10-27)
+
+The previous actor root scanner used a flat regex terminating at the first nested
+\`struct.end\`. It returned **zero matching actor roots**, yet printed PASS. That was
+a false positive; no claim of actor/manifest compatibility is supported by that run.
+
+The updated scanner uses real column-zero, 32-hex actor roots, slices only owned
+actor blocks and explicitly **FAILS if zero actor manifest roots are matched**
+in either the base or DLC1 dump. Actor changes in \`StashPrototypeSID\`,
+\`ItemGeneratorSettings\`, \`SpawnedPrototypeSID\`, or
+\`EnableSmartLootIfPossible\` are now compared for every identified owner.
+
+Actual decoded-dump delta observed during this investigation:
+- Base SpawnActor: 16 removed roots, 205 new roots; **87 pre-existing actor
+  roots gain \`EnableSmartLootIfPossible = true\`**.
+- DLC1 SpawnActor: 8 removed roots, 6 new roots; no changes to those four
+  watched fields among unchanged actor roots.
+- All 15 direct writer edit points in changed direct-source CFG files stayed
+  at the same exact source values (the separate 2.0.5 embedded baseline
+  is still not being re-versioned).
+
+A two-actor representative audit against the actual user's 2.0/2.1 ZIPs
+(one base SmartLoot stash and one DLC1 stash) now scans nonzero roots and
+passes. That test does **not** substitute for a full run over the repository's
+actual manifests; run the command below on the user's checkout for that.
+Six synthetic negative/positive regression tests verify normal pass, nested
+fields, disappearing actors, new SmartLoot flags, changed direct leaves and
+the fail-on-zero case.
+
+**Roaming guides:** do not add \`ALifeGuideEconomy\` to the legacy hub-guide
+slider or to a 2.0.5 baseline. A separate 2.1-aware control requires a
+reliable game-version capability check and actual game QA; no silent writer
+change has been made.
+
 ## Required manual runtime regression
 
 Test on the **2.1** game build with a clean save and controlled before/after comparisons:
