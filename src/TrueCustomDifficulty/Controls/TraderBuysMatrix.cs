@@ -52,7 +52,7 @@ public sealed class TraderBuysMatrix : UserControl
             CornerRadius = new CornerRadius(3),
             BorderThickness = new Thickness(1),
             Background = panel,
-            Margin = new Thickness(2, 1, 2, 1),
+            Margin = new Thickness(1, 1, 1, 1),
             SnapsToDevicePixels = true
         };
         var style = new Style(typeof(Border));
@@ -71,7 +71,8 @@ public sealed class TraderBuysMatrix : UserControl
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
                 ToolTip = isBuying
-                    ? role + " · " + category + " · BUYS FROM YOU. Untouched = each trader's original rules."
+                    ? role + " · " + category + " · BUYS FROM YOU. Untouched = original rules." +
+                      (category == "CONSUMABLES" ? " Includes medical, food and drinks." : "")
                     : role + " · " + category + " · SELLS TO YOU. Checked = original offers; unchecked = remove stock."
             };
             box.SetBinding(ToggleButton.IsCheckedProperty,
@@ -121,10 +122,10 @@ public sealed class TraderBuysMatrix : UserControl
         var accent = ThemeBrush("AccentBrush", Brushes.Gold);
         var softBorder = ThemeBrush("BorderSoftBrush", Brushes.DimGray);
         var panel = ThemeBrush("RecessedParameterRowBrush", Brushes.Black);
-        var main = new StackPanel { Margin = new Thickness(8, 8, 8, 7) };
-        var title = Caption("TRADERS", 13, accent);
+        var main = new StackPanel { Margin = new Thickness(5, 5, 5, 5) };
+        var title = Caption("TRADERS", 12, accent);
         title.HorizontalAlignment = HorizontalAlignment.Left;
-        title.Margin = new Thickness(3, 0, 0, 0);
+        title.Margin = new Thickness(3, 0, 0, 1);
         main.Children.Add(title);
 
         // "Consumables" is a single native buy type, while seller stock has
@@ -145,21 +146,21 @@ public sealed class TraderBuysMatrix : UserControl
             ("MUTANT PARTS", "mutantLoot", null)
         };
         var board = new Grid { SnapsToDevicePixels = true };
-        board.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(121) });
+        board.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(112) });
         foreach (var _ in TraderBuysPolicy.Roles)
         {
             board.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             board.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
         }
-        board.RowDefinitions.Add(new RowDefinition { Height = new GridLength(35) });
-        board.RowDefinitions.Add(new RowDefinition { Height = new GridLength(23) });
+        board.RowDefinitions.Add(new RowDefinition { Height = new GridLength(27) });
+        board.RowDefinitions.Add(new RowDefinition { Height = new GridLength(19) });
         foreach (var _ in rows)
-            board.RowDefinitions.Add(new RowDefinition { Height = new GridLength(34) });
+            board.RowDefinitions.Add(new RowDefinition { Height = new GridLength(28) });
 
         for (var c = 0; c < TraderBuysPolicy.Roles.Count; c++)
         {
             var role = TraderBuysPolicy.Roles[c];
-            var name = Caption(role.Label.ToUpperInvariant(), 10.2, fg);
+            var name = Caption(role.Label.ToUpperInvariant(), 10, fg);
             name.TextTrimming = TextTrimming.CharacterEllipsis;
             name.ToolTip = role.Label;
             Grid.SetRow(name, 0);
@@ -168,7 +169,7 @@ public sealed class TraderBuysMatrix : UserControl
             board.Children.Add(name);
             foreach (var isBuying in new[] { true, false })
             {
-                var label = Caption(isBuying ? "BUY" : "SELL", 10, muted);
+                var label = Caption(isBuying ? "BUY" : "SELL", 9.5, muted);
                 label.ToolTip = isBuying ? "Trader buys from you" : "Trader sells to you";
                 Grid.SetRow(label, 1);
                 Grid.SetColumn(label, c * 2 + (isBuying ? 1 : 2));
@@ -179,9 +180,9 @@ public sealed class TraderBuysMatrix : UserControl
         for (var r = 0; r < rows.Length; r++)
         {
             var row = rows[r];
-            var name = Caption(row.Label, 10.5, fg);
+            var name = Caption(row.Label, 10, fg);
             name.HorizontalAlignment = HorizontalAlignment.Left;
-            name.Margin = new Thickness(7, 0, 0, 0);
+            name.Margin = new Thickness(5, 0, 0, 0);
             Grid.SetRow(name, r + 2);
             board.Children.Add(name);
             for (var c = 0; c < TraderBuysPolicy.Roles.Count; c++)
@@ -207,21 +208,12 @@ public sealed class TraderBuysMatrix : UserControl
             }
         }
         main.Children.Add(board);
-        var footer = Caption("BUY: FROM YOU    •    SELL: ORIGINAL STOCK    •    —: NOT AVAILABLE",
-            10.2, muted);
-        footer.HorizontalAlignment = HorizontalAlignment.Left;
-        footer.Margin = new Thickness(3, 7, 0, 0);
-        main.Children.Add(footer);
-        var note = Caption("BUY CONSUMABLES = MEDICAL + FOOD + DRINKS", 10.2, muted);
-        note.HorizontalAlignment = HorizontalAlignment.Left;
-        note.Margin = new Thickness(3, 1, 0, 0);
-        main.Children.Add(note);
         Content = new Border
         {
             Background = ThemeBrush("PanelBrush", Brushes.Black),
             BorderBrush = softBorder, BorderThickness = new Thickness(1),
             CornerRadius = new CornerRadius(4), Child = main,
-            Margin = new Thickness(2), MaxWidth = 920
+            Margin = new Thickness(2), MaxWidth = 820
         };
     }
 }

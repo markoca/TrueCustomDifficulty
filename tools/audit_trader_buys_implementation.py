@@ -128,6 +128,16 @@ must = [
 ]
 for label, needle, content in must:
     assert needle in content, (label, needle)
+# Compact unified matrix layout: never reintroduce the 920-DIP wide / 34-DIP rows.
+assert 'MaxWidth = 820' in matrix
+assert 'new GridLength(112)' in matrix
+assert 'new GridLength(28)' in matrix
+assert 'new GridLength(27)' in matrix
+assert 'new GridLength(19)' in matrix
+assert 'Margin = new Thickness(1, 1, 1, 1)' in matrix
+assert 'BUY: FROM YOU    •    SELL: ORIGINAL STOCK' not in matrix
+assert 'BUY CONSUMABLES = MEDICAL + FOOD + DRINKS' not in matrix
+assert 'category == "CONSUMABLES"' in matrix
 assert "TradeGenerators" in implementation and "ItemGeneratorPrototypes.cfg" not in implementation
 
 print("[PASS] 359 catalog IDs / 184 visible / 175 hidden, 40 native Trader Buys cells")
