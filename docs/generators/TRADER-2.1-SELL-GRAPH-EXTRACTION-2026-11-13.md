@@ -62,3 +62,13 @@ The 2.1 raw graph was joined back to the exact parent `ItemGeneratorPrototypeSID
 ## Writer preparation: multi-parent references
 
 The SELL writer now accepts either a single legacy `OuterLinks` coordinate or multiple `|`-separated coordinates. It splits and deduplicates parent slots before assigning every slot to the same per-trade cloned child generator. Existing 2.0.5 single-slot records remain valid. The 2.1 manifest is **not yet activated**: the embedded resource, strict source hash, profile census, category mappings and UI remain on the prior source. A static source audit is available at `tools/audit_trader_21_parent_links.py`. This is not a substitute for compiling and validating generated CFG patches.
+
+## 2.1 category-normalized staging manifest (2026-11-13)
+
+A fail-closed staging manifest has been generated locally from the 3,150-row parent-link graph and validated for category mapping, two-level generator chains, duplicate/missing parent slots and source coordinates. The output is `STALKER2_2.1_trader_staging_manifest.csv` (SHA256 `cd4b68b755b03f1418da2ca98503d9ee25bbe9001cbaf3ae8e25a6fb0b771ed4`). Source-normalization code is `tools/build_trader_21_manifest.py`.
+
+Counts: Weapons 581; Armor 212; Attachments 299; Ammo 558; Medical 683; Food 281; Drinks 387; Artifacts 93; Detectors 15; Grenades 18; Binoculars 23. The source has 90 profiles with reachable leaves. Binoculars are deliberately retained in staging, not silently mapped to one of the existing ten UI categories.
+
+Run: `python3 tools/build_trader_21_manifest.py STALKER2_2.1_trader_graph_with_parent_links.csv STALKER2_2.1_trader_staging_manifest.csv`.
+
+**Not activated in runtime:** the staging manifest lacks verified role assignments and is not the 20-column 2.0.5 writer format. The existing embedded manifest and source integrity guard remain unchanged. Next, reconcile per-trade roles and validate emitted CFG clone/relink/remove operations before enabling the 2.1 resource.
