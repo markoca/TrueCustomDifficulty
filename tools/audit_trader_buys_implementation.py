@@ -37,15 +37,15 @@ all_rows = catalog["parameters"]
 by = {p["id"]: p for p in all_rows}
 assert len(all_rows) == len(by) == base["supportedParameterCount"] == 359
 assert len(ids) == 40 and set(by).intersection(ids) == ids
-assert sum(p.get("exposeInUi", True) for p in all_rows) == 185
-assert sum(p.get("exposeInUi") is False for p in all_rows) == 174
+assert sum(p.get("exposeInUi", True) for p in all_rows) == 184
+assert sum(p.get("exposeInUi") is False for p in all_rows) == 175
 assert {p["id"] for p in all_rows if p.get("exposeInUi", True) and p["id"] in ids} == {
     "economy.traderBuys.general.weapon"}
 for role, (_, _, denied) in ROLES.items():
     for cat, native in CATEGORIES.items():
         p = by[f"economy.traderBuys.{role}.{cat}"]
         assert p["control"] == "toggle" and p["valueKind"] == "boolean"
-        assert p["group"] == "Trader Buys" and p["tab"] == "economy"
+        assert p["group"] == ("Traders" if role == "general" and cat == "weapon" else "Trader Buys") and p["tab"] == "economy"
         assert p["vanilla"] == {"All": native not in denied}
         assert p["targets"][0]["itemType"] == "EItemType::" + native
         assert p["support"]["status"] == "runtime_test_required"
@@ -115,7 +115,7 @@ must = [
     ("checkbox", "ToggleButton.IsCheckedProperty", matrix),
     ("cell-local state", "nameof(ParameterViewModel.IsOwnValueModified)", matrix),
     ("local notification", "OnPropertyChanged(nameof(IsOwnValueModified))", p),
-    ("two-line heading", '"CONSUM-\\\\nABLES"', matrix),
+    ("unified headings", '"BUY" : "SELL"', matrix),
     ("policy rows", "new Role(", policy),
     ("production dispatch", "WriteTraderBuys(modifiedById, hasDlc1", writer),
     ("production coverage", "baseline.Special.TraderBuys.ExpectedProfiles != 86", writer),
@@ -130,7 +130,7 @@ for label, needle, content in must:
     assert needle in content, (label, needle)
 assert "TradeGenerators" in implementation and "ItemGeneratorPrototypes.cfg" not in implementation
 
-print("[PASS] 359 catalog IDs / 185 visible / 174 hidden, 40 native Trader Buys cells")
+print("[PASS] 359 catalog IDs / 184 visible / 175 hidden, 40 native Trader Buys cells")
 print("[PASS] 86 exact original buy-policy source entries, roles, DLC1, Eger/Bolshak")
 print("[PASS] 12 neutral factory presets, real WPF bindings, BPatch source router")
 print("NOT VERIFIED: actual C# build, emitted .NET writer, Wine layout, Unreal gameplay")
