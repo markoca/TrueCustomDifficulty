@@ -122,7 +122,8 @@ assert "width >= 700.0 ? 609.0 : 1050.0" in source
 assert '"VANILLA"' not in quantity_rail and '"AUTO"' not in quantity_rail
 assert 'Math.Round(StashMedicalMaxDisplay(max.CurrentNumber))' in quantity_rail
 assert 'StashMedicalMaxStore(Math.Clamp(Math.Round(raw), 0.0, 5.0))' in source
-assert "AddHorizontalTarget(p," in quantity_rail
+assert "AddHorizontalTarget(min, fullHit, rail, 0.0, 5.0);" in quantity_rail
+assert "AddHorizontalTarget(max, fullHit, rail, 0.0, 5.0);" in quantity_rail
 # The same source-backed MIN/MAX coupling is applied to live input and bulk
 # preset/save/build normalization without removing the native MAX=-1 exclusion.
 assert "EnforceStashMedicalQuantityBounds(p);" in main_vm_source
