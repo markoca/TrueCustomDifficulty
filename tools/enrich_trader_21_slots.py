@@ -2,7 +2,7 @@
 """Join exact 2.1 TradeGenerators slots/conditions onto staged trader leaves."""
 import csv, io, sys, zipfile
 from pathlib import Path
-from enrich_trader_21_links import parse
+from extract_trader_21_graph import parse
 
 def run(source, staging, output):
     slots = {}
