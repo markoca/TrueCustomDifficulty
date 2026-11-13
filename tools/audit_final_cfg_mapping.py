@@ -222,10 +222,10 @@ def main():
     require(len(baseline["editPoints"]) == 1230 and len(direct) == 215,
             "direct writer point count drift")
     special = method_routes(baseline["special"])
-    require(len(special) == 70, "special writer route count drift")
+    require(len(special) == 71, "special writer route count drift")
     require(not set(direct).intersection(special), "direct/special parameter double ownership")
     require(set(direct) | set(special) == set(definitions), "unrouted CFG IDs")
-    require(len(definitions) - len(NON_UI) == 268, "UI dimension count drift")
+    require(len(definitions) - len(NON_UI) == 269, "UI dimension count drift")
     require(len(NON_UI) == 17 and NON_UI.issubset(definitions),
             "17 non-mounted catalog source IDs required")
     for pid in NON_UI:
