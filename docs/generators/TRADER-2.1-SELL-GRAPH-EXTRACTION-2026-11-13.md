@@ -32,3 +32,16 @@ Recounted top-level `ItemGeneratorPrototypes.cfg` entries using balanced `struct
 The two scopes share only the sentinel SID `empty`; unscoped unique SID strings therefore number **3,451**. The earlier **3,449** count was erroneous and must not be used as an integrity assertion. These counts concern all item generators, not just reachable trader stock roots. Do not conflate the 3,452 total with the 83 stock-root SIDs.
 
 Writer lookup must use `(scope, SID)` and explicit DLC-to-base fallback where applicable; it must never merge same-SID records across scopes. This resolves the census discrepancy, but does not yet validate 2.1 category removal patch paths or authorize switching the production 2.0.5 manifest.
+
+## Reproducible source extraction tool
+
+Added `tools/extract_trader_21_graph.py` to reproduce the 2.1 raw offer graph from the user-supplied nested ZIP without external dependencies. Usage:
+
+```bash
+python3 tools/extract_trader_21_graph.py 'STALKER2-2.1 cfg dump.zip' trader-21-graph.csv
+python3 tools/audit_trader_21_categories.py trader-21-graph.csv
+```
+
+The original standalone extraction was independently rerun locally and its output SHA256 matched the prior 777 KB CSV exactly: `ae96c393b27afc2c63bee7c5ae42940962c26d2da46bcc210ef2b6e7e02b1e71`. Counts: 92 trade definitions, 3,452 scope-qualified generators, 3,150 leaf occurrences, no unresolved references or cycles. The checked-in script implements the same extraction logic; CI/build execution of the checked-in revision has not been claimed.
+
+**Migration blocker:** This graph does not yet contain the writer's original nested `OuterLinks` (parent reference patch coordinates) or its complete source-exact 2.0.5 role/category schema. The existing writer uses those coordinates to clone and relink shared stock. Therefore do not simply replace the embedded `trader-offers-source-rows.csv` with the raw graph, or change hard-coded SHA/census assertions. A proper migration must enrich and validate parent links, source scope and category mapping before runtime activation.
