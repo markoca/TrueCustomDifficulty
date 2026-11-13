@@ -1,0 +1,108 @@
+{
+  "archive_sha256": {
+    "base": "7610b16218310c7345796ff26b1554c73e3d2ca775f6a50108a7406cb7f33da1",
+    "dlc1": "3c5cb53f1769619b510ae3780142d92639c083a4a755a8717a267710c3c849e6"
+  },
+  "decoded_cfg_sha256": {
+    "base/trade": "c5115350d67d91a329b5922f0a51e9abe02f91075e5fbe24c1b3b4fa48f540eb",
+    "base/stock": "4a06bc946eb9eaa7ff736421df7fd1bb6fe38fb91038bf5fffa005f680d64ac3",
+    "base/items": "f6b98e5931a3c936cd9f279aac23b39b45527b1995fc7008b0a7940eed790d42",
+    "dlc1/trade": "7a72b5dfc112226c92c081e49ca6c3877b7cf00cd541964d07113253d37e31a5",
+    "dlc1/stock": "3a6ad1ef628ab6182591a9c1f9273d053ee1e338433a81402346f6354c700155",
+    "dlc1/items": "4b823f79487751cbc13577d48ae9aa124828d8a60f1fcb39af811b34ea933a50"
+  },
+  "decoded_cfg_lines": {
+    "base/trade": 3119,
+    "base/stock": 268315,
+    "base/items": 24390,
+    "dlc1/trade": 872,
+    "dlc1/stock": 58834,
+    "dlc1/items": 12557
+  },
+  "trade_roots": {
+    "base": 74,
+    "dlc1": 18
+  },
+  "stock_roots": {
+    "base": 3086,
+    "dlc1": 366
+  },
+  "production_trades": 86,
+  "explicit_buy_limitation_lists": 53,
+  "missing_buy_limitation_lists": 33,
+  "buy_rule_profiles": {
+    "(none)": 33,
+    "MutantLoot": 13,
+    "Weapon;Armor;Ammo;Grenade;Attach;MutantLoot": 15,
+    "Weapon;Armor;MutantLoot": 9,
+    "Consumable;Ammo;Grenade": 15,
+    "Weapon;Armor;Ammo;Grenade;Attach;Consumable;Artifact": 1
+  },
+  "buy_restricted_count_by_item_type": {
+    "MutantLoot": 37,
+    "Weapon": 25,
+    "Armor": 25,
+    "Ammo": 31,
+    "Grenade": 31,
+    "Attach": 16,
+    "Consumable": 16,
+    "Artifact": 1
+  },
+  "by_trader_role": {
+    "BARTENDER": {
+      "trade_count": 13,
+      "explicit_buy_limitation_lists": 13,
+      "limit_patterns": {
+        "MutantLoot": 13
+      }
+    },
+    "GENERAL_TRADER": {
+      "trade_count": 33,
+      "explicit_buy_limitation_lists": 1,
+      "limit_patterns": {
+        "(none)": 32,
+        "Weapon;Armor;Ammo;Grenade;Attach;Consumable;Artifact": 1
+      }
+    },
+    "GENERIC_NPC_TRADER": {
+      "trade_count": 9,
+      "explicit_buy_limitation_lists": 9,
+      "limit_patterns": {
+        "Weapon;Armor;MutantLoot": 9
+      }
+    },
+    "MEDIC": {
+      "trade_count": 15,
+      "explicit_buy_limitation_lists": 15,
+      "limit_patterns": {
+        "Weapon;Armor;Ammo;Grenade;Attach;MutantLoot": 15
+      }
+    },
+    "TECHNICIAN": {
+      "trade_count": 16,
+      "explicit_buy_limitation_lists": 15,
+      "limit_patterns": {
+        "Consumable;Ammo;Grenade": 15,
+        "(none)": 1
+      }
+    }
+  },
+  "offers_source_rows": 2939,
+  "offers_distinct_sid": 164,
+  "offers_distinct_by_category": {
+    "Weapons": 548,
+    "Armor": 152,
+    "Ammo": 531,
+    "Food": 269,
+    "Drinks": 381,
+    "Medical": 674,
+    "Attachments": 298,
+    "Binoculars": 23,
+    "NightVision": 9,
+    "Grenades": 16,
+    "Detectors": 14,
+    "Artifacts": 24
+  },
+  "offer_missing": [],
+  "warnings": []
+}
