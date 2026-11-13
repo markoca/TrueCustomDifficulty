@@ -197,6 +197,10 @@ def main():
         or "TraderSellsPolicy.ParameterIds" not in rendered_text
         or "TraderBuysMatrix" not in rendered_text):
         fail("Trader Sells dynamic UI source contract drifted")
+    if ("TraderOffersPolicy.Offers" not in rendered_text
+        or "TraderItemOverrides" not in rendered_text
+        or "TraderItemOverrides" not in (SRC / "ViewModels/MainViewModel.cs").read_text(encoding="utf-8")):
+        fail("Individual trader stock source-to-UI binding drifted")
     if "TraderSellsMatrix.cs" in [p.name for p in live_sources]:
         fail("Retired separate Trader Sells matrix must not exist")
     if unreferenced:

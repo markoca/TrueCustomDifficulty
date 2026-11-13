@@ -14250,7 +14250,7 @@
     {
       "id": "economy.traderBuys.general.weapon",
       "tab": "economy",
-      "group": "Traders",
+      "group": "Trader Buys",
       "label": "Trader Buys",
       "description": "Controls whether general traders buy weapons from you when overriding the original rule.",
       "control": "toggle",
@@ -14282,7 +14282,7 @@
       "rationale": "Choose which kinds of items each merchant type buys. Untouched cells keep each trader's original rules.",
       "logic": "CHECKED buys weapons when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
-      "exposeInUi": true
+      "exposeInUi": false
     },
     {
       "id": "economy.traderBuys.general.armor",
@@ -15730,9 +15730,9 @@
     {
       "id": "economy.traderSells.general.weapons",
       "tab": "economy",
-      "group": "Trader Sells",
-      "label": "Trader Sells",
-      "description": "Remove weapons from the inventory of general traders while leaving what they buy from you unchanged.",
+      "group": "Traders",
+      "label": "Trader Stock",
+      "description": "Choose exactly which original items each trader offers to the player. Stock generation and individual item SID selection are independent of merchant BUY limitations.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -15761,10 +15761,10 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Choose which item categories each merchant type offers. Only unchecked cells change stock, without touching NPC or quest inventories.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
-      "exposeInUi": false
+      "rationale": "Choose a trader, filter its stock, and remove individual items from its original item generator. NPC and quest inventories are unchanged.",
+      "logic": "Checked items remain in original trader stock. Unchecked items are removed from private generator copies. Older category-wide seller restrictions remain compatible.",
+      "interaction": "Search or filter original item SIDs and uncheck unwanted stock. Rank gating, stock probabilities, condition, and refresh remain original.",
+      "exposeInUi": true
     },
     {
       "id": "economy.traderSells.general.armor",

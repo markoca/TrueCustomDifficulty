@@ -39,13 +39,13 @@ assert len(all_rows) == len(by) == base["supportedParameterCount"] == 359
 assert len(ids) == 40 and set(by).intersection(ids) == ids
 assert sum(p.get("exposeInUi", True) for p in all_rows) == 184
 assert sum(p.get("exposeInUi") is False for p in all_rows) == 175
-assert {p["id"] for p in all_rows if p.get("exposeInUi", True) and p["id"] in ids} == {
-    "economy.traderBuys.general.weapon"}
+assert {p["id"] for p in all_rows if p.get("exposeInUi", True) and p["id"] in ids} == set()
+assert by["economy.traderSells.general.weapons"]["exposeInUi"] is True
 for role, (_, _, denied) in ROLES.items():
     for cat, native in CATEGORIES.items():
         p = by[f"economy.traderBuys.{role}.{cat}"]
         assert p["control"] == "toggle" and p["valueKind"] == "boolean"
-        assert p["group"] == ("Traders" if role == "general" and cat == "weapon" else "Trader Buys") and p["tab"] == "economy"
+        assert p["group"] == "Trader Buys" and p["tab"] == "economy"
         assert p["vanilla"] == {"All": native not in denied}
         assert p["targets"][0]["itemType"] == "EItemType::" + native
         assert p["support"]["status"] == "runtime_test_required"
@@ -111,11 +111,11 @@ must = [
     ("aggregate anchor", "TraderBuysPolicy.AnchorId", v),
     ("visible backing collapse", "(!IsTraderBuysMember || IsTraderBuysAnchor)", p),
     ("matrix xaml", '<controls:TraderBuysMatrix x:Name="TraderBuysMatrixControl"', x),
-    ("matrix trigger", 'Binding="{Binding IsTraderBuysAnchor}"', x),
-    ("checkbox", "ToggleButton.IsCheckedProperty", matrix),
-    ("cell-local state", "nameof(ParameterViewModel.IsOwnValueModified)", matrix),
+    ("stock inventory trigger", 'Binding="{Binding IsTraderSellsAnchor}"', x),
+    ("item stock listing", "TraderOffersPolicy.Offers", matrix),
+    ("individual item changes", "TraderItemOverrides = TraderOffersPolicy.Encode(disabled)", matrix),
     ("local notification", "OnPropertyChanged(nameof(IsOwnValueModified))", p),
-    ("paired direction headings", 'Caption("BUY", 9, muted)', matrix),
+    ("role selection", 'RebuildRoleButtons();', matrix),
     ("policy rows", "new Role(", policy),
     ("production dispatch", "WriteTraderBuys(modifiedById, hasDlc1", writer),
     ("production coverage", "baseline.Special.TraderBuys.ExpectedProfiles != 86", writer),
@@ -128,31 +128,21 @@ must = [
 ]
 for label, needle, content in must:
     assert needle in content, (label, needle)
-# One bounded 9-row paired matrix: ten separate columns/twelve individual
-# category rows would fragment a single gameplay category again.
-assert 'MaxWidth = 820' in matrix
-assert 'new GridLength(115)' in matrix
-assert 'new GridLength(42)' in matrix
-assert 'new GridLength(47)' not in matrix  # 47 is data-dependent on Consumables row
-assert 'row.Label == "CONSUMABLES" ? 47 : 32' in matrix
-assert 'new RowSpec("CONSUMABLES", "consumable", new[] { "medical", "food", "drinks" })' in matrix
-assert 'new RowSpec("DETECTORS", null, new[] { "detectors" })' in matrix
-assert 'new RowSpec("MUTANT PARTS", "mutantLoot", Array.Empty<string>())' in matrix
-assert matrix.count("new RowSpec(") == 9
-assert 'TraderCategoryCell(row, role, source, panel, border, muted, accent)' in matrix
-assert 'nameof(ParameterViewModel.IsOwnValueModified)' in matrix
-assert 'new UniformGrid { Columns = 3' in matrix
-assert '"M", "food" => "F", "drinks" => "D"' in matrix
-assert '"BUY" : "SELL"' not in matrix  # still one BUY and one SELL heading per role
-assert 'var buy = Caption("BUY", 9, muted)' in matrix
-assert 'var sell = Caption("SELL", 9, muted)' in matrix
-assert 'BUY: FROM YOU    •    SELL: ORIGINAL STOCK' not in matrix
-assert 'BUY CONSUMABLES = MEDICAL + FOOD + DRINKS' not in matrix
-assert '<controls:TraderSellsMatrix' not in x and 'TraderSellsMatrixControl' not in x
-assert 'MaxWidth="820"' in x.split('<controls:TraderBuysMatrix', 1)[1][:230]
+# The source-backed buyer writer remains for legacy user presets, but there are
+# no player-to-trader purchasing checkboxes in the active stock-only editor.
+assert "TraderOffersPolicy.Offers" in matrix
+assert "SetItem(TraderOffersPolicy.Offer offer, bool enabled)" in matrix
+assert "TraderItemOverrides" in matrix
+assert "OLD PRESET: BUY RULES STILL ACTIVE" in matrix
+assert "RESET BUY RULES" in matrix
+assert "MaxWidth = 820" in matrix
+assert "MaxHeight = 365" in matrix
+assert 'TraderItemOverrides="{Binding DataContext.TraderItemOverrides' in x
+assert '<controls:TraderSellsMatrix' not in x
+assert 'TraderSellsMatrixControl' not in x
 assert "TradeGenerators" in implementation and "ItemGeneratorPrototypes.cfg" not in implementation
 
-print("[PASS] 359 catalog IDs / 184 visible / 175 hidden, 40 native Trader Buys cells")
+print("[PASS] 359 catalog IDs / 184 visible / 175 hidden, 40 preserved legacy buyer rules, no live BUY matrix")
 print("[PASS] 86 exact original buy-policy source entries, roles, DLC1, Eger/Bolshak")
 print("[PASS] 12 neutral factory presets, real WPF bindings, BPatch source router")
 print("NOT VERIFIED: actual C# build, emitted .NET writer, Wine layout, Unreal gameplay")

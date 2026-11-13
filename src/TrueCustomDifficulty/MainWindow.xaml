@@ -526,7 +526,7 @@
                                                             <Setter TargetName="AnomalyDamageRadarControl" Property="Visibility" Value="Visible" />
                                                         </DataTrigger>
                                                         
-                                                         <DataTrigger Binding="{Binding IsTraderBuysAnchor}" Value="True">
+                                                         <DataTrigger Binding="{Binding IsTraderSellsAnchor}" Value="True">
                                                              <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />
                                                              <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
                                                              <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />

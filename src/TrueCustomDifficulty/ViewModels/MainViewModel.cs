@@ -24,6 +24,7 @@ public sealed class MainViewModel : ObservableObject
     private IReadOnlyList<ParameterViewModel> _anomalyDerivedParameters = Array.Empty<ParameterViewModel>();
     private PresetListItem? _selectedPreset;
     private string? _loadedPresetName;
+    private string _traderItemOverrides = string.Empty;
     private bool _suppressPresetSelection;
     private bool _isBuilding;
     private int _buildProgressStep;
@@ -69,6 +70,15 @@ public sealed class MainViewModel : ObservableObject
     public ObservableCollection<TabViewModel> Tabs { get; } = new();
     public ObservableCollection<PresetListItem> AvailablePresets { get; } = new();
     public IReadOnlyList<ParameterViewModel> AllParameters { get; }
+
+    // Source-verified seller-to-player inventory exclusions. Kept outside the
+    // fixed 359-parameter catalog so legacy presets and CFG source counts stay stable.
+    public string TraderItemOverrides
+    {
+        get => _traderItemOverrides;
+        set => SetProperty(ref _traderItemOverrides, TraderOffersPolicy.Encode(
+            TraderOffersPolicy.Decode(value)));
+    }
 
     public RelayCommand ResetCurrentTabCommand { get; }
     public RelayCommand ResetAllCommand { get; }
@@ -1287,6 +1297,7 @@ public sealed class MainViewModel : ObservableObject
 
         if (resetAll)
         {
+            TraderItemOverrides = string.Empty;
             AllParameters.First(p => p.Id == "survival.waterInstantStaminaRestore")
                 .DrinkDurationOverrideEnabled = false;
             AllParameters.First(p => p.Id == "health.bandageHealing")
@@ -1304,6 +1315,8 @@ public sealed class MainViewModel : ObservableObject
         _suspendSliderConstraints = true;
         try
         {
+            if (SelectedTab.Id == "economy")
+                TraderItemOverrides = string.Empty;
             if (SelectedTab.Id == "health")
                 AllParameters.First(p => p.Id == "health.bandageHealing")
                     .MedicalOverrideEnabled = false;
@@ -1462,6 +1475,7 @@ public sealed class MainViewModel : ObservableObject
             ToolVersion = AppVersion,
             GameVersion = GameVersion,
             ReferenceDifficulty = SelectedReferenceDifficulty,
+            TraderItemOverrides = TraderItemOverrides,
             DrinkDurationOverride = AllParameters.First(p =>
                 p.Id == "survival.waterInstantStaminaRestore").DrinkDurationOverrideEnabled,
             MedicalOverride = AllParameters.First(p =>
@@ -1527,6 +1541,7 @@ public sealed class MainViewModel : ObservableObject
             try
             {
                 _selectedReferenceDifficulty = preset.ReferenceDifficulty;
+                TraderItemOverrides = preset.TraderItemOverrides;
                 OnPropertyChanged(nameof(SelectedReferenceDifficulty));
                 OnPropertyChanged(nameof(BasePresetIndex));
 

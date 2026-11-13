@@ -315,7 +315,7 @@ public sealed partial class CfgPatchWriterService
             documents,
             writtenParameters);
         editCount += WriteTraderBuys(modifiedById, hasDlc1, documents, writtenParameters);
-        editCount += WriteTraderSells(modifiedById, hasDlc1, documents, writtenParameters);
+        editCount += WriteTraderSells(modifiedById, vm.TraderItemOverrides, hasDlc1, documents, writtenParameters);
 
         var f1BoxRemoval = WriteWorldF1GrenadeBoxes(
             modifiedById,

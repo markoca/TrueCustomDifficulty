@@ -66,8 +66,8 @@ for id in sells:
     p = by[id]
     assert p["control"] == "toggle" and p["valueKind"] == "boolean"
     assert p["vanilla"] == {"All": True} and p["tab"] == "economy"
-    assert p["group"] == "Trader Sells" and p["support"]["status"] == "runtime_test_required"
-    assert p.get("exposeInUi") is False
+    assert p["group"] == ("Traders" if id == "economy.traderSells.general.weapons" else "Trader Sells") and p["support"]["status"] == "runtime_test_required"
+    assert p.get("exposeInUi") is (id == "economy.traderSells.general.weapons")
 assert len(base["special"]["traderSells"]["parameterIds"]) == 31
 assert set(base["special"]["traderSells"]["parameterIds"]) == sells
 assert base["special"]["traderSells"]["manifestResource"] == (
@@ -140,8 +140,8 @@ source = {
 }
 checks = {
     "policy": ("ParameterIds", "Dlc1OnlyParameterIds", "IsAvailable"),
-    "control": ("TraderSellsPolicy.IsAvailable", "ToggleButton.IsCheckedProperty",
-                "IsOwnValueModified", "—"),
+    "control": ("TraderSellsPolicy.IsAvailable", "TraderOffersPolicy.Offers",
+                "TraderItemOverrides", "SetItem(offer, box.IsChecked == true)"),
     "writer": ("SHA256.HashData", "GetOrAddReferencedRoot", "SellCloneSid(",
                'AddRemovalNode(targetClone, path[..^1], path[^1])',
                '"ItemGeneratorPrototypeSID", rootClone',
@@ -153,17 +153,19 @@ checks = {
            "traderSellsParameterIds.Contains(p.Id)"),
     "parameter": ("IsTraderSellsMember", "IsTraderSellsAnchor"),
     "xaml": ('<controls:TraderBuysMatrix x:Name="TraderBuysMatrixControl"',
-             'Binding="{Binding IsTraderBuysAnchor}"'),
+             'Binding="{Binding IsTraderSellsAnchor}"'),
     "proj": ("trader-offers-source-rows.csv", "EmbeddedResource")
 }
 for k, needles in checks.items():
     for needle in needles:
         assert needle in source[k], (k, needle)
-# The seller side is paired with BUY in the same source-backed per-category cell;
-# native seller inventory remains independent, including the three consumables.
-assert 'new UniformGrid { Columns = 3' in source["control"]
+# Original stock is now edited per exact SID, with all legacy category
+# presets preserved. Source `TraderOffersPolicy` is backed by the same embedded 2.0.5 CSV.
+assert 'TraderOffersPolicy.Offers' in source["control"]
 assert 'TraderSellsPolicy.IsAvailable(role, category)' in source["control"]
-assert 'SELL uses M = Medical, F = Food, D = Drinks.' in source["control"]
+assert 'TraderItemOverrides' in source["control"]
+assert 'roleItemKeys.Contains(TraderOffersPolicy.Key(role.Id, r.ItemSid))' in source["writer"]
+assert 'disabledItems = TraderOffersPolicy.Decode(traderItemOverrides)' in source["writer"]
 assert '<controls:TraderSellsMatrix' not in source["xaml"]
 assert 'TraderSellsMatrixControl' not in source["xaml"]
 assert 'GetDocument(documents, SellGeneratorFile(t.GeneratorScope))' in source["writer"]
@@ -171,7 +173,7 @@ assert 'GetDocument(documents, SellTradeFile(first.TradeScope))' in source["writ
 assert 'rootDocument.AddRemovalNode(first.RootSid' not in source["writer"]
 assert 'document.AddRemovalNode(t.GeneratorSid' not in source["writer"]
 
-print("PASS: 359 source IDs, 184 visible, 175 hidden, 31 actual stock category/role cells")
+print("PASS: 359 source IDs, 184 visible, 175 hidden, 31 legacy stock-category source parameters and individual item SID exclusions")
 print("PASS: 2939 original stock paths, 86 merchant profiles, 608 physical entries, nested links")
 print("PASS: no inert source combinations, five DLC1-only cells, shared source clone isolation")
 print("PASS: 12 neutral presets and source-backed UI → BPatch writer linkage")

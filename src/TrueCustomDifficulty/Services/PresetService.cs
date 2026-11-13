@@ -63,6 +63,8 @@ public sealed class PresetService
             throw new InvalidDataException("Preset does not contain a Base Preset.");
 
         preset.Values ??= new Dictionary<string, PresetValue>(StringComparer.Ordinal);
+        preset.TraderItemOverrides ??= string.Empty;
+        _ = TraderOffersPolicy.Decode(preset.TraderItemOverrides);
 
         foreach (var (id, value) in preset.Values)
         {

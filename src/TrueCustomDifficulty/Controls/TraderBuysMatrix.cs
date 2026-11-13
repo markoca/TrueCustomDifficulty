@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -13,32 +15,19 @@ using TrueCustomDifficulty.ViewModels;
 namespace TrueCustomDifficulty.Controls;
 
 /// <summary>
-/// One trader/category table: each cell contains its independent BUY/SELL pair.
-/// Native buy Consumables is shared; stock Medical/Food/Drinks are three SELL
-/// sources in the SAME row. Neither native writer nor preset IDs are changed.
+/// Source-audited trader inventory editor. Pick a seller, filter native stock
+/// items, and toggle individual item SIDs. No player-to-trader BUY matrix.
 /// </summary>
 public sealed class TraderBuysMatrix : UserControl
 {
-    private sealed record RowSpec(string Label, string? BuyId, string[] SellIds);
-
-    // One category row, one trader cell, independent source-backed controls.
-    // The three SELL consumables never imply three unsupported BUY categories.
-    private static readonly RowSpec[] Rows =
-    {
-        new RowSpec("WEAPONS", "weapon", new[] { "weapons" }),
-        new RowSpec("ARMOR", "armor", new[] { "armor" }),
-        new RowSpec("ATTACHMENTS", "attach", new[] { "attachments" }),
-        new RowSpec("AMMO", "ammo", new[] { "ammo" }),
-        new RowSpec("GRENADES", "grenade", new[] { "grenades" }),
-        new RowSpec("CONSUMABLES", "consumable", new[] { "medical", "food", "drinks" }),
-        new RowSpec("ARTIFACTS", "artifact", new[] { "artifacts" }),
-        new RowSpec("DETECTORS", null, new[] { "detectors" }),
-        new RowSpec("MUTANT PARTS", "mutantLoot", Array.Empty<string>())
-    };
-
     public static readonly DependencyProperty ParametersProperty = DependencyProperty.Register(
         nameof(Parameters), typeof(IEnumerable), typeof(TraderBuysMatrix),
-        new PropertyMetadata(null, (sender, _) => ((TraderBuysMatrix)sender).Rebuild()));
+        new PropertyMetadata(null, (o, _) => ((TraderBuysMatrix)o).Rebuild()));
+
+    public static readonly DependencyProperty TraderItemOverridesProperty = DependencyProperty.Register(
+        nameof(TraderItemOverrides), typeof(string), typeof(TraderBuysMatrix),
+        new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+            (o, _) => ((TraderBuysMatrix)o).RefreshItems()));
 
     public IEnumerable? Parameters
     {
@@ -46,288 +35,379 @@ public sealed class TraderBuysMatrix : UserControl
         set => SetValue(ParametersProperty, value);
     }
 
+    public string TraderItemOverrides
+    {
+        get => (string)GetValue(TraderItemOverridesProperty);
+        set => SetValue(TraderItemOverridesProperty, value);
+    }
+
     public event EventHandler<AggregateParameterSelectedEventArgs>? ParameterSelected;
 
-    private static Brush ThemeBrush(string key, Brush fallback) =>
-        Application.Current?.TryFindResource(key) as Brush ?? fallback;
+    private Dictionary<string, ParameterViewModel> _source = new(StringComparer.Ordinal);
+    private readonly List<ParameterViewModel> _observedLegacy = new();
+    private string _roleId = "general";
+    private string _category = "ALL";
+    private TextBox? _search;
+    private ComboBox? _categories;
+    private StackPanel? _rows;
+    private TextBlock? _count;
+    private StackPanel? _roleButtons;
+    private Border? _legacyNotice;
 
-    private static TextBlock Caption(string label, double fontSize, Brush brush) => new()
+    private static Brush ThemeBrush(string name, Brush fallback) =>
+        Application.Current?.TryFindResource(name) as Brush ?? fallback;
+
+    private static TextBlock Text(string value, double size, Brush color) => new()
     {
-        Text = label,
-        FontSize = fontSize,
-        Foreground = brush,
-        FontWeight = FontWeights.SemiBold,
-        HorizontalAlignment = HorizontalAlignment.Center,
-        VerticalAlignment = VerticalAlignment.Center,
-        TextAlignment = TextAlignment.Center,
-        TextWrapping = TextWrapping.NoWrap
+        Text = value, FontSize = size, FontWeight = FontWeights.SemiBold,
+        Foreground = color, VerticalAlignment = VerticalAlignment.Center,
+        TextTrimming = TextTrimming.CharacterEllipsis
     };
 
-    // The unchanged 20-DIP application CheckBox is the actual editing surface.
-    // Its individual border, rather than the shared category cell, shows edits.
-    private FrameworkElement ActionToggle(ParameterViewModel? parameter,
-        string tooltip, Brush muted, Brush accent)
+    private static string LabelForSid(string sid)
     {
-        if (parameter is null)
-        {
-            var absent = Caption("—", 10, muted);
-            absent.Opacity = 0.42;
-            absent.ToolTip = tooltip;
-            return absent;
-        }
-
-        var halo = new Border
-        {
-            Width = 26,
-            Height = 26,
-            CornerRadius = new CornerRadius(3),
-            BorderThickness = new Thickness(1),
-            Background = Brushes.Transparent,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center,
-            DataContext = parameter
-        };
-        var style = new Style(typeof(Border));
-        style.Setters.Add(new Setter(Border.BorderBrushProperty, Brushes.Transparent));
-        style.Triggers.Add(new DataTrigger
-        {
-            Binding = new Binding(nameof(ParameterViewModel.IsOwnValueModified)),
-            Value = true,
-            Setters = { new Setter(Border.BorderBrushProperty, accent) }
-        });
-        halo.Style = style;
-
-        var box = new CheckBox
-        {
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center,
-            ToolTip = tooltip
-        };
-        box.SetBinding(ToggleButton.IsCheckedProperty,
-            new Binding(nameof(ParameterViewModel.CurrentBoolean))
-            {
-                Mode = BindingMode.TwoWay,
-                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-            });
-        box.SetBinding(IsEnabledProperty,
-            new Binding(nameof(ParameterViewModel.IsControlEnabled)));
-        box.PreviewMouseLeftButtonDown += (_, _) =>
-            ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
-        halo.Child = box;
-        return halo;
-    }
-
-    private FrameworkElement SellerActions(RowSpec row, TraderBuysPolicy.Role role,
-        IReadOnlyDictionary<string, ParameterViewModel> source,
-        Brush muted, Brush accent)
-    {
-        if (row.SellIds.Length == 0)
-            return ActionToggle(null, "No original stock category here.", muted, accent);
-
-        if (row.SellIds.Length == 1)
-        {
-            var category = TraderSellsPolicy.Categories.Single(c => c.Id == row.SellIds[0]);
-            var available = TraderSellsPolicy.IsAvailable(role, category);
-            return ActionToggle(available ? source[TraderSellsPolicy.ParameterId(role, category)] : null,
-                role.Label + " · " + category.Label +
-                (available ? " · SELLS TO YOU. Checked keeps original offers; unchecked removes this stock."
-                           : " · No original offers."),
-                muted, accent);
-        }
-
-        // Only Consumables has multiple seller categories. A three-part
-        // source-backed SELL cluster fits alongside its ONE native BUY toggle.
-        var cluster = new UniformGrid { Columns = 3, VerticalAlignment = VerticalAlignment.Center };
-        foreach (var id in row.SellIds)
-        {
-            var category = TraderSellsPolicy.Categories.Single(c => c.Id == id);
-            var available = TraderSellsPolicy.IsAvailable(role, category);
-            var caption = id switch { "medical" => "M", "food" => "F", "drinks" => "D", _ => "?" };
-            var title = role.Label + " · SELLS " + category.Label.ToUpperInvariant();
-            var stack = new StackPanel
-            {
-                Orientation = Orientation.Vertical,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            var tag = Caption(caption, 8.5, muted);
-            tag.ToolTip = title;
-            stack.Children.Add(tag);
-            stack.Children.Add(ActionToggle(
-                available ? source[TraderSellsPolicy.ParameterId(role, category)] : null,
-                title + (available
-                    ? ". Checked = original stock; unchecked = remove this category."
-                    : ". No original offers."),
-                muted, accent));
-            cluster.Children.Add(stack);
-        }
-        return cluster;
-    }
-
-    private Border TraderCategoryCell(RowSpec row, TraderBuysPolicy.Role role,
-        IReadOnlyDictionary<string, ParameterViewModel> source,
-        Brush panel, Brush border, Brush muted, Brush accent)
-    {
-        var pair = new Grid { SnapsToDevicePixels = true };
-        pair.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(42) });
-        pair.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-
-        ParameterViewModel? buyer = null;
-        if (row.BuyId is not null)
-        {
-            var category = TraderBuysPolicy.Categories.Single(c => c.Id == row.BuyId);
-            buyer = source[TraderBuysPolicy.ParameterId(role, category)];
-        }
-
-        var buyerTip = role.Label + " · " + row.Label +
-            (row.BuyId is null
-                ? " · No separate native BUY category."
-                : " · BUYS FROM YOU. Untouched = individual original trader rules." +
-                  (row.Label == "CONSUMABLES" ? " Medical, food and drinks share this one BUY rule." : ""));
-        var buyerControl = ActionToggle(buyer, buyerTip, muted, accent);
-        Grid.SetColumn(buyerControl, 0);
-        pair.Children.Add(buyerControl);
-
-        var separator = new Border
-        {
-            Width = 1, Background = border, Opacity = 0.4,
-            VerticalAlignment = VerticalAlignment.Stretch,
-            HorizontalAlignment = HorizontalAlignment.Left,
-            Margin = new Thickness(0, 5, 0, 5),
-            IsHitTestVisible = false
-        };
-        Grid.SetColumn(separator, 1);
-        pair.Children.Add(separator);
-
-        var sellerControl = SellerActions(row, role, source, muted, accent);
-        Grid.SetColumn(sellerControl, 1);
-        pair.Children.Add(sellerControl);
-        return new Border
-        {
-            CornerRadius = new CornerRadius(3),
-            BorderThickness = new Thickness(1),
-            BorderBrush = border,
-            Background = panel,
-            Padding = new Thickness(1, 0, 1, 0),
-            Margin = new Thickness(2, 2, 2, 2),
-            Child = pair,
-            SnapsToDevicePixels = true
-        };
+        var name = sid.Replace('_', ' ');
+        return Regex.Replace(name, @"(?<=[a-z])(?=[A-Z])", " ");
     }
 
     private void Rebuild()
     {
-        var source = Parameters?.OfType<ParameterViewModel>()
-            .ToDictionary(p => p.Id, StringComparer.Ordinal);
-        if (source is null) { Content = null; return; }
-        var buyIds = TraderBuysPolicy.Roles.SelectMany(role =>
-            TraderBuysPolicy.Categories.Select(category => TraderBuysPolicy.ParameterId(role, category)));
-        if (buyIds.Concat(TraderSellsPolicy.ParameterIds).Any(id => !source.ContainsKey(id)))
+        foreach (var old in _observedLegacy)
+            old.PropertyChanged -= LegacyChanged;
+        _observedLegacy.Clear();
+
+        if (Parameters is null) { Content = null; return; }
+        _source = Parameters.OfType<ParameterViewModel>()
+            .ToDictionary(x => x.Id, StringComparer.Ordinal);
+        if (!_source.ContainsKey(TraderSellsPolicy.AnchorId)
+            || TraderSellsPolicy.ParameterIds.Any(id => !_source.ContainsKey(id)))
         {
-            Content = Caption("Trader controls are missing from the active catalog.", 12,
-                ThemeBrush("TextBrush", Brushes.White));
+            Content = Text("Trader stock controls are missing from the catalog.",
+                12, ThemeBrush("TextBrush", Brushes.White));
             return;
+        }
+
+        foreach (var id in TraderSellsPolicy.ParameterIds)
+        {
+            var parameter = _source[id];
+            parameter.PropertyChanged += LegacyChanged;
+            _observedLegacy.Add(parameter);
+        }
+        foreach (var role in TraderBuysPolicy.Roles)
+        foreach (var category in TraderBuysPolicy.Categories)
+        {
+            var id = TraderBuysPolicy.ParameterId(role, category);
+            if (_source.TryGetValue(id, out var buyer))
+            {
+                buyer.PropertyChanged += LegacyChanged;
+                _observedLegacy.Add(buyer);
+            }
         }
 
         var foreground = ThemeBrush("TextBrush", Brushes.White);
         var muted = ThemeBrush("RadarMutedTextBrush", Brushes.LightGray);
         var accent = ThemeBrush("AccentBrush", Brushes.Gold);
         var border = ThemeBrush("BorderSoftBrush", Brushes.DimGray);
-        var panel = ThemeBrush("RecessedParameterRowBrush", Brushes.Black);
-        var rowAlt = ThemeBrush("ParameterRowBrush", Brushes.Black);
-        var main = new StackPanel { Margin = new Thickness(7, 7, 7, 6) };
-        var title = Caption("TRADERS", 12, accent);
-        title.HorizontalAlignment = HorizontalAlignment.Left;
-        title.Margin = new Thickness(3, 0, 0, 4);
-        main.Children.Add(title);
+        var panel = ThemeBrush("PanelBrush", Brushes.Black);
+        var root = new StackPanel { Margin = new Thickness(10, 9, 10, 9) };
 
-        var board = new Grid { SnapsToDevicePixels = true };
-        board.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(115) });
-        foreach (var _ in TraderBuysPolicy.Roles)
-            board.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        var title = Text("TRADER STOCK", 13, accent);
+        title.Margin = new Thickness(2, 0, 0, 7);
+        root.Children.Add(title);
 
-        board.RowDefinitions.Add(new RowDefinition { Height = new GridLength(28) });
-        board.RowDefinitions.Add(new RowDefinition { Height = new GridLength(19) });
-        foreach (var row in Rows)
-            board.RowDefinitions.Add(new RowDefinition { Height = new GridLength(row.Label == "CONSUMABLES" ? 47 : 32) });
+        _roleButtons = new StackPanel { Orientation = Orientation.Horizontal };
+        root.Children.Add(_roleButtons);
 
-        for (var c = 0; c < TraderBuysPolicy.Roles.Count; c++)
+        var tools = new Grid { Margin = new Thickness(1, 9, 1, 6) };
+        tools.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(154) });
+        tools.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        tools.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(78) });
+
+        _categories = new ComboBox
         {
-            var role = TraderBuysPolicy.Roles[c];
-            var heading = Caption(role.Label.ToUpperInvariant(), 10, foreground);
-            heading.TextTrimming = TextTrimming.CharacterEllipsis;
-            heading.ToolTip = role.Label;
-            Grid.SetRow(heading, 0);
-            Grid.SetColumn(heading, c + 1);
-            board.Children.Add(heading);
-
-            // The two labels orient EVERY role/category pair; only five
-            // category-cell borders exist across a row, not ten.
-            var actions = new Grid { Margin = new Thickness(2, 0, 2, 0) };
-            actions.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(42) });
-            actions.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            var buy = Caption("BUY", 9, muted);
-            buy.ToolTip = "Merchant buys from you";
-            actions.Children.Add(buy);
-            var sell = Caption("SELL", 9, muted);
-            sell.ToolTip = "Merchant sells to you";
-            Grid.SetColumn(sell, 1);
-            actions.Children.Add(sell);
-            Grid.SetRow(actions, 1);
-            Grid.SetColumn(actions, c + 1);
-            board.Children.Add(actions);
-        }
-
-        for (var r = 0; r < Rows.Length; r++)
+            Height = 29,
+            Margin = new Thickness(0, 0, 6, 0),
+            ToolTip = "Show a single original stock category"
+        };
+        _categories.Items.Add("ALL");
+        foreach (var category in TraderOffersPolicy.Offers
+            .Select(x => x.Category).Distinct(StringComparer.Ordinal).OrderBy(x => x, StringComparer.Ordinal))
+            _categories.Items.Add(category);
+        _categories.SelectedItem = _category;
+        if (_categories.SelectedIndex < 0) _categories.SelectedIndex = 0;
+        _categories.SelectionChanged += (_, _) =>
         {
-            var row = Rows[r];
-            if (r % 2 == 1)
-            {
-                var band = new Border { Background = rowAlt, Opacity = 0.48, IsHitTestVisible = false };
-                Grid.SetRow(band, r + 2);
-                Grid.SetColumnSpan(band, TraderBuysPolicy.Roles.Count + 1);
-                board.Children.Add(band);
-            }
-            if (r == 5 || r == 6)
-            {
-                var rule = new Border
-                {
-                    BorderBrush = border, BorderThickness = new Thickness(0, 1, 0, 0),
-                    Opacity = 0.75, VerticalAlignment = VerticalAlignment.Top,
-                    IsHitTestVisible = false
-                };
-                Grid.SetRow(rule, r + 2);
-                Grid.SetColumnSpan(rule, TraderBuysPolicy.Roles.Count + 1);
-                board.Children.Add(rule);
-            }
-            var category = Caption(row.Label, 10, foreground);
-            category.HorizontalAlignment = HorizontalAlignment.Left;
-            category.Margin = new Thickness(5, 0, 0, 0);
-            category.ToolTip = row.Label == "CONSUMABLES"
-                ? "BUY covers all consumables. SELL uses M = Medical, F = Food, D = Drinks."
-                : row.Label;
-            Grid.SetRow(category, r + 2);
-            Grid.SetColumn(category, 0);
-            board.Children.Add(category);
+            _category = _categories.SelectedItem as string ?? "ALL";
+            RefreshItems();
+        };
+        tools.Children.Add(_categories);
 
-            for (var c = 0; c < TraderBuysPolicy.Roles.Count; c++)
-            {
-                var role = TraderBuysPolicy.Roles[c];
-                var cell = TraderCategoryCell(row, role, source, panel, border, muted, accent);
-                Grid.SetRow(cell, r + 2);
-                Grid.SetColumn(cell, c + 1);
-                board.Children.Add(cell);
-            }
-        }
+        _search = new TextBox
+        {
+            Height = 29,
+            FontSize = 11,
+            VerticalContentAlignment = VerticalAlignment.Center,
+            ToolTip = "Filter by item name or exact source item SID",
+            Margin = new Thickness(0, 0, 8, 0),
+            Padding = new Thickness(7, 0, 5, 0)
+        };
+        _search.TextChanged += (_, _) => RefreshItems();
+        Grid.SetColumn(_search, 1);
+        tools.Children.Add(_search);
 
-        main.Children.Add(board);
+        _count = Text("", 10, muted);
+        _count.HorizontalAlignment = HorizontalAlignment.Right;
+        Grid.SetColumn(_count, 2);
+        tools.Children.Add(_count);
+        root.Children.Add(tools);
+
+        _legacyNotice = new Border
+        {
+            BorderBrush = border,
+            BorderThickness = new Thickness(1),
+            Background = ThemeBrush("RecessedParameterRowBrush", Brushes.Black),
+            CornerRadius = new CornerRadius(3),
+            Margin = new Thickness(1, 0, 1, 6),
+            Visibility = Visibility.Collapsed
+        };
+        root.Children.Add(_legacyNotice);
+
+        _rows = new StackPanel();
+        var scroll = new ScrollViewer
+        {
+            Content = _rows,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+            MaxHeight = 365,
+            Focusable = false
+        };
+        root.Children.Add(scroll);
         Content = new Border
         {
-            Background = ThemeBrush("PanelBrush", Brushes.Black),
-            BorderBrush = border, BorderThickness = new Thickness(1),
+            Margin = new Thickness(2),
+            MaxWidth = 820,
+            BorderBrush = border,
+            BorderThickness = new Thickness(1),
             CornerRadius = new CornerRadius(4),
-            Margin = new Thickness(2), MaxWidth = 820,
-            Child = main
+            Background = panel,
+            Child = root
         };
+        RebuildRoleButtons();
+        RefreshItems();
+    }
+
+    private void LegacyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(ParameterViewModel.CurrentBoolean) or
+            nameof(ParameterViewModel.IsOwnValueModified))
+            RefreshItems();
+    }
+
+    private void RebuildRoleButtons()
+    {
+        if (_roleButtons is null) return;
+        _roleButtons.Children.Clear();
+        var accent = ThemeBrush("AccentBrush", Brushes.Gold);
+        var foreground = ThemeBrush("TextBrush", Brushes.White);
+        var muted = ThemeBrush("RadarMutedTextBrush", Brushes.LightGray);
+        var border = ThemeBrush("BorderSoftBrush", Brushes.DimGray);
+        foreach (var role in TraderBuysPolicy.Roles)
+        {
+            var active = role.Id == _roleId;
+            var button = new Button
+            {
+                Content = role.Label.ToUpperInvariant(),
+                Height = 29,
+                FontSize = 10,
+                FontWeight = FontWeights.SemiBold,
+                Foreground = active ? accent : foreground,
+                Background = ThemeBrush("RecessedParameterRowBrush", Brushes.Black),
+                BorderBrush = active ? accent : border,
+                BorderThickness = new Thickness(1),
+                Padding = new Thickness(8, 2, 8, 2),
+                Margin = new Thickness(0, 0, 4, 0),
+                ToolTip = "Edit items offered by " + role.Label
+            };
+            button.Click += (_, _) =>
+            {
+                if (_roleId == role.Id) return;
+                _roleId = role.Id;
+                RebuildRoleButtons();
+                RefreshItems();
+            };
+            _roleButtons.Children.Add(button);
+        }
+    }
+
+    private bool CategoryDisabled(TraderOffersPolicy.Offer offer)
+    {
+        var role = TraderSellsPolicy.Roles.Single(x => x.Id == offer.RoleId);
+        var category = TraderSellsPolicy.Categories.FirstOrDefault(x =>
+            x.Label == offer.Category);
+        if (category is null || !TraderSellsPolicy.IsAvailable(role, category))
+            return false;
+        return !_source[TraderSellsPolicy.ParameterId(role, category)].CurrentBoolean;
+    }
+
+    private void SetItem(TraderOffersPolicy.Offer offer, bool enabled)
+    {
+        var disabled = TraderOffersPolicy.Decode(TraderItemOverrides)
+            .ToHashSet(StringComparer.Ordinal);
+        var key = TraderOffersPolicy.Key(offer.RoleId, offer.ItemSid);
+        if (!enabled)
+        {
+            disabled.Add(key);
+        }
+        else
+        {
+            // Old presets can have a role-wide stock-category OFF. Convert that
+            // one legacy ban into individual exclusions before enabling one item.
+            if (CategoryDisabled(offer))
+            {
+                foreach (var sibling in TraderOffersPolicy.Offers.Where(x =>
+                    x.RoleId == offer.RoleId && x.Category == offer.Category))
+                    disabled.Add(TraderOffersPolicy.Key(sibling.RoleId, sibling.ItemSid));
+                var role = TraderSellsPolicy.Roles.Single(x => x.Id == offer.RoleId);
+                var category = TraderSellsPolicy.Categories.Single(x => x.Label == offer.Category);
+                _source[TraderSellsPolicy.ParameterId(role, category)].CurrentBoolean = true;
+            }
+            disabled.Remove(key);
+        }
+        TraderItemOverrides = TraderOffersPolicy.Encode(disabled);
+        if (_source.TryGetValue(TraderSellsPolicy.AnchorId, out var anchor))
+            ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(anchor));
+    }
+
+    private void UpdateLegacyNotice()
+    {
+        if (_legacyNotice is null) return;
+        var modified = TraderBuysPolicy.Roles.SelectMany(role =>
+                TraderBuysPolicy.Categories.Select(category =>
+                    TraderBuysPolicy.ParameterId(role, category)))
+            .Where(id => _source.TryGetValue(id, out var parameter) &&
+                         parameter.IsValueModifiedFromReference()).ToArray();
+        _legacyNotice.Visibility = modified.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
+        if (modified.Length == 0) return;
+
+        var muted = ThemeBrush("RadarMutedTextBrush", Brushes.LightGray);
+        var accent = ThemeBrush("AccentBrush", Brushes.Gold);
+        var line = new DockPanel { Margin = new Thickness(6, 2, 6, 2) };
+        var label = Text("OLD PRESET: BUY RULES STILL ACTIVE", 9.5, muted);
+        DockPanel.SetDock(label, Dock.Left);
+        line.Children.Add(label);
+        var reset = new Button
+        {
+            Content = "RESET BUY RULES",
+            HorizontalAlignment = HorizontalAlignment.Right,
+            Foreground = accent,
+            FontSize = 9,
+            Margin = new Thickness(12, 0, 0, 0),
+            Padding = new Thickness(5, 2, 5, 2)
+        };
+        reset.Click += (_, _) =>
+        {
+            foreach (var id in modified)
+                _source[id].ResetToReference();
+            RefreshItems();
+        };
+        DockPanel.SetDock(reset, Dock.Right);
+        line.Children.Add(reset);
+        _legacyNotice.Child = line;
+    }
+
+    private void RefreshItems()
+    {
+        if (_rows is null || _count is null || _source.Count == 0) return;
+        var disabled = TraderOffersPolicy.Decode(TraderItemOverrides);
+        var query = _search?.Text.Trim() ?? string.Empty;
+        var offers = TraderOffersPolicy.Offers.Where(x =>
+            x.RoleId == _roleId &&
+            (_category == "ALL" || x.Category == _category) &&
+            (query.Length == 0 || x.ItemSid.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+             LabelForSid(x.ItemSid).Contains(query, StringComparison.OrdinalIgnoreCase)))
+            .ToArray();
+
+        _rows.Children.Clear();
+        UpdateLegacyNotice();
+        var fg = ThemeBrush("TextBrush", Brushes.White);
+        var muted = ThemeBrush("RadarMutedTextBrush", Brushes.LightGray);
+        var accent = ThemeBrush("AccentBrush", Brushes.Gold);
+        var border = ThemeBrush("BorderSoftBrush", Brushes.DimGray);
+        var panel = ThemeBrush("RecessedParameterRowBrush", Brushes.Black);
+        var shown = 0;
+        var available = 0;
+        string? lastCategory = null;
+        foreach (var offer in offers)
+        {
+            if (_category == "ALL" && lastCategory != offer.Category)
+            {
+                var heading = Text(offer.Category.ToUpperInvariant(), 9.5, muted);
+                heading.Margin = new Thickness(6, 9, 0, 3);
+                _rows.Children.Add(heading);
+                lastCategory = offer.Category;
+            }
+            var key = TraderOffersPolicy.Key(offer.RoleId, offer.ItemSid);
+            var checkedState = !disabled.Contains(key) && !CategoryDisabled(offer);
+            if (checkedState && !offer.ZeroChanceOnly) available++;
+            shown++;
+
+            var grid = new Grid { Height = 31 };
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(48) });
+            var name = Text(LabelForSid(offer.ItemSid), 10.8, checkedState ? fg : muted);
+            name.Margin = new Thickness(7, 0, 3, 0);
+            name.ToolTip = offer.ItemSid + " · " + offer.Category +
+                (offer.Dlc1Only ? " · DLC1 stock only" : "") +
+                (offer.ZeroChanceOnly ? " · Original chance is zero" : "");
+            grid.Children.Add(name);
+            if (offer.Dlc1Only || offer.ZeroChanceOnly)
+            {
+                var hint = Text(offer.ZeroChanceOnly ? "0%" : "DLC", 9, muted);
+                hint.HorizontalAlignment = HorizontalAlignment.Right;
+                hint.Margin = new Thickness(0, 0, 2, 0);
+                Grid.SetColumn(hint, 0);
+                grid.Children.Add(hint);
+            }
+
+            var outline = new Border
+            {
+                BorderThickness = new Thickness(1),
+                BorderBrush = checkedState ? Brushes.Transparent : accent,
+                CornerRadius = new CornerRadius(3),
+                Width = 27, Height = 27,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            var box = new CheckBox
+            {
+                IsChecked = checkedState,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                ToolTip = "Trader " + _roleId + " offers " + offer.ItemSid +
+                          ". Uncheck to remove this item from the original stock generator."
+            };
+            box.Click += (_, _) => SetItem(offer, box.IsChecked == true);
+            outline.Child = box;
+            Grid.SetColumn(outline, 1);
+            grid.Children.Add(outline);
+
+            var row = new Border
+            {
+                BorderBrush = border, BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(3), Background = panel,
+                Margin = new Thickness(2, 1, 2, 1),
+                Child = grid
+            };
+            _rows.Children.Add(row);
+        }
+
+        if (shown == 0)
+        {
+            var none = Text("NO MATCHING SOURCE ITEMS", 10.5, muted);
+            none.Margin = new Thickness(8, 18, 8, 16);
+            _rows.Children.Add(none);
+        }
+        _count.Text = available + " / " + shown;
+        _count.ToolTip = "Items retained in the filtered original stock list. Original 0%-chance entries are not counted as available.";
     }
 }

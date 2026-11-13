@@ -26,6 +26,10 @@ public sealed class PresetFile
     [JsonPropertyName("medicalOverride")]
     public bool MedicalOverride { get; set; }
 
+    // Optional in older presets: independent per-role, per-item SELL exclusions.
+    [JsonPropertyName("traderItemOverrides")]
+    public string TraderItemOverrides { get; set; } = string.Empty;
+
     [JsonPropertyName("savedAtUtc")]
     public DateTimeOffset? SavedAtUtc { get; set; }
 

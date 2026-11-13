@@ -119,6 +119,7 @@ public sealed partial class CfgPatchWriterService
 
     private static int WriteTraderSells(
         IReadOnlyDictionary<string, ParameterViewModel> modifiedById,
+        string traderItemOverrides,
         bool hasDlc1,
         IDictionary<string, PatchDocument> documents,
         ISet<string> writtenParameters)
@@ -128,7 +129,11 @@ public sealed partial class CfgPatchWriterService
                 .Select(category => (Role: role, Category: category,
                     Id: TraderSellsPolicy.ParameterId(role, category))))
             .Where(x => modifiedById.ContainsKey(x.Id)).ToArray();
-        if (changed.Length == 0) return 0;
+        // Individual item selection is a sidecar preset field; the canonical
+        // 359 gameplay parameter IDs and the old role-level SELL flags survive.
+        // Only existing source item SIDs may be removed.
+        var disabledItems = TraderOffersPolicy.Decode(traderItemOverrides);
+        if (changed.Length == 0 && disabledItems.Count == 0) return 0;
         if (changed.Any(x => !modifiedById[x.Id].IsToggle || modifiedById[x.Id].CurrentBoolean))
             throw new InvalidDataException("Trader Sells only supports explicitly unchecked category removals.");
 
@@ -148,9 +153,14 @@ public sealed partial class CfgPatchWriterService
             var first = profile.First();
             if (!IsScopeApplicable(first.TradeScope, hasDlc1)) continue;
             var roleChanges = changed.Where(c => c.Role.SourceRole == first.TraderType).ToArray();
-            if (roleChanges.Length == 0) continue;
+            var role = TraderSellsPolicy.Roles.Single(x => x.SourceRole == first.TraderType);
+            var roleItemKeys = disabledItems.Where(x =>
+                x.StartsWith(role.Id + "|", StringComparison.Ordinal))
+                .ToHashSet(StringComparer.Ordinal);
+            if (roleChanges.Length == 0 && roleItemKeys.Count == 0) continue;
             var labels = roleChanges.Select(c => c.Category.Label).ToHashSet(StringComparer.Ordinal);
-            var affected = profile.Where(r => labels.Contains(r.Category))
+            var affected = profile.Where(r => labels.Contains(r.Category) ||
+                roleItemKeys.Contains(TraderOffersPolicy.Key(role.Id, r.ItemSid)))
                 .GroupBy(r => (r.GeneratorScope, r.GeneratorSid, r.EntryPath, r.ItemSid,
                     r.NestedChain, r.OuterLinks)).Select(g => g.First()).ToArray();
             if (affected.Length == 0) continue;
