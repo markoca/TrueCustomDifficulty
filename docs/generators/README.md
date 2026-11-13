@@ -1,3 +1,5 @@
+**Trader Category pre-implementation source audit (2026-11-13):** [10-category direct-item census, shared-pool blocking boundaries, DLC1 and acceptance gates](TRADER-CATEGORY-REMOVAL-SOURCE-AUDIT-2026-11-13.md). Static classification gate: `python3 tools/audit_trader_category_source.py`. No category toggle or writer edit is implemented.
+
 **GENERIC NPC + STASH CFG PRE-GAME GATE (2026-10-17):** [Original generator execution diagram, 13 source-diagnostic CFG cases and unchanged gameplay acceptance boundary](GENERIC-NPC-STASH-EXECUTION-AND-CFG-PARITY-2026-10-17.md). Real production-writer tests now cover ordinary NPC consumables versus corpse SmartLoot and world stash tier ItemGenerator versus SmartLoot without altering regular app controls or source guards. Wine/.NET and game runtime checks still pending.
 
 # Generator map data
