@@ -100,7 +100,8 @@ def main() -> int:
                 and all(p["key"] == "Weight" and p["operation"] == "scale"
                         and p.get("nodePath", []) == [] and float(p["sourceRaw"]) > 0
                         for p in points), "New item-weight source manifest drift: " + pid)
-    require(len(routed) == 71 and set(routed) | direct == set(definitions)
+    require(len(set(routed) - trader_ids) == 71 and len(set(routed) & trader_ids) == 71
+            and set(routed) | direct == set(definitions)
             and not set(routed) & direct, "Writer route coverage/ownership drift")
 
     mix = {"loot.stashMix" + x for x in
