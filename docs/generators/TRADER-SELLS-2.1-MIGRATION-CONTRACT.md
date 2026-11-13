@@ -17,3 +17,7 @@ Decision: **S.T.A.L.K.E.R. 2.1 is the target and sole supported Trader Sells sou
 Run `python3 tools/audit_trader_21_migration.py docs/generators/trader-buy-limits-86.csv STALKER2_2.1_trader_staging_manifest.csv`. This fails closed if 2.1 profiles with stock have no reviewed role assignment.
 
 **Status:** migration contract and audit added; production runtime still uses the old source until all gates pass. Do not report 2.1 activation based on staging alone.
+
+## Blocker verified: source root scope
+
+The existing SELL writer infers the root generator file from direct leaves, or falls back to the trade profile scope. This is not sufficient for a source-exact 2.1 migration because a DLC trade can reference a base-game generator and a root can have only nested leaves. The 2.1 production resource must include an explicit `root_generator_scope` resolved against `ItemGeneratorPrototypes.cfg` definitions; reject ambiguous or missing roots. Do not replace the embedded 2.0.5 CSV with a partial 2.1 export. No 2.1 runtime activation is claimed here.

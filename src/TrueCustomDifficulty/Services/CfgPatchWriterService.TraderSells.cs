@@ -168,13 +168,16 @@ public sealed partial class CfgPatchWriterService
                     r.NestedChain, r.OuterLinks)).Select(g => g.First()).ToArray();
             if (affected.Length == 0) continue;
 
+            // The root may have no direct leaves: all stock can be nested.
+            // For 2.1, its scope must come from source inventory, never be
+            // guessed from the TradePrototype scope (DLC trades can use base roots).
             var rootScope = profile.Where(x => x.GeneratorSid == first.RootSid)
                 .Select(x => x.GeneratorScope).Distinct().ToArray();
             var originalRootScope = rootScope.Length switch
             {
                 1 => rootScope[0],
                 0 when first.RootSid == "MedicUniversal_TradeItemGenerator" => "base",
-                0 => first.TradeScope,
+                0 => first.TradeScope, // Legacy 2.0.5 fallback; remove for 2.1.
                 _ => throw new InvalidDataException("Mixed trader original generator scope.")
             };
             var rootClone = SellCloneSid(first.TradeScope, first.TradeSid, first.TradeGeneratorSlot, first.RootSid);
