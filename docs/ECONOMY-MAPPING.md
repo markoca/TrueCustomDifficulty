@@ -37,10 +37,10 @@ The CFG confirms the field and vanilla progression. This is the trader-buying-fr
 
 - File: `GameData/TradePrototypes.cfg` and DLC1 `DLCGameData/DLC1/TradePrototypes.cfg`
 - Fields: `TradeGenerators/[0]/WeaponSellMinDurability` and `ArmorSellMinDurability`
-- Vanilla threshold: `0.40` for both weapon and armor sell-condition gates
+- Reference slider threshold: `0.40`; source exceptions `SelmaTrader_TradePrototype` and `Trader_Soviet_Rostok_TradePrototype` explicitly author `0.0f`; 22 profiles omit both local fields. See `generators/TRADER-BUY-BPATCH-CONTRACT-2026-11-13.md`
 - UI: **Trader Minimum Buy Condition**, 0-100% in 1% steps
 
-This field is the condition-acceptance gate, not a price multiplier. Setting it to 0% allows mapped traders to accept completely broken weapons and armor. The price of that damaged gear is still determined separately by durability-based item value, difficulty `BuyCondition`, trader-specific modifiers and other vanilla economy rules.
+This field is the condition-acceptance gate, not a price multiplier. Setting it to 0% removes this durability gate for mapped traders; an untouched 40% slider leaves source-authored 0% exceptions unchanged. The price of that damaged gear is still determined separately by durability-based item value, difficulty `BuyCondition`, trader-specific modifiers and other vanilla economy rules.
 
 The current production allowlist contains 86 mapped production trade profiles: 68 base-game and 18 DLC1. Template/test profiles are excluded, and DLC1 targets are emitted only when DLC1 is installed.
 

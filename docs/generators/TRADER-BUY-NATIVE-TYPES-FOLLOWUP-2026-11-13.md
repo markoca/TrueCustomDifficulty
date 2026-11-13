@@ -1,3 +1,5 @@
+**2026-11-13 verified follow-up:** [BPatch and durability source contract](TRADER-BUY-BPATCH-CONTRACT-2026-11-13.md) confirmed the 86 source profiles and 688 hypothetical category flips. The two original 0%-condition rows are now corrected in the production manifest; compiled writer/Unreal gameplay validation remains outstanding. This supersedes the earlier statement below that the manifest still needs reconciliation.
+
 # Trader Buy Acceptance — Native Item Types and Consumables Follow-up (2026-11-13)
 
 **Verdict: source-verified for broad native item types; Food / Drinks / Medical cannot be split via the existing `BuyLimitations` field.** No gameplay or UI controls implemented. No in-game behavior verified.

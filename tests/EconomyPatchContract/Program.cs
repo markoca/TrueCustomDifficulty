@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using TrueCustomDifficulty.Models;
 using TrueCustomDifficulty.Services;
@@ -51,8 +52,9 @@ internal static class Program
                 foreach (var difficulty in new[] { "Novice", "Stalker", "Master" })
                     TestDirect(id, difficulty);
             TestTraderThreshold();
+            TestTraderBuyLimitationsPatchShape();
             TestLinkedRoamingGuides();
-            Check(_passed == 39, "Expected exactly 39 Economy writer scenarios");
+            Check(_passed == 40, "Expected exactly 40 Economy writer scenarios");
             Console.WriteLine($"PASS: {_passed} Economy production BPatch writer scenarios");
             Console.WriteLine("NOT VERIFIED: original CFG archives, DLC1-installed patches or game behavior");
             return 0;
@@ -188,6 +190,7 @@ internal static class Program
             var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
             var par = vm.AllParameters.Single(p => p.Id == id);
             Check(par.IsSlider && par.IsControlEnabled, label + ": missing live editor");
+            Check(!par.IsValueModifiedFromReference(), label + ": neutral default must not patch vanilla exceptions");
             par.SnapCurrentNumberToMarker(0.5);
             Check(par.IsValueModifiedFromReference(), label + ": unchanged threshold");
             Check(vm.AllParameters.Where(p => p.Id.StartsWith("economy.", StringComparison.Ordinal)
@@ -200,6 +203,13 @@ internal static class Program
             var baseRows = csv.Where(row=>row[0]=="base").ToArray();
             Check(baseRows.Length==68 && csv.Count(row=>row[0]=="dlc1")==18,
                 label+": unexpected 68/18 scope inventory");
+            var nativeZeroSids = new[] { "SelmaTrader_TradePrototype", "Trader_Soviet_Rostok_TradePrototype" };
+            Check(baseRows.Count(row => nativeZeroSids.Contains(row[2], StringComparer.Ordinal)) == 2
+                && baseRows.Where(row => nativeZeroSids.Contains(row[2], StringComparer.Ordinal))
+                    .All(row => row[6] == "0.0f")
+                && csv.Where(row => !nativeZeroSids.Contains(row[2], StringComparer.Ordinal))
+                    .All(row => row[6] == "0.4f"),
+                label + ": original two 0%-condition trader baselines were lost");
             var result = new CfgPatchWriterService().Write(vm,Catalog,null,path);
             var files = baseRows.Select(row=>ExpectedFile(path,row[1]))
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
@@ -241,6 +251,87 @@ internal static class Program
         {
             if (_keep is null && Directory.Exists(path)) Directory.Delete(path,recursive:true);
         }
+    }
+
+    // Invoke the *actual production PatchDocument/PatchNode serializer* without
+    // registering a new gameplay parameter. This is a format/merge contract
+    // only, NOT an Unreal parser or an in-game merchant acceptance test.
+    private static void TestTraderBuyLimitationsPatchShape()
+    {
+        const string label = "Trader-BuyLimitations-BPatch-Shape";
+        var docType = typeof(CfgPatchWriterService).GetNestedType("PatchDocument", BindingFlags.NonPublic)
+            ?? throw new InvalidDataException(label + ": missing production PatchDocument");
+        var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+        var replace = docType.GetMethod("AddReplacementNode", flags)
+            ?? throw new InvalidDataException(label + ": missing production AddReplacementNode");
+        var remove = docType.GetMethod("AddRemovalNode", flags)
+            ?? throw new InvalidDataException(label + ": missing production AddRemovalNode");
+        var assign = docType.GetMethod("AddAssignment", flags)
+            ?? throw new InvalidDataException(label + ": missing production AddAssignment");
+        var render = docType.GetMethod("Render", flags)
+            ?? throw new InvalidDataException(label + ": missing production Render");
+        const string source = "GameData/TradePrototypes.cfg";
+        const string sid = "EgerTrader_TradePrototype";
+        var parentPath = new[] { "TradeGenerators", "[0]" };
+        var document = Activator.CreateInstance(docType, nonPublic: true)
+            ?? throw new InvalidDataException(label + ": failed to construct production document");
+
+        // Existing minimum-durability control and new buy-limit child MUST
+        // coalesce into one TradeGenerators/[0] node, never overwrite siblings.
+        assign.Invoke(document, new object[] { sid, parentPath, "WeaponSellMinDurability", "0.5f" });
+        assign.Invoke(document, new object[] { sid, parentPath, "ArmorSellMinDurability", "0.5f" });
+        var child = replace.Invoke(document, new object[] { sid, parentPath, "BuyLimitations" })
+            ?? throw new InvalidDataException(label + ": no replace child");
+        var set = child.GetType().GetMethod("SetAssignment", flags)
+            ?? throw new InvalidDataException(label + ": missing production PatchNode.SetAssignment");
+        var types = new[] { "Weapon", "Armor", "Ammo", "Grenade", "Attach", "Artifact" };
+        for (var i = 0; i < types.Length; i++)
+            set.Invoke(child, new object[] { $"[{i}]", "EItemType::" + types[i] });
+        var rendered = (string)(render.Invoke(document, new object[] { source })
+            ?? throw new InvalidDataException(label + ": serializer returned null"));
+        var patch = Parse(rendered);
+        var root = patch.Get(sid);
+        var trade = root.Get("TradeGenerators");
+        var zero = trade.Get("[0]");
+        var limits = zero.Get("BuyLimitations");
+        Check(root.Bpatch && trade.Bpatch && zero.Bpatch && !limits.Bpatch,
+            label + ": {bpatch} ancestors and replaced child format drift");
+        Check(zero.Assignments.Count == 2
+            && zero.Value("WeaponSellMinDurability") == "0.5f"
+            && zero.Value("ArmorSellMinDurability") == "0.5f",
+            label + ": minimum condition fields lost or extra trade scalar added");
+        Check(limits.Assignments.Count == types.Length && limits.Children.Count == 0,
+            label + ": buy array has incorrect shape");
+        for (var i = 0; i < types.Length; i++)
+            Check(limits.Value($"[{i}]") == "EItemType::" + types[i],
+                label + ": incorrect source-preserving array entry");
+
+        var fields = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var n in patch.Children.Values)
+            Collect(n, n.Name, fields);
+        var wanted = new HashSet<string>(StringComparer.Ordinal) {
+            sid + "/TradeGenerators/[0]/WeaponSellMinDurability",
+            sid + "/TradeGenerators/[0]/ArmorSellMinDurability"
+        };
+        foreach (var i in Enumerable.Range(0, types.Length))
+            wanted.Add(sid + $"/TradeGenerators/[0]/BuyLimitations/[{i}]");
+        Check(fields.SetEquals(wanted), label + ": serializer touched unrelated trader fields");
+
+        var empty = Activator.CreateInstance(docType, nonPublic: true)
+            ?? throw new InvalidDataException(label + ": no removal document");
+        remove.Invoke(empty, new object[] { "Bartender_Zalesie_TradePrototype",
+            parentPath, "BuyLimitations" });
+        var removal = (string)(render.Invoke(empty, new object[] { source })
+            ?? throw new InvalidDataException(label + ": no removal patch"));
+        Check(removal.Contains("BuyLimitations : removenode", StringComparison.Ordinal)
+            && removal.Contains("TradeGenerators : struct.begin {bpatch}", StringComparison.Ordinal)
+            && removal.Contains("[0] : struct.begin {bpatch}", StringComparison.Ordinal)
+            && !removal.Contains("WeaponSellMinDurability", StringComparison.Ordinal)
+            && !removal.Contains("ArmorSellMinDurability", StringComparison.Ordinal),
+            label + ": removal touches unrelated fields or lacks BPatch ancestors");
+
+        _passed++;
+        Console.WriteLine("PASS " + label + " (production serializer: child replacement, list removal, sibling durability)");
     }
 
     private static string ExpectedFile(string outRoot, string source)

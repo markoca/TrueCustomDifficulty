@@ -45,7 +45,7 @@ base,GameData/TradePrototypes.cfg,NewbieVillage_Medic_TradePrototype,TradeGenera
 base,GameData/TradePrototypes.cfg,PowerPlugTechnician_TradePrototype,TradeGenerators/[0],WeaponSellMinDurability,ArmorSellMinDurability,0.4f
 base,GameData/TradePrototypes.cfg,RC_TraderNPC,TradeGenerators/[0],WeaponSellMinDurability,ArmorSellMinDurability,0.4f
 base,GameData/TradePrototypes.cfg,Rostok_Medic_TradePrototype,TradeGenerators/[0],WeaponSellMinDurability,ArmorSellMinDurability,0.4f
-base,GameData/TradePrototypes.cfg,SelmaTrader_TradePrototype,TradeGenerators/[0],WeaponSellMinDurability,ArmorSellMinDurability,0.4f
+base,GameData/TradePrototypes.cfg,SelmaTrader_TradePrototype,TradeGenerators/[0],WeaponSellMinDurability,ArmorSellMinDurability,0.0f
 dlc1,DLCGameData/DLC1/TradePrototypes.cfg,SkobaMedicStage2_TradePrototype,TradeGenerators/[0],WeaponSellMinDurability,ArmorSellMinDurability,0.4f
 dlc1,DLCGameData/DLC1/TradePrototypes.cfg,SkobaMedic_TradePrototype,TradeGenerators/[0],WeaponSellMinDurability,ArmorSellMinDurability,0.4f
 base,GameData/TradePrototypes.cfg,Sultansk_Medic_TradePrototype,TradeGenerators/[0],WeaponSellMinDurability,ArmorSellMinDurability,0.4f
@@ -74,7 +74,7 @@ base,GameData/TradePrototypes.cfg,Trader_NewbeeVillage_TradePrototype,TradeGener
 base,GameData/TradePrototypes.cfg,Trader_Pripyat_TradePrototype,TradeGenerators/[0],WeaponSellMinDurability,ArmorSellMinDurability,0.4f
 base,GameData/TradePrototypes.cfg,Trader_RedForest_TradePrototype,TradeGenerators/[0],WeaponSellMinDurability,ArmorSellMinDurability,0.4f
 base,GameData/TradePrototypes.cfg,Trader_Shevchenko_TradePrototype,TradeGenerators/[0],WeaponSellMinDurability,ArmorSellMinDurability,0.4f
-base,GameData/TradePrototypes.cfg,Trader_Soviet_Rostok_TradePrototype,TradeGenerators/[0],WeaponSellMinDurability,ArmorSellMinDurability,0.4f
+base,GameData/TradePrototypes.cfg,Trader_Soviet_Rostok_TradePrototype,TradeGenerators/[0],WeaponSellMinDurability,ArmorSellMinDurability,0.0f
 base,GameData/TradePrototypes.cfg,Trader_Sultansk_TradePrototype,TradeGenerators/[0],WeaponSellMinDurability,ArmorSellMinDurability,0.4f
 base,GameData/TradePrototypes.cfg,Trader_Terikon_TradePrototype,TradeGenerators/[0],WeaponSellMinDurability,ArmorSellMinDurability,0.4f
 base,GameData/TradePrototypes.cfg,Trader_Yanov_TradePrototype,TradeGenerators/[0],WeaponSellMinDurability,ArmorSellMinDurability,0.4f

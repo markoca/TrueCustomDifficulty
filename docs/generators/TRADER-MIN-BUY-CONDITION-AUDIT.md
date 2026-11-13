@@ -13,9 +13,9 @@ The trade condition gate is separate from trader pricing and stock generation.
 - `TradeGenerators/[0]/WeaponSellMinDurability`
 - `TradeGenerators/[0]/ArmorSellMinDurability`
 
-The vanilla reference threshold is **0.40 / 40%** for both equipment classes.
+The **global slider reference** is **0.40 / 40%**. This is **not** the source-authored vanilla value for every trader: `SelmaTrader_TradePrototype` and `Trader_Soviet_Rostok_TradePrototype` explicitly author **0.0f**, 62 other production profiles explicitly author **0.4f**, and 22 profiles have neither gate field locally authored.
 
-The repository's baseline documentation already records both fields on `BaseTraderNPC_Template` at 0.4. External current-game references independently identify the same two fields as the vanilla 40% gate.
+`BaseTraderNPC_Template` records 0.4f for both, but does not override the two source-authored 0% dealer values. The production manifest now uses `vanilla=0.0f` for those exact two rows and keeps 0.4f as the reference for all other profiles; see [original BPatch/durability audit](TRADER-BUY-BPATCH-CONTRACT-2026-11-13.md).
 
 ## Production profile allowlist
 
@@ -39,10 +39,10 @@ The exact list is `trader-min-buy-condition-manifest.csv`.
 `Trader Minimum Buy Condition` is an absolute 0-100% slider.
 
 - **0%** — mapped traders can accept completely broken weapons and armor.
-- **40%** — vanilla.
+- **40%** — neutral slider reference; no patch is emitted while unchanged, preserving the two original 0%-condition traders.
 - **100%** — equipment must be at full condition to pass this gate.
 
-The selected value is written identically to weapon and armor minimum durability fields.
+A deliberately changed slider is an **absolute threshold**: it writes the selected value to both weapon and armor fields for all mapped traders, including the two vanilla 0% exceptions.
 
 ## Isolation
 
