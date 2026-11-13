@@ -49,3 +49,8 @@ The SELL writer now carries `RootGeneratorScope` in its internal offer model and
 The SELL writer now recognizes a SHA256-pinned 15-column 2.1 runtime manifest alongside the existing 20-column 2.0.5 resource. The source-exact 2.1 playable manifest was generated locally from the actual 2.1 CFG archive: 2,939 rows, 86 playable profiles, 62 distinct leaf generators, 608 distinct leaf coordinates, 113 DLC generator rows, 6 zero-chance leaves. The four template/test profiles are excluded; all playable rows use slot 0 with `ConstTrue`. The generated file SHA256 is `9585c5b21bc13610dbc448650b2b053d582c852911782976076f5657f741e587`. Root generator scope is source-resolved and embedded per row.
 
 **Important:** the 2.1 CSV is currently a local generated artifact, **not yet checked into GitHub**. The csproj still embeds the 2.0.5 CSV, so this is a preparatory reader change, not runtime migration. The resource must be added and switched in the same commit, followed by .NET compilation and CFG output tests. Do not claim completion until those steps are confirmed.
+
+
+## CI UI contract reconciliation (2026-11-14)
+
+The category-only Trader Stock editor intentionally does not bind `TraderOffersPolicy.Offers` as a visible individual-SID list. The 2.1 source still drives the saved `TraderItemOverrides` compatibility sidecar and the CFG writer. The UI-to-CFG audit now checks the active category editor binding (`TraderSellsPolicy.IsAvailable`) and preservation of the sidecar in the view model, rather than requiring the retired item-level UI. This is an audit-correction, not a gameplay or UI layout change.

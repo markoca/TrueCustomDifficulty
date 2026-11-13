@@ -197,10 +197,12 @@ def main():
         or "TraderSellsPolicy.ParameterIds" not in rendered_text
         or "TraderBuysMatrix" not in rendered_text):
         fail("Trader Sells dynamic UI source contract drifted")
-    if ("TraderOffersPolicy.Offers" not in rendered_text
+    # The 2.1 editor exposes original stock categories; saved per-item
+    # exclusions remain a compatibility sidecar, not a second visible list.
+    if ("TraderSellsPolicy.IsAvailable" not in rendered_text
         or "TraderItemOverrides" not in rendered_text
         or "TraderItemOverrides" not in (SRC / "ViewModels/MainViewModel.cs").read_text(encoding="utf-8")):
-        fail("Individual trader stock source-to-UI binding drifted")
+        fail("Trader stock category UI / saved item compatibility binding drifted")
     if "TraderSellsMatrix.cs" in [p.name for p in live_sources]:
         fail("Retired separate Trader Sells matrix must not exist")
     if unreferenced:
