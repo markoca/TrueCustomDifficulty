@@ -21,3 +21,15 @@ Run `python3 tools/audit_trader_21_migration.py docs/generators/trader-buy-limit
 ## Blocker verified: source root scope
 
 The existing SELL writer infers the root generator file from direct leaves, or falls back to the trade profile scope. This is not sufficient for a source-exact 2.1 migration because a DLC trade can reference a base-game generator and a root can have only nested leaves. The 2.1 production resource must include an explicit `root_generator_scope` resolved against `ItemGeneratorPrototypes.cfg` definitions; reject ambiguous or missing roots. Do not replace the embedded 2.0.5 CSV with a partial 2.1 export. No 2.1 runtime activation is claimed here.
+
+## 2.1 runtime manifest generator and activation gate
+
+`tools/build_trader_21_runtime.py` now builds the intended 15-column writer resource from the 2.1 source archive, slot-enriched staging rows, and the 90-profile role reconciliation CSV. It verifies source generator scopes directly against `ItemGeneratorPrototypes.cfg`, including DLC trade profiles pointing at base generators, and fails closed on unknown or ambiguous root scopes, bad parent chains, missing role rows, incorrect profile counts, and wrong slot census.
+
+Run:
+
+```bash
+python3 tools/build_trader_21_runtime.py 'STALKER2-2.1 cfg dump.zip' slots.csv docs/generators/trader-21-role-reconciliation.csv trader-sells-2.1-runtime.csv
+```
+
+**Activation blocker:** four extra profiles have unresolved role classification. The script intentionally refuses to emit a production-ready resource until they are reviewed. The existing app still embeds the old 2.0.5 resource. The runtime reader, resource embedding, output CFG tests, and removal of legacy census checks remain outstanding. No runtime migration or build success is claimed.
