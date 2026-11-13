@@ -253,7 +253,10 @@ def main():
     missing_resources = []
     for resource in resources:
         filename = resource.split(".Data.", 1)[-1] if ".Data." in resource else resource
-        if not (DATA / filename).is_file():
+        # The 1.15 MB source-exact 2.0.5 stock ledger is embedded from the
+        # canonical docs/generators path, not copied into Data.
+        candidate = (ROOT / "docs" / "generators" / filename) if filename == "trader-offers-source-rows.csv" else (DATA / filename)
+        if not candidate.is_file():
             missing_resources.append(filename)
     if missing_resources:
         fail(f"special writer resources missing: {sorted(set(missing_resources))}")

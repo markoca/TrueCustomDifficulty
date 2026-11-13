@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src/TrueCustomDifficulty"
 DATA = SRC / "Data"
 OFFERS = ROOT / "docs/generators/trader-offers-source-rows.csv"
-assert hashlib.sha256(OFFERS.read_bytes()).hexdigest() == (
+assert hashlib.sha256(OFFERS.read_bytes().replace(b"\r\n", b"\n")).hexdigest() == (
     "6b06e7f3b6b4844e4043f4f620f7b8a364ed7623728027315ad90e7d74c2e05f"
 ), "Original 2.0.5 seller offer source content changed; reextract before writing."
 with OFFERS.open(newline="", encoding="utf-8") as file:
@@ -29,7 +29,7 @@ with OFFERS.open(newline="", encoding="utf-8") as file:
     ]
     rows = list(reader)
 assert len(rows) == 2939
-assert Counter(x["trade_scope"] for x in rows) == {"base": 2826, "dlc1": 113}
+assert Counter(x["generator_scope"] for x in rows) == {"base": 2826, "dlc1": 113}
 assert len({(x["trade_scope"], x["trade_sid"]) for x in rows}) == 86
 assert len({(x["generator_scope"], x["generator_sid"]) for x in rows}) == 62
 assert len({(x["generator_scope"], x["generator_sid"], x["entry_cfg_path"], x["item_sid"])

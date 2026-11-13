@@ -303,7 +303,8 @@ def main():
     collect_resource_paths(baseline["special"], resources)
     for resource in resources:
         filename = resource.split(".Data.", 1)[-1]
-        require((DATA / filename).is_file(), "missing special writer manifest " + resource)
+        candidate = (ROOT / "docs" / "generators" / filename) if filename == "trader-offers-source-rows.csv" else (DATA / filename)
+        require(candidate.is_file(), "missing special writer manifest " + resource)
 
     by_id = {}
     for pid, p in definitions.items():

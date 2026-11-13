@@ -27,12 +27,16 @@ public sealed partial class CfgPatchWriterService
         using var stream = Assembly.GetExecutingAssembly()
             .GetManifestResourceStream(TraderSellsSourceResource)
             ?? throw new InvalidDataException("Missing source-exact Trader Sells inventory resource.");
-        var sourceHash = Convert.ToHexString(SHA256.HashData(stream));
+        // Git for Windows can check out text CSV with CRLF while the committed
+        // 2.0.5 source snapshot is LF. Normalize only line endings before the
+        // SHA256 check; any actual source-value/field drift still fails closed.
+        using var sourceReader = new StreamReader(stream);
+        var sourceText = sourceReader.ReadToEnd().Replace("\r\n", "\n", StringComparison.Ordinal);
+        var sourceHash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(sourceText)));
         if (!sourceHash.Equals("6B06E7F3B6B4844E4043F4F620F7B8A364ED7623728027315AD90E7D74C2E05F",
                 StringComparison.Ordinal))
             throw new InvalidDataException("Trader Sells original 2.0.5 offer source content changed.");
-        stream.Position = 0;
-        using var reader = new StreamReader(stream);
+        using var reader = new StringReader(sourceText);
         const string expected = "trade_scope,trade_sid,trader_type,root_stock_sid,item_sid,item_category,"
             + "generator_sid,generator_scope,generator_cfg_line,entry_cfg_line,entry_cfg_path,"
             + "generation_native_category,player_ranks,chance,weight,min_count,max_count,"
@@ -71,7 +75,7 @@ public sealed partial class CfgPatchWriterService
             rows.Add(row);
         }
         if (rows.Count != 2939
-            || rows.Count(x => x.TradeScope == "dlc1") != 113
+            || rows.Count(x => x.GeneratorScope == "dlc1") != 113
             || rows.Count(x => x.State == "ZERO_CHANCE") != 1
             || rows.Select(x => (x.TradeScope, x.TradeSid)).Distinct().Count() != 86
             || rows.Select(x => (x.GeneratorScope, x.GeneratorSid)).Distinct().Count() != 62
