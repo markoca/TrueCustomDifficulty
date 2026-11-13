@@ -5,7 +5,7 @@ using System.Linq;
 namespace TrueCustomDifficulty.Services;
 
 /// <summary>
-/// Exact 2.0.5 merchant SELL inventory categories, separate from native EItemType
+/// Exact 2.1 merchant SELL inventory categories, separate from native EItemType
 /// buy restrictions. A disabled cell removes this category only for the
 /// selected merchant role. Unavailable cells are deliberately not controls.
 /// </summary>
@@ -27,7 +27,7 @@ public static class TraderSellsPolicy
         new Category("detectors", "Detectors"),
         new Category("grenades", "Grenades")
     };
-    // Source-exact 86-profile 2.0.5 inventory union; an absent combination
+    // Source-exact 86-playable-profile 2.1 inventory union; an absent combination
     // would be a no-op and must never become a misleading editable setting.
     private static readonly IReadOnlyDictionary<string, IReadOnlySet<string>> Available =
         new Dictionary<string, IReadOnlySet<string>>(StringComparer.Ordinal)

@@ -1,3 +1,11 @@
+## 2026-11-14 — 2.1 Trader Stock runtime activation
+
+The 2.1 manifest is the sole embedded SELL inventory source, verified by SHA256 `9585c5b21bc13610dbc448650b2b053d582c852911782976076f5657f741e587`. The 86 playable profiles, 2,939 offers, 164 distinct item SIDs and 260 role/item selections retain their preset identifiers. Two DLC medic profiles reference base-game root generators; their source-resolved scopes are mandatory. The Suslov SQ14 ammo pool has two parent-link slots and both must be rewritten during clone/relink. The five formerly nonzero TraderNPC entries are now native zero-chance entries. In Rostok, AVOG is both Ammo and Artifacts in separate native source paths; the item-selector presents one AVOG under Ammo but a per-SID OFF removes both, while category-only OFF follows each path's native category. The 2.0.5 source remains in docs for historical audit only, not as runtime fallback.
+
+The original 31 category toggles, compact five-role editor and `TraderItemOverrides` preset field are unchanged, so the UI design catalogs do not require layout changes. Static audit: `python3 tools/audit_trader_21_runtime.py`. Windows build, CFG writer patch and in-game stock refresh remain separate acceptance gates; do not equate static auditing with game behavior.
+
+---
+
 ## 2026-11-13 — CURRENT TRADER STOCK item-offer editor (supersedes all BUY/SELL matrices)
 
 Economy → Trader Stock is ONE compact 820-DIP stock editor, not a 5×9 BUY/SELL matrix. Choose one of five source merchant roles (General, Medic, Technician, Bartender, Generic NPC); filter by original stock category, search by source item SID or readable spaced SID, and independently retain/remove each original item offer. The scroll list is bounded to 365 DIP and 31-DIP item rows. Items are grouped by category when ALL is selected. The verified embedded 2.0.5 merchant manifest yields 164 distinct item SIDs and 260 role/item pairs (including NightVision and Binoculars); DLC1-only and original 0%-chance candidates are annotated. 0%-chance entries do not count as available offers. Source SHA256 is verified. Spaced SIDs are not claims about localized game names.

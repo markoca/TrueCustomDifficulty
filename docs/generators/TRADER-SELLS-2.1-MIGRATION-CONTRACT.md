@@ -1,5 +1,7 @@
 # Trader Sells — 2.1-only migration contract
 
+**Activated on main: 2026-11-14.** The SELL writer and item-offer UI now both consume only the SHA256-pinned 2.1 runtime manifest embedded as `Data/trader-sells-2.1-runtime.csv`. Legacy 2.0.5 SELL data remains solely as historical source evidence in `docs/generators/` and is not embedded. Existing 31 category parameter IDs and per-SID preset keys are preserved. The previous preparatory-status paragraphs below document the earlier migration stages, not the current runtime state. The 2.1 source-to-writer static regression is `tools/audit_trader_21_runtime.py`; Windows/Wine and in-game behavior require separate acceptance.
+
 Decision: **S.T.A.L.K.E.R. 2.1 is the target and sole supported Trader Sells source**. The existing 2.0.5 inventory is deprecated and must be removed from runtime **only in the same change that activates a verified 2.1 replacement**. No silent fallback to 2.0.5.
 
 ## Migration gates

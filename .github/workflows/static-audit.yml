@@ -33,6 +33,8 @@ jobs:
 
       - name: Trader Sells 2939-path merchant stock isolation and UI contract
         run: python tools/audit_trader_sells_implementation.py
+      - name: Trader 2.1 source/runtime integrity
+        run: python tools/audit_trader_21_runtime.py
 
       - name: Four native Food Hunger Relief source, UI, and preset audit
         run: python tools/audit_food_satiety_source.py

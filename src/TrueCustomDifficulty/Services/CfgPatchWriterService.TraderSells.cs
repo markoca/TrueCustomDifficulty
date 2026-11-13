@@ -16,7 +16,7 @@ namespace TrueCustomDifficulty.Services;
 /// </summary>
 public sealed partial class CfgPatchWriterService
 {
-    private const string TraderSellsSourceResource = "TrueCustomDifficulty.Data.trader-offers-source-rows.csv";
+    private const string TraderSellsSourceResource = "TrueCustomDifficulty.Data.trader-sells-2.1-runtime.csv";
     private sealed record TraderSellOffer(
         string TradeScope, string TradeSid, string TraderType, string RootSid,
         string ItemSid, string Category, string GeneratorSid, string GeneratorScope,
@@ -28,50 +28,38 @@ public sealed partial class CfgPatchWriterService
         using var stream = Assembly.GetExecutingAssembly()
             .GetManifestResourceStream(TraderSellsSourceResource)
             ?? throw new InvalidDataException("Missing source-exact Trader Sells inventory resource.");
-        // Git for Windows can check out text CSV with CRLF while the committed
-        // 2.0.5 source snapshot is LF. Normalize only line endings before the
-        // SHA256 check; any actual source-value/field drift still fails closed.
+        // Normalize only Git checkout line endings. Any field or row drift
+        // fails against the exact source-extracted S.T.A.L.K.E.R. 2.1 hash.
         using var sourceReader = new StreamReader(stream);
         var sourceText = sourceReader.ReadToEnd().Replace("\r\n", "\n", StringComparison.Ordinal);
         var sourceHash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(sourceText)));
-        var is21 = sourceHash.Equals(
-            "9585C5B21BC13610DBC448650B2B053D582C852911782976076F5657F741E587",
-            StringComparison.Ordinal);
-        if (!is21 && !sourceHash.Equals(
-                "6B06E7F3B6B4844E4043F4F620F7B8A364ED7623728027315AD90E7D74C2E05F",
+        if (!sourceHash.Equals(
+                "9585C5B21BC13610DBC448650B2B053D582C852911782976076F5657F741E587",
                 StringComparison.Ordinal))
-            throw new InvalidDataException("Trader Sells source integrity check failed.");
+            throw new InvalidDataException("Trader Sells requires the exact 2.1 source manifest.");
         using var reader = new StringReader(sourceText);
         const string expected = "trade_scope,trade_sid,trader_type,root_stock_sid,item_sid,item_category,"
-            + "generator_sid,generator_scope,generator_cfg_line,entry_cfg_line,entry_cfg_path,"
-            + "generation_native_category,player_ranks,chance,weight,min_count,max_count,"
-            + "direct_entry_state,nested_chain,outer_links";
-        const string expected21 = "trade_scope,trade_sid,trader_type,root_stock_sid,item_sid,item_category,"
             + "generator_sid,generator_scope,entry_cfg_path,direct_entry_state,nested_chain,"
             + "outer_links,trade_generator_slot,trade_generator_condition,root_generator_scope";
-        if (reader.ReadLine() != (is21 ? expected21 : expected))
-            throw new InvalidDataException("Trader Sells native source manifest header changed.");
+        if (reader.ReadLine() != expected)
+            throw new InvalidDataException("Trader Sells 2.1 source manifest header changed.");
         var rows = new List<TraderSellOffer>();
         string? line;
         while ((line = reader.ReadLine()) is not null)
         {
             if (string.IsNullOrWhiteSpace(line)) continue;
-            // The original 2.0.5 extractor emits no quoted/comma-valued cells.
-            // Fail closed on source shape drift rather than misrouting an entry.
+            // This schema is 2.1-only: no 2.0.5 columns or slot fallback.
             var x = line.Split(',');
-            if (x.Length != (is21 ? 15 : 20) || x.Any(v => v.Contains('"')))
-                throw new InvalidDataException("Unexpected trader stock CSV shape.");
-            var row = is21
-                ? new TraderSellOffer(x[0], x[1], x[2], x[3], x[4],
-                    x[5], x[6], x[7], x[8], x[9], x[10], x[11],
-                    int.Parse(x[12], System.Globalization.CultureInfo.InvariantCulture), x[14])
-                : new TraderSellOffer(x[0], x[1], x[2], x[3], x[4],
-                    x[5], x[6], x[7], x[10], x[17], x[18], x[19], 0, "");
+            if (x.Length != 15 || x.Any(v => v.Contains('"')))
+                throw new InvalidDataException("Unexpected 2.1 trader stock CSV shape.");
+            var row = new TraderSellOffer(x[0], x[1], x[2], x[3], x[4],
+                x[5], x[6], x[7], x[8], x[9], x[10], x[11],
+                int.Parse(x[12], System.Globalization.CultureInfo.InvariantCulture), x[14]);
             if (row.TradeScope is not ("base" or "dlc1")
                 || row.GeneratorScope is not ("base" or "dlc1")
                 || !TraderSellsPolicy.Roles.Any(r => r.SourceRole == row.TraderType)
                 || !TraderSellsPolicy.Categories.Any(c => string.Equals(c.Label, row.Category, StringComparison.Ordinal))
-                    && row.Category is not ("NightVision" or "Binoculars")
+                    && row.Category != "Binoculars"
                 || row.EntryPath.Split('/').Length != 4
                 || !row.EntryPath.StartsWith("ItemGenerator/[", StringComparison.Ordinal)
                 || !row.EntryPath.Contains("/PossibleItems/[", StringComparison.Ordinal)
@@ -84,15 +72,15 @@ public sealed partial class CfgPatchWriterService
                 || chain[^1] != row.GeneratorSid
                 || (chain.Length == 1) != string.IsNullOrWhiteSpace(row.OuterLinks))
                 throw new InvalidDataException("Trader stock graph / nested edge mismatch: " + row.TradeSid);
-            if (is21 && (row.TradeGeneratorSlot != 0
+            if (row.TradeGeneratorSlot != 0
                 || x[13] != "ConstTrue"
-                || row.RootGeneratorScope is not ("base" or "dlc1")))
+                || row.RootGeneratorScope is not ("base" or "dlc1"))
                 throw new InvalidDataException("Unsupported 2.1 playable trader slot or root scope: " + row.TradeSid);
             rows.Add(row);
         }
         if (rows.Count != 2939
             || rows.Count(x => x.GeneratorScope == "dlc1") != 113
-            || rows.Count(x => x.State == "ZERO_CHANCE") != (is21 ? 6 : 1)
+            || rows.Count(x => x.State == "ZERO_CHANCE") != 6
             || rows.Select(x => (x.TradeScope, x.TradeSid)).Distinct().Count() != 86
             || rows.Select(x => (x.GeneratorScope, x.GeneratorSid)).Distinct().Count() != 62
             || rows.Select(x => (x.GeneratorScope, x.GeneratorSid, x.EntryPath, x.ItemSid))
@@ -188,15 +176,9 @@ public sealed partial class CfgPatchWriterService
             // guessed from the TradePrototype scope (DLC trades can use base roots).
             var rootScope = profile.Where(x => x.GeneratorSid == first.RootSid)
                 .Select(x => x.GeneratorScope).Distinct().ToArray();
-            var originalRootScope = first.RootGeneratorScope.Length != 0
-                ? first.RootGeneratorScope
-                : rootScope.Length switch
-                {
-                    1 => rootScope[0],
-                    0 when first.RootSid == "MedicUniversal_TradeItemGenerator" => "base",
-                    0 => first.TradeScope, // Legacy 2.0.5 fallback only.
-                    _ => throw new InvalidDataException("Mixed trader original generator scope.")
-                };
+            // Source resolved from 2.1 ItemGeneratorPrototypes definitions.
+            // A DLC TradePrototype can inherit a base-game stock generator.
+            var originalRootScope = first.RootGeneratorScope;
             if (profile.Any(x => x.RootGeneratorScope != first.RootGeneratorScope)
                 || originalRootScope is not ("base" or "dlc1")
                 || rootScope.Any(x => x != originalRootScope))
@@ -225,9 +207,8 @@ public sealed partial class CfgPatchWriterService
                     target.SetAssignment("SID", targetClone);
                     edited++;
                     // A source generator can be referenced by multiple parent slots.
-                    // The legacy 2.0.5 manifest contains one slot per row; the 2.1
-                    // extractor records multiple slots separated by '|'. Redirect
-                    // every slot to the same private child clone, never the source.
+                    // The 2.1 source may reference one child from multiple parent
+                    // positions. Redirect all positions, never the shared original.
                     var linkPaths = targetGroup
                         .SelectMany(r => r.OuterLinks.Split('|', StringSplitOptions.RemoveEmptyEntries))
                         .Distinct(StringComparer.Ordinal);

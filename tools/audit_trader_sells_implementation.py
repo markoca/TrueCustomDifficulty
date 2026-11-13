@@ -42,5 +42,5 @@ assert 'WriteTraderSells(' in (src / "Services/CfgPatchWriterService.cs").read_t
 assert 'roleItemKeys.Contains(TraderOffersPolicy.Key(role.Id, r.ItemSid))' in writer
 assert 'roleChanges.Select(c => c.Category.Label)' in writer
 assert 'Dlc1OnlyParameterIds' in policy
-assert 'trader-offers-source-rows.csv' in (src / "TrueCustomDifficulty.csproj").read_text(encoding="utf-8")
+assert 'trader-sells-2.1-runtime.csv' in (src / "TrueCustomDifficulty.csproj").read_text(encoding="utf-8")
 print("PASS: 359 source IDs, 40 legacy BUY flags, 31 source-backed SELL category toggles; category-only trader UI")

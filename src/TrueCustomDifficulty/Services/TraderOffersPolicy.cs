@@ -15,8 +15,8 @@ namespace TrueCustomDifficulty.Services;
 /// </summary>
 public static class TraderOffersPolicy
 {
-    private const string Resource = "TrueCustomDifficulty.Data.trader-offers-source-rows.csv";
-    private const string SourceSha256 = "6B06E7F3B6B4844E4043F4F620F7B8A364ED7623728027315AD90E7D74C2E05F";
+    private const string Resource = "TrueCustomDifficulty.Data.trader-sells-2.1-runtime.csv";
+    private const string SourceSha256 = "9585C5B21BC13610DBC448650B2B053D582C852911782976076F5657F741E587";
 
     public sealed record Offer(string RoleId, string Category, string ItemSid,
         bool Dlc1Only, bool ZeroChanceOnly);
@@ -69,9 +69,10 @@ public static class TraderOffersPolicy
             throw new InvalidDataException("Trader stock source hash changed; re-extract the CFG before editing.");
 
         var rows = raw.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-        if (rows.Length != 2940 || !rows[0].StartsWith(
-                "trade_scope,trade_sid,trader_type,root_stock_sid,item_sid,item_category,",
-                StringComparison.Ordinal))
+        if (rows.Length != 2940 || rows[0] !=
+                "trade_scope,trade_sid,trader_type,root_stock_sid,item_sid,item_category,"
+                + "generator_sid,generator_scope,entry_cfg_path,direct_entry_state,nested_chain,"
+                + "outer_links,trade_generator_slot,trade_generator_condition,root_generator_scope")
             throw new InvalidDataException("Unexpected original trader item source structure.");
 
         var roles = TraderSellsPolicy.Roles
@@ -82,23 +83,30 @@ public static class TraderOffersPolicy
         foreach (var line in rows.Skip(1))
         {
             var fields = line.Split(',');
-            if (fields.Length != 20 || !roles.TryGetValue(fields[2], out var role)
+            if (fields.Length != 15 || !roles.TryGetValue(fields[2], out var role)
                 || fields[4].Length == 0 || fields[5].Length == 0
                 || fields[0] is not ("base" or "dlc1")
-                || fields[17] is not ("CANDIDATE" or "ZERO_CHANCE"))
-                throw new InvalidDataException("Unexpected original merchant stock row.");
+                || fields[9] is not ("CANDIDATE" or "ZERO_CHANCE")
+                || fields[12] != "0" || fields[13] != "ConstTrue"
+                || fields[14] is not ("base" or "dlc1"))
+                throw new InvalidDataException("Unexpected 2.1 merchant stock row.");
 
             var key = Key(role, fields[4]);
             records.TryGetValue(key, out var old);
-            if (old.Sid is not null && old.Category != fields[5])
-                throw new InvalidDataException("Ambiguous item category for trader: " + key);
-            records[key] = (role, fields[5], fields[4],
+            // The same AVOG SID is Ammo in the native pool but Artifacts in one
+            // Rostok direct entry. Show it once under Ammo; per-SID exclusion
+            // still suppresses both native occurrences for that merchant role.
+            var category = role == "general" && fields[4] == "AVOG"
+                && fields[5] is ("Ammo" or "Artifacts") ? "Ammo" : fields[5];
+            if (old.Sid is not null && old.Category != category)
+                throw new InvalidDataException("Ambiguous 2.1 item category for trader: " + key);
+            records[key] = (role, category, fields[4],
                 old.Base || fields[0] == "base",
                 old.Dlc || fields[0] == "dlc1",
-                old.Candidate || fields[17] == "CANDIDATE");
+                old.Candidate || fields[9] == "CANDIDATE");
         }
         if (records.Count != 260 || records.Values.Select(v => v.Sid).Distinct(StringComparer.Ordinal).Count() != 164)
-            throw new InvalidDataException("Original 164-item / 260-role-item offer census drifted.");
+            throw new InvalidDataException("2.1 164-item / 260-role-item offer census drifted.");
 
         return records.Values
             .Select(v => new Offer(v.Role, v.Category, v.Sid,
