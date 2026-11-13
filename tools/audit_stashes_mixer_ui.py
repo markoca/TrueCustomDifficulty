@@ -167,7 +167,9 @@ for pid in ("loot.stashMedicalBandageBias", "loot.stashMedicalMedkitBias",
     entry = next(p for p in catalog["parameters"] if p["id"] == pid)
     assert entry["slider"] == {"min": 0, "max": 3,
         "step": 0.25, "stepMode": "absolute"}
-    assert "0–1×" in entry["interaction"]
+    assert "priority" in entry["logic"].lower()
+    assert "Chance Modifier" in entry["interaction"]
+    assert "Zero excludes" in entry["logic"]
 assert "DrawStashMedicalPairShares(dc," in medical
 assert "DrawStashAntiRadWeightSwitch(dc," in medical
 assert '"DROP ROLLS · CHANCE %"' in medical
