@@ -14250,7 +14250,7 @@
     {
       "id": "economy.traderBuys.general.weapon",
       "tab": "economy",
-      "group": "Trader Buys",
+      "group": "Traders",
       "label": "Trader Buys",
       "description": "Controls whether general traders buy weapons from you when overriding the original rule.",
       "control": "toggle",
@@ -15764,7 +15764,7 @@
       "rationale": "Choose which item categories each merchant type offers. Only unchecked cells change stock, without touching NPC or quest inventories.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
-      "exposeInUi": true
+      "exposeInUi": false
     },
     {
       "id": "economy.traderSells.general.armor",
