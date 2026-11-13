@@ -130,7 +130,7 @@ def read(path):
     return (SRC / path).read_text(encoding="utf-8")
 source = {
     "policy": read("Services/TraderSellsPolicy.cs"),
-    "control": read("Controls/TraderSellsMatrix.cs"),
+    "control": read("Controls/TraderBuysMatrix.cs"),
     "writer": read("Services/CfgPatchWriterService.TraderSells.cs"),
     "dispatch": read("Services/CfgPatchWriterService.cs"),
     "vm": read("ViewModels/MainViewModel.cs"),
@@ -152,8 +152,8 @@ checks = {
     "vm": ("TraderSellsPolicy.ParameterIds", "TraderSellsPolicy.AnchorId",
            "traderSellsParameterIds.Contains(p.Id)"),
     "parameter": ("IsTraderSellsMember", "IsTraderSellsAnchor"),
-    "xaml": ('<controls:TraderSellsMatrix x:Name="TraderSellsMatrixControl"',
-             'Binding="{Binding IsTraderSellsAnchor}"'),
+    "xaml": ('<controls:TraderBuysMatrix x:Name="TraderBuysMatrixControl"',
+             'Binding="{Binding IsTraderBuysAnchor}"'),
     "proj": ("trader-offers-source-rows.csv", "EmbeddedResource")
 }
 for k, needles in checks.items():
