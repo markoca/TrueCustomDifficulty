@@ -33,3 +33,7 @@ python3 tools/build_trader_21_runtime.py 'STALKER2-2.1 cfg dump.zip' slots.csv d
 ```
 
 **Activation blocker:** four extra profiles have unresolved role classification. The script intentionally refuses to emit a production-ready resource until they are reviewed. The existing app still embeds the old 2.0.5 resource. The runtime reader, resource embedding, output CFG tests, and removal of legacy census checks remain outstanding. No runtime migration or build success is claimed.
+
+## Playable-trader scope decision
+
+The 2.1 runtime manifest generator explicitly excludes the four source-only generic/template/test profiles (`AllTraderNPC`, `BaseTraderNPC_Template`, `BasicTrader`, `TradeTest`) rather than inventing merchant roles. They remain in the 90-profile source inventory, while the runtime output targets the 86 existing playable trade profiles. This deliberately excludes the seven `TradeTest` slot-1 leaves. The generator now uses an explicit zero-chance comparison instead of a Python chained comparison and checks that every expected exclusion is present. This does not yet change the embedded runtime resource or constitute full 2.1 activation.

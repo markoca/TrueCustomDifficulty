@@ -40,7 +40,7 @@ def build(archive, slot_csv, roles_csv, output):
         rows=list(csv.DictReader(f))
     if len(rows)!=3150:raise ValueError('2.1 leaf census mismatch')
     output_rows=[]
-    unresolved=set()
+    excluded=set()
     for row in rows:
         trade_scope=row['trade_scope']
         trade_sid=row['trade_sid']
@@ -54,7 +54,13 @@ def build(archive, slot_csv, roles_csv, output):
             raise ValueError('Missing leaf generator scope: '+repr((generator,row['generator_scope'])))
         role=roles.get((trade_scope,trade_sid))
         if role is None:raise ValueError('Missing trade role mapping: '+trade_sid)
-        if role=='UNRESOLVED':unresolved.add((trade_scope,trade_sid))
+        if role=='UNRESOLVED':
+            if (trade_scope,trade_sid) not in {
+                ('base','AllTraderNPC'),('base','BaseTraderNPC_Template'),
+                ('base','BasicTrader'),('base','TradeTest')}:
+                raise ValueError('Unreviewed trade role: '+trade_sid)
+            excluded.add((trade_scope,trade_sid))
+            continue
         chain=row['nested_chain'].split('>')
         if len(chain) not in (1,2) or chain[0]!=root or chain[-1]!=generator:
             raise ValueError('Invalid source generator chain: '+trade_sid)
@@ -66,21 +72,22 @@ def build(archive, slot_csv, roles_csv, output):
         output_rows.append(dict(zip(COLUMNS,[
             trade_scope,trade_sid,role,root,row['item_sid'],row['category'],
             generator,row['generator_scope'],row['entry_path'],
-            'ZERO_CHANCE' if float(row['chance'] or 1)>0 is False else 'CANDIDATE',
+            'ZERO_CHANCE' if float(row['chance'] or '0') == 0 else 'CANDIDATE',
             row['nested_chain'],parent,str(slot),row['trade_generator_condition'],
             next(iter(scope_set))
         ])))
-    if len({(r['trade_scope'],r['trade_sid']) for r in output_rows})!=90:
+    if len({(r['trade_scope'],r['trade_sid']) for r in output_rows})!=86:
         raise ValueError('2.1 stocked profile census mismatch')
-    if Counter(int(r['trade_generator_slot']) for r in output_rows)!={0:3143,1:7}:
+    if Counter(int(r['trade_generator_slot']) for r in output_rows)!={0:len(output_rows)}:
         raise ValueError('2.1 slot census mismatch')
-    if unresolved:
-        raise ValueError('Unreviewed 2.1 trade roles; refusing production manifest: '+repr(sorted(unresolved)))
+    if excluded != {('base','AllTraderNPC'),('base','BaseTraderNPC_Template'),
+                    ('base','BasicTrader'),('base','TradeTest')}:
+        raise ValueError('Missing expected 2.1 template/test exclusions: '+repr(sorted(excluded)))
     with open(output,'w',newline='',encoding='utf-8') as f:
         writer=csv.DictWriter(f,fieldnames=COLUMNS,lineterminator='\n')
         writer.writeheader()
         writer.writerows(output_rows)
-    print('2.1 production-ready source manifest:',len(output_rows),'rows')
+    print('2.1 source-backed playable trade manifest:',len(output_rows),'rows; excluded template/test profiles:',len(excluded))
 
 if __name__=='__main__':
     if len(sys.argv)!=5:
