@@ -1,5 +1,12 @@
 ## 2026-10-20 — CURRENT portable Presets storage
 
+## 2026-11-13 — Trader Buys screenshot fixes (CURRENT)
+
+**Header fit:** every trader matrix category heading uses a deliberate short line break for long words (Attachments, Grenades, Artifacts, Consumables, Mutant Parts), in a fixed-height two-line 46-DIP heading row. Typography 10.5 DIP; ellipsis clip fallback and full hover tooltip ensure no bleed into neighboring columns at 920-DIP and narrow layouts. The subtitle is shorter at 11 DIP; the footer is shorter at 10.5 DIP. Category labels remain unambiguous, no duplicate text or room-filling padding.
+
+**Checkbox highlight isolation:** the source aggregate anchor reports any-child changes for the overall matrix. Its own top-left cell, however, binds to `IsOwnValueModified`, a separate per-parameter, reference-relative property, rather than aggregate `IsModified`. Changes in any other cell therefore **do not outline General → Weapons**. Modified borders on the actually changed cells still use the canonical yellow accent. The live parameter model raises `PropertyChanged` for both values after edits/resets. No changes to the CFG writer or category semantics.
+
+
 ## 2026-11-13 — CURRENT Trader Buys matrix (40 source controls, 1 visible card)
 
 **UI contract:** Economy → Trader Buys is a single compact 5-row × 8-column checkbox matrix. Rows **General, Medic, Technician, Bartender, Generic NPC**; columns **Weapons, Armor, Attachments, Ammo, Grenades, Artifacts, Consumables, Mutant Parts**. It uses the global 20-DIP Checkbox template and subdued hover border, 132-DIP first column, eight equal stretch columns, 46-DIP header, 42-DIP per trader row, no redundant Vanilla/Base strings or exaggerated empty padding. At 1600×900, retain a centered responsive width bounded by 920 DIP, with the existing right-hand detail panel. The matrix is owned by visible anchor `economy.traderBuys.general.weapon`; the remaining 39 `economy.traderBuys.*` real toggle source IDs are hidden as standalone rows but instantiated, saved, reset and written independently. Clicking a cell selects its specific right-side rationale. Modified cells use the existing yellow-accent modified state; unchecked is not synonymous with unchanged.

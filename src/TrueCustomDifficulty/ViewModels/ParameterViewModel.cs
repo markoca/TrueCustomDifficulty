@@ -934,6 +934,10 @@ public sealed class ParameterViewModel : ObservableObject
     public bool IsModified
         => _aggregateModifiedProvider?.Invoke() ?? IsValueModifiedFromReference();
 
+    // Cell-local modified state. Composite anchors may aggregate all siblings,
+    // but the selected top-left checkbox must not inherit sibling highlights.
+    public bool IsOwnValueModified => IsValueModifiedFromReference();
+
     public bool IsValueModifiedFromReference()
     {
         var vanilla = GetReferenceElement();
@@ -1905,6 +1909,7 @@ public sealed class ParameterViewModel : ObservableObject
         OnPropertyChanged(nameof(EffectiveDisplay));
         OnPropertyChanged(nameof(EffectiveDetails));
         OnPropertyChanged(nameof(IsModified));
+        OnPropertyChanged(nameof(IsOwnValueModified));
         OnPropertyChanged(nameof(ValueMeaning));
         OnPropertyChanged(nameof(PracticalQuantityDisplay));
         StateChanged?.Invoke(this, EventArgs.Empty);

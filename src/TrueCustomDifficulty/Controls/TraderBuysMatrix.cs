@@ -77,8 +77,8 @@ public sealed class TraderBuysMatrix : UserControl
         title.Margin = new Thickness(3, 1, 0, 0);
         main.Children.Add(title);
 
-        var subtitle = Caption("CHECKED = BUYS WHEN OVERRIDDEN  •  UNCHANGED = ORIGINAL MERCHANT RULES",
-            10, muted);
+        var subtitle = Caption("CHECKED: BUYS FROM YOU   •   UNCHANGED: ORIGINAL RULES",
+            11, muted);
         subtitle.HorizontalAlignment = HorizontalAlignment.Left;
         subtitle.Margin = new Thickness(3, 2, 0, 9);
         main.Children.Add(subtitle);
@@ -94,8 +94,21 @@ public sealed class TraderBuysMatrix : UserControl
         for (var c = 0; c < TraderBuysPolicy.Categories.Count; c++)
         {
             var category = TraderBuysPolicy.Categories[c];
-            var heading = Caption(category.Label.ToUpperInvariant(), 9.7, muted);
-            heading.Margin = new Thickness(1, 0, 1, 3);
+            // Deliberate line breaks: WPF does not break long uppercase category
+            // words reliably inside these eight equal grid columns.
+            var headingText = category.Id switch
+            {
+                "attach" => "ATTACH-\\nMENTS",
+                "grenade" => "GRE-\\nNADES",
+                "artifact" => "ARTI-\\nFACTS",
+                "consumable" => "CONSUM-\\nABLES",
+                "mutantLoot" => "MUTANT\\nPARTS",
+                _ => category.Label.ToUpperInvariant()
+            };
+            var heading = Caption(headingText.Replace("\\n", "\n"), 10.5, muted);
+            heading.TextTrimming = TextTrimming.CharacterEllipsis;
+            heading.ToolTip = category.Label;
+            heading.Margin = new Thickness(2, 0, 2, 3);
             Grid.SetRow(heading, 0);
             Grid.SetColumn(heading, c + 1);
             board.Children.Add(heading);
@@ -128,7 +141,7 @@ public sealed class TraderBuysMatrix : UserControl
                 cellStyle.Setters.Add(new Setter(Border.BorderBrushProperty, softBorder));
                 cellStyle.Triggers.Add(new DataTrigger
                 {
-                    Binding = new Binding(nameof(ParameterViewModel.IsModified)),
+                    Binding = new Binding(nameof(ParameterViewModel.IsOwnValueModified)),
                     Value = true,
                     Setters = { new Setter(Border.BorderBrushProperty, accent) }
                 });
@@ -161,8 +174,8 @@ public sealed class TraderBuysMatrix : UserControl
 
         main.Children.Add(board);
         var footer = Caption(
-            "CONSUMABLES = FOOD + DRINKS + MEDICAL   •   EGER / BOLSHAK KEEP THEIR UNIQUE RULES UNTIL OVERRIDDEN",
-            9.8, muted);
+            "CONSUMABLES = FOOD + DRINKS + MEDICAL   •   EGER / BOLSHAK KEEP UNIQUE RULES UNTIL CHANGED",
+            10.5, muted);
         footer.Margin = new Thickness(3, 9, 3, 1);
         footer.HorizontalAlignment = HorizontalAlignment.Left;
         main.Children.Add(footer);
