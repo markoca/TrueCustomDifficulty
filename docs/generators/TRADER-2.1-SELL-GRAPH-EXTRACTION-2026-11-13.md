@@ -45,3 +45,16 @@ python3 tools/audit_trader_21_categories.py trader-21-graph.csv
 The original standalone extraction was independently rerun locally and its output SHA256 matched the prior 777 KB CSV exactly: `ae96c393b27afc2c63bee7c5ae42940962c26d2da46bcc210ef2b6e7e02b1e71`. Counts: 92 trade definitions, 3,452 scope-qualified generators, 3,150 leaf occurrences, no unresolved references or cycles. The checked-in script implements the same extraction logic; CI/build execution of the checked-in revision has not been claimed.
 
 **Migration blocker:** This graph does not yet contain the writer's original nested `OuterLinks` (parent reference patch coordinates) or its complete source-exact 2.0.5 role/category schema. The existing writer uses those coordinates to clone and relink shared stock. Therefore do not simply replace the embedded `trader-offers-source-rows.csv` with the raw graph, or change hard-coded SHA/census assertions. A proper migration must enrich and validate parent links, source scope and category mapping before runtime activation.
+
+## Parent-link reconstruction audit (2026-11-13)
+
+The 2.1 raw graph was joined back to the exact parent `ItemGeneratorPrototypeSID` assignments in both source `ItemGeneratorPrototypes.cfg` files. Source artifact: `STALKER2_2.1_trader_graph_with_parent_links.csv`, SHA256 `2acee116549142a12e4cbd28f8d834e2513afa107397db76b1c6ab6e4400e8bc`.
+
+- 3,150 leaf occurrences across 90 profiles with reachable items.
+- 578 direct leaves (chain depth 1); 2,572 nested leaves (depth 2); **no deeper leaf chain** in this extraction.
+- 2,550 nested leaf occurrences have one parent reference; **22** have **two parent reference slots** to the same child generator.
+- **242** distinct parent-reference positions, keyed by trade scope, trade SID, root SID and slot coordinates.
+- Parent slots are encoded in the audit export as `rootSid:ItemGenerator/[n]/PossibleItems/[n]:chance=...:weight=...`; multiple slots are delimited by `|` for analysis only. This is **not** the legacy writer's single-`OuterLinks` format and must not be passed to it unmodified.
+- Example: `SuslovTraderSQ14_TradePrototype` has two root slots, `[5]` and `[6]`, referencing `Trader_T3_Ammo_ItemGenerator`. Both must be redirected to the same per-trade private clone.
+
+**Writer migration requirement:** normalize each parent slot into its own validated row (or change the writer to consume an array); group by scoped trade profile + target generator; clone each target once; redirect **all** source parent slots, even if multiple point to the same child; remove selected leaf nodes only from that private clone. Preserve source scope and fail closed on missing/ambiguous references. The existing 2.0.5 writer expects `OuterLinks` in a single-slot shape, so this 2.1 audit alone does not constitute a safe runtime migration.
