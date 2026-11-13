@@ -118,8 +118,8 @@ def main():
             assert knob["slider"]["min"] <= value <= knob["slider"]["max"], (
                 case, "Value out of the actual UI range")
             assert r["stage"] in ("zero", "high", "negative")
-            assert (r["stage"] != "high" or value == 3), (
-                case, "High test must be isolated 3x")
+            assert (r["stage"] != "high" or value == float(knob["slider"]["max"])), (
+                case, "High test must use the current source-native slider maximum")
             assert (r["stage"] != "negative" or case == "CAB-BIG-NEG-FOOD")
         status = r["status"]
         assert status in ("NOT_RUN", "PASS", "FAIL", "INCONCLUSIVE"), (
