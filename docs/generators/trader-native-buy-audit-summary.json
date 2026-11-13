@@ -1,0 +1,45 @@
+{
+  "audit_date": "2026-11-13",
+  "kind": "native_buy_types_source_audit",
+  "source_version": "CFG 2.0.5",
+  "source_sha256": {
+    "base_zip": "7610b16218310c7345796ff26b1554c73e3d2ca775f6a50108a7406cb7f33da1",
+    "dlc1_zip": "3c5cb53f1769619b510ae3780142d92639c083a4a755a8717a267710c3c849e6",
+    "base_trade": "c5115350d67d91a329b5922f0a51e9abe02f91075e5fbe24c1b3b4fa48f540eb",
+    "dlc1_trade": "7a72b5dfc112226c92c081e49ca6c3877b7cf00cd541964d07113253d37e31a5"
+  },
+  "production_profiles": 86,
+  "base_profiles": 68,
+  "dlc1_profiles": 18,
+  "trade_generators_per_profile": 1,
+  "explicit_buy_lists": 53,
+  "no_explicit_buy_list": 33,
+  "consumable_buy_limitation_profiles": 16,
+  "food_drinks_medical_all_native_type": "EItemType::Consumable",
+  "distinct_consumbale_sids": {
+    "food": 5,
+    "drinks": 4,
+    "medical": 6
+  },
+  "offered_unique_sid": 164,
+  "offered_scope_sid_pairs": 253,
+  "item_source_unresolved": [
+    "A0919A",
+    "DutyArmor_3_U1",
+    "DutyMask_1"
+  ],
+  "explicit_zero_min_durability_profiles": [
+    "SelmaTrader_TradePrototype",
+    "Trader_Soviet_Rostok_TradePrototype"
+  ],
+  "item_type_price_modifier": [
+    {
+      "trade": "BolshakTechnician_TradePrototype",
+      "scope": "dlc1",
+      "item_type": "EItemType::Info",
+      "modifier": "1"
+    }
+  ],
+  "runtime_verified": false,
+  "caveat": "Existing 86-row 0.4f durability baseline manifest does not preserve two original 0.0f overrides. Absence of BuyLimitations is not guaranteed acceptance. Food/Drinks/Medical cannot be split by observed BuyLimitations EItemType schema."
+}
