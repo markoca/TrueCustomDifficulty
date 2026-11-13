@@ -116,10 +116,10 @@ internal static class Program
             .Select(x => x.Id).ToHashSet(StringComparer.Ordinal);
         var source = Baseline.EditPoints.Where(x => x.ParameterId.StartsWith("loot.", StringComparison.Ordinal))
             .ToArray();
-        Check(catalog.Count == 76
-            && Catalog.Parameters.Count(p => p.Tab == "loot") == 35
+        Check(catalog.Count == 77
+            && Catalog.Parameters.Count(p => p.Tab == "loot") == 36
             && Catalog.Parameters.Count(p => p.Tab == "stashes") == 41,
-            "Expected 76 loot.* IDs (35 Loot plus 41 Stashes), not just the Loot tab");
+            "Expected 77 loot.* IDs (36 Loot plus 41 Stashes), not just the Loot tab");
         Check(source.Length == 320, "Expected 320 direct Loot source points");
         var directIds = Mutants.Concat(new[] { Money, Condition }).ToHashSet(StringComparer.Ordinal);
         Check(source.Select(x => x.ParameterId).ToHashSet(StringComparer.Ordinal).SetEquals(directIds),

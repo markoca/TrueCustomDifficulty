@@ -514,6 +514,7 @@ public sealed class ParameterViewModel : ObservableObject
         ["loot.worldWeaponDensity"] = "WorldLootLayout",
         ["loot.worldAttachmentShuffle"] = "WorldLootLayout",
         ["loot.worldDetectors"] = "WorldLootLayout",
+        ["loot.worldArmorRemoved"] = "WorldLootLayout",
         ["loot.blueprintShuffle"] = "WorldLootLayout",
 
         ["loot.stashMixAmmo"] = "StashContentMix",

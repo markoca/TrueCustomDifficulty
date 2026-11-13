@@ -192,8 +192,8 @@ internal static class Program
                     failed.Add(id + ": " + string.Join(" | ", issues));
             }
             Check(failed.Count == 0, "Writer probe failures:\n" + string.Join("\n", failed));
-            Check(executed == 270, "Not every mounted editable source was executed");
-            Console.WriteLine($"PASS: {executed}/270 mounted editable source IDs produced production staged CFG output.");
+            Check(executed == 269, "Not every mounted editable source was executed");
+            Console.WriteLine($"PASS: {executed}/269 mounted editable source IDs produced production staged CFG output.");
             Console.WriteLine("NOT VERIFIED: in-game STALKER 2 CFG merge, UI interaction via Wine, or gameplay effects.");
             return 0;
         }

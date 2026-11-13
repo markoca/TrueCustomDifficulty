@@ -87,6 +87,11 @@ EXPECTED_HIDDEN_NON_UI = {
     "stamina.slowRunRegenCoef",
     "stamina.sprintRegenCoef",
     "stamina.runRegenCoef",
+    # Hidden compatibility-only source IDs are not mounted in MainViewModel.
+    "environment.diamondHealthDamage",
+    "environment.diamondBleeding",
+    "loot.standardStashChanceScale",
+    "loot.rareStashChanceScale",
 }
 
 def fail(msg: str) -> None:
@@ -139,7 +144,7 @@ def main():
         fail(f"live visible/hidden catalog drift: {len(visible_ids)}/{len(hidden_ids)} != 181/105")
     if not EXPECTED_HIDDEN_NON_UI.issubset(hidden_ids):
         fail(f"declared non-UI controls became visible or vanished: {sorted(EXPECTED_HIDDEN_NON_UI-hidden_ids)}")
-    if len(effective_ui_ids) != 273 or len(backing_ids) != 92:
+    if len(effective_ui_ids) != 269 or len(backing_ids) != 88:
         fail(f"active source dimension count drifted: {len(effective_ui_ids)} / {len(backing_ids)} backing")
 
     # Named legacy aggregate cohorts are evidence, not the complete editor
