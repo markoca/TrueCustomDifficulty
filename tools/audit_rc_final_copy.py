@@ -43,7 +43,7 @@ def main() -> int:
     all_params = catalog["parameters"]
     visible = [p for p in all_params if p.get("exposeInUi", True)]
     demand(len(all_params) == 286 and len(visible) == 181,
-           "current 286/180 catalog boundary changed; re-review all visible copy")
+           "current 286/181 catalog boundary changed; re-review all visible copy")
     demand(len({p["id"] for p in all_params}) == len(all_params), "duplicate catalog IDs")
     demand(dict(Counter(p["tab"] for p in visible)) == TAB_COUNTS,
            "visible per-tab inventory drifted; redo RC review")
@@ -54,7 +54,7 @@ def main() -> int:
         ledger = list(reader)
     demand(len(ledger) == 181, "not all 181 visible settings have been reviewed")
     by_id = {entry["id"]: entry for entry in ledger}
-    demand(len(by_id) == 181 and len({p["label"] for p in visible}) == 180,
+    demand(len(by_id) == 181 and len({p["label"] for p in visible}) == 181,
            "duplicate IDs or ambiguous visible labels")
     demand({p["id"] for p in visible} == set(by_id), "unreviewed/new/retired visible ID")
 

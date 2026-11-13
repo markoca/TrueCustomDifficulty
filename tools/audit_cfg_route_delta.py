@@ -43,8 +43,8 @@ def main() -> int:
 
     require(old["counts"]["catalog"] == 248 and len(previous) == 248,
             "Frozen 248-source audited inventory changed")
-    require(len(definitions) == baseline["supportedParameterCount"] == 285,
-            "Current catalog must have 285 registered sources")
+    require(len(definitions) == baseline["supportedParameterCount"] == 286,
+            "Current catalog must have 286 registered sources")
     food = {"survival.breadSatiety", "survival.sausageSatiety",
             "survival.cannedFoodSatiety", "survival.milkSatiety"}
     require(len(added) == 39 and food.issubset(added)
