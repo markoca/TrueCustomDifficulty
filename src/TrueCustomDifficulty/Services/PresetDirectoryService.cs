@@ -571,6 +571,25 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "ed0e3920ce77a59f6e539e1483338114a4c9a2a5",
     };
 
+    // Immediately preceding 286-source factory presets. Migrate only exact
+    // stock copies; preserve every modified factory-named user preset.
+    private static readonly Dictionary<string, string> PreWeaponArmorWeightFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "feb15262b6bb647b57fec729da86a832a95dcfc3",
+        ["Field Medic"] = "af9cad3ba4682acd0c4dcabd3c8528bee4af6669",
+        ["Hardcore+"] = "7b37be84ac5a1331eca49534942b52d210743069",
+        ["Hardcore"] = "fa78da1518754def8753d9d8f4180f8d5472eccc",
+        ["Immersive"] = "49891449c80115ba2687c8e5a4816994f7c4cd1a",
+        ["Mercenary"] = "7cc24785a8c5dabe17bbdd17f9f50f9b4ed8553d",
+        ["Mutant Hunter"] = "e8a2cd5c587caa72bb1d4d8a85b034ec5fc81ea6",
+        ["Outcast"] = "1a22b7c2db37ff3f4e7a379efc70c35f1541612d",
+        ["Scavenger"] = "d6dbb52baf09c3f21d4cf971659d07d09ab1c63a",
+        ["Smuggler"] = "164201cb77b90ed12da4abe8cb40d9a781d5d6c2",
+        ["Tactical"] = "1fd1217afdefda05b48a1f44541c6d50c3023b6d",
+        ["Wanderer"] = "b97953269c4487b01a0a46fa5b16ef1059c5473b",
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -590,7 +609,8 @@ public sealed class PresetDirectoryService
             && !PreTierChanceFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreFoodSatietyFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreRoleCoverageFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreWorldArmorRemovalFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreWorldArmorRemovalFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreWeaponArmorWeightFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -638,7 +658,9 @@ public sealed class PresetDirectoryService
                 || (PreRoleCoverageFactoryBlobs.TryGetValue(name, out var preRoleCoverageHash)
                     && actual.Equals(preRoleCoverageHash, StringComparison.OrdinalIgnoreCase))
                 || (PreWorldArmorRemovalFactoryBlobs.TryGetValue(name, out var preArmorHash)
-                    && actual.Equals(preArmorHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preArmorHash, StringComparison.OrdinalIgnoreCase))
+                || (PreWeaponArmorWeightFactoryBlobs.TryGetValue(name, out var preWeightHash)
+                    && actual.Equals(preWeightHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

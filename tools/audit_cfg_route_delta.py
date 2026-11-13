@@ -43,18 +43,19 @@ def main() -> int:
 
     require(old["counts"]["catalog"] == 248 and len(previous) == 248,
             "Frozen 248-source audited inventory changed")
-    require(len(definitions) == baseline["supportedParameterCount"] == 286,
-            "Current catalog must have 286 registered sources")
+    require(len(definitions) == baseline["supportedParameterCount"] == 288,
+            "Current catalog must have 288 registered sources")
     food = {"survival.breadSatiety", "survival.sausageSatiety",
             "survival.cannedFoodSatiety", "survival.milkSatiety"}
     armor = {"loot.worldArmorRemoved"}
-    require(len(added) == 40 and (food | armor).issubset(added)
-            and len(added - food - armor) == 35
-            and all(definitions[x]["tab"] == "stashes" for x in added - food - armor),
-            "Frozen 248 -> 35 Stashes + 4 Food + 1 Armor source boundary drift")
-    require(added & direct == food,
-            "Only new food satiety effects may add direct source routes")
-    require(len(direct) == 215 and len(baseline["editPoints"]) == 1230,
+    weight = {"equipment.weaponWeight", "equipment.armorWeight"}
+    require(len(added) == 42 and (food | armor | weight).issubset(added)
+            and len(added - food - armor - weight) == 35
+            and all(definitions[x]["tab"] == "stashes" for x in added - food - armor - weight),
+            "Frozen 248 -> 35 Stashes + 4 Food + 1 Armor removal + 2 Equipment Weight source boundary drift")
+    require(added & direct == food | weight,
+            "Only new food and weight controls may add direct source routes")
+    require(len(direct) == 217 and len(baseline["editPoints"]) == 1448,
             "Old direct and new food leaf count drift")
     # Reuse earlier source audit, but prove that the previously verified leaf
     # identities have not drifted. Counts alone can hide silent reassignment.
@@ -68,7 +69,7 @@ def main() -> int:
     retired = {"combat.npcAttackCooldown", "combat.npcHipAccuracy"}
     require(len(previous_direct) == 213 and retired.issubset(previous_direct)
             and retired.isdisjoint(direct)
-            and set(previous_direct) - retired == direct - food,
+            and set(previous_direct) - retired == direct - food - weight,
             "Previously source-audited active direct parameter ownership changed")
     keys = ("scope", "file", "prototype", "key", "operation", "sourceRaw")
     for pid, record in previous_direct.items():
@@ -87,6 +88,12 @@ def main() -> int:
         require(len(points) == 2 and {p["key"] for p in points} == {"ValueMin", "ValueMax"}
                 and all(p["operation"] == "negateSet" and p["file"] == "GameData/EffectPrototypes.cfg"
                         for p in points), "New food signed direct writer pair drift: " + pid)
+    for pid, expected in (("equipment.weaponWeight", 124), ("equipment.armorWeight", 94)):
+        points = direct_by_id[pid]
+        require(len(points) == expected
+                and all(p["key"] == "Weight" and p["operation"] == "scale"
+                        and p.get("nodePath", []) == [] and float(p["sourceRaw"]) > 0
+                        for p in points), "New item-weight source manifest drift: " + pid)
     require(len(routed) == 71 and set(routed) | direct == set(definitions)
             and not set(routed) & direct, "Writer route coverage/ownership drift")
 
@@ -104,7 +111,7 @@ def main() -> int:
             "loot.expensiveStashDrinksChance", "loot.expensiveStashGrenadesChance"}
     require([len(mix), len(medical), len(gear), len(tier)] == [6, 12, 7, 10],
             "Changed Stashes source cohorts")
-    require(added == mix | medical | gear | tier | food | armor
+    require(added == mix | medical | gear | tier | food | armor | weight
             and sum(map(len, (mix, medical, gear, tier))) == 35,
             "Unidentified or doubly owned incremental source ID")
     registered_mix = baseline["special"]["stashContentAndGearProduction"]["parameterIds"]
@@ -180,6 +187,13 @@ def main() -> int:
             files = (prototype, actors, dlc_actors)
             require({t["file"] for t in p["targets"]} & {prototype, actors, dlc_actors},
                     "Extra Gear catalog has no output target: " + pid)
+        elif pid in weight:
+            group = "Native Weapon/Armor Item Weight"
+            methods = ("TransformValue",)
+            files = ("GameData/ItemPrototypes.cfg", "DLCGameData/DLC1/ItemPrototypes.cfg")
+            require({t["file"] for t in p["targets"]} == set(files)
+                    and {t["operation"] for t in p["targets"]} == {"scale"},
+                    "Equipment weight source targets must remain independent: " + pid)
         elif pid in armor:
             group = "Non-quest World Armor Removal"
             methods = ("WriteWorldArmorRemovals",)

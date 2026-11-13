@@ -97,7 +97,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "RepairCurve" => "Drag one reputation point vertically to set its repair-price multiplier. Linked values follow the existing source-value ordering.",
                     "TraderStockBoard" => "AMMO SUPPLY and MEDIC SUPPLIES change quantities carried by traders and medics, not the items they can unlock.",
                     "ServiceCostsBoard" => "Adjust guide travel, upgrades and repairs separately. Discounts and reputation may still affect final prices.",
-                    "ItemWeightBoard" => "Drag AMMUNITION WEIGHT or FOOD & MEDICINE WEIGHT independently.",
+                    "ItemWeightBoard" => "Adjust ammunition, food and medicine, weapons or armor weight independently.",
                     "AnomalyGlobalDamage" => "GLOBAL affects all supported anomaly damage. Each anomaly also has its own damage setting; FINAL includes both before protection.",
                     "AnomalySpecialEffects" => "Adjust Glass Shards bleeding and Psy drain independently. Their other damage effects remain separate.",
                     "NpcLootLoadout" => "Choose extra corpse loot, medical or bonus ammo drops, and dropped weapon condition. Bonus ammo requires Medicine + Ammo.",
@@ -497,6 +497,8 @@ public sealed class ParameterViewModel : ObservableObject
         ["economy.repairCostBase"] = "ServiceCostsBoard",
         ["equipment.ammoWeight"] = "ItemWeightBoard",
         ["equipment.consumableWeight"] = "ItemWeightBoard",
+        ["equipment.weaponWeight"] = "ItemWeightBoard",
+        ["equipment.armorWeight"] = "ItemWeightBoard",
         ["environment.anomalyDamage"] = "AnomalyGlobalDamage",
         ["environment.flycatcherMovementSpeed"] = "FlycatcherSlowdown",
         ["environment.flycatcherTurnSpeed"] = "FlycatcherSlowdown",
@@ -1113,7 +1115,8 @@ public sealed class ParameterViewModel : ObservableObject
 
             // Equipment.
             "equipment.armorDurability" => Times(CurrentNumber, "durability"),
-            "equipment.ammoWeight" or "equipment.consumableWeight" => Times(CurrentNumber, "weight"),
+            "equipment.ammoWeight" or "equipment.consumableWeight" or
+            "equipment.weaponWeight" or "equipment.armorWeight" => Times(CurrentNumber, "weight"),
             "equipment.weaponWearPerShot" => Times(CurrentNumber, "wear"),
 
             // Anomalies.

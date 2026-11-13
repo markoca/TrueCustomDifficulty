@@ -9626,6 +9626,110 @@
       "interaction": "This does not change consumable effect strength or duration. DLC1 dry-ration weight is patched only when DLC1 is installed."
     },
     {
+      "id": "equipment.weaponWeight",
+      "tab": "equipment",
+      "group": "Item Weight",
+      "label": "Weapon Weight",
+      "description": "Changes the inventory weight of weapons, including authored variants, without changing their combat stats.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "weapon weight"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 2,
+        "step": 0.01
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemPrototypes.cfg",
+          "prototype": "concrete weapon item prototypes",
+          "path": "Weight",
+          "operation": "scale"
+        },
+        {
+          "scope": "dlc1",
+          "file": "DLCGameData/DLC1/ItemPrototypes.cfg",
+          "prototype": "concrete weapon item prototypes",
+          "path": "Weight",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "112 base-game and 12 DLC1 non-zero real weapon weights; inherited prototypes resolved individually and tutorial-only data excluded.",
+          "Source values derive from the 2026-10-17 base + DLC1 2.0.5 decoded CFG snapshots. Explicit per-prototype {bpatch} Weight edits make inherited variants follow the same multiplier.",
+          "Zero-weight, template, and tutorial-only weapon prototypes remain unchanged; runtime loading requires in-game validation."
+        ]
+      },
+      "rationale": "Makes weapons heavier or lighter to carry without changing damage, wear or jamming.",
+      "logic": "1× keeps the original weight. 0× makes mapped items weightless; 2× doubles their original weight.",
+      "interaction": "Preserves original weight differences between items. Does not change maximum carry weight or any equipment protection statistics."
+    },
+    {
+      "id": "equipment.armorWeight",
+      "tab": "equipment",
+      "group": "Item Weight",
+      "label": "Armor Weight",
+      "description": "Changes inventory weight of suits and helmets, including their existing NPC and quest variants, without changing armor protection.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "armor weight"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 2,
+        "step": 0.01
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemPrototypes.cfg",
+          "prototype": "concrete armor item prototypes",
+          "path": "Weight",
+          "operation": "scale"
+        },
+        {
+          "scope": "dlc1",
+          "file": "DLCGameData/DLC1/ItemPrototypes.cfg",
+          "prototype": "concrete armor item prototypes",
+          "path": "Weight",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "86 base-game armor/helmet prototypes and 8 DLC1 armor prototypes with non-zero source weights.",
+          "Source values derive from the 2026-10-17 base + DLC1 2.0.5 decoded CFG snapshots. Explicit per-prototype {bpatch} Weight edits make inherited variants follow the same multiplier.",
+          "Zero-weight, template, and tutorial-only weapon prototypes remain unchanged; runtime loading requires in-game validation."
+        ]
+      },
+      "rationale": "Makes suits and helmets heavier or lighter without changing armor protection or wear.",
+      "logic": "1× keeps the original weight. 0× makes mapped items weightless; 2× doubles their original weight.",
+      "interaction": "Preserves original weight differences between items. Does not change maximum carry weight or any equipment protection statistics."
+    },
+    {
       "id": "environment.anomalyDamage",
       "tab": "environment",
       "group": "Global Anomaly Damage",

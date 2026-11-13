@@ -763,8 +763,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             9.0, muted, FontWeights.Normal);
     }
 
-    // Item Weight is two independent compact source cards, not vertical mixer
-    // strips. The current value is the native item-mass multiplier in both.
+    // Four independent Item Weight cards share the native source scale:
+    // ammunition, food and medicine, weapons, suits and helmets.
     private void DrawEquipmentWeightBoard(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
@@ -775,7 +775,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var controls = new (string Id, string Label)[]
         {
             ("equipment.ammoWeight", "AMMO WEIGHT"),
-            ("equipment.consumableWeight", "FOOD & MEDICINE")
+            ("equipment.consumableWeight", "FOOD & MEDICINE"),
+            ("equipment.weaponWeight", "WEAPON WEIGHT"),
+            ("equipment.armorWeight", "ARMOR WEIGHT")
         };
         var columns = EconomyColumns(ActualWidth);
         var cardWidth = EconomyCardWidth(ActualWidth, columns);
@@ -5914,6 +5916,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "economy.fastTravelCost" or "economy.upgradeCost" or
             "economy.traderAmmoStock" or "economy.medicStock" or
             "equipment.ammoWeight" or "equipment.consumableWeight" or
+            "equipment.weaponWeight" or "equipment.armorWeight" or
             "environment.anomalyDamage" or "environment.razorBleeding" or
             "environment.psyAnomalyIntensity" => $"{rawValue:0.##}x",
             "economy.repairCostBase" or
@@ -7288,7 +7291,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "CouponFlow" => CouponBoardHeight(width),
             "ServiceCostsBoard" => ServicePriceBoardHeight(width),
             "TraderStockBoard" => 242.0,
-            "ItemWeightBoard" => EconomyBoardHeight(width, 2),
+            "ItemWeightBoard" => EconomyBoardHeight(width, 4),
             "AnomalyGlobalDamage" => 242.0,
             "FlycatcherSlowdown" => FlycatcherBoardHeight(width),
             "AnomalySpecialEffects" => 270.0,
@@ -7375,7 +7378,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "ItemWeightBoard" => new[]
             {
                 "equipment.ammoWeight",
-                "equipment.consumableWeight"
+                "equipment.consumableWeight",
+                "equipment.weaponWeight",
+                "equipment.armorWeight"
             },
             "AnomalyGlobalDamage" => new[] { "environment.anomalyDamage" },
             "FlycatcherSlowdown" => new[]

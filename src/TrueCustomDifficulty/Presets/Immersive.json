@@ -1152,6 +1152,14 @@
     "loot.worldArmorRemoved": {
       "kind": "toggle",
       "boolean": false
+    },
+    "equipment.weaponWeight": {
+      "kind": "slider",
+      "number": 1
+    },
+    "equipment.armorWeight": {
+      "kind": "slider",
+      "number": 1
     }
   }
 }

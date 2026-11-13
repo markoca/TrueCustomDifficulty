@@ -40,8 +40,8 @@ internal static class Program
 
             var ids = Catalog.Parameters.Select(p => p.Id).ToHashSet(StringComparer.Ordinal);
             var tested = ids.Except(NonUi, StringComparer.Ordinal).OrderBy(x => x, StringComparer.Ordinal).ToArray();
-            Check(ids.Count == 286 && NonUi.IsSubsetOf(ids) && tested.Length == 269,
-                "Expected 285 catalog sources and 268 mounted editable writer probes");
+            Check(ids.Count == 288 && NonUi.IsSubsetOf(ids) && tested.Length == 271,
+                "Expected 288 catalog sources and 271 mounted editable writer probes");
 
             // The ordinary Master/Stalker corpse package contains no bonus
             // NPC_Ammo_Smart, so that source must be explicitly probed where
@@ -192,8 +192,8 @@ internal static class Program
                     failed.Add(id + ": " + string.Join(" | ", issues));
             }
             Check(failed.Count == 0, "Writer probe failures:\n" + string.Join("\n", failed));
-            Check(executed == 269, "Not every mounted editable source was executed");
-            Console.WriteLine($"PASS: {executed}/269 mounted editable source IDs produced production staged CFG output.");
+            Check(executed == 271, "Not every mounted editable source was executed");
+            Console.WriteLine($"PASS: {executed}/271 mounted editable source IDs produced production staged CFG output.");
             Console.WriteLine("NOT VERIFIED: in-game STALKER 2 CFG merge, UI interaction via Wine, or gameplay effects.");
             return 0;
         }

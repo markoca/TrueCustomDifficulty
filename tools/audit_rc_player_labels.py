@@ -5,8 +5,8 @@ import json
 r=Path(__file__).resolve().parents[1]
 p=json.loads((r/"src/TrueCustomDifficulty/Data/parameters.json").read_text())["parameters"]
 by={v["id"]:v for v in p}
-assert len(p)==len(by)==286
-assert sum(v.get("exposeInUi",True) for v in p)==181
+assert len(p)==len(by)==288
+assert sum(v.get("exposeInUi",True) for v in p)==183
 names={
   "combat.npcHealth": "Human Enemy HP",
   "combat.playerWeaponDamage": "Weapon Damage",

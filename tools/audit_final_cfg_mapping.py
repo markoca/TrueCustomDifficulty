@@ -193,8 +193,8 @@ def main():
     # independent armor-removal production method in its C# partial.
     code += "\n" + (WRITER_PATH.parent / "CfgPatchWriterService.WorldArmorRemovals.cs").read_text(encoding="utf-8")
     definitions = {p["id"]: p for p in catalog["parameters"]}
-    require(len(definitions) == len(catalog["parameters"]) == 286, "286 unique CFG source IDs expected")
-    require(baseline["supportedParameterCount"] == 286, "writer expected coverage drift")
+    require(len(definitions) == len(catalog["parameters"]) == 288, "288 unique CFG source IDs expected")
+    require(baseline["supportedParameterCount"] == 288, "writer expected coverage drift")
     require(not baseline["deferredParameterIds"], "deferred production parameters")
     require(baseline["gameVersion"] == catalog["source"]["gameVersion"] == "2.0.5", "source/game baseline mismatch")
     require(set(catalog["difficultyProfiles"]) == set(SIDS), "difficulty baseline drift")
@@ -222,13 +222,13 @@ def main():
         if point["operation"] not in ("set", "toggleSourceOrZero"):
             parse_source(point["sourceRaw"])
         direct[pid].append(point)
-    require(len(baseline["editPoints"]) == 1230 and len(direct) == 215,
+    require(len(baseline["editPoints"]) == 1448 and len(direct) == 217,
             "direct writer point count drift")
     special = method_routes(baseline["special"])
     require(len(special) == 71, "special writer route count drift")
     require(not set(direct).intersection(special), "direct/special parameter double ownership")
     require(set(direct) | set(special) == set(definitions), "unrouted CFG IDs")
-    require(len(definitions) - len(NON_UI) == 269, "UI dimension count drift")
+    require(len(definitions) - len(NON_UI) == 271, "UI dimension count drift")
     require(len(NON_UI) == 17 and NON_UI.issubset(definitions),
             "17 non-mounted catalog source IDs required")
     for pid in NON_UI:
@@ -321,12 +321,12 @@ def main():
             "declaredTargets": p["targets"],
             "runtimeVerified": False,
         }
-    require(len(direct) == 215,
+    require(len(direct) == 217,
             "direct route inventory mutated while building source report")
     inert = []
     for name in NAMES:
         doc = json.loads((PRESETS / (name + ".json")).read_text(encoding="utf-8"))
-        require(len(doc["values"]) == 286 and set(doc["values"]) == set(definitions),
+        require(len(doc["values"]) == 288 and set(doc["values"]) == set(definitions),
                 "factory catalog source ID drift " + name)
         sid = SIDS[doc["referenceDifficulty"]]
         for pid, p in definitions.items():

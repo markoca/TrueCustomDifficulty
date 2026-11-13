@@ -498,7 +498,9 @@ public sealed class MainViewModel : ObservableObject
         WireVisualAggregate(
             "equipment.ammoWeight",
             "equipment.ammoWeight",
-            "equipment.consumableWeight");
+            "equipment.consumableWeight",
+            "equipment.weaponWeight",
+            "equipment.armorWeight");
 
         // Global damage is edited inside the Individual Anomaly Damage radar
         // alongside ten confirmed, player-facing source controls. Keep this legacy
@@ -2001,6 +2003,8 @@ public sealed class MainViewModel : ObservableObject
                 "equipment.weaponWearPerShot" => 10,
                 "equipment.ammoWeight" => 100,
                 "equipment.consumableWeight" => 110,
+                "equipment.weaponWeight" => 120,
+                "equipment.armorWeight" => 130,
                 _ => 199
             };
         }

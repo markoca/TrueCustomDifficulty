@@ -18,7 +18,9 @@ internal static class Program
         "equipment.armorDurability",
         "equipment.weaponWearPerShot",
         "equipment.ammoWeight",
-        "equipment.consumableWeight"
+        "equipment.consumableWeight",
+        "equipment.weaponWeight",
+        "equipment.armorWeight"
     };
     private static string? _keep;
     private static int _passed;
@@ -54,19 +56,24 @@ internal static class Program
             }
 
             // Explicit DLC1 installed signal: DLC1 weight and wear must be emitted too.
-            foreach (var id in new[] { "equipment.weaponWearPerShot", "equipment.consumableWeight" })
+            foreach (var id in new[] { "equipment.weaponWearPerShot", "equipment.consumableWeight",
+                                      "equipment.weaponWeight", "equipment.armorWeight" })
             {
                 Single("Veteran", id, 0.5, hasDlc1: true);
                 Single("Veteran", id, 2.0, hasDlc1: true);
             }
 
-            // Both crosshair axes / both weight controls, including a shared ItemPrototypes file.
+            // Crosshair axes, four native item-weight controls, and shared ItemPrototypes output.
             Pair("Veteran", "equipment.armorDurability", 1.4,
                 "equipment.weaponWearPerShot", 0.5);
             Pair("Veteran", "equipment.ammoWeight", 0.5,
                 "equipment.consumableWeight", 1.6, hasDlc1: true);
+            Pair("Veteran", "equipment.weaponWeight", 0.5,
+                "equipment.armorWeight", 1.6, hasDlc1: true);
+            Pair("Veteran", "equipment.ammoWeight", 0.5,
+                "equipment.weaponWeight", 1.6, hasDlc1: true);
 
-            Check(_passed == 32, "Expected exactly 32 Equipment writer scenarios, got " + _passed);
+            Check(_passed == 50, "Expected exactly 50 Equipment writer scenarios, got " + _passed);
             Console.WriteLine("PASS: " + _passed + " Equipment production BPatch writer scenarios");
             Console.WriteLine("NOT VERIFIED: original CFG ZIPs, actual DLC installation, Unreal patch loading or gameplay");
             return 0;
@@ -90,17 +97,19 @@ internal static class Program
         Check(mounted.SequenceEqual(defined), "Equipment catalog-to-actual-ViewModel drift");
         var points = Baseline.EditPoints.Where(p => p.ParameterId.StartsWith("equipment.", StringComparison.Ordinal))
             .ToArray();
-        Check(points.Length == 113, "Expected 113 direct Equipment CFG points");
+        Check(points.Length == 331, "Expected 331 direct Equipment CFG points");
         Check(points.Select(p => p.ParameterId).ToHashSet(StringComparer.Ordinal)
             .SetEquals(Ids), "Equipment catalog-to-writer source ID mismatch");
-        Check(points.Count(p => p.Scope == "baseGame") == 101 &&
-              points.Count(p => p.Scope == "dlc1") == 12, "Equipment source scope counts drift");
+        Check(points.Count(p => p.Scope == "baseGame") == 299 &&
+              points.Count(p => p.Scope == "dlc1") == 32, "Equipment source scope counts drift");
         Check(points.All(p => p.Operation is "set" or "scale" or "scaleNonZero"),
             "Unsupported direct Equipment operation");
         Check(points.Count(p => p.ParameterId == "equipment.armorDurability") == 4
            && points.Count(p => p.ParameterId == "equipment.ammoWeight") == 34
            && points.Count(p => p.ParameterId == "equipment.consumableWeight") == 23
-           && points.Count(p => p.ParameterId == "equipment.weaponWearPerShot") == 52,
+           && points.Count(p => p.ParameterId == "equipment.weaponWearPerShot") == 52
+           && points.Count(p => p.ParameterId == "equipment.weaponWeight") == 124
+           && points.Count(p => p.ParameterId == "equipment.armorWeight") == 94,
            "Equipment field count/ownership drift");
 
         var wear = points.Where(p => p.ParameterId == "equipment.weaponWearPerShot").ToArray();
@@ -120,9 +129,26 @@ internal static class Program
         Check(armor.Select(p => p.DifficultySid).ToHashSet(StringComparer.Ordinal)
             .SetEquals(Catalog.DifficultyProfiles.Values.Select(p => p.Sid)),
             "Missing or duplicated armor difficulty SID");
-        Check(points.Where(p => p.ParameterId is "equipment.ammoWeight" or "equipment.consumableWeight")
+        Check(points.Where(p => p.ParameterId is "equipment.ammoWeight" or "equipment.consumableWeight"
+                                or "equipment.weaponWeight" or "equipment.armorWeight")
               .All(p => p.Key == "Weight" && p.NodePath.Count == 0 && p.Operation == "scale"),
             "Item weight path/operation changed unexpectedly");
+        var weaponWeight = points.Where(p => p.ParameterId == "equipment.weaponWeight").ToArray();
+        var armorWeight = points.Where(p => p.ParameterId == "equipment.armorWeight").ToArray();
+        Check(weaponWeight.Count(p => p.Scope == "baseGame") == 112
+            && weaponWeight.Count(p => p.Scope == "dlc1") == 12
+            && armorWeight.Count(p => p.Scope == "baseGame") == 86
+            && armorWeight.Count(p => p.Scope == "dlc1") == 8,
+            "Weapon/armor source inventory lost base/DLC coverage");
+        Check(weaponWeight.Concat(armorWeight).All(p => ParseNumber(p.SourceRaw) > 0
+                && p.NodePath.Count == 0 && p.Key == "Weight" && p.Operation == "scale"
+                && string.IsNullOrEmpty(p.DifficultySid)),
+            "Weapon/armor weight source became zero or changed source semantics");
+        Check(!weaponWeight.Any(p => p.Prototype == "GunPM_PDA_Tutorial_HG")
+            && !weaponWeight.Concat(armorWeight).Any(p => p.Prototype.StartsWith("Template", StringComparison.Ordinal)),
+            "Template/tutorial-only gear leaked into inventory-weight writer");
+        Check(weaponWeight.Concat(armorWeight).GroupBy(p => p.Scope + "/" + p.Prototype)
+            .All(g => g.Count() == 1), "Duplicate weapon/armor source edits");
         Check(wear.All(p => p.Key == "DurabilityDamagePerShot" && p.NodePath.Count == 0
             && p.Operation == "scaleNonZero" && p.Prototype.EndsWith("_Player", StringComparison.Ordinal)),
             "Weapon wear paths/operation changed unexpectedly");
