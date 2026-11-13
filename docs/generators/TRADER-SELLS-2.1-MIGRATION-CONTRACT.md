@@ -54,3 +54,5 @@ The SELL writer now recognizes a SHA256-pinned 15-column 2.1 runtime manifest al
 ## CI UI contract reconciliation (2026-11-14)
 
 The category-only Trader Stock editor intentionally does not bind `TraderOffersPolicy.Offers` as a visible individual-SID list. The 2.1 source still drives the saved `TraderItemOverrides` compatibility sidecar and the CFG writer. The UI-to-CFG audit now checks the active category editor binding (`TraderSellsPolicy.IsAvailable`) and preservation of the sidecar in the view model, rather than requiring the retired item-level UI. This is an audit-correction, not a gameplay or UI layout change.
+
+The UI-contract script's source-root alias is explicit (`SRC`), preventing a `NameError` during the GitHub Actions audit.

@@ -6,7 +6,8 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA = ROOT / "src" / "TrueCustomDifficulty" / "Data"
+SRC = ROOT / "src" / "TrueCustomDifficulty"
+DATA = SRC / "Data"
 
 AGGREGATES = {
     "Stash Content": ["loot.stashMixAmmo","loot.stashMixMedical","loot.stashMixFood","loot.stashMixDrinks","loot.stashMixGrenades","loot.stashMixCoupons"],
