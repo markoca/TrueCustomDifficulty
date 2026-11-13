@@ -17,3 +17,7 @@ One toggle, not a second stash checkbox: `loot.worldArmorRemoved` with independe
 - Preserve normal world weapon and detector settings; only additional armor candidates in Extra Stash Gear are suppressed while the removal is ON.
 - Tests cover physical actor and ItemGenerator node paths and output accounting; game runtime and existing-save behavior remain to be tested.
 
+
+## Preset upgrade compatibility
+
+The exact SHA-1 Git blob IDs of the immediately preceding 12 pristine 285-source factory presets are recorded in `PresetDirectoryService.PreWorldArmorRemovalFactoryBlobs`. Only byte-identical stock installations upgrade to the new 286-source defaults. Player-edited factory-named presets remain intact and the new checkbox retains its OFF default when absent from an older custom preset.

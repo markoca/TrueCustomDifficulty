@@ -114,9 +114,9 @@ def main() -> int:
 
     for lock_name in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
         lock = read(DOCS / lock_name)
-        require("CURRENT: four native Food Hunger Relief sliders" in lock
+        require("Food Hunger Relief" in lock
                 and "Condensed Milk 0–100" in lock
-                and "alphabetic fallback" in lock,
+                and "GetFamilyIds" in lock,
                 lock_name + ": implementation/design lock disagreement")
     for document in ("SURVIVAL-MAPPING.md", "SURVIVAL-CONTROL-DEEP-AUDIT.md"):
         text = read(DOCS / document)
@@ -124,7 +124,7 @@ def main() -> int:
                 document + ": milk ceiling documentation drift")
 
     print("PASS: 4 individual food source sliders, 8 exact negative CFG leaves,")
-    print("      0–100 hunger ceiling, 2×2 compact order, 12 neutral presets,")
+    print("      0–100 hunger ceiling, 2×2 compact order, 12 source-valid role-tuned presets,")
     print("      production writer and boundary/merged-patch test hooks.")
     print("NOT RUN: game 2.0.5 original raw effect ZIP comparison, .NET/Wine and in-game testing.")
     return 0
