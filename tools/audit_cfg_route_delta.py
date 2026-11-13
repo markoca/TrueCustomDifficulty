@@ -47,10 +47,11 @@ def main() -> int:
             "Current catalog must have 286 registered sources")
     food = {"survival.breadSatiety", "survival.sausageSatiety",
             "survival.cannedFoodSatiety", "survival.milkSatiety"}
-    require(len(added) == 39 and food.issubset(added)
-            and len(added - food) == 35
-            and all(definitions[x]["tab"] == "stashes" for x in added - food),
-            "Frozen 248 -> 35 Stashes + 4 Food direct source boundary drift")
+    armor = {"loot.worldArmorRemoved"}
+    require(len(added) == 40 and (food | armor).issubset(added)
+            and len(added - food - armor) == 35
+            and all(definitions[x]["tab"] == "stashes" for x in added - food - armor),
+            "Frozen 248 -> 35 Stashes + 4 Food + 1 Armor source boundary drift")
     require(added & direct == food,
             "Only new food satiety effects may add direct source routes")
     require(len(direct) == 215 and len(baseline["editPoints"]) == 1230,
@@ -79,7 +80,7 @@ def main() -> int:
         require(len(points) == 2 and {p["key"] for p in points} == {"ValueMin", "ValueMax"}
                 and all(p["operation"] == "negateSet" and p["file"] == "GameData/EffectPrototypes.cfg"
                         for p in points), "New food signed direct writer pair drift: " + pid)
-    require(len(routed) == 70 and set(routed) | direct == set(definitions)
+    require(len(routed) == 71 and set(routed) | direct == set(definitions)
             and not set(routed) & direct, "Writer route coverage/ownership drift")
 
     mix = {"loot.stashMix" + x for x in
@@ -96,7 +97,7 @@ def main() -> int:
             "loot.expensiveStashDrinksChance", "loot.expensiveStashGrenadesChance"}
     require([len(mix), len(medical), len(gear), len(tier)] == [6, 12, 7, 10],
             "Changed Stashes source cohorts")
-    require(added == mix | medical | gear | tier | food
+    require(added == mix | medical | gear | tier | food | armor
             and sum(map(len, (mix, medical, gear, tier))) == 35,
             "Unidentified or doubly owned incremental source ID")
     registered_mix = baseline["special"]["stashContentAndGearProduction"]["parameterIds"]
@@ -172,6 +173,13 @@ def main() -> int:
             files = (prototype, actors, dlc_actors)
             require({t["file"] for t in p["targets"]} & {prototype, actors, dlc_actors},
                     "Extra Gear catalog has no output target: " + pid)
+        elif pid in armor:
+            group = "Non-quest World Armor Removal"
+            methods = ("WriteWorldArmorRemovals",)
+            files = (prototype, actors, dlc_actors)
+            require({t["file"] for t in p["targets"]} == set(files)
+                    and {t["operation"] for t in p["targets"]} == {"removeNode"},
+                    "Armor toggle lost its original world/stash targets: " + pid)
         elif pid in food:
             # Four new Food/Hunger controls are native direct EffectPrototypes
             # ValueMin/ValueMax edits, never Stash tier generator Chance routes.
@@ -210,9 +218,9 @@ def main() -> int:
             writer = csv.DictWriter(out, fieldnames=list(rows[0]))
             writer.writeheader()
             writer.writerows(rows)
-    print("PASS: 248 frozen + 35 Stashes + 4 native food satiety IDs")
-    print("PASS: 213 old + 4 new direct sources, 70 special routes, zero unmapped sources")
-    print("PASS: 35/35 new controls -> called production writers -> concrete CFG destinations")
+    print("PASS: 248 frozen + 35 Stashes + 4 native food satiety + 1 world armor source ID")
+    print("PASS: 213 old + 4 new direct sources, 71 special routes, zero unmapped sources")
+    print("PASS: 35 Stash controls plus World Armor -> called production writers -> concrete CFG destinations")
     print("NOT VERIFIED: C# build / real emitted patches / Unreal game runtime")
     return 0
 
