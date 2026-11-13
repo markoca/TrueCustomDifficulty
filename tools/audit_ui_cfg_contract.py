@@ -75,7 +75,7 @@ AGGREGATES = {
 TRADER_BUY_ROLES = ("general", "medic", "technician", "bartender", "genericNpc")
 TRADER_BUY_CATEGORIES = ("weapon", "armor", "attach", "ammo", "grenade", "artifact", "consumable", "mutantLoot")
 TRADER_BUY_IDS = [f"economy.traderBuys.{role}.{category}" for role in TRADER_BUY_ROLES for category in TRADER_BUY_CATEGORIES]
-AGGREGATES["Trader Buys"] = TRADER_BUY_IDS
+
 
 TRADER_SELL_ROLES = {
     "general": ("weapons", "armor", "attachments", "ammo", "medical", "food", "drinks", "artifacts", "detectors", "grenades"),
@@ -86,7 +86,7 @@ TRADER_SELL_ROLES = {
 }
 TRADER_SELL_IDS = [f"economy.traderSells.{role}.{category}"
                    for role, categories in TRADER_SELL_ROLES.items() for category in categories]
-AGGREGATES["Trader Sells"] = TRADER_SELL_IDS
+AGGREGATES["Traders"] = TRADER_BUY_IDS + TRADER_SELL_IDS
 
 # Unlike aggregate backing members, these source IDs are intentionally
 # audit-only, not exposed by a native or aggregate editor.
