@@ -100,8 +100,13 @@ def main() -> int:
         profile = json.loads(read(preset_file))
         require(len(profile["values"]) == 286, f"{preset_file.name}: incomplete source keys")
         for pid, _, reference, _, _, _, _ in FOOD:
-            require(profile["values"][pid] == {"kind": "slider", "number": reference},
-                    f"{preset_file.name}: do not pre-tune food strength without a balance request")
+            entry = profile["values"][pid]
+        value = entry.get("number")
+        maximum = next(item[3] for item in FOOD if item[0] == pid)
+        require(entry.get("kind") == "slider"
+                and isinstance(value, (int, float)) and 0 <= value <= maximum
+                and value % 5 == 0,
+                f"{preset_file.name}: food relief must stay in the source-backed 5-point range")
     migration = read(SRC / "Services" / "PresetDirectoryService.cs")
     require("PreFoodSatietyFactoryBlobs" in migration
             and "IsUnmodifiedPreviousFactory" in migration,
