@@ -186,3 +186,10 @@ This is intentional scope control, not missing writer coverage.
 ## 2026-10-15 Survival tab cleanup — bleeding and alcohol
 
 Removed the uncalled `BleedingCurveControl.DrawPolyline` painter, after confirming the live bleeding graph uses native per-parameter rulers and existing source drawing. Removed the unused `DrunkennessControl.OverDrunknessReference` constant (89.0), which was never displayed, linked to a parameter, or used in an event/CFG calculation. All seven bleeding parameters, separate Beer/Vodka strength editors, WASTED AFTER projection, drink-progress steps, visible stage thresholds, input/reset paths and presets/writer routes remain unchanged. No visible layouts or derived game mechanics were altered. Project consistency audit extended; local .NET/WPF/Wine testing pending.
+
+## 2026-11-13 — Bleeding Damage Profile 0–6 HP/tick (CURRENT)
+
+The Bleeding Damage Profile graph already displays its HP/TICK ruler from 0 to 6. Its three independent, source-backed editable damage handles now all cover **0–6 HP/tick in 0.1 steps**, rather than the former Low 0–2, Medium 0–3, Severe 0–4 limits. A drag to the top reaches exactly 6 on every stage; keyboard/wheel and preset values use the same ceiling. The existing nondecreasing Low ≤ Medium ≤ Severe constraint remains active.
+
+The actual game's source references **Low 1, Medium 1.5, Severe 2 HP/tick**, original CFG `ValueMin/ValueMax` destinations, independent edits, initial values and right-click/group reset behavior are unchanged. No chart scaling or layout change is needed: `BleedingCurveControl.CurveMaximumDamage = 6.0` already maps both drawing and pointer input. These are increased editor limits, not claims of original game-imposed maxima. Production Windows Survival writer regression must verify both Severe-only 6 and all-three 6 emit the corresponding native CFG values.
+

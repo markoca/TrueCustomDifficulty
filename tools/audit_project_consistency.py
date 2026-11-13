@@ -5682,8 +5682,9 @@ for _microcopy_doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
 note("Repair derived multiplier is numeric-only; Flycatcher axes use SPEED names")
 
 
-# 2026-10-15: retain center-hero medicine proportions, bleeding 0–6
-# visualization versus native 2/3/4 caps, and terse stamina row suffixes.
+# 2026-11-13: bleeding damage stage controls now share their 0–6 HP/TICK
+# axis with the graph; original 1/1.5/2 HP/TICK CFG defaults remain.
+# Retain the center-hero medicine proportions and terse stamina row suffixes.
 _latest_aggregate = (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
 _latest_bleeding = (ROOT / "src/TrueCustomDifficulty/Controls/BleedingCurveControl.cs").read_text(encoding="utf-8")
 _latest_stamina = (ROOT / "src/TrueCustomDifficulty/Controls/ActionCostsRadar.cs").read_text(encoding="utf-8")
@@ -5706,15 +5707,18 @@ if ('DrawText(dc, "GLOBAL EFFECTS"' in _latest_bleeding
     or 'var raw = ratio * CurveMaximumDamage;' not in _latest_bleeding
     or 'damage / CurveMaximumDamage' not in _latest_bleeding):
     fail('Bleeding 0–6 visual graph / removed subtitle drifted')
-_original_bleed_controls = {p['id']: p['slider']['max'] for p in parameters_doc['parameters']
+_bleed_damage = {p['id']: p for p in parameters_doc['parameters']
     if p['id'] in ('survival.bleedingLowDamage',
                    'survival.bleedingMediumDamage',
                    'survival.bleedingStrongDamage')}
-if _original_bleed_controls != {
-        'survival.bleedingLowDamage': 2,
-        'survival.bleedingMediumDamage': 3,
-        'survival.bleedingStrongDamage': 4}:
-    fail('Bleeding visual range changed the game-authored native damage maxima')
+if (len(_bleed_damage) != 3
+    or any(p['slider'] != {'min': 0, 'max': 6, 'step': 0.1, 'stepMode': 'absolute'}
+           for p in _bleed_damage.values())
+    or {pid: p['vanilla']['All'] for pid, p in _bleed_damage.items()} != {
+        'survival.bleedingLowDamage': 1,
+        'survival.bleedingMediumDamage': 1.5,
+        'survival.bleedingStrongDamage': 2}):
+    fail('Bleeding LOW/MEDIUM/SEVERE controls must all reach the 6 HP/tick graph top without changing original damage defaults')
 if ('SPENT PER' in _latest_stamina or 'SpendCaption' in _latest_stamina
     or 'Actions[index].UsageCaption' not in _latest_stamina
     or any(f'new("{pid}", "{label}", ActionGroup.{group}, "{event}")'

@@ -343,6 +343,17 @@ internal static class Program
                 45.0, 0.75, 33.75);
             TestDrinkDurationOverride();
             TestMedicineTargets();
+            BleedingDamageGraphRangeContract();
+            TestCombined("Veteran-Bleeding-Severe-6HP-Tick", "Veteran", new[]
+            {
+                ("survival.bleedingStrongDamage", 6.0)
+            });
+            TestCombined("Veteran-Bleeding-All-Stages-6HP-Tick", "Veteran", new[]
+            {
+                ("survival.bleedingLowDamage", 6.0),
+                ("survival.bleedingMediumDamage", 6.0),
+                ("survival.bleedingStrongDamage", 6.0)
+            });
             // 0x is a real gameplay setting: validate emitted ValueMin and ValueMax = 0.
             TestCombined("Veteran-Sleep-Zero-HP", "Veteran", new[]
             {
@@ -458,6 +469,49 @@ internal static class Program
     // ceiling without synchronizing source values or inventing a CFG boolean.
     // Every medicine magnitude edits both deterministic Value bounds, and
     // Hercules keeps its two separate effect SIDs synchronized.
+    // Match the three independent native damage sources to the graph's 0–6
+    // HP/tick axis; source references and 0.1 HP/tick input granularity stay.
+    private static void BleedingDamageGraphRangeContract()
+    {
+        foreach (var (id, prototype, vanilla) in new[]
+        {
+            ("survival.bleedingLowDamage", "LowBleedingDamage", 1.0),
+            ("survival.bleedingMediumDamage", "MediumBleedingDamage", 1.5),
+            ("survival.bleedingStrongDamage", "StrongBleedingDamage", 2.0)
+        })
+        {
+            var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+            var p = vm.AllParameters.Single(x => x.Id == id);
+            var def = Catalog.Parameters.Single(x => x.Id == id);
+            var points = Baseline.EditPoints.Where(x => x.ParameterId == id).ToArray();
+            Check(p.IsSlider && p.IsControlEnabled && p.IsBleedingCurveMember
+                  && p.Minimum == 0.0 && p.Maximum == 6.0
+                  && Math.Abs(p.TickFrequency - 0.1) < 0.0000001
+                  && Math.Abs(p.ReferenceNumber - vanilla) < 0.0000001
+                  && def.Slider is { Min: 0.0, Max: 6.0, Step: 0.1, StepMode: "absolute" },
+                id + ": 0–6 graph scale or native damage reference drifted");
+            Check(points.Length == 2
+                  && points.Select(x => x.Key).ToHashSet(StringComparer.Ordinal)
+                      .SetEquals(new[] { "ValueMin", "ValueMax" })
+                  && points.All(x => x.Prototype == prototype
+                      && x.File == "GameData/EffectPrototypes.cfg"
+                      && x.Operation == "set"
+                      && Math.Abs(ParseNumber(x.SourceRaw) - vanilla) < 0.0000001),
+                id + ": native damage CFG pair or original value changed");
+
+            p.SnapCurrentNumberToMarker(6.0);
+            Check(Math.Abs(p.CurrentNumber - 6.0) < 0.0000001,
+                id + ": plot top 6 HP/tick is unreachable");
+            p.CurrentNumber = 7.0;
+            Check(Math.Abs(p.CurrentNumber - 6.0) < 0.0000001,
+                id + ": value was not clamped at chart upper bound");
+            p.ResetToReference();
+            Check(Math.Abs(p.CurrentNumber - vanilla) < 0.0000001,
+                id + ": original bleeding damage did not restore after reset");
+            _passed++;
+        }
+    }
+
     private static void TestMedicineTargets()
     {
         var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
