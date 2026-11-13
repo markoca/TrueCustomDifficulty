@@ -3,7 +3,10 @@
 from pathlib import Path
 s=(Path(__file__).resolve().parents[1]/'src/TrueCustomDifficulty/Services/CfgPatchWriterService.TraderSells.cs').read_text()
 checks=[
-    'int TradeGeneratorSlot',
+    'int TradeGeneratorSlot, string RootGeneratorScope',
+    'first.RootGeneratorScope.Length != 0',
+    'profile.Any(x => x.RootGeneratorScope != first.RootGeneratorScope)',
+    'rootScope.Any(x => x != originalRootScope)',
     'x[5], x[6], x[7], x[10], x[17], x[18], x[19], 0)',
     'rows.GroupBy(x => (x.TradeScope, x.TradeSid, x.TradeGeneratorSlot))',
     'source.GroupBy(r => (r.TradeScope, r.TradeSid, r.TradeGeneratorSlot))',

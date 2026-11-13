@@ -37,3 +37,7 @@ python3 tools/build_trader_21_runtime.py 'STALKER2-2.1 cfg dump.zip' slots.csv d
 ## Playable-trader scope decision
 
 The 2.1 runtime manifest generator explicitly excludes the four source-only generic/template/test profiles (`AllTraderNPC`, `BaseTraderNPC_Template`, `BasicTrader`, `TradeTest`) rather than inventing merchant roles. They remain in the 90-profile source inventory, while the runtime output targets the 86 existing playable trade profiles. This deliberately excludes the seven `TradeTest` slot-1 leaves. The generator now uses an explicit zero-chance comparison instead of a Python chained comparison and checks that every expected exclusion is present. This does not yet change the embedded runtime resource or constitute full 2.1 activation.
+
+## Source-scope writer guard
+
+The SELL writer now carries `RootGeneratorScope` in its internal offer model and validates that every row for a trade slot agrees, that the scope is `base` or `dlc1`, and that any direct root leaves have the same scope. The legacy embedded CSV initializes the new field to empty and retains the old fallback. This makes the root-scope change backward compatible; the new field must be populated by the 2.1 loader before 2.1 activation. Static guard updated in `tools/audit_trader_sell_slots.py`.

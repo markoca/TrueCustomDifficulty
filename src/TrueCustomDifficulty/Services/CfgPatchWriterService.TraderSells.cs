@@ -21,7 +21,7 @@ public sealed partial class CfgPatchWriterService
         string TradeScope, string TradeSid, string TraderType, string RootSid,
         string ItemSid, string Category, string GeneratorSid, string GeneratorScope,
         string EntryPath, string State, string NestedChain, string OuterLinks,
-        int TradeGeneratorSlot);
+        int TradeGeneratorSlot, string RootGeneratorScope);
 
     private static IReadOnlyList<TraderSellOffer> LoadTraderSellOffers()
     {
@@ -55,7 +55,7 @@ public sealed partial class CfgPatchWriterService
             if (x.Length != 20 || x.Any(v => v.Contains('"')))
                 throw new InvalidDataException("Unexpected original trader stock CSV shape.");
             var row = new TraderSellOffer(x[0], x[1], x[2], x[3], x[4],
-                x[5], x[6], x[7], x[10], x[17], x[18], x[19], 0);
+                x[5], x[6], x[7], x[10], x[17], x[18], x[19], 0, "");
             if (row.TradeScope is not ("base" or "dlc1")
                 || row.GeneratorScope is not ("base" or "dlc1")
                 || !TraderSellsPolicy.Roles.Any(r => r.SourceRole == row.TraderType)
@@ -173,13 +173,19 @@ public sealed partial class CfgPatchWriterService
             // guessed from the TradePrototype scope (DLC trades can use base roots).
             var rootScope = profile.Where(x => x.GeneratorSid == first.RootSid)
                 .Select(x => x.GeneratorScope).Distinct().ToArray();
-            var originalRootScope = rootScope.Length switch
-            {
-                1 => rootScope[0],
-                0 when first.RootSid == "MedicUniversal_TradeItemGenerator" => "base",
-                0 => first.TradeScope, // Legacy 2.0.5 fallback; remove for 2.1.
-                _ => throw new InvalidDataException("Mixed trader original generator scope.")
-            };
+            var originalRootScope = first.RootGeneratorScope.Length != 0
+                ? first.RootGeneratorScope
+                : rootScope.Length switch
+                {
+                    1 => rootScope[0],
+                    0 when first.RootSid == "MedicUniversal_TradeItemGenerator" => "base",
+                    0 => first.TradeScope, // Legacy 2.0.5 fallback only.
+                    _ => throw new InvalidDataException("Mixed trader original generator scope.")
+                };
+            if (profile.Any(x => x.RootGeneratorScope != first.RootGeneratorScope)
+                || originalRootScope is not ("base" or "dlc1")
+                || rootScope.Any(x => x != originalRootScope))
+                throw new InvalidDataException("Trader Sells root generator source scope mismatch: " + first.TradeSid);
             var rootClone = SellCloneSid(first.TradeScope, first.TradeSid, first.TradeGeneratorSlot, first.RootSid);
             RegisterClone(rootClone, originalRootScope, first.RootSid);
             var rootDocument = GetDocument(documents, SellGeneratorFile(originalRootScope));
