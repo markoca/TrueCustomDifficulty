@@ -20,7 +20,8 @@ public sealed partial class CfgPatchWriterService
     private sealed record TraderSellOffer(
         string TradeScope, string TradeSid, string TraderType, string RootSid,
         string ItemSid, string Category, string GeneratorSid, string GeneratorScope,
-        string EntryPath, string State, string NestedChain, string OuterLinks);
+        string EntryPath, string State, string NestedChain, string OuterLinks,
+        int TradeGeneratorSlot);
 
     private static IReadOnlyList<TraderSellOffer> LoadTraderSellOffers()
     {
@@ -54,7 +55,7 @@ public sealed partial class CfgPatchWriterService
             if (x.Length != 20 || x.Any(v => v.Contains('"')))
                 throw new InvalidDataException("Unexpected original trader stock CSV shape.");
             var row = new TraderSellOffer(x[0], x[1], x[2], x[3], x[4],
-                x[5], x[6], x[7], x[10], x[17], x[18], x[19]);
+                x[5], x[6], x[7], x[10], x[17], x[18], x[19], 0);
             if (row.TradeScope is not ("base" or "dlc1")
                 || row.GeneratorScope is not ("base" or "dlc1")
                 || !TraderSellsPolicy.Roles.Any(r => r.SourceRole == row.TraderType)
@@ -82,7 +83,7 @@ public sealed partial class CfgPatchWriterService
             || rows.Select(x => (x.GeneratorScope, x.GeneratorSid, x.EntryPath, x.ItemSid))
                 .Distinct().Count() != 608)
             throw new InvalidDataException("Trader Sells 2.0.5 source census drifted (2939/86/62/608).");
-        var profiles = rows.GroupBy(x => (x.TradeScope, x.TradeSid)).ToArray();
+        var profiles = rows.GroupBy(x => (x.TradeScope, x.TradeSid, x.TradeGeneratorSlot)).ToArray();
         if (profiles.Count(x => x.Key.TradeScope == "base") != 68
             || profiles.Count(x => x.Key.TradeScope == "dlc1") != 18
             || profiles.Any(p => p.Select(x => (x.RootSid, x.TraderType)).Distinct().Count() != 1))
@@ -97,9 +98,11 @@ public sealed partial class CfgPatchWriterService
         return rows;
     }
 
-    private static string SellCloneSid(string scope, string tradeSid, string sourceSid)
+    private static string SellCloneSid(string scope, string tradeSid, int slot, string sourceSid)
     {
-        var seed = scope + "|" + tradeSid + "|" + sourceSid;
+        var seed = slot == 0
+            ? scope + "|" + tradeSid + "|" + sourceSid
+            : scope + "|" + tradeSid + "|" + slot + "|" + sourceSid;
         var digest = SHA256.HashData(Encoding.UTF8.GetBytes(seed));
         return "TCD_TS_" + Convert.ToHexString(digest.AsSpan(0, 10));
     }
@@ -148,7 +151,7 @@ public sealed partial class CfgPatchWriterService
             cloneIdentities[sid] = (scope, original);
         }
 
-        foreach (var profile in source.GroupBy(r => (r.TradeScope, r.TradeSid)))
+        foreach (var profile in source.GroupBy(r => (r.TradeScope, r.TradeSid, r.TradeGeneratorSlot)))
         {
             var first = profile.First();
             if (!IsScopeApplicable(first.TradeScope, hasDlc1)) continue;
@@ -174,7 +177,7 @@ public sealed partial class CfgPatchWriterService
                 0 => first.TradeScope,
                 _ => throw new InvalidDataException("Mixed trader original generator scope.")
             };
-            var rootClone = SellCloneSid(first.TradeScope, first.TradeSid, first.RootSid);
+            var rootClone = SellCloneSid(first.TradeScope, first.TradeSid, first.TradeGeneratorSlot, first.RootSid);
             RegisterClone(rootClone, originalRootScope, first.RootSid);
             var rootDocument = GetDocument(documents, SellGeneratorFile(originalRootScope));
             var root = rootDocument.GetOrAddReferencedRoot(
@@ -188,7 +191,7 @@ public sealed partial class CfgPatchWriterService
                 var isRoot = t.GeneratorSid == first.RootSid;
                 var targetClone = isRoot
                     ? rootClone
-                    : SellCloneSid(first.TradeScope, first.TradeSid, t.GeneratorSid);
+                    : SellCloneSid(first.TradeScope, first.TradeSid, first.TradeGeneratorSlot, t.GeneratorSid);
                 if (!isRoot)
                 {
                     RegisterClone(targetClone, t.GeneratorScope, t.GeneratorSid);
@@ -229,7 +232,7 @@ public sealed partial class CfgPatchWriterService
             }
 
             GetDocument(documents, SellTradeFile(first.TradeScope)).AddAssignment(
-                first.TradeSid, new[] { "TradeGenerators", "[0]" },
+                first.TradeSid, new[] { "TradeGenerators", "[" + first.TradeGeneratorSlot + "]" },
                 "ItemGeneratorPrototypeSID", rootClone);
             edited++;
             foreach (var c in roleChanges)

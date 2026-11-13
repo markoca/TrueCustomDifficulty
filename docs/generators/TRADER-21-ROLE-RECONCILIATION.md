@@ -35,3 +35,9 @@ Re-read `GameData/TradePrototypes.cfg` for the four additional source profiles:
 **Critical writer invariant:** `TradeTest` has **two** `TradeGenerators` entries, while the existing SELL writer hardcodes `TradeGenerators/[0]` when relinking. A 2.1 writer must retain each source slot index and condition, clone/relink only its targeted slot, and never rewrite slot 1 through slot 0. The earlier 3,150-leaf graph can include stock from multiple slots of the same trade; it must be augmented with `trade_generator_slot` before becoming the production manifest.
 
 The four profiles remain in the 2.1 source inventory but are not exposed in the unique-trader UI. This verifies their direct source configuration, **not** their exact game runtime reachability. The production SELL writer is still 2.0.5 until slot-aware migration and CFG output tests pass.
+
+## Writer: slot-aware clone/relink groundwork (2026-11-13)
+
+The production SELL writer's internal offer record now has `TradeGeneratorSlot`. It groups source rows by `(trade scope, trade SID, slot)`, includes nonzero slot in private clone identity, and targets `TradeGenerators/[slot]` rather than hard-coded `[0]`. For slot 0, clone SID hashing is intentionally unchanged, preserving existing 2.0.5 output and preset behavior. The currently embedded legacy CSV has no slot column, so its loader explicitly assigns slot 0; **this change does not activate 2.1**.
+
+Static guard: `python3 tools/audit_trader_sell_slots.py`. The new 2.1 manifest must supply the actual per-leaf slot, including multiple stock roots for `TradeTest`, and writer source integrity checks must be migrated before enabling it. Static inspection is not compiled/runtime CFG validation.
