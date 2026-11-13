@@ -56,8 +56,8 @@ catalog = json.loads((DATA / "parameters.json").read_text(encoding="utf-8"))
 base = json.loads((DATA / "cfg-writer-baseline.json").read_text(encoding="utf-8"))
 by = {p["id"]: p for p in catalog["parameters"]}
 assert len(by) == len(catalog["parameters"]) == base["supportedParameterCount"] == 359
-assert sum(p.get("exposeInUi", True) for p in by.values()) == 185
-assert len([p for p in by.values() if not p.get("exposeInUi", True)]) == 174
+assert sum(p.get("exposeInUi", True) for p in by.values()) == 184
+assert len([p for p in by.values() if not p.get("exposeInUi", True)]) == 175
 sells = {f"economy.traderSells.{role}.{category}"
          for role, (_, categories) in active.items() for category in categories}
 assert len(sells) == 31
@@ -67,7 +67,7 @@ for id in sells:
     assert p["control"] == "toggle" and p["valueKind"] == "boolean"
     assert p["vanilla"] == {"All": True} and p["tab"] == "economy"
     assert p["group"] == "Trader Sells" and p["support"]["status"] == "runtime_test_required"
-    assert bool(p.get("exposeInUi", True)) == (id == "economy.traderSells.general.weapons")
+    assert p.get("exposeInUi") is False
 assert len(base["special"]["traderSells"]["parameterIds"]) == 31
 assert set(base["special"]["traderSells"]["parameterIds"]) == sells
 assert base["special"]["traderSells"]["manifestResource"] == (
@@ -164,7 +164,7 @@ assert 'GetDocument(documents, SellTradeFile(first.TradeScope))' in source["writ
 assert 'rootDocument.AddRemovalNode(first.RootSid' not in source["writer"]
 assert 'document.AddRemovalNode(t.GeneratorSid' not in source["writer"]
 
-print("PASS: 359 source IDs, 185 visible, 174 hidden, 31 actual stock category/role cells")
+print("PASS: 359 source IDs, 184 visible, 175 hidden, 31 actual stock category/role cells")
 print("PASS: 2939 original stock paths, 86 merchant profiles, 608 physical entries, nested links")
 print("PASS: no inert source combinations, five DLC1-only cells, shared source clone isolation")
 print("PASS: 12 neutral presets and source-backed UI → BPatch writer linkage")
