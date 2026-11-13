@@ -115,7 +115,7 @@ must = [
     ("checkbox", "ToggleButton.IsCheckedProperty", matrix),
     ("cell-local state", "nameof(ParameterViewModel.IsOwnValueModified)", matrix),
     ("local notification", "OnPropertyChanged(nameof(IsOwnValueModified))", p),
-    ("unified headings", '"BUY" : "SELL"', matrix),
+    ("paired direction headings", 'Caption("BUY", 9, muted)', matrix),
     ("policy rows", "new Role(", policy),
     ("production dispatch", "WriteTraderBuys(modifiedById, hasDlc1", writer),
     ("production coverage", "baseline.Special.TraderBuys.ExpectedProfiles != 86", writer),
@@ -128,16 +128,28 @@ must = [
 ]
 for label, needle, content in must:
     assert needle in content, (label, needle)
-# Compact unified matrix layout: never reintroduce the 920-DIP wide / 34-DIP rows.
+# One bounded 9-row paired matrix: ten separate columns/twelve individual
+# category rows would fragment a single gameplay category again.
 assert 'MaxWidth = 820' in matrix
-assert 'new GridLength(112)' in matrix
-assert 'new GridLength(28)' in matrix
-assert 'new GridLength(27)' in matrix
-assert 'new GridLength(19)' in matrix
-assert 'Margin = new Thickness(1, 1, 1, 1)' in matrix
+assert 'new GridLength(115)' in matrix
+assert 'new GridLength(42)' in matrix
+assert 'new GridLength(47)' not in matrix  # 47 is data-dependent on Consumables row
+assert 'row.Label == "CONSUMABLES" ? 47 : 32' in matrix
+assert 'new RowSpec("CONSUMABLES", "consumable", new[] { "medical", "food", "drinks" })' in matrix
+assert 'new RowSpec("DETECTORS", null, new[] { "detectors" })' in matrix
+assert 'new RowSpec("MUTANT PARTS", "mutantLoot", Array.Empty<string>())' in matrix
+assert matrix.count("new RowSpec(") == 9
+assert 'TraderCategoryCell(row, role, source, panel, border, muted, accent)' in matrix
+assert 'nameof(ParameterViewModel.IsOwnValueModified)' in matrix
+assert 'new UniformGrid { Columns = 3' in matrix
+assert '"M", "food" => "F", "drinks" => "D"' in matrix
+assert '"BUY" : "SELL"' not in matrix  # still one BUY and one SELL heading per role
+assert 'var buy = Caption("BUY", 9, muted)' in matrix
+assert 'var sell = Caption("SELL", 9, muted)' in matrix
 assert 'BUY: FROM YOU    •    SELL: ORIGINAL STOCK' not in matrix
 assert 'BUY CONSUMABLES = MEDICAL + FOOD + DRINKS' not in matrix
-assert 'category == "CONSUMABLES"' in matrix
+assert '<controls:TraderSellsMatrix' not in x and 'TraderSellsMatrixControl' not in x
+assert 'MaxWidth="820"' in x.split('<controls:TraderBuysMatrix', 1)[1][:230]
 assert "TradeGenerators" in implementation and "ItemGeneratorPrototypes.cfg" not in implementation
 
 print("[PASS] 359 catalog IDs / 184 visible / 175 hidden, 40 native Trader Buys cells")

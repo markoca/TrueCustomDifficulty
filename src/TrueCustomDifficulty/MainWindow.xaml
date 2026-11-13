@@ -320,8 +320,8 @@
                                                                                                Visibility="Collapsed"
                                                                                                Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
                                                                 <controls:TraderBuysMatrix x:Name="TraderBuysMatrixControl"
-                                                                                           MaxWidth="920"
-                                                                                           HorizontalAlignment="Stretch"
+                                                                                           MaxWidth="820"
+                                                                                           HorizontalAlignment="Center"
                                                                                            PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                            ParameterSelected="AggregateVisualControl_ParameterSelected"
                                                                                            Grid.Row="0"
@@ -329,15 +329,7 @@
                                                                                            Visibility="Collapsed"
                                                                                            Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
 
-                                                                 <controls:TraderSellsMatrix x:Name="TraderSellsMatrixControl"
-                                                                                           MaxWidth="920"
-                                                                                           HorizontalAlignment="Stretch"
-                                                                                           PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
-                                                                                           ParameterSelected="AggregateVisualControl_ParameterSelected"
-                                                                                           Grid.Row="0"
-                                                                                           Grid.RowSpan="2"
-                                                                                           Visibility="Collapsed"
-                                                                                           Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
+                                                                 
 
                                                                  <controls:StashAmmoRadar x:Name="StashAmmoRadarControl"
                                                                                                 MaxWidth="920"
@@ -533,15 +525,7 @@
                                                             <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
                                                             <Setter TargetName="AnomalyDamageRadarControl" Property="Visibility" Value="Visible" />
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding IsTraderSellsAnchor}" Value="True">
-                                                             <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />
-                                                             <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
-                                                             <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
-                                                             <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
-                                                             <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
-                                                             <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
-                                                             <Setter TargetName="TraderSellsMatrixControl" Property="Visibility" Value="Visible" />
-                                                         </DataTrigger>
+                                                        
                                                          <DataTrigger Binding="{Binding IsTraderBuysAnchor}" Value="True">
                                                              <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />
                                                              <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />

@@ -159,6 +159,13 @@ checks = {
 for k, needles in checks.items():
     for needle in needles:
         assert needle in source[k], (k, needle)
+# The seller side is paired with BUY in the same source-backed per-category cell;
+# native seller inventory remains independent, including the three consumables.
+assert 'new UniformGrid { Columns = 3' in source["control"]
+assert 'TraderSellsPolicy.IsAvailable(role, category)' in source["control"]
+assert 'SELL uses M = Medical, F = Food, D = Drinks.' in source["control"]
+assert '<controls:TraderSellsMatrix' not in source["xaml"]
+assert 'TraderSellsMatrixControl' not in source["xaml"]
 assert 'GetDocument(documents, SellGeneratorFile(t.GeneratorScope))' in source["writer"]
 assert 'GetDocument(documents, SellTradeFile(first.TradeScope))' in source["writer"]
 assert 'rootDocument.AddRemovalNode(first.RootSid' not in source["writer"]

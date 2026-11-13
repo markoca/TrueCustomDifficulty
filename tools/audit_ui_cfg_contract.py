@@ -195,8 +195,10 @@ def main():
     if (not set(TRADER_SELL_IDS).issubset(all_ids)
         or len(TRADER_SELL_IDS) != 31
         or "TraderSellsPolicy.ParameterIds" not in rendered_text
-        or "TraderSellsMatrix" not in rendered_text):
+        or "TraderBuysMatrix" not in rendered_text):
         fail("Trader Sells dynamic UI source contract drifted")
+    if "TraderSellsMatrix.cs" in [p.name for p in live_sources]:
+        fail("Retired separate Trader Sells matrix must not exist")
     if unreferenced:
         fail(f"hidden editable source IDs without live UI/VM reference: {unreferenced}")
 
