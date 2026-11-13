@@ -71,6 +71,12 @@ AGGREGATES = {
     ],
 }
 
+# Role x native buy-category composite. Exact source IDs are in the baseline.
+TRADER_BUY_ROLES = ("general", "medic", "technician", "bartender", "genericNpc")
+TRADER_BUY_CATEGORIES = ("weapon", "armor", "attach", "ammo", "grenade", "artifact", "consumable", "mutantLoot")
+TRADER_BUY_IDS = [f"economy.traderBuys.{role}.{category}" for role in TRADER_BUY_ROLES for category in TRADER_BUY_CATEGORIES]
+AGGREGATES["Trader Buys"] = TRADER_BUY_IDS
+
 # Unlike aggregate backing members, these source IDs are intentionally
 # audit-only, not exposed by a native or aggregate editor.
 EXPECTED_HIDDEN_NON_UI = {
@@ -128,8 +134,8 @@ def main():
     # These are the CURRENT catalog invariants, not v0.9.26.51's 199/188
     # obsolete snapshot. The core must route every parameter, even hidden
     # aggregate backings; 13 independent source IDs are audit-only.
-    if len(parameters) != 288:
-        fail(f"catalog count drifted: {len(parameters)} != 288")
+    if len(parameters) != 328:
+        fail(f"catalog count drifted: {len(parameters)} != 328")
     if len(all_ids) != len(parameters):
         fail("duplicate catalog parameter IDs")
 
@@ -140,11 +146,11 @@ def main():
     hidden_non_ui = all_ids - effective_ui_ids
     backing_ids = hidden_ids - EXPECTED_HIDDEN_NON_UI
 
-    if len(visible_ids) != 183 or len(hidden_ids) != 105:
-        fail(f"live visible/hidden catalog drift: {len(visible_ids)}/{len(hidden_ids)} != 183/105")
+    if len(visible_ids) != 184 or len(hidden_ids) != 144:
+        fail(f"live visible/hidden catalog drift: {len(visible_ids)}/{len(hidden_ids)} != 184/144")
     if not EXPECTED_HIDDEN_NON_UI.issubset(hidden_ids):
         fail(f"declared non-UI controls became visible or vanished: {sorted(EXPECTED_HIDDEN_NON_UI-hidden_ids)}")
-    if len(effective_ui_ids) != 271 or len(backing_ids) != 88:
+    if len(effective_ui_ids) != 311 or len(backing_ids) != 127:
         fail(f"active source dimension count drifted: {len(effective_ui_ids)} / {len(backing_ids)} backing")
 
     # Named legacy aggregate cohorts are evidence, not the complete editor
@@ -167,7 +173,14 @@ def main():
         *sorted((ROOT / "src" / "TrueCustomDifficulty" / "Controls").glob("*.cs")),
     ]
     rendered_text = "\n".join(path.read_text(encoding="utf-8") for path in live_sources)
-    unreferenced = sorted(pid for pid in backing_ids if f'"{pid}"' not in rendered_text)
+    unreferenced = sorted(pid for pid in backing_ids
+                          if f'"{pid}"' not in rendered_text and pid not in TRADER_BUY_IDS)
+    # The matrix keys are constructed from canonical role/category names in C#;
+    # enforce those exact source dimensions and active control linkage.
+    if (not set(TRADER_BUY_IDS).issubset(all_ids)
+        or "TraderBuysPolicy.Roles" not in rendered_text
+        or "TraderBuysMatrix" not in rendered_text):
+        fail("Trader Buys dynamic UI source contract drifted")
     if unreferenced:
         fail(f"hidden editable source IDs without live UI/VM reference: {unreferenced}")
 

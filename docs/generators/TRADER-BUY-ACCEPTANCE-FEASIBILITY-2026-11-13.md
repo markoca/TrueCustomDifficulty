@@ -1,3 +1,5 @@
+**Implementation follow-up (2026-11-13):** the native eight-category `Trader Buys` × five-role matrix is now implemented in the source and production writer; [full design, exact manifest and pending in-game gates](TRADER-BUYS-IMPLEMENTATION-2026-11-13.md). This source audit predates implementation and retains its original scope/limitations.
+
 **2026-11-13 original-source follow-up:** The original base + DLC1 CFG 2.0.5 `TradePrototypes.cfg` files and nested seller stock graph have since been independently extracted. See [TRADER-BUY-SELL-ORIGINAL-CFG-2026-11-13.md](TRADER-BUY-SELL-ORIGINAL-CFG-2026-11-13.md), [exact 86-profile buy blacklist CSV](trader-buy-limits-86.csv), and [full sale-item source-path ledger](trader-offers-source-rows.csv). This earlier feasibility report remains useful for the implementation contract, but its statement that no native source lists were extracted is superseded. The direct source audit found 53 explicit lists and 33 profiles with no authored `BuyLimitations` list. No new gameplay control or in-game acceptance proof is implied.
 
 # Trader Buy Acceptance by Role — Feasibility Audit (2026-11-13)

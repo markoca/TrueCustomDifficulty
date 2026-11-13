@@ -14246,6 +14246,1486 @@
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Deer group size. 1x keeps vanilla; right-click the point or legend name to reset Deer.",
       "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.general.weapon",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Trader Buys",
+      "description": "Controls whether general traders buy weapons from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "GENERAL_TRADER production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Weapon"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Choose which kinds of items each merchant type buys. Untouched cells keep each trader's original rules.",
+      "logic": "CHECKED buys weapons when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": true
+    },
+    {
+      "id": "economy.traderBuys.general.armor",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "General Buys Armor",
+      "description": "Controls whether general traders buy armor from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "GENERAL_TRADER production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Armor"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether general traders buy armor from you.",
+      "logic": "CHECKED buys armor when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.general.attach",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "General Buys Attachments",
+      "description": "Controls whether general traders buy attachments from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "GENERAL_TRADER production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Attach"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether general traders buy attachments from you.",
+      "logic": "CHECKED buys attachments when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.general.ammo",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "General Buys Ammo",
+      "description": "Controls whether general traders buy ammo from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "GENERAL_TRADER production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Ammo"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether general traders buy ammo from you.",
+      "logic": "CHECKED buys ammo when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.general.grenade",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "General Buys Grenades",
+      "description": "Controls whether general traders buy grenades from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "GENERAL_TRADER production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Grenade"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether general traders buy grenades from you.",
+      "logic": "CHECKED buys grenades when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.general.artifact",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "General Buys Artifacts",
+      "description": "Controls whether general traders buy artifacts from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "GENERAL_TRADER production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Artifact"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether general traders buy artifacts from you.",
+      "logic": "CHECKED buys artifacts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.general.consumable",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "General Buys Consumables",
+      "description": "Controls whether general traders buy consumables from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "GENERAL_TRADER production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Consumable"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether general traders buy consumables from you.",
+      "logic": "CHECKED buys consumables when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Food, drinks and medical supplies are one native item type.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.general.mutantLoot",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "General Buys Mutant Parts",
+      "description": "Controls whether general traders buy mutant parts from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "GENERAL_TRADER production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::MutantLoot"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether general traders buy mutant parts from you.",
+      "logic": "CHECKED buys mutant parts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.medic.weapon",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Medic Buys Weapons",
+      "description": "Controls whether medic traders buy weapons from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": false
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "MEDIC production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Weapon"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether medic traders buy weapons from you.",
+      "logic": "CHECKED buys weapons when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.medic.armor",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Medic Buys Armor",
+      "description": "Controls whether medic traders buy armor from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": false
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "MEDIC production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Armor"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether medic traders buy armor from you.",
+      "logic": "CHECKED buys armor when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.medic.attach",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Medic Buys Attachments",
+      "description": "Controls whether medic traders buy attachments from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": false
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "MEDIC production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Attach"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether medic traders buy attachments from you.",
+      "logic": "CHECKED buys attachments when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.medic.ammo",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Medic Buys Ammo",
+      "description": "Controls whether medic traders buy ammo from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": false
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "MEDIC production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Ammo"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether medic traders buy ammo from you.",
+      "logic": "CHECKED buys ammo when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.medic.grenade",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Medic Buys Grenades",
+      "description": "Controls whether medic traders buy grenades from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": false
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "MEDIC production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Grenade"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether medic traders buy grenades from you.",
+      "logic": "CHECKED buys grenades when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.medic.artifact",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Medic Buys Artifacts",
+      "description": "Controls whether medic traders buy artifacts from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "MEDIC production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Artifact"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether medic traders buy artifacts from you.",
+      "logic": "CHECKED buys artifacts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.medic.consumable",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Medic Buys Consumables",
+      "description": "Controls whether medic traders buy consumables from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "MEDIC production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Consumable"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether medic traders buy consumables from you.",
+      "logic": "CHECKED buys consumables when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Food, drinks and medical supplies are one native item type.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.medic.mutantLoot",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Medic Buys Mutant Parts",
+      "description": "Controls whether medic traders buy mutant parts from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": false
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "MEDIC production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::MutantLoot"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether medic traders buy mutant parts from you.",
+      "logic": "CHECKED buys mutant parts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.technician.weapon",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Technician Buys Weapons",
+      "description": "Controls whether technician traders buy weapons from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "TECHNICIAN production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Weapon"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether technician traders buy weapons from you.",
+      "logic": "CHECKED buys weapons when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.technician.armor",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Technician Buys Armor",
+      "description": "Controls whether technician traders buy armor from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "TECHNICIAN production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Armor"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether technician traders buy armor from you.",
+      "logic": "CHECKED buys armor when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.technician.attach",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Technician Buys Attachments",
+      "description": "Controls whether technician traders buy attachments from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "TECHNICIAN production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Attach"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether technician traders buy attachments from you.",
+      "logic": "CHECKED buys attachments when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.technician.ammo",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Technician Buys Ammo",
+      "description": "Controls whether technician traders buy ammo from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": false
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "TECHNICIAN production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Ammo"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether technician traders buy ammo from you.",
+      "logic": "CHECKED buys ammo when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.technician.grenade",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Technician Buys Grenades",
+      "description": "Controls whether technician traders buy grenades from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": false
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "TECHNICIAN production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Grenade"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether technician traders buy grenades from you.",
+      "logic": "CHECKED buys grenades when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.technician.artifact",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Technician Buys Artifacts",
+      "description": "Controls whether technician traders buy artifacts from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "TECHNICIAN production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Artifact"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether technician traders buy artifacts from you.",
+      "logic": "CHECKED buys artifacts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.technician.consumable",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Technician Buys Consumables",
+      "description": "Controls whether technician traders buy consumables from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": false
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "TECHNICIAN production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Consumable"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether technician traders buy consumables from you.",
+      "logic": "CHECKED buys consumables when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Food, drinks and medical supplies are one native item type.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.technician.mutantLoot",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Technician Buys Mutant Parts",
+      "description": "Controls whether technician traders buy mutant parts from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "TECHNICIAN production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::MutantLoot"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether technician traders buy mutant parts from you.",
+      "logic": "CHECKED buys mutant parts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.bartender.weapon",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Bartender Buys Weapons",
+      "description": "Controls whether bartender traders buy weapons from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "BARTENDER production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Weapon"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether bartender traders buy weapons from you.",
+      "logic": "CHECKED buys weapons when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.bartender.armor",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Bartender Buys Armor",
+      "description": "Controls whether bartender traders buy armor from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "BARTENDER production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Armor"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether bartender traders buy armor from you.",
+      "logic": "CHECKED buys armor when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.bartender.attach",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Bartender Buys Attachments",
+      "description": "Controls whether bartender traders buy attachments from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "BARTENDER production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Attach"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether bartender traders buy attachments from you.",
+      "logic": "CHECKED buys attachments when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.bartender.ammo",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Bartender Buys Ammo",
+      "description": "Controls whether bartender traders buy ammo from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "BARTENDER production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Ammo"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether bartender traders buy ammo from you.",
+      "logic": "CHECKED buys ammo when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.bartender.grenade",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Bartender Buys Grenades",
+      "description": "Controls whether bartender traders buy grenades from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "BARTENDER production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Grenade"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether bartender traders buy grenades from you.",
+      "logic": "CHECKED buys grenades when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.bartender.artifact",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Bartender Buys Artifacts",
+      "description": "Controls whether bartender traders buy artifacts from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "BARTENDER production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Artifact"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether bartender traders buy artifacts from you.",
+      "logic": "CHECKED buys artifacts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.bartender.consumable",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Bartender Buys Consumables",
+      "description": "Controls whether bartender traders buy consumables from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "BARTENDER production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Consumable"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether bartender traders buy consumables from you.",
+      "logic": "CHECKED buys consumables when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Food, drinks and medical supplies are one native item type.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.bartender.mutantLoot",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Bartender Buys Mutant Parts",
+      "description": "Controls whether bartender traders buy mutant parts from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": false
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "BARTENDER production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::MutantLoot"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether bartender traders buy mutant parts from you.",
+      "logic": "CHECKED buys mutant parts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.genericNpc.weapon",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Generic NPC Buys Weapons",
+      "description": "Controls whether generic npc traders buy weapons from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": false
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "GENERIC_NPC_TRADER production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Weapon"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether generic npc traders buy weapons from you.",
+      "logic": "CHECKED buys weapons when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.genericNpc.armor",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Generic NPC Buys Armor",
+      "description": "Controls whether generic npc traders buy armor from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": false
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "GENERIC_NPC_TRADER production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Armor"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether generic npc traders buy armor from you.",
+      "logic": "CHECKED buys armor when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.genericNpc.attach",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Generic NPC Buys Attachments",
+      "description": "Controls whether generic npc traders buy attachments from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "GENERIC_NPC_TRADER production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Attach"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether generic npc traders buy attachments from you.",
+      "logic": "CHECKED buys attachments when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.genericNpc.ammo",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Generic NPC Buys Ammo",
+      "description": "Controls whether generic npc traders buy ammo from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "GENERIC_NPC_TRADER production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Ammo"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether generic npc traders buy ammo from you.",
+      "logic": "CHECKED buys ammo when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.genericNpc.grenade",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Generic NPC Buys Grenades",
+      "description": "Controls whether generic npc traders buy grenades from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "GENERIC_NPC_TRADER production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Grenade"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether generic npc traders buy grenades from you.",
+      "logic": "CHECKED buys grenades when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.genericNpc.artifact",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Generic NPC Buys Artifacts",
+      "description": "Controls whether generic npc traders buy artifacts from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "GENERIC_NPC_TRADER production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Artifact"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether generic npc traders buy artifacts from you.",
+      "logic": "CHECKED buys artifacts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.genericNpc.consumable",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Generic NPC Buys Consumables",
+      "description": "Controls whether generic npc traders buy consumables from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "GENERIC_NPC_TRADER production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::Consumable"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether generic npc traders buy consumables from you.",
+      "logic": "CHECKED buys consumables when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Food, drinks and medical supplies are one native item type.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderBuys.genericNpc.mutantLoot",
+      "tab": "economy",
+      "group": "Trader Buys",
+      "label": "Generic NPC Buys Mutant Parts",
+      "description": "Controls whether generic npc traders buy mutant parts from you when overriding the original rule.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": false
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + DLCGameData/DLC1/TradePrototypes.cfg",
+          "prototype": "GENERIC_NPC_TRADER production traders",
+          "path": "TradeGenerators/[0]/BuyLimitations",
+          "operation": "setTraderBuysByRole",
+          "itemType": "EItemType::MutantLoot"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Eight exact native BuyLimitations item types only.",
+          "Untouched cell leaves individual merchant bans unchanged, including Eger and Bolshak.",
+          "Consumables combines food, drinks and medicine; no verified native split."
+        ]
+      },
+      "rationale": "Controls whether generic npc traders buy mutant parts from you.",
+      "logic": "CHECKED buys mutant parts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "exposeInUi": false
     }
   ],
   "deferred": [

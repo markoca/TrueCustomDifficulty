@@ -249,6 +249,8 @@ public sealed class ParameterViewModel : ObservableObject
 
     public bool IsWorldLootRemovalMember => WorldLootRemovalParameterIds.Contains(Id);
     public bool IsWorldLootRemovalAnchor => Id == "loot.worldAmmoCratesRemoved";
+    public bool IsTraderBuysMember => Id.StartsWith(TraderBuysPolicy.Prefix, StringComparison.Ordinal);
+    public bool IsTraderBuysAnchor => Id == TraderBuysPolicy.AnchorId;
 
     private static readonly HashSet<string> MedicalHealingParameterIds = new(StringComparer.Ordinal)
     {
@@ -628,6 +630,7 @@ public sealed class ParameterViewModel : ObservableObject
         IsMutantDropAnchor ||
         IsIndividualAnomalyDamageAnchor ||
         IsWorldLootRemovalAnchor ||
+        IsTraderBuysAnchor ||
         IsMedicalHealingAnchor ||
         IsActionCostAnchor ||
         IsExhaustionRecoveryAnchor ||
@@ -659,6 +662,7 @@ public sealed class ParameterViewModel : ObservableObject
         && (!IsMutantDropMember || IsMutantDropAnchor)
         && (!IsIndividualAnomalyDamageMember || IsIndividualAnomalyDamageAnchor)
         && (!IsWorldLootRemovalMember || IsWorldLootRemovalAnchor)
+        && (!IsTraderBuysMember || IsTraderBuysAnchor)
         && (!IsMedicalHealingMember || IsMedicalHealingAnchor)
         && (!IsActionCostMember || IsActionCostAnchor)
         && (!IsExhaustionRecoveryMember || IsExhaustionRecoveryAnchor)

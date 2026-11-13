@@ -56,8 +56,23 @@ public sealed class CfgWriterEditPoint
     public string DifficultySid { get; set; } = string.Empty;
 }
 
+public sealed class CfgWriterTraderBuys
+{
+    [JsonPropertyName("parameterIds")]
+    public List<string> ParameterIds { get; set; } = new();
+
+    [JsonPropertyName("manifestResource")]
+    public string ManifestResource { get; set; } = string.Empty;
+
+    [JsonPropertyName("expectedProfiles")]
+    public int ExpectedProfiles { get; set; }
+}
+
 public sealed class CfgWriterSpecialBaseline
 {
+    [JsonPropertyName("traderBuys")]
+    public CfgWriterTraderBuys TraderBuys { get; set; } = new();
+
     // Explicit source-backed route for the dedicated nine-actor shuffle writer.
     // Keeps Python audit coverage and real C# validation on one baseline.
     [JsonPropertyName("looseUniqueWeaponShuffle")]

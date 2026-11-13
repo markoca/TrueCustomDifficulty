@@ -1160,6 +1160,166 @@
     "equipment.armorWeight": {
       "kind": "slider",
       "number": 1
+    },
+    "economy.traderBuys.general.weapon": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.general.armor": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.general.attach": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.general.ammo": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.general.grenade": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.general.artifact": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.general.consumable": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.general.mutantLoot": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.medic.weapon": {
+      "kind": "toggle",
+      "boolean": false
+    },
+    "economy.traderBuys.medic.armor": {
+      "kind": "toggle",
+      "boolean": false
+    },
+    "economy.traderBuys.medic.attach": {
+      "kind": "toggle",
+      "boolean": false
+    },
+    "economy.traderBuys.medic.ammo": {
+      "kind": "toggle",
+      "boolean": false
+    },
+    "economy.traderBuys.medic.grenade": {
+      "kind": "toggle",
+      "boolean": false
+    },
+    "economy.traderBuys.medic.artifact": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.medic.consumable": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.medic.mutantLoot": {
+      "kind": "toggle",
+      "boolean": false
+    },
+    "economy.traderBuys.technician.weapon": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.technician.armor": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.technician.attach": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.technician.ammo": {
+      "kind": "toggle",
+      "boolean": false
+    },
+    "economy.traderBuys.technician.grenade": {
+      "kind": "toggle",
+      "boolean": false
+    },
+    "economy.traderBuys.technician.artifact": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.technician.consumable": {
+      "kind": "toggle",
+      "boolean": false
+    },
+    "economy.traderBuys.technician.mutantLoot": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.bartender.weapon": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.bartender.armor": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.bartender.attach": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.bartender.ammo": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.bartender.grenade": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.bartender.artifact": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.bartender.consumable": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.bartender.mutantLoot": {
+      "kind": "toggle",
+      "boolean": false
+    },
+    "economy.traderBuys.genericNpc.weapon": {
+      "kind": "toggle",
+      "boolean": false
+    },
+    "economy.traderBuys.genericNpc.armor": {
+      "kind": "toggle",
+      "boolean": false
+    },
+    "economy.traderBuys.genericNpc.attach": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.genericNpc.ammo": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.genericNpc.grenade": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.genericNpc.artifact": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.genericNpc.consumable": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderBuys.genericNpc.mutantLoot": {
+      "kind": "toggle",
+      "boolean": false
     }
   }
 }

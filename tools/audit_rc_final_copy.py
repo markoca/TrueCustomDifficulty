@@ -17,7 +17,7 @@ LEDGER = ROOT / "docs/RC-FINAL-COPY-INDEX-2026-10-19.csv"
 SRC = ROOT / "src/TrueCustomDifficulty"
 TAB_COUNTS = {
     "combat": 15, "survival": 35, "health": 13, "master": 20,
-    "stamina": 7, "loot": 28, "stashes": 34, "economy": 17,
+    "stamina": 7, "loot": 28, "stashes": 34, "economy": 18,
     "equipment": 6, "environment": 6, "alife": 2,
 }
 FIELDS = ("id", "tab", "group", "label", "rationale", "logic", "interaction")
@@ -42,8 +42,9 @@ def main() -> int:
     catalog = json.loads(CATALOG.read_text(encoding="utf-8"))
     all_params = catalog["parameters"]
     visible = [p for p in all_params if p.get("exposeInUi", True)]
-    demand(len(all_params) == 288 and len(visible) == 183,
-           "current 288/183 catalog boundary changed; re-review all visible copy")
+    historical = [p for p in visible if p["id"] != "economy.traderBuys.general.weapon"]
+    demand(len(all_params) == 328 and len(visible) == 184 and len(historical) == 183,
+           "current 328/184 catalog or historical 183-entry copy boundary drifted")
     demand(len({p["id"] for p in all_params}) == len(all_params), "duplicate catalog IDs")
     demand(dict(Counter(p["tab"] for p in visible)) == TAB_COUNTS,
            "visible per-tab inventory drifted; redo RC review")
@@ -54,11 +55,15 @@ def main() -> int:
         ledger = list(reader)
     demand(len(ledger) == 183, "not all 183 visible settings have been reviewed")
     by_id = {entry["id"]: entry for entry in ledger}
-    demand(len(by_id) == 183 and len({p["label"] for p in visible}) == 183,
+    demand(len(by_id) == 183 and len({p["label"] for p in visible}) == 184,
            "duplicate IDs or ambiguous visible labels")
-    demand({p["id"] for p in visible} == set(by_id), "unreviewed/new/retired visible ID")
+    demand({p["id"] for p in historical} == set(by_id), "unreviewed/retired historical RC entry")
+    new = next(p for p in visible if p["id"] == "economy.traderBuys.general.weapon")
+    demand(new["label"] == "Trader Buys" and new["group"] == "Trader Buys"
+           and new["control"] == "toggle" and "original" in new["rationale"].lower(),
+           "Trader Buys matrix copy/anchor drifted")
 
-    for p in visible:
+    for p in historical:
         pid = p["id"]
         entry = by_id[pid]
         for field in FIELDS:
@@ -141,7 +146,7 @@ def main() -> int:
         text = (ROOT / "docs" / doc).read_text(encoding="utf-8")
         demand("CURRENT FINAL RC COPY FREEZE — 180 visible controls" in text,
                doc + ": missing current RC copy authority")
-    print("PASS: reviewed every one of 183 player-visible controls across 11 tabs")
+    print("PASS: reviewed 183 frozen RC controls + 1 Trader Buys matrix anchor across 11 tabs")
     print("PASS: names, WHAT IT DOES, HIGHER / LOWER and WORKS WITH match copy ledger")
     print("PASS: no developer jargon, duplicate-value explanations or stray gestures")
     print("PASS: independent Priority/Chance/Quantity, Master, mutant, and trader meaning")

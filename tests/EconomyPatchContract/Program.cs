@@ -30,7 +30,7 @@ internal static class Program
             }
             var defs = Catalog.Parameters.Where(p => p.Id.StartsWith("economy.", StringComparison.Ordinal))
                 .OrderBy(p => p.Id, StringComparer.Ordinal).ToArray();
-            Check(defs.Length == 23, "Expected 23 Economy catalog definitions");
+            Check(defs.Length == 63, "Expected 63 Economy catalog definitions (23 existing + 40 trader buy cells)");
             var active = new MainViewModel(Catalog).AllParameters.Select(p => p.Id)
                 .ToHashSet(StringComparer.Ordinal);
             Check(defs.Where(p => !active.Contains(p.Id)).Select(p => p.Id)
@@ -39,13 +39,16 @@ internal static class Program
             var points = Baseline.EditPoints.Where(p => p.ParameterId.StartsWith("economy.", StringComparison.Ordinal)).ToArray();
             Check(points.Length == 409, "Expected 409 direct Economy fields");
             Check(points.Select(p => p.ParameterId).ToHashSet(StringComparer.Ordinal)
-                .SetEquals(defs.Where(p => p.Id != "economy.traderMinBuyCondition").Select(p => p.Id)),
+                .SetEquals(defs.Where(p => p.Id != "economy.traderMinBuyCondition"
+                    && !p.Id.StartsWith(TraderBuysPolicy.Prefix, StringComparison.Ordinal)).Select(p => p.Id)),
                 "Economy catalog / manifest mismatch");
             Check(points.Count(p => p.Scope == "dlc1") == 1, "Economy direct DLC1 count drift");
             Check(points.All(p => new[] { "set", "scale", "scaleNonZero", "scaleIntegerHalfUp" }
                 .Contains(p.Operation, StringComparer.Ordinal)), "Unsupported operation in Economy direct manifest");
 
-            foreach (var def in defs.Where(p => active.Contains(p.Id) && p.Id != "economy.traderMinBuyCondition"))
+            foreach (var def in defs.Where(p => active.Contains(p.Id)
+                && p.Id != "economy.traderMinBuyCondition"
+                && !p.Id.StartsWith(TraderBuysPolicy.Prefix, StringComparison.Ordinal)))
                 TestDirect(def.Id, "Veteran");
             foreach (var id in new[] { "economy.buyCondition", "economy.sellCondition",
                          "economy.mainQuestReward", "economy.sideQuestReward" })
@@ -53,8 +56,11 @@ internal static class Program
                     TestDirect(id, difficulty);
             TestTraderThreshold();
             TestTraderBuyLimitationsPatchShape();
+            TestTraderBuysNeutral();
+            TestTraderBuysAllRoles();
+            TestTraderBuysCombinedWithCondition();
             TestLinkedRoamingGuides();
-            Check(_passed == 40, "Expected exactly 40 Economy writer scenarios");
+            Check(_passed == 43, "Expected exactly 43 Economy writer scenarios");
             Console.WriteLine($"PASS: {_passed} Economy production BPatch writer scenarios");
             Console.WriteLine("NOT VERIFIED: original CFG archives, DLC1-installed patches or game behavior");
             return 0;
@@ -334,6 +340,193 @@ internal static class Program
         Console.WriteLine("PASS " + label + " (production serializer: child replacement, list removal, sibling durability)");
     }
 
+    private static string[][] TraderPolicyRows()
+    {
+        var csv = File.ReadAllLines(Path.Combine("src", "TrueCustomDifficulty", "Data",
+            "trader-buy-policy-manifest.csv")).Skip(1)
+            .Where(line => !string.IsNullOrWhiteSpace(line))
+            .Select(line => line.Split(',')).ToArray();
+        Check(csv.Length == 86 && csv.All(row => row.Length == 6),
+            "Trader Buys: invalid 86-profile purchase policy source");
+        return csv;
+    }
+
+    private static List<string> ChangedTraderBuyTypes(string[] row,
+        IReadOnlyDictionary<string, ParameterViewModel> modified)
+    {
+        var before = row[5].Length == 0 ? new List<string>()
+            : row[5].Split(';').ToList();
+        foreach (var role in TraderBuysPolicy.Roles.Where(role => role.Id == row[3]))
+        {
+            foreach (var category in TraderBuysPolicy.Categories)
+            {
+                var id = TraderBuysPolicy.ParameterId(role, category);
+                if (!modified.TryGetValue(id, out var p)) continue;
+                if (p.CurrentBoolean)
+                    before.Remove(category.NativeType);
+                else if (!before.Contains(category.NativeType, StringComparer.Ordinal))
+                    before.Add(category.NativeType);
+            }
+        }
+        return before;
+    }
+
+    private static void TestTraderBuysNeutral()
+    {
+        const string label = "Trader-Buys-NoChange";
+        var path = Path.Combine(_keep ?? Path.GetTempPath(), "TCD_Economy_Patch", label);
+        try
+        {
+            var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+            var ids = TraderBuysPolicy.Roles.SelectMany(role => TraderBuysPolicy.Categories
+                .Select(category => TraderBuysPolicy.ParameterId(role, category))).ToArray();
+            Check(ids.Length == 40 && ids.Distinct(StringComparer.Ordinal).Count() == 40,
+                label + ": expected 5 x 8 unique buy cells");
+            foreach (var id in ids)
+            {
+                var p = vm.AllParameters.Single(p => p.Id == id);
+                Check(p.IsToggle && !p.IsValueModifiedFromReference() && p.IsControlEnabled,
+                    label + ": unexpected non-neutral buying rule " + id);
+            }
+            var result = new CfgPatchWriterService().Write(vm, Catalog,
+                new GameInstallInfo { HasDlc1 = true }, path);
+            Check(result.FileCount == 0 && result.EditCount == 0 && result.ParameterCount == 0,
+                label + ": neutral settings must not rewrite native Eger/Bolshak/other policies");
+            _passed++;
+            Console.WriteLine("PASS " + label + " (40 defaults, 86 unchanged profiles)");
+        }
+        finally
+        {
+            if (_keep is null && Directory.Exists(path)) Directory.Delete(path, recursive: true);
+        }
+    }
+
+    private static void TestTraderBuysAllRoles()
+    {
+        const string label = "Trader-Buys-AllRoles";
+        var path = Path.Combine(_keep ?? Path.GetTempPath(), "TCD_Economy_Patch", label);
+        try
+        {
+            var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+            var selected = new[]
+            {
+                "economy.traderBuys.general.weapon",
+                "economy.traderBuys.medic.consumable",
+                "economy.traderBuys.technician.consumable",
+                "economy.traderBuys.bartender.mutantLoot",
+                "economy.traderBuys.genericNpc.weapon"
+            };
+            foreach (var id in selected)
+            {
+                var p = vm.AllParameters.Single(p => p.Id == id);
+                p.CurrentBoolean = !p.ReferenceBoolean;
+                Check(p.IsValueModifiedFromReference(), label + ": unchanged test cell " + id);
+            }
+            var modified = vm.AllParameters.Where(p => selected.Contains(p.Id, StringComparer.Ordinal))
+                .ToDictionary(p => p.Id, StringComparer.Ordinal);
+            var rows = TraderPolicyRows();
+            var expected = new Dictionary<(string Scope, string Sid), List<string>>();
+            foreach (var row in rows)
+            {
+                var before = row[5].Length == 0 ? Array.Empty<string>() : row[5].Split(';');
+                var after = ChangedTraderBuyTypes(row, modified);
+                if (!after.SequenceEqual(before, StringComparer.Ordinal))
+                    expected.Add((row[0], row[2]), after);
+            }
+            Check(expected.Count > 50 && expected.Count < 86,
+                label + ": atypical per-trader source cases not preserved");
+            var result = new CfgPatchWriterService().Write(vm, Catalog,
+                new GameInstallInfo { HasDlc1 = true }, path);
+            Check(result.ParameterCount == 5 && result.EditCount == expected.Count,
+                label + ": incorrect category-to-prototype writer fanout");
+            var sourceFiles = rows.Where(r => expected.ContainsKey((r[0], r[2])))
+                .Select(r => ExpectedFile(path, r[1])).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+            Check(result.FileCount == sourceFiles.Length && sourceFiles.Length == 2,
+                label + ": both base and DLC1 required");
+            foreach (var file in sourceFiles)
+            {
+                var patch = Parse(File.ReadAllText(file));
+                var candidates = rows.Where(r =>
+                    string.Equals(ExpectedFile(path, r[1]), file, StringComparison.OrdinalIgnoreCase)).ToArray();
+                var wanted = candidates.Where(r => expected.ContainsKey((r[0], r[2])))
+                    .Select(r => r[2]).ToHashSet(StringComparer.Ordinal);
+                Check(patch.Children.Keys.ToHashSet(StringComparer.Ordinal).SetEquals(wanted),
+                    label + ": unexpected or missing trade prototypes in BPatch");
+                foreach (var row in candidates.Where(r => wanted.Contains(r[2])))
+                {
+                    var root = patch.Get(row[2]);
+                    var trade = root.Get("TradeGenerators").Get("[0]");
+                    Check(root.Bpatch && trade.Bpatch && trade.Assignments.Count == 0,
+                        label + ": trade price/condition modified alongside buy whitelist");
+                    var limits = trade.Get("BuyLimitations");
+                    var types = expected[(row[0], row[2])];
+                    if (types.Count == 0)
+                        Check(limits.Removed && limits.Assignments.Count == 0,
+                            label + ": empty list should be removed only");
+                    else
+                    {
+                        Check(!limits.Bpatch && !limits.Removed
+                            && limits.Assignments.Count == types.Count,
+                            label + ": failure to replace a complete compact list");
+                        for (var i = 0; i < types.Count; i++)
+                            Check(limits.Value($"[{i}]") == "EItemType::" + types[i],
+                                label + ": wrong native category or ordinal index");
+                    }
+                }
+            }
+            _passed++;
+            Console.WriteLine("PASS " + label + " (5 merchant roles, native exceptions, full BPatch source paths)");
+        }
+        finally
+        {
+            if (_keep is null && Directory.Exists(path)) Directory.Delete(path, recursive: true);
+        }
+    }
+
+    private static void TestTraderBuysCombinedWithCondition()
+    {
+        const string label = "Trader-Buys-And-MinCondition";
+        var path = Path.Combine(_keep ?? Path.GetTempPath(), "TCD_Economy_Patch", label);
+        try
+        {
+            var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+            vm.AllParameters.Single(p => p.Id == "economy.traderMinBuyCondition")
+                .SnapCurrentNumberToMarker(0.55);
+            vm.AllParameters.Single(p => p.Id == "economy.traderBuys.general.weapon")
+                .CurrentBoolean = false;
+            vm.AllParameters.Single(p => p.Id == "economy.traderBuys.bartender.mutantLoot")
+                .CurrentBoolean = true;
+            var result = new CfgPatchWriterService().Write(vm, Catalog,
+                new GameInstallInfo { HasDlc1 = true }, path);
+            Check(result.ParameterCount == 3 && result.FileCount == 2,
+                label + ": combined writer leaked sibling fields / other files");
+
+            var manifest = TraderPolicyRows();
+            foreach (var row in manifest)
+            {
+                var patch = Parse(File.ReadAllText(ExpectedFile(path, row[1])));
+                var root = patch.Get(row[2]);
+                var limits = root.Get("TradeGenerators").Get("[0]");
+                Check(root.Bpatch && limits.Bpatch && limits.Assignments.Count == 2,
+                    label + ": missing sibling minimum-condition assignments");
+                Approx(limits.Value("WeaponSellMinDurability"), 0.55, label + ": weapon");
+                Approx(limits.Value("ArmorSellMinDurability"), 0.55, label + ": armor");
+                if (row[2] == "EgerTrader_TradePrototype")
+                    Check(!limits.Children.ContainsKey("BuyLimitations"),
+                        label + ": Eger already rejects weapons, do not rewrite his source list");
+                if (row[2] == "Bartender_Zalesie_TradePrototype")
+                    Check(limits.Get("BuyLimitations").Removed,
+                        label + ": native one-item blacklist must become a removenode");
+            }
+            _passed++;
+            Console.WriteLine("PASS " + label + " (86 merged profiles; DLC1, Eger, empty list)");
+        }
+        finally
+        {
+            if (_keep is null && Directory.Exists(path)) Directory.Delete(path, recursive: true);
+        }
+    }
+
     private static string ExpectedFile(string outRoot, string source)
     {
         var file = Path.GetFileName(source);
@@ -407,6 +600,13 @@ internal static class Program
                 nodes.Push(n);
                 continue;
             }
+            var removal = Regex.Match(line, @"^(?<name>\S+)\s*:\s*removenode$");
+            if (removal.Success)
+            {
+                var n = new Node(removal.Groups["name"].Value, "{removenode}");
+                Check(nodes.Peek().Children.TryAdd(n.Name, n), "Duplicate removal CFG node " + n.Name);
+                continue;
+            }
             var value = Regex.Match(line, @"^(?<key>\S+)\s*=\s*(?<value>.*)$");
             Check(value.Success, "Unknown CFG line: " + line);
             Check(nodes.Peek().Assignments.TryAdd(value.Groups["key"].Value,
@@ -426,6 +626,7 @@ internal static class Program
     {
         public string Name { get; } = name;
         public bool Bpatch { get; } = flags.Contains("{bpatch}", StringComparison.Ordinal);
+        public bool Removed { get; } = flags.Contains("{removenode}", StringComparison.Ordinal);
         public Dictionary<string, Node> Children { get; } = new(StringComparer.Ordinal);
         public Dictionary<string, string> Assignments { get; } = new(StringComparer.Ordinal);
         public Node Get(string name) =>

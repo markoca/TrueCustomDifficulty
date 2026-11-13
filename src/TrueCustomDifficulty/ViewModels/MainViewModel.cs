@@ -276,6 +276,11 @@ public sealed class MainViewModel : ObservableObject
             .SelectMany(constraint => constraint.ParameterIds)
             .ToHashSet(StringComparer.Ordinal);
 
+        var traderBuysParameterIds = TraderBuysPolicy.Roles
+            .SelectMany(role => TraderBuysPolicy.Categories.Select(category =>
+                TraderBuysPolicy.ParameterId(role, category)))
+            .ToHashSet(StringComparer.Ordinal);
+
         var parameterVMs = catalog.Parameters
             .Where(p => p.ExposeInUi
                 || constrainedParameterIds.Contains(p.Id)
@@ -293,7 +298,8 @@ public sealed class MainViewModel : ObservableObject
                 || itemPriceScalerParameterIds.Contains(p.Id)
                 || mutantHealthParameterIds.Contains(p.Id)
                 || humanGroupSizeParameterIds.Contains(p.Id)
-                || mutantGroupSizeParameterIds.Contains(p.Id))
+                || mutantGroupSizeParameterIds.Contains(p.Id)
+                || traderBuysParameterIds.Contains(p.Id))
             .Select(p => new ParameterViewModel(p, _selectedReferenceDifficulty))
             .ToList();
         AllParameters = parameterVMs;
@@ -477,6 +483,10 @@ public sealed class MainViewModel : ObservableObject
             "economy.repairDisaffection",
             "economy.repairNeutral",
             "economy.repairFriend");
+
+        WireVisualAggregate(
+            TraderBuysPolicy.AnchorId,
+            traderBuysParameterIds.OrderBy(id => id, StringComparer.Ordinal).ToArray());
 
         WireVisualAggregate(
             "economy.traderAmmoStock",
@@ -2100,6 +2110,7 @@ public sealed class MainViewModel : ObservableObject
                 "economy.traderMinBuyCondition" => 120,
                 "economy.itemValueFloor" => 130,
                 "economy.medicStock" => 150,
+                "economy.traderBuys.general.weapon" => 160,
 
                 // Item Price Scalers
                 "economy.consumableCost" => 200,

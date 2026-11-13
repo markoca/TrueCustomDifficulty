@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.0.5",
-  "supportedParameterCount": 288,
+  "supportedParameterCount": 328,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -25341,6 +25341,52 @@
       "parameterId": "loot.worldArmorRemoved",
       "directManifestResource": "TrueCustomDifficulty.Data.world-armor-direct-manifest.csv",
       "stashManifestResource": "TrueCustomDifficulty.Data.world-armor-stash-manifest.csv"
+    },
+    "traderBuys": {
+      "parameterIds": [
+        "economy.traderBuys.general.weapon",
+        "economy.traderBuys.general.armor",
+        "economy.traderBuys.general.attach",
+        "economy.traderBuys.general.ammo",
+        "economy.traderBuys.general.grenade",
+        "economy.traderBuys.general.artifact",
+        "economy.traderBuys.general.consumable",
+        "economy.traderBuys.general.mutantLoot",
+        "economy.traderBuys.medic.weapon",
+        "economy.traderBuys.medic.armor",
+        "economy.traderBuys.medic.attach",
+        "economy.traderBuys.medic.ammo",
+        "economy.traderBuys.medic.grenade",
+        "economy.traderBuys.medic.artifact",
+        "economy.traderBuys.medic.consumable",
+        "economy.traderBuys.medic.mutantLoot",
+        "economy.traderBuys.technician.weapon",
+        "economy.traderBuys.technician.armor",
+        "economy.traderBuys.technician.attach",
+        "economy.traderBuys.technician.ammo",
+        "economy.traderBuys.technician.grenade",
+        "economy.traderBuys.technician.artifact",
+        "economy.traderBuys.technician.consumable",
+        "economy.traderBuys.technician.mutantLoot",
+        "economy.traderBuys.bartender.weapon",
+        "economy.traderBuys.bartender.armor",
+        "economy.traderBuys.bartender.attach",
+        "economy.traderBuys.bartender.ammo",
+        "economy.traderBuys.bartender.grenade",
+        "economy.traderBuys.bartender.artifact",
+        "economy.traderBuys.bartender.consumable",
+        "economy.traderBuys.bartender.mutantLoot",
+        "economy.traderBuys.genericNpc.weapon",
+        "economy.traderBuys.genericNpc.armor",
+        "economy.traderBuys.genericNpc.attach",
+        "economy.traderBuys.genericNpc.ammo",
+        "economy.traderBuys.genericNpc.grenade",
+        "economy.traderBuys.genericNpc.artifact",
+        "economy.traderBuys.genericNpc.consumable",
+        "economy.traderBuys.genericNpc.mutantLoot"
+      ],
+      "manifestResource": "TrueCustomDifficulty.Data.trader-buy-policy-manifest.csv",
+      "expectedProfiles": 86
     }
   }
 }

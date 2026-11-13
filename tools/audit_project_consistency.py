@@ -497,7 +497,7 @@ _non_gen_expected = {
     "stamina": (7, 6, 1),
     # Equipment is a separate tab again; CFG sources and total visibility are unchanged.
     "survival": (31, 29, 2),
-    "economy": (17, 12, 5),
+    "economy": (18, 12, 6),  # Trader Buys native category matrix anchor is runtime-test-required.
     "equipment": (6, 5, 1),
 }
 _non_gen_doc = DOCS / "NON-GENERATOR-CONTROL-VERIFICATION.md"

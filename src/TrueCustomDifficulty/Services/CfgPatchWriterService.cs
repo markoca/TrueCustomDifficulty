@@ -314,6 +314,7 @@ public sealed partial class CfgPatchWriterService
             hasDlc1,
             documents,
             writtenParameters);
+        editCount += WriteTraderBuys(modifiedById, hasDlc1, documents, writtenParameters);
 
         var f1BoxRemoval = WriteWorldF1GrenadeBoxes(
             modifiedById,
@@ -462,6 +463,16 @@ public sealed partial class CfgPatchWriterService
         }
         supported.Add(uniqueShuffleRoute.ParameterId);
         supported.Add("economy.traderMinBuyCondition");
+        var traderBuysIds = TraderBuysPolicy.Roles.SelectMany(role =>
+            TraderBuysPolicy.Categories.Select(category => TraderBuysPolicy.ParameterId(role, category)))
+            .ToHashSet(StringComparer.Ordinal);
+        if (baseline.Special.TraderBuys.ExpectedProfiles != 86
+            || baseline.Special.TraderBuys.ManifestResource != "TrueCustomDifficulty.Data.trader-buy-policy-manifest.csv"
+            || baseline.Special.TraderBuys.ParameterIds.Count != 40
+            || !baseline.Special.TraderBuys.ParameterIds.ToHashSet(StringComparer.Ordinal)
+                .SetEquals(traderBuysIds))
+            throw new InvalidDataException("Trader Buys manifest / 40-cell control contract drifted.");
+        supported.UnionWith(traderBuysIds);
         supported.UnionWith(StashTierChanceParameterIds);
         supported.UnionWith(baseline.Special.ListMembership.Select(p => p.ParameterId));
         supported.UnionWith(baseline.Special.SetList.Select(p => p.ParameterId));

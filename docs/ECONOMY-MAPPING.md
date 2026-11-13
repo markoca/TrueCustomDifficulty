@@ -1,3 +1,7 @@
+## 2026-11-13 — Trader Buys (role × native item category)
+
+**Implemented, game-runtime test pending.** Economy's compact `Trader Buys` 5×8 grid controls whether five merchant roles accept Weapons, Armor, Attachments, Ammo, Grenades, Artifacts, Consumables and Mutant Parts from the player, by changing only `TradeGenerators/[0]/BuyLimitations`. All 40 independent native source boolean IDs are stored in presets; default preserves each merchant's exact original policy (including Eger and Bolshak). Consumers cannot be split into Food/Drinks/Medical via native `EItemType::Consumable`. `Trader Sells` remains an audit candidate, not yet a control. See [`generators/TRADER-BUYS-IMPLEMENTATION-2026-11-13.md`](generators/TRADER-BUYS-IMPLEMENTATION-2026-11-13.md).
+
 # Economy Mapping
 
 Source of truth for this pass: runtime STALKER 2 CFG dump 2.0.5.
