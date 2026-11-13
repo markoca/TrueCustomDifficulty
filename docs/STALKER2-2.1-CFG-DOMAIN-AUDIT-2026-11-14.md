@@ -1,0 +1,59 @@
+# S.T.A.L.K.E.R. 2.1 — CFG domain migration audit (2026-11-14)
+
+## Scope and reproducible evidence
+
+Compared the user's original outer CFG archives:
+- STALKER2-2.0 cfg dump.zip SHA-256: 2fc93b7ec3389ea274b48c76d1082ff512fcd237c0d3c2c1c1a035e9814f7e71
+- STALKER2-2.1 cfg dump.zip SHA-256: d1f38f28effae06d5009cbf823e268e9fa2db42ab4fdd0f4de4a8b0ef08228a9
+
+The 2026-10-17 separately uploaded GameData and DLC1 source archives are byte-identical to the inner archives of the user's 2.0 dump. Source-diff evidence is therefore tied to the previously used 2.0/2.0.5 material; it is not evidence of 2.1 gameplay patch loading.
+
+Source diff: **603 → 605 CFG files; 22 existing files changed, two added, zero deleted.** Added: GameData/FastTravelDestinationPrototypes.cfg and GameData/FastTravelEconomyPrototypes.cfg. The changed CFGs touched by direct writer targets are only GameData/CoreVariables.cfg and DLCGameData/DLC1/ItemPrototypes.cfg.
+
+On the current main baseline: **359 source IDs, 1,448 direct edit points, 25 special writer groups**. Exactly **35 direct leaves** are in the two changed files; checked individually in both original archives against current sourceRaw: **35/35 present and numerically unchanged**. The other **1,413** direct edit points target byte-identical CFG files. This supports direct-source structural compatibility relative to the previous dump, not runtime behavior or proof that every older baseline value was valid to begin with.
+
+## Domain status
+
+| Domain | Catalog IDs | Direct CFG leaves | 2.1 source delta | Migration verdict |
+| --- | ---: | ---: | --- | --- |
+| Combat / Mutants | 28 | 56 | Direct files unchanged; Psy special source was not independently re-extracted | Direct-compatible; legacy baseline |
+| Survival | 68 | 153 | Direct files unchanged | Direct-compatible; legacy baseline |
+| Health | 22 | 47 | Direct files unchanged | Direct-compatible; legacy baseline |
+| Advanced mechanics | 5 | 0 | Special listMembership on unchanged DifficultyPrototypes.cfg | Compatible source surface; legacy baseline |
+| Stamina | 23 | 26 | Six CoreVariables.cfg leaves verified 2.0 = 2.1 = sourceRaw | Direct-compatible; legacy baseline |
+| Economy | 94 | 409 | Eight changed-file leaves verified. Trader Sells has a 2.1-pinned runtime manifest. Trader Buys and other specials are not fully re-extracted | **Trader Sells migrated**; rest direct-compatible, rebase pending |
+| Equipment | 6 | 331 | Twenty-one DLC1 item-weight leaves verified 2.0 = 2.1 = sourceRaw | Direct-compatible; legacy baseline |
+| Environment | 17 | 42 | Direct files unchanged | Direct-compatible; legacy baseline |
+| Loot / Stashes / World | 77 | 320 | Direct ItemGeneratorPrototypes.cfg unchanged; SpawnActorPrototypes.cfg changed and special manifests require full source validation | **Special-writer certification pending** |
+| A-Life | 19 | 64 | Direct ALifeDirectorScenarioPrototypes.cfg unchanged; new 2.1 streaming changes outside TCD-owned routes | Direct-compatible; new settings not migrated |
+
+Total direct leaves: 1,448. Catalog and writer baseline still declare gameVersion **2.0.5**; changing the version label alone would be false certification.
+
+## Changed actor and special-writer boundary
+
+Source comparison of SpawnActorPrototypes.cfg:
+- Base: 16 original actor roots removed, 205 added; 87 surviving roots change one of the watched loot-related fields (the newly authored EnableSmartLootIfPossible flag).
+- DLC1: eight original roots removed, six added; no watched-field changes in surviving roots.
+- Focused check against 17 current production/stash/world actor CSV inventories found no overlap with the 24 removed actor roots. A 16-manifest pass likewise found no overlap with the 87 changed base actor roots. **These focused checks are not an exhaustive 46-CSV source registry audit** and do not prove that all special routes are unaffected.
+- Actor changes need isolated verification of all impacted stash, crate, SmartLoot, world placement, NPC-loot and protection branches.
+
+Other 2.1 additions:
+- Roaming-guide fees use the new FastTravelEconomyPrototypes.cfg, handled conditionally by the existing Guide Travel Fees slider on installations where the source exists. The two hub/roaming systems need in-game regression.
+- New streaming/A-Life variables are not automatically equivalent to existing NPC count or A-Life director controls.
+- The full 2.1 Trader Sells runtime was activated separately and SHA-256 pinned (2939 rows, 86 playable profiles, 31 category parameter IDs). Its baseline special manifest pointer now matches runtime. The legacy Trader Buys manifest is still separate; do not call it 2.1-re-extracted simply because TradePrototypes.cfg is byte-identical.
+
+## Gates before global 2.1 rebase / deprecating 2.0.5
+
+1. Run the original-ZIP source mode against the active repository to cover all manifest actor roots and the 35 changed-file direct points: 
+   ~~~bash
+   python3 tools/audit_21_domain_migration.py --old "/path/STALKER2-2.0 cfg dump.zip" --new "/path/STALKER2-2.1 cfg dump.zip" --json-out audit/21-domain-migration.json
+   ~~~
+2. Re-extract / reconcile every special writer with the 2.1 original source, especially World, Stashes, SmartLoot/NPC loot, Trader Buys and producer graph references; reject missing roots, source-value drift and ambiguous DLC scope.
+3. Only after every direct and special route passes, version the catalog, baseline, source labels, generator manifests and test contracts together. Do not bump just the gameVersion fields.
+4. Confirm emitted BPatch and gameplay in S.T.A.L.K.E.R. 2.1, including DLC1, protected quest actors, trader buy/sell isolation, guide fees and changed SmartLoot actors. .NET writer tests are not game acceptance.
+
+## CI and release evidence
+
+The last inspected GitHub Actions run before this report (commit 0a906e6) had successful Windows Economy, Equipment, Combat, Survival, Health-Stamina, Environment, A-Life, Loot and AllControls writer jobs, plus successful Linux cross-build. The overall workflow was **red**, due to a separate existing Stashes A+C static UI-layout assertion in tools/audit_stashes_mixer_ui.py. Its success cannot be inferred from unrelated writer jobs.
+
+tools/audit_21_domain_migration.py is an offline inventory guard by default, **not proof of 2.1 certification**. Supplying both source ZIPs enables the existing 2.1 CFG/manifest compatibility scanner. Full runtime and game QA remain outstanding.

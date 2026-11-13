@@ -23,6 +23,7 @@ STATIC = (
     ("trader-buys-implementation", "tools/audit_trader_buys_implementation.py"),
     ("trader-sells-implementation", "tools/audit_trader_sells_implementation.py"),
     ("trader-21-runtime", "tools/audit_trader_21_runtime.py"),
+    ("game-21-domain-migration", "tools/audit_21_domain_migration.py"),
     ("rc-final-copy", "tools/audit_rc_final_copy.py"),
     ("current-stashes", "tools/audit_stashes_current.py"),
     ("stash-content-gear", "tools/audit_stash_content_gear.py"),

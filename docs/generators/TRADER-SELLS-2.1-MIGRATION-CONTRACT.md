@@ -60,3 +60,7 @@ The UI-contract script's source-root alias is explicit (`SRC`), preventing a `Na
 Both legacy-named trader static checks now follow the category-only screen and assert view-model persistence of the saved item sidecar, without requiring the retired item-list XAML binding.
 
 The full static CI chain also updates the independent Food Hunger Relief audit's stale UI census (184 visible parameters) and repairs its per-food preset-loop indentation; this changes checks only, not game values.
+
+## Source registry reconciliation (2026-11-14)
+
+The baseline special-writer metadata now points to TrueCustomDifficulty.Data.trader-sells-2.1-runtime.csv, matching the embedded production SELL writer. The legacy CSV under docs/generators stays historical only. This does NOT re-version the unrelated direct CFG or other special writer inventories; see docs/STALKER2-2.1-CFG-DOMAIN-AUDIT-2026-11-14.md.

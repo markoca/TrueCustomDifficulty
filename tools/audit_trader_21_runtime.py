@@ -85,4 +85,7 @@ assert 'roleItemKeys.Contains(TraderOffersPolicy.Key(role.Id, r.ItemSid))' in wr
 assert '"[" + first.TradeGeneratorSlot + "]"' in writer
 assert 'r.OuterLinks.Split(\'|\',' in writer
 assert 'fields[4] == "AVOG"' in items
+import json
+baseline = json.loads((SRC / "Data/cfg-writer-baseline.json").read_text(encoding="utf-8"))
+assert baseline["special"]["traderSells"]["manifestResource"] == "TrueCustomDifficulty.Data.trader-sells-2.1-runtime.csv", "Stale SELL baseline source"
 print("PASS Trader Stock 2.1 SHA256/2939 rows/86 profiles/164 items/260 role-items/62 generators/608 coordinates; 2.0.5 SELL fallback absent")

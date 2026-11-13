@@ -25422,7 +25422,7 @@
         "economy.traderSells.genericNpc.drinks",
         "economy.traderSells.genericNpc.grenades"
       ],
-      "manifestResource": "TrueCustomDifficulty.Data.trader-offers-source-rows.csv",
+      "manifestResource": "TrueCustomDifficulty.Data.trader-sells-2.1-runtime.csv",
       "expectedSourceRows": 2939,
       "expectedProfiles": 86
     }
