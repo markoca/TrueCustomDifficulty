@@ -136,7 +136,9 @@ assert "_sliderConstraintCoordinator.NormalizeAll();" in main_vm_source
 for medical_id in ("loot.stashMedkitMinCount", "loot.stashMedkitMaxCount",
                    "loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount"):
     entry = next(p for p in catalog["parameters"] if p["id"] == medical_id)
-    assert "MAX" in entry["interaction"] and "MIN" in entry["interaction"]
+    bound = "minimum" if medical_id.endswith("MinCount") else "maximum"
+    assert bound in entry["rationale"].lower()
+    assert "stack" in entry["interaction"].lower() and "chance" in entry["interaction"].lower()
 assert 'var shareWidth = Math.Max(1.0, innerWidth * .64);' in medical
 assert '_medicalWeightRankTargets.Clear();' not in source
 assert 'innerWidth - shareWidth - gap' in medical
