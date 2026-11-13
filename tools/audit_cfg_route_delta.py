@@ -39,7 +39,13 @@ def main() -> int:
     direct = {p["parameterId"] for p in baseline["editPoints"]}
     routed = method_routes(baseline["special"])
     previous = set(old["parameters"])
-    added = set(definitions) - previous
+    # This delta contract is the frozen 248→290 historical slice, not the
+    # later dedicated trader matrices. Both trader families have independent
+    # original-source manifests and test contracts.
+    trader_ids = {pid for pid in definitions if pid.startswith(
+        ("economy.traderBuys.", "economy.traderSells."))}
+    require(len(trader_ids) == 71, "Trader Buys/Sells source boundary drift")
+    added = set(definitions) - previous - trader_ids
 
     require(old["counts"]["catalog"] == 248 and len(previous) == 248,
             "Frozen 248-source audited inventory changed")
