@@ -39,7 +39,7 @@ def main() -> int:
     factory_files = list((SRC / "Presets").glob("*.json"))
 
     require(len(catalog["parameters"]) == len(params) == 359, "source count / duplicate IDs")
-    require(sum(p.get("exposeInUi", True) for p in params.values()) == 185,
+    require(sum(p.get("exposeInUi", True) for p in params.values()) == 184,
             "current visible-source census")
     require(baseline["supportedParameterCount"] == 359 and len(edit_points) == 1448,
             "current full direct CFG-writer census")
@@ -99,14 +99,13 @@ def main() -> int:
     for preset_file in factory_files:
         profile = json.loads(read(preset_file))
         require(len(profile["values"]) == 359, f"{preset_file.name}: incomplete source keys")
-        for pid, _, reference, _, _, _, _ in FOOD:
+        for pid, _, reference, maximum, _, _, _ in FOOD:
             entry = profile["values"][pid]
-        value = entry.get("number")
-        maximum = next(item[3] for item in FOOD if item[0] == pid)
-        require(entry.get("kind") == "slider"
-                and isinstance(value, (int, float)) and 0 <= value <= maximum
-                and value % 5 == 0,
-                f"{preset_file.name}: food relief must stay in the source-backed 5-point range")
+            value = entry.get("number")
+            require(entry.get("kind") == "slider"
+                    and isinstance(value, (int, float)) and 0 <= value <= maximum
+                    and value % 5 == 0,
+                    f"{preset_file.name}: {pid} must stay in the source-backed 5-point range")
     migration = read(SRC / "Services" / "PresetDirectoryService.cs")
     require("PreFoodSatietyFactoryBlobs" in migration
             and "IsUnmodifiedPreviousFactory" in migration,

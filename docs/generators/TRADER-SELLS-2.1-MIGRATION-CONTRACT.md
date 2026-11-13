@@ -58,3 +58,5 @@ The category-only Trader Stock editor intentionally does not bind `TraderOffersP
 The UI-contract script's source-root alias is explicit (`SRC`), preventing a `NameError` during the GitHub Actions audit.
 
 Both legacy-named trader static checks now follow the category-only screen and assert view-model persistence of the saved item sidecar, without requiring the retired item-list XAML binding.
+
+The full static CI chain also updates the independent Food Hunger Relief audit's stale UI census (184 visible parameters) and repairs its per-food preset-loop indentation; this changes checks only, not game values.
