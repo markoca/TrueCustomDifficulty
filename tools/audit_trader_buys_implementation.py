@@ -36,7 +36,9 @@ assert 'legacy item-specific exclusions' in ui
 assert 'legacy BUY restrictions' in ui
 assert 'Binding="{Binding IsTraderSellsAnchor}"' in xaml
 assert '<controls:TraderBuysMatrix' in xaml
-assert 'TraderItemOverrides="{Binding DataContext.TraderItemOverrides' in xaml
+# The category-only UI does not bind the retired per-item list. The saved
+# sidecar must continue to reach the writer through MainViewModel.
+assert 'TraderItemOverrides' in (src / "ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
 assert 'TraderSellsPolicy.ParameterIds' in (src / "ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
 assert 'WriteTraderSells(' in (src / "Services/CfgPatchWriterService.cs").read_text(encoding="utf-8")
 assert 'roleItemKeys.Contains(TraderOffersPolicy.Key(role.Id, r.ItemSid))' in writer
