@@ -63,10 +63,17 @@ def main() -> int:
         direct_by_id.setdefault(point["parameterId"], []).append(point)
     previous_direct = {pid: row for pid, row in old["parameters"].items()
                        if row["writerType"] == "direct"}
-    require(len(previous_direct) == 213 and set(previous_direct) == direct - food,
-            "Previously source-audited direct parameter ownership changed")
+    # Two Human Combat source controls were retired in the later RC pass.
+    # The 248-source historical ledger remains immutable; compare its active subset.
+    retired = {"combat.npcAttackCooldown", "combat.npcHipAccuracy"}
+    require(len(previous_direct) == 213 and retired.issubset(previous_direct)
+            and retired.isdisjoint(direct)
+            and set(previous_direct) - retired == direct - food,
+            "Previously source-audited active direct parameter ownership changed")
     keys = ("scope", "file", "prototype", "key", "operation", "sourceRaw")
     for pid, record in previous_direct.items():
+        if pid in retired:
+            continue
         points = direct_by_id[pid]
         leaf = record["representativeDirectLeaf"]
         require(len(points) == record["directEditPointCount"],
@@ -219,7 +226,7 @@ def main() -> int:
             writer.writeheader()
             writer.writerows(rows)
     print("PASS: 248 frozen + 35 Stashes + 4 native food satiety + 1 world armor source ID")
-    print("PASS: 213 old + 4 new direct sources, 71 special routes, zero unmapped sources")
+    print("PASS: 211 retained old + 4 new direct sources (2 retired RC controls), 71 special routes, zero unmapped sources")
     print("PASS: 35 Stash controls plus World Armor -> called production writers -> concrete CFG destinations")
     print("NOT VERIFIED: C# build / real emitted patches / Unreal game runtime")
     return 0
