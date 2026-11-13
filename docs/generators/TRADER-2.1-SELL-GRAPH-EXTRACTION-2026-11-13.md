@@ -58,3 +58,7 @@ The 2.1 raw graph was joined back to the exact parent `ItemGeneratorPrototypeSID
 - Example: `SuslovTraderSQ14_TradePrototype` has two root slots, `[5]` and `[6]`, referencing `Trader_T3_Ammo_ItemGenerator`. Both must be redirected to the same per-trade private clone.
 
 **Writer migration requirement:** normalize each parent slot into its own validated row (or change the writer to consume an array); group by scoped trade profile + target generator; clone each target once; redirect **all** source parent slots, even if multiple point to the same child; remove selected leaf nodes only from that private clone. Preserve source scope and fail closed on missing/ambiguous references. The existing 2.0.5 writer expects `OuterLinks` in a single-slot shape, so this 2.1 audit alone does not constitute a safe runtime migration.
+
+## Writer preparation: multi-parent references
+
+The SELL writer now accepts either a single legacy `OuterLinks` coordinate or multiple `|`-separated coordinates. It splits and deduplicates parent slots before assigning every slot to the same per-trade cloned child generator. Existing 2.0.5 single-slot records remain valid. The 2.1 manifest is **not yet activated**: the embedded resource, strict source hash, profile census, category mappings and UI remain on the prior source. A static source audit is available at `tools/audit_trader_21_parent_links.py`. This is not a substitute for compiling and validating generated CFG patches.

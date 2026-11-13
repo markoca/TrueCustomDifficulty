@@ -197,7 +197,12 @@ public sealed partial class CfgPatchWriterService
                         targetClone, "../ItemGeneratorPrototypes.cfg", t.GeneratorSid);
                     target.SetAssignment("SID", targetClone);
                     edited++;
-                    var linkPaths = targetGroup.Select(r => r.OuterLinks)
+                    // A source generator can be referenced by multiple parent slots.
+                    // The legacy 2.0.5 manifest contains one slot per row; the 2.1
+                    // extractor records multiple slots separated by '|'. Redirect
+                    // every slot to the same private child clone, never the source.
+                    var linkPaths = targetGroup
+                        .SelectMany(r => r.OuterLinks.Split('|', StringSplitOptions.RemoveEmptyEntries))
                         .Distinct(StringComparer.Ordinal);
                     foreach (var link in linkPaths)
                     {
