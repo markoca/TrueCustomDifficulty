@@ -54,6 +54,8 @@
     <EmbeddedResource Include="Data\world-attachment-shuffle-pool.csv" LogicalName="TrueCustomDifficulty.Data.world-attachment-shuffle-pool.csv" />
     <EmbeddedResource Include="Data\world-attachment-direct-manifest.csv" LogicalName="TrueCustomDifficulty.Data.world-attachment-direct-manifest.csv" />
     <EmbeddedResource Include="Data\world-attachment-generator-manifest.csv" LogicalName="TrueCustomDifficulty.Data.world-attachment-generator-manifest.csv" />
+    <EmbeddedResource Include="Data\world-armor-direct-manifest.csv" LogicalName="TrueCustomDifficulty.Data.world-armor-direct-manifest.csv" />
+    <EmbeddedResource Include="Data\world-armor-stash-manifest.csv" LogicalName="TrueCustomDifficulty.Data.world-armor-stash-manifest.csv" />
     <EmbeddedResource Include="Data\world-detector-direct-manifest.csv" LogicalName="TrueCustomDifficulty.Data.world-detector-direct-manifest.csv" />
     <EmbeddedResource Include="Data\world-detector-stash-manifest.csv" LogicalName="TrueCustomDifficulty.Data.world-detector-stash-manifest.csv" />
     <EmbeddedResource Include="Data\world-f1-grenade-box-manifest.csv" LogicalName="TrueCustomDifficulty.Data.world-f1-grenade-box-manifest.csv" />

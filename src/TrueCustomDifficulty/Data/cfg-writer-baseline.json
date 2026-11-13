@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.0.5",
-  "supportedParameterCount": 285,
+  "supportedParameterCount": 286,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -22720,6 +22720,11 @@
       "source": "GameData/ItemGeneratorPrototypes.cfg",
       "scope": "Existing TCD-owned production-only Cheap/Medium/Expensive stash copies; branch/candidate coverage from source 2.0.5",
       "notes": "4 independent item selection biases times global Medical and 4 Medkit/ArmyMedkit AUTO / floor / cap controls; output remains rank/difficulty gated and untouched for scripted loot."
+    },
+    "worldArmorRemoved": {
+      "parameterId": "loot.worldArmorRemoved",
+      "directManifestResource": "TrueCustomDifficulty.Data.world-armor-direct-manifest.csv",
+      "stashManifestResource": "TrueCustomDifficulty.Data.world-armor-stash-manifest.csv"
     }
   }
 }

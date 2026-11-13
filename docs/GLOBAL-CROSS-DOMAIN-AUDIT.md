@@ -91,3 +91,14 @@ The current UI contains **167 distinct controls with no concrete writer collisio
 ## v0.3.2 loot-axis update
 
 The catalog now contains **179 parameters / 168 visible controls / 11 hidden audit-only entries**. The added visible control is `loot.cheapStashGrenadeQuantity`, giving Cheap-stash RGD-5 a real independent Chance + Quantity pair. Current visible status split is **137 confirmed + 31 runtime-test-required**. Generator-backed visible controls are now **28**; non-generator visible controls remain 140.
+
+## 2026-11-13 — Remove World Armor (active source-backed control)
+
+A single default-OFF **REMOVE WORLD ARMOR** checkbox is added to **World Item Spawns** in the Loot tab. It shares the existing compact right-hand toggle column, which now has four 44-pixel-high toggles at 49-pixel pitch, rather than adding a new card or slider. The World Item Spawns aggregate retains one visible anchor; this checkbox is an independently bound control.
+
+When enabled at Build, exactly **76 source-audited direct base-world suit/helmet actors**, plus **18 DLC1 direct actors** when installed, are removed using per-ActorSID `removenode` patches. Six independently approved **regular physical-stash helmet item nodes** are removed with indexed ItemGenerator BPatch paths. No broad removal by armor item name is allowed. Vanilla source slots are otherwise inherited.
+
+The source domains are `src/TrueCustomDifficulty/Data/world-armor-direct-manifest.csv` and `world-armor-stash-manifest.csv`; only safe `WorldMap_WP` normal wearable pickups and independently established non-quest stash generator/actor pairs qualify. Quest/story suits including X7, quest-linked stash armor, named-clue/shared reward generator slots, protected stashes, NPC/player equipment and merchant inventory are excluded. If Extra Stash Gear is also enabled, it keeps other bonus gear classes but suppresses its Armor bonus class, so this removal is not silently undone.
+
+One toggle, not a second stash checkbox: `loot.worldArmorRemoved` with independently serialized ON/OFF default OFF. The source control is #286 (previously 285) and the player-visible control inventory is #181 (previously 180). The historical 180-control RC copy freeze predates this addition and remains an archive; this control has a new reviewed copy row. The real-world game result requires in-game validation, particularly with previously opened stashes.
+

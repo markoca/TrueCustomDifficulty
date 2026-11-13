@@ -101,7 +101,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "AnomalyGlobalDamage" => "GLOBAL affects all supported anomaly damage. Each anomaly also has its own damage setting; FINAL includes both before protection.",
                     "AnomalySpecialEffects" => "Adjust Glass Shards bleeding and Psy drain independently. Their other damage effects remain separate.",
                     "NpcLootLoadout" => "Choose extra corpse loot, medical or bonus ammo drops, and dropped weapon condition. Bonus ammo requires Medicine + Ammo.",
-                    "WorldLootLayout" => "Shuffle regular weapons, unique weapons, attachments and blueprints separately. Weapon density applies only with regular weapon shuffle.",
+                    "WorldLootLayout" => "Shuffle weapons, attachments and blueprints separately. Remove ordinary armor or detectors independently; quest rewards stay. Weapon density only affects weapon shuffle.",
                     "StashContentMix" => "Ammo Quantity changes Basic, Standard and Rare stacks together. Chance sliders scale original item chances; 100% does not guarantee loot. Rare Coupons and Basic RGD-5 have separate absolute chances.",
                     "StashMedicalComposition" => "DROP ROLLS changes medical-item chances, not whole-stash odds. LOOT PRIORITY favors items inside their actual pools. EFFECTIVE PICK previews the Medkit/Army Medkit mix; MIN/MAX sets stack sizes.",
                     "StashGear" => "BONUS GEAR COVERAGE chooses eligible stash locations. PRIORITY favors item categories; BONUS CHANCE checks each candidate. Quest and unique loot are protected.",

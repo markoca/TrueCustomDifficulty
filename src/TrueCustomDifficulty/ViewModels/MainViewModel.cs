@@ -150,6 +150,7 @@ public sealed class MainViewModel : ObservableObject
             "loot.looseUniqueWeaponShuffle",
             "loot.worldAttachmentShuffle",
             "loot.worldDetectors",
+            "loot.worldArmorRemoved",
             "loot.blueprintShuffle"
         };
 
@@ -532,6 +533,7 @@ public sealed class MainViewModel : ObservableObject
             "loot.looseUniqueWeaponShuffle",
             "loot.worldAttachmentShuffle",
             "loot.worldDetectors",
+            "loot.worldArmorRemoved",
             "loot.blueprintShuffle");
 
         // Mutually exclusive overlapping stash weapon transformations:
@@ -2173,7 +2175,8 @@ public sealed class MainViewModel : ObservableObject
                 "loot.looseUniqueWeaponShuffle" => 102,
                 "loot.worldAttachmentShuffle" => 102,
                 "loot.worldDetectors" => 103,
-                "loot.blueprintShuffle" => 104,
+                "loot.worldArmorRemoved" => 104,
+                "loot.blueprintShuffle" => 105,
 
                 // NPC loot and equipment
                 "loot.npcCorpseBonus" => 200,

@@ -174,6 +174,7 @@ def method_routes(special):
     add("WriteWorldWeaponDistribution", *(x["parameterId"] for x in special["worldWeaponShuffle"]["parameters"]))
     add("WriteWorldAttachmentShuffle", special["worldAttachmentShuffle"]["parameterId"])
     add("WriteWorldDetectorSpawns", special["worldDetectors"]["parameterId"])
+    add("WriteWorldArmorRemovals", special["worldArmorRemoved"]["parameterId"])
     add("WriteBlueprintShuffle", special["blueprintShuffle"]["parameterId"])
     add("WriteWorldF1GrenadeBoxes", special["worldF1GrenadeBoxes"]["parameterId"])
     add("WriteCrateSpawnRemovals", *(x["parameterId"] for x in special["crateSpawnProduction"]["categories"]))
@@ -189,8 +190,8 @@ def main():
     baseline = json.loads((DATA / "cfg-writer-baseline.json").read_text(encoding="utf-8"))
     code = WRITER_PATH.read_text(encoding="utf-8")
     definitions = {p["id"]: p for p in catalog["parameters"]}
-    require(len(definitions) == len(catalog["parameters"]) == 285, "285 unique CFG source IDs expected")
-    require(baseline["supportedParameterCount"] == 285, "writer expected coverage drift")
+    require(len(definitions) == len(catalog["parameters"]) == 286, "286 unique CFG source IDs expected")
+    require(baseline["supportedParameterCount"] == 286, "writer expected coverage drift")
     require(not baseline["deferredParameterIds"], "deferred production parameters")
     require(baseline["gameVersion"] == catalog["source"]["gameVersion"] == "2.0.5", "source/game baseline mismatch")
     require(set(catalog["difficultyProfiles"]) == set(SIDS), "difficulty baseline drift")
@@ -322,7 +323,7 @@ def main():
     inert = []
     for name in NAMES:
         doc = json.loads((PRESETS / (name + ".json")).read_text(encoding="utf-8"))
-        require(len(doc["values"]) == 285 and set(doc["values"]) == set(definitions),
+        require(len(doc["values"]) == 286 and set(doc["values"]) == set(definitions),
                 "factory catalog source ID drift " + name)
         sid = SIDS[doc["referenceDifficulty"]]
         for pid, p in definitions.items():

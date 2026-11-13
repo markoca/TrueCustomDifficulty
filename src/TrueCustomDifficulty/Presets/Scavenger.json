@@ -1148,6 +1148,10 @@
     "loot.stashGearBonusChance": {
       "kind": "slider",
       "number": 20
+    },
+    "loot.worldArmorRemoved": {
+      "kind": "toggle",
+      "boolean": false
     }
   }
 }

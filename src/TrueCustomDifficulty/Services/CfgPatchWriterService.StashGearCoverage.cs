@@ -244,6 +244,9 @@ public sealed partial class CfgPatchWriterService
                 : pair.Item1 == "Attachment" ? 0.0 : 10.0),
             0, 30)))
             .Where(x => x.Weight > 0
+                && (x.Class != "Armor"
+                    || !all.TryGetValue("loot.worldArmorRemoved", out var removeArmor)
+                    || !removeArmor.CurrentBoolean)
                 && (x.Class != "Attachment" || hasEligibleAttachments))
             .ToList();
 

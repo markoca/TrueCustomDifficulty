@@ -40,7 +40,7 @@ internal static class Program
 
             var ids = Catalog.Parameters.Select(p => p.Id).ToHashSet(StringComparer.Ordinal);
             var tested = ids.Except(NonUi, StringComparer.Ordinal).OrderBy(x => x, StringComparer.Ordinal).ToArray();
-            Check(ids.Count == 285 && NonUi.IsSubsetOf(ids) && tested.Length == 268,
+            Check(ids.Count == 286 && NonUi.IsSubsetOf(ids) && tested.Length == 269,
                 "Expected 285 catalog sources and 268 mounted editable writer probes");
 
             // The ordinary Master/Stalker corpse package contains no bonus

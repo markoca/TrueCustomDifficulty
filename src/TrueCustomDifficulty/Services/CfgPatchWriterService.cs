@@ -278,6 +278,11 @@ public sealed partial class CfgPatchWriterService
             writtenParameters);
         editCount += worldWeaponDistribution.EditCount;
 
+        // Safe non-quest suits and helmets: direct world actors plus independent stash entries.
+        var worldArmorRemoval = WriteWorldArmorRemovals(
+            modifiedById, allById, hasDlc1, outputRoot, documents, writtenParameters);
+        editCount += worldArmorRemoval.EditCount;
+
         // Strictly allowlisted original regular weapon reward nodes disappear
         // only while the Extra Stash Gear master checkbox is enabled.
         editCount += WriteStashAuthoredWeaponRemovals(allById, documents);
@@ -383,7 +388,7 @@ public sealed partial class CfgPatchWriterService
                 string.Join(Environment.NewLine, missing.Select(id => $"  - {id}")));
         }
 
-        var fileCount = f1BoxRemoval.FileCount + crateRemoval.FileCount + looseRemoval.FileCount + uniqueWeaponShuffle.FileCount + worldWeaponDistribution.FileCount;
+        var fileCount = f1BoxRemoval.FileCount + crateRemoval.FileCount + looseRemoval.FileCount + uniqueWeaponShuffle.FileCount + worldWeaponDistribution.FileCount + worldArmorRemoval.FileCount;
         foreach (var pair in documents.OrderBy(p => p.Key, StringComparer.OrdinalIgnoreCase))
         {
             if (pair.Value.IsEmpty)
@@ -438,6 +443,7 @@ public sealed partial class CfgPatchWriterService
         supported.Add("loot.worldWeaponDensity");
         supported.Add("loot.worldAttachmentShuffle");
         supported.Add("loot.worldDetectors");
+        supported.Add("loot.worldArmorRemoved");
         supported.Add("loot.worldF1GrenadeBoxes");
         supported.Add("loot.blueprintShuffle");
         supported.Add("loot.looseWorldLootRemoved");
