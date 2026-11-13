@@ -18,3 +18,17 @@ No runtime/UI writer changes were made in this extraction step. The current appl
 ## Classification validation (follow-up)
 
 The source graph contains 3,150 item occurrences across **90** profiles with reachable item leaves (92 total TradePrototype definitions, two with no reachable leaves). There are 235 unique item SIDs. Source enum `Consumable` contains medical, food, drinks **and grenades**. The source also assigns binoculars to multiple raw categories and uses `Junk` for weapons and armor. Therefore, a direct enum-to-UI mapping would incorrectly hide or remove stock. A strict audit script `tools/audit_trader_21_categories.py` classifies by SID first, with a fail-closed fallback. Validated occurrence counts: Weapons 581; Armor 212; Attachments 299; Ammo 558; Medical 683; Food 281; Drinks 387; Artifacts 93; Detectors 15; Grenades 18; Binoculars 23. These counts are occurrences, not unique items. The audit flags 23 binocular occurrences and 16 Junk occurrences requiring SID-specific handling. Binoculars remain outside the current ten-category UI until an explicit product decision. This script was run successfully against the uploaded graph CSV. Runtime writer migration remains unimplemented.
+
+## Generator census correction (2026-11-13)
+
+Recounted top-level `ItemGeneratorPrototypes.cfg` entries using balanced `struct.begin`/`struct.end` depth and the top-level `SID` field directly from the supplied 2.1 nested ZIPs:
+
+| Scope | Top-level definitions | Duplicate SIDs within scope |
+|---|---:|---:|
+| base | 3,086 | 0 |
+| dlc1 | 366 | 0 |
+| **(scope, SID) total** | **3,452** | **0** |
+
+The two scopes share only the sentinel SID `empty`; unscoped unique SID strings therefore number **3,451**. The earlier **3,449** count was erroneous and must not be used as an integrity assertion. These counts concern all item generators, not just reachable trader stock roots. Do not conflate the 3,452 total with the 83 stock-root SIDs.
+
+Writer lookup must use `(scope, SID)` and explicit DLC-to-base fallback where applicable; it must never merge same-SID records across scopes. This resolves the census discrepancy, but does not yet validate 2.1 category removal patch paths or authorize switching the production 2.0.5 manifest.
