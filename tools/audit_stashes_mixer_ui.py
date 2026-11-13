@@ -120,7 +120,7 @@ assert "dMin < dMax ? lower : upper" in source
 assert "private static bool IsStashMedicalMin(string id)" in source
 assert "width >= 700.0 ? 609.0 : 1050.0" in source
 assert '"VANILLA"' not in quantity_rail and '"AUTO"' not in quantity_rail
-assert 'StashMedicalMaxDisplay(p.CurrentNumber)' in quantity_rail
+assert 'Math.Round(StashMedicalMaxDisplay(max.CurrentNumber))' in quantity_rail
 assert 'StashMedicalMaxStore(Math.Clamp(Math.Round(raw), 0.0, 5.0))' in source
 assert "AddHorizontalTarget(p," in quantity_rail
 # The same source-backed MIN/MAX coupling is applied to live input and bulk
