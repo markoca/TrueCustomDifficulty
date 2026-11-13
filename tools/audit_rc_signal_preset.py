@@ -35,7 +35,7 @@ assert (data["profileVersion"] == 1 and data["referenceDifficulty"] == "Stalker"
         and data["name"] == PROFILE_NAME and data["gameVersion"] == catalog["source"]["gameVersion"]
         and not data.get("drinkDurationOverride") and not data.get("medicalOverride"))
 assert set(data["values"]) == ids and len(ids) == 13
-assert len(by_id) == 288
+assert len(by_id) == 328
 for id, target in EXPECTED.items():
     definition = by_id[id]
     entry = data["values"][id]

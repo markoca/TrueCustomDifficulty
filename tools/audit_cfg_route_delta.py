@@ -43,8 +43,8 @@ def main() -> int:
 
     require(old["counts"]["catalog"] == 248 and len(previous) == 248,
             "Frozen 248-source audited inventory changed")
-    require(len(definitions) == baseline["supportedParameterCount"] == 288,
-            "Current catalog must have 288 registered sources")
+    require(len(definitions) == baseline["supportedParameterCount"] == 328,
+            "Current catalog must have 328 registered sources")
     food = {"survival.breadSatiety", "survival.sausageSatiety",
             "survival.cannedFoodSatiety", "survival.milkSatiety"}
     armor = {"loot.worldArmorRemoved"}
