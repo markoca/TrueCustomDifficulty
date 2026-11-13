@@ -189,6 +189,9 @@ def main():
     catalog = json.loads((DATA / "parameters.json").read_text(encoding="utf-8"))
     baseline = json.loads((DATA / "cfg-writer-baseline.json").read_text(encoding="utf-8"))
     code = WRITER_PATH.read_text(encoding="utf-8")
+    # Keep the single canonical Write entrypoint while also checking the
+    # independent armor-removal production method in its C# partial.
+    code += "\n" + (WRITER_PATH.parent / "CfgPatchWriterService.WorldArmorRemovals.cs").read_text(encoding="utf-8")
     definitions = {p["id"]: p for p in catalog["parameters"]}
     require(len(definitions) == len(catalog["parameters"]) == 286, "286 unique CFG source IDs expected")
     require(baseline["supportedParameterCount"] == 286, "writer expected coverage drift")
