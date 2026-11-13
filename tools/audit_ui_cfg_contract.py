@@ -77,6 +77,17 @@ TRADER_BUY_CATEGORIES = ("weapon", "armor", "attach", "ammo", "grenade", "artifa
 TRADER_BUY_IDS = [f"economy.traderBuys.{role}.{category}" for role in TRADER_BUY_ROLES for category in TRADER_BUY_CATEGORIES]
 AGGREGATES["Trader Buys"] = TRADER_BUY_IDS
 
+TRADER_SELL_ROLES = {
+    "general": ("weapons", "armor", "attachments", "ammo", "medical", "food", "drinks", "artifacts", "detectors", "grenades"),
+    "medic": ("medical", "drinks", "artifacts", "detectors"),
+    "technician": ("weapons", "attachments", "ammo", "medical", "food", "drinks"),
+    "bartender": ("weapons", "ammo", "food", "drinks", "artifacts", "detectors"),
+    "genericNpc": ("ammo", "medical", "food", "drinks", "grenades"),
+}
+TRADER_SELL_IDS = [f"economy.traderSells.{role}.{category}"
+                   for role, categories in TRADER_SELL_ROLES.items() for category in categories]
+AGGREGATES["Trader Sells"] = TRADER_SELL_IDS
+
 # Unlike aggregate backing members, these source IDs are intentionally
 # audit-only, not exposed by a native or aggregate editor.
 EXPECTED_HIDDEN_NON_UI = {
@@ -134,8 +145,8 @@ def main():
     # These are the CURRENT catalog invariants, not v0.9.26.51's 199/188
     # obsolete snapshot. The core must route every parameter, even hidden
     # aggregate backings; 13 independent source IDs are audit-only.
-    if len(parameters) != 328:
-        fail(f"catalog count drifted: {len(parameters)} != 328")
+    if len(parameters) != 359:
+        fail(f"catalog count drifted: {len(parameters)} != 359")
     if len(all_ids) != len(parameters):
         fail("duplicate catalog parameter IDs")
 
@@ -146,11 +157,11 @@ def main():
     hidden_non_ui = all_ids - effective_ui_ids
     backing_ids = hidden_ids - EXPECTED_HIDDEN_NON_UI
 
-    if len(visible_ids) != 184 or len(hidden_ids) != 144:
-        fail(f"live visible/hidden catalog drift: {len(visible_ids)}/{len(hidden_ids)} != 184/144")
+    if len(visible_ids) != 185 or len(hidden_ids) != 174:
+        fail(f"live visible/hidden catalog drift: {len(visible_ids)}/{len(hidden_ids)} != 185/174")
     if not EXPECTED_HIDDEN_NON_UI.issubset(hidden_ids):
         fail(f"declared non-UI controls became visible or vanished: {sorted(EXPECTED_HIDDEN_NON_UI-hidden_ids)}")
-    if len(effective_ui_ids) != 311 or len(backing_ids) != 127:
+    if len(effective_ui_ids) != 342 or len(backing_ids) != 157:
         fail(f"active source dimension count drifted: {len(effective_ui_ids)} / {len(backing_ids)} backing")
 
     # Named legacy aggregate cohorts are evidence, not the complete editor
@@ -174,13 +185,18 @@ def main():
     ]
     rendered_text = "\n".join(path.read_text(encoding="utf-8") for path in live_sources)
     unreferenced = sorted(pid for pid in backing_ids
-                          if f'"{pid}"' not in rendered_text and pid not in TRADER_BUY_IDS)
+                          if f'"{pid}"' not in rendered_text and pid not in TRADER_BUY_IDS and pid not in TRADER_SELL_IDS)
     # The matrix keys are constructed from canonical role/category names in C#;
     # enforce those exact source dimensions and active control linkage.
     if (not set(TRADER_BUY_IDS).issubset(all_ids)
         or "TraderBuysPolicy.Roles" not in rendered_text
         or "TraderBuysMatrix" not in rendered_text):
         fail("Trader Buys dynamic UI source contract drifted")
+    if (not set(TRADER_SELL_IDS).issubset(all_ids)
+        or len(TRADER_SELL_IDS) != 31
+        or "TraderSellsPolicy.ParameterIds" not in rendered_text
+        or "TraderSellsMatrix" not in rendered_text):
+        fail("Trader Sells dynamic UI source contract drifted")
     if unreferenced:
         fail(f"hidden editable source IDs without live UI/VM reference: {unreferenced}")
 

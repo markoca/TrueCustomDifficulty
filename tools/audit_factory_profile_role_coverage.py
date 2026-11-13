@@ -10,11 +10,13 @@ catalog = json.loads((ROOT/"src/TrueCustomDifficulty/Data/parameters.json").read
 sources = {p["id"]:p for p in catalog["parameters"]}
 names = matrix["profiles"]
 assert len(names)==len(set(names))==12
-assert len(sources)==328 and matrix["sourceCount"]==288
+assert len(sources)==359 and matrix["sourceCount"]==288
 # Historical 2026-10-19 role-target ledger covers original 288 IDs; the
 # new 40 Trader Buys cells intentionally start neutral in every preset.
 trader_buys = {p["id"]: p for p in sources.values() if p["id"].startswith("economy.traderBuys.")}
 assert len(trader_buys)==40
+trader_sells = {p["id"]: p for p in sources.values() if p["id"].startswith("economy.traderSells.")}
+assert len(trader_sells)==31
 assert len(matrix["targets"])==49
 assert set(matrix["previousFactoryGitBlobs"])==set(names)
 service=(ROOT/"src/TrueCustomDifficulty/Services/PresetDirectoryService.cs").read_text(encoding="utf-8")
@@ -32,6 +34,8 @@ for index,name in enumerate(names):
     assert set(d["values"])==set(sources)
     for tid,p in trader_buys.items():
         assert d["values"][tid]=={"kind":"toggle","boolean":p["vanilla"]["All"]},(name,tid)
+    for tid,p in trader_sells.items():
+        assert d["values"][tid]=={"kind":"toggle","boolean":True},(name,tid)
     def get(id):
         e=d["values"][id]
         return e["number"] if e["kind"]=="slider" else e["boolean"]
@@ -64,6 +68,6 @@ for index,name in enumerate(names):
                "loot.expensiveStashDrinksChance","loot.expensiveStashGrenadesChance"):
         assert 0<=get(id)<=1,(name,id)
     assert matrix["roleResults"][name]["newChanges"]>=30,name
-print("PASS: 12 factory roles / 328 catalog sources each (40 neutral Trader Buys) / 49 curated control dimensions")
+print("PASS: 12 factory roles / 359 catalog sources each (40 neutral Trader Buys + 31 Trader Sells) / 49 curated control dimensions")
 print("PASS: native bounds, absolute snaps, ordered stages, stash chance, exclusive gear/shuffle, pristine-only migration map")
 print("NOT TESTED: WPF publish, actual .NET preset import, BPatch, Wine or UE gameplay.")

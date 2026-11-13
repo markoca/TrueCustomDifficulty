@@ -78,7 +78,7 @@ public sealed class TabViewModel : ObservableObject
         "stamina" => "Stamina pool and recovery, action costs, movement penalties, vaulting and carry capacity.",
         "loot" => "World pickups, breakable boxes, NPC corpse equipment and mutant parts; stash rewards are in Stashes.",
         "stashes" => "Basic, Standard and Rare stash rewards: ammo stacks, bonus rolls, content biases, medical amounts and extra gear.",
-        "economy" => "Coupons, trader buying rules, pricing, item values, services, repair and quest rewards.",
+        "economy" => "Coupons, what traders buy and sell, prices, item values, services, repair and quest rewards.",
         "environment" => "Global anomaly damage, 11 individual damage sources, Flycatcher slowdown and three special effects; no weather/emission timing.",
         "alife" => "Human and mutant encounter group-size caps by player rank; world population and spawn timing are unchanged.",
         "master" => "Optional Master-only punishment bundles for starvation, severe fatigue, radiation, low health and medical effectiveness.",

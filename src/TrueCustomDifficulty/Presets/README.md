@@ -1,3 +1,7 @@
+## 2026-11-13 — Trader Sells factory preset extension
+
+All 12 factory profiles now have **359 catalog entries**: the original 288, 40 independent Trader Buys cells, and 31 independent Trader Sells cells. The new seller cells are all ON/neutral, so **existing merchant stock remains unchanged** unless a player explicitly turns one OFF. No per-role merchant-category customization is introduced by default; reset and older preset import preserve the same vanilla behavior. See `docs/generators/TRADER-SELLS-IMPLEMENTATION-2026-11-13.md`.
+
 ## 2026-11-13 — Trader Buys matrix / factory profile source coverage
 
 The 12 shipped profiles each contain **328 source IDs** (the historical 288 + 40 new `economy.traderBuys.*` boolean values). All new buyer cells are neutral and preserve each merchant's original buy limitations. The 2026-10-19 49-dimension preset tuning matrix remains a historical subset, not an instruction to limit full catalog coverage. See [`docs/generators/TRADER-BUYS-IMPLEMENTATION-2026-11-13.md`](../../../docs/generators/TRADER-BUYS-IMPLEMENTATION-2026-11-13.md).

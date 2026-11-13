@@ -281,6 +281,8 @@ public sealed class MainViewModel : ObservableObject
                 TraderBuysPolicy.ParameterId(role, category)))
             .ToHashSet(StringComparer.Ordinal);
 
+        var traderSellsParameterIds = TraderSellsPolicy.ParameterIds.ToHashSet(StringComparer.Ordinal);
+
         var parameterVMs = catalog.Parameters
             .Where(p => p.ExposeInUi
                 || constrainedParameterIds.Contains(p.Id)
@@ -299,7 +301,8 @@ public sealed class MainViewModel : ObservableObject
                 || mutantHealthParameterIds.Contains(p.Id)
                 || humanGroupSizeParameterIds.Contains(p.Id)
                 || mutantGroupSizeParameterIds.Contains(p.Id)
-                || traderBuysParameterIds.Contains(p.Id))
+                || traderBuysParameterIds.Contains(p.Id)
+                || traderSellsParameterIds.Contains(p.Id))
             .Select(p => new ParameterViewModel(p, _selectedReferenceDifficulty))
             .ToList();
         AllParameters = parameterVMs;
@@ -487,6 +490,10 @@ public sealed class MainViewModel : ObservableObject
         WireVisualAggregate(
             TraderBuysPolicy.AnchorId,
             traderBuysParameterIds.OrderBy(id => id, StringComparer.Ordinal).ToArray());
+
+        WireVisualAggregate(
+            TraderSellsPolicy.AnchorId,
+            traderSellsParameterIds.OrderBy(id => id, StringComparer.Ordinal).ToArray());
 
         WireVisualAggregate(
             "economy.traderAmmoStock",
@@ -2111,6 +2118,7 @@ public sealed class MainViewModel : ObservableObject
                 "economy.itemValueFloor" => 130,
                 "economy.medicStock" => 150,
                 "economy.traderBuys.general.weapon" => 160,
+                "economy.traderSells.general.weapons" => 170,
 
                 // Item Price Scalers
                 "economy.consumableCost" => 200,

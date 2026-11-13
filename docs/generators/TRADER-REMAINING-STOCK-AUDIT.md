@@ -1,3 +1,5 @@
+**2026-11-13 follow-up:** [Trader Sells matrix and private source generator copy-on-write](TRADER-SELLS-IMPLEMENTATION-2026-11-13.md) is now integrated. The quantity-slider closure below is preserved: the new checkbox matrix removes categories by exact item SID/physical source leaf; it does NOT introduce a misleading global stock quantity multiplier. Native runtime validation is pending.
+
 # Remaining Trader Stock Domain Audit
 
 ## Decision

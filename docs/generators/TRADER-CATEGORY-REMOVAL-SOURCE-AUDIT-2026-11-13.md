@@ -1,3 +1,5 @@
+**CURRENT implementation follow-up (2026-11-13):** the original `NOT implementation-ready` finding below is historical. The [Trader Sells source + writer implementation](TRADER-SELLS-IMPLEMENTATION-2026-11-13.md) now uses 2,939 source-exact offering paths from the verified base/DLC1 original CFG archives and per-merchant clone/rewire of *all* nested source generators. This addresses the previous mixed shared-target and role-isolation blocker **in source design**, without modifying original NPC/quest definitions. The remaining BPatch inheritance and in-game stock-regeneration gates **have not been passed**.
+
 # Trader Category Removal — Pre-Implementation Source Audit (2026-11-13)
 
 **Decision: conditional / NOT implementation-ready.** This is a classification and

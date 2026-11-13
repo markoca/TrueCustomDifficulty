@@ -315,6 +315,7 @@ public sealed partial class CfgPatchWriterService
             documents,
             writtenParameters);
         editCount += WriteTraderBuys(modifiedById, hasDlc1, documents, writtenParameters);
+        editCount += WriteTraderSells(modifiedById, hasDlc1, documents, writtenParameters);
 
         var f1BoxRemoval = WriteWorldF1GrenadeBoxes(
             modifiedById,
@@ -362,6 +363,9 @@ public sealed partial class CfgPatchWriterService
                 StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                 .Contains(corpseAmmo.SourceSid, StringComparer.Ordinal))
             dormantSavedOnly.Add(corpseAmmo.ParameterId);
+
+        if (!hasDlc1)
+            dormantSavedOnly.UnionWith(TraderSellsPolicy.Dlc1OnlyParameterIds);
 
         var missing = modifiedSupported
             .Where(id => !writtenParameters.Contains(id) && !dormantSavedOnly.Contains(id))
@@ -473,6 +477,14 @@ public sealed partial class CfgPatchWriterService
                 .SetEquals(traderBuysIds))
             throw new InvalidDataException("Trader Buys manifest / 40-cell control contract drifted.");
         supported.UnionWith(traderBuysIds);
+        var traderSellsIds = TraderSellsPolicy.ParameterIds.ToHashSet(StringComparer.Ordinal);
+        if (baseline.Special.TraderSells.ExpectedProfiles != 86
+            || baseline.Special.TraderSells.ExpectedSourceRows != 2939
+            || baseline.Special.TraderSells.ManifestResource != "TrueCustomDifficulty.Data.trader-offers-source-rows.csv"
+            || baseline.Special.TraderSells.ParameterIds.Count != 31
+            || !baseline.Special.TraderSells.ParameterIds.ToHashSet(StringComparer.Ordinal).SetEquals(traderSellsIds))
+            throw new InvalidDataException("Trader Sells 31-cell source/writer manifest contract drifted.");
+        supported.UnionWith(traderSellsIds);
         supported.UnionWith(StashTierChanceParameterIds);
         supported.UnionWith(baseline.Special.ListMembership.Select(p => p.ParameterId));
         supported.UnionWith(baseline.Special.SetList.Select(p => p.ParameterId));

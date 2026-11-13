@@ -1,3 +1,5 @@
+**CURRENT Trader Sells (2026-11-13):** [31-cell, five-role, ten-category merchant-stock removal matrix, source exact 86 seller profiles and private nested-generator clones](TRADER-SELLS-IMPLEMENTATION-2026-11-13.md). The prior source audit below is historical; original shared generator definitions remain untouched. Actual .NET/Unreal gameplay verification remains pending.
+
 **CURRENT Trader Buys implementation (2026-11-13):** [5 × 8 role/native-item buying matrix, exact 86-seller source manifest, vanilla-preserving writer and acceptance checks](TRADER-BUYS-IMPLEMENTATION-2026-11-13.md). `Trader Sells` removal is still only an audit candidate.
 
 **Trader Buys BPatch / original 0%-condition source audit (2026-11-13):** [86 profiles, 688 hypothetical category flips, prospective serializer format and corrected two 0% original baselines](TRADER-BUY-BPATCH-CONTRACT-2026-11-13.md). Re-run `python3 tools/audit_trader_buy_bpatch_contract.py --base-zip <base.zip> --dlc1-zip <dlc1.zip> --out audit/trader-buy-bpatch`. Source/shape evidence only, not a game-runtime PASS.

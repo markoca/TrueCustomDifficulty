@@ -1,5 +1,16 @@
 ## 2026-10-20 — CURRENT portable Presets storage
 
+## 2026-11-13 — CURRENT Trader Sells (separate from Trader Buys)
+
+**Economy → Trader Sells** is a compact **5×10** role/category table. The ten headers are Weapons, Armor, Attachments, Ammo, Medical, Food, Drinks, Artifacts, Detectors and Grenades. Each category has deliberate two-line heading splits where necessary, within a 49-DIP header; the board is bounded to 920 DIP, the role column is 123 DIP and each active row is 40 DIP. Exactly **31 source-backed ON/OFF checkboxes** exist. The remaining 19 cells show a passive dash and cannot be edited because the source role has no vanilla offers. No stretched empty card, duplicated label, misleading default flag, global checkbox overlay or unbounded text.
+
+Every checkbox is ON by default and means **keep original generated offers**; OFF means **remove the category for this trader role**. Original rarity/Chance, PlayerRank, counts, quantities, refresh, NPC and quest loot, merchant buying rules and price modifiers remain independent. The writer makes private **per-merchant inherited generator copies** and private copies of nested, cross-context pools as needed. It never edits shared originals. Base/DLC1 stock source identities and exact `TradeGenerators/[0]` trade redirects are audited separately from BuyLimitations. Technical details and runtime-validation caveats: `docs/generators/TRADER-SELLS-IMPLEMENTATION-2026-11-13.md`.
+
+**UI highlighting:** Matrix cell borders bind their own `IsOwnValueModified` boolean, not aggregate `IsModified`; checking/unchecking any cell must never highlight General → Weapons unless that specific cell changed. Every modified cell uses the established yellow accent. The right-hand help panel follows the clicked source parameter. Existing Trader Buys uses the same corrected cell-local rule.
+
+**Current source inventory:** **359 total parameters, 185 visible anchors, 174 hidden parameters; 12 official factory presets with 359 neutral/curated values**. Existing historical RC wording ledger applies to the original 183 anchors. Both trader matrices have new source-reviewed wording and do not alter the freeze of earlier controls.
+
+
 ## 2026-11-13 — Trader Buys screenshot fixes (CURRENT)
 
 **Header fit:** every trader matrix category heading uses a deliberate short line break for long words (Attachments, Grenades, Artifacts, Consumables, Mutant Parts), in a fixed-height two-line 46-DIP heading row. Typography 10.5 DIP; ellipsis clip fallback and full hover tooltip ensure no bleed into neighboring columns at 920-DIP and narrow layouts. The subtitle is shorter at 11 DIP; the footer is shorter at 10.5 DIP. Category labels remain unambiguous, no duplicate text or room-filling padding.

@@ -5,8 +5,8 @@ import json
 r=Path(__file__).resolve().parents[1]
 p=json.loads((r/"src/TrueCustomDifficulty/Data/parameters.json").read_text())["parameters"]
 by={v["id"]:v for v in p}
-assert len(p)==len(by)==328
-assert sum(v.get("exposeInUi",True) for v in p)==184
+assert len(p)==len(by)==359
+assert sum(v.get("exposeInUi",True) for v in p)==185
 names={
   "combat.npcHealth": "Human Enemy HP",
   "combat.playerWeaponDamage": "Weapon Damage",
@@ -46,6 +46,7 @@ names={
 }
 assert len(names)==35
 assert by["economy.traderBuys.general.weapon"]["label"] == "Trader Buys"
+assert by["economy.traderSells.general.weapons"]["label"] == "Trader Sells"
 for pid,label in names.items():assert by[pid]["label"]==label,(pid,by[pid]["label"])
 for old in ("Item Price Scalers","Equipment Wear","Individual Anomaly Damage","Human Group Size"):assert all(x["group"]!=old for x in p),old
 check={

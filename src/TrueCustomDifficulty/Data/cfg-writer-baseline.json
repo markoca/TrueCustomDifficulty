@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.0.5",
-  "supportedParameterCount": 328,
+  "supportedParameterCount": 359,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -25386,6 +25386,44 @@
         "economy.traderBuys.genericNpc.mutantLoot"
       ],
       "manifestResource": "TrueCustomDifficulty.Data.trader-buy-policy-manifest.csv",
+      "expectedProfiles": 86
+    },
+    "traderSells": {
+      "parameterIds": [
+        "economy.traderSells.general.weapons",
+        "economy.traderSells.general.armor",
+        "economy.traderSells.general.attachments",
+        "economy.traderSells.general.ammo",
+        "economy.traderSells.general.medical",
+        "economy.traderSells.general.food",
+        "economy.traderSells.general.drinks",
+        "economy.traderSells.general.artifacts",
+        "economy.traderSells.general.detectors",
+        "economy.traderSells.general.grenades",
+        "economy.traderSells.medic.medical",
+        "economy.traderSells.medic.drinks",
+        "economy.traderSells.medic.artifacts",
+        "economy.traderSells.medic.detectors",
+        "economy.traderSells.technician.weapons",
+        "economy.traderSells.technician.attachments",
+        "economy.traderSells.technician.ammo",
+        "economy.traderSells.technician.medical",
+        "economy.traderSells.technician.food",
+        "economy.traderSells.technician.drinks",
+        "economy.traderSells.bartender.weapons",
+        "economy.traderSells.bartender.ammo",
+        "economy.traderSells.bartender.food",
+        "economy.traderSells.bartender.drinks",
+        "economy.traderSells.bartender.artifacts",
+        "economy.traderSells.bartender.detectors",
+        "economy.traderSells.genericNpc.ammo",
+        "economy.traderSells.genericNpc.medical",
+        "economy.traderSells.genericNpc.food",
+        "economy.traderSells.genericNpc.drinks",
+        "economy.traderSells.genericNpc.grenades"
+      ],
+      "manifestResource": "TrueCustomDifficulty.Data.trader-offers-source-rows.csv",
+      "expectedSourceRows": 2939,
       "expectedProfiles": 86
     }
   }

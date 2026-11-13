@@ -30,7 +30,7 @@ internal static class Program
             }
             var defs = Catalog.Parameters.Where(p => p.Id.StartsWith("economy.", StringComparison.Ordinal))
                 .OrderBy(p => p.Id, StringComparer.Ordinal).ToArray();
-            Check(defs.Length == 63, "Expected 63 Economy catalog definitions (23 existing + 40 trader buy cells)");
+            Check(defs.Length == 94, "Expected 94 Economy catalog definitions (23 existing + 40 trader buys + 31 trader sells)");
             var active = new MainViewModel(Catalog).AllParameters.Select(p => p.Id)
                 .ToHashSet(StringComparer.Ordinal);
             Check(defs.Where(p => !active.Contains(p.Id)).Select(p => p.Id)
@@ -40,7 +40,8 @@ internal static class Program
             Check(points.Length == 409, "Expected 409 direct Economy fields");
             Check(points.Select(p => p.ParameterId).ToHashSet(StringComparer.Ordinal)
                 .SetEquals(defs.Where(p => p.Id != "economy.traderMinBuyCondition"
-                    && !p.Id.StartsWith(TraderBuysPolicy.Prefix, StringComparison.Ordinal)).Select(p => p.Id)),
+                    && !p.Id.StartsWith(TraderBuysPolicy.Prefix, StringComparison.Ordinal)
+                    && !p.Id.StartsWith(TraderSellsPolicy.Prefix, StringComparison.Ordinal)).Select(p => p.Id)),
                 "Economy catalog / manifest mismatch");
             Check(points.Count(p => p.Scope == "dlc1") == 1, "Economy direct DLC1 count drift");
             Check(points.All(p => new[] { "set", "scale", "scaleNonZero", "scaleIntegerHalfUp" }
@@ -48,7 +49,8 @@ internal static class Program
 
             foreach (var def in defs.Where(p => active.Contains(p.Id)
                 && p.Id != "economy.traderMinBuyCondition"
-                && !p.Id.StartsWith(TraderBuysPolicy.Prefix, StringComparison.Ordinal)))
+                && !p.Id.StartsWith(TraderBuysPolicy.Prefix, StringComparison.Ordinal)
+                && !p.Id.StartsWith(TraderSellsPolicy.Prefix, StringComparison.Ordinal)))
                 TestDirect(def.Id, "Veteran");
             foreach (var id in new[] { "economy.buyCondition", "economy.sellCondition",
                          "economy.mainQuestReward", "economy.sideQuestReward" })
@@ -59,8 +61,12 @@ internal static class Program
             TestTraderBuysNeutral();
             TestTraderBuysAllRoles();
             TestTraderBuysCombinedWithCondition();
+            TestTraderSellsNeutral();
+            TestTraderSellsFiveRoles();
+            TestTraderSellsDlcOnly();
+            TestTraderSellsCombinedWithBuys();
             TestLinkedRoamingGuides();
-            Check(_passed == 43, "Expected exactly 43 Economy writer scenarios");
+            Check(_passed == 47, "Expected exactly 47 Economy writer scenarios");
             Console.WriteLine($"PASS: {_passed} Economy production BPatch writer scenarios");
             Console.WriteLine("NOT VERIFIED: original CFG archives, DLC1-installed patches or game behavior");
             return 0;
@@ -525,6 +531,141 @@ internal static class Program
         {
             if (_keep is null && Directory.Exists(path)) Directory.Delete(path, recursive: true);
         }
+    }
+
+    private static void TestTraderSellsNeutral()
+    {
+        const string label = "Trader-Sells-Neutral";
+        var path = Path.Combine(_keep ?? Path.GetTempPath(), "TCD_Economy_Patch", label);
+        try
+        {
+            var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+            var ids = TraderSellsPolicy.ParameterIds.ToArray();
+            Check(ids.Length == 31 && ids.Distinct(StringComparer.Ordinal).Count() == 31,
+                label + ": expected 31 real seller category cells");
+            foreach (var id in ids)
+            {
+                var p = vm.AllParameters.Single(p => p.Id == id);
+                Check(p.IsToggle && p.CurrentBoolean && !p.IsValueModifiedFromReference()
+                    && p.IsControlEnabled, label + ": non-neutral seller " + id);
+            }
+            var result = new CfgPatchWriterService().Write(vm, Catalog,
+                new GameInstallInfo { HasDlc1 = true }, path);
+            Check(result.FileCount == 0 && result.EditCount == 0 && result.ParameterCount == 0,
+                label + ": default should emit zero patches");
+            _passed++;
+            Console.WriteLine("PASS " + label + " (31 neutral seller settings)");
+        }
+        finally { if (_keep is null && Directory.Exists(path)) Directory.Delete(path, true); }
+    }
+
+    private static void TestTraderSellsFiveRoles()
+    {
+        const string label = "Trader-Sells-Five-Roles";
+        var path = Path.Combine(_keep ?? Path.GetTempPath(), "TCD_Economy_Patch", label);
+        try
+        {
+            var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+            var selected = new[]
+            {
+                "economy.traderSells.general.drinks",
+                "economy.traderSells.medic.medical",
+                "economy.traderSells.technician.attachments",
+                "economy.traderSells.bartender.food",
+                "economy.traderSells.genericNpc.grenades"
+            };
+            foreach (var id in selected)
+            {
+                var parameter = vm.AllParameters.Single(p => p.Id == id);
+                parameter.CurrentBoolean = false;
+                Check(parameter.IsValueModifiedFromReference(), label + ": unchanged " + id);
+            }
+            var result = new CfgPatchWriterService().Write(vm, Catalog,
+                new GameInstallInfo { HasDlc1 = true }, path);
+            Check(result.ParameterCount == 5 && result.EditCount > 40 && result.FileCount >= 3,
+                label + ": source generator copies/redirects missing");
+            var cfgs = Directory.GetFiles(path, "*.cfg", SearchOption.AllDirectories);
+            var content = string.Join("\n", cfgs.Select(File.ReadAllText));
+            Check(content.Contains("TCD_TS_", StringComparison.Ordinal)
+                && content.Contains(": removenode", StringComparison.Ordinal)
+                && content.Contains("ItemGeneratorPrototypeSID = TCD_TS_", StringComparison.Ordinal)
+                && content.Contains("{refurl=../ItemGeneratorPrototypes.cfg;refkey=", StringComparison.Ordinal)
+                && content.Contains("ItemGenerator : struct.begin {bpatch}", StringComparison.Ordinal)
+                && content.Contains("PossibleItems : struct.begin {bpatch}", StringComparison.Ordinal)
+                && content.Contains("TradeGenerators : struct.begin {bpatch}", StringComparison.Ordinal),
+                label + ": wrong original-copy / BPatch / consumer redirect shape");
+            foreach (var file in cfgs)
+            {
+                var patch = Parse(File.ReadAllText(file));
+                Check(patch.Children.Keys.All(sid =>
+                    !sid.EndsWith("_ItemGenerator", StringComparison.Ordinal)
+                    || sid.StartsWith("TCD_TS_", StringComparison.Ordinal)),
+                    label + ": a shared vanilla item generator was edited directly");
+            }
+            _passed++;
+            Console.WriteLine("PASS " + label + " (5 roles, private copies, nested deletion and trade redirects)");
+        }
+        finally { if (_keep is null && Directory.Exists(path)) Directory.Delete(path, true); }
+    }
+
+    private static void TestTraderSellsDlcOnly()
+    {
+        const string label = "Trader-Sells-DLC-Only";
+        var path = Path.Combine(_keep ?? Path.GetTempPath(), "TCD_Economy_Patch", label);
+        try
+        {
+            var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+            var parameter = vm.AllParameters.Single(p =>
+                p.Id == "economy.traderSells.technician.weapons");
+            parameter.CurrentBoolean = false;
+            var inactive = new CfgPatchWriterService().Write(vm, Catalog,
+                new GameInstallInfo { HasDlc1 = false }, path);
+            Check(inactive.FileCount == 0 && inactive.EditCount == 0
+                && inactive.ParameterCount == 0,
+                label + ": disabled DLC must be a saved-only preference, not a false CFG patch");
+            var active = new CfgPatchWriterService().Write(vm, Catalog,
+                new GameInstallInfo { HasDlc1 = true }, path);
+            Check(active.EditCount > 0 && active.FileCount >= 2 && active.ParameterCount == 1,
+                label + ": installed DLC weapon seller source did not route");
+            var expectedDlc = ExpectedFile(path, "DLCGameData/DLC1/TradePrototypes.cfg");
+            Check(File.Exists(expectedDlc)
+                && File.ReadAllText(expectedDlc).Contains("ItemGeneratorPrototypeSID = TCD_TS_",
+                    StringComparison.Ordinal), label + ": missing DLC merchant rewire");
+            _passed++;
+            Console.WriteLine("PASS " + label + " (DLC1-only stock ignored without DLC1)");
+        }
+        finally { if (_keep is null && Directory.Exists(path)) Directory.Delete(path, true); }
+    }
+
+    private static void TestTraderSellsCombinedWithBuys()
+    {
+        const string label = "Trader-Sells-Combined-TradeGenerator";
+        var path = Path.Combine(_keep ?? Path.GetTempPath(), "TCD_Economy_Patch", label);
+        try
+        {
+            var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+            vm.AllParameters.Single(p => p.Id == "economy.traderSells.general.weapons")
+                .CurrentBoolean = false;
+            vm.AllParameters.Single(p => p.Id == "economy.traderBuys.general.weapon")
+                .CurrentBoolean = false;
+            vm.AllParameters.Single(p => p.Id == "economy.traderMinBuyCondition")
+                .SnapCurrentNumberToMarker(0.55);
+            var result = new CfgPatchWriterService().Write(vm, Catalog,
+                new GameInstallInfo { HasDlc1 = true }, path);
+            Check(result.ParameterCount == 3 && result.EditCount > 130,
+                label + ": missing one of three independent merchant edits");
+            var trade = Parse(File.ReadAllText(ExpectedFile(path, "GameData/TradePrototypes.cfg")));
+            var zalesie = trade.Get("Trader_Zalesie_TradePrototype").Get("TradeGenerators").Get("[0]");
+            Check(zalesie.Bpatch
+                && zalesie.Value("ItemGeneratorPrototypeSID").StartsWith("TCD_TS_", StringComparison.Ordinal)
+                && zalesie.Value("WeaponSellMinDurability") == "0.55f"
+                && zalesie.Value("ArmorSellMinDurability") == "0.55f"
+                && zalesie.Get("BuyLimitations").Value("[0]") == "EItemType::Weapon",
+                label + ": stock redirect, buyer restriction and condition overwrote one another");
+            _passed++;
+            Console.WriteLine("PASS " + label + " (three independent fields on one trade profile)");
+        }
+        finally { if (_keep is null && Directory.Exists(path)) Directory.Delete(path, true); }
     }
 
     private static string ExpectedFile(string outRoot, string source)

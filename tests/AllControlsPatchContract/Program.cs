@@ -40,8 +40,8 @@ internal static class Program
 
             var ids = Catalog.Parameters.Select(p => p.Id).ToHashSet(StringComparer.Ordinal);
             var tested = ids.Except(NonUi, StringComparer.Ordinal).OrderBy(x => x, StringComparer.Ordinal).ToArray();
-            Check(ids.Count == 328 && NonUi.IsSubsetOf(ids) && tested.Length == 311,
-                "Expected 328 catalog sources and 311 mounted editable writer probes");
+            Check(ids.Count == 359 && NonUi.IsSubsetOf(ids) && tested.Length == 342,
+                "Expected 359 catalog sources and 342 mounted editable writer probes");
 
             // The ordinary Master/Stalker corpse package contains no bonus
             // NPC_Ammo_Smart, so that source must be explicitly probed where
@@ -95,7 +95,9 @@ internal static class Program
                                 continue;
                             }
 
-                            var result = new CfgPatchWriterService().Write(vm, Catalog, null, path);
+                            var installation = id.StartsWith(TraderSellsPolicy.Prefix, StringComparison.Ordinal)
+                                ? new GameInstallInfo { HasDlc1 = true } : null;
+                            var result = new CfgPatchWriterService().Write(vm, Catalog, installation, path);
                             var cfg = Directory.Exists(path)
                                 ? Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories).ToArray()
                                 : Array.Empty<string>();
@@ -192,8 +194,8 @@ internal static class Program
                     failed.Add(id + ": " + string.Join(" | ", issues));
             }
             Check(failed.Count == 0, "Writer probe failures:\n" + string.Join("\n", failed));
-            Check(executed == 311, "Not every mounted editable source was executed");
-            Console.WriteLine($"PASS: {executed}/311 mounted editable source IDs produced production staged CFG output.");
+            Check(executed == 342, "Not every mounted editable source was executed");
+            Console.WriteLine($"PASS: {executed}/342 mounted editable source IDs produced production staged CFG output.");
             Console.WriteLine("NOT VERIFIED: in-game STALKER 2 CFG merge, UI interaction via Wine, or gameplay effects.");
             return 0;
         }

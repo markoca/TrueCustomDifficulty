@@ -68,8 +68,26 @@ public sealed class CfgWriterTraderBuys
     public int ExpectedProfiles { get; set; }
 }
 
+public sealed class CfgWriterTraderSells
+{
+    [JsonPropertyName("parameterIds")]
+    public List<string> ParameterIds { get; set; } = new();
+
+    [JsonPropertyName("manifestResource")]
+    public string ManifestResource { get; set; } = string.Empty;
+
+    [JsonPropertyName("expectedSourceRows")]
+    public int ExpectedSourceRows { get; set; }
+
+    [JsonPropertyName("expectedProfiles")]
+    public int ExpectedProfiles { get; set; }
+}
+
 public sealed class CfgWriterSpecialBaseline
 {
+    [JsonPropertyName("traderSells")]
+    public CfgWriterTraderSells TraderSells { get; set; } = new();
+
     [JsonPropertyName("traderBuys")]
     public CfgWriterTraderBuys TraderBuys { get; set; } = new();
 

@@ -1320,6 +1320,130 @@
     "economy.traderBuys.genericNpc.mutantLoot": {
       "kind": "toggle",
       "boolean": false
+    },
+    "economy.traderSells.general.weapons": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.general.armor": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.general.attachments": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.general.ammo": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.general.medical": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.general.food": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.general.drinks": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.general.artifacts": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.general.detectors": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.general.grenades": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.medic.medical": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.medic.drinks": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.medic.artifacts": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.medic.detectors": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.technician.weapons": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.technician.attachments": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.technician.ammo": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.technician.medical": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.technician.food": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.technician.drinks": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.bartender.weapons": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.bartender.ammo": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.bartender.food": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.bartender.drinks": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.bartender.artifacts": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.bartender.detectors": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.genericNpc.ammo": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.genericNpc.medical": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.genericNpc.food": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.genericNpc.drinks": {
+      "kind": "toggle",
+      "boolean": true
+    },
+    "economy.traderSells.genericNpc.grenades": {
+      "kind": "toggle",
+      "boolean": true
     }
   }
 }

@@ -35,10 +35,10 @@ catalog = json.loads((DATA / "parameters.json").read_text(encoding="utf-8"))
 base = json.loads((DATA / "cfg-writer-baseline.json").read_text(encoding="utf-8"))
 all_rows = catalog["parameters"]
 by = {p["id"]: p for p in all_rows}
-assert len(all_rows) == len(by) == base["supportedParameterCount"] == 328
+assert len(all_rows) == len(by) == base["supportedParameterCount"] == 359
 assert len(ids) == 40 and set(by).intersection(ids) == ids
-assert sum(p.get("exposeInUi", True) for p in all_rows) == 184
-assert sum(p.get("exposeInUi") is False for p in all_rows) == 144
+assert sum(p.get("exposeInUi", True) for p in all_rows) == 185
+assert sum(p.get("exposeInUi") is False for p in all_rows) == 174
 assert {p["id"] for p in all_rows if p.get("exposeInUi", True) and p["id"] in ids} == {
     "economy.traderBuys.general.weapon"}
 for role, (_, _, denied) in ROLES.items():
@@ -130,7 +130,7 @@ for label, needle, content in must:
     assert needle in content, (label, needle)
 assert "TradeGenerators" in implementation and "ItemGeneratorPrototypes.cfg" not in implementation
 
-print("[PASS] 328 catalog IDs / 184 visible / 144 hidden, 40 native Trader Buys cells")
+print("[PASS] 359 catalog IDs / 185 visible / 174 hidden, 40 native Trader Buys cells")
 print("[PASS] 86 exact original buy-policy source entries, roles, DLC1, Eger/Bolshak")
 print("[PASS] 12 neutral factory presets, real WPF bindings, BPatch source router")
 print("NOT VERIFIED: actual C# build, emitted .NET writer, Wine layout, Unreal gameplay")

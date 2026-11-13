@@ -15726,6 +15726,1215 @@
       "logic": "CHECKED buys mutant parts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.general.weapons",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "Trader Sells",
+      "description": "Remove weapons from the inventory of general traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "general",
+          "stockCategory": "weapons"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Choose which item categories each merchant type offers. Only unchecked cells change stock, without touching NPC or quest inventories.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": true
+    },
+    {
+      "id": "economy.traderSells.general.armor",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "General Sells Armor",
+      "description": "Remove armor from the inventory of general traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "general",
+          "stockCategory": "armor"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether general traders stock armor. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.general.attachments",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "General Sells Attachments",
+      "description": "Remove attachments from the inventory of general traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "general",
+          "stockCategory": "attachments"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether general traders stock attachments. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.general.ammo",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "General Sells Ammo",
+      "description": "Remove ammo from the inventory of general traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "general",
+          "stockCategory": "ammo"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether general traders stock ammo. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.general.medical",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "General Sells Medical",
+      "description": "Remove medical from the inventory of general traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "general",
+          "stockCategory": "medical"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether general traders stock medical. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.general.food",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "General Sells Food",
+      "description": "Remove food from the inventory of general traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "general",
+          "stockCategory": "food"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether general traders stock food. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.general.drinks",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "General Sells Drinks",
+      "description": "Remove drinks from the inventory of general traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "general",
+          "stockCategory": "drinks"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether general traders stock drinks. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.general.artifacts",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "General Sells Artifacts",
+      "description": "Remove artifacts from the inventory of general traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "general",
+          "stockCategory": "artifacts"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether general traders stock artifacts. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.general.detectors",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "General Sells Detectors",
+      "description": "Remove detectors from the inventory of general traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "general",
+          "stockCategory": "detectors"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether general traders stock detectors. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.general.grenades",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "General Sells Grenades",
+      "description": "Remove grenades from the inventory of general traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "general",
+          "stockCategory": "grenades"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether general traders stock grenades. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.medic.medical",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "Medic Sells Medical",
+      "description": "Remove medical from the inventory of medic traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "medic",
+          "stockCategory": "medical"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether medic traders stock medical. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.medic.drinks",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "Medic Sells Drinks",
+      "description": "Remove drinks from the inventory of medic traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "medic",
+          "stockCategory": "drinks"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether medic traders stock drinks. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.medic.artifacts",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "Medic Sells Artifacts",
+      "description": "Remove artifacts from the inventory of medic traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "medic",
+          "stockCategory": "artifacts"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether medic traders stock artifacts. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.medic.detectors",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "Medic Sells Detectors",
+      "description": "Remove detectors from the inventory of medic traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "medic",
+          "stockCategory": "detectors"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether medic traders stock detectors. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.technician.weapons",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "Technician Sells Weapons",
+      "description": "Remove weapons from the inventory of technician traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "technician",
+          "stockCategory": "weapons"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether technician traders stock weapons. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.technician.attachments",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "Technician Sells Attachments",
+      "description": "Remove attachments from the inventory of technician traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "technician",
+          "stockCategory": "attachments"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether technician traders stock attachments. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.technician.ammo",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "Technician Sells Ammo",
+      "description": "Remove ammo from the inventory of technician traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "technician",
+          "stockCategory": "ammo"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether technician traders stock ammo. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.technician.medical",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "Technician Sells Medical",
+      "description": "Remove medical from the inventory of technician traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "technician",
+          "stockCategory": "medical"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether technician traders stock medical. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.technician.food",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "Technician Sells Food",
+      "description": "Remove food from the inventory of technician traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "technician",
+          "stockCategory": "food"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether technician traders stock food. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.technician.drinks",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "Technician Sells Drinks",
+      "description": "Remove drinks from the inventory of technician traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "technician",
+          "stockCategory": "drinks"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether technician traders stock drinks. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.bartender.weapons",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "Bartender Sells Weapons",
+      "description": "Remove weapons from the inventory of bartender traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "bartender",
+          "stockCategory": "weapons"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether bartender traders stock weapons. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.bartender.ammo",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "Bartender Sells Ammo",
+      "description": "Remove ammo from the inventory of bartender traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "bartender",
+          "stockCategory": "ammo"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether bartender traders stock ammo. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.bartender.food",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "Bartender Sells Food",
+      "description": "Remove food from the inventory of bartender traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "bartender",
+          "stockCategory": "food"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether bartender traders stock food. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.bartender.drinks",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "Bartender Sells Drinks",
+      "description": "Remove drinks from the inventory of bartender traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "bartender",
+          "stockCategory": "drinks"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether bartender traders stock drinks. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.bartender.artifacts",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "Bartender Sells Artifacts",
+      "description": "Remove artifacts from the inventory of bartender traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "bartender",
+          "stockCategory": "artifacts"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether bartender traders stock artifacts. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.bartender.detectors",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "Bartender Sells Detectors",
+      "description": "Remove detectors from the inventory of bartender traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "bartender",
+          "stockCategory": "detectors"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether bartender traders stock detectors. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.genericNpc.ammo",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "Generic NPC Sells Ammo",
+      "description": "Remove ammo from the inventory of generic npc traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "genericNpc",
+          "stockCategory": "ammo"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether generic npc traders stock ammo. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.genericNpc.medical",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "Generic NPC Sells Medical",
+      "description": "Remove medical from the inventory of generic npc traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "genericNpc",
+          "stockCategory": "medical"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether generic npc traders stock medical. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.genericNpc.food",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "Generic NPC Sells Food",
+      "description": "Remove food from the inventory of generic npc traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "genericNpc",
+          "stockCategory": "food"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether generic npc traders stock food. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.genericNpc.drinks",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "Generic NPC Sells Drinks",
+      "description": "Remove drinks from the inventory of generic npc traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "genericNpc",
+          "stockCategory": "drinks"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether generic npc traders stock drinks. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
+    },
+    {
+      "id": "economy.traderSells.genericNpc.grenades",
+      "tab": "economy",
+      "group": "Trader Sells",
+      "label": "Generic NPC Sells Grenades",
+      "description": "Remove grenades from the inventory of generic npc traders while leaving what they buy from you unchanged.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/TradePrototypes.cfg + GameData/ItemGeneratorPrototypes.cfg + DLCGameData/DLC1 equivalents",
+          "prototype": "86 source-audited production trade profiles",
+          "path": "TradeGenerators/[0]/ItemGeneratorPrototypeSID + private stock generator copies",
+          "operation": "removeTraderSellCategoryByRole",
+          "merchantRole": "genericNpc",
+          "stockCategory": "grenades"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
+          "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+        ]
+      },
+      "rationale": "Controls whether generic npc traders stock grenades. Uncheck to remove these items from their offers.",
+      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
+      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "exposeInUi": false
     }
   ],
   "deferred": [

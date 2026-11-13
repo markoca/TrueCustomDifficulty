@@ -62,6 +62,7 @@
     <EmbeddedResource Include="Data\blueprint-shuffle-manifest.csv" LogicalName="TrueCustomDifficulty.Data.blueprint-shuffle-manifest.csv" />
     <EmbeddedResource Include="Data\trader-min-buy-condition-manifest.csv" LogicalName="TrueCustomDifficulty.Data.trader-min-buy-condition-manifest.csv" />
     <EmbeddedResource Include="Data\trader-buy-policy-manifest.csv" LogicalName="TrueCustomDifficulty.Data.trader-buy-policy-manifest.csv" />
+    <EmbeddedResource Include="..\..\docs\generators\trader-offers-source-rows.csv" LogicalName="TrueCustomDifficulty.Data.trader-offers-source-rows.csv" />
     <EmbeddedResource Include="Presets\README.md" LogicalName="TrueCustomDifficulty.Presets.README.md" />
     <EmbeddedResource Include="Presets\Immersive.json" LogicalName="TrueCustomDifficulty.Presets.Immersive.json" />
     <EmbeddedResource Include="Presets\Tactical.json" LogicalName="TrueCustomDifficulty.Presets.Tactical.json" />
