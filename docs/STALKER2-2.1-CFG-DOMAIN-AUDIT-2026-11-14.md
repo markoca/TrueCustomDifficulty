@@ -67,3 +67,15 @@ The existing BUY manifest remains unchanged *because its actual source bytes are
 ## Full original-ZIP actor delta vs all production manifests (2026-11-14)
 
 Recomputed the native base and DLC1 SpawnActor roots from the supplied original 2.0 and 2.1 outer ZIPs (24 removed, 87 watched-field-changed, 211 newly introduced roots) and searched all **46** current embedded production CSVs for exact removed/changed actor GUID references. Result: **zero intersections**. `tools/audit_game_21_actor_manifests.py --old "/path/STALKER2-2.0 cfg dump.zip" --new "/path/STALKER2-2.1 cfg dump.zip"` reproduces this source check. It intentionally requires both archives and is not part of no-source CI, to prevent treating an archive-free check as real evidence. New-actor incorporation and behavioral tests remain pending.
+
+## 2.1 added-actor classification (2026-11-14)
+
+Re-extracted the exact 2.1 base/DLC1 `SpawnActorPrototypes.cfg` roots, using original 2.0 dumps for set subtraction. All **211** newly introduced roots are accounted for. Base (205): 132 FastTravelSecondaryPoint, 63 FastTravelPoint, three Trigger, three Snork Obj, two ContextualAction, one ElectroAnomaly and one Squad. DLC1 (six): three Trigger, two ContextualAction, one FastTravelPoint. Combined: **196 fast-travel-only roots**, and **15 quest/non-loot roots**. No newly added actor authors nonempty `StashPrototypeSID` or `ItemGeneratorSettings`. Four base quest Snork/Squad roots in `WorldMap_WP/E11_MQ01_LogicLevel_WP` have `EnableSmartLootIfPossible = true`: preserve quest-specific isolation; do not automatically add these to regular NPC loot manifests. No production stash/loot manifests need augmentation merely to account for these new actors.
+
+The auditable extractor is `tools/audit_21_new_actor_scope.py`. Example:
+
+```bash
+python3 tools/audit_21_new_actor_scope.py --old "STALKER2-2.0 cfg dump.zip" --new "STALKER2-2.1 cfg dump.zip" --out audit/21-new-actor-scope.csv
+```
+
+It pins the actual decoded 2.1 actor CFG SHA-256 and all newly introduced root IDs, validates type census and each source field, and rejects any new nonempty stash/generator field. The generated CSV is evidence, not an embedded runtime source. This is original-source mapping evidence, **not** gameplay confirmation; 2.1 Fast Travel and quest NPC loot behavior remain untested.
