@@ -3440,3 +3440,8 @@ The compact Anti-Rad cell remains an OFF/ON two-state control. Its present catal
 ## 2026-11-14 — Stashes current source audit method scope
 
 The Stashes current source auditor now obtains `content_body` from the live `DrawStashContentMix` method before checking ammo quantity placement. A stale undefined `content` alias blocked all later checks. Duplicate identical static assertions were consolidated without weakening the current source contract. No UI runtime code or source values changed.
+
+
+## 2026-11-14 — Unified Stash ammo quantity source visibility
+
+The active unified Ammo Quantity rail edits `loot.cheapStashAmmoQuantity`; the Standard/Rare ammo amount sources stay supported, saved and synchronized by the ViewModel but hidden from direct UI. Stashes current audit now asserts this exact one-visible / two-hidden catalog arrangement, instead of incorrectly requiring three visible rails. UI/control semantics and CFG output remain unchanged.
