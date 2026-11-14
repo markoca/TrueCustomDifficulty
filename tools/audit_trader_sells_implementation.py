@@ -34,6 +34,16 @@ assert 'parameter.IsValueModifiedFromReference()' in ui
 assert 'TraderItemOverrides' in ui
 assert 'legacy item-specific exclusions' in ui
 assert 'legacy BUY restrictions' in ui
+# Technician has native CFG SELL routes but only exceptional game merchants
+# actually open a stock shop. Suppress misleading role-wide Technician cards,
+# without dropping existing preset/CFG writer parameters.
+assert 'Roles.Where(role => role.Id != "technician").ToArray()' in policy
+assert 'foreach (var role in TraderSellsPolicy.EditorRoles)' in ui
+assert 'TraderSellsPolicy.EditorRoles.Single(r => r.Id == _roleId)' in ui
+assert 'foreach (var role in TraderSellsPolicy.Roles)' not in ui
+assert 'TraderSellsPolicy.ParameterIds.Any(id => !_source.ContainsKey(id))' in ui
+assert 'TraderSellsPolicy.ParameterIds.Concat(' in ui
+assert '["technician"] = new HashSet<string>(StringComparer.Ordinal)' in policy
 assert 'Binding="{Binding IsTraderSellsAnchor}"' in xaml
 assert '<controls:TraderBuysMatrix' in xaml
 # The category-only UI does not bind the retired per-item list. The saved

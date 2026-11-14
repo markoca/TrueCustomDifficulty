@@ -117,7 +117,7 @@ public sealed class TraderBuysMatrix : UserControl
         var accent = BrushFor("AccentBrush", Brushes.Gold);
         var fg = BrushFor("TextBrush", Brushes.White);
         var border = BrushFor("BorderSoftBrush", Brushes.DimGray);
-        foreach (var role in TraderSellsPolicy.Roles)
+        foreach (var role in TraderSellsPolicy.EditorRoles)
         {
             var selected = role.Id == _roleId;
             var button = new Button
@@ -144,7 +144,7 @@ public sealed class TraderBuysMatrix : UserControl
         if (_categories is null) return;
         _categories.Children.Clear();
         _cells.Clear();
-        var role = TraderSellsPolicy.Roles.Single(r => r.Id == _roleId);
+        var role = TraderSellsPolicy.EditorRoles.Single(r => r.Id == _roleId);
         var fg = BrushFor("TextBrush", Brushes.White);
         var muted = BrushFor("RadarMutedTextBrush", Brushes.LightGray);
         var accent = BrushFor("AccentBrush", Brushes.Gold);

@@ -1,3 +1,9 @@
+## 2026-11-14 — CURRENT Trader Stock: technician role hidden from the stock editor
+
+**Economy → Trader Stock has four player-facing role tabs:** General, Medic, Bartender, Generic NPC. Do **not** display a Technician tab or technician category checkboxes. In the 2.1 CFG, technician trade profiles and source stock paths exist, but these do not establish that ordinary repair/upgrade technicians expose a shop to the player. The rare selling technician is not justification for applying broad role-wide stock changes through the UI.
+
+This is **UI filtering only**, not parameter deletion: all 31 original SELL IDs (including six technician SELL IDs), all 40 legacy BUY IDs, their preset values, DLC1 data, legacy compatibility sidecars and CFG writer routing remain intact. Existing customized technician settings are not silently discarded. Maintain the exact separation between `TraderSellsPolicy.Roles` (all five source roles for persistence/writer) and `TraderSellsPolicy.EditorRoles` (four visible tabs). No extra card, blank Technician placeholder, or default check highlight.
+
 ## 2026-11-14 — CURRENT Trader Stock: remove orphan Trader Buys ON row
 
 The legacy `economy.traderBuys.general.weapon` anchor must **not** render an individual parameter card (including the redundant `Trader Buys — ON` header and mouse-wheel `−/+` hints). All 40 BUY settings remain loaded, saved and routed to their CFG writer, but every BUY source is hidden as an independent card. The single compact category-only Trader Stock board remains hosted by `economy.traderSells.general.weapons`, with the five role tabs and original SELL checkboxes unchanged. No second BUY editor or empty placeholder spacing. `IsVisualControlAnchor` and XAML toggle layout reserve the trader-board anchor only for SELL. Catalog IDs, visible/hidden catalog metadata, preset values and generated patch behavior do not change.
