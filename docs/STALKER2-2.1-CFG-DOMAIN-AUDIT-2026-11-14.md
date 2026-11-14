@@ -83,3 +83,15 @@ It pins the actual decoded 2.1 actor CFG SHA-256 and all newly introduced root I
 The added-actor scope audit is source-only and uses both original archives; it must fail if new actor census, scope or stash/generator fields change. The separate Stashes Medical static readout assertion was updated to track the live source expression (no gameplay change).
 
 The 2.1 new-actor extractor now has an offline parser/quest-isolation regression in GitHub Actions (`tests/test_game_21_new_actor_scope.py`). It checks non-loot travel classification, rejects unreviewed stash assignments, isolates quest Snork SmartLoot, and parses only top-level actor fields. CI has no original source ZIPs: the 211-actor full census is deliberately a separate original-archive check, not a synthetic PASS.
+
+## Special CFG source-family identity gate (2026-11-14)
+
+Direct original-archive comparison confirms **11 source CFGs** used by the generator, trader, stash, difficulty, A-Life and other special writer families are **byte-identical** between the supplied 2.0 and 2.1 dumps. Both ItemGeneratorPrototypes sources (base and DLC1), both TradePrototypes sources, StashPrototypes, DifficultyPrototypes, FastTravelPrototypes, CorpseClueStashPrototypes, ALife Director, ObjPrototypes and the base ItemPrototypes are identical. The DLC1 ItemPrototypes source *changed* and is intentionally excluded from this equivalence claim (its 21 changed-file direct leaves were compared separately). Base and DLC1 SpawnActorPrototypes also changed; actor-root checks and new-actor classification are separate evidence.
+
+The new `tools/audit_21_special_source_families.py` pins SHA-256 values for these 11 source files and refuses to report source PASS without BOTH original archives. Run:
+
+```bash
+python3 tools/audit_21_special_source_families.py --old "/path/STALKER2-2.0 cfg dump.zip" --new "/path/STALKER2-2.1 cfg dump.zip" --json-out audit/21-special-source-families.json
+```
+
+CI runs `--inventory-only`, which explicitly reports `sourceStatus=NOT_RUN`, and cannot be mistaken for original archive verification. These checks establish CFG byte compatibility, **not** that every special writer's 2.1 item-generator link, SmartLoot semantic, game load order, or modified runtime output has been validated. Global version metadata remains 2.0.5.

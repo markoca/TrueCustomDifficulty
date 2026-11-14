@@ -25,6 +25,7 @@ STATIC = (
     ("trader-21-runtime", "tools/audit_trader_21_runtime.py"),
     ("trader-21-buy-source", "tools/audit_trader_buy_21_source.py"),
     ("game-21-domain-migration", "tools/audit_21_domain_migration.py"),
+    ("game-21-special-source-inventory", "tools/audit_21_special_source_families.py"),
     ("rc-final-copy", "tools/audit_rc_final_copy.py"),
     ("current-stashes", "tools/audit_stashes_current.py"),
     ("stash-content-gear", "tools/audit_stash_content_gear.py"),
