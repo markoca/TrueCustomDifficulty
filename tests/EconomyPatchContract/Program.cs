@@ -65,6 +65,7 @@ internal static class Program
             TestTraderSellsFiveRoles();
             TestTraderSellsDlcOnly();
             TestTraderSellsCombinedWithBuys();
+            TestGenericNpcRareStock();
             TestLinkedRoamingGuides();
             Check(_passed == 47, "Expected exactly 47 Economy writer scenarios");
             Console.WriteLine($"PASS: {_passed} Economy production BPatch writer scenarios");
@@ -666,6 +667,117 @@ internal static class Program
             Console.WriteLine("PASS " + label + " (three independent fields on one trade profile)");
         }
         finally { if (_keep is null && Directory.Exists(path)) Directory.Delete(path, true); }
+    }
+
+    private static void TestGenericNpcRareStock()
+    {
+        const string label = "Generic-NPC-Rare-Trader-Stock";
+        var path = Path.Combine(_keep ?? Path.GetTempPath(), "TCD_Economy_Patch", label);
+        const string key = "TCD_GENERIC_NPC_RARE_STOCK";
+        var original = Environment.GetEnvironmentVariable(key);
+        try
+        {
+            var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+            Environment.SetEnvironmentVariable(key, "test");
+            var test = new CfgPatchWriterService().Write(vm, Catalog,
+                new GameInstallInfo { HasDlc1 = true }, path);
+            Check(test.FileCount == 2 && test.EditCount > 30 && test.ParameterCount == 0,
+                label + ": expected only two test-mode CFG files without catalog changes");
+            var generator = Parse(File.ReadAllText(ExpectedFile(path,
+                "GameData/ItemGeneratorPrototypes.cfg")));
+            var trade = Parse(File.ReadAllText(ExpectedFile(path,
+                "GameData/TradePrototypes.cfg")));
+            var expected = new Dictionary<string, int>(StringComparer.Ordinal)
+            {
+                ["GeneralNPC_TradePrototype"] = 2,
+                ["GeneralNPC_TradePrototype_Bandit"] = 2,
+                ["GeneralNPC_TradePrototype_Corpus"] = 2,
+                ["GeneralNPC_TradePrototype_Duty"] = 2,
+                ["GeneralNPC_TradePrototype_Freedom"] = 2,
+                ["GeneralNPC_TradePrototype_Mercenary"] = 2,
+                ["GeneralNPC_TradePrototype_Militaries"] = 2,
+                ["GeneralNPC_TradePrototype_Scientists"] = 1,
+                ["GeneralNPC_TradePrototype_Spark"] = 1
+            };
+            Check(trade.Children.Count == expected.Count,
+                label + ": modified named/non-generic merchant");
+            foreach (var (sid, nextGroup) in expected)
+            {
+                var clone = trade.Get(sid).Get("TradeGenerators").Get("[0]")
+                    .Value("ItemGeneratorPrototypeSID");
+                Check(clone.StartsWith("TCD_TS_", StringComparison.Ordinal),
+                    label + ": generic trader has no private clone " + sid);
+                var extra = generator.Get(clone).Get("ItemGenerator")
+                    .Get("[" + nextGroup.ToString(CultureInfo.InvariantCulture) + "]")
+                    .Get("PossibleItems").Get("[0]");
+                Check(extra.Value("ItemGeneratorPrototypeSID") == "TCD_GNRS_RARE_MASTER"
+                    && extra.Value("Chance") == "1", label + ": test offer not guaranteed");
+            }
+            var master = generator.Get("TCD_GNRS_RARE_MASTER")
+                .Get("ItemGenerator").Get("[0]").Get("PossibleItems");
+            Check(master.Children.Count == 2 &&
+                master.Get("[0]").Value("Chance") == "1" &&
+                master.Get("[1]").Value("Chance") == "0.08",
+                label + ": expected one slot and occasional second slot");
+            var primary = generator.Get("TCD_GNRS_PRIMARY")
+                .Get("ItemGenerator").Get("[0]").Get("PossibleItems");
+            Check(primary.Children.Count == 5 &&
+                primary.Get("[0]").Value("Weight") == "58" &&
+                primary.Get("[1]").Value("Weight") == "16" &&
+                primary.Get("[2]").Value("Weight") == "8",
+                label + ": wrong broken/better weapon mix");
+            var broken = generator.Get("TCD_GNRS_BROKEN_PRIMARY")
+                .Get("ItemGenerator").Get("[0]").Get("PossibleItems").Get("[0]");
+            var better = generator.Get("TCD_GNRS_BETTER_PRIMARY")
+                .Get("ItemGenerator").Get("[0]").Get("PossibleItems").Get("[0]");
+            Check(broken.Value("MinDurability") == "0.02"
+                && broken.Value("MaxDurability") == "0.17"
+                && better.Value("MinDurability") == "0.42"
+                && better.Value("MaxDurability") == "0.68",
+                label + ": weapon condition pools drifted");
+            Check(!generator.Children.ContainsKey("GeneralNPC_TradeItemGenerator")
+                && !trade.Children.ContainsKey("Trader_Zalesie_TradePrototype"),
+                label + ": original or named merchant touched");
+
+            // Active SELL category suppression must reuse the SAME clone;
+            // no duplicate/missing TradeGenerators[0] patch assignments.
+            vm.AllParameters.Single(p => p.Id == "economy.traderSells.genericNpc.ammo")
+                .CurrentBoolean = false;
+            var merged = new CfgPatchWriterService().Write(vm, Catalog,
+                new GameInstallInfo { HasDlc1 = true }, path);
+            Check(merged.ParameterCount == 1 && merged.FileCount == 2,
+                label + ": rare trader and original SELL removal did not compose");
+            var mergedGenerator = Parse(File.ReadAllText(ExpectedFile(path,
+                "GameData/ItemGeneratorPrototypes.cfg")));
+            var mergedTrade = Parse(File.ReadAllText(ExpectedFile(path,
+                "GameData/TradePrototypes.cfg")));
+            Check(mergedTrade.Children.Count == expected.Count &&
+                mergedGenerator.Children.Keys.Count(k =>
+                    k.StartsWith("TCD_TS_", StringComparison.Ordinal)) == 9,
+                label + ": duplicate generic merchant clones");
+
+            // The opt-in normal setting is a 2% gate; no per-SID 100% flood.
+            Environment.SetEnvironmentVariable(key, "1");
+            new CfgPatchWriterService().Write(
+                new MainViewModel(Catalog), Catalog, null, path);
+            var normal = Parse(File.ReadAllText(ExpectedFile(path,
+                "GameData/ItemGeneratorPrototypes.cfg")));
+            var normalTrade = Parse(File.ReadAllText(ExpectedFile(path,
+                "GameData/TradePrototypes.cfg")));
+            var normalClone = normalTrade.Get("GeneralNPC_TradePrototype")
+                .Get("TradeGenerators").Get("[0]").Value("ItemGeneratorPrototypeSID");
+            Check(normal.Get(normalClone).Get("ItemGenerator").Get("[2]")
+                .Get("PossibleItems").Get("[0]").Value("Chance") == "0.02",
+                label + ": normal chance must be 2%");
+
+            _passed++;
+            Console.WriteLine("PASS " + label + " (9 private traders, 1+rare 2 slots, TEST=100%, normal=2%, compatible SELL)");
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable(key, original);
+            if (_keep is null && Directory.Exists(path)) Directory.Delete(path, true);
+        }
     }
 
     private static string ExpectedFile(string outRoot, string source)

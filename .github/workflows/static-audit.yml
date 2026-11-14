@@ -39,6 +39,9 @@ jobs:
 
       - name: Trader Sells 2939-path merchant stock isolation and UI contract
         run: python tools/audit_trader_sells_implementation.py
+
+      - name: Generic NPC trader-only rare stock 2.1 scope and native-pool contract
+        run: python tools/audit_generic_npc_rare_trader_21.py
       
       - name: Named trader 2.1 rationale versus current source category manifest
         run: python tools/audit_trader_named_rationale.py

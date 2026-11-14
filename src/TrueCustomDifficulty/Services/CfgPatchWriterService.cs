@@ -316,6 +316,9 @@ public sealed partial class CfgPatchWriterService
             writtenParameters);
         editCount += WriteTraderBuys(modifiedById, hasDlc1, documents, writtenParameters);
         editCount += WriteTraderSells(modifiedById, vm.TraderItemOverrides, hasDlc1, documents, writtenParameters);
+        // Explicit environment opt-in only during the rare generic-NPC
+        // trader stock playtest. No NPC loadouts, corpses or normal builds.
+        editCount += WriteGenericNpcRareTraderStock(documents);
 
         var f1BoxRemoval = WriteWorldF1GrenadeBoxes(
             modifiedById,
@@ -3460,6 +3463,17 @@ public sealed partial class CfgPatchWriterService
             foreach (var segment in nodePath)
                 current = current.GetOrAddChild(segment, useBpatch: true);
             return current;
+        }
+
+        // Standalone source-independent TCD item generators are new CFG
+        // definitions, not BPatch edits of original or shared game roots.
+        public PatchNode AddPlainRoot(string prototype)
+        {
+            if (_roots.ContainsKey(prototype))
+                throw new InvalidDataException("Duplicate TCD generator SID: " + prototype);
+            var root = new PatchNode(prototype, useBpatch: false);
+            _roots.Add(prototype, root);
+            return root;
         }
 
         public PatchNode GetOrAddReferencedRoot(string prototype, string refUrl, string refKey)
