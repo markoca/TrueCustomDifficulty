@@ -418,11 +418,12 @@ assert '"WEIGHT APPLIES TO ALL TIERS"' not in content
 assert '"RELATIVE SELECTION"' not in source
 assert '"BASIC POOL COMPOSITION"' not in coverage
 assert "var wide = width >= 670.0;" in content
-assert 839.0 - (589.0 + 236.0) == 14.0
-assert 1185.0 - (839.0 + 332.0) == 14.0
-assert "=> width >= 700.0 ? 373.0 : 409.0;" in source
-assert "=> width >= 700.0 ? 220.0 : 383.0;" in source
-assert "=> width >= 746.0 ? 220.0 : width >= 580.0 ? 383.0 : 546.0;" in source
+# Old fixed 373/409, 220/383 and 839/1185 lane calculations
+# were retired with the current compact Stashes rendering. Guard the
+# actual measured heights rather than asserting removed helper formulas.
+assert '=> width >= 700.0 ? 785.0 : 1095.0;' in source
+assert '=> width >= 700.0 ? 609.0 : 1050.0;' in source
+assert '=> width < 570.0 ? 670.0 : 502.0;' in source
 for name, document in [("UI-DESIGN-LOCK", lock),
                        ("VISUAL-CONTROL-SYSTEM", system),
                        ("STASHES-TAB-AND-REDESIGN-PROPOSAL", proposal)]:

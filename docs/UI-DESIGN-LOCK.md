@@ -3080,3 +3080,8 @@ The native Medical MAX value can use a negative sentinel, but the compact dual-r
 ## 2026-11-14 — Stash Content Mix height regression guard
 
 The live `StashContentMixHeight(width)` returns 785 DIP for board widths ≥700 DIP and 1095 DIP below that threshold. The static source audit had kept obsolete 839/1185-DIP expectations from an earlier geometry. The audit now asserts the **current renderer measurements**; no UI source, controls or gameplay values have been changed.
+
+
+## 2026-11-14 — Current Stashes board height guards
+
+Retired hardcoded 839/1185-DIP lane arithmetic and older 373/409, 220/383, 220/383/546-DIP assertions were removed from the Stashes audit. Their former helpers are no longer live controls. Tests now check active Stash Content Mix (785/1095 DIP), Medical (609/1050 DIP), and Bonus Gear (502/670 DIP) bounds. No renderer or gameplay values changed.
