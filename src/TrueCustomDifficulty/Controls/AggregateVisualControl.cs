@@ -1675,6 +1675,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private const double SurvivalPrimaryRulerHeight = 105.0;
     private const double SurvivalPrimaryPreviewTop =
         SurvivalPrimaryRulerTop + SurvivalPrimaryRulerHeight + 12.0;
+    // The stage strip is INSIDE the Fatigue Combat Profile frame. The combat
+    // chart keeps its original 365-DIP native point/ring/footer geometry.
+    private const double FatigueCombatInset = 105.0;
+    private const double FatigueCombatGraphHeight = 365.0;
 
     // Fatigue stages affect when penalties begin, while their strengths remain
     // separate authored effects. The overview is read-only: thresholds and
@@ -1740,21 +1744,30 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             text, muted, border, accent, panel);
 
         var previewTop = SurvivalPrimaryPreviewTop;
-        var preview = new Rect(17, previewTop, width, 80);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1), preview, 4, 4);
-        DrawText(dc, "FATIGUE POINTS / STAGE PREVIEW",
-            new Point(preview.Left + 12, preview.Top + 7),
-            11.0, text, FontWeights.Bold);
-        // Sleep availability is an independent CFG threshold, drawn as a
-        // passive source-linked landmark, not a fourth fatigue stage editor.
+        // A single framed surface owns both the passive stage strip and the
+        // editable AIM/RELOAD combat graph. The shared X endpoints refer to
+        // exactly the same native 0-100 fatigue-point domain.
+        var profile = new Rect(17.0, previewTop, width,
+            FatigueCombatInset + FatigueCombatGraphHeight);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), profile, 4.0, 4.0);
+        DrawCenteredText(dc, "FATIGUE COMBAT PROFILE",
+            new Point(profile.Left + profile.Width / 2.0, profile.Top + 18.0),
+            11.5, accent, FontWeights.Bold);
+
+        // Sleep eligibility is a passive source-linked landmark, not an
+        // extra fatigue stage or a draggable threshold.
         var sleepGate = Linked("survival.sleepEligibilityThreshold");
         if (sleepGate is not null)
             DrawDerivedRight(dc, $"SLEEP AVAILABLE {sleepGate.CurrentNumber:0} PTS",
-                new Point(preview.Right - 12.0, preview.Top + 8.0),
+                new Point(profile.Right - 12.0, profile.Top + 15.0),
                 9.0, muted, accent, FontWeights.SemiBold);
-        var axis = new Rect(preview.Left + 81, preview.Top + 32, preview.Width - 111, 12);
+
+        // The upper strip uses the exact same horizontal X mapping as the
+        // combat chart below; no second card or redundant preview heading.
+        var axis = new Rect(profile.Left + 81.0, profile.Top + 55.0,
+            profile.Width - 111.0, 12.0);
         double X(double value) => ValueToX(value, 0, 100, axis, false);
-        var y = axis.Top + axis.Height / 2;
+        var y = axis.Top + axis.Height / 2.0;
         if (sleepGate is not null)
         {
             var sleepX = X(sleepGate.CurrentNumber);
@@ -1767,21 +1780,30 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var thresholds = new[] { low, medium, severe };
         var stops = new[] { 0.0, low.CurrentNumber, medium.CurrentNumber, severe.CurrentNumber, 100.0 };
         for (var i = 0; i < 4; i++)
-            dc.DrawRectangle(CloneWithOpacity(i == 3 ? accent : soft, i == 3 ? 0.72 : 0.2 + i * 0.12),
-                null, new Rect(X(stops[i]), y - 4, Math.Max(0, X(stops[i + 1]) - X(stops[i])), 8));
+            dc.DrawRectangle(CloneWithOpacity(i == 3 ? accent : soft,
+                    i == 3 ? 0.72 : 0.2 + i * 0.12),
+                null, new Rect(X(stops[i]), y - 4.0,
+                    Math.Max(0.0, X(stops[i + 1]) - X(stops[i])), 8.0));
         for (var i = 0; i < 3; i++)
         {
-            dc.DrawLine(new Pen(muted, 1.5), new Point(X(thresholds[i].ReferenceNumber), y - 10),
-                new Point(X(thresholds[i].ReferenceNumber), y + 10));
-            dc.DrawLine(new Pen(accent, 2), new Point(X(thresholds[i].CurrentNumber), y - 11),
-                new Point(X(thresholds[i].CurrentNumber), y + 11));
+            dc.DrawLine(new Pen(muted, 1.5),
+                new Point(X(thresholds[i].ReferenceNumber), y - 10.0),
+                new Point(X(thresholds[i].ReferenceNumber), y + 10.0));
+            dc.DrawLine(new Pen(accent, 2.0),
+                new Point(X(thresholds[i].CurrentNumber), y - 11.0),
+                new Point(X(thresholds[i].CurrentNumber), y + 11.0));
             DrawCenteredText(dc, new[] { "LOW", "MEDIUM", "SEVERE" }[i] +
                 $" {thresholds[i].CurrentNumber:0}",
-                new Point(preview.Left + 12 + (i + 0.5) * (preview.Width - 24) / 3, preview.Top + 55),
+                new Point(profile.Left + 12.0 +
+                    (i + 0.5) * (profile.Width - 24.0) / 3.0,
+                    profile.Top + 80.0),
                 9.5, i == 2 ? accent : text, FontWeights.SemiBold);
         }
+        dc.DrawLine(new Pen(CloneWithOpacity(border, 0.65), 0.9),
+            new Point(profile.Left + 12.0, profile.Top + 101.0),
+            new Point(profile.Right - 12.0, profile.Top + 101.0));
 
-        DrawFatigueCombined(dc, preview.Bottom + 51.0, width,
+        DrawFatigueCombined(dc, profile.Top + FatigueCombatInset, width,
             rate, low, medium, severe, lowAim, mediumAim, severeAim,
             mediumReload, severeReload, text, muted, border, soft, accent, panel);
     }
@@ -1796,10 +1818,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         ParameterViewModel severeReload, Brush text, Brush muted,
         Brush border, Brush soft, Brush accent, Brush panel)
     {
-        var frame = new Rect(17, top, width, 365);
-        DrawCenteredText(dc, "FATIGUE COMBAT PROFILE",
-            new Point(frame.Left + frame.Width / 2, top - 29), 11.5, accent, FontWeights.Bold);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1), frame, 4, 4);
+        // Geometry-only subregion inside the one shared profile frame.
+        // Do not paint a second border or a duplicate profile heading here.
+        var frame = new Rect(17, top, width, FatigueCombatGraphHeight);
         var area = new Rect(frame.Left + 81, top + 52, frame.Width - 111, 164);
         double X(double v) => ValueToX(v, 0, 100, area, false);
         var aimMax = Math.Max(lowAim.Maximum, Math.Max(mediumAim.Maximum, severeAim.Maximum));
@@ -7350,7 +7371,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     // Renderer measurements and painted card extents must agree at every breakpoint.
     private static double CompactFatigueHeight(double width)
     {
-        return SurvivalPrimaryPreviewTop + 80.0 + 51.0 + 365.0 + 12.0;
+        return SurvivalPrimaryPreviewTop + FatigueCombatInset +
+            FatigueCombatGraphHeight + 12.0;
     }
 
 

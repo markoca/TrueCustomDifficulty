@@ -3327,12 +3327,12 @@ _fatigue_required = (
     'AIM TIME +{aims[i].CurrentNumber * 100:0.#}%',
     'RELOAD TIME +{reloads[i - 1].CurrentNumber * 100:0.##}%',
     "top + (wrap ? 337.0 : 327.0)",
-    'var frame = new Rect(17, top, width, 365);',
+    'var frame = new Rect(17, top, width, FatigueCombatGraphHeight);',
 )
 for _token in _fatigue_required:
     if _token not in _fatigue_block:
         fail(f"Fatigue stage/threshold/AFTER/AIM/RELOAD contract drifted: {_token}")
-if ("DrawFatigueCombined(dc, preview.Bottom + 51.0, width,\n            rate, low,"
+if ("DrawFatigueCombined(dc, profile.Top + FatigueCombatInset, width,\n            rate, low,"
         not in _fatigue_source
         or not _fatigue_block
         or any(x in _fatigue_block for x in ("ToolTip =", "AddHorizontalTarget(", "onsetY ="))):
@@ -3342,6 +3342,30 @@ for _threshold, _seconds in ((50, 5000), (60, 6000), (80, 8000)):
         fail("Fatigue vanilla onset arithmetic drifted")
 if not errors:
     note("Fatigue integrated stage PTS/AFTER/AIM TIME/RELOAD TIME percentages, live rate")
+
+
+# One fatigue panel: a source-linked passive strip and interactive graph
+# within ONE visible rounded profile frame. Preserve both 0–100 X mappings.
+_fatigue_curve_end = _fatigue_source.find(
+    "// Gold aim curve and white reload curve", _fatigue_source.find("private void DrawFatigueCurve("))
+_fatigue_curve = _fatigue_source[
+    _fatigue_source.find("private void DrawFatigueCurve("):_fatigue_curve_end]
+if (not all(token in _fatigue_curve for token in (
+        'var profile = new Rect(17.0, previewTop, width,',
+        'FatigueCombatInset + FatigueCombatGraphHeight);',
+        'dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), profile, 4.0, 4.0);',
+        'DrawCenteredText(dc, "FATIGUE COMBAT PROFILE",',
+        'Linked("survival.sleepEligibilityThreshold")',
+        'var axis = new Rect(profile.Left + 81.0, profile.Top + 55.0,',
+        'profile.Width - 111.0, 12.0);',
+        'DrawFatigueCombined(dc, profile.Top + FatigueCombatInset, width,'))
+    or _fatigue_curve.count('dc.DrawRoundedRectangle(') != 1
+    or 'FATIGUE POINTS / STAGE PREVIEW' in _fatigue_curve
+    or 'dc.DrawRoundedRectangle(' in _fatigue_block
+    or 'FATIGUE COMBAT PROFILE' in _fatigue_block):
+    fail("Fatigue stage preview / combat plot unified-frame contract drifted")
+else:
+    note("Fatigue stage strip + AIM/RELOAD graph share one aligned 470-DIP framed board")
 
 # Same 10.8-DIP footer typography in both Survival stage profiles.
 # Preserve 69-/93-DIP clipped stage cells and measured responsive wrapping.
@@ -3406,7 +3430,7 @@ if not all(token in _primary_src for token in (
         'private const double SurvivalPrimaryRulerTop = 51.0;',
         'private const double SurvivalPrimaryRulerHeight = 105.0;',
         'SurvivalPrimaryRulerTop + SurvivalPrimaryRulerHeight + 12.0;',
-        'return SurvivalPrimaryPreviewTop + 80.0 + 51.0 + 365.0 + 12.0;',
+        'return SurvivalPrimaryPreviewTop + FatigueCombatInset +',
         'var previewBottom = SurvivalPrimaryPreviewTop + 80.0;')):
     fail("Hunger/Fatigue live source height and responsive stage layout diverged")
 for _file in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
