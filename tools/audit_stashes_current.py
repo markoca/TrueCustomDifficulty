@@ -223,9 +223,11 @@ basic_mixer = read(src / "Controls/AggregateVisualControl.StashBranch.cs").split
 assert "tierName" not in basic_mixer
 assert "ammoId" not in basic_mixer
 assert 'percentage: false, multiplier: true' in content_body
+# The unified Ammo Quantity rail exposes the Basic source only;
+# Standard/Rare amounts remain routed and synchronized, not separate UI rails.
 for pid in rewards:
     assert stash[pid]["group"] == "Stash Content"
-    assert stash[pid]["exposeInUi"] is True
+    assert stash[pid]["exposeInUi"] is (pid == rewards[0]), pid
     assert stash[pid]["slider"] == {"min": 0.25, "max": 2, "step": 0.25, "stepMode": "absolute"}
     assert f'["{pid}"] = "StashContentMix"' in pvm
     assert f'"{pid}"' in vm

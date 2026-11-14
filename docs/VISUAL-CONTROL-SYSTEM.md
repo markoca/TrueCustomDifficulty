@@ -3449,3 +3449,7 @@ The active unified Ammo Quantity rail edits `loot.cheapStashAmmoQuantity`; the S
 ## 2026-11-14 — Stashes audit visibility-scope repair
 
 The single visible Ammo Quantity rail has exactly one exposed source, `loot.cheapStashAmmoQuantity`; Standard and Rare remain hidden and synchronized. The source-visibility assertion now iterates those three quantity IDs, **not** the unrelated Medical/Food/Drinks priority knobs. Those three priority knobs still retain their 0.05× step contract. This fixes a false CI failure without changing any WPF layout, parameter value or game writer.
+
+## 2026-11-14 — Complete unified Ammo Quantity visibility regression
+
+The active Stashes UI deliberately exposes one `loot.cheapStashAmmoQuantity` rail for all tiers while retaining two hidden, routed `loot.mediumStashAmmoQuantity` / `loot.expensiveStashAmmoQuantity` model values. The end-of-audit three-reward loop now checks this same one-visible/two-hidden invariant as the earlier visibility block, rather than incorrectly demanding three separate controls. No runtime, CFG writer or layout was modified.

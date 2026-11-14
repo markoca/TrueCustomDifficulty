@@ -105,3 +105,7 @@ Direct writer values were retained only at structurally equivalent source positi
 The old 2.0/2.0.5 strings in historical research and source-valued rationale remain **provenance only**, not alternate writer source selection. Writer baseline schema version 1 is not a game-version selector.
 
 **Acceptance still NOT RUN:** no original game archives ship in this repository, so archive-free CI cannot repeat original-ZIP source checks or validate actual game runtime. The domain audit distinguishes an offline inventory PASS from sourceComparison=NOT_RUN and gameplayStatus=NOT_TESTED. Test in S.T.A.L.K.E.R. 2.1: clean BPatch game load; hub and roaming guides; trader category on/off for both buys/sells; regular/unique/protected stashes; crates; NPC SmartLoot/corpse loot; world weapon/armor/attachment placement; DLC1 item weights/spawns; and A-Life streaming. Do not call the game behavior certified until those pass.
+
+## 2026-11-14 — Stashes static CI gate follow-up
+
+The Windows production BPatch contract jobs and Linux WPF cross-build passed on commit `9273f14`, while the static `audit_stashes_current.py` stopped on its late assertion requiring all three ammo quantity sources to be independently visible. That conflicts with the deliberately unified tier UI. The assertion now verifies exactly one exposed Basic source with the Standard/Rare values preserved and hidden. Game-side runtime acceptance is still pending; CI passing cannot certify in-game gameplay.
