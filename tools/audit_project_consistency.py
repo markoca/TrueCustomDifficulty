@@ -3224,6 +3224,35 @@ else:
     note("Hunger LOW single-hover contract: actual Y(0) handle glow, no generic plot-midpoint overlay")
 
 
+# Hunger preview and response profile are ONE shared source-linked board.
+# No duplicate frame/header; use the same X positions and unchanged joint hits.
+_hunger_frame_begin = _hunger_source.find(
+    'const double previewTop = SurvivalPrimaryPreviewTop;', _hunger_source.find('private void DrawHungerLadder('))
+_hunger_frame_end = _hunger_source.find(
+    '// Leave room only for Y tick labels/title;', _hunger_frame_begin)
+_hunger_frame = (_hunger_source[_hunger_frame_begin:_hunger_frame_end]
+                 if 0 <= _hunger_frame_begin < _hunger_frame_end else '')
+if (not all(token in _hunger_frame for token in (
+        'var profile = new Rect(17.0, previewTop, width,',
+        'HungerSurvivalInset + HungerProfileHeight);',
+        'dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), profile, 4.0, 4.0);',
+        'DrawCenteredText(dc, "HUNGER SURVIVAL PROFILE",',
+        'var axis = new Rect(profile.Left + 81.0, profile.Top + 55.0,',
+        'profile.Width - 111.0, 12.0);',
+        'var previewLabels = new[] { "LOW", "MEDIUM", "SEVERE" };',
+        'var frame = new Rect(17.0, profile.Top + HungerSurvivalInset,',
+        'width, HungerProfileHeight);'))
+    or _hunger_frame.count('dc.DrawRoundedRectangle(') != 1
+    or 'HUNGER POINTS  /  STAGE PREVIEW' in _hunger_frame
+    or 'frame.Top - 36.0' in _hunger_frame
+    or 'var plot = new Rect(axis.Left - 2.0,' not in _hunger_source
+    or 'var area = new Rect(plot.Left + 2.0,' not in _hunger_source
+    or 'HitKind.HungerJoint' not in _hunger_source
+    or 'private const double HungerSurvivalInset = 105.0;' not in _hunger_source):
+    fail('Hunger stage preview / survival response unified-frame contract drifted')
+else:
+    note('Hunger stage strip and stamina recovery chart share one 449-DIP frame')
+
 # Source-linked Hunger footer: one stage/threshold/AFTER summary per column,
 # with the native stamina recovery loss below. No separate IN row or editor.
 _hunger_footer_start = _hunger_source.find('var footerTop = frame.Top + 269.0;')
@@ -3252,7 +3281,7 @@ _hunger_required = (
     'if (pointsPerSecond <= Epsilon)',
     'Math.Floor(Math.Max(0.0, threshold) / pointsPerSecond)',
     'private const double HungerProfileHeight = 344.0;',
-    'var frameBottom = previewBottom + 55.0 + HungerProfileHeight;',
+    'var frameBottom = SurvivalPrimaryPreviewTop + HungerSurvivalInset +',
 )
 if not all(token in _hunger_source for token in _hunger_required):
     fail('Hunger stage/threshold/onset/recovery summary contract drifted')
@@ -3431,7 +3460,7 @@ if not all(token in _primary_src for token in (
         'private const double SurvivalPrimaryRulerHeight = 105.0;',
         'SurvivalPrimaryRulerTop + SurvivalPrimaryRulerHeight + 12.0;',
         'return SurvivalPrimaryPreviewTop + FatigueCombatInset +',
-        'var previewBottom = SurvivalPrimaryPreviewTop + 80.0;')):
+        'var frameBottom = SurvivalPrimaryPreviewTop + HungerSurvivalInset +')):
     fail("Hunger/Fatigue live source height and responsive stage layout diverged")
 for _file in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
     if "2026-10-11 — Matched Hunger/Fatigue primary resource rulers" not in (DOCS / _file).read_text(encoding="utf-8"):

@@ -3766,16 +3766,19 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             text, muted, border, accent, panel);
 
         const double previewTop = SurvivalPrimaryPreviewTop;
-        var preview = new Rect(17.0, previewTop, width, 80.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), preview, 4.0, 4.0);
-        DrawText(dc, "HUNGER POINTS  /  STAGE PREVIEW",
-            new Point(preview.Left + 12.0, previewTop + 7.0),
-            11.0, text, FontWeights.Bold);
+        // One visual frame for both the read-only hunger stage strip and the
+        // editable stamina recovery graph: no second border/title and no gap.
+        var profile = new Rect(17.0, previewTop, width,
+            HungerSurvivalInset + HungerProfileHeight);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), profile, 4.0, 4.0);
+        DrawCenteredText(dc, "HUNGER SURVIVAL PROFILE",
+            new Point(profile.Left + profile.Width / 2.0, profile.Top + 18.0),
+            11.5, accent, FontWeights.Bold);
 
-        // Share the exact 0–100 X coordinates with the lower Hunger profile.
-        // The left inset makes room for the profile's rotated Y caption and ticks.
-        var axis = new Rect(preview.Left + 81.0, previewTop + 32.0,
-            preview.Width - 111.0, 12.0);
+        // The strip's 0–100 hunger scale and the graph's X scale have exactly
+        // matching on-screen endpoints (profile.Left + 81 / width - 111).
+        var axis = new Rect(profile.Left + 81.0, profile.Top + 55.0,
+            profile.Width - 111.0, 12.0);
         var y = axis.Top + axis.Height / 2.0;
         double At(double value) => ValueToX(value, 0.0, 100.0, axis, false);
 
@@ -3789,11 +3792,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         };
         for (var i = 0; i < stops.Length - 1; i++)
         {
-            var a = At(stops[i]);
-            var b = At(stops[i + 1]);
+            var from = At(stops[i]);
+            var to = At(stops[i + 1]);
             dc.DrawRectangle(CloneWithOpacity(i == 3 ? accent : soft,
                     i == 3 ? 0.72 : 0.22 + i * 0.12), null,
-                new Rect(a, y - 4.0, Math.Max(0.0, b - a), 8.0));
+                new Rect(from, y - 4.0, Math.Max(0.0, to - from), 8.0));
         }
 
         foreach (var threshold in new[] { low, medium, severe })
@@ -3808,25 +3811,25 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         var previewParameters = new[] { low, medium, severe };
         var previewLabels = new[] { "LOW", "MEDIUM", "SEVERE" };
-        var legendWidth = (preview.Width - 24.0) / 3.0;
+        var legendWidth = (profile.Width - 24.0) / 3.0;
         for (var i = 0; i < 3; i++)
         {
             var parameter = previewParameters[i];
-            var cx = preview.Left + 12.0 + (i + 0.5) * legendWidth;
+            var cx = profile.Left + 12.0 + (i + 0.5) * legendWidth;
             DrawCenteredNumericChanges(dc,
                 $"{previewLabels[i]} {parameter.CurrentNumber:0}",
-                new Point(cx, previewTop + 55.0),
+                new Point(cx, profile.Top + 80.0),
                 9.5, text, accent, FontWeights.SemiBold,
                 parameter.IsValueModifiedFromReference());
         }
+        dc.DrawLine(new Pen(CloneWithOpacity(border, 0.65), 0.9),
+            new Point(profile.Left + 12.0, profile.Top + 101.0),
+            new Point(profile.Right - 12.0, profile.Top + 101.0));
 
-        // Game-facing state profile: the bonus is now edited in the top row.
-        // The lower plot spans the same full-width panel as the stage preview.
-        var frame = new Rect(17.0, preview.Bottom + 55.0,
-            Math.Max(460.0, ActualWidth - 34.0), HungerProfileHeight);
-        DrawCenteredText(dc, "HUNGER SURVIVAL PROFILE",
-            new Point(ActualWidth / 2.0, frame.Top - 36.0), 11.5, accent, FontWeights.Bold);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), frame, 4.0, 4.0);
+        // The original 344-DIP plot and summary area is an internal geometry
+        // region now. Only the outer "profile" rectangle paints a border.
+        var frame = new Rect(17.0, profile.Top + HungerSurvivalInset,
+            width, HungerProfileHeight);
         // Leave room only for Y tick labels/title; no separate Well-Fed lane.
         var plot = new Rect(axis.Left - 2.0, frame.Top + 43.0,
             axis.Width + 12.0, 183.0);
@@ -5731,6 +5734,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     }
     // Reserved space for plot ticks plus three independently readable stage lines.
     private const double HungerProfileHeight = 344.0;
+    // The read-only hunger stage strip sits inside the SAME frame as the
+    // recovery-loss chart; keep original chart/hit/footer geometry intact.
+    private const double HungerSurvivalInset = 105.0;
     // Keep the four food editors bounded within HungerLadder at all host widths.
     // The same geometry constants drive painting and measured board height.
     private const double HungerFoodHeadingOffset = 18.0;
@@ -7384,8 +7390,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
     private static double CompactHungerHeight(double width)
     {
-        var previewBottom = SurvivalPrimaryPreviewTop + 80.0;
-        var frameBottom = previewBottom + 55.0 + HungerProfileHeight;
+        var frameBottom = SurvivalPrimaryPreviewTop + HungerSurvivalInset +
+            HungerProfileHeight;
         var foodRows = width >= 700.0 ? 2 : 4;
         return frameBottom + HungerFoodCardsOffset
             + (foodRows - 1) * HungerFoodRowPitch + HungerFoodCardHeight + 12.0;
