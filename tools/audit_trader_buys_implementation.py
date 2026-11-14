@@ -68,19 +68,19 @@ assert '&& Id != "economy.traderAmmoStock"' in visible
 assert '&& Id != "economy.fastTravelCost"' in visible
 panel = (src / "Infrastructure/TraderEconomyPanel.cs").read_text(encoding="utf-8")
 assert 'UseSideColumn(width)' in panel
+assert 'private const double TableShare = 0.30;' in panel
+assert 'var tableWidth = contentWidth * TableShare;' in panel
+assert 'return (tableWidth, contentWidth - tableWidth);' in panel
+assert 'tableWidth >= MinTableWidth && bankWidth >= MinBankWidth' in panel
+assert 'var (tableWidth, bankWidth) = ColumnWidths(width);' in panel
 assert 'var right = left + tableWidth + Gap;' in panel
+assert 'Math.Min(FallbackTableWidth, width)' in panel
+assert 'Math.Min(FallbackBankWidth, width)' in panel
+assert 'Family="TraderStockBoard"\n                                                                                                     HorizontalAlignment="Stretch"' in xaml
+assert 'Family="ServiceCostsBoard"\n                                                                                                     HorizontalAlignment="Stretch"' in xaml
 assert 'stock.DesiredSize.Height + Gap + services.DesiredSize.Height' in panel
 assert 'new Rect(right, stock.DesiredSize.Height + Gap,' in panel
 assert 'table.DesiredSize.Height + Gap' in panel
-viewmodel = (src / "ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
-visible = viewmodel.split("public bool IsControlVisible =>", 1)[1].split("public string ToggleStateLabel", 1)[0]
-assert '&& Id != "economy.traderAmmoStock"' in visible
-assert '&& Id != "economy.fastTravelCost"' in visible
-panel = (src / "Infrastructure/TraderEconomyPanel.cs").read_text(encoding="utf-8")
-assert 'UseThreeColumns(width)' in panel
-assert 'UseTwoKnobColumns(width)' in panel
-assert 'tableWidth + 2 * KnobWidth + 2 * Gap' in panel
-assert 'table.DesiredSize.Height + Gap + bankHeight' in panel
 # The legacy BUY source anchor must not leak a bare ON / wheel +/- card.
 # SELL anchors the only visible stock editor; all 40 BUY toggles still write.
 pvm = (src / "ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")

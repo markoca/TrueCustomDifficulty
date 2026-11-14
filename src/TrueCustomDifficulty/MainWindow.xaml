@@ -332,12 +332,12 @@
                                                                                                ParameterSelected="AggregateVisualControl_ParameterSelected"
                                                                                                Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
                                                                     <controls:AggregateVisualControl Family="TraderStockBoard"
-                                                                                                     HorizontalAlignment="Center"
+                                                                                                     HorizontalAlignment="Stretch"
                                                                                                      PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                                      ParameterSelected="AggregateVisualControl_ParameterSelected"
                                                                                                      Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
                                                                     <controls:AggregateVisualControl Family="ServiceCostsBoard"
-                                                                                                     HorizontalAlignment="Center"
+                                                                                                     HorizontalAlignment="Stretch"
                                                                                                      PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                                      ParameterSelected="AggregateVisualControl_ParameterSelected"
                                                                                                      Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />

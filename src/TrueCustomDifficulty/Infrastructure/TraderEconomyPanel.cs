@@ -12,22 +12,30 @@ namespace TrueCustomDifficulty.Infrastructure;
 public sealed class TraderEconomyPanel : Panel
 {
     private const double Gap = 10.0;
-    private const double MinTableWidth = 340.0;
-    private const double MaxTableWidth = 820.0;
-    private const double MinBankWidth = 390.0;
-    private const double MaxBankWidth = 500.0;
+    private const double TableShare = 0.30;
+    private const double MinTableWidth = 300.0;
+    private const double MinBankWidth = 470.0;
+    // Only used when the window is too narrow to preserve a readable 30/70 split.
+    private const double FallbackTableWidth = 820.0;
+    private const double FallbackBankWidth = 606.0;
 
     private static double UsableWidth(double width)
         => double.IsFinite(width) ? Math.Max(1.0, width) : 1120.0;
 
-    private static bool UseSideColumn(double width)
-        => width >= MinTableWidth + Gap + MinBankWidth;
-
+    // Split the available content (not the 10-DIP gutter) precisely 30/70.
+    // Both Measure and Arrange use the same calculation, with no maximum
+    // width on either column that would silently undo the requested ratio.
     private static (double Table, double Banks) ColumnWidths(double width)
     {
-        var bankWidth = Math.Min(MaxBankWidth, width - MinTableWidth - Gap);
-        var tableWidth = Math.Min(MaxTableWidth, width - bankWidth - Gap);
-        return (tableWidth, bankWidth);
+        var contentWidth = Math.Max(1.0, width - Gap);
+        var tableWidth = contentWidth * TableShare;
+        return (tableWidth, contentWidth - tableWidth);
+    }
+
+    private static bool UseSideColumn(double width)
+    {
+        var (tableWidth, bankWidth) = ColumnWidths(width);
+        return tableWidth >= MinTableWidth && bankWidth >= MinBankWidth;
     }
 
     protected override Size MeasureOverride(Size availableSize)
@@ -52,8 +60,8 @@ public sealed class TraderEconomyPanel : Panel
 
         // Narrow fallback preserves the horizontal knob orientation within
         // each bank; only the two bank cards move below the stock table.
-        var narrowTableWidth = Math.Min(MaxTableWidth, width);
-        var narrowBankWidth = Math.Min(MaxBankWidth, width);
+        var narrowTableWidth = Math.Min(FallbackTableWidth, width);
+        var narrowBankWidth = Math.Min(FallbackBankWidth, width);
         table.Measure(new Size(narrowTableWidth, double.PositiveInfinity));
         stock.Measure(new Size(narrowBankWidth, double.PositiveInfinity));
         services.Measure(new Size(narrowBankWidth, double.PositiveInfinity));
@@ -81,8 +89,8 @@ public sealed class TraderEconomyPanel : Panel
             return finalSize;
         }
 
-        var tableWidthNarrow = Math.Min(MaxTableWidth, width);
-        var bankWidthNarrow = Math.Min(MaxBankWidth, width);
+        var tableWidthNarrow = Math.Min(FallbackTableWidth, width);
+        var bankWidthNarrow = Math.Min(FallbackBankWidth, width);
         table.Arrange(new Rect((width - tableWidthNarrow) / 2.0, 0.0,
             tableWidthNarrow, table.DesiredSize.Height));
         var top = table.DesiredSize.Height + Gap;
