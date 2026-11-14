@@ -15732,7 +15732,7 @@
       "tab": "economy",
       "group": "Traders",
       "label": "Trader Stock",
-      "description": "Choose exactly which original items each trader offers to the player. Stock generation and individual item SID selection are independent of merchant BUY limitations.",
+      "description": "Choose which original stock categories traders offer; controls apply by trader role, not by individual NPC.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -15761,8 +15761,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Choose a trader, filter its stock, and remove individual items from its original item generator. NPC and quest inventories are unchanged.",
-      "logic": "Checked items remain in original trader stock. Unchecked items are removed from private generator copies. Older category-wide seller restrictions remain compatible.",
+      "rationale": "Switch categories on or off for all traders of the selected role. OFF removes offers from that category after stock refresh; prices and other inventories stay separate.",
+      "logic": "CHECKED keeps original category stock. UNCHECKED removes that category for the selected trader role; original chance, rank and refresh rules still apply.",
       "interaction": "Search or filter original item SIDs and uncheck unwanted stock. Rank gating, stock probabilities, condition, and refresh remain original.",
       "exposeInUi": true
     },

@@ -57,9 +57,15 @@ public sealed class ParameterViewModel : ObservableObject
     // The WHAT IT DOES paragraph contains gameplay rationale only.
     // Editor instructions are a separate, compact section at the bottom of the
     // right-hand pane, immediately ahead of the muted contextual footer.
-    public string RationaleDisplay => string.IsNullOrWhiteSpace(Definition.Rationale)
-        ? Description.Trim()
-        : Definition.Rationale.Trim();
+    // Keep source-backed named-trader category reference in WHAT IT DOES
+    // for every clicked Trader Stock checkbox, not just the first anchor cell.
+    public string RationaleDisplay =>
+        (string.IsNullOrWhiteSpace(Definition.Rationale)
+            ? Description.Trim()
+            : Definition.Rationale.Trim())
+        + (IsTraderSellsMember
+            ? Environment.NewLine + Environment.NewLine + TraderStockRationale.NamedCategories
+            : string.Empty);
 
     /// <summary>
     /// Player-facing interaction guide. These entries describe the ACTUAL

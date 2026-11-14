@@ -39,6 +39,9 @@ jobs:
 
       - name: Trader Sells 2939-path merchant stock isolation and UI contract
         run: python tools/audit_trader_sells_implementation.py
+      
+      - name: Named trader 2.1 rationale versus current source category manifest
+        run: python tools/audit_trader_named_rationale.py
       - name: Trader 2.1 source/runtime integrity
         run: python tools/audit_trader_21_runtime.py
 
