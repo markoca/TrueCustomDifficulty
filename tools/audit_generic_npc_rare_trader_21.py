@@ -74,6 +74,13 @@ assert 'Text("CHANCE", 10, muted)' in ui
 assert 'Visibility.Visible : Visibility.Collapsed' in ui
 assert 'Minimum = 0.01, Maximum = 1.0' in ui
 assert 'TickFrequency = 0.01' in ui
+assert 'row.PreviewMouseRightButtonDown +=' in ui
+assert 'parameter.ResetToReference();' in ui
+assert 'if (!parameter.IsControlEnabled) return;' in ui
+assert '_gearOutline.PreviewMouseRightButtonDown +=' in ui
+assert 'RareGearEnabled = false;' in ui
+assert '_gearChanceRow.PreviewMouseRightButtonDown +=' in ui
+assert 'RareGearChance = 0.02;' in ui
 assert 'RareGearEnabled="{Binding DataContext.GenericNpcRareGearEnabled, Mode=TwoWay' in xaml
 assert 'RareGearChance="{Binding DataContext.GenericNpcRareGearChance, Mode=TwoWay' in xaml
 assert '_genericNpcRareGearChance = 0.02' in vm

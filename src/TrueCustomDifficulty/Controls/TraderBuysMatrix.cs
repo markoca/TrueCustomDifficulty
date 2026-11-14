@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using TrueCustomDifficulty.Services;
 using TrueCustomDifficulty.ViewModels;
@@ -217,12 +218,23 @@ public sealed class TraderBuysMatrix : UserControl
             };
             Grid.SetColumn(outline, 1);
             grid.Children.Add(outline);
-            _categories.Children.Add(new Border
+            var row = new Border
             {
                 BorderBrush = border, BorderThickness = new Thickness(1),
                 CornerRadius = new CornerRadius(3), Background = background,
                 Margin = new Thickness(1, 2, 1, 2), Child = grid
-            });
+            };
+            // Preview catches right-clicks on the row, checkbox and its chrome.
+            // Reset only this native SELL category, never the selected role.
+            row.PreviewMouseRightButtonDown += (_, e) =>
+            {
+                if (!parameter.IsControlEnabled) return;
+                parameter.ResetToReference();
+                ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
+                Refresh();
+                e.Handled = true;
+            };
+            _categories.Children.Add(row);
             _cells[id] = cell;
         }
 
@@ -259,6 +271,11 @@ public sealed class TraderBuysMatrix : UserControl
             BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(3),
             Width = 28, Height = 27, HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center, Child = _gearCheck
+        };
+        _gearOutline.PreviewMouseRightButtonDown += (_, e) =>
+        {
+            RareGearEnabled = false;
+            e.Handled = true;
         };
         Grid.SetColumn(_gearOutline, 1);
         grid.Children.Add(_gearOutline);
@@ -301,6 +318,13 @@ public sealed class TraderBuysMatrix : UserControl
             BorderBrush = border, BorderThickness = new Thickness(1),
             CornerRadius = new CornerRadius(3), Background = background,
             Margin = new Thickness(1, 1, 1, 2), Child = chanceGrid
+        };
+        // Keep the optional chance independent of GEAR: reset to its
+        // persisted 2% default without turning the checkbox off.
+        _gearChanceRow.PreviewMouseRightButtonDown += (_, e) =>
+        {
+            RareGearChance = 0.02;
+            e.Handled = true;
         };
         _categories.Children.Add(_gearChanceRow);
     }
