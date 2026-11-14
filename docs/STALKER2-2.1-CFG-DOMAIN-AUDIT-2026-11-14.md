@@ -117,3 +117,7 @@ Factory presets deliberately vary Extra Stash Gear: enabled for Anomaly Runner, 
 ## 2026-11-14 — Twelve factory preset 2.1 metadata cutover
 
 All twelve embedded factory presets now carry `gameVersion: 2.1`; the 359 parameter values in each were left unchanged. The directory migration recognizes SHA-1 Git blob identities of the immediately previous pristine 2.0.5 factory JSONs, replacing **only exact-byte stock copies** on startup. User-edited presets of any name, including factory names, remain untouched; older metadata is informational and does not select an obsolete CFG writer baseline. The active writer and catalog already reject 2.0.5 targets. An offline regression checks factory versions, complete parameter sets and the exact-blob upgrade gate. Gameplay test remains separate.
+
+## 2026-11-14 — Extra Stash Gear call-site static audit
+
+`WriteStashGearCoverage(...)` is invoked by the principal `CfgPatchWriterService.cs` production writer, not by the `StashTuning.cs` partial. The protected-weapon audit now checks the real production call-site; the existing independent checks of regular-only weapon removals and protected stash exclusions are preserved. This corrects a stale static audit path; no game writer or UI behavior changes.

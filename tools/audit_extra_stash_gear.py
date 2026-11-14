@@ -41,7 +41,8 @@ dlc_code = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.Stas
 assert "loot.stashGearCheapWeapon" not in dlc_code
 assert "loot.stashGearCheapArmor" not in dlc_code
 assert "if (patch.Count == 0)" in dlc_code
-assert 'WriteStashGearCoverage(allById, hasDlc1, documents)' in svc
+writer = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.cs").read_text(encoding="utf-8")
+assert 'WriteStashGearCoverage(allById, hasDlc1, documents)' in writer
 assert "StashGearStableHash(" in coverage and "SelectStashGearActors(" in coverage
 assert "LoadStashGearPool(" in coverage and "LoadStashGearActors(" in coverage
 assert 'item.SetAssignment("MinCount", "1")' in coverage
