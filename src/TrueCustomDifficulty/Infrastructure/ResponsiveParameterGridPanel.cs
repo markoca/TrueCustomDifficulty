@@ -101,22 +101,15 @@ public sealed class ResponsiveParameterGridPanel : Panel
             ["loot.blueprintShuffle"] = new("loot-world-switches-2", 1),
             ["loot.worldWeaponDensity"] = new("loot-world-density-1", 0),
 
-            // Economy dashboard: two source-native editors per logical section.
-            // Full-width visual anchors are selectively paired below; the six
-            // item-value columns and Trader Stock keep their existing widths.
+            // Trader Stock, Stock Amount and Service Prices share one
+            // responsive three-column row. No standalone knob bank remains.
             ["economy.startingMoney"] = new("economy-moneyflow", 0),
-            ["economy.fastTravelCost"] = new("economy-expenses", 0),
-            ["economy.repairEnemy"] = new("economy-expenses", 1),
             ["economy.buyCondition"] = new("economy-moneyflow", 1),
 
             // Economy original per-source semantic slots (backing children).
             ["economy.sellCondition"] = new("economy-trading-1", 1),
             ["economy.traderMinBuyCondition"] = new("economy-trading-2", 0),
             ["economy.itemValueFloor"] = new("economy-trading-2", 1),
-            ["economy.traderAmmoStock"] = new("economy-stock-1", 0),
-            ["economy.medicStock"] = new("economy-stock-1", 1),
-            ["economy.upgradeCost"] = new("economy-services", 1),
-            ["economy.repairCostBase"] = new("economy-services", 2),
             ["economy.repairDisaffection"] = new("economy-reputation-1", 1),
             ["economy.repairNeutral"] = new("economy-reputation-2", 0),
             ["economy.repairFriend"] = new("economy-reputation-2", 1),
@@ -364,12 +357,11 @@ public sealed class ResponsiveParameterGridPanel : Panel
         if (child is not FrameworkElement { DataContext: ParameterViewModel parameter })
             return false;
 
-        // Pair only these compact approved Economy panels. The item-value
-        // six-column editor and stock knobs retain full-width source geometry.
+        // RepairCurve has no companion in Expenses after Service Prices moves
+        // into the Trader Economy panel, so it must use a full-width row.
         return parameter.IsVisualControlAnchor
             && parameter.Id is not ("economy.startingMoney"
-                or "economy.buyCondition" or "economy.fastTravelCost"
-                or "economy.repairEnemy");
+                or "economy.buyCondition");
     }
 
     private sealed record SemanticSlot(string RowKey, int Column);

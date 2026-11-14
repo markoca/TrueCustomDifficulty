@@ -99,6 +99,21 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         control.InvalidateVisual();
     }
 
+    // Portrait presentation for the Economy's combined trader row only.
+    // All other families retain their established knob layout.
+    public static readonly DependencyProperty VerticalKnobLayoutProperty =
+        DependencyProperty.Register(nameof(VerticalKnobLayout), typeof(bool),
+            typeof(AggregateVisualControl),
+            new FrameworkPropertyMetadata(false,
+                FrameworkPropertyMetadataOptions.AffectsMeasure
+                | FrameworkPropertyMetadataOptions.AffectsRender));
+
+    public bool VerticalKnobLayout
+    {
+        get => (bool)GetValue(VerticalKnobLayoutProperty);
+        set => SetValue(VerticalKnobLayoutProperty, value);
+    }
+
     public IEnumerable? Parameters
     {
         get => (IEnumerable?)GetValue(ParametersProperty);
@@ -138,8 +153,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var compactBoard = Family is "CouponFlow" or "TradingDashboard"
             or "ServiceCostsBoard" or "RepairCurve"
             or "MasterLowHealth" or "MasterRadiationPenalty";
+        var minimumWidth = VerticalKnobLayout ? 180.0 : compactBoard ? 280.0 : 520.0;
         var width = double.IsInfinity(availableSize.Width) ? 760.0
-            : Math.Max(compactBoard ? 280.0 : 520.0, availableSize.Width);
+            : Math.Max(minimumWidth, availableSize.Width);
         return new Size(width, GetDesiredHeight(Family, width));
     }
 
@@ -642,6 +658,19 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             ("economy.upgradeCost", "UPGRADES"),
             ("economy.repairCostBase", "BASE REPAIR")
         };
+        if (VerticalKnobLayout)
+        {
+            const double pitch = 187.0;
+            var cellWidth = Math.Min(194.0, Math.Max(1.0, ActualWidth - 24.0));
+            var left = (ActualWidth - cellWidth) / 2.0;
+            for (var i = 0; i < channels.Length; i++)
+                DrawSourceKnob(dc, P(channels[i].Id), channels[i].Label,
+                    new Rect(left, 44.0 + i * pitch, cellWidth, 181.0),
+                    text, muted, border, accent, panel,
+                    percentageReadout: channels[i].Id == "economy.repairCostBase");
+            return;
+        }
+
         var columns = ActualWidth >= 390.0 ? 3 : 2;
         const double gap = 10.0;
         var bankWidth = Math.Min(606.0, ActualWidth - 30.0);
@@ -667,12 +696,24 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
-        DrawHeader(dc, "TRADER STOCK", "", text, muted, accent);
+        DrawHeader(dc, VerticalKnobLayout ? "STOCK AMOUNT" : "TRADER STOCK",
+            "", text, muted, accent);
         var channels = new (string Id, string Label)[]
         {
             ("economy.traderAmmoStock", "AMMO SUPPLY"),
             ("economy.medicStock", "MEDIC SUPPLIES")
         };
+        if (VerticalKnobLayout)
+        {
+            const double pitch = 187.0;
+            var cellWidth = Math.Min(194.0, Math.Max(1.0, ActualWidth - 24.0));
+            var left = (ActualWidth - cellWidth) / 2.0;
+            for (var i = 0; i < channels.Length; i++)
+                DrawSourceKnob(dc, P(channels[i].Id), channels[i].Label,
+                    new Rect(left, 44.0 + i * pitch, cellWidth, 181.0),
+                    text, muted, border, accent, panel);
+            return;
+        }
         const double cellWidth = 194.0;
         const double gap = 12.0;
         const double top = 49.0;
@@ -7289,8 +7330,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         => family switch
         {
             "CouponFlow" => CouponBoardHeight(width),
-            "ServiceCostsBoard" => ServicePriceBoardHeight(width),
-            "TraderStockBoard" => 242.0,
+            "ServiceCostsBoard" => VerticalKnobLayout ? 608.0 : ServicePriceBoardHeight(width),
+            "TraderStockBoard" => VerticalKnobLayout ? 423.0 : 242.0,
             "ItemWeightBoard" => EconomyBoardHeight(width, 4),
             "AnomalyGlobalDamage" => 242.0,
             "FlycatcherSlowdown" => FlycatcherBoardHeight(width),

@@ -46,6 +46,28 @@ assert 'TraderSellsPolicy.ParameterIds.Concat(' in ui
 assert '["technician"] = new HashSet<string>(StringComparer.Ordinal)' in policy
 assert 'Binding="{Binding IsTraderSellsAnchor}"' in xaml
 assert '<controls:TraderBuysMatrix' in xaml
+# The single SELL-anchored trader row owns the table and both native
+# vertical knob banks. All five price/amount scalars remain in the catalog,
+# presets and CFG writers, but their old standalone anchor rows are hidden.
+assert '<infra:TraderEconomyPanel x:Name="TraderEconomyPanel"' in xaml
+assert '<Setter TargetName="TraderEconomyPanel" Property="Visibility" Value="Visible" />' in xaml
+assert xaml.count('VerticalKnobLayout="True"') == 2
+assert 'Family="TraderStockBoard"' in xaml and 'Family="ServiceCostsBoard"' in xaml
+assert 'TraderBuysMatrixControl" Property="Visibility" Value="Visible"' not in xaml
+aggregate = (src / "Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
+assert 'VerticalKnobLayout ? "STOCK AMOUNT" : "TRADER STOCK"' in aggregate
+assert '"ServiceCostsBoard" => VerticalKnobLayout ? 608.0' in aggregate
+assert '"TraderStockBoard" => VerticalKnobLayout ? 423.0' in aggregate
+assert aggregate.count('new Rect(left, 44.0 + i * pitch, cellWidth, 181.0)') == 2
+viewmodel = (src / "ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
+visible = viewmodel.split("public bool IsControlVisible =>", 1)[1].split("public string ToggleStateLabel", 1)[0]
+assert '&& Id != "economy.traderAmmoStock"' in visible
+assert '&& Id != "economy.fastTravelCost"' in visible
+panel = (src / "Infrastructure/TraderEconomyPanel.cs").read_text(encoding="utf-8")
+assert 'UseThreeColumns(width)' in panel
+assert 'UseTwoKnobColumns(width)' in panel
+assert 'tableWidth + 2 * KnobWidth + 2 * Gap' in panel
+assert 'table.DesiredSize.Height + Gap + bankHeight' in panel
 # The legacy BUY source anchor must not leak a bare ON / wheel +/- card.
 # SELL anchors the only visible stock editor; all 40 BUY toggles still write.
 pvm = (src / "ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")

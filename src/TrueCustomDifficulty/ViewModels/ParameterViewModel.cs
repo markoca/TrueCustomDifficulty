@@ -668,6 +668,10 @@ public sealed class ParameterViewModel : ObservableObject
         // own a standalone parameter card. Trader Stock uses the SELL anchor.
         && !IsTraderBuysMember
         && (!IsTraderSellsMember || IsTraderSellsAnchor)
+        // Native stock and service knobs are hosted in TraderEconomyPanel,
+        // not duplicated as standalone rows in Market / Expenses.
+        && Id != "economy.traderAmmoStock"
+        && Id != "economy.fastTravelCost"
         && (!IsMedicalHealingMember || IsMedicalHealingAnchor)
         && (!IsActionCostMember || IsActionCostAnchor)
         && (!IsExhaustionRecoveryMember || IsExhaustionRecoveryAnchor)
