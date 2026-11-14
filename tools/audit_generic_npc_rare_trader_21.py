@@ -46,10 +46,11 @@ assert 'WriteGenericNpcRareTraderStock(documents)' in core
 assert 'AddPlainRoot(string prototype)' in core
 assert 'WriteTraderSells(modifiedById, vm.TraderItemOverrides' in core
 assert core.index('WriteTraderSells(modifiedById, vm.TraderItemOverrides') < core.index('WriteGenericNpcRareTraderStock(documents)')
-assert 'TCD_GENERIC_NPC_RARE_STOCK' in service
-assert 'GenericRareNormalChance = 0.02' in service
+assert 'TCD_GENERIC_NPC_RARE_STOCK' not in service
 assert 'GenericRareSecondChoiceChance = 0.08' in service
-assert 'mode.Equals("test", StringComparison.OrdinalIgnoreCase)' in service
+assert 'bool enabled, double chance, IDictionary<string, PatchDocument> documents' in service
+assert 'if (!enabled) return 0;' in service
+assert 'Math.Round(chance, 2)' in service
 assert '(RareBrokenPrimarySid, 58)' in service and '(RareBrokenPistolSid, 16)' in service
 assert '(RareBetterPrimarySid, 8)' in service
 assert '"0.02", "0.17"' in service and '"0.42", "0.68"' in service
@@ -57,11 +58,34 @@ assert 'RareGroup(NewRareRoot(generator, RareMasterSid), 0, "SubItemGenerator")'
 assert 'RareReference(master, 0, RarePrimarySid, "Chance", "1")' in service
 assert 'RareReference(master, 1, RareSecondarySid, "Chance",' in service
 assert 'TestGenericNpcRareStock();' in contract
-assert 'original = Environment.GetEnvironmentVariable(key)' in contract
-assert 'Environment.SetEnvironmentVariable(key, original);' in contract
+assert 'GenericNpcRareGearEnabled = true' in contract
+assert 'GenericNpcRareGearChance = 1.0' in contract
+assert 'GenericNpcRareGearChance = 0.37' in contract
+assert 'WriteGenericNpcRareTraderStock(' in core
+assert 'vm.GenericNpcRareGearEnabled, vm.GenericNpcRareGearChance, documents' in core
+ui = (SRC / "Controls/TraderBuysMatrix.cs").read_text(encoding="utf-8")
+xaml = (SRC / "MainWindow.xaml").read_text(encoding="utf-8")
+vm = (SRC / "ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
+preset = (SRC / "Models/PresetFile.cs").read_text(encoding="utf-8")
+assert 'if (_roleId == "genericNpc")' in ui
+assert 'RenderRareGear(fg, muted, accent, border, background)' in ui
+assert 'Text("GEAR", 11, fg)' in ui
+assert 'Text("CHANCE", 10, muted)' in ui
+assert 'Visibility.Visible : Visibility.Collapsed' in ui
+assert 'Minimum = 0.01, Maximum = 1.0' in ui
+assert 'TickFrequency = 0.01' in ui
+assert 'RareGearEnabled="{Binding DataContext.GenericNpcRareGearEnabled, Mode=TwoWay' in xaml
+assert 'RareGearChance="{Binding DataContext.GenericNpcRareGearChance, Mode=TwoWay' in xaml
+assert '_genericNpcRareGearChance = 0.02' in vm
+assert 'GenericNpcRareGearEnabled = preset.GenericNpcRareGearEnabled;' in vm
+assert 'GenericNpcRareGearChance = preset.GenericNpcRareGearChance;' in vm
+assert 'GenericNpcRareGearEnabled = GenericNpcRareGearEnabled,' in vm
+assert 'GenericNpcRareGearChance = GenericNpcRareGearChance,' in vm
+assert '[JsonPropertyName("genericNpcRareGearEnabled")]' in preset
+assert '[JsonPropertyName("genericNpcRareGearChance")]' in preset
 assert 'TraderBuysPolicy' not in service and 'CorpseSmartLoot' not in service.split("private static int WriteGenericNpcRareTraderStock",1)[1]
 assert (ROOT / "docs/generators/GENERIC-NPC-RARE-TRADER-STOCK-21.md").exists()
 for doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
     s = (ROOT / "docs" / doc).read_text(encoding="utf-8")
     assert "Generic NPC rare trader stock, **explicit test opt-in**" in s
-print("PASS: nine exact 2.1 generic merchants, opt-in 100%/2% isolated rare branch, native weight+durability source contract")
+print("PASS: 9 exact 2.1 generic merchants, conditional GEAR checkbox and 1-100% CHANCE slider, persisted preset, isolated CFG branch")

@@ -26,6 +26,28 @@ public sealed class TraderBuysMatrix : UserControl
         new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
             (o, _) => ((TraderBuysMatrix)o).Refresh()));
 
+    public static readonly DependencyProperty RareGearEnabledProperty = DependencyProperty.Register(
+        nameof(RareGearEnabled), typeof(bool), typeof(TraderBuysMatrix),
+        new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+            (o, _) => ((TraderBuysMatrix)o).Refresh()));
+
+    public static readonly DependencyProperty RareGearChanceProperty = DependencyProperty.Register(
+        nameof(RareGearChance), typeof(double), typeof(TraderBuysMatrix),
+        new FrameworkPropertyMetadata(0.02, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+            (o, _) => ((TraderBuysMatrix)o).Refresh()));
+
+    public bool RareGearEnabled
+    {
+        get => (bool)GetValue(RareGearEnabledProperty);
+        set => SetValue(RareGearEnabledProperty, value);
+    }
+
+    public double RareGearChance
+    {
+        get => (double)GetValue(RareGearChanceProperty);
+        set => SetValue(RareGearChanceProperty, value);
+    }
+
     public IEnumerable? Parameters
     {
         get => (IEnumerable?)GetValue(ParametersProperty);
@@ -44,6 +66,11 @@ public sealed class TraderBuysMatrix : UserControl
     private readonly List<ParameterViewModel> _observed = new();
     private readonly Dictionary<string, CheckBox> _cells = new(StringComparer.Ordinal);
     private TextBlock? _legacyNotice;
+    private CheckBox? _gearCheck;
+    private Border? _gearOutline;
+    private Border? _gearChanceRow;
+    private Slider? _gearChanceSlider;
+    private TextBlock? _gearChanceValue;
     private string _roleId = "general";
     private StackPanel? _roles;
     private StackPanel? _categories;
@@ -144,6 +171,11 @@ public sealed class TraderBuysMatrix : UserControl
         if (_categories is null) return;
         _categories.Children.Clear();
         _cells.Clear();
+        _gearCheck = null;
+        _gearOutline = null;
+        _gearChanceRow = null;
+        _gearChanceSlider = null;
+        _gearChanceValue = null;
         var role = TraderSellsPolicy.EditorRoles.Single(r => r.Id == _roleId);
         var fg = BrushFor("TextBrush", Brushes.White);
         var muted = BrushFor("RadarMutedTextBrush", Brushes.LightGray);
@@ -193,7 +225,84 @@ public sealed class TraderBuysMatrix : UserControl
             });
             _cells[id] = cell;
         }
+
+        if (_roleId == "genericNpc")
+            RenderRareGear(fg, muted, accent, border, background);
+
         Refresh();
+    }
+
+    // The Generic NPC trade-only bonus is a persisted optional preset sidecar,
+    // just like legacy TraderItemOverrides: no extra 359-catalog source ID.
+    // The conditional CHANCE row uses the same compact native Slider grammar.
+    private void RenderRareGear(Brush fg, Brush muted, Brush accent,
+        Brush border, Brush background)
+    {
+        if (_categories is null) return;
+        var grid = new Grid { Height = 34 };
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(58) });
+        var name = Text("GEAR", 11, fg);
+        name.Margin = new Thickness(10, 0, 0, 0);
+        grid.Children.Add(name);
+        _gearCheck = new CheckBox
+        {
+            IsChecked = RareGearEnabled,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
+            ToolTip = "Rare gear in Generic NPC trade offers only. No corpse loot."
+        };
+        _gearCheck.Click += (_, _) => RareGearEnabled = _gearCheck.IsChecked == true;
+        _gearOutline = new Border
+        {
+            BorderBrush = RareGearEnabled ? accent : Brushes.Transparent,
+            BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(3),
+            Width = 28, Height = 27, HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center, Child = _gearCheck
+        };
+        Grid.SetColumn(_gearOutline, 1);
+        grid.Children.Add(_gearOutline);
+        _categories.Children.Add(new Border
+        {
+            BorderBrush = border, BorderThickness = new Thickness(1),
+            CornerRadius = new CornerRadius(3), Background = background,
+            Margin = new Thickness(1, 2, 1, 2), Child = grid
+        });
+
+        var chanceGrid = new Grid { Height = 42, Margin = new Thickness(8, 0, 8, 0) };
+        chanceGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(54) });
+        chanceGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        chanceGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(43) });
+        var caption = Text("CHANCE", 10, muted);
+        chanceGrid.Children.Add(caption);
+        _gearChanceSlider = new Slider
+        {
+            Minimum = 0.01, Maximum = 1.0,
+            Value = RareGearChance, TickFrequency = 0.01,
+            SmallChange = 0.01, LargeChange = 0.01, IsSnapToTickEnabled = true,
+            VerticalAlignment = VerticalAlignment.Center,
+            Margin = new Thickness(2, 0, 8, 0),
+            ToolTip = "Chance to offer one rare item, occasionally two (8% second roll)."
+        };
+        _gearChanceSlider.ValueChanged += (_, _) =>
+        {
+            var value = Math.Round(_gearChanceSlider.Value, 2);
+            if (Math.Abs(RareGearChance - value) > 0.000001)
+                RareGearChance = value;
+        };
+        Grid.SetColumn(_gearChanceSlider, 1);
+        chanceGrid.Children.Add(_gearChanceSlider);
+        _gearChanceValue = Text("2%", 11, fg);
+        _gearChanceValue.HorizontalAlignment = HorizontalAlignment.Right;
+        Grid.SetColumn(_gearChanceValue, 2);
+        chanceGrid.Children.Add(_gearChanceValue);
+        _gearChanceRow = new Border
+        {
+            BorderBrush = border, BorderThickness = new Thickness(1),
+            CornerRadius = new CornerRadius(3), Background = background,
+            Margin = new Thickness(1, 1, 1, 2), Child = chanceGrid
+        };
+        _categories.Children.Add(_gearChanceRow);
     }
 
     private void OnParameterChanged(object? sender, PropertyChangedEventArgs e)
@@ -211,6 +320,27 @@ public sealed class TraderBuysMatrix : UserControl
             if (checkbox.Parent is Border outline)
                 outline.BorderBrush = parameter.IsValueModifiedFromReference()
                     ? BrushFor("AccentBrush", Brushes.Gold) : Brushes.Transparent;
+        }
+        if (_gearCheck is not null)
+        {
+            _gearCheck.IsChecked = RareGearEnabled;
+            if (_gearOutline is not null)
+                _gearOutline.BorderBrush = RareGearEnabled
+                    ? BrushFor("AccentBrush", Brushes.Gold) : Brushes.Transparent;
+            if (_gearChanceRow is not null)
+                _gearChanceRow.Visibility = RareGearEnabled
+                    ? Visibility.Visible : Visibility.Collapsed;
+            if (_gearChanceSlider is not null
+                && Math.Abs(_gearChanceSlider.Value - RareGearChance) > 0.000001)
+                _gearChanceSlider.Value = RareGearChance;
+            if (_gearChanceValue is not null)
+            {
+                _gearChanceValue.Text = Math.Round(RareGearChance * 100.0)
+                    .ToString(System.Globalization.CultureInfo.InvariantCulture) + "%";
+                _gearChanceValue.Foreground = Math.Abs(RareGearChance - 0.02) > 0.000001
+                    ? BrushFor("AccentBrush", Brushes.Gold)
+                    : BrushFor("TextBrush", Brushes.White);
+            }
         }
         if (_legacyNotice is null) return;
         var itemCount = TraderOffersPolicy.Decode(TraderItemOverrides).Count;

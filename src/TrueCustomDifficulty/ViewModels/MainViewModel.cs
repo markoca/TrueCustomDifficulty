@@ -25,6 +25,8 @@ public sealed class MainViewModel : ObservableObject
     private PresetListItem? _selectedPreset;
     private string? _loadedPresetName;
     private string _traderItemOverrides = string.Empty;
+    private bool _genericNpcRareGearEnabled;
+    private double _genericNpcRareGearChance = 0.02;
     private bool _suppressPresetSelection;
     private bool _isBuilding;
     private int _buildProgressStep;
@@ -78,6 +80,27 @@ public sealed class MainViewModel : ObservableObject
         get => _traderItemOverrides;
         set => SetProperty(ref _traderItemOverrides, TraderOffersPolicy.Encode(
             TraderOffersPolicy.Decode(value)));
+    }
+
+    // Additional merchant offer branch. OFF by default; the chance is retained
+    // when GEAR is unchecked and serialized with optional preset sidecars.
+    // This does not add two fake vanilla source IDs to the fixed catalog.
+    public bool GenericNpcRareGearEnabled
+    {
+        get => _genericNpcRareGearEnabled;
+        set => SetProperty(ref _genericNpcRareGearEnabled, value);
+    }
+
+    public double GenericNpcRareGearChance
+    {
+        get => _genericNpcRareGearChance;
+        set
+        {
+            if (!double.IsFinite(value))
+                throw new ArgumentOutOfRangeException(nameof(value), "Rare trader chance must be finite.");
+            SetProperty(ref _genericNpcRareGearChance,
+                Math.Round(Math.Clamp(value, 0.01, 1.0), 2));
+        }
     }
 
     public RelayCommand ResetCurrentTabCommand { get; }
@@ -1298,6 +1321,8 @@ public sealed class MainViewModel : ObservableObject
         if (resetAll)
         {
             TraderItemOverrides = string.Empty;
+            GenericNpcRareGearEnabled = false;
+            GenericNpcRareGearChance = 0.02;
             AllParameters.First(p => p.Id == "survival.waterInstantStaminaRestore")
                 .DrinkDurationOverrideEnabled = false;
             AllParameters.First(p => p.Id == "health.bandageHealing")
@@ -1316,7 +1341,11 @@ public sealed class MainViewModel : ObservableObject
         try
         {
             if (SelectedTab.Id == "economy")
+            {
                 TraderItemOverrides = string.Empty;
+                GenericNpcRareGearEnabled = false;
+                GenericNpcRareGearChance = 0.02;
+            }
             if (SelectedTab.Id == "health")
                 AllParameters.First(p => p.Id == "health.bandageHealing")
                     .MedicalOverrideEnabled = false;
@@ -1476,6 +1505,8 @@ public sealed class MainViewModel : ObservableObject
             GameVersion = GameVersion,
             ReferenceDifficulty = SelectedReferenceDifficulty,
             TraderItemOverrides = TraderItemOverrides,
+            GenericNpcRareGearEnabled = GenericNpcRareGearEnabled,
+            GenericNpcRareGearChance = GenericNpcRareGearChance,
             DrinkDurationOverride = AllParameters.First(p =>
                 p.Id == "survival.waterInstantStaminaRestore").DrinkDurationOverrideEnabled,
             MedicalOverride = AllParameters.First(p =>
@@ -1542,6 +1573,8 @@ public sealed class MainViewModel : ObservableObject
             {
                 _selectedReferenceDifficulty = preset.ReferenceDifficulty;
                 TraderItemOverrides = preset.TraderItemOverrides;
+                GenericNpcRareGearChance = preset.GenericNpcRareGearChance;
+                GenericNpcRareGearEnabled = preset.GenericNpcRareGearEnabled;
                 OnPropertyChanged(nameof(SelectedReferenceDifficulty));
                 OnPropertyChanged(nameof(BasePresetIndex));
 

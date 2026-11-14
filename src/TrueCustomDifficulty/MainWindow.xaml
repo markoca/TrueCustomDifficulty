@@ -330,6 +330,9 @@
                                                                                                HorizontalAlignment="Stretch"
                                                                                                PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                                ParameterSelected="AggregateVisualControl_ParameterSelected"
+                                                                                               RareGearEnabled="{Binding DataContext.GenericNpcRareGearEnabled, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                                               RareGearChance="{Binding DataContext.GenericNpcRareGearChance, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                                               IsEnabled="{Binding DataContext.IsBuildIdle, RelativeSource={RelativeSource AncestorType=Window}}"
                                                                                                Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
                                                                     <controls:AggregateVisualControl Family="TraderStockBoard"
                                                                                                      HorizontalAlignment="Stretch"

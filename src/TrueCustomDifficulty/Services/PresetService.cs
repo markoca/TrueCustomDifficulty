@@ -65,6 +65,11 @@ public sealed class PresetService
         preset.Values ??= new Dictionary<string, PresetValue>(StringComparer.Ordinal);
         preset.TraderItemOverrides ??= string.Empty;
         _ = TraderOffersPolicy.Decode(preset.TraderItemOverrides);
+        if (!double.IsFinite(preset.GenericNpcRareGearChance)
+            || preset.GenericNpcRareGearChance < 0.01
+            || preset.GenericNpcRareGearChance > 1.0)
+            throw new InvalidDataException(
+                "Generic NPC rare GEAR chance must be between 1% and 100%.");
 
         foreach (var (id, value) in preset.Values)
         {

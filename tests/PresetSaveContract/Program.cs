@@ -23,11 +23,26 @@ internal static class Program
             Check(service.Load(target).Name == "First", "Created preset round-trips");
 
             var second = MakePreset("Second", 2.5);
+            second.GenericNpcRareGearEnabled = true;
+            second.GenericNpcRareGearChance = 0.37;
             service.Save(second, target);
             var loaded = service.Load(target);
             Check(loaded.Name == "Second", "Existing preset is overwritten in place");
             Check(loaded.Values["combat.playerWeaponDamage"].Number == 2.5, "Overwrite persists the new value");
+            Check(loaded.GenericNpcRareGearEnabled && Math.Abs(loaded.GenericNpcRareGearChance - 0.37) < 0.000001,
+                "Generic NPC GEAR checkbox and CHANCE slider survive preset round-trip");
             Check(!Directory.EnumerateFiles(presets, "*.tmp").Any(), "Overwrite leaves no temp files");
+
+            var legacy = MakePreset("Legacy", 1.0);
+            service.Save(legacy, target);
+            var oldJson = File.ReadAllText(target)
+                .Replace("  \"genericNpcRareGearEnabled\": false,\n", "", StringComparison.Ordinal)
+                .Replace("  \"genericNpcRareGearChance\": 0.02,\n", "", StringComparison.Ordinal);
+            File.WriteAllText(target, oldJson);
+            var restoredLegacy = service.Load(target);
+            Check(!restoredLegacy.GenericNpcRareGearEnabled
+                && Math.Abs(restoredLegacy.GenericNpcRareGearChance - 0.02) < 0.000001,
+                "Older presets missing both GEAR fields preserve vanilla OFF and 2%");
 
             var source = File.ReadAllText(Path.Combine(FindRepositoryRoot(),
                 "src", "TrueCustomDifficulty", "Services", "PresetService.cs"));

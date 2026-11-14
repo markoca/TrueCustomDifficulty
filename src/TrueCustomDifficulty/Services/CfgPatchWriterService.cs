@@ -316,9 +316,10 @@ public sealed partial class CfgPatchWriterService
             writtenParameters);
         editCount += WriteTraderBuys(modifiedById, hasDlc1, documents, writtenParameters);
         editCount += WriteTraderSells(modifiedById, vm.TraderItemOverrides, hasDlc1, documents, writtenParameters);
-        // Explicit environment opt-in only during the rare generic-NPC
-        // trader stock playtest. No NPC loadouts, corpses or normal builds.
-        editCount += WriteGenericNpcRareTraderStock(documents);
+        // The Generic NPC GEAR checkbox/slider own this trade-only bonus.
+        // No environment variable, item corpse drop or unrelated trader edits.
+        editCount += WriteGenericNpcRareTraderStock(
+            vm.GenericNpcRareGearEnabled, vm.GenericNpcRareGearChance, documents);
 
         var f1BoxRemoval = WriteWorldF1GrenadeBoxes(
             modifiedById,

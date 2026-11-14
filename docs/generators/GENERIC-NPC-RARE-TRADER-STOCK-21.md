@@ -1,10 +1,18 @@
-# Generic NPC Rare Trader Stock — S.T.A.L.K.E.R. 2.1 source / playtest contract
+# Generic NPC Rare Trader Stock — S.T.A.L.K.E.R. 2.1 active UI/source contract
 
-**Status:** test build/source-verified; real build, UE BPatch, independent NPC trade rolls and in-game item counts unverified.
+**Current 2026-11-14 behavior:** Generic NPC tab in **Economy → Trader Stock** has a **GEAR** checkbox after the five vanilla stock categories. When checked, a compact **CHANCE** slider appears immediately beneath it. When unchecked, no bonus rare-stock CFG edits are produced. These are two **persisted optional preset sidecar inputs**, not two fabricated 2.1 vanilla source parameters: the fixed 359-source catalog, factory preset values and original 31 SELL category IDs remain intact. The legacy `TCD_GENERIC_NPC_RARE_STOCK` environment flag is **retired**.
 
-This is **merchant sale inventory only**, not standard human equipment, corpse SmartLoot, loot generated at death, NPC pocket inventory, trader buying conditions, or world stashes. Scope is nine regular 2.1 base-game Generic NPC TradePrototypes (never story characters or templates).
+- GEAR default: **OFF**. CHANCE retained default: **2%**; adjustable **1–100%**, **1 percentage point per step**. Unchecking GEAR hides but retains the chosen chance for next use.
+- **100%** is the in-app test setting: the rare branch is enabled for each of the nine generic stock profiles. It is **not** 100% per item SID or a guarantee that a particular living NPC has independent randomized stock.
+- At any enabled chance, the first branch selects **one** weighted extra item. An independent native **8% second-slot** roll can add a different second item, subject to game-native execution; pending in-game acceptance.
+- This ONLY affects **TradePrototypes.cfg** and private **ItemGeneratorPrototypes.cfg** clones. NPC equipment, corpse loot, world item containers, quest characters, buying restrictions and non-generic traders are unchanged.
+- GEAR OFF + default vanilla SELL categories emits **zero extra CFG files**, and turning GEAR OFF after a test build fully removes its generated effects on the next Build Difficulty run.
+- Save/Load/Reset All/Reset Economy preserve or restore the checkbox and chance. Older factory/custom presets missing both optional fields load with GEAR OFF and chance 2%.
+- The same private cloned source generator is shared with existing Generic NPC OFF-category choices (no edit to original source stock roots).
 
-## Native 2.1 TradePrototype-to-ItemGenerator mapping
+**Source evidence:** verified against user-supplied original 2.1 CFG dump `STALKER2-2.1 cfg dump.zip` and embedded `trader-sells-2.1-runtime.csv`. BPatch engine behavior, precise one/two item outcome, actual refresh timing, damage percentages and actor-independent availability still require in-game testing.
+
+## Exact source trade profile list
 
 | TradePrototype SID | Original stock root SID | First unused ItemGenerator category index |
 |---|---|---:|
@@ -18,14 +26,9 @@ This is **merchant sale inventory only**, not standard human equipment, corpse S
 | GeneralNPC_TradePrototype_Scientists | GeneralNPC_TradeItemGenerator_Scientists | 1 |
 | GeneralNPC_TradePrototype_Spark | GeneralNPC_TradeItemGenerator_Spark | 1 |
 
-All rows use `TradeGenerators/[0]` and source-`ConstTrue`; base `TradePrototypes.cfg` references the listed source root directly. The embedded 2.1 SELL runtime CSV independently names exactly these nine GENERIC_NPC_TRADER profiles, matching the source-root and base scope. The extra category is inserted only on each `TCD_TS_...` clone; the original root definitions and NPC actor inventories remain original.
+All nine roles are base-game, source `TradeGenerators/[0]`, and the new bonus link occupies the listed next-free category index in a per-trader `TCD_TS_...` clone.
 
-## Exact test and normal behavior
-
-- **OFF/unset**: no rare stock CFG emitted; normal presets/neutral economy patch expectations are retained.
-- **TEST** (`TCD_GENERIC_NPC_RARE_STOCK=test`): first `Chance=1` rare *branch*, then first weighted item (100% branch chance; **not** every SID guaranteed); possible second weighted item with native `Chance=0.08`.
-- **Normal opt-in** (`TCD_GENERIC_NPC_RARE_STOCK=1`): first `Chance=0.02`, then one item; 8% conditional second item when first branch succeeds. Nominal 0.16% double-slot chance, subject to engine semantics.
-- **One/rarely two**: branch → two independent Chance members under `TCD_GNRS_RARE_MASTER` → type selectors with `Weight` values → type-correct item categories using one weighted item. Separate primary and secondary SID sets avoid a duplicate item between the two slots.
+## Source item pool, weights and durability
 
 | Slot / pool | Exact regular item SIDs | Source category | Mix weight | Condition |
 |---|---|---|---:|---|
@@ -38,35 +41,16 @@ All rows use `TradeGenerators/[0]` and source-`ConstTrue`; base `TradePrototypes
 | Second detector | Bear | Detector | 25 | n/a |
 | Second better weapon | GunAKU_PP | WeaponPrimary | 25 | 0.42–0.68 |
 
-These 2.1 SIDs occur in regular `GameData/ItemPrototypes.cfg`, with unambiguous item semantics; no quest-specific or named-unique item is introduced. Type selectors use native weighted `SubItemGenerator` entries (source precedents include Duty loadout weighted generator pools); the second-slot conditional uses native nested `Chance` (source precedents include the RC Bandit consumable/detector/artifact nested generators). Native item groups use `Weight` and single-item counts. These CFG conventions **support the design**, but only an actual game test can prove precise number/distribution of visible offers.
+Broken weapons are 2–17% condition; rarer better guns are 42–68%. The main weighted selector assigns broken primary 58%, broken pistol 16%, better primary 8%, artifact 14%, attachment 4%; the second-slot selector assigns Battery 50%, Bear detector 25%, AKU weapon 25%. Different SIDs in primary/secondary pools prevent a duplicate bonus item. Pool selection is based on native Weight, not independent 100%-Chance rolls per candidate.
 
-## Private generator construction and coexistence
-
-For each affected generic trade, build `SellCloneSid("base", tradeSid, 0, originalRoot)` and reference-derive it from the exact original root. Extend only the first unused item generator category with one `SubItemGenerator` link to `TCD_GNRS_RARE_MASTER` with chance 1 (test) or 0.02 (normal opt-in). Private standalone `TCD_GNRS_...` generator nodes carry all item-selection and durability payload. Relink only that Generic NPC's `TradeGenerators/[0]/ItemGeneratorPrototypeSID` to the private root. The existing category-removal writer reuses precisely the same private clone name and patches separate group indexes, avoiding duplicate conflicting relinks. No unrelated trader profile is patched and NO changes are made to `ObjPrototypes.cfg`, NPC equipment `ItemGeneratorPrototypes` roots or `DifficultyPrototypes.cfg`.
-
-## Local test
-
-Launch the app *with environment variable set*, press Build Difficulty, then test a newly refreshed generic NPC merchant. For normal opt-in testing switch `test` to `1`; unset it for plain builds. On Linux/Wine:
+## Local build and in-game test
 
 ```bash
 cd /home/marko/s2tools/TrueCustomDifficulty/
 git pull
 chmod +x publish.sh
 ./publish.sh
-TCD_GENERIC_NPC_RARE_STOCK=test WINEPREFIX="$HOME/.wine-s2" WINEDEBUG=-all wine "./publish/win-x64/TrueCustomDifficulty.exe"
+WINEPREFIX="$HOME/.wine-s2" WINEDEBUG=-all wine "./publish/win-x64/TrueCustomDifficulty.exe"
 ```
 
-For Windows PowerShell use `$env:TCD_GENERIC_NPC_RARE_STOCK="test"` before launching the executable.
-
-Run `python3 tools/audit_generic_npc_rare_trader_21.py` (static source/writer arrangement) and `./tests/run-wine.sh EconomyPatchContract` or the CI Windows contract. Source-BPatch and in-game activation are separate acceptance gates; 100% refers to the **bonus slot gate**, never per-item guarantee or per-actor independent generation.
-
-### Game acceptance matrix
-
-1. In TEST mode, newly refreshed trade stock from at least three distinct generic NPC archetypes should contain one bonus item, occasionally a second. Log actual SID, condition, actor/trade archetype and rank, plus save/refresh provenance.
-2. Compare two physically distinct NPCs with the **same** TradePrototypeSID; record whether stock appears independently generated or profile-cached.
-3. Test a broken weapon (2–17%) and a better one (42–68%); ensure original trade prices and buying limitations unchanged.
-4. Disable an existing Generic NPC category (e.g. Ammo) and keep rare stock active. Only original Ammo offers should disappear; rare stock should remain and no duplicate trader root should be emitted.
-5. Return to a fresh save after unsetting the variable and rebuilding; the special `TCD_GNRS_` definitions and TCD_TS generic redirects should no longer appear without unrelated SELL changes.
-6. Kill the trader **only as a negative-control observation**, not an assertion that shop stock transfers to corpse inventory.
-
-Do not publish the experimental opt-in as a stable gameplay feature until the tests pass. Later, after acceptance, expose a catalogued compact ON/off + chance control consistent with UI-DESIGN-LOCK.md.
+Select **Economy → Trader Stock → Generic NPC**, tick **GEAR**, set **CHANCE to 100%**, and press **Build Difficulty**. Check several newly refreshed generic NPC traders; each should offer one and occasionally two bonus items if the BPatch generator semantics work as expected. Test 2%, 37%, the OFF state and combined vanilla Ammo OFF. Verify stock contents and condition, no corpse-loot effect, and whether stock is independently generated for two NPCs of the same profile. `tests/EconomyPatchContract` and `tests/PresetSaveContract` provide deterministic application-side checks; live game tests remain mandatory.

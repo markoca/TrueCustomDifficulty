@@ -30,6 +30,14 @@ public sealed class PresetFile
     [JsonPropertyName("traderItemOverrides")]
     public string TraderItemOverrides { get; set; } = string.Empty;
 
+    // Optional backwards-compatible trade-only bonus fields. Older factory
+    // presets omit them and load with GEAR OFF and the 2% stored chance.
+    [JsonPropertyName("genericNpcRareGearEnabled")]
+    public bool GenericNpcRareGearEnabled { get; set; }
+
+    [JsonPropertyName("genericNpcRareGearChance")]
+    public double GenericNpcRareGearChance { get; set; } = 0.02;
+
     [JsonPropertyName("savedAtUtc")]
     public DateTimeOffset? SavedAtUtc { get; set; }
 

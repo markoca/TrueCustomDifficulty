@@ -673,12 +673,17 @@ internal static class Program
     {
         const string label = "Generic-NPC-Rare-Trader-Stock";
         var path = Path.Combine(_keep ?? Path.GetTempPath(), "TCD_Economy_Patch", label);
-        const string key = "TCD_GENERIC_NPC_RARE_STOCK";
-        var original = Environment.GetEnvironmentVariable(key);
         try
         {
             var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
-            Environment.SetEnvironmentVariable(key, "test");
+            Check(!vm.GenericNpcRareGearEnabled &&
+                Math.Abs(vm.GenericNpcRareGearChance - 0.02) < 0.000001,
+                label + ": GEAR must default OFF with retained 2% chance");
+            var off = new CfgPatchWriterService().Write(vm, Catalog, null, path);
+            Check(off.FileCount == 0 && off.EditCount == 0,
+                label + ": GEAR OFF must preserve vanilla trader stock");
+            vm.GenericNpcRareGearEnabled = true;
+            vm.GenericNpcRareGearChance = 1.0;
             var test = new CfgPatchWriterService().Write(vm, Catalog,
                 new GameInstallInfo { HasDlc1 = true }, path);
             Check(test.FileCount == 2 && test.EditCount > 30 && test.ParameterCount == 0,
@@ -756,10 +761,9 @@ internal static class Program
                     k.StartsWith("TCD_TS_", StringComparison.Ordinal)) == 9,
                 label + ": duplicate generic merchant clones");
 
-            // The opt-in normal setting is a 2% gate; no per-SID 100% flood.
-            Environment.SetEnvironmentVariable(key, "1");
-            new CfgPatchWriterService().Write(
-                new MainViewModel(Catalog), Catalog, null, path);
+            // The same UI slider works at 2% and other 1%-step values.
+            var normalVm = new MainViewModel(Catalog) { GenericNpcRareGearEnabled = true };
+            new CfgPatchWriterService().Write(normalVm, Catalog, null, path);
             var normal = Parse(File.ReadAllText(ExpectedFile(path,
                 "GameData/ItemGeneratorPrototypes.cfg")));
             var normalTrade = Parse(File.ReadAllText(ExpectedFile(path,
@@ -769,13 +773,24 @@ internal static class Program
             Check(normal.Get(normalClone).Get("ItemGenerator").Get("[2]")
                 .Get("PossibleItems").Get("[0]").Value("Chance") == "0.02",
                 label + ": normal chance must be 2%");
+            normalVm.GenericNpcRareGearChance = 0.37;
+            new CfgPatchWriterService().Write(normalVm, Catalog, null, path);
+            var adjusted = Parse(File.ReadAllText(ExpectedFile(path,
+                "GameData/ItemGeneratorPrototypes.cfg")));
+            Check(adjusted.Get(normalClone).Get("ItemGenerator").Get("[2]")
+                .Get("PossibleItems").Get("[0]").Value("Chance") == "0.37",
+                label + ": GEAR slider must write precise 37% chance");
+            normalVm.GenericNpcRareGearEnabled = false;
+            var disabled = new CfgPatchWriterService().Write(normalVm, Catalog, null, path);
+            Check(disabled.FileCount == 0 && disabled.EditCount == 0,
+                label + ": turning GEAR off must remove all bonus CFG output");
 
             _passed++;
-            Console.WriteLine("PASS " + label + " (9 private traders, 1+rare 2 slots, TEST=100%, normal=2%, compatible SELL)");
+            Console.WriteLine("PASS " + label +
+                " (9 private traders, 1/rare-2 slots, GEAR 100%/2%/37%, compatible SELL)");
         }
         finally
         {
-            Environment.SetEnvironmentVariable(key, original);
             if (_keep is null && Directory.Exists(path)) Directory.Delete(path, true);
         }
     }

@@ -10,12 +10,12 @@ namespace TrueCustomDifficulty.Services;
 /// Isolated 2.1 generic-NPC merchant stock experiment. Only nine base-game
 /// TradePrototypes are relinked to private inherited trader stock generators.
 /// Never edits human loadouts, corpse overrides or SmartLoot.
-/// NO normal-build changes: TCD_GENERIC_NPC_RARE_STOCK=1 (2%) or test (100%).
+/// Player-facing GEAR toggle and CHANCE slider own the native branch; OFF
+/// leaves vanilla trader stock unchanged, 100% is the reproducible test case.
 /// </summary>
 public sealed partial class CfgPatchWriterService
 {
-    private const string GenericRareEnvironmentKey = "TCD_GENERIC_NPC_RARE_STOCK";
-    private const double GenericRareNormalChance = 0.02;
+
     private const double GenericRareSecondChoiceChance = 0.08;
 
     private const string RareMasterSid = "TCD_GNRS_RARE_MASTER";
@@ -100,16 +100,12 @@ public sealed partial class CfgPatchWriterService
     }
 
     private static int WriteGenericNpcRareTraderStock(
-        IDictionary<string, PatchDocument> documents)
+        bool enabled, double chance, IDictionary<string, PatchDocument> documents)
     {
-        var mode = Environment.GetEnvironmentVariable(GenericRareEnvironmentKey)?.Trim();
-        if (string.IsNullOrEmpty(mode) || mode.Equals("0", StringComparison.Ordinal))
-            return 0;
-        var primaryChance = mode.Equals("test", StringComparison.OrdinalIgnoreCase)
-            ? 1.0 : mode.Equals("1", StringComparison.Ordinal)
-                ? GenericRareNormalChance
-                : throw new InvalidDataException(
-                    GenericRareEnvironmentKey + " must be unset, 0, 1 or test.");
+        if (!enabled) return 0;
+        if (!double.IsFinite(chance) || chance < 0.01 || chance > 1.0)
+            throw new InvalidDataException("Generic NPC rare GEAR chance must be 1–100%.");
+        var primaryChance = Math.Round(chance, 2);
         var source = LoadTraderSellOffers()
             .Where(x => x.TraderType == "GENERIC_NPC_TRADER")
             .GroupBy(x => (x.TradeScope, x.TradeSid))
