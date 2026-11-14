@@ -36,6 +36,18 @@ assert 'legacy item-specific exclusions' in ui
 assert 'legacy BUY restrictions' in ui
 assert 'Binding="{Binding IsTraderSellsAnchor}"' in xaml
 assert '<controls:TraderBuysMatrix' in xaml
+# The legacy BUY source anchor must not leak a bare ON / wheel +/- card.
+# SELL anchors the only visible stock editor; all 40 BUY toggles still write.
+pvm = (src / "ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
+visible = pvm.split("public bool IsControlVisible =>", 1)[1].split("public string ToggleStateLabel", 1)[0]
+visual_anchors = pvm.split("public bool IsVisualControlAnchor =>", 1)[1].split("public bool HasEffectiveDamage", 1)[0]
+assert "&& !IsTraderBuysMember" in visible
+assert "(!IsTraderBuysMember || IsTraderBuysAnchor)" not in visible
+assert "IsTraderBuysAnchor ||" not in visual_anchors
+assert "IsTraderSellsAnchor ||" in visual_anchors
+assert 'Binding="{Binding IsTraderBuysAnchor}"' not in xaml
+sell_board = xaml.split('<DataTrigger Binding="{Binding IsTraderSellsAnchor}" Value="True">', 1)[1].split("</DataTrigger>", 1)[0]
+assert '<Setter TargetName="TraderBuysMatrixControl" Property="Visibility" Value="Visible" />' in sell_board
 # The category-only UI does not bind the retired per-item list. The saved
 # sidecar must continue to reach the writer through MainViewModel.
 assert 'TraderItemOverrides' in (src / "ViewModels/MainViewModel.cs").read_text(encoding="utf-8")

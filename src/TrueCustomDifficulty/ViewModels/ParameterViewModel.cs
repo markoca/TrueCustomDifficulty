@@ -632,7 +632,6 @@ public sealed class ParameterViewModel : ObservableObject
         IsMutantDropAnchor ||
         IsIndividualAnomalyDamageAnchor ||
         IsWorldLootRemovalAnchor ||
-        IsTraderBuysAnchor ||
         IsTraderSellsAnchor ||
         IsMedicalHealingAnchor ||
         IsActionCostAnchor ||
@@ -665,7 +664,9 @@ public sealed class ParameterViewModel : ObservableObject
         && (!IsMutantDropMember || IsMutantDropAnchor)
         && (!IsIndividualAnomalyDamageMember || IsIndividualAnomalyDamageAnchor)
         && (!IsWorldLootRemovalMember || IsWorldLootRemovalAnchor)
-        && (!IsTraderBuysMember || IsTraderBuysAnchor)
+        // BUY restrictions remain in the model, presets and writer, but do not
+        // own a standalone parameter card. Trader Stock uses the SELL anchor.
+        && !IsTraderBuysMember
         && (!IsTraderSellsMember || IsTraderSellsAnchor)
         && (!IsMedicalHealingMember || IsMedicalHealingAnchor)
         && (!IsActionCostMember || IsActionCostAnchor)

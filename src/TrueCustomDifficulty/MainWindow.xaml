@@ -644,7 +644,6 @@
                                                             <MultiDataTrigger.Conditions>
                                                                 <Condition Binding="{Binding IsToggle}" Value="True" />
                                                                 <Condition Binding="{Binding IsVisualAggregateAnchor}" Value="False" />
-                                                                 <Condition Binding="{Binding IsTraderBuysAnchor}" Value="False" />
                                                                 <Condition Binding="{Binding IsTraderSellsAnchor}" Value="False" />
                                                             </MultiDataTrigger.Conditions>
                                                             <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
