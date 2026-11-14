@@ -3100,3 +3100,8 @@ The Basic Stash preview now reads `StashSourceGroups.Value` from the shared sour
 ## 2026-11-14 — Stash Source Factor regression label
 
 StashEffectiveState uses the local `factor` variable when clamping its per-source Chance value to 0..1. The stale static test expected the retired `multiplier` variable name. The audit now checks the live operation rather than the removed identifier; no CFG or gameplay semantics changed.
+
+
+## 2026-11-14 — Current Stashes regression references
+
+Static assertions now follow the existing source-backed rendering: 'PRIORITY ZERO' replaces obsolete 'WEIGHT OFF'; the 78-DIP tier-card row pitch, 70-DIP tiles, percent-of-source readout and `StashMixPalette[kind]` match current control code. Source text no longer prints redundant native preview diagnostics. Medical sentinel exclusion is based on the authored MaxCount sentinel, not a retired per-item weight gate; a Weight-zero control does not disable independent Chance-only fields. All edits are **test-only**, with UI geometry, native CFG logic and preset values untouched.

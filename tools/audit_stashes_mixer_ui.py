@@ -526,10 +526,10 @@ assert "groups.Sum(x => x.Items.Count) != 1124" in coverage
 assert "StashCategoryIndex(item.ItemSid)" in coverage
 assert '"ITEMGEN ' not in coverage and '"WORLD ' not in coverage
 assert '"STASH ITEM WEIGHTS"' not in coverage
-assert '"WEIGHT OFF"' in coverage and '"REDUCED"' in coverage
+assert '"PRIORITY ZERO"' in coverage and '"REDUCED"' in coverage
 assert '"INCREASED"' in coverage and '"EXCLUDED"' in coverage
 assert '"ORIGINAL"' in coverage and '"PARTIAL"' in coverage
-assert '"WEIGHT OFF · INDEPENDENT CHANCE MAY STILL ROLL"' in coverage
+assert '"PRIORITY ZERO · INDEPENDENT CHANCE MAY STILL ROLL"' in coverage
 assert "StashEffectiveState.ItemBiasId(sid)" in coverage
 assert "StashEffectiveState.SmartItemBiasId(sid)" in coverage
 for retired in ("DrawStashBranchBrowser(", "NavigateStash(", "TryStashBrowserClick(",
@@ -546,7 +546,8 @@ assert "var columns = outer.Width >= 670.0 ? 3 : 2;" in coverage
 assert "var rail = new Rect(x + 13.0, y + 26.0," in coverage
 assert "p.IsValueModifiedFromReference()" in coverage
 assert "number.SetForegroundBrush(accent, 0, digits.Length)" in coverage
-assert "ValueToX(p.CurrentNumber, p.Minimum, p.Maximum, rail, false)" in coverage
+assert "var currentX = ValueToX(p.CurrentNumber," in coverage
+assert "p.Minimum, p.Maximum, rail, false);" in coverage
 assert "p.ReferenceNumber" in coverage
 assert "Normalize(" not in coverage
 assert "percentages" not in coverage
@@ -615,7 +616,8 @@ assert 'DrawStashPoolBar(dc, hard, "VETERAN"' not in native_preview_method
 assert '"EASY/MEDIUM · EXPERIENCED"' not in coverage
 assert 'CreateText(label, 11.4, text' in coverage
 assert 'GlobalStashCategoryNames[kind], 10.2, text,' in coverage
-assert 'CreateText("NATIVE " + currentText, 10.4,' in coverage
+assert 'CreateText("NATIVE " + currentText' not in coverage
+assert "Source Chance diagnostics stay in the backend" in coverage
 assert 'var compactOffset = string.IsNullOrWhiteSpace(caption) ? -8.0 : 0.0;' in source
 assert "row.Width < 440.0 ? 9.6 : 10.8" in source
 assert "row.Width >= 580.0 ? 10.0 : 8.9" in source
@@ -717,8 +719,8 @@ assert "hasWeight[k] || hasChance[k]" in tier_preview
 assert '"NATIVE CHANCE"' not in tier_preview
 assert 'var chanceKinds = present.Where(k => hasChance[k]).ToArray();' in tier_preview
 assert '"WEIGHT ONLY"' not in tier_preview
-assert "const double pitch = 96.0;" in tier_preview
-assert "cellWidth, 88.0" in tier_preview
+assert "const double pitch = 78.0;" in tier_preview
+assert "cellWidth, 70.0" in tier_preview
 assert 'CreateText("V "' not in tier_preview
 assert "vanillaX" not in tier_preview
 assert "var expected = tierName == \"Medium\"" in tier_preview
@@ -730,7 +732,7 @@ assert 'var parameter = P(id);' in tier_preview
 assert 'AddHorizontalTarget(parameter,' in tier_preview
 assert 'AddHorizontalTarget(scale,' not in tier_preview
 assert 'var y = outer.Top + 35.0' in tier_preview
-assert 'var currentText = PercentRange(activeValues.Min(), activeValues.Max());' in tier_preview
+assert 'var digits = (parameter.CurrentNumber * 100.0).ToString("0.##",' in tier_preview
 assert 'if (parameter is null)' in tier_preview
 assert 'var label = Parameters is null' not in tier_preview
 assert "continue;" in tier_preview
@@ -753,7 +755,7 @@ assert '"loot.expensiveStashMoneyChance"' in coverage
 for doc in (lock, system, proposal):
     assert "STASHES — ACTUAL TIER CONTENT / WEIGHT-CHANCE COVERAGE (CURRENT)" in doc
 
-assert "StashMixPalette[i]" in coverage
+assert "StashMixPalette[kind]" in coverage
 assert "GlobalMedicalItems.Select(item => state.ChanceFactor(item.Sid))" in coverage
 assert "EXCLUDED: " in coverage
 assert 'GlobalStashStatus(int category, StashEffectiveState state)' in coverage
@@ -790,7 +792,8 @@ assert "public double TierFactor(string sid)" in effective
 assert "public double SmartFactor(string sid)" in effective
 assert "public double ChanceFactor(string sid)" in effective
 assert "public double SelectionFactor(string sid, string field)" in effective
-assert 'return MedicalDetailId(sid) is { } detail && Value(detail) <= 0;' in effective
+assert '&& Value($"loot.stash{sid}MaxCount", 0) < -.5;' in effective
+assert "A zero Weight dial must NOT switch off a Chance-only native row." in effective
 assert "public double SmartSelectionFactor(string sid, string selectionField)" in effective
 assert "if (SmartSelectionFactor(sid, selectionField) <= 0.0000001)" in effective
 assert 'if (ItemBiasId(sid) is null) return raw;' in effective
