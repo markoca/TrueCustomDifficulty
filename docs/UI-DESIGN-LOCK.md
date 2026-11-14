@@ -3145,3 +3145,7 @@ Standard/Rare Stash chance tiles no longer compute or display `EffectiveSelectio
 ## 2026-11-14 — Stash zero-priority tooltip source audit
 
 The compact Basic Stash priority control uses `PRIORITY ZERO` wording while preserving the native distinction that independent Chance rolls may still occur. The static audit now checks that live phrase rather than the retired `WEIGHT OFF` text. No user-facing wording or code changed in this commit.
+
+## 2026-11-14 — Medical MAX display regression source
+
+The live Medical MIN/MAX dual rail calls `StashMedicalMaxDisplay(max.CurrentNumber)` rather than the removed inline `value < -.5` rendering expression. The UI static audit now checks the actual sentinel display helper and still rejects a redundant Vanilla label. Gameplay values and rendering were not changed.

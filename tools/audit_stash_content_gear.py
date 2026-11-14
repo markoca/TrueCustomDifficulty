@@ -191,7 +191,8 @@ assert 'DrawStashAntiRadWeightSwitch(dc,' in ui
 assert 'DrawStashMedicalModeSelector(' not in ui
 assert '=> width >= 700.0 ? 609.0 : 1050.0;' in ui
 assert 'DrawStashQuantityDualRail(dc,' in ui
-assert 'value < -.5 ? "0"' in ui and '"VANILLA"' not in ui
+assert "StashMedicalMaxDisplay(max.CurrentNumber)" in ui and '"VANILLA"' not in ui
+assert "DrawStashQuantityDualRail(dc," in ui
 assert "IsStashMedicalSelectionDisabled(" in writer
 assert "TuneStashMedicalCountField(" in writer
 assert "StashState(all).TuneSelection(" in writer
