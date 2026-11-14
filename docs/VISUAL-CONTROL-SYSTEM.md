@@ -3445,3 +3445,7 @@ The Stashes current source auditor now obtains `content_body` from the live `Dra
 ## 2026-11-14 — Unified Stash ammo quantity source visibility
 
 The active unified Ammo Quantity rail edits `loot.cheapStashAmmoQuantity`; the Standard/Rare ammo amount sources stay supported, saved and synchronized by the ViewModel but hidden from direct UI. Stashes current audit now asserts this exact one-visible / two-hidden catalog arrangement, instead of incorrectly requiring three visible rails. UI/control semantics and CFG output remain unchanged.
+
+## 2026-11-14 — Stashes audit visibility-scope repair
+
+The single visible Ammo Quantity rail has exactly one exposed source, `loot.cheapStashAmmoQuantity`; Standard and Rare remain hidden and synchronized. The source-visibility assertion now iterates those three quantity IDs, **not** the unrelated Medical/Food/Drinks priority knobs. Those three priority knobs still retain their 0.05× step contract. This fixes a false CI failure without changing any WPF layout, parameter value or game writer.

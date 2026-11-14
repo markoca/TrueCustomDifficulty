@@ -33,6 +33,7 @@ for pid in ("loot.stashMixMedical", "loot.stashMixFood", "loot.stashMixDrinks"):
     assert stash[pid]["slider"] == {
         "min": 0, "max": 1, "step": 0.05, "stepMode": "absolute"
     }
+for pid in ("loot.cheapStashAmmoQuantity", "loot.mediumStashAmmoQuantity", "loot.expensiveStashAmmoQuantity"):
     assert stash[pid]["exposeInUi"] is (pid == "loot.cheapStashAmmoQuantity")
 for pid in ("loot.stashMixAmmo", "loot.stashMixGrenades", "loot.stashMixCoupons"):
     assert stash[pid]["slider"] == {
