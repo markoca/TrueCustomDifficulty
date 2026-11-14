@@ -3425,3 +3425,8 @@ StashEffectiveState uses the local `factor` variable when clamping its per-sourc
 ## 2026-11-14 — Current Stashes regression references
 
 Static assertions now follow the existing source-backed rendering: 'PRIORITY ZERO' replaces obsolete 'WEIGHT OFF'; the 78-DIP tier-card row pitch, 70-DIP tiles, percent-of-source readout and `StashMixPalette[kind]` match current control code. Source text no longer prints redundant native preview diagnostics. Medical sentinel exclusion is based on the authored MaxCount sentinel, not a retired per-item weight gate; a Weight-zero control does not disable independent Chance-only fields. All edits are **test-only**, with UI geometry, native CFG logic and preset values untouched.
+
+
+## 2026-11-14 — Phase 5 source-backed fixture names
+
+The current native Stash branch contract uses the `food-half` (0.5×) scenario, not the retired `food-3x` scenario. The static test now requires `food-half` alongside `all-category-zero`, preserving exact coverage of the active actual-writer fixture. No UI/source values have changed.

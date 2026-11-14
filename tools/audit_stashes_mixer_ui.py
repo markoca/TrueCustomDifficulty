@@ -853,7 +853,7 @@ assert "group.EffectiveCount(Baseline, snapshot, row" in phase5
 assert "group.EffectiveSpawn(snapshot)" in phase5
 assert "AssertProtectedBaseStashesUntouched(generated, name)" in phase5
 assert "DlcEligibleActorIds.Value" in phase5
-assert '"all-category-zero"' in phase5 and '"food-3x"' in phase5
+assert '"all-category-zero"' in phase5 and '"food-half"' in phase5
 assert '"hard-bonus-medical-dlc"' in phase5
 assert 'Math.Abs(NativeValue(grenade, chance) - .8)' in phase5
 assert 'Math.Abs(NativeValue(rareEasy, couponEasy) - .6)' in phase5
