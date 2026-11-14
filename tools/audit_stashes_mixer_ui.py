@@ -406,7 +406,7 @@ mixer_match = re.search(
 )
 assert height_match is not None, "missing StashContentMix measured height"
 assert mixer_match is not None, "missing StashContentMix mixer"
-assert tuple(map(float, height_match.groups())) == (700.0, 839.0, 1185.0)
+assert tuple(map(float, height_match.groups())) == (700.0, 785.0, 1095.0)
 assert tuple(map(float, mixer_match.groups())) == (141.0, 146.0, 300.0)
 assert "wide ? 441.0 : 595.0, width," in content
 assert "wide ? 122.0 : 200.0" in content

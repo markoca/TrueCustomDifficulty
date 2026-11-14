@@ -3395,3 +3395,8 @@ The four Extra Gear weight dials are rendered by the existing compact 4-category
 ## 2026-11-14 — Stash Medical MAX sentinel readout contract
 
 The native Medical MAX value can use a negative sentinel, but the compact dual-rail display intentionally renders `StashMedicalMaxDisplay(max.CurrentNumber)` through a neutral 0–5 numeric scale. The static test now checks that exact current display mapping, rather than an obsolete `value < -.5 ? "0"` expression that the live renderer no longer uses. No UI rendering, CFG logic, or underlying min/max handling changes.
+
+
+## 2026-11-14 — Stash Content Mix height regression guard
+
+The live `StashContentMixHeight(width)` returns 785 DIP for board widths ≥700 DIP and 1095 DIP below that threshold. The static source audit had kept obsolete 839/1185-DIP expectations from an earlier geometry. The audit now asserts the **current renderer measurements**; no UI source, controls or gameplay values have been changed.
