@@ -2,7 +2,7 @@
 """Fail-closed inventory for the 2.1 CFG migration boundary.
 
 Default is an offline repo contract: a PASS certifies inventory consistency,
-NOT 2.1 runtime migration. Pass both original outer ZIPs for source deltas.
+NOT in-game 2.1 acceptance. Pass both original outer ZIPs for source deltas.
 """
 from __future__ import annotations
 
@@ -46,9 +46,8 @@ def main() -> int:
     assert dict(actual) == EXPECTED, f"Direct domain census drift: {actual}"
     assert len(points) == 1448 and len(ids) == 359
     assert baseline["supportedParameterCount"] == len(ids)
-    assert baseline["gameVersion"] == catalog["source"]["gameVersion"] == "2.0.5", (
-        "Reversioning requires fresh 2.1 direct + special source certification, "
-        "not just a metadata label edit."
+    assert baseline["gameVersion"] == catalog["source"]["gameVersion"] == "2.1", (
+        "2.1 source-target metadata mismatch; legacy 2.0.5 fallback is not supported."
     )
     assert len(baseline["special"]) == 25
     sell = baseline["special"]["traderSells"]
@@ -65,7 +64,7 @@ def main() -> int:
     }, f"2.1 changed-file edit points drift: {changed_by_domain}"
 
     report = {
-        "baselineStatus": "NOT_MIGRATED_GLOBAL_VERSION_2.0.5",
+        "baselineStatus": "2_1_TARGET_ACTIVE_SOURCE_PARITY",
         "directRoutes": len(points),
         "unchangedFileRoutes": len(points) - len(changed),
         "changedFileRoutes": len(changed),
@@ -92,7 +91,7 @@ def main() -> int:
         args.json_out.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({k: v for k, v in report.items()
                       if k != "manifestActors"}, indent=2))
-    print("PASS: current source inventory; full 2.1 migration is NOT certified"
+    print("PASS: 2.1 source target and inventory; in-game acceptance is NOT RUN"
           if report["sourceComparison"] != "FAIL" else "FAIL: original-source compatibility")
     return 1 if report["sourceComparison"] == "FAIL" else 0
 

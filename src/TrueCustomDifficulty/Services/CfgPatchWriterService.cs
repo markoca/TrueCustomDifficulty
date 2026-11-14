@@ -434,6 +434,10 @@ public sealed partial class CfgPatchWriterService
         if (baseline.WriterBaselineVersion != 1)
             throw new InvalidDataException($"Unsupported CFG writer baseline version: {baseline.WriterBaselineVersion}");
 
+        if (!string.Equals(baseline.GameVersion, "2.1", StringComparison.Ordinal) ||
+            !string.Equals(catalog.Source.GameVersion, "2.1", StringComparison.Ordinal))
+            throw new InvalidDataException("Only the S.T.A.L.K.E.R. 2.1 CFG baseline is supported.");
+
         if (!baseline.GameVersion.Equals(catalog.Source.GameVersion, StringComparison.OrdinalIgnoreCase))
         {
             throw new InvalidDataException(

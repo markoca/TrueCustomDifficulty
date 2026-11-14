@@ -8,8 +8,8 @@
     "version": "0.9.26.82"
   },
   "source": {
-    "gameVersion": "2.0.5",
-    "dumpLabel": "Current extracted base GameData + DLC1 CFG baseline (2026-10-02)",
+    "gameVersion": "2.1",
+    "dumpLabel": "STALKER 2.1 base GameData + DLC1 CFG (2026-11-14 source comparison, unchanged values inherited)",
     "precedence": [
       "runtimeGameAndDlcDump",
       "zoneKitReference"
@@ -15755,7 +15755,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -15794,7 +15794,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -15833,7 +15833,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -15872,7 +15872,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -15911,7 +15911,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -15950,7 +15950,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -15989,7 +15989,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -16028,7 +16028,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -16067,7 +16067,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -16106,7 +16106,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -16145,7 +16145,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -16184,7 +16184,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -16223,7 +16223,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -16262,7 +16262,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -16301,7 +16301,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -16340,7 +16340,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -16379,7 +16379,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -16418,7 +16418,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -16457,7 +16457,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -16496,7 +16496,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -16535,7 +16535,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -16574,7 +16574,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -16613,7 +16613,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -16652,7 +16652,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -16691,7 +16691,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -16730,7 +16730,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -16769,7 +16769,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -16808,7 +16808,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -16847,7 +16847,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -16886,7 +16886,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
@@ -16925,7 +16925,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The source-exact 2.0.5 2939-row seller offer manifest drives per-trader inherited generator clones.",
+          "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."

@@ -95,3 +95,13 @@ python3 tools/audit_21_special_source_families.py --old "/path/STALKER2-2.0 cfg 
 ```
 
 CI runs `--inventory-only`, which explicitly reports `sourceStatus=NOT_RUN`, and cannot be mistaken for original archive verification. These checks establish CFG byte compatibility, **not** that every special writer's 2.1 item-generator link, SmartLoot semantic, game load order, or modified runtime output has been validated. Global version metadata remains 2.0.5.
+
+## 2026-11-14 — Global source-target cutover to 2.1
+
+This section supersedes the earlier pending-global-label notes above. The embedded parameter catalog and writer baseline now both target **2.1**, and the C# writer rejects a mismatched or obsolete 2.0.5 target. No executable 2.0.5 SELL fallback exists: Trader Sells is sourced from the SHA-pinned 2.1 2,939-row resource. Trader Buys uses its separate 2.1 byte-identical TradePrototypes source.
+
+Direct writer values were retained only at structurally equivalent source positions: previous original-ZIP comparisons showed 35/35 changed-file direct leaves still matching and the remaining 1,413 direct points in unchanged CFG files. The 11 source-identical special CFGs, the 46-manifest actor nonintersection, and the classification of 211 newly added actors are previous source evidence, not evidence of successfully loading every BPatch in game.
+
+The old 2.0/2.0.5 strings in historical research and source-valued rationale remain **provenance only**, not alternate writer source selection. Writer baseline schema version 1 is not a game-version selector.
+
+**Acceptance still NOT RUN:** no original game archives ship in this repository, so archive-free CI cannot repeat original-ZIP source checks or validate actual game runtime. The domain audit distinguishes an offline inventory PASS from sourceComparison=NOT_RUN and gameplayStatus=NOT_TESTED. Test in S.T.A.L.K.E.R. 2.1: clean BPatch game load; hub and roaming guides; trader category on/off for both buys/sells; regular/unique/protected stashes; crates; NPC SmartLoot/corpse loot; world weapon/armor/attachment placement; DLC1 item weights/spawns; and A-Life streaming. Do not call the game behavior certified until those pass.

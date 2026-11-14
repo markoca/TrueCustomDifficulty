@@ -88,7 +88,7 @@ def main():
     special = baseline["special"]
     assert len(special) == 25, "Special CFG writer group census drift"
     assert ACTOR_DEPENDENT <= set(special), "Actor-dependent writer group removed"
-    assert baseline["gameVersion"] == "2.0.5", "Global rebase needs fresh approval"
+    assert baseline["gameVersion"] == "2.1", "2.1 target/source metadata mismatch"
     assert "GameData/SpawnActorPrototypes.cfg" not in SOURCES
     assert "DLCGameData/DLC1/SpawnActorPrototypes.cfg" not in SOURCES
     assert CHANGED_DLC not in SOURCES
@@ -123,7 +123,7 @@ def main():
         args.json_out.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report, indent=2))
     print("NOT VERIFIED: SpawnActor merges, newly added content or game runtime")
-    print("The source identity check does not re-version the 2.0.5 baseline.")
+    print("The source identity check does not establish in-game 2.1 BPatch acceptance.")
 
 
 if __name__ == "__main__":

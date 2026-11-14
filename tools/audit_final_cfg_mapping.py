@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Final, reproducible *static* 2.0.5 catalog -> production BPatch writer audit.
+"""Final, reproducible *static* 2.1 catalog -> production BPatch writer audit.
 
 Verifies source inventory and both direct/special writer dispatch, authored CFG
 edit-point identities, all twelve shipped profiles and integer source effects.
@@ -200,7 +200,7 @@ def main():
     require(len(definitions) == len(catalog["parameters"]) == 359, "359 unique CFG source IDs expected")
     require(baseline["supportedParameterCount"] == 359, "writer expected coverage drift")
     require(not baseline["deferredParameterIds"], "deferred production parameters")
-    require(baseline["gameVersion"] == catalog["source"]["gameVersion"] == "2.0.5", "source/game baseline mismatch")
+    require(baseline["gameVersion"] == catalog["source"]["gameVersion"] == "2.1", "source/game baseline mismatch")
     require(set(catalog["difficultyProfiles"]) == set(SIDS), "difficulty baseline drift")
     for difficulty, sid in SIDS.items():
         require(catalog["difficultyProfiles"][difficulty]["sid"] == sid, "CFG difficulty SID drift: " + difficulty)

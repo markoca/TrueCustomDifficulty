@@ -175,3 +175,7 @@ The writer emits only the selected Base Preset's difficulty-specific edits. Some
 ## DLC1
 
 DLC1 targets are written only when the detected game installation contains the DLC1 `.pak/.utoc/.ucas` triplet.
+
+## 2.1-only writer target (2026-11-14)
+
+Both embedded catalog and CFG writer baseline require gameVersion 2.1. The writer fails closed if either claims obsolete 2.0.5. Trader Sells uses the SHA-pinned 2.1 runtime manifest exclusively. Historical 2.0.5 source-value documentation does not constitute a runtime fallback. The two 2.1 audit scripts distinguish source inventory from exact original-ZIP validation; neither replaces in-game BPatch and gameplay acceptance.

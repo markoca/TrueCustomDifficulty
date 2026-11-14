@@ -42,7 +42,10 @@ jobs:
       - name: Trader 2.1 source/runtime integrity
         run: python tools/audit_trader_21_runtime.py
 
-      - name: 2.1 CFG domain migration inventory (global rebase pending)
+      - name: 2.1 source target and no-legacy-fallback contract
+        run: python -m unittest discover -s tests -p 'test_21_runtime_baseline.py'
+
+      - name: 2.1 CFG domain migration inventory (gameplay acceptance separate)
         run: python tools/audit_21_domain_migration.py
 
       - name: Original 2.1 Trader Buys source registry and BUY-to-SELL parity

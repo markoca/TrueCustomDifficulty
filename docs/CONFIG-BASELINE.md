@@ -1,5 +1,7 @@
 # True Custom Difficulty — Configuration Baseline
 
+> **Current production target (2026-11-14): S.T.A.L.K.E.R. 2.1.** This page remains the historical 2.0.5 raw-value ledger, not the executable source selector. The active game version is stored in the embedded parameters.json and cfg-writer-baseline.json. See STALKER2-2.1-CFG-DOMAIN-AUDIT-2026-11-14.md for source parity and pending in-game acceptance.
+
 **Status:** Baseline v0.2 — audited against runtime 2.0.5  
 **Primary source:** Runtime/game CFG dump from STALKER 2 2.0.5 with DLC content  
 **Dump label:** `Stalker2 Config Files Dump 2.0.5 1653 2.0.5 2026-09-11T13-40Z`  
