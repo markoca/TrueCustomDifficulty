@@ -3133,3 +3133,7 @@ The single visible Ammo Quantity rail has exactly one exposed source, `loot.chea
 ## 2026-11-14 — Complete unified Ammo Quantity visibility regression
 
 The active Stashes UI deliberately exposes one `loot.cheapStashAmmoQuantity` rail for all tiers while retaining two hidden, routed `loot.mediumStashAmmoQuantity` / `loot.expensiveStashAmmoQuantity` model values. The end-of-audit three-reward loop now checks this same one-visible/two-hidden invariant as the earlier visibility block, rather than incorrectly demanding three separate controls. No runtime, CFG writer or layout was modified.
+
+## 2026-11-14 — Stashes source auditor aligned to current compact UI
+
+The Stash Content/Gear static test now matches the live compact Standard Stash title, responsive layout heights, current medical-control approach and absence of redundant Vanilla text; it also verifies the unified Ammo Quantity label in the actual renderer instead of searching for a display string inside view-model code. Removed legacy rank-target bookkeeping remains explicitly forbidden. No UI implementation was modified.

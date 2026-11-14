@@ -135,9 +135,9 @@ assert "DrawStashBasicNativePools(dc," in ui
 assert '"RGD-5 AMOUNT"' in ui
 assert "percentage: false" in ui
 assert "wide ? 146.0 : 300.0" in ui
-assert "=> width >= 700.0 ? 839.0 : 1185.0;" in ui
-assert 'DrawStashChanceTier(dc, "STANDARD", "Medium", 10,' in ui
-assert "wide ? 140.0 : 236.0" in ui
+assert "=> width >= 700.0 ? 785.0 : 1095.0;" in ui
+assert 'DrawStashChanceTier(dc, "STANDARD STASH", "Medium", 10,' in ui
+assert "wide ? 122.0 : 200.0" in ui
 assert "private void DrawStashChanceTier(" in mixer
 tier_preview = mixer.split("private void DrawStashChanceTier(", 1)[1]
 assert "StashSourceGroups.Value" in tier_preview
@@ -182,18 +182,18 @@ assert '\"StashMedicalComposition\" => StashMedicalCompositionHeight(width)' in 
 assert '\"StashMedicalQuantity\" => StashMedicalQuantityHeight(width)' not in ui
 assert 'DrawStashMedicalPairShares(dc,' in ui
 assert 'var shareWidth = Math.Max(1.0, innerWidth * .64);' in ui
-assert '_medicalWeightRankTargets.Add((rect, rank));' in ui
+assert '_medicalWeightRankTargets.Add((rect, rank));' not in ui
 assert 'source.count' not in ui
 assert ui.count('visualMaximum: 1.0') == 3
 assert 'DrawStashAntiRadWeightSwitch(dc,' in ui
 assert 'DrawStashMedicalModeSelector(' not in ui
-assert '=> width >= 700.0 ? 585.0 : 1001.0;' in ui
+assert '=> width >= 700.0 ? 609.0 : 1050.0;' in ui
 assert 'DrawStashQuantityDualRail(dc,' in ui
-assert 'value < -.5 ? "0"' in ui and '"VANILLA"' in ui
+assert 'value < -.5 ? "0"' in ui and '"VANILLA"' not in ui
 assert "IsStashMedicalSelectionDisabled(" in writer
 assert "TuneStashMedicalCountField(" in writer
 assert "StashState(all).TuneSelection(" in writer
-assert "StashContentMix" in vm and "AMMO QUANTITY" in vm
+assert "StashContentMix" in vm and "AMMO QUANTITY · ALL TIERS" in ui
 assert "StashMedicalComposition" in vm
 for doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md",
             "STASHES-TAB-AND-REDESIGN-PROPOSAL.md",
