@@ -3435,3 +3435,8 @@ The current native Stash branch contract uses the `food-half` (0.5×) scenario, 
 ## 2026-11-14 — Anti-Rad semantic regression check
 
 The compact Anti-Rad cell remains an OFF/ON two-state control. Its present catalog describes OFF/ON in `logic` and independent Chance scaling in `interaction` rather than using the redundant literal phrase `two-state`. The static test checks those source semantics. No layout or native-value changes.
+
+
+## 2026-11-14 — Stashes current source audit method scope
+
+The Stashes current source auditor now obtains `content_body` from the live `DrawStashContentMix` method before checking ammo quantity placement. A stale undefined `content` alias blocked all later checks. Duplicate identical static assertions were consolidated without weakening the current source contract. No UI runtime code or source values changed.

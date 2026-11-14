@@ -41,6 +41,9 @@ for pid in ("loot.stashMixAmmo", "loot.stashMixGrenades", "loot.stashMixCoupons"
     assert stash[pid]["exposeInUi"] is False
 
 ui = read(src / "Controls/AggregateVisualControl.cs")
+# Current Stash Content renderer body, independent of aggregate methods.
+content_body = ui.split("private void DrawStashContentMix(", 1)[1].split(
+    "private void DrawStashMedicalComposition(", 1)[0]
 vm = read(src / "ViewModels/MainViewModel.cs")
 pvm = read(src / "ViewModels/ParameterViewModel.cs")
 tuning = read(src / "Services/CfgPatchWriterService.StashTuning.cs")
@@ -211,15 +214,13 @@ assert '"$EXPECTED_STASH_SHA" != "$ACTUAL_STASH_SHA"' in verified_runner
 assert '"$NATIVE_ROW_STATUS" != "absent"' in verified_runner
 assert 'grep -nF' in verified_runner
 assert 'exec env WINEPREFIX=' in verified_runner
-assert '"loot.cheapStashAmmoQuantity"' in content
-assert '"AMMO QUANTITY · ALL TIERS"' in content_body
+assert '"loot.cheapStashAmmoQuantity"' in content_body
 assert '"AMMO QUANTITY · ALL TIERS"' in content_body
 basic_mixer = read(src / "Controls/AggregateVisualControl.StashBranch.cs").split(
     "private void DrawStashWeightMixer(", 1)[1].split(
     "private void DrawStashBasicNativePools(", 1)[0]
 assert "tierName" not in basic_mixer
 assert "ammoId" not in basic_mixer
-assert 'percentage: false, multiplier: true' in content_body
 assert 'percentage: false, multiplier: true' in content_body
 for pid in rewards:
     assert stash[pid]["group"] == "Stash Content"
