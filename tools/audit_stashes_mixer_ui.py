@@ -299,7 +299,9 @@ assert "StashSourceNumber(" not in source
 assert "CfgWriterBaselineService().Load()" in source
 assert "StashMedicalSourcePreview" not in source
 assert '"0 ITEMS"' not in quantity_rail and '"AUTO"' not in quantity_rail
-assert 'value < -.5 ? "0"' in quantity_rail
+assert 'var maxValue = Math.Round(StashMedicalMaxDisplay(max.CurrentNumber));' in quantity_rail
+assert 'maxValue.ToString(CultureInfo.InvariantCulture)' in quantity_rail
+assert '"0 ITEMS"' not in quantity_rail and '"AUTO"' not in quantity_rail
 
 # Authoritative baseline input: 2 representative DIFFERENT actual-native
 # weight pools from GameData/ItemGeneratorPrototypes.cfg. At 1x the real

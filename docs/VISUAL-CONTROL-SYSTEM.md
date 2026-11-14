@@ -3390,3 +3390,8 @@ The active `StashMedicalCompositionHeight` source is **609 DIP** at widths ≥70
 ## 2026-11-14 — Stash Extra Gear wording/audit consistency
 
 The four Extra Gear weight dials are rendered by the existing compact 4-category knob mixer. Catalog `interaction` describes **Coverage** versus **Bonus Chance**, and `logic` describes **category priority** and the zero-excludes boundary; it intentionally does **not** repeat the word “knob” in each item's interaction text. `tools/audit_stashes_mixer_ui.py` now asserts the actual semantic contract instead of an obsolete literal `knob` copy requirement. No UI renderer geometry, active value, or preset file changes.
+
+
+## 2026-11-14 — Stash Medical MAX sentinel readout contract
+
+The native Medical MAX value can use a negative sentinel, but the compact dual-rail display intentionally renders `StashMedicalMaxDisplay(max.CurrentNumber)` through a neutral 0–5 numeric scale. The static test now checks that exact current display mapping, rather than an obsolete `value < -.5 ? "0"` expression that the live renderer no longer uses. No UI rendering, CFG logic, or underlying min/max handling changes.

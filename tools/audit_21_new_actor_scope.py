@@ -139,12 +139,8 @@ def audit(old: Path, new: Path):
         raise ValueError("New 2.1 actor classification changed")
     if sum(r["smartloot_flag"] == "true" for r in records) != 4:
         raise ValueError("2.1 quest SmartLoot flags changed")
-    if len(records) != len({(r["scope"], r["actor_sid"]) for r in records}) != 0:
-        # Keep the bound explicit and prevent duplicate source coordinates.
-        if len(records) != 211:
-            raise ValueError("Unexpected classified actor count")
-    else:
-        raise ValueError("Duplicate or empty classified actors")
+    if len(records) != 211 or len({(r["scope"], r["actor_sid"]) for r in records}) != 211:
+        raise ValueError("Duplicate or unexpected classified actor count")
     return sorted(records, key=lambda x: (x["scope"], x["actor_sid"]))
 
 
