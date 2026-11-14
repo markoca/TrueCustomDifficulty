@@ -1735,7 +1735,7 @@ _economy_coupon_contract = (
 )
 _economy_service_contract = (
     'P(channels[i].Id)',
-    '("economy.fastTravelCost", "FAST TRAVEL")',
+    '("economy.fastTravelCost", "GUIDE TRAVEL FEES")',
     '("economy.upgradeCost", "UPGRADES")',
     '("economy.repairCostBase", "BASE REPAIR")',
     'DrawSourceKnob(dc, P(channels[i].Id)',
@@ -4297,8 +4297,8 @@ _stock_knob_source = _knob_source
 if (not all(v in _stock_knob_source for v in (
     'private void DrawTraderStockKnobs(',
     '("economy.traderAmmoStock", "AMMO SUPPLY")',
-    '("economy.medicStock", "MEDIC STOCK")',
-    '"TraderStockBoard" => 242.0',
+    '("economy.medicStock", "MEDIC SUPPLIES")',
+    '"TraderStockBoard" => StockAmountBoardHeight(width)',
 )) or not knob_wheel_gate_contains(_stock_knob_source, "TraderStockBoard") or any('2026-10-11 — Trader Stock native knobs' not in d
           for d in _knob_catalog_texts)):
     fail("Trader Stock dual source knob contract drifted")

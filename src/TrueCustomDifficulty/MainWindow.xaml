@@ -332,13 +332,11 @@
                                                                                                ParameterSelected="AggregateVisualControl_ParameterSelected"
                                                                                                Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
                                                                     <controls:AggregateVisualControl Family="TraderStockBoard"
-                                                                                                     VerticalKnobLayout="True"
                                                                                                      HorizontalAlignment="Center"
                                                                                                      PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                                      ParameterSelected="AggregateVisualControl_ParameterSelected"
                                                                                                      Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
                                                                     <controls:AggregateVisualControl Family="ServiceCostsBoard"
-                                                                                                     VerticalKnobLayout="True"
                                                                                                      HorizontalAlignment="Center"
                                                                                                      PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                                      ParameterSelected="AggregateVisualControl_ParameterSelected"

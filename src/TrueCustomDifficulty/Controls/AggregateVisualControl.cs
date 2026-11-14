@@ -99,21 +99,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         control.InvalidateVisual();
     }
 
-    // Portrait presentation for the Economy's combined trader row only.
-    // All other families retain their established knob layout.
-    public static readonly DependencyProperty VerticalKnobLayoutProperty =
-        DependencyProperty.Register(nameof(VerticalKnobLayout), typeof(bool),
-            typeof(AggregateVisualControl),
-            new FrameworkPropertyMetadata(false,
-                FrameworkPropertyMetadataOptions.AffectsMeasure
-                | FrameworkPropertyMetadataOptions.AffectsRender));
-
-    public bool VerticalKnobLayout
-    {
-        get => (bool)GetValue(VerticalKnobLayoutProperty);
-        set => SetValue(VerticalKnobLayoutProperty, value);
-    }
-
     public IEnumerable? Parameters
     {
         get => (IEnumerable?)GetValue(ParametersProperty);
@@ -151,9 +136,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // The paired Economy dashboard cards must measure at their actual host
         // width rather than demanding the unrelated 520-DIP plot minimum.
         var compactBoard = Family is "CouponFlow" or "TradingDashboard"
-            or "ServiceCostsBoard" or "RepairCurve"
+            or "ServiceCostsBoard" or "TraderStockBoard" or "RepairCurve"
             or "MasterLowHealth" or "MasterRadiationPenalty";
-        var minimumWidth = VerticalKnobLayout ? 180.0 : compactBoard ? 280.0 : 520.0;
+        var minimumWidth = compactBoard ? 280.0 : 520.0;
         var width = double.IsInfinity(availableSize.Width) ? 760.0
             : Math.Max(minimumWidth, availableSize.Width);
         return new Size(width, GetDesiredHeight(Family, width));
@@ -542,8 +527,13 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private static double CouponBoardHeight(double width)
         => width >= 390.0 ? 274.0 : 367.0;
 
+    // Three service knobs fit one row only when labels and full dial hit zones
+    // have enough room; narrower hosts use a two-plus-one arrangement.
     private static double ServicePriceBoardHeight(double width)
-        => width >= 390.0 ? 242.0 : 438.0;
+        => width >= 470.0 ? 242.0 : 438.0;
+
+    private static double StockAmountBoardHeight(double width)
+        => width >= 320.0 ? 242.0 : 423.0;
 
     private static string EconomyValue(ParameterViewModel parameter, double value)
         => parameter.Id switch
@@ -658,20 +648,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             ("economy.upgradeCost", "UPGRADES"),
             ("economy.repairCostBase", "BASE REPAIR")
         };
-        if (VerticalKnobLayout)
-        {
-            const double pitch = 187.0;
-            var portraitWidth = Math.Min(194.0, Math.Max(1.0, ActualWidth - 24.0));
-            var portraitLeft = (ActualWidth - portraitWidth) / 2.0;
-            for (var i = 0; i < channels.Length; i++)
-                DrawSourceKnob(dc, P(channels[i].Id), channels[i].Label,
-                    new Rect(portraitLeft, 44.0 + i * pitch, portraitWidth, 181.0),
-                    text, muted, border, accent, panel,
-                    percentageReadout: channels[i].Id == "economy.repairCostBase");
-            return;
-        }
-
-        var columns = ActualWidth >= 390.0 ? 3 : 2;
+        var columns = ActualWidth >= 470.0 ? 3 : 2;
         const double gap = 10.0;
         var bankWidth = Math.Min(606.0, ActualWidth - 30.0);
         var cellWidth = Math.Min(194.0, (bankWidth - (columns - 1) * gap) / columns);
@@ -692,35 +669,31 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     }
 
     // Independent native stock multipliers: no suggestion of actual item slots.
+    // The two dials sit side by side beside the trader table, not one above another.
     private void DrawTraderStockKnobs(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
-        DrawHeader(dc, VerticalKnobLayout ? "STOCK AMOUNT" : "TRADER STOCK",
-            "", text, muted, accent);
+        DrawHeader(dc, "STOCK AMOUNT", "", text, muted, accent);
         var channels = new (string Id, string Label)[]
         {
             ("economy.traderAmmoStock", "AMMO SUPPLY"),
             ("economy.medicStock", "MEDIC SUPPLIES")
         };
-        if (VerticalKnobLayout)
-        {
-            const double pitch = 187.0;
-            var portraitWidth = Math.Min(194.0, Math.Max(1.0, ActualWidth - 24.0));
-            var portraitLeft = (ActualWidth - portraitWidth) / 2.0;
-            for (var i = 0; i < channels.Length; i++)
-                DrawSourceKnob(dc, P(channels[i].Id), channels[i].Label,
-                    new Rect(portraitLeft, 44.0 + i * pitch, portraitWidth, 181.0),
-                    text, muted, border, accent, panel);
-            return;
-        }
-        const double cellWidth = 194.0;
+        // Exceptionally narrow windows may use a two-row fallback so neither
+        // dial or its caption gets cropped.
+        var twoColumns = ActualWidth >= 320.0;
         const double gap = 12.0;
-        const double top = 49.0;
-        var left = (ActualWidth - (2 * cellWidth + gap)) / 2.0;
+        var bankWidth = Math.Min(400.0, Math.Max(1.0, ActualWidth - 28.0));
+        var cellWidth = Math.Min(194.0,
+            twoColumns ? (bankWidth - gap) / 2.0 : bankWidth);
+        var rowWidth = twoColumns ? 2 * cellWidth + gap : cellWidth;
+        var left = (ActualWidth - rowWidth) / 2.0;
         for (var i = 0; i < channels.Length; i++)
             DrawSourceKnob(dc, P(channels[i].Id), channels[i].Label,
-                new Rect(left + i * (cellWidth + gap), top, cellWidth, 181.0),
+                new Rect(left + (twoColumns ? i * (cellWidth + gap) : 0.0),
+                    49.0 + (twoColumns ? 0.0 : i * 187.0),
+                    cellWidth, 181.0),
                 text, muted, border, accent, panel);
     }
 
@@ -7330,8 +7303,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         => family switch
         {
             "CouponFlow" => CouponBoardHeight(width),
-            "ServiceCostsBoard" => VerticalKnobLayout ? 608.0 : ServicePriceBoardHeight(width),
-            "TraderStockBoard" => VerticalKnobLayout ? 423.0 : 242.0,
+            "ServiceCostsBoard" => ServicePriceBoardHeight(width),
+            "TraderStockBoard" => StockAmountBoardHeight(width),
             "ItemWeightBoard" => EconomyBoardHeight(width, 4),
             "AnomalyGlobalDamage" => 242.0,
             "FlycatcherSlowdown" => FlycatcherBoardHeight(width),

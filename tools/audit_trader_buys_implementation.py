@@ -46,19 +46,32 @@ assert 'TraderSellsPolicy.ParameterIds.Concat(' in ui
 assert '["technician"] = new HashSet<string>(StringComparer.Ordinal)' in policy
 assert 'Binding="{Binding IsTraderSellsAnchor}"' in xaml
 assert '<controls:TraderBuysMatrix' in xaml
-# The single SELL-anchored trader row owns the table and both native
-# vertical knob banks. All five price/amount scalars remain in the catalog,
-# presets and CFG writers, but their old standalone anchor rows are hidden.
+# The single SELL-anchored trader row owns the table and two horizontal
+# knob boards stacked on the right. The five native source controls remain
+# hidden as standalone cards but retain their preset/CFG writer mappings.
 assert '<infra:TraderEconomyPanel x:Name="TraderEconomyPanel"' in xaml
 assert '<Setter TargetName="TraderEconomyPanel" Property="Visibility" Value="Visible" />' in xaml
-assert xaml.count('VerticalKnobLayout="True"') == 2
+assert 'VerticalKnobLayout="True"' not in xaml
 assert 'Family="TraderStockBoard"' in xaml and 'Family="ServiceCostsBoard"' in xaml
+assert xaml.index('Family="TraderStockBoard"') < xaml.index('Family="ServiceCostsBoard"')
 assert 'TraderBuysMatrixControl" Property="Visibility" Value="Visible"' not in xaml
 aggregate = (src / "Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
-assert 'VerticalKnobLayout ? "STOCK AMOUNT" : "TRADER STOCK"' in aggregate
-assert '"ServiceCostsBoard" => VerticalKnobLayout ? 608.0' in aggregate
-assert '"TraderStockBoard" => VerticalKnobLayout ? 423.0' in aggregate
-assert aggregate.count('new Rect(portraitLeft, 44.0 + i * pitch, portraitWidth, 181.0)') == 2
+assert 'DrawHeader(dc, "STOCK AMOUNT", "", text, muted, accent);' in aggregate
+assert '"ServiceCostsBoard" => ServicePriceBoardHeight(width)' in aggregate
+assert '"TraderStockBoard" => StockAmountBoardHeight(width)' in aggregate
+assert 'var columns = ActualWidth >= 470.0 ? 3 : 2;' in aggregate
+assert 'var twoColumns = ActualWidth >= 320.0;' in aggregate
+assert 'VerticalKnobLayout' not in aggregate
+viewmodel = (src / "ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
+visible = viewmodel.split("public bool IsControlVisible =>", 1)[1].split("public string ToggleStateLabel", 1)[0]
+assert '&& Id != "economy.traderAmmoStock"' in visible
+assert '&& Id != "economy.fastTravelCost"' in visible
+panel = (src / "Infrastructure/TraderEconomyPanel.cs").read_text(encoding="utf-8")
+assert 'UseSideColumn(width)' in panel
+assert 'var right = left + tableWidth + Gap;' in panel
+assert 'stock.DesiredSize.Height + Gap + services.DesiredSize.Height' in panel
+assert 'new Rect(right, stock.DesiredSize.Height + Gap,' in panel
+assert 'table.DesiredSize.Height + Gap' in panel
 viewmodel = (src / "ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
 visible = viewmodel.split("public bool IsControlVisible =>", 1)[1].split("public string ToggleStateLabel", 1)[0]
 assert '&& Id != "economy.traderAmmoStock"' in visible
