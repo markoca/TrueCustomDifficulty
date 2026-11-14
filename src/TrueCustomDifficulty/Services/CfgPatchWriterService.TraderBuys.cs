@@ -13,7 +13,7 @@ public sealed partial class CfgPatchWriterService
     private sealed record TraderBuysRow(
         string Scope, string File, string Prototype, string Role, bool Authored, IReadOnlyList<string> Blocked);
 
-    // Source-identity manifest generated from original CFG 2.0.5 TradePrototypes,
+    // Source-identity manifest verified byte-identical against original CFG 2.1 TradePrototypes,
     // NOT from merchant stock generators or the current user's price settings.
     private static IReadOnlyList<TraderBuysRow> LoadTraderBuysRows()
     {

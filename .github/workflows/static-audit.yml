@@ -39,6 +39,9 @@ jobs:
       - name: 2.1 CFG domain migration inventory (global rebase pending)
         run: python tools/audit_21_domain_migration.py
 
+      - name: Original 2.1 Trader Buys source registry and BUY-to-SELL parity
+        run: python tools/audit_trader_buy_21_source.py
+
       - name: Four native Food Hunger Relief source, UI, and preset audit
         run: python tools/audit_food_satiety_source.py
 

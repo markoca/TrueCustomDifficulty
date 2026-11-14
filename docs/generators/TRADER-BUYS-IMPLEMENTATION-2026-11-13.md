@@ -40,3 +40,7 @@ It merges with the existing `economy.traderMinBuyCondition` writer on the same `
 
 **Acceptance not claimed:** compiled .NET build / WPF layout visual behavior, generated mod install, Unreal BPatch semantics on live game, purchase eligibility, cross-mod replacement conflicts and DLC1 gameplay. Do not label this implementation game-tested until those pass. The implemented control is exclusively merchant BUY acceptance; the separately researched **Trader Sells** category suppression remains unimplemented.
 
+
+## Verification against original 2.1 TradePrototypes (2026-11-14)
+
+All 86 native BUY exclusion profiles were re-extracted from the 2.1 base+DLC1 source (53 explicit, 33 non-authored), and the signed source inventory exactly matches the embedded buy policy manifest. The two TradePrototypes CFG files are byte-for-byte identical to the provided 2.0 originals. The native 2.1 BUY verifier is `python3 tools/audit_trader_buy_21_source.py --source "/path/STALKER2-2.1 cfg dump.zip"`; its default CI mode pins the source-derived ledger and checks 2.1 SELL role parity. Durability thresholds: 64 physically authored pairs, 22 non-authored pairs that are assigned the historical 0.4f marker; do not call those 22 original authored defaults. No UI or active gameplay values have changed.
