@@ -480,7 +480,7 @@ public sealed partial class CfgPatchWriterService
         var traderSellsIds = TraderSellsPolicy.ParameterIds.ToHashSet(StringComparer.Ordinal);
         if (baseline.Special.TraderSells.ExpectedProfiles != 86
             || baseline.Special.TraderSells.ExpectedSourceRows != 2939
-            || baseline.Special.TraderSells.ManifestResource != "TrueCustomDifficulty.Data.trader-offers-source-rows.csv"
+            || baseline.Special.TraderSells.ManifestResource != "TrueCustomDifficulty.Data.trader-sells-2.1-runtime.csv"
             || baseline.Special.TraderSells.ParameterIds.Count != 31
             || !baseline.Special.TraderSells.ParameterIds.ToHashSet(StringComparer.Ordinal).SetEquals(traderSellsIds))
             throw new InvalidDataException("Trader Sells 31-cell source/writer manifest contract drifted.");

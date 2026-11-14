@@ -3385,3 +3385,8 @@ Exact source and exclusions are tracked in `src/TrueCustomDifficulty/Data/equipm
 ## 2026-11-14 — Stash Medical responsive height audit synchronization
 
 The active `StashMedicalCompositionHeight` source is **609 DIP** at widths ≥700 DIP and **1050 DIP** below 700 DIP. The source's later layout adjustment was already present; the static `tools/audit_stashes_mixer_ui.py` expected the retired 585/1001-DIP geometry and therefore falsely failed. The test now asserts the current measured geometry. No UI control rendering, slider positions, values, CFG writer, or preset behaviors were changed in this reconciliation.
+
+
+## 2026-11-14 — Stash Extra Gear wording/audit consistency
+
+The four Extra Gear weight dials are rendered by the existing compact 4-category knob mixer. Catalog `interaction` describes **Coverage** versus **Bonus Chance**, and `logic` describes **category priority** and the zero-excludes boundary; it intentionally does **not** repeat the word “knob” in each item's interaction text. `tools/audit_stashes_mixer_ui.py` now asserts the actual semantic contract instead of an obsolete literal `knob` copy requirement. No UI renderer geometry, active value, or preset file changes.

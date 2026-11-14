@@ -64,3 +64,7 @@ The full static CI chain also updates the independent Food Hunger Relief audit's
 ## Source registry reconciliation (2026-11-14)
 
 The baseline special-writer metadata now points to TrueCustomDifficulty.Data.trader-sells-2.1-runtime.csv, matching the embedded production SELL writer. The legacy CSV under docs/generators stays historical only. This does NOT re-version the unrelated direct CFG or other special writer inventories; see docs/STALKER2-2.1-CFG-DOMAIN-AUDIT-2026-11-14.md.
+
+## 2026-11-14: active C# source guard synchronized
+
+`CfgPatchWriterService.ValidateBaseline` now requires `TrueCustomDifficulty.Data.trader-sells-2.1-runtime.csv` rather than the removed 2.0.5 CSV. Previous main had updated the JSON baseline without updating this guard, causing **all C# writer contracts to fail before patch generation**. This restores matching writer/source registry checks and does not change trader prices, category choices or generated CFG instructions.
