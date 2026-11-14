@@ -58,7 +58,7 @@ aggregate = (src / "Controls/AggregateVisualControl.cs").read_text(encoding="utf
 assert 'VerticalKnobLayout ? "STOCK AMOUNT" : "TRADER STOCK"' in aggregate
 assert '"ServiceCostsBoard" => VerticalKnobLayout ? 608.0' in aggregate
 assert '"TraderStockBoard" => VerticalKnobLayout ? 423.0' in aggregate
-assert aggregate.count('new Rect(left, 44.0 + i * pitch, cellWidth, 181.0)') == 2
+assert aggregate.count('new Rect(portraitLeft, 44.0 + i * pitch, portraitWidth, 181.0)') == 2
 viewmodel = (src / "ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
 visible = viewmodel.split("public bool IsControlVisible =>", 1)[1].split("public string ToggleStateLabel", 1)[0]
 assert '&& Id != "economy.traderAmmoStock"' in visible

@@ -661,11 +661,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         if (VerticalKnobLayout)
         {
             const double pitch = 187.0;
-            var cellWidth = Math.Min(194.0, Math.Max(1.0, ActualWidth - 24.0));
-            var left = (ActualWidth - cellWidth) / 2.0;
+            var portraitWidth = Math.Min(194.0, Math.Max(1.0, ActualWidth - 24.0));
+            var portraitLeft = (ActualWidth - portraitWidth) / 2.0;
             for (var i = 0; i < channels.Length; i++)
                 DrawSourceKnob(dc, P(channels[i].Id), channels[i].Label,
-                    new Rect(left, 44.0 + i * pitch, cellWidth, 181.0),
+                    new Rect(portraitLeft, 44.0 + i * pitch, portraitWidth, 181.0),
                     text, muted, border, accent, panel,
                     percentageReadout: channels[i].Id == "economy.repairCostBase");
             return;
@@ -706,11 +706,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         if (VerticalKnobLayout)
         {
             const double pitch = 187.0;
-            var cellWidth = Math.Min(194.0, Math.Max(1.0, ActualWidth - 24.0));
-            var left = (ActualWidth - cellWidth) / 2.0;
+            var portraitWidth = Math.Min(194.0, Math.Max(1.0, ActualWidth - 24.0));
+            var portraitLeft = (ActualWidth - portraitWidth) / 2.0;
             for (var i = 0; i < channels.Length; i++)
                 DrawSourceKnob(dc, P(channels[i].Id), channels[i].Label,
-                    new Rect(left, 44.0 + i * pitch, cellWidth, 181.0),
+                    new Rect(portraitLeft, 44.0 + i * pitch, portraitWidth, 181.0),
                     text, muted, border, accent, panel);
             return;
         }

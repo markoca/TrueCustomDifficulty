@@ -3473,3 +3473,7 @@ The active Stashes UI deliberately exposes one `loot.cheapStashAmmoQuantity` rai
 ## 2026-11-14 — Stashes source auditor aligned to current compact UI
 
 The Stash Content/Gear static test now matches the live compact Standard Stash title, responsive layout heights, current medical-control approach and absence of redundant Vanilla text; it also verifies the unified Ammo Quantity label in the actual renderer instead of searching for a display string inside view-model code. Removed legacy rank-target bookkeeping remains explicitly forbidden. No UI implementation was modified.
+
+## 2026-11-14 — Vertical knob build scope fix
+
+WPF cross-build revealed shadowing of the existing horizontal renderer's local `cellWidth` and `left` variables inside the added portrait branches. These were renamed to `portraitWidth` and `portraitLeft`, preserving the same geometry and source interactions. Both trader layout audits check the corrected expression.
