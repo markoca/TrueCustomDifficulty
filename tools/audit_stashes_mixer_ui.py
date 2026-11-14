@@ -195,7 +195,7 @@ assert '"OFF"' in anti_weight and '"ON"' in anti_weight
 assert "_stashMedicalShowChance" not in source
 assert "DrawStashQuantityDots(" not in source
 assert "DrawStashMedicalSourcePreview(" not in source
-assert '=> width >= 700.0 ? 585.0 : 1001.0;' in source
+assert '=> width >= 700.0 ? 609.0 : 1050.0;' in source
 assert 'P("loot.stashGearCoveragePercent")' in gear
 for key in ("Weapon", "Armor", "Artifact", "Attachment"):
     assert '"loot.stashGear' + key + 'Weight"' in gear

@@ -3380,3 +3380,8 @@ The production source reader selected **112 base + 12 DLC1 weapons** (one tutori
 
 Exact source and exclusions are tracked in `src/TrueCustomDifficulty/Data/equipment-weapon-armor-weight-source.csv` (218 distinct base/DLC1 rows), with accompanying `docs/equipment/WEAPON-ARMOR-WEIGHT-SOURCE-2026-11-13.md`. Direct writer entries increase from 1230 to 1448; total catalog dimensions 286 → 288 and player-visible sources 181 → 183. All twelve stock presets add independent neutral 1× values. Existing player-customized presets keep their values, and only byte-identical previous factory JSONs migrate. Gameplay and DLC load-order acceptance remain separate from source parity and Windows BPatch tests.
 
+
+
+## 2026-11-14 — Stash Medical responsive height audit synchronization
+
+The active `StashMedicalCompositionHeight` source is **609 DIP** at widths ≥700 DIP and **1050 DIP** below 700 DIP. The source's later layout adjustment was already present; the static `tools/audit_stashes_mixer_ui.py` expected the retired 585/1001-DIP geometry and therefore falsely failed. The test now asserts the current measured geometry. No UI control rendering, slider positions, values, CFG writer, or preset behaviors were changed in this reconciliation.
