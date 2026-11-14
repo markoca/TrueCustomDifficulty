@@ -79,7 +79,7 @@ assert "IsTraderBuysAnchor ||" not in visual_anchors
 assert "IsTraderSellsAnchor ||" in visual_anchors
 assert 'Binding="{Binding IsTraderBuysAnchor}"' not in xaml
 sell_board = xaml.split('<DataTrigger Binding="{Binding IsTraderSellsAnchor}" Value="True">', 1)[1].split("</DataTrigger>", 1)[0]
-assert '<Setter TargetName="TraderBuysMatrixControl" Property="Visibility" Value="Visible" />' in sell_board
+assert '<Setter TargetName="TraderEconomyPanel" Property="Visibility" Value="Visible" />' in sell_board
 # The category-only UI does not bind the retired per-item list. The saved
 # sidecar must continue to reach the writer through MainViewModel.
 assert 'TraderItemOverrides' in (src / "ViewModels/MainViewModel.cs").read_text(encoding="utf-8")

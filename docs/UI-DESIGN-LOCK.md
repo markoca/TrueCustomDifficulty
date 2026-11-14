@@ -3165,3 +3165,7 @@ The compact Basic Stash priority control uses `PRIORITY ZERO` wording while pres
 ## 2026-11-14 — Medical MAX display regression source
 
 The live Medical MIN/MAX dual rail calls `StashMedicalMaxDisplay(max.CurrentNumber)` rather than the removed inline `value < -.5` rendering expression. The UI static audit now checks the actual sentinel display helper and still rejects a redundant Vanilla label. Gameplay values and rendering were not changed.
+
+## 2026-11-14 — Trader Economy host regression assertion
+
+The legacy BUY source audit now expects the SELL anchor to reveal the **TraderEconomyPanel** host, rather than the old standalone **TraderBuysMatrixControl**. The table is a child of this single host. This is a static test update only; existing native UI and writer code remain unchanged.
