@@ -491,7 +491,11 @@ mix_ids = expected["StashContentMix"][:6]  # global Weight only; remaining two a
 for pid in mix_ids:
     item = next(p for p in catalog["parameters"] if p["id"] == pid)
     slider = item["slider"]
-    assert (slider["min"], slider["max"], slider["step"]) == (0, 1, 0.1), pid
+    expected_step = 0.05 if pid in (
+        "loot.stashMixMedical", "loot.stashMixFood", "loot.stashMixDrinks"
+    ) else 0.1
+    assert (slider["min"], slider["max"], slider["step"]) == (0, 1, expected_step), pid
+    assert item["exposeInUi"] is (expected_step == 0.05), pid
     assert item["vanilla"]["All"] == 1, pid
     assert "Weight" in item["targets"][0]["path"], pid
     assert all("Chance" not in target["path"] for target in item["targets"]), pid
@@ -515,7 +519,7 @@ assert 'CreateText("V "' not in tier_preview and "vanillaX" not in tier_preview
 assert "Math.Clamp(Number(updated) * multiplier, 0.0, 1.0)" in effective
 assert 'StashTierChanceParameterIds.Any(id =>' in tuning
 
-assert '=> width >= 700.0 ? 839.0 : 1185.0;' in source
+assert '=> width >= 700.0 ? 785.0 : 1095.0;' in source
 assert "GlobalStashKindsVerified.Value" in coverage
 assert "StashBranchPreviewCatalog.Load(StashPreviewBaseline.Value)" in coverage
 assert "groups.Sum(x => x.Items.Count) != 1124" in coverage

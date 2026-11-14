@@ -3085,3 +3085,8 @@ The live `StashContentMixHeight(width)` returns 785 DIP for board widths ≥700 
 ## 2026-11-14 — Current Stashes board height guards
 
 Retired hardcoded 839/1185-DIP lane arithmetic and older 373/409, 220/383, 220/383/546-DIP assertions were removed from the Stashes audit. Their former helpers are no longer live controls. Tests now check active Stash Content Mix (785/1095 DIP), Medical (609/1050 DIP), and Bonus Gear (502/670 DIP) bounds. No renderer or gameplay values changed.
+
+
+## 2026-11-14 — Current Stash Content static contract consistency
+
+The Stashes A+C audit now enforces the current catalog: the three visible Medical/Food/Drinks relative priority sliders use 0.05× increments; the three hidden compatibility-only Ammo/Grenades/Coupons weight IDs retain 0.10× increments. The renderer's already-adopted Stash Content Mix height is 785/1095 DIP, not the retired 839/1185 values. This commit changes the static verification only; visual geometry, catalog values, game writer and existing presets remain unchanged.
