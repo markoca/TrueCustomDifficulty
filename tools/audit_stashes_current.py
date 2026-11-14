@@ -312,7 +312,11 @@ for name in names:
     assert set(values) == set(catalog), f"{name} does not match catalog"
     for pid in bonus:
         assert values[pid]["kind"] == ("toggle" if pid == bonus[0] else "slider")
-    assert values["loot.stashGearEnabled"]["boolean"] is False
+    gear_enabled = values["loot.stashGearEnabled"]["boolean"]
+    weapon_shuffle = values["loot.worldWeaponShuffle"]["boolean"]
+    assert isinstance(gear_enabled, bool) and isinstance(weapon_shuffle, bool), name
+    assert not (gear_enabled and weapon_shuffle), f"{name}: conflicting gear/shuffle settings"
+    assert (values["loot.stashGearCoveragePercent"]["number"] > 0) == gear_enabled, name
 
 def csv_rows(filename):
     with (data / filename).open(encoding="utf-8", newline="") as f:

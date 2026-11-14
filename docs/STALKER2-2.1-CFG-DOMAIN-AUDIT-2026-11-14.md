@@ -109,3 +109,7 @@ The old 2.0/2.0.5 strings in historical research and source-valued rationale rem
 ## 2026-11-14 — Stashes static CI gate follow-up
 
 The Windows production BPatch contract jobs and Linux WPF cross-build passed on commit `9273f14`, while the static `audit_stashes_current.py` stopped on its late assertion requiring all three ammo quantity sources to be independently visible. That conflicts with the deliberately unified tier UI. The assertion now verifies exactly one exposed Basic source with the Standard/Rare values preserved and hidden. Game-side runtime acceptance is still pending; CI passing cannot certify in-game gameplay.
+
+## 2026-11-14 — Factory preset / Stash Gear static contract
+
+Factory presets deliberately vary Extra Stash Gear: enabled for Anomaly Runner, Mercenary, Mutant Hunter, Scavenger and Smuggler, disabled for the other seven. The static Stashes audit now checks typed toggles, mutual exclusion with World Weapon Shuffle, and positive coverage precisely when Extra Stash Gear is enabled. It no longer incorrectly requires every factory profile to disable Extra Stash Gear. Existing preset gameplay values and compact UI remain unchanged.
