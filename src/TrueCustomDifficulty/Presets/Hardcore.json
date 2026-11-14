@@ -2,7 +2,7 @@
   "profileVersion": 1,
   "name": "Hardcore",
   "toolVersion": "0.9.26.82",
-  "gameVersion": "2.0.5",
+  "gameVersion": "2.1",
   "referenceDifficulty": "Master",
   "drinkDurationOverride": true,
   "medicalOverride": false,

@@ -590,6 +590,24 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "b97953269c4487b01a0a46fa5b16ef1059c5473b",
     };
 
+    // Exact old stock preset blobs before the 2.1 metadata cutover;
+    // never overwrite user-edited factory-named presets.
+    private static readonly Dictionary<string, string> Pre21FactoryBlobs = new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "41f3bcbca9cb58a93efcd12c590dc4a55fb375d5",
+        ["Field Medic"] = "a6ff6b15f0631aef44d799b7feb5f769565284c5",
+        ["Hardcore"] = "44d5ec3b5300b9a2091572da0039622b816de0fa",
+        ["Hardcore+"] = "c2d2ccff5c4b17368d5d0be185d11fa9f7b7a041",
+        ["Immersive"] = "a82482c25751ce586ba563f7e4874c27f26dd5bd",
+        ["Mercenary"] = "432ba5f699626da9867f0487f79b83a1835f3e35",
+        ["Mutant Hunter"] = "642771d1616d1d6f0ede681ec6fd0f1ee253b736",
+        ["Outcast"] = "ba9ade30bb0751d251f2c6e90cead5a095a40785",
+        ["Scavenger"] = "e7da8148a2cb839b07b2b22173e0f65f28310538",
+        ["Smuggler"] = "a7e6b46819bfb659e027b5033edd9b6fc18d0a22",
+        ["Tactical"] = "c39842c262d5dc36b191005686cc99b9c67c7233",
+        ["Wanderer"] = "f8c6f8441756ef9c749b8023765628e68fefd5cb",
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -610,7 +628,8 @@ public sealed class PresetDirectoryService
             && !PreFoodSatietyFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreRoleCoverageFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreWorldArmorRemovalFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreWeaponArmorWeightFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreWeaponArmorWeightFactoryBlobs.TryGetValue(name, out knownHash)
+            && !Pre21FactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -660,7 +679,9 @@ public sealed class PresetDirectoryService
                 || (PreWorldArmorRemovalFactoryBlobs.TryGetValue(name, out var preArmorHash)
                     && actual.Equals(preArmorHash, StringComparison.OrdinalIgnoreCase))
                 || (PreWeaponArmorWeightFactoryBlobs.TryGetValue(name, out var preWeightHash)
-                    && actual.Equals(preWeightHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preWeightHash, StringComparison.OrdinalIgnoreCase))
+                || (Pre21FactoryBlobs.TryGetValue(name, out var pre21Hash)
+                    && actual.Equals(pre21Hash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

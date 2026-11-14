@@ -113,3 +113,7 @@ The Windows production BPatch contract jobs and Linux WPF cross-build passed on 
 ## 2026-11-14 — Factory preset / Stash Gear static contract
 
 Factory presets deliberately vary Extra Stash Gear: enabled for Anomaly Runner, Mercenary, Mutant Hunter, Scavenger and Smuggler, disabled for the other seven. The static Stashes audit now checks typed toggles, mutual exclusion with World Weapon Shuffle, and positive coverage precisely when Extra Stash Gear is enabled. It no longer incorrectly requires every factory profile to disable Extra Stash Gear. Existing preset gameplay values and compact UI remain unchanged.
+
+## 2026-11-14 — Twelve factory preset 2.1 metadata cutover
+
+All twelve embedded factory presets now carry `gameVersion: 2.1`; the 359 parameter values in each were left unchanged. The directory migration recognizes SHA-1 Git blob identities of the immediately previous pristine 2.0.5 factory JSONs, replacing **only exact-byte stock copies** on startup. User-edited presets of any name, including factory names, remain untouched; older metadata is informational and does not select an obsolete CFG writer baseline. The active writer and catalog already reject 2.0.5 targets. An offline regression checks factory versions, complete parameter sets and the exact-blob upgrade gate. Gameplay test remains separate.

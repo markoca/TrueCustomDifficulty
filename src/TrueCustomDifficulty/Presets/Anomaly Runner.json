@@ -2,7 +2,7 @@
   "profileVersion": 1,
   "name": "Anomaly Runner",
   "toolVersion": "0.9.26.82",
-  "gameVersion": "2.0.5",
+  "gameVersion": "2.1",
   "referenceDifficulty": "Stalker",
   "drinkDurationOverride": true,
   "medicalOverride": false,

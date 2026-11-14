@@ -18,6 +18,19 @@ class Game21BaselineContract(unittest.TestCase):
         self.assertEqual(1448, len(baseline["editPoints"]))
         self.assertEqual(25, len(baseline["special"]))
 
+    def test_factory_presets_target_21_and_protect_user_edits(self):
+        names = ("Anomaly Runner", "Field Medic", "Hardcore", "Hardcore+",
+                 "Immersive", "Mercenary", "Mutant Hunter", "Outcast",
+                 "Scavenger", "Smuggler", "Tactical", "Wanderer")
+        for name in names:
+            preset = json.loads((SRC / "Presets" / (name + ".json")).read_text(encoding="utf-8"))
+            self.assertEqual("2.1", preset["gameVersion"], name)
+            self.assertEqual(359, len(preset["values"]), name)
+        service = (SRC / "Services" / "PresetDirectoryService.cs").read_text(encoding="utf-8")
+        self.assertIn("Pre21FactoryBlobs", service)
+        self.assertIn("&& !Pre21FactoryBlobs.TryGetValue(name, out knownHash)", service)
+        self.assertIn("actual.Equals(pre21Hash, StringComparison.OrdinalIgnoreCase)", service)
+
     def test_writer_rejects_old_target(self):
         source = (SRC / "Services" / "CfgPatchWriterService.cs").read_text(encoding="utf-8")
         self.assertIn('string.Equals(baseline.GameVersion, "2.1"', source)
