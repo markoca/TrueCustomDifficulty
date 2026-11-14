@@ -3090,3 +3090,8 @@ Retired hardcoded 839/1185-DIP lane arithmetic and older 373/409, 220/383, 220/3
 ## 2026-11-14 — Current Stash Content static contract consistency
 
 The Stashes A+C audit now enforces the current catalog: the three visible Medical/Food/Drinks relative priority sliders use 0.05× increments; the three hidden compatibility-only Ammo/Grenades/Coupons weight IDs retain 0.10× increments. The renderer's already-adopted Stash Content Mix height is 785/1095 DIP, not the retired 839/1185 values. This commit changes the static verification only; visual geometry, catalog values, game writer and existing presets remain unchanged.
+
+
+## 2026-11-14 — Basic Stash source-preview verification
+
+The Basic Stash preview now reads `StashSourceGroups.Value` from the shared source-backed preview catalog. The older audit string `StashPreviewBaseline.Value, effective, r.Item` belongs to the retired renderer. The audit asserts the current catalog boundary and actual 785/1095-DIP renderer height. Source, UI visuals, values, and saved presets remain unchanged.

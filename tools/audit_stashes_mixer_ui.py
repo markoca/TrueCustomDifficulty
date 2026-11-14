@@ -514,7 +514,7 @@ assert '"loot.mediumStashCouponsChance"' in source
 assert '"loot.expensiveStashAmmoChance"' in source
 assert '"loot.expensiveStashGrenadesChance"' in source
 assert 'var id = tierName == "Medium"' in coverage
-assert "StashPreviewBaseline.Value, effective, r.Item" in coverage
+assert "var basicGroups = StashSourceGroups.Value" in coverage
 assert 'CreateText("V "' not in tier_preview and "vanillaX" not in tier_preview
 assert "Math.Clamp(Number(updated) * multiplier, 0.0, 1.0)" in effective
 assert 'StashTierChanceParameterIds.Any(id =>' in tuning
