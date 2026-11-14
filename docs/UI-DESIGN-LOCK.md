@@ -3137,3 +3137,7 @@ The active Stashes UI deliberately exposes one `loot.cheapStashAmmoQuantity` rai
 ## 2026-11-14 — Stashes source auditor aligned to current compact UI
 
 The Stash Content/Gear static test now matches the live compact Standard Stash title, responsive layout heights, current medical-control approach and absence of redundant Vanilla text; it also verifies the unified Ammo Quantity label in the actual renderer instead of searching for a display string inside view-model code. Removed legacy rank-target bookkeeping remains explicitly forbidden. No UI implementation was modified.
+
+## 2026-11-14 — Native Stash Chance tile regression check
+
+Standard/Rare Stash chance tiles no longer compute or display `EffectiveSelection(...)` source diagnostics; each tile renders its bound per-category 0–100% multiplier against the native Chance entries with yellow number emphasis only when modified. The static UI contract now checks that actual rendering/binding logic and leaves backend source-parity checks in place. No UI or writer behavior changed.

@@ -150,7 +150,9 @@ assert 'CreateText(label, 11.4, text' in tier_preview
 assert '"loot.mediumStashCouponsChance"' in tier_preview
 assert '"loot.expensiveStashMoneyChance"' in tier_preview
 assert "100.0 * totals" not in tier_preview
-assert "EffectiveSelection(" in tier_preview
+assert 'var rows = groups.Where(g => g.Field == "Chance")' in tier_preview
+assert 'parameter.CurrentNumber * 100.0' in tier_preview
+assert 'parameter.IsValueModifiedFromReference()' in tier_preview
 assert "AddHorizontalTarget(parameter," in tier_preview
 assert "const double cardHeight = 146.0;" in mixer
 assert "BasicVisibleWeightKinds = { 1, 2, 3 }" in mixer
