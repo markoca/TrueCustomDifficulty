@@ -2164,10 +2164,10 @@ _balance_matrix = json.loads((ROOT / "tools/factory_preset_scarcity_balance.json
 _balance_groups = _balance_matrix["groups"]
 _balance_profiles = _balance_matrix["profiles"]
 _balance_ids = [pid for members in _balance_groups.values() for pid in members]
-if (_balance_matrix.get("version") != 1 or len(_balance_ids) != 46
-        or len(set(_balance_ids)) != 46 or not set(_balance_ids) <= set(_factory_catalog)
+if (_balance_matrix.get("version") != 1 or len(_balance_ids) != 45
+        or len(set(_balance_ids)) != 45 or not set(_balance_ids) <= set(_factory_catalog)
         or set(_balance_profiles) != set(_factory_preset_names)):
-    _factory_errors.append("scarcity balance matrix must cover 46 unique sourced controls and all 12 profiles")
+    _factory_errors.append("scarcity balance matrix must cover 45 unique active sourced controls and all 12 profiles")
 for _name in _factory_preset_names:
     _preset_path = _factory_preset_dir / f"{_name}.json"
     if not _preset_path.exists() or _name not in _balance_profiles:

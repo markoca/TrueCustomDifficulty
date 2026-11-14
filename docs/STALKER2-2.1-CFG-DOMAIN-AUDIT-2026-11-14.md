@@ -129,3 +129,7 @@ The Stash Gear master has four explicit catalog targets: one source-approved reg
 ## 2026-11-14 — Stash mixer 0.05× knob audit
 
 Three exposed Basic Stash priority knobs (Medical/Food/Drinks) use their intended 0.05× slider steps. The hidden Ammo/Grenades/Coupons legacy mixer fields retain 0.10×. The Stash Content/Gear audit now enforces each group's actual slider contract instead of a stale blanket 0.10× assertion. UI/writer unchanged.
+
+## 2026-11-14 — Retired NPC cooldown removed from factory scarcity matrix
+
+`combat.npcAttackCooldown` was retired from the active catalog, but the 46-control historical factory scarcity ledger still included it. Removed that obsolete hazard element and its corresponding position from each of the twelve six-group factory vectors. The consistency guard now enforces exactly **45 active source IDs** and rejects missing/retired catalog keys without a bare `KeyError`. No factory preset game values were modified by this ledger-only cleanup.
