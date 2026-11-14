@@ -3430,3 +3430,8 @@ Static assertions now follow the existing source-backed rendering: 'PRIORITY ZER
 ## 2026-11-14 — Phase 5 source-backed fixture names
 
 The current native Stash branch contract uses the `food-half` (0.5×) scenario, not the retired `food-3x` scenario. The static test now requires `food-half` alongside `all-category-zero`, preserving exact coverage of the active actual-writer fixture. No UI/source values have changed.
+
+
+## 2026-11-14 — Anti-Rad semantic regression check
+
+The compact Anti-Rad cell remains an OFF/ON two-state control. Its present catalog describes OFF/ON in `logic` and independent Chance scaling in `interaction` rather than using the redundant literal phrase `two-state`. The static test checks those source semantics. No layout or native-value changes.

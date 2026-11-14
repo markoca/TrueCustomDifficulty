@@ -122,7 +122,8 @@ assert 'target.Parameter.Id == "loot.stashMedicalAntiRadBias"' in ui
 assert '=> width >= 700.0 ? 609.0 : 1050.0;' in ui
 anti = stash["loot.stashMedicalAntiRadBias"]
 assert anti["slider"] == {"min": 0, "max": 3, "step": 0.25, "stepMode": "absolute"}
-assert "two-state" in anti["interaction"].lower()
+assert "OFF excludes" in anti["logic"] and "ON allows" in anti["logic"]
+assert "Chance Modifier" in anti["interaction"]
 assert "Chance" in anti["description"]
 # Audited native game 2.0.5 groups, not a fabricated 4-item medicine pool.
 with (data / "smartloot-world-source-entries.csv").open(
