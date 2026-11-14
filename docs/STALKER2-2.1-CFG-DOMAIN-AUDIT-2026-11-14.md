@@ -81,3 +81,5 @@ python3 tools/audit_21_new_actor_scope.py --old "STALKER2-2.0 cfg dump.zip" --ne
 It pins the actual decoded 2.1 actor CFG SHA-256 and all newly introduced root IDs, validates type census and each source field, and rejects any new nonempty stash/generator field. The generated CSV is evidence, not an embedded runtime source. This is original-source mapping evidence, **not** gameplay confirmation; 2.1 Fast Travel and quest NPC loot behavior remain untested.
 
 The added-actor scope audit is source-only and uses both original archives; it must fail if new actor census, scope or stash/generator fields change. The separate Stashes Medical static readout assertion was updated to track the live source expression (no gameplay change).
+
+The 2.1 new-actor extractor now has an offline parser/quest-isolation regression in GitHub Actions (`tests/test_game_21_new_actor_scope.py`). It checks non-loot travel classification, rejects unreviewed stash assignments, isolates quest Snork SmartLoot, and parses only top-level actor fields. CI has no original source ZIPs: the 211-actor full census is deliberately a separate original-archive check, not a synthetic PASS.
