@@ -164,7 +164,7 @@ assert "p.IsValueModifiedFromReference()" in mixer
 assert "number.SetForegroundBrush(accent, 0, digits.Length)" in mixer
 assert "CurrentStashEffectiveState()" in ui
 assert "DrawStashBasicNativePools(" in mixer
-assert '"WEIGHT OFF · INDEPENDENT CHANCE MAY STILL ROLL"' in mixer
+assert '"PRIORITY ZERO · INDEPENDENT CHANCE MAY STILL ROLL"' in mixer
 assert "Normalize(" not in mixer and "percentages" not in mixer
 assert "DrawStashGlobalCoverage(" not in ui + mixer
 assert '"STASH ITEM WEIGHTS"' not in mixer

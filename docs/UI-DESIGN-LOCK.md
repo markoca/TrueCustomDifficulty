@@ -3141,3 +3141,7 @@ The Stash Content/Gear static test now matches the live compact Standard Stash t
 ## 2026-11-14 — Native Stash Chance tile regression check
 
 Standard/Rare Stash chance tiles no longer compute or display `EffectiveSelection(...)` source diagnostics; each tile renders its bound per-category 0–100% multiplier against the native Chance entries with yellow number emphasis only when modified. The static UI contract now checks that actual rendering/binding logic and leaves backend source-parity checks in place. No UI or writer behavior changed.
+
+## 2026-11-14 — Stash zero-priority tooltip source audit
+
+The compact Basic Stash priority control uses `PRIORITY ZERO` wording while preserving the native distinction that independent Chance rolls may still occur. The static audit now checks that live phrase rather than the retired `WEIGHT OFF` text. No user-facing wording or code changed in this commit.
