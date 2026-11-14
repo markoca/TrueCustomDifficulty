@@ -3095,3 +3095,8 @@ The Stashes A+C audit now enforces the current catalog: the three visible Medica
 ## 2026-11-14 — Basic Stash source-preview verification
 
 The Basic Stash preview now reads `StashSourceGroups.Value` from the shared source-backed preview catalog. The older audit string `StashPreviewBaseline.Value, effective, r.Item` belongs to the retired renderer. The audit asserts the current catalog boundary and actual 785/1095-DIP renderer height. Source, UI visuals, values, and saved presets remain unchanged.
+
+
+## 2026-11-14 — Stash Source Factor regression label
+
+StashEffectiveState uses the local `factor` variable when clamping its per-source Chance value to 0..1. The stale static test expected the retired `multiplier` variable name. The audit now checks the live operation rather than the removed identifier; no CFG or gameplay semantics changed.
