@@ -121,3 +121,7 @@ All twelve embedded factory presets now carry `gameVersion: 2.1`; the 359 parame
 ## 2026-11-14 — Extra Stash Gear call-site static audit
 
 `WriteStashGearCoverage(...)` is invoked by the principal `CfgPatchWriterService.cs` production writer, not by the `StashTuning.cs` partial. The protected-weapon audit now checks the real production call-site; the existing independent checks of regular-only weapon removals and protected stash exclusions are preserved. This corrects a stale static audit path; no game writer or UI behavior changes.
+
+## 2026-11-14 — Extra Gear target census correction
+
+The Stash Gear master has four explicit catalog targets: one source-approved regular authored-weapon removal and three conditional generator/actor additions, covering base and DLC1 scopes. The static audit now verifies that four-target contract instead of the superseded two-target assertion, preserving the quest/protected exclusions. No game source or live control changed.

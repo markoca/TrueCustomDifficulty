@@ -104,7 +104,10 @@ assert 'shuffle.CurrentBoolean' in suppression and 'cannot both be enabled' in s
 assert 'stash-authored-weapon-removal-manifest.csv' in csproj
 assert 'stash-weapon-source-inventory.csv' in csproj
 assert 'CompleteStashWeaponInventoryResource' in suppression
-assert len(catalog["loot.stashGearEnabled"]["targets"]) == 2
-assert any(t["operation"] == "removeNode" for t in catalog["loot.stashGearEnabled"]["targets"])
+gear_targets = catalog["loot.stashGearEnabled"]["targets"]
+assert len(gear_targets) == 4
+assert sum(t["operation"] == "removeNode" for t in gear_targets) == 1
+assert sum(t["operation"] == "conditionalAdd" for t in gear_targets) == 3
+assert {t["scope"] for t in gear_targets} == {"baseGame", "dlc1"}
 
 print("OK: 39 reviewed weapon source entries; exactly 13 approved regular removals; 26 protected/quest/review untouched")
