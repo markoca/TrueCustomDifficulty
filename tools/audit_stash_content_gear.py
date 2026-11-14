@@ -54,7 +54,8 @@ assert all(parameters[x]["tab"] == "stashes" and
 assert parameters["loot.stashGearEnabled"]["tab"] == "stashes"
 for name in mix:
     p = parameters[name]
-    assert (p["slider"]["min"], p["slider"]["max"], p["slider"]["step"]) == (0, 1, 0.1)
+    expected_step = 0.05 if name in ("loot.stashMixMedical", "loot.stashMixFood", "loot.stashMixDrinks") else 0.1
+    assert (p["slider"]["min"], p["slider"]["max"], p["slider"]["step"]) == (0, 1, expected_step), name
     assert p["vanilla"]["All"] == 1
     assert len(p["targets"]) == 2
     assert "Weight" in p["targets"][0]["path"]

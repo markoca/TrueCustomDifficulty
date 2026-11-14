@@ -125,3 +125,7 @@ All twelve embedded factory presets now carry `gameVersion: 2.1`; the 359 parame
 ## 2026-11-14 — Extra Gear target census correction
 
 The Stash Gear master has four explicit catalog targets: one source-approved regular authored-weapon removal and three conditional generator/actor additions, covering base and DLC1 scopes. The static audit now verifies that four-target contract instead of the superseded two-target assertion, preserving the quest/protected exclusions. No game source or live control changed.
+
+## 2026-11-14 — Stash mixer 0.05× knob audit
+
+Three exposed Basic Stash priority knobs (Medical/Food/Drinks) use their intended 0.05× slider steps. The hidden Ammo/Grenades/Coupons legacy mixer fields retain 0.10×. The Stash Content/Gear audit now enforces each group's actual slider contract instead of a stale blanket 0.10× assertion. UI/writer unchanged.
