@@ -22,6 +22,7 @@ Use source-exact names, including source misspellings. Never quietly map `Junk` 
 |---|---|---|---|---|
 | 001 | Sleeping Bag (packaged plugin version `1.0`) | `SBM_Item` | `Trader_Cosnsumables_ItemGenerator` → new `SBM` category | **Source audited, runtime unverified; direct native category filtering does not cover this new leaf** |
 | 002 | ZoneWatch / ZST — Zone Standard Time (NewContent PAK) | Not yet verified (item CFG Oodle) | `ItemGeneratorPrototypes/zZST_FieldWatch110.cfg` (Oodle) | **Container/index audited; exact generator and item definitions pending decompression** |
+| 003 | Point of No Return — Backpacks Pack | Not decoded (Oodle) | Mod-owned ItemGeneratorPrototypes.cfg plus native-path zBackpackGeneratorPatch.cfg | **Container + plaintext audited; generator paths and item SIDs pending Oodle extraction** |
 
 ---
 
@@ -245,3 +246,102 @@ The public [ZST — Zone Standard Time mod page](https://www.nexusmods.com/stalk
 - [ ] Define/implement mod-aware overlay only when exact source routing is verified and additional mod examples have been compared.
 
 **Audit status:** archive-integrity, directory inventory, plugin, core patch, uncompressed effects and quest roots **complete**. Mod item-prototype identification and generation rules **open** due to Oodle compression. **No gameplay code, catalog control, UI, factory preset or TCD writer has been changed.**
+
+---
+
+## 003 — Point of No Return: Backpacks Pack
+
+**Audited:** 2026-11-15. **Sources:** two user-supplied PAKs, inspected read-only. The audit records only what could be recovered from these exact packages; it does not assume any corresponding cooked assets or runtime files.
+
+| Supplied archive | Exact bytes | SHA-256 | PAK mount |
+|---|---:|---|---|
+| `PointOfNoReturn-BackpacksPackStalker2-Windows-NewContent.pak` | 24,459 | `1fd91e43629889a279268c6b8a66d9e4bf310f5295f27f55fccd8dcc011490c6` | `../../../Stalker2/Mods/PointOfNoReturn-BackpacksPack/` |
+| `PointOfNoReturn-BackpacksPackStalker2-Windows-OverrideContent.pak` | 1,876 | `5326668aba6a7a9fe2b1cfefe7081e2624f3c3dbb4a073244990520084089816` | `../../../Stalker2/Content/GameLite/GameData/ItemGeneratorPrototypes/` |
+
+Both are Unreal **PAK version 11**. Verified primary-index, full-directory-index and path-hash-index SHA-1, plus every file entry's stored/compressed data SHA-1 against the archive headers. The archives contain **15 indexed files**: NewContent has 14 entries (12 CFGs, one `.uplugin`, one `AssetRegistry.bin`); OverrideContent has 1 CFG. Among 13 CFGs, **4 are stored/plaintext and fully read; 9 use Oodle and were not decompressed**. The size table below gives the *uncompressed size reported and cross-checked in archive metadata*, not the size of text successfully decoded.
+
+### Complete file inventory
+
+All paths are relative to their archive mount point. NewContent's CFG prefix is `Content/GameLite/ModGameData/PointOfNoReturn-BackpacksPack/`.
+
+| Package | File under respective mount | Format | Uncompressed bytes |
+|---|---|---|---:|
+| NewContent | `/PointOfNoReturn-BackpacksPack.uplugin` | Stored, fully read | 504 |
+| NewContent | `/AssetRegistry.bin` | Oodle | 46,971 |
+| NewContent | `CameraShakeGroupPrototypes.cfg` | Stored, fully read | 644 |
+| NewContent | `CameraShakePrototypes.cfg` | Oodle | 6,365 |
+| NewContent | `EffectPrototypes.cfg` | Oodle | 35,131 |
+| NewContent | `GlobalVariablePrototypes.cfg` | Stored, fully read | 646 |
+| NewContent | `ItemGeneratorPrototypes.cfg` | Oodle | **32,682** |
+| NewContent | `ItemPrototypes/BackpackItemPrototypes.cfg` | Oodle | **10,946** |
+| NewContent | `MeshPrototypes.cfg` | Oodle | 3,755 |
+| NewContent | `QuestNodePrototypes/BackpacksDemo.cfg` | Oodle | 14,856 |
+| NewContent | `QuestNodePrototypes/MigrateBackpacks.cfg` | Oodle | 28,130 |
+| NewContent | `QuestPrototypes/BackpacksDemo.cfg` | Stored, fully read | 535 |
+| NewContent | `QuestPrototypes/MigrateBackpacks.cfg` | Stored, fully read | 541 |
+| NewContent | `SpawnActorPrototypes/WorldMap_WP/BackpacksDemo.cfg` | Oodle | 10,865 |
+| OverrideContent | `/zBackpackGeneratorPatch.cfg` | Oodle | **53,405** |
+
+The two **physically separate generator sources** are the most important finding for TCD compatibility: a mod-owned `ItemGeneratorPrototypes.cfg` within NewContent and a `zBackpackGeneratorPatch.cfg` placed directly under the **native game's** `GameData/ItemGeneratorPrototypes/` via OverrideContent. The latter is a potential native generator integration point, **not** proof of which original root is patched, which item is injected, or whether the resulting contents appear at traders, stashes, NPCs or world spawns. Those require decompression of the actual CFG.
+
+### Exact verified CFG evidence
+
+**Global variable: `GlobalVariablePrototypes.cfg`** (the source includes a decorative PNR Team header):
+
+~~~cfg
+GVarBackpackSlotItem : struct.begin {refurl=@BaseGame/GlobalVariablePrototypes.cfg;refkey=[0]}
+    SID = GVarBackpackSlotItem
+    Type = EGlobalVariableType::String
+    DefaultValue = DefaultBackpack
+struct.end
+~~~
+
+This confirms one mod-owned global string-value prototype and its default value `DefaultBackpack`. The precise equipment behavior and state persistence must be checked against the compressed quest/effect definitions or runtime; `DefaultBackpack` is **not a proven item prototype SID**.
+
+**Camera-shake group: `CameraShakeGroupPrototypes.cfg`**:
+
+~~~cfg
+BackpackCameraShakeGroup : struct.begin {refurl=@BaseGame/CameraShakeGroupPrototypes.cfg;refkey=[0]}
+    SID = BackpackCameraShakeGroup
+    Type = ECameraShakeGroupType::MaxCount
+    MaxCount = 100
+struct.end
+~~~
+
+This describes an effects/feedback group, not a generator or a loot entry.
+
+**Quest roots:** `QuestPrototypes/BackpacksDemo.cfg` declares `BackpacksDemo` and `QuestPrototypes/MigrateBackpacks.cfg` declares `MigrateBackpacks`. Both are top-level `struct.begin` records with matching `SID` and `DLC = PointOfNoReturn-BackpacksPack`. Their actual item-grant/equip/cleanup behavior is not established: the relevant `QuestNodePrototypes` files are compressed. The separate `SpawnActorPrototypes/WorldMap_WP/BackpacksDemo.cfg` exists but is also compressed, so it is **not yet evidence of any particular spawned backpack or guaranteed world pickup**.
+
+**Plugin metadata:** `PointOfNoReturn-BackpacksPack.uplugin` reports `FriendlyName = PointOfNoReturn-BackpacksPack`, `CreatedBy = PNR Team`, `Version = 1`, `VersionName = 1.0`, `EnabledByDefault = true`, `ExplicitlyLoaded = true`, `CanContainContent = true`, `Mod = true` and `BuiltInInitialFeatureState = Registered`. These are descriptor values rather than a tested mod version or proof of in-game activation. No MCM dependency was declared in this particular descriptor.
+
+### TCD 2.1 compatibility analysis
+
+1. **Native SELL manifest:** `src/TrueCustomDifficulty/Data/trader-sells-2.1-runtime.csv` contains no textual `Backpack`, `DefaultBackpack` or `PointOfNoReturn`. This only excludes the *currently known names* from the fixed original-game 2.1 inventory. Actual item SIDs from `BackpackItemPrototypes.cfg` are not yet decoded, so this is not a comprehensive per-SID comparison.
+2. **Source-exact TCD writer:** `CfgPatchWriterService.TraderSells.cs` uses fixed native inventory rows and copy-on-write (COW) inherited generator clones for selectively disabled SELL categories. It does **not** dynamically import installed external mod CFGs. Therefore, it cannot be claimed to deliberately remove or regulate these yet-unknown new backpack item leaves. The original 2.1 manifest must remain unchanged.
+3. **Two potential propagation routes:** mod-owned generators may define new roots and reference them from native patches, or the native-path patch may directly append item entries to existing original roots. Both are plausible, but **neither pattern is proven by filenames**. Exact `struct.begin`, `{bpatch}`, `refurl/refkey` and `PossibleItems` structure is needed.
+4. **Category classification:** a wearable backpack cannot automatically be assigned to Armor, Consumables, Junk, Stash Gear or generic Equipment. Follow both the item prototype inheritance and actual generator category; do not derive semantics from the mod's name.
+5. **Other distribution/side effects:** world map spawn actor, demo/migration quest nodes, and a large `EffectPrototypes.cfg` can affect acquisition or operation independently of the trader-stash generator graph. TCD should not touch these based on filenames.
+6. **Load order/merging:** if TCD replaces native trader generator references with inherited COW clones, the interaction with a separate external patch may depend on resolved inheritance, BPatch order and actual reference targets. This is a **runtime test requirement**, not an established incompatibility.
+
+### Comparison of the first three audited mods
+
+| Mod | Evidence for mod items | Native generator integration | Additional routes |
+|---|---|---|---|
+| **001 Sleeping Bag** | Explicit `SBM_Item` prototype decoded | Explicit `{bpatch}` adds `SBM` category to shared original generator | Explicit quest `ItemAdd` grant |
+| **002 ZoneWatch** | ItemPrototypes present, compressed | Native-path generator CFG present, compressed | Seven quest roots; behavior unverified |
+| **003 Backpacks Pack** | `BackpackItemPrototypes.cfg` present, compressed | **Mod-owned generator file plus separate native-path generator patch**, both compressed | Demo + migration quest roots and world actor prototype present, behavior unverified |
+
+### Remaining extraction and acceptance work
+
+- [x] Verify both PAK v11 index structures and all 15 payload hashes.
+- [x] Enumerate the 13 CFGs and read all four noncompressed CFGs plus plugin metadata.
+- [x] Identify both the mod-owned generator and the separately packaged native-location generator patch.
+- [x] Identify global slot variable, camera shake group and two quest roots without inventing item or spawn semantics.
+- [ ] **Highest priority:** Oodle-decompress `OverrideContent/zBackpackGeneratorPatch.cfg` (53,405 bytes) and enumerate exact patched root SIDs, categories, indexed/named entries and `PossibleItems` item SIDs, chance, weights and counts.
+- [ ] Decompress `NewContent/ItemGeneratorPrototypes.cfg` (32,682 bytes) and `ItemPrototypes/BackpackItemPrototypes.cfg` (10,946 bytes); join all item SIDs, inheritance and nested generator references.
+- [ ] Decode quest-node/world-actor sources to distinguish vendor stock from quest grants, world spawns and other acquisition paths.
+- [ ] Resolve source exact paths against game 2.1 trader, stash, corpse and world manifests; identify any real source category/rank mapping.
+- [ ] Verify runtime precedence with and without TCD-generated patches, including stock refresh and independent mod mechanics.
+- [ ] Decide mod-aware overlay/control behavior only after exact CFG routing and runtime evidence. Do not create a generic backpack toggle from filenames.
+
+**Status:** container integrity, full two-archive inventory, four stored CFGs and plugin metadata **verified**. **Nine Oodle CFGs have not been decoded**, including both generator files, so mod item SID lists and direct stock integration remain pending. **Documentation only; no gameplay code, UI, presets or patch writer changed.**
