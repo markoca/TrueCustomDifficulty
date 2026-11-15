@@ -1,0 +1,50 @@
+name: Mod audit repair kit decode
+
+on:
+  push:
+    paths:
+      - '.github/workflows/mod-audit-repair-decode.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  decode:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile open-source Kraken decoder and decode the three verified CFG streams
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --user 'Cython<4' setuptools wheel
+          git clone --depth=1 https://github.com/q3k/pyooz.git /tmp/pyooz
+          cd /tmp/pyooz
+          python setup.py build_ext --inplace
+          cd "$GITHUB_WORKSPACE"
+          PYTHONPATH=/tmp/pyooz python - <<'PY'
+          import base64,hashlib,sys,pathlib,re
+          import ooz
+          x=pathlib.Path('tools/mod-audit-repair-oodle-encoded.txt').read_text().splitlines()
+          specs=[('zRepairKitGeneratorPatch.cfg',56987),('RepairKitItemGenerators.cfg',11238),('RepairKitPrototypes.cfg',10363)]
+          assert len(x)==3
+          out=pathlib.Path('repair-decoded')
+          out.mkdir(exist_ok=True)
+          for b64,(name,size) in zip(x,specs):
+              b=base64.b64decode(b64,validate=True)
+              data=ooz.decompress(b,size)
+              assert len(data)==size, (name,len(data),size)
+              s=data.decode('utf-8-sig')
+              (out/name).write_text(s)
+              print('DECODE_OK',name,size,hashlib.sha256(data).hexdigest(),flush=True)
+              print('BEGIN_CFG',name,flush=True)
+              print(s,flush=True)
+              print('END_CFG',name,flush=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: repair-cfg-decoded
+          path: repair-decoded/*.cfg
+          retention-days: 3
