@@ -1,3 +1,13 @@
+## 2026-11-15 — CURRENT SOURCE-CHECK: reusable Weight distribution, no new mixer
+
+**Code observation, not a newly implemented control:** `AggregateVisualControl.StashBranch.cs` currently defines `BasicVisibleWeightKinds = {1, 2, 3}` and draws **three** compact Basic `Weight` controls: MEDICAL, FOOD, DRINKS, with a normalized **single original Veteran Basic consumables group** preview. The older four-knob and six-knob implementation claims below are historical/stale relative to the current WPF code. The other underlying `stashMix*` IDs remain in the parameter catalog and production writer for allowed sources and presets; their existence does not establish a visible knob for each category in the active Basic UI.
+
+**Accepted next-design direction:** Reuse the current source-relative category mixer/preview in ordinary stash loot. The two **proposed** generic scarcity controls for regular human corpses and protected-filtered world stashes are a separate concept from native `Weight` distribution: common multipliers on every item in one normalized group do not reduce its total roll count. `Chance`-only NPC consumables stay native `Chance` and do not get a fabricated cross-role Weight mixer. Use actual native Weighted item groups and the shared `StashEffectiveState` writer/preview path, protect all actor/rank/difficulty scopes, and do not add a synthetic empty candidate without a proven native generator gate. See [generic loot reduction + native Weight design](generators/GENERIC-LOOT-TWO-CONTROL-SCARCITY-DESIGN-2026-11-15.md).
+
+**No WPF/UI, CFG writer or preset changes in this documentation pass.**
+
+---
+
 ## STASHES — FOUR REAL BASIC WEIGHT MIXER KNOBS, 0–1× (CURRENT, 2026-10-17)
 
 **Authoritative implementation and UI contract; this block supersedes all older Stash Content Mix six-knob / 0–3× design text below.**

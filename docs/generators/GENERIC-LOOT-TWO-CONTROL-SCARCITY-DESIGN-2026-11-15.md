@@ -1,5 +1,58 @@
 # Generic loot reduction — two-control architecture proposal (S.T.A.L.K.E.R. 2.1)
 
+## Latest design refinement — REUSE NATIVE WEIGHT DISTRIBUTION (2026-11-15)
+
+**Status: approved direction / architecture only.** The request is for a configurable **native Weight distribution** like the TCD project already has; do not create a new, large independent mixer or invent a new player-facing `Weight` interpretation. The two independent reduction masters below remain proposed; **distribution changes what an eligible group selects**, reduction changes **how often optional supplies are generated**. Neither is the other.
+
+### Existing, actual project primitives
+
+- `StashEffectiveState.TierFactor`, `ItemBiasId`, `TuneSelection`, `SmartSelectionFactor` and the production ItemGenerator/SmartLoot writers already implement source-typed, relative `Weight` multipliers. The native preview calls the same state calculator as the writer.
+- `AggregateVisualControl.StashBranch.cs` already draws native Basic `Weight` composition and a normalized source-only preview. Its current `BasicVisibleWeightKinds = {1,2,3}` maps to **MEDICAL / FOOD / DRINKS**. Other persisted `stashMix*` parameter IDs exist, including hidden legacy sources; do not add more visible knobs merely because the IDs exist. Other source branches (for instance a coupon-bearing Basic rank) can have different native category membership; a preview of one branch must not be labeled a whole-world distribution.
+- The **Breakable Box Ammo Distribution** four-axis radar is the other good precedent: each axis modifies only source items already present in its original pool, and the resulting per-item relative selection shares are computed **separately for each original pool**.
+
+### Exact behavior
+
+For each eligible native `Weight` group `g` containing authored items `i`:
+
+```text
+effectiveWeight(g,i) = originalWeight(g,i) × existingCategoryMultiplier(i)
+                       × any permitted group-local multiplier(i)
+relativeShare(g,i) = effectiveWeight(g,i)
+                     / sum(effectiveWeight(g,j) for eligible j in g)
+```
+
+No item SID is added, no rank/difficulty gate is flattened, no native `Chance` is converted to `Weight`, and no direct NPC weapon/equipment generator is adjusted. Use a fixed original-pool comparison marker, matching existing TCD visual grammars. Each group has its own valid, nonzero denominator or an explicit native-safe all-zero guard; never silently normalize over unrelated physical generators, mixed `Chance` groups or different ranks.
+
+**Audited example:** Basic Veteran consumable `Weight` group has Medical Bandage `2`, Food Bread/Sausage/CannedFood `5+5+3`, Drinks Milk `1`. Source total `16`. Native relative mix is Medical `12.5%`, Food `81.25%`, Drinks `6.25%`. Halving **Food only** makes weights `2 / 6.5 / 1`, total `9.5`, giving Medical `21.05%`, Food `68.42%`, Drinks `10.53%`. Halving **all three categories** makes `1 / 6.5 / 0.5`, total `8`, and **leaves the original relative shares unchanged**. Thus **one master scarcity slider must never be implemented as uniform Weight scaling**.
+
+### Compact UI composition
+
+The product goal is **as few new controls as possible**:
+- Keep **CORPSE LOOT REDUCTION** and **STASH LOOT REDUCTION** as the only two *new proposed* high-level controls, one per existing family. Both default to zero reduction and must be safe no-ops for legacy presets.
+- **Reuse**, rather than duplicate, the existing stash category mixer and its read-only normalized bar for native `Weight` groups. At wide resolution, retain compact row geometry and conditional source details; do not show a 463-group editor.
+- For NPC supplies the verified generic-human consumable surface has **104 source `Chance` rows, not a common native Weight pool**. Its existing Food/Drinks/Medical SID-specific Chance editors remain the truthful way to configure those categories. Do not fabricate a shared 3-way NPC `Weight` distribution or turn 3 independent rolls into a `100%` composition bar.
+- For optional NPC `CorpseSmartLoot` and world stash SmartLoot, only draw weighted composition where its **specific native ItemSet/Rank/Group** has authored `Weight`; retain source-native `Chance`, group spawn bounds, caliber and count separately.
+- No new Echo detector Chance, weapon-attached ammo control, generic NPC grenade percentage, quest actor control, or separate distribution knobs per NPC class/stash tier.
+
+### Actual scarcity still needs a distinct, source-supported gate
+
+`Weight` has no intrinsic empty-result probability: `20:10:10` and `10:5:5` have identical relative selection **50%:25%:25%** when the group executes. A new **EMPTY/NO LOOT** axis would reduce actual output only if the game's exact generator schema supports a verified empty/no-pick candidate at that context; **none is approved by the present 2.1 audit**. Do **not** add an invented empty SID, an invalid `Weight` row, or an untested fake `None` candidate.
+
+When a group has a native `Chance` gate, apply the scarcity factor `q = 1 - reduction` after existing detailed edits; its internal `Weight` distribution stays relative to the same original pool. For groups with no native optional activation gate, keep reduction unsupported **until** a local source-backed method is proven (including SmartLoot 0/0 endpoint and all-zero fallback acceptance). Preserve existing independent native `Chance` controls and source quantity bounds. A 100% master must not claim total optional-loot suppression while any eligible weighted group still produces items.
+
+### Acceptance before implementation
+
+1. Assert native Basic mixed-pool examples against the same `StashEffectiveState` logic that emits CFG: `2:13:1` => `12.5:81.25:6.25%`; Food 0.5 => `21.05:68.42:10.53%`; all three at 0.5 => same original mix.
+2. Assert each `Weight` group is normalized **only over its native members**. Verify ammo-only weight groups do not become a fictitious general ammo abundance control.
+3. Assert mixed `Chance` + `Weight`, zero-weight groups, Source `Chance=0`, special original `MaxSpawnChance=0`, selected NPC bonus packages and protected consumers each keep their original semantics.
+4. Verify NPC 104 `Chance` entries, original 33 redirects, current 10 independent item toggles, optional bonus packages and stash Basic/Standard/Rare/13 world SmartLoot allowlists before any new publisher code.
+5. Confirm reset/preset roundtrip, compact graphics, generated CFG and game-run acceptance on fresh ordinary humans and unopened generic stashes. No new gameplay claim from a composition preview alone.
+
+**Relationship to previous design below:** The earlier two-master scarcity proposal remains a target, but its implementation **must reuse the proven native Weight mix for distribution** and must not assume that scaling relative weights uniformly lowers output. Implementation remains pending.
+
+---
+
+
 **Decision record — 2026-11-15. DESIGN ONLY; not an implemented UI, parameter, writer or build.**
 
 ## Goal and hard exclusions

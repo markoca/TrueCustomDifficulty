@@ -1,5 +1,8 @@
 # Generic NPC corpse vs Basic / Standard / Rare stash content — CFG coverage matrix
 
+> **Distribution clarification (2026-11-15):** A native `Weight` distribution mixer can be reused for supported **stash Weight groups**, showing within-group normalized relative shares through the existing `StashEffectiveState` pipeline. It does not regulate whole-stash quantity. The 104 approved ordinary-human consumable rows are explicit `Chance` entries; they must **not** be silently recast as a single NPC Weight distribution. Native group roll gating is unproven for some Weight-only and SmartLoot groups. The two proposed master reduction controls remain distinct from category distribution and are **not yet implemented**. See [design update](GENERIC-LOOT-TWO-CONTROL-SCARCITY-DESIGN-2026-11-15.md).
+
+
 > **Current design decision (2026-11-15):** Weapon-attached NPC ammo is explicitly excluded from future TCD tuning, as is Echo detector Chance. Earlier “strongest next candidate” text below is historical research, **not an approved feature**. The requested ordinary-loot simplification is exactly **two proposed high-level source-scoped reduction controls**, not new per-weapon or detector controls; see [two-control scarcity design](GENERIC-LOOT-TWO-CONTROL-SCARCITY-DESIGN-2026-11-15.md). This decision record changes documentation only, not the shipped UI or CFG writer.
 
 
