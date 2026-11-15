@@ -39,6 +39,7 @@ Use source-exact names, including source misspellings. Never quietly map `Junk` 
 | 002 | ZoneWatch / ZST — Zone Standard Time (NewContent PAK) | Not yet verified (item CFG Oodle) | `ItemGeneratorPrototypes/zZST_FieldWatch110.cfg` (Oodle) | **Container/index audited; exact generator and item definitions pending decompression** |
 | 003 | Point of No Return — Backpacks Pack | Not decoded (Oodle) | Mod-owned ItemGeneratorPrototypes.cfg plus native-path zBackpackGeneratorPatch.cfg | **Container + plaintext audited; generator paths and item SIDs pending Oodle extraction** |
 | 004 | Point of No Return — Repair System | **12 decoded item SIDs, common consumable template** | **7 source pools + 80 native-root BPatch additions** (20 traders, 1 generic trade, 4 stashes, 55 NPC loot) | **Source decoded and joined to TCD 2.1; runtime coexistence/repair effects pending** |
+| 005 | OXA Standard / Oxide (A+B+C PAK set) | **80 new concrete SIDs** in decoded direct generator leaves; 32 original patched SIDs also referenced | **18 new generator roots + 4 native-root BPatch**; T2/T3/T4 attachment pools and Rostok NATO trader | **Generator CFG fully decoded; source-level ALLOW/BLOCK feasible with mixed-pool guards; runtime unverified** |
 
 ---
 
@@ -597,3 +598,103 @@ The `0.6` and `0.04` are **per-patch PossibleItems Chance fields**, not proven a
 - [ ] Keep source-payload redistributions out of the public repository; retain this derived SID and field audit as the canonical documentation.
 
 **Revised status: source-level kit identity, rank pools and generation routes VERIFIED; in-game behavior and cross-patch merge behavior NOT YET VERIFIED. No TCD UI, gameplay, preset or writer changes.**
+
+---
+
+## 005 — OXA Standard (Oxide) — three PAK variants
+
+**Audit date:** 2026-11-15. **Scope:** all three uploaded packages, read-only. **Current TCD goal is only generator-spawn ALLOW/BLOCK** (see CURRENT SCOPE LOCK). No runtime patch, preset or UI was changed for this entry.
+
+### Verified source provenance / PAK boundaries
+
+| Package | Exact bytes | SHA-256 | Mount point / role |
+|---|---:|---|---|
+| `OXA_StandardA_P.pak` | 110,813 | `8db9e973f11f1beaf619c7b54ef02a7474779b27dc8e2b2929395ca84e80ff81` | `../../../Stalker2/Content/GameLite/GameData/` — core 2.1 CFG changes, item generator prototypes |
+| `OXA_StandardB_P.pak` | 146,698 | `2ca06d03653a10bcef5f3051f18e1ade83101f585e9195a13f3dc0cd6a8209ba` | `../../../Stalker2/Mods/Standard/` — `Standard.uplugin` + `AssetRegistry.bin` |
+| `OXA_StandardC_P.pak` | 444,753 | `f5c54270b1ce45db64d57020b639e55708f06d17dc1528692af519bb9178200b` | `../../../` — DLC1 / Deluxe / Preorder / Ultimate source patches |
+
+All three have a valid **PAK v11** footer and readable directory index. A has **51 CFG files** (50 Oodle-compressed + 1 stored); all 51 CFGs were decoded using the GPL open-source `gooz` Kraken-compatible shared library built in an isolated Linux runner, then extracted locally. C has **7 stored CFGs**, all read and digests verified. Together they supply **58 fully decoded CFGs**, of which **two in A** are generator configuration files. B has **2 files**, no CFG; its `Standard.uplugin` descriptor was independently extracted and SHA-1 validated against its PAK entry header. Its compressed `AssetRegistry.bin` was not decoded, as it is not a CFG source; B's directory-index flags require separate parsing and were not subjected to the same full-entry decoding as A/C. Index/mount observations are distinct from in-game load-order claims.
+
+`Standard.uplugin`: `FriendlyName = "Standard"`; `CreatedBy = "Oxide"`; `VersionName = "1.0"`; `ExplicitlyLoaded = true`; `BuiltInInitialFeatureState = "Registered"`; `CanContainContent = true`. These are plugin-descriptor values, not proof of runtime feature activation. No external-gameplay component is assumed from the brand/name.
+
+### Decoded item-generator graph
+
+**Generator files:**
+1. A → `ItemGeneratorPrototypes/DynamicItemGenerator_OXA.cfg` (**36,911** decoded bytes; 1,084 text lines).
+2. A → `ItemGeneratorPrototypes/ItemGeneratorPrototypes_OXA.cfg` (**1,005** decoded bytes).
+
+The first file declares **22 top-level generator roots**: **18 mod-defined inherited roots** with `refurl=../ItemGeneratorPrototypes.cfg;refkey=[0]` (15 direct item-category pools + 3 aggregator pools) and **4 patched existing original roots**. Its `PossibleItems` graph contains **119 direct ItemPrototypeSID leaf occurrences representing 112 distinct SIDs**, plus **19 nested `ItemGeneratorPrototypeSID` references**.
+
+A cross-reference to **all decoded item-prototype CFGs within A and C** identifies those **112 distinct generator item SIDs** as:
+- **80 new (mod-defined) concrete item SIDs** in the uploaded A prototype CFGs;
+- **32 existing SIDs** that OXA **patches** with `{bpatch}`. Those are native/game-origin items and **must remain allowed** when the player blocks OXA-added item spawning.
+- No unresolved direct item SID from those 119 leaves in the uploaded prototype sources.
+
+**Important inventory distinction:** across 10 decoded item-prototype CFG files in A/C there are **327 top-level prototype definitions / patches**, comprising **150 new definitions** and **177 patches** (326 unique names across all these files; one original SID patched in more than one file). **Only 80** of the newly declared prototypes actually appear in `DynamicItemGenerator_OXA.cfg` item leaves. Many other declarations are templates, weapon component defaults, rails, sights, NVG pieces or functional data objects that are **not directly spawned by the audited generator**. Do not create an ON/OFF generator switch for each of the 150 merely because a prototype exists.
+
+**Concrete generator group inventory — names are exact:**
+
+| Direct generator family | Roots | Number of direct item leaves (occurrences) | Mod-defined / already existing (occurrences) |
+|---|---:|---:|---:|
+| Scopes | `OXATrade_ScopeBasicGenerator`, `OXATrade_ScopeStandardGenerator`, `OXATrade_ScopeAdvancedGenerator` | 31 | 26 / 5 |
+| Muzzles | `OXATrade_MuzzleBasicGenerator`, `OXATrade_MuzzleStandardGenerator`, `OXATrade_MuzzleAdvancedGenerator` | 12 | 12 / 0 |
+| Grips | `OXATrade_GripStandardGenerator` | 4 | 4 / 0 |
+| Magazines | `OXATrade_MagBasicGenerator`, `OXATrade_MagStandardGenerator`, `OXATrade_MagAdvancedGenerator` | 32 | 5 / 27 |
+| Silencers | `OXATrade_SilencerBasicGenerator`, `OXATrade_SilencerStandardGenerator`, `OXATrade_SilencerAdvancedGenerator` | 23 | 23 / 0 |
+| Lasers | `OXATrade_LaserGenerator`, `OXATrade_LaserAdvancedGenerator` | 14 | 14 / 0 |
+| Weapons inside standard aggregate | `OXATrade_AttachmentStandardGenerator` | 3 | 3 / 0 |
+| **Total** | **15 source leaf-bearing generators** | **119** | **87 / 32** |
+
+**Why 87 vs 80?** A few OXA-new SIDs occur in more than one tier, especially silencers/lasers; distinct selectable SID count is **80**, while generated leaves have **87 new-SID occurrences**. For per-SID blocking, all occurrences must be handled, not just the first one.
+
+**Intermediate aggregator roots (3):**
+- `OXATrade_AttachmentBasicGenerator`: child links to ScopeBasic, MuzzleBasic, GripStandard, MagBasic, SilencerBasic.
+- `OXATrade_AttachmentStandardGenerator`: child links to ScopeStandard, MuzzleStandard, MagStandard, SilencerStandard, LaserGenerator; *also* includes three `EItemGenerationCategory::WeaponPrimary` direct leaves: `GunAKS74N_G2_ST`, `GunP30L_HG`, `GunGlock17_HG` (all OXA-new concrete prototype roots, `Chance = 0.1` per leaf, `MinDurability = MaxDurability = 1`).
+- `OXATrade_AttachmentAdvancedGenerator`: child links to ScopeAdvanced, MuzzleAdvanced, MagAdvanced, SilencerAdvanced; `PlayerRank = ERank::Veteran, ERank::Master` on its group.
+
+**Original-game generator integration (4 patches):**
+- `Trader_Attachments_T2_ItemGenerator`: top-level `{bpatch}`, child `ItemGenerator : struct.begin {bskipref}`, new `[*]` points to `OXATrade_AttachmentBasicGenerator`.
+- `Trader_Attachments_T3_ItemGenerator`: same with `OXATrade_AttachmentStandardGenerator`.
+- `Trader_Attachments_T4_ItemGenerator`: same with `OXATrade_AttachmentAdvancedGenerator`.
+- `RostokTraderNato_TradeItemGenerator`: `{bpatch}` appends named `OXA` under `ItemGenerator : struct.begin {bpatch}`; its two indexed children reference the T2 and T3 trader attachment generators, with `Chance = 1` each.
+
+**Patch-shape risk:** `{bskipref}` differs from a plain `{bpatch}` leaf append. Treat it as a **potentially replaced/isolated underlying `ItemGenerator` subtree**, not as guaranteed preservation of original native entries. Do not assume TCD's native per-category SELL copy-on-write clone will inherit the same resolved children or that order is immaterial. Validate the real 2.1 merge/load behavior before implementing item-blocking edits.
+
+The other decoded generator CFG `ItemGeneratorPrototypes_OXA.cfg` only edits `Arena_R3_Generator` with `{bpatch}`, authoring two original weapon leaves (`GunM701_SP`, `GunUDP_HG`) and an attached `EN_X8Scope_1`. This is a **native arena/test-style generator**, not a basis to classify the two native weapons as new mod loot. Under the user-approved scope, do not add a player-facing switch for this arena patch or edit quest/prologue routes.
+
+### Relevant native 2.1 TCD manifest cross-reference
+
+Compared the four exact patched generator root SIDs against `src/TrueCustomDifficulty/Data/trader-sells-2.1-runtime.csv` on `main`:
+
+| OXA patched native SID | Vanilla 2.1 SELL manifest leaf occurrence rows | Distinct native trade profiles |
+|---|---:|---:|
+| `Trader_Attachments_T2_ItemGenerator` | 155 | 31 |
+| `Trader_Attachments_T3_ItemGenerator` | 68 | 17 |
+| `Trader_Attachments_T4_ItemGenerator` | 54 | 9 |
+| `RostokTraderNato_TradeItemGenerator` | 41 | 1 |
+
+These are **vanilla source inventory rows**, not 318 OXA items, 318 NPCs, or proof each profile generates every modded attachment. T2/T3/T4 appear in `GENERAL_TRADER` and `TECHNICIAN` profile paths; technicians remain hidden from the current TCD Trader Stock UI, not removed from the source. `RostokTraderNato_TradeItemGenerator` is a nested/native root in the one NATO Rostok trade profile. OXA's injected pool can affect multiple traders via the shared T2/T3/T4 generators; the named Rostok extension is an additional route to those pools.
+
+The current `CfgPatchWriterService.TraderSells.cs` filters only pre-enumerated original 2.1 source leaves and creates **copy-on-write inherited generator clones** for edited vendor stock categories. Its fixed hash and source counts must be preserved. The new OXA pools/leaves are **not in that native manifest** and cannot be assumed to obey existing category OFF flags or new per-SID blocking without a separate mod-source overlay. Because these are **mixed pools**, naively deleting an entire T2/T3/T4 root or all `PossibleItems` entries would wrongly erase native attachments alongside mod additions.
+
+### Generator-only ALLOW / BLOCK implementation contract for this mod
+
+- **Default ALLOW:** do not touch mod generator definitions; original `Chance`, `Weight`, `MinCount`, `MaxCount`, `PlayerRank` and nested pool structure remain unchanged.
+- **BLOCK all OXA-added spawned items:** suppress every branch/leaf that can resolve to the **80 mod-defined item SIDs**, while preserving the **32 native/previously existing** attachment SID selections and other unrelated native stock. The exact way of editing independent mod-defined roots vs. native `{bskipref}/{bpatch}` references requires a compatibility-safe CFG patch design and runtime validation.
+- **Per-item BLOCK (if implemented):** match by exact concrete SID and **all** associated `PossibleItems` occurrences; block only its generator-derived eligibility. Examples: `OXA_Laser_3` appears in multiple laser tiers; modifying the item prototype itself is expressly out of scope.
+- **Not eligible solely by prototype presence:** the other **70** new prototype declarations absent from this item's generator leaf set. They may be functionally installed attachments, templates, weapon defaults or accessible from separate scripts/quests, but they have no proven `ItemPrototypeSID` generator path in these packages.
+- **No unrelated edits:** do not change weapon setup, perks, effects, upgrade behavior, item mass, price, magazine mechanics, DLC icons or asset metadata. The C package only patches existing DLC1/Deluxe/Preorder/Ultimate weapon/item setup and **contains no generator file**. The B package is the plugin/asset registry; no generator CFG.
+- **User-facing control design (future code change only):** an independent compact allow/block selection for OXA spawn content should follow the locked control catalog and reset behavior. Do not produce hundreds of always-visible rows. The audit confirms eligibility, **not that TCD has shipped the control**.
+
+### Remaining verification
+
+- [x] Integrity and mount/source inventory of the three PAKs; all 58 CFGs in A/C decoded or read fully.
+- [x] Parse 22 generator roots / 119 direct leaves / 19 generator links; match all 112 distinct direct item SIDs against mod prototype sources.
+- [x] Identify mod-new vs native item definitions and the 4 patched native generators.
+- [x] Join the four native roots to original 2.1 trader SELL manifest and flag `{bskipref}`.
+- [ ] Prove source merge and COW inheritance with `{bskipref}` under game 2.1 and TCD patch order, without affecting native attachments.
+- [ ] Test ALLOW vs. targeted BLOCK at an affected trader, including Rostok NATO, mixed pools and the three extra weapon entries.
+- [ ] Test whether unique spawned non-generator acquisitions exist; these remain outside TCD scope.
+- [ ] Before coding: define a deterministic per-mod CFG identity (hash + target generator paths), compatible output packaging and explicit opt-in; ensure absent mod does not generate dangling references.
+
+**Status:** exact mod-owned item-generator graph and native-root relationships **source verified**, with **80 source-backed candidate spawned modded SIDs**. In-game merge/stock refresh and TCD ALLOW/BLOCK implementation **not yet verified**. **Audit/documentation only**.
