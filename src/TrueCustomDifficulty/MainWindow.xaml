@@ -532,7 +532,18 @@
                                                                                    Text="{Binding DataContext.WorldModItemsRemovalDisplay, RelativeSource={RelativeSource AncestorType=Window}}"
                                                                                    FontSize="10.4" FontWeight="Bold"
                                                                                    TextAlignment="Right" VerticalAlignment="Center"
-                                                                                   Foreground="{StaticResource TextBrush}" />
+                                                                                   >
+                                                                            <TextBlock.Style>
+                                                                                <Style TargetType="TextBlock">
+                                                                                    <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+                                                                                    <Style.Triggers>
+                                                                                        <DataTrigger Binding="{Binding DataContext.IsWorldModItemsRemovalModified, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                                                                                            <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                                                                        </DataTrigger>
+                                                                                    </Style.Triggers>
+                                                                                </Style>
+                                                                            </TextBlock.Style>
+                                                                        </TextBlock>
                                                                     </Grid>
                                                                 </Border>
                                                                 <Border x:Name="CorpseModLootControl"
@@ -570,7 +581,18 @@
                                                                                    Text="{Binding DataContext.CorpseModItemsRemovalDisplay, RelativeSource={RelativeSource AncestorType=Window}}"
                                                                                    FontSize="10.4" FontWeight="Bold"
                                                                                    TextAlignment="Right" VerticalAlignment="Center"
-                                                                                   Foreground="{StaticResource TextBrush}" />
+                                                                                   >
+                                                                            <TextBlock.Style>
+                                                                                <Style TargetType="TextBlock">
+                                                                                    <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+                                                                                    <Style.Triggers>
+                                                                                        <DataTrigger Binding="{Binding DataContext.IsCorpseModItemsRemovalModified, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                                                                                            <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                                                                        </DataTrigger>
+                                                                                    </Style.Triggers>
+                                                                                </Style>
+                                                                            </TextBlock.Style>
+                                                                        </TextBlock>
                                                                     </Grid>
                                                                 </Border>
                                                             </Grid>

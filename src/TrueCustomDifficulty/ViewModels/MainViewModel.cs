@@ -104,9 +104,11 @@ public sealed class MainViewModel : ObservableObject
                 throw new ArgumentOutOfRangeException(nameof(value));
             if (SetProperty(ref _worldModItemsRemoval, Math.Round(Math.Clamp(value, 0.0, 1.0), 2)))
                 OnPropertyChanged(nameof(WorldModItemsRemovalDisplay));
+                OnPropertyChanged(nameof(IsWorldModItemsRemovalModified));
         }
     }
     public string WorldModItemsRemovalDisplay => $"{WorldModItemsRemoval * 100:0}%";
+    public bool IsWorldModItemsRemovalModified => WorldModItemsRemoval > 0.000001;
 
     public double CorpseModItemsRemoval
     {
@@ -117,9 +119,11 @@ public sealed class MainViewModel : ObservableObject
                 throw new ArgumentOutOfRangeException(nameof(value));
             if (SetProperty(ref _corpseModItemsRemoval, Math.Round(Math.Clamp(value, 0.0, 1.0), 2)))
                 OnPropertyChanged(nameof(CorpseModItemsRemovalDisplay));
+                OnPropertyChanged(nameof(IsCorpseModItemsRemovalModified));
         }
     }
     public string CorpseModItemsRemovalDisplay => $"{CorpseModItemsRemoval * 100:0}%";
+    public bool IsCorpseModItemsRemovalModified => CorpseModItemsRemoval > 0.000001;
 
     public double GenericNpcRareGearChance
     {
