@@ -3603,3 +3603,9 @@ WPF cross-build revealed shadowing of the existing horizontal renderer's local `
 - World Loot Depletion mod bar uses a separately named local `modRatio` in `UpdateFromPoint` to avoid CS0136 against the native bar's `ratio` local.
 - NPC Loot & Equipment mod card keyboard handler uses a separately named `modStep` to avoid CS0136 against the existing aggregate keyboard handler's `step` local.
 - These are local identifier fixes only: no changes to control appearance, snap increments, preset data, or CFG writer semantics. Validate with `./publish.sh` and Wine before considering the editors visually verified.
+
+
+### 2026-11-15 — Reference difficulty visibility expression compiler fix
+
+- `ParameterViewModel.IsControlVisible` combines the `IsAvailableForReferenceDifficulty` property with the UI exposure/anchor condition using the explicit boolean `&&` operator. Treat this property as a boolean, not an invocable method (CS1955).
+- Syntax-only correction: no changes to control visuals, interaction, default values, preset serialization or CFG output. Confirm the Windows publish build before UI validation.

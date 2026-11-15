@@ -704,7 +704,7 @@ public sealed class ParameterViewModel : ObservableObject
     // but are collapsed as individual rows. Each family exposes one visible anchor control.
     public bool IsControlVisible =>
         IsAvailableForReferenceDifficulty
-        // Catalog-hidden constraint members must not leak into standalone UI rows.
+        && // Catalog-hidden constraint members must not leak into standalone UI rows.
         (Definition.ExposeInUi || IsVisualControlAnchor)
         && !Id.Equals("environment.anomalyDamage", StringComparison.Ordinal) // Combined AnomalyDamageRadar.
         && !Id.Equals("alife.mutantSpawn.generic", StringComparison.Ordinal)
