@@ -66,8 +66,8 @@ Every audited generator **route**, including nested/shared routes, must carry:
 | Audit / mod | TRADER routes | OPEN_WORLD routes | Limits / excluded paths |
 |---|---|---|---|
 | **001 Sleeping Bag** | **Yes:** `Trader_Cosnsumables_ItemGenerator` `{bpatch}` → `SBM` → `SBM_Item`; shared original generator is present in **30** vanilla trade profiles | **No source-backed open-world generator route in supplied audit** | `SBM_QGet_Item` quest `ItemAdd` is **OUT_OF_SCOPE**, not world loot |
-| **002 ZoneWatch** | **PENDING** | **PENDING** | `zZST_FieldWatch110.cfg` and item prototype CFG remain compressed/unresolved in audit 002; watch/quest names and public mod descriptions are not CFG linkage |
-| **003 Backpacks Pack** | **PENDING** | **PENDING** | Mod-owned `ItemGeneratorPrototypes.cfg` and native `zBackpackGeneratorPatch.cfg` remain compressed/unresolved in audit 003; `BackpacksDemo` world actor filename is **not** evidence of a world *item generator* |
+| **002 ZoneWatch** | **Yes:** 10 named trade generator roots, 4 distinct watch SIDs | **Yes:** 2 stash generator roots + 1 safe/container generator, 4 distinct watch SIDs; FieldWatch overlaps TRADER | All 7 watch SIDs have decoded generator paths; no generated NPC/mutant loot path in this PAK; in-game spawn not verified |
+| **003 Backpacks Pack** | **Yes:** 18 named trade generator roots, 10 distinct backpack SIDs | **Yes:** 48 human NPC loot roots (12 backpack SIDs), 4 GamePass stash roots (10 backpack SIDs) | Shared generic pools require path-scoped OFF; `DefaultBackpack` has no decoded generator route and is NOT an eligible generator-spawn item; in-game spawn not verified |
 | **004 Repair System** | **Yes:** **20** named trader stock root patches plus **1** `GeneralNPC_TradeItemGenerator` (`TRADER.GENERIC`) | **Yes:** **4** `GamePass_Stash_*` (`STASH`), **55** `GeneralNPC_*_ItemGenerator` (`NPC_LOOT`) | All share 7 mod pool definitions. Four rank pools underlie **both** trader and world generation; a global pool-level OFF would be cross-domain and is **not allowed** for a domain-specific switch |
 | **005 OXA Standard** | **Yes:** native T2/T3/T4 attachment roots plus NATO Rostok trader root; **76** unique OXA-new SIDs have evidenced trader reachability (32 original mixed SID occurrences are not OXA-new) | **No source-backed open-world generator route** | `OXATrade_LaserAdvancedGenerator` and its 4 unique new item SIDs are **DISCONNECTED** from native trader roots in supplied CFGs. `Arena_R3_Generator` is **OUT_OF_SCOPE** as arena/test generation |
 | **006 Project Itemization Reborn** | **Yes:** **39** named trader/medic/bartender roots + **9** generic NPC trade roots | **Yes:** **25** human NPC loot roots, **50** zombie roots (`NPC_LOOT`), **14** mutant roots (`MUTANT_LOOT`), **3** GamePass stash roots (`STASH`), **23** destructible roots and **12** weighted `PackOfItemsGroup` roots (`CONTAINER`) | **113** distinct PIR SIDs reachable from some native item-generator root (union, **not** separate counts per domain). Two prologue/quest generator roots **OUT_OF_SCOPE**; one other native root **PENDING**; 6 disconnected prototype SIDs and absent `PIR_StashClues_*` roots cannot be assumed active. 21 direct MoneyBriefcase actor placements **OUT_OF_SCOPE** |
@@ -96,8 +96,8 @@ Use source-exact names, including source misspellings. Never quietly map `Junk` 
 | ID | Mod | CFG item SID | Generator hook | TCD compatibility status |
 |---|---|---|---|---|
 | 001 | Sleeping Bag (packaged plugin version `1.0`) | `SBM_Item` | `Trader_Cosnsumables_ItemGenerator` → new `SBM` category | **Source audited, runtime unverified; direct native category filtering does not cover this new leaf** |
-| 002 | ZoneWatch / ZST — Zone Standard Time (NewContent PAK) | Not yet verified (item CFG Oodle) | `ItemGeneratorPrototypes/zZST_FieldWatch110.cfg` (Oodle) | **Container/index audited; exact generator and item definitions pending decompression** |
-| 003 | Point of No Return — Backpacks Pack | Not decoded (Oodle) | Mod-owned ItemGeneratorPrototypes.cfg plus native-path zBackpackGeneratorPatch.cfg | **Container + plaintext audited; generator paths and item SIDs pending Oodle extraction** |
+| 002 | ZoneWatch / ZST — Zone Standard Time (NewContent PAK) | **7 decoded item SIDs; all have source-backed generator paths** | **13 native BPatch targets: 10 TRADER, 2 OPEN_WORLD.STASH, 1 OPEN_WORLD.CONTAINER** | **Both domains CLASSIFIED; all 19 CFGs decoded; runtime patch/spawn verification pending** |
+| 003 | Point of No Return — Backpacks Pack | **13 concrete item SIDs: 12 generation-reachable, DefaultBackpack has no evidenced generator leaf** | **21 mod-owned pool roots + 70 native BPatch targets: 18 TRADER, 48 OPEN_WORLD.NPC_LOOT, 4 OPEN_WORLD.STASH** | **Both domains CLASSIFIED; all 13 CFGs decoded; runtime patch/spawn verification pending** |
 | 004 | Point of No Return — Repair System | **12 decoded item SIDs, common consumable template** | **7 source pools + 80 native-root BPatch additions** (20 traders, 1 generic trade, 4 stashes, 55 NPC loot) | **Source decoded and joined to TCD 2.1; runtime coexistence/repair effects pending** |
 | 005 | OXA Standard / Oxide (A+B+C PAK set) | **80 new concrete SIDs** in decoded direct generator leaves; 32 original patched SIDs also referenced | **18 new generator roots + 4 native-root BPatch**; T2/T3/T4 attachment pools and Rostok NATO trader | **Generator CFG fully decoded; source-level ALLOW/BLOCK feasible with mixed-pool guards; runtime unverified** |
 | 006 | Project Itemization Reborn (4 PAKs; ItemGenerators + Main, NC/OC) | **150 distinct mod item prototype SIDs, 113 statically reachable from native item generator patches** | **109 non-BPatch generator definitions, 217 patch definitions, plus 12 PackOfItemsGroup patches** | **All 101 CFGs decoded; mixed vanilla pools, 56 bskipref operations, two unresolved stash-clue generator references; game runtime unverified** |
@@ -230,6 +230,8 @@ Append `002 — <Mod>`, `003 — <Mod>`, etc. Use the same columns, evidence sta
 
 ## 002 — ZoneWatch / ZST — Zone Standard Time
 
+**2026-11-15 UPDATE:** The previous compression-related PENDING status below is **superseded** by the decoded-source domain-resolution addendum at the end of this entry. TRADER and OPEN_WORLD paths are now classified. The historic initial audit remains for provenance; it is not the current status.
+
 **Audit date:** 2026-11-15  
 **Supplied source:** `ZoneWatchStalker2-Windows-NewContent(1).pak`, **25,481 bytes**; **SHA-256** `df9a997ed67c3f3871778c5d6fbb18cc11721b2205cb1915ce719eb2a0caf466`.  
 **Scope:** this *one* user-supplied PAK, inspected read-only. No matching UCAS/UTOC or other distribution files were supplied. The suffix `(1)` is the upload filename; do not interpret it as a mod version or load order.  
@@ -326,9 +328,49 @@ The public [ZST — Zone Standard Time mod page](https://www.nexusmods.com/stalk
 
 **Audit status:** archive-integrity, directory inventory, plugin, core patch, uncompressed effects and quest roots **complete**. Mod item-prototype identification and generation rules **open** due to Oodle compression. **No gameplay code, catalog control, UI, factory preset or TCD writer has been changed.**
 
+
+### 2026-11-15 generator domain resolution — ZoneWatch
+
+**Status: source-level TRADER and OPEN_WORLD classification COMPLETE (all 19 CFGs decoded).** Reopened the exact user-supplied `ZoneWatchStalker2-Windows-NewContent(1).pak`, validated the PAK v11 index/entry integrity, and decoded all remaining Oodle/Kraken CFGs with the open-source `Kraken_Decompress` implementation. No mod file was altered. This is a generator-graph classification; **whether these BPatch targets actually resolve and spawn in STALKER 2.1 is not game-tested**.
+
+| Original source | Decoded bytes | Decoded SHA-256 |
+|---|---:|---|
+| `Content/GameLite/GameData/ItemGeneratorPrototypes/zZST_FieldWatch110.cfg` | 12,239 | `0d5fc27c3932ccc1911583a414c85380668ac7873228b32fea4a4d422d7bdc98` |
+| `Plugins/GameFeatures/ZoneWatch/Content/GameLite/ModGameData/ZoneWatch/ItemPrototypes.cfg` | 7,056 | `636e0391624a03f9c153fa48ee9c83413511a1d3e788d41d9d6e4b150464552a` |
+
+**Item prototype identities (7 exact SIDs):** `ZST_FieldWatch`, `ZST_SWatch`, `ZST_ZoneSignal`, `ZST_ZoneSentinel`, `ZST_LabSentinel`, `ZST_SignalmanHold` and `ZST_FerrymanTally`. All seven have a direct `ItemPrototypeSID` leaf in the decoded source patch. These are new standalone prototypes inheriting `@BaseGame/ItemPrototypes.cfg;refkey=[0]`, not generic native stock leaves.
+
+**Thirteen original-generator `{bpatch}` roots** all add a named mod-owned child under `ItemGenerator : struct.begin {bpatch}`; no `{bskipref}` replacement in these 13 target definitions. Source inventory: **17 `ItemPrototypeSID` leaf occurrences, 7 distinct item SIDs, 0 nested generator-SID links**.
+
+| Domain / exact native target | ItemPrototypeSID(s) added | Source count |
+|---|---|---:|
+| **TRADER** `TraderZalesie_TradeItemGenerator` | `ZST_FieldWatch` | 1 |
+| **TRADER** `TraderTerikon_TradeItemGenerator` | `ZST_FieldWatch`, `ZST_SWatch`, `ZST_ZoneSignal` | 3 |
+| **TRADER** `NewbeeVillageTrader_TradeItemGenerator` | `ZST_SWatch` | 1 |
+| **TRADER** `RostokTraderNato_TradeItemGenerator` | `ZST_SWatch` | 1 |
+| **TRADER** `MalakhitTrader_TradeItemGenerator` | `ZST_SWatch`, `ZST_ZoneSentinel` | 2 |
+| **TRADER** `CementPlantTrader_TradeItemGenerator` | `ZST_ZoneSignal` | 1 |
+| **TRADER** `IkarTrader_TradeItemGenerator` | `ZST_ZoneSignal` | 1 |
+| **TRADER** `VartaTrader_TradeItemGenerator` | `ZST_ZoneSignal` | 1 |
+| **TRADER** `RostokTraderSoviet_TradeItemGenerator` | `ZST_ZoneSignal` | 1 |
+| **TRADER** `ShevchenkoTrader_TradeItemGenerator` | `ZST_ZoneSignal` | 1 |
+| **OPEN_WORLD.STASH** `LesserZone_PostOffice_StashGenerator1_47ED900C400F3D651EA30EBBD5B58EA6` | `ZST_FieldWatch` | 1 |
+| **OPEN_WORLD.STASH** `Promzona_AhropromResearchInstitute_StashGenerator3_1B259E604F001F533511BD889B771B3C` | `ZST_LabSentinel`, `ZST_SignalmanHold` | 2 |
+| **OPEN_WORLD.CONTAINER** `CementPlant_IslandNearKopachi_Safe` | `ZST_FerrymanTally` | 1 |
+
+All **10 named trader generator SIDs** were also found as reachable original 2.1 trade roots in TCD's frozen `trader-sells-2.1-runtime.csv` (566 source leaf-occurrence rows total across those 10 roots, **not** 566 watches or sales). The two source-named `StashGenerator` roots and one `Safe` container root have generator patches in the uploaded PAK; a complete original-game world consumer/actor provenance check has not yet been executed. Their OPEN_WORLD subdomains follow their actual native generator names and location, **not a claim of runtime-confirmed spawn**.
+
+**Domain-by-SID:** TRADER = `ZST_FieldWatch`, `ZST_SWatch`, `ZST_ZoneSignal`, `ZST_ZoneSentinel` (4 SIDs). OPEN_WORLD = `ZST_FieldWatch`, `ZST_LabSentinel`, `ZST_SignalmanHold`, `ZST_FerrymanTally` (4 SIDs). `ZST_FieldWatch` is reachable by *both* domains. A future independent OFF must block only the appropriate native root/leaf path; removing the item prototype globally is forbidden.
+
+**No other generator category from this PAK:** no generic-NPC trading, NPC-corpse generator, mutant generator or additional world-item-generator root appears in the decoded generator patch. Quest/Blueprint behavior and existing world-placed assets remain outside generator-only ON/OFF. Previous notes in this entry saying that item-generator CFG decoding is pending are now historical and superseded by this addendum.
+
+**Acceptance still outstanding:** actual game 2.1 BPatch merge, exact world-stash/safe references, TCD COW inheritance/patch order, real merchant stock/stash appearance, and independent per-domain OFF behavior.
+
 ---
 
 ## 003 — Point of No Return: Backpacks Pack
+
+**2026-11-15 UPDATE:** The previous compression-related PENDING status below is **superseded** by the decoded-source domain-resolution addendum at the end of this entry. TRADER and OPEN_WORLD paths are now classified. The historic initial audit remains for provenance; it is not the current status.
 
 **Audited:** 2026-11-15. **Sources:** two user-supplied PAKs, inspected read-only. The audit records only what could be recovered from these exact packages; it does not assume any corresponding cooked assets or runtime files.
 
@@ -424,6 +466,44 @@ This describes an effects/feedback group, not a generator or a loot entry.
 - [ ] Decide mod-aware overlay/control behavior only after exact CFG routing and runtime evidence. Do not create a generic backpack toggle from filenames.
 
 **Status:** container integrity, full two-archive inventory, four stored CFGs and plugin metadata **verified**. **Nine Oodle CFGs have not been decoded**, including both generator files, so mod item SID lists and direct stock integration remain pending. **Documentation only; no gameplay code, UI, presets or patch writer changed.**
+
+
+### 2026-11-15 generator domain resolution — Backpacks Pack
+
+**Status: source-level TRADER and OPEN_WORLD classification COMPLETE (all 13 CFGs decoded).** Reopened both original user-supplied `PointOfNoReturn-BackpacksPackStalker2-Windows-NewContent.pak` and `PointOfNoReturn-BackpacksPackStalker2-Windows-OverrideContent.pak`, validated PAK v11 index and entry integrity, and expanded all Oodle/Kraken-compressed CFG data read-only.
+
+| Original source | Decoded bytes | Decoded SHA-256 |
+|---|---:|---|
+| NewContent: `Content/GameLite/ModGameData/PointOfNoReturn-BackpacksPack/ItemGeneratorPrototypes.cfg` | 32,682 | `7707360e64c24500563e00c8e30cbef1386b27f674bedd12045da91e536cba47` |
+| NewContent: `Content/GameLite/ModGameData/PointOfNoReturn-BackpacksPack/ItemPrototypes/BackpackItemPrototypes.cfg` | 10,946 | `c371fb5ca39a31ded5cc9ec0a70685a606be406dfd6870c2c75f97e108881833` |
+| OverrideContent: `zBackpackGeneratorPatch.cfg` (native ItemGeneratorPrototypes mount) | 53,405 | `f6657488753f21665ab993656ff65331974899539eb14fbfb2c5c7f784232693` |
+
+**Prototypes:** 14 root declarations: `TemplateBackpack`, 13 concrete items (including `DefaultBackpack`). All concrete items inherit `refkey=TemplateBackpack`. There are **12 distinct concrete SIDs reachable from generator leaves**, and **`DefaultBackpack` is not referenced by any `ItemPrototypeSID` leaf** in the supplied generator graph. `DefaultBackpack` is not eligible for an item-generator ON/OFF control merely because the prototype exists.
+
+**Pool structure:** **21 distinct mod-owned generator roots**: four generic item-tier pools (Newbie / Experienced / Veteran / Master); 12 faction-tier pools (four each for Bandit, Monolith, IPSF); four rank-dependent umbrella pools (`BackpackPoolGeneric`, `BackpackBanditPool`, `BackpackMonolithPool`, `BackpackIPSFPool`); plus `BackpackStashPoolGeneric`. Together they contain **101 direct item SID occurrences** and **20 nested generator links**. Generator-pool `EItemGenerationCategory::Consumable` describes the source generation category, **not** a request to change item use effects.
+
+**OverrideContent native patches:** exactly **70 top-level `{bpatch}` roots**, all adding a named `Backpacks` group below `ItemGenerator : struct.begin {bpatch}` and referencing the mod-defined pool graph (no native-root `{bskipref}` rewrite in these 70 roots). They split as follows:
+
+| Domain | Native generator roots | Direct links / source Chance values | Reachable mod item SIDs |
+|---|---:|---|---:|
+| **TRADER.NAMED** | **18** unique named merchant roots | 34 pool references (mostly two per trader; `Chance = 1` and `0.5` for paired pools; Rostok Armor has two `1`, Yanov/Pripyat single `1`) | **10** |
+| **OPEN_WORLD.NPC_LOOT** | **48** faction/loadout roots beginning with `GeneralNPC_*_ItemGenerator` | 48 mod pool references, source `Chance = 0.1` each | **12** |
+| **OPEN_WORLD.STASH** | **4** `GamePass_Stash_*` roots (Cheap, Common_Var1, Common_Var2, Rare) | 4 `BackpackStashPoolGeneric` references, source `Chance = 0.1` | **10** |
+
+The 18 **TRADER** patch roots are:
+`TraderZalesie_TradeItemGenerator`, `TraderChemicalPlant_TradeItemGenerator`, `NewbeeVillageTrader_TradeItemGenerator`, `TraderTerikon_TradeItemGenerator`, `AsylumTrader_TradeItemGenerator`, `IkarTrader_TradeItemGenerator`, `SultanskTrader_TradeItemGenerator`, `ShevchenkoTrader_TradeItemGenerator`, `MalakhitTrader_TradeItemGenerator`, `CementPlantTrader_TradeItemGenerator`, `TraderSuska_TradeItemGenerator`, `EgerTrader_TradeItemGenerator`, `RedForestTrader_TradeItemGenerator`, `SelmaTrader_TradeItemGenerator`, `VartaTrader_TradeItemGenerator`, `RostokTraderArmor_TradeItemGenerator`, `YanovTrader_TradeItemGenerator`, `PripyatTrader_TradeItemGenerator`.
+
+All 18 are present in TCD's immutable game 2.1 SELL inventory, each resolving to **one named general-trader `TradePrototype`**, 1,172 original-game source leaf-occurrence rows combined (**not** actual backpack-offer counts). The 48 NPC roots are corpse/loadout generators, **not** Generic NPC trading stock. This distinction is mandatory for domain-specific ON/OFF.
+
+**Domain-by-SID (source-reachable):**
+- **Both TRADER and OPEN_WORLD (NPC and stash):** `BasicBackpack`, `FieldBackpack`, `HikingBackpack`, `HuntingBackpack`, `HydrationPack`, `OldBackpack`, `OxygenTanks`, `PlateCarrier`, `TacticalBackpack` and `TrackerBackpack` (**10**).
+- **OPEN_WORLD.NPC_LOOT only:** `BanditBag`, `HealthPack` (**2**). They are in the faction NPC loot pool branches, **not** the audited trader or stash pool branches.
+- **DISCONNECTED from item generation:** `DefaultBackpack` (**1 concrete prototype**), which also has a non-generator global slot state reference; do not interpret a global variable's string default as an item generator.
+- **OUT_OF_SCOPE:** `BackpacksDemo` and `MigrateBackpacks` quest/actor scripts, effect files, mesh/prototype properties, and direct world actor placement. These are independent of item-generator OFF unless a real generator route is separately proven.
+
+**Future independent toggle risk:** ten concrete SIDs appear in both domains and the same four generic rank item pools are used from multiple umbrella paths. Never remove these leaves globally to implement `TRADER OFF` or `OPEN_WORLD OFF` — it would inadvertently disable the other domain. Instead implement a verified domain-scoped clone/redirect or equivalent path-isolated edit. `BanditBag` and `HealthPack` require only the NPC/world route and must not be falsely listed in TRADER.
+
+**Acceptance still outstanding:** actual game 2.1 merge and spawn, TCD COW coexistence, world actor consumer correctness, rank-based pool selection, patch load order and any practical side effects. The original mod PAKs, TCD gameplay writer, presets and UI were **not** changed by this documentation update.
 
 ---
 
