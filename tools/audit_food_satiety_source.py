@@ -39,7 +39,7 @@ def main() -> int:
     factory_files = list((SRC / "Presets").glob("*.json"))
 
     require(len(catalog["parameters"]) == len(params) == 361, "source count / duplicate IDs")
-    require(sum(p.get("exposeInUi", True) for p in params.values()) == 184,
+    require(sum(p.get("exposeInUi", True) for p in params.values()) == 186,
             "current visible-source census")
     require(baseline["supportedParameterCount"] == 361 and len(edit_points) == 1448,
             "current full direct CFG-writer census")
