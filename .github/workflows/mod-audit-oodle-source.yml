@@ -1,0 +1,29 @@
+name: Fetch GPL Oodle decoder source for mod audits
+
+on:
+  push:
+    paths:
+      - '.github/workflows/mod-audit-oodle-source.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Retrieve upstream open-source decoder
+        run: |
+          git clone --depth 1 https://github.com/powzix/ooz.git ooz
+          test -f ooz/kraken.cpp
+          test -f ooz/bitknit.cpp
+          test -f ooz/lzna.cpp
+          tar -czf ooz-source.tgz -C ooz kraken.cpp bitknit.cpp lzna.cpp stdafx.h
+      - name: Save source bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: ooz-source-mod-audit
+          path: ooz-source.tgz
+          retention-days: 1
