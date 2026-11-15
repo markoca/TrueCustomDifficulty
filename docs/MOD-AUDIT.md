@@ -2,6 +2,21 @@
 
 **Canonical incremental audit.** Append a numbered mod entry for each supplied mod; retain source evidence, unresolved questions, and any in-game acceptance results. The objective is to design mod-aware generation without breaking the existing game-2.1, source-exact True Custom Difficulty (TCD) writers. This file records observations and proposed integration contracts, **not an assertion of shipped mod support**.
 
+## CURRENT SCOPE LOCK — generator spawn eligibility only (2026-11-15)
+
+**Decision:** The only intended TCD integration for items added by external mods is **ALLOW SPAWN / BLOCK SPAWN via item generators**. This decision supersedes suggestions elsewhere in this historical audit to extend TCD into repair effectiveness, durability coefficients, equipment mechanics, stamina/effects, costs, item mass, charges, crafting, UI assets, quest behavior or mod configuration. Those details may be observed as identifiers/context but **are never TCD edit targets** for this feature.
+
+**Functional target:** For each verified concrete mod-added item SID (or, where explicitly selected, a complete mod-defined generator group), allow the player to retain its original generation or prevent its generation through the audited `ItemGeneratorPrototypes` graph. Default is **ALLOW**, preserving the mod exactly. **BLOCK** must remove/exclude that SID from the relevant generator's `PossibleItems` paths and any other proven item-generation branches using safe source-level patches; do **not** destroy the item prototype or modify the original mod files. Avoid changing vanilla items merely because the pool is shared. Respect existing native TCD catalog/writer behavior and unchanged preset values. The exact patching strategy for mod-defined roots and inherited native roots must be verified before shipping.
+
+**Coverage follows generator paths, not the item's UI/category label:** Trader stock, generic-NPC *trader* stock, NPC corpse/loadout generators, stashes and other actual generator-root references are covered only where **verified by the supplied CFGs**. Example: Repair System declares 12 concrete kit SIDs via 7 custom pools and 80 patched native roots (20 named traders, 1 generic trader, 4 stashes, 55 NPC loot). A future item-level BLOCK requires excluding the chosen SID from the four underlying rank pools (or all reachable equivalent generation leaves), rather than assuming that toggling one visible trader role prevents stash/NPC generation too. This is a **design requirement, not implemented behavior**.
+
+**Explicit exclusions:** Quest ItemAdd/grants, scripts, spawned actors and world-placed pickups that do not use audited item generators; items already in inventories, existing saves or merchant stock generated earlier; item *use* behavior and the mod's own mechanics. Never promise to remove previously generated items. No probability sliders, weight tuning or additional control families under this scope. A mod that adds no item generator is documented as **not eligible for this feature**.
+
+**Audit minimum from now on:** exact item SIDs and their template for identity; source generator SID, file/scope, `refurl/refkey`, `{bpatch}` target, complete parent-child link chain, concrete `PossibleItems` leaf and every reachable acquisition *generator* domain; relevant Chance/Weight/Count are *read-only source evidence* to disambiguate paths. No need to fully decode effect, mesh, quest or gameplay logic **unless it is necessary to prove that a particular spawn route is an item generator**. Record missing compressed generator files as blockers; do not make mod support dependent on irrelevant mechanics.
+
+**UI constraint if/when implemented:** compact source-catalog-matching ON/OFF selection with no repeated explanatory copy, no width-expanding matrices or always-visible per-SID lists, modified-only highlighting, and per-control right-click reset to the active preset default. Update `docs/UI-DESIGN-LOCK.md`, `docs/VISUAL-CONTROL-SYSTEM.md`, runtime/preset contracts and tests in the *same commit* as any future UI change. **No UI or writer change is part of this scope clarification.**
+
+
 ## Audit protocol
 
 For every new mod, record:
@@ -12,7 +27,7 @@ For every new mod, record:
 4. **2.1 cross-reference:** join generator SIDs and parent links to the authoritative game-2.1 manifests; distinguish base, DLC1, and external-mod provenance; do not confuse a shared generator with individual traders.
 5. **TCD writer interaction:** whether existing controls modify direct leaves, shared roots, inherited clones, or only fixed native SID inventories; note independent mod-added branches that TCD does not enumerate.
 6. **Compatibility and safety:** conflicting patches, load-order unknowns, absent dependencies, runtime selection chance, and effects on item types or categories. No assumptions about runtime behavior from CFG syntax alone.
-7. **Status / next evidence:** complete or partial extraction, proposed classification, tests required, and explicit support decision.
+7. **Status / next evidence:** concrete item-generator allow/block feasibility, generator paths requiring extraction, runtime tests, and support decision. Other mod behavior is out of scope per CURRENT SCOPE LOCK.
 
 Use source-exact names, including source misspellings. Never quietly map `Junk` to `Medical`, `Food` or `Drinks` just because the item inherits a consumable template. Never assume a leaf `Chance = 1` guarantees an item in stock: ancestor selection, roll and refresh semantics must be established in-game. Do not mutate original mod files.
 
