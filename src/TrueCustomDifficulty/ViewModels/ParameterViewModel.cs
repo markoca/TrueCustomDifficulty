@@ -87,8 +87,8 @@ public sealed class ParameterViewModel : ObservableObject
             : Id == "loot.npcCorpseBonus"
                 ? Environment.NewLine + Environment.NewLine
                   + "STANDARD NPC CONSUMABLE CHANCE — FOOD / DRINKS / MEDICAL\n"
-                  + "Each optional item slider scales its own original Chance "
-                  + "1:1 (100% preserves the exact CFG source). The 104 source "
+                  + "Each checked item slider writes an absolute CFG Chance "
+                  + "(0% = 0, 100% = 1). The 104 source "
                   + "rows remain gated by native difficulty, rank and role, "
                   + "with original counts unchanged. Food/Drinks have no global "
                   + "slider; enabled Medical items replace only their own part "
@@ -142,7 +142,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "ItemWeightBoard" => "Adjust ammunition, food and medicine, weapons or armor weight independently.",
                     "AnomalyGlobalDamage" => "GLOBAL affects all supported anomaly damage. Each anomaly also has its own damage setting; FINAL includes both before protection.",
                     "AnomalySpecialEffects" => "Adjust Glass Shards bleeding and Psy drain independently. Their other damage effects remain separate.",
-                    "NpcLootLoadout" => "Choose corpse bonus, ordinary Medical Drops, bonus ammo and weapon condition. Food, Drinks and Medical item checks enable source-Chance sliders; 100% preserves the original chance. Right-click a rail to reset.",
+                    "NpcLootLoadout" => "Choose corpse bonus, standard medical, bonus ammo quantity and weapon condition. Checking a Food, Drinks or Medical item sets its literal Chance (100% = 1 when eligible). Right-click a rail to reset.",
                     "WorldLootLayout" => "Shuffle weapons, attachments and blueprints separately. Remove ordinary armor or detectors independently; quest rewards stay. Weapon density only affects weapon shuffle.",
                     "StashContentMix" => "Ammo Quantity changes Basic, Standard and Rare stacks together. Chance sliders scale original item chances; 100% does not guarantee loot. Rare Coupons and Basic RGD-5 have separate absolute chances.",
                     "StashMedicalComposition" => "DROP ROLLS changes medical-item chances, not whole-stash odds. LOOT PRIORITY favors items inside their actual pools. EFFECTIVE PICK previews the Medkit/Army Medkit mix; MIN/MAX sets stack sizes.",

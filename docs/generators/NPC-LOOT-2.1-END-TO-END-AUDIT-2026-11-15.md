@@ -45,3 +45,11 @@ Correct the UI gate to **only** `loot.npcWeaponAmmoSupply`. Medical Drops remain
 - Re-run `dotnet run --project tests/LootSpecialGeneratorsContract/LootSpecialGeneratorsContract.csproj -c Release`, `dotnet run --project tests/LootDirectPatchContract/LootDirectPatchContract.csproj -c Release`, then the normal `./publish.sh` and Wine visual test. These commands are required validation, not claimed completed by the connector audit.
 
 **Audit verdict:** one confirmed UI gating error fixed; no additional verified wrong source path/count found in the examined four native NPC controls. Static correctness does not prove corpse loot outcomes in game.
+
+## 2026-11-15 — Absolute SID Chance clarification and compact UI follow-up
+
+The ten Food/Drinks/Medical opt-in Chance editors already author literal `Chance` (checked 100% writes 1), rather than multiplying the original per-entry Chance. The selected-control rationale and interaction help previously said that 100% preserved the source Chance; these strings have been corrected. The separate STANDARD MED control still multiplies unchecked medical SID rows by 0–2×, and optional bonus medicine is still independently selected via CorpseSmartLoot.
+
+The WPF NPC board shrinks from 784 to **720 DIP** by retaining its existing source controls while tightening the nine-sample bonus-ammo preview (98 DIP), weapon-condition band (115 DIP), centering and capping the MOD ITEMS rail to 420 DIP (68 DIP card), and moving the 3-column consumables block to Y=553. The companion source contract test asserts the new measured board height and literal-Chance rationale. These are UI/wording changes only: generator routes, presets, source categories, source chances and output writer stay unchanged.
+
+The proposed weapon-attached ammo (121 local weapon entries) and Echo detector (36 local Chance entries) controls remain audit-only until exact local CFG fixtures and live generated NPC acceptance establish actual loot behavior. This change does not claim Windows compilation, Wine visual acceptance or game-runtime confirmation.

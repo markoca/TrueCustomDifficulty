@@ -1239,7 +1239,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             12.0, enabled && amount > Epsilon ? accent : enabled ? text : muted,
             FontWeights.Bold);
 
-        _npcModRail = new Rect(card.Left + 20.0, card.Top + 50.0,
+        _npcModRail = new Rect(card.Left + 20.0, card.Top + 39.0,
             Math.Max(1.0, card.Width - 40.0), 12.0);
         var y = _npcModRail.Top + _npcModRail.Height / 2.0;
         var x = _npcModRail.Left + _npcModRail.Width * amount;
@@ -1255,11 +1255,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             dc.DrawEllipse(accent, null, new Point(x, y), 2.2, 2.2);
         _npcModRailHit = new Rect(_npcModRail.Left - 8.0, _npcModRail.Top - 6.0,
             _npcModRail.Width + 16.0, _npcModRail.Height + 12.0);
-        DrawText(dc, "0%", new Point(_npcModRail.Left, card.Bottom - 17.0),
-            9.0, muted, FontWeights.Normal);
-        DrawRightAlignedText(dc, "100%",
-            new Point(_npcModRail.Right, card.Bottom - 17.0),
-            9.0, muted, FontWeights.Normal);
     }
 
     private void UpdateNpcModItems(Point point)
@@ -1368,7 +1363,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var countsModified = ammoPackageActive && ammo.IsValueModifiedFromReference();
         // The nine source/rank examples are read-only. A compact 3x3
         // two-line grid retains all samples without dominating the controls.
-        var sampleCard = new Rect(margin, 238.0, width, 124.0);
+        var sampleCard = new Rect(margin, 238.0, width, 98.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
             sampleCard, 4.0, 4.0);
         DrawText(dc, "BONUS AMMO STACKS",
@@ -1386,7 +1381,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             var sample = examples[i];
             var tile = new Rect(previewLeft
                     + (i % 3) * (previewWidth + previewGap),
-                sampleCard.Top + 25.0 + (i / 3) * 31.0, previewWidth, 29.0);
+                sampleCard.Top + 24.0 + (i / 3) * 24.0, previewWidth, 23.0);
             dc.DrawRoundedRectangle(
                 ammoPackageActive ? CloneWithOpacity(panel, 0.95)
                     : CloneWithOpacity(panel, 0.55),
@@ -1407,7 +1402,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // This is a dual-ended native RANGE, not two normal slider
         // headers. Show the two editable figures together in the middle
         // of the card, immediately above their shared physical rail.
-        var rangeCard = new Rect(margin, 374.0, width, 130.0);
+        var rangeCard = new Rect(margin, 348.0, width, 115.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
             rangeCard, 4.0, 4.0);
         DrawText(dc, "DROPPED WEAPON CONDITION",
@@ -1445,7 +1440,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             new Point(center, rangeCard.Top + 28.0),
             new Point(center, rangeCard.Top + 61.0));
 
-        var rail = new Rect(rangeCard.Left + 20.0, rangeCard.Top + 81.0,
+        var rail = new Rect(rangeCard.Left + 20.0, rangeCard.Top + 75.0,
             Math.Max(1.0, rangeCard.Width - 40.0), 12.0);
         var y = rail.Top + rail.Height / 2.0;
         var xMin = ValueToX(condition.CurrentMinNumber, 0.0, 1.0, rail, false);
@@ -1521,8 +1516,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             new Point(rail.Right, rangeCard.Bottom - 19.0),
             9.5, muted, FontWeights.Normal);
 
-        // Dedicated peer card inside the same NPC board industrial frame.
-        DrawNpcModItemsCard(dc, new Rect(margin, 515.0, width, 88.0),
+        // Centered, capped-width peer avoids a full-width mod rail.
+        var modCardWidth = Math.Min(width, 420.0);
+        DrawNpcModItemsCard(dc, new Rect(
+                margin + (width - modCardWidth) / 2.0, 474.0, modCardWidth, 68.0),
             text, muted, border, accent, panel);
         DrawNpcConsumables(dc, text, muted, border, accent, panel);
     }
@@ -7586,7 +7583,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "AnomalyGlobalDamage" => 242.0,
             "FlycatcherSlowdown" => FlycatcherBoardHeight(width),
             "AnomalySpecialEffects" => 270.0,
-            "NpcLootLoadout" => 784.0,
+            "NpcLootLoadout" => 720.0,
             "WorldLootLayout" => 275.0,
             "StashContentMix" => StashContentMixHeight(width),
             "StashMedicalComposition" => StashMedicalCompositionHeight(width),

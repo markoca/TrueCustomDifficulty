@@ -93,7 +93,7 @@ The existing `loot.npcCorpseBonus` parameter still selects the package list at `
 
 ## 2026-11-15 — Current NPC SmartLoot editor placement and meaning
 
-Previous icon-only / 836-DIP UI screenshots in this historical audit are superseded by the live 784-DIP `NpcLootLoadout` renderer. The three exact authoritative `CorpseSmartLoot.GeneralNPC` list values remain **Medicine + Ammo**, **Water**, **None**. The compact chip captions are now **MED + AMMO**, **WATER**, **NONE**, under source-derived symbols. This is package selection, **not 0–100% Chance**.
+Previous icon-only / 836-DIP UI screenshots in this historical audit are superseded by the live 720-DIP `NpcLootLoadout` renderer. The three exact authoritative `CorpseSmartLoot.GeneralNPC` list values remain **Medicine + Ammo**, **Water**, **None**. The compact chip captions are now **MED + AMMO**, **WATER**, **NONE**, under source-derived symbols. This is package selection, **not 0–100% Chance**.
 
 The related **BONUS AMMO QTY** slider now sits to the left, immediately above a shortened nine-sample **BONUS AMMO STACKS** panel. It edits `NPC_Ammo_Smart` quantity (`MinCount/MaxCount`, 0–3×) only when the Medicine + Ammo package is active. Its saved setting remains intact but muted and non-interactive for Water/None; even a previously changed value cannot paint an inactive preview yellow.
 

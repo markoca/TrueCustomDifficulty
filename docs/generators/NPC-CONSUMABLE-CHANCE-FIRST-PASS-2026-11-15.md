@@ -10,7 +10,7 @@ The existing **NPC LOOT & EQUIPMENT** board contains exactly ten compact SID-spe
 - **Unchecked (default)**: muted **CFG** readout; no SID-specific override; all native `Chance` literals stay intact, except that the existing independent Medical Drops global control still applies to unchecked medical entries.
 - **Checked**: the slider reads an **absolute 0–100% chance** in **1% steps**; `Chance = selectedPercent / 100`. For example, choosing **37%** writes `Chance = 0.37`, regardless of whether that particular entry originally had 0.05 or 1.0. **0%** writes 0; **100%** writes 1, guaranteeing the entry's Chance roll **when that entry is eligible and its generator is evaluated**.
 - A SID absent from an NPC role/rank pool is not added there. A full NPC drop is still subject to NPC spawn, generator invocation and separate loot pools; 100% is **not** a blanket guarantee that every human corpse has the item.
-- The little checkbox only enables the override; disabling retains the last slider value. Right-click on a row/rail or **R** while focused restores the source CFG by disabling its override; **Space** toggles the checkbox; arrows adjust 1%, **Home** is 0 and **End** is 100. Only checked changes are highlighted. Board remains 784 DIP with the existing 3-column geometry.
+- The little checkbox only enables the override; disabling retains the last slider value. Right-click on a row/rail or **R** while focused restores the source CFG by disabling its override; **Space** toggles the checkbox; arrows adjust 1%, **Home** is 0 and **End** is 100. Only checked changes are highlighted. Board measures 720 DIP with the same compact 3-column geometry.
 
 ## Exact original source
 
@@ -60,4 +60,4 @@ dotnet run --project tests/AllControlsPatchContract/AllControlsPatchContract.csp
 
 ### NPC SmartLoot board integration (2026-11-15)
 
-The optional standard consumable Chance editors now sit at Y=614 in the compact 784-DIP NPC board. The independent top **CORPSE SMART LOOT** three-chip selector, **BONUS AMMO QTY** (bonus stack quantity, only for Medicine + Ammo), and **STANDARD MED** (source Chance multiplier, independent of SmartLoot) remain separate controls with original writer IDs. See [source-audited package semantics](SMARTLOOT-CORPSE-BONUS-AUDIT.md).
+The optional standard consumable Chance editors now sit at Y=553 in the compact 720-DIP NPC board. The 98-DIP ammo preview begins at Y=238; the 115-DIP condition card at Y=348; the centered 420-DIP-capped 68-DIP MOD ITEMS card at Y=474. The independent top **CORPSE SMART LOOT** three-chip selector, **BONUS AMMO QTY** (bonus stack quantity, only for Medicine + Ammo), and **STANDARD MED** (source Chance multiplier, independent of SmartLoot) remain separate controls with original writer IDs. See [source-audited package semantics](SMARTLOOT-CORPSE-BONUS-AUDIT.md).

@@ -71,9 +71,15 @@ internal static partial class Program
             NpcConsumables = uiVm.NpcConsumableItems
         };
         npcBoard.Measure(new System.Windows.Size(760.0, 1000.0));
-        Check(Math.Abs(npcBoard.DesiredSize.Height - 784.0) < 0.000001
+        Check(Math.Abs(npcBoard.DesiredSize.Height - 720.0) < 0.000001
             && ReferenceEquals(npcBoard.NpcConsumables, uiVm.NpcConsumableItems),
             "Ten source-backed item editors did not mount inside the compact NPC board");
+
+        var npcRationale = uiVm.AllParameters.Single(p => p.Id == "loot.npcCorpseBonus")
+            .RationaleDisplay;
+        Check(npcRationale.Contains("100% = 1", StringComparison.Ordinal)
+            && !npcRationale.Contains("100% preserves", StringComparison.Ordinal),
+            "NPC corpse Chance rationale incorrectly describes literal percent as a multiplier");
 
         // Checked percentages directly author each matching literal CFG Chance:
         // 0% => 0, 100% => 1 even when the source entry was only 0.05.
