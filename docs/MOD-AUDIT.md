@@ -41,6 +41,7 @@ Use source-exact names, including source misspellings. Never quietly map `Junk` 
 | 004 | Point of No Return — Repair System | **12 decoded item SIDs, common consumable template** | **7 source pools + 80 native-root BPatch additions** (20 traders, 1 generic trade, 4 stashes, 55 NPC loot) | **Source decoded and joined to TCD 2.1; runtime coexistence/repair effects pending** |
 | 005 | OXA Standard / Oxide (A+B+C PAK set) | **80 new concrete SIDs** in decoded direct generator leaves; 32 original patched SIDs also referenced | **18 new generator roots + 4 native-root BPatch**; T2/T3/T4 attachment pools and Rostok NATO trader | **Generator CFG fully decoded; source-level ALLOW/BLOCK feasible with mixed-pool guards; runtime unverified** |
 | 006 | Project Itemization Reborn (4 PAKs; ItemGenerators + Main, NC/OC) | **150 distinct mod item prototype SIDs, 113 statically reachable from native item generator patches** | **109 non-BPatch generator definitions, 217 patch definitions, plus 12 PackOfItemsGroup patches** | **All 101 CFGs decoded; mixed vanilla pools, 56 bskipref operations, two unresolved stash-clue generator references; game runtime unverified** |
+| 007 | Point of No Return — AR Goggles Pack (NC + OC) | **3** (`ArGogglesT1/2/3`) | **4 mod-owned tier pools + 20 native-root BPatch attempts**, including 4 GamePass stashes | **All 19 CFGs decoded; 15 trader roots matched to vanilla 2.1, 1 suspicious Sultansk TradePrototype target; generator-only ON/OFF candidate, runtime unverified** |
 
 ---
 
@@ -841,3 +842,123 @@ Core mod-defined generator CFG locations (relative to `ItemGenerators_NC`'s `Con
 - [ ] Audit debug/prologue exclusions and store confirmed results before adding compact ON/OFF controls per UI catalog.
 
 **No gameplay writer, UI control, preset storage, vanilla source manifest, or mod PAK has been changed by this audit.**
+
+---
+
+## 007 — Point of No Return: AR Goggles Pack
+
+**Audit date:** 2026-11-15. **Source:** the exact two user-supplied PAKs, read-only. **Feature scope:** item-generator ALLOW/BLOCK only (current scope lock); price, item mass, effects, equipment upgrades, quest logic, etc. are not TCD edit targets.
+
+### Verified archive provenance and extraction
+
+| Source archive | Bytes | SHA-256 | PAK mount | Contents |
+|---|---:|---|---|---|
+| `PointOfNoReturn-ArGogglesPackStalker2-Windows-NewContent.pak` | **20,970** | `5ae6c754f276a0f0ea6102569066a2562c6fc4283f440cd5a2721ca7c20ac55c` | `../../../Stalker2/Mods/PointOfNoReturn-ArGogglesPack/` | **15 entries:** 13 CFGs, `.uplugin`, `AssetRegistry.bin` |
+| `PointOfNoReturn-ArGogglesPackStalker2-Windows-OverrideContent.pak` | **4,932** | `298598de23359b5397550a4c44331055e3c02665503d1cdddd617942731e03e2` | `../../../Stalker2/Content/GameLite/GameData/` | **6 entries, all CFGs** |
+
+Both archives are Unreal **PAK v11**. Primary-index SHA-1 (as verified against the footer), path-hash and directory-index digests and individual entry SHA-1 values were verified. All **19 CFG files decoded in full**, including their Oodle/Kraken-compressed entries. The binary `AssetRegistry.bin` is not an item-generator CFG and was not decoded. The NewContent plugin descriptor declares `FriendlyName = PointOfNoReturn-ArGogglesPack`, `VersionName = 1.0`, `CreatedBy = PNR Team`, `ExplicitlyLoaded = true` and `BuiltInInitialFeatureState = Registered`; those are descriptor values, not an in-game compatibility result.
+
+**Generator-related decoded sources and independent content checks:**
+
+| CFG file | Uncompressed bytes | SHA-256 of decoded CFG |
+|---|---:|---|
+| NewContent: `Content/GameLite/ModGameData/PointOfNoReturn-ArGogglesPack/ItemGeneratorPrototypes.cfg` | 3,925 | `24d79f67b8200b7b893d6b18dcbef483625ee14b82e9f18abf6e42e5ce1464f0` |
+| NewContent: `Content/GameLite/ModGameData/PointOfNoReturn-ArGogglesPack/ItemPrototypes/NightVisionGogglesPrototypes.cfg` | 2,175 | `7080d05cc8c18e0f3bdc1dc9ddcfa6dc8a67535bf7074e629cfc1cf0d9baec6f` |
+| OverrideContent: `ItemGeneratorPrototypes/zArGogglesGeneratorPatch.cfg` | 14,510 | `24b53c15f8e243bb5c0601319b4d6e226baefce06bb1bb4e1be0b11ec606fd53` |
+
+The remaining **16 CFGs** consist of mod-specific BoolProvider, CameraShake, Effect, GlobalVariable, Mesh, Upgrade and Quest/QuestNode definitions (NewContent) and original-game BoolProvider, ItemPrototypes/helmets, NPC, PDA tutorial and QuestNode patches (OverrideContent). They were included in the read-only source scan. No additional `ItemGeneratorPrototypeSID` reference exists in those CFGs; no `ItemAdd`, `SetItemGenerator` or `SpawnedPrototypeSID` token was found in the 19 decoded CFGs. Override tutorial nodes contain item-SID fields, but **are not item-generator leaves**; quest/tutorial/upgrade mechanisms remain outside this feature. Absence of those tokens does **not** prove absence of Blueprint/runtime acquisition paths.
+
+### Three concrete item identities
+
+NewContent `NightVisionGogglesPrototypes.cfg` declares precisely three item prototype SIDs:
+
+| ItemPrototypeSID | Base/reference chain | Source Cost | Source Weight |
+|---|---|---:|---:|
+| `ArGogglesT1` | `@BaseGame/ItemPrototypes/NightVisionGogglesPrototypes.cfg;refkey=TemplateNightVisionGoggles` | 25,000 | 0.4 |
+| `ArGogglesT2` | `refkey=ArGogglesT1` | 50,000 | 0.7 |
+| `ArGogglesT3` | `refkey=ArGogglesT1` | 75,000 | 1.0 |
+
+Costs/weights are documented for identity matching **only**, not targets for TCD edits. All three goggles are items derived from a night-vision template, while their **generation pool category** is `EItemGenerationCategory::Consumable`. Do not automatically map them to TCD's generic Medical, Detectors or Armor stock toggles.
+
+### Four dedicated mod-owned generator pools
+
+Every mod-owned root is defined with `{refurl=@BaseGame/ItemGeneratorPrototypes.cfg;refkey=[0]}` and contains `ItemGenerator/[0]` with `Category = EItemGenerationCategory::Consumable`, `bAllowSameCategoryGeneration = true`. Exactly three `PossibleItems` leaf slots, `[0]`–`[2]`, reference T1/T2/T3 respectively:
+
+| Generator SID | T1 Weight | T2 Weight | T3 Weight |
+|---|---:|---:|---:|
+| `ArGogglesNewbiePoolGeneric` | 80 | 15 | 5 |
+| `ArGogglesExperiencedPoolGeneric` | 60 | 30 | 10 |
+| `ArGogglesVeteranPoolGeneric` | 40 | 40 | 20 |
+| `ArGogglesMasterPoolGeneric` | 20 | 30 | 50 |
+
+There are **12 direct mod-item leaves** in these four new pool roots, **three unique modded item SIDs**, and **no vanilla item leaf in those pools**. Each item's source-level OFF therefore means removing that item's one `PossibleItems` slot from **all four pools** (not altering its item prototype); preserve remaining two slots and their original weights. This is a **symbolically verified source-only filter design**, not yet an implemented/runtime-proven BPatch for external mod-owned generator roots. A single mod-wide OFF could instead suppress the new named `ArGoggles` branches in native roots, but exact patch merging/target validation is required.
+
+### Twenty native-root patch attempts: four stashes + sixteen trader-labeled entries
+
+OverrideContent's `zArGogglesGeneratorPatch.cfg` contains **20 top-level `{bpatch}` roots** and **23 nested `ItemGeneratorPrototypeSID` references**. Every entry adds a separate named `ArGoggles` group inside `ItemGenerator : struct.begin {bpatch}`, using `EItemGenerationCategory::SubItemGenerator`, `PlayerRank = ERank::Newbie, ERank::Experienced, ERank::Veteran, ERank::Master`, and one or two `PossibleItems/[*]` references. Each reference has `MinCount = MaxCount = 1`.
+
+| Patched native SID | Referenced mod pool(s) | Source Chance(s) |
+|---|---|---|
+| `GamePass_Stash_ItemGenerator_Cheap` | Newbie | 0.05 |
+| `GamePass_Stash_ItemGenerator_Common_Var1` | Newbie | 0.05 |
+| `GamePass_Stash_ItemGenerator_Common_Var2` | Experienced | 0.05 |
+| `GamePass_Stash_ItemGenerator_Rare` | Experienced | 0.05 |
+| `TraderZalesie_TradeItemGenerator` | Newbie | 0.5 |
+| `TraderChemicalPlant_TradeItemGenerator` | Newbie | 0.5 |
+| `TraderTerikon_TradeItemGenerator` | Experienced | 0.5 |
+| `AsylumTrader_TradeItemGenerator` | Experienced | 0.5 |
+| `IkarTrader_TradeItemGenerator` | Experienced | 0.5 |
+| **`Trader_Sultansk_TradePrototype`** | Experienced | 0.5 |
+| `ShevchenkoTrader_TradeItemGenerator` | Experienced | 0.5 |
+| `NewbeeVillageTrader_TradeItemGenerator` | Newbie | 0.5 |
+| `MalakhitTrader_TradeItemGenerator` | Veteran | 0.5 |
+| `CementPlantTrader_TradeItemGenerator` | Veteran | 0.5 |
+| `RostokTraderArmor_TradeItemGenerator` | Experienced, Veteran | 0.9, 0.5 |
+| `YanovTrader_TradeItemGenerator` | Veteran, Master | 0.9, 0.5 |
+| `PripyatTrader_TradeItemGenerator` | Veteran, Master | 0.9, 0.5 |
+| `TraderSuska_TradeItemGenerator` | Veteran | 0.4 |
+| `EgerTrader_TradeItemGenerator` | Veteran | 0.4 |
+| `RedForestTrader_TradeItemGenerator` | Veteran | 0.5 |
+
+**These `Chance` values are authored local generator-entry fields, not confirmed final trader or stash spawn rates.** All four pools include all three items, so each item has a static source path from every valid native root. No NPC corpse/loadout or mutant loot generator is patched in the supplied files.
+
+### Critical source anomaly: Sultansk target almost certainly misaddressed
+
+The supplied OverrideContent contains this exact top-level patch in an **ItemGeneratorPrototypes** file:
+
+```cfg
+Trader_Sultansk_TradePrototype : struct.begin {bpatch}
+    ItemGenerator : struct.begin {bpatch}
+        ArGoggles : struct.begin
+            Category = EItemGenerationCategory::SubItemGenerator
+            // ... reference to ArGogglesExperiencedPoolGeneric ...
+        struct.end
+    struct.end
+struct.end
+```
+
+This patch root is named like a **TradePrototype**, not an ItemGeneratorPrototype. Cross-checked TCD's source-exact vanilla 2.1 `trader-sells-2.1-runtime.csv`: the source trade profile is `Trader_Sultansk_TradePrototype`, but its actual root stock generator is **`SultanskTrader_TradeItemGenerator`**. The latter does **not** occur as a patch root in the supplied AR Goggles CFG. Thus **15 of the 16 trader-labeled patches have real generator SID matches in the 2.1 SELL manifest**, while this Sultansk entry does not match a known generator root. It is **a probable mod author typo / misplaced patch**, **not confirmed runtime failure**. Do not silently correct or patch another mod's original files in TCD; record a game-level confirmation before declaring its effect or implementing a fix.
+
+### TCD 2.1 compatibility and source-only checks
+
+- **Vanilla inventory join: PASS.** The 15 legitimate named-trader generator roots map to **15 original 2.1 `TradePrototype` profiles** and **950 source-extracted native SELL leaf occurrences** (source manifest statistics, not modded goggles quantities). Separately Sultansk's actual vanilla trade profile has **60** source leaf occurrences against `SultanskTrader_TradeItemGenerator`. All four GamePass stashes are **outside the trader SELL manifest** as expected.
+- **Generator graph: PASS.** Four custom pool roots, 12 direct item slots, 20 patched root records, 23 parent→pool references; no unresolved mod pool references. Pool weights are 80/15/5, 60/30/10, 40/40/20 and 20/30/50 in Newbie/Experienced/Veteran/Master respectively.
+- **No mixed native leaves within mod-owned pools: PASS.** Unlike OXA or PIR, the four AR Goggles pools contain only the three new item SIDs. A symbolic item-level BLOCK can preserve other goggles without accidentally removing vanilla items from these **specific** pools. Do not infer the runtime behavior of the patch writer from that source-only property.
+- **Patch style: `{bpatch}` append, not `{bskipref}` replace.** The new group name is `ArGoggles`. This is structurally more isolated than OXA's/PIR's `{bskipref}` replacement of entire inherited `ItemGenerator` children, but **actual BPatch merging, inherited TCD COW clones and load order are not verified**.
+- **TCD current behavior:** existing `CfgPatchWriterService.TraderSells.cs` filters only vanilla 2.1 item leaves using copy-on-write inherited clones. It does **not** enumerate these three AR Goggles SIDs. Neither disabling a generic stock category nor using current stock knobs is proven to suppress this mod's new branch. A separate, source-exact external-mod overlay or a proven per-mod root/slot exclusion strategy is required for future ON/OFF.
+- **Overlap with previous audits:** all **four** GamePass stash roots also appear in Repair System (audit 004), and PIR (audit 006) rewrites GamePass stash generation through `{bskipref}` on several roots. Several named vendor generator roots are shared across Repair, PIR and AR Goggles. Distinct subgroup names (`RepairKits`, `ArGoggles`) may coexist if the patch engine merges them, but PIR root replacement can supersede inherited/additional branches: **source overlap, not proven conflict**.
+- **Exclusions:** helmet upgrades, technician skill additions, effects and night-vision behavior are mod functionality, not eligible for generator-only OFF. Items previously spawned and existing inventories are not touched.
+
+### Runtime acceptance checklist (NOT YET RUN)
+
+- [x] Validate both supplied PAK v11 containers, mount points and entry digests; decode **all 19 CFGs**.
+- [x] Verify exact item SID/price/weight identities, four pools and all 20 native patches plus 23 cross-references.
+- [x] Join **15** proper vendor target roots with the frozen 2.1 SELL graph and isolate Sultansk mismatch.
+- [x] Verify no additional `ItemGeneratorPrototypeSID`, `ItemAdd`, `SetItemGenerator` or `SpawnedPrototypeSID` routes in the supplied CFGs.
+- [ ] In game 2.1, test AR Goggles without TCD: vendor stock at a newbie/expert/veteran/master-tier vendor and each GamePass stash tier, including low authored Chances.
+- [ ] In game, verify whether Sultansk stock actually receives goggles; if absent, confirm whether the `Trader_Sultansk_TradePrototype` patch was ignored or applied unexpectedly.
+- [ ] Test AR Goggles + TCD vanilla category OFF: verify the new named `ArGoggles` group survives COW cloning when unblocked, and no unrelated original item is removed.
+- [ ] Test with Repair and PIR installed together; ensure all distinct item-generation additions coexist at the four shared GamePass stash roots, or document concrete BPatch precedence if not.
+- [ ] When ON/OFF is implemented, test each of the three SIDs independently across all four pools and merchant/stash routes; OFF prevents **future** generator production, ON leaves original weights/Chances intact. Preserve all vanilla and nonselected mod items.
+
+**Status:** complete CFG-level audit, three source-backed spawn-eligible goggles, 19 native generator target matches (15 vendor + 4 stash), one likely bad Sultansk patch target. **Game runtime acceptance and TCD mod-enabled writer/UI implementation remain pending.** This audit is documentation-only; no gameplay code, presets, UI or original mod archives modified.
