@@ -94,3 +94,16 @@ Generated audit receipts, logs, fixtures, and reports belong under the ignored `
 ## Development rules
 
 Keep `docs/UI-DESIGN-LOCK.md` and `docs/VISUAL-CONTROL-SYSTEM.md` synchronized with live UI controls and the parameter catalog. Treat `main` as the source of truth; code, applicable audits and documentation must change together. Neither repository audits nor `./publish.sh` install third-party binaries.
+
+
+## OXA Standard generator compatibility audit
+
+`python3 tools/audit_mod_oxa_generators_21.py` verifies the currently locked 2.1 TCD SELL inventory / COW writer contract. To additionally verify an installed OXA Standard release, extract both external PAKs' CFG files using the user's Oodle-compatible local extraction tools, then run:
+
+```bash
+python3 tools/audit_mod_oxa_generators_21.py \\
+  --oxa-a "/path/to/OXA_StandardA_P" \\
+  --oxa-c "/path/to/OXA_StandardC_P"
+```
+
+It checks exact decoded generator SHA-256, generator reachability, all modded/new and original leaf classifications, native bridge risk, and source-only ALLOW/BLOCK separation. **Do not commit extracted third-party CFG data.** It does **not** execute the STALKER 2 engine or promise `bskipref` runtime compatibility; actual game acceptance remains separate. See `docs/MOD-AUDIT.md` entry 005.

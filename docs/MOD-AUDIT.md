@@ -698,3 +698,37 @@ The current `CfgPatchWriterService.TraderSells.cs` filters only pre-enumerated o
 - [ ] Before coding: define a deterministic per-mod CFG identity (hash + target generator paths), compatible output packaging and explicit opt-in; ensure absent mod does not generate dangling references.
 
 **Status:** exact mod-owned item-generator graph and native-root relationships **source verified**, with **80 source-backed candidate spawned modded SIDs**. In-game merge/stock refresh and TCD ALLOW/BLOCK implementation **not yet verified**. **Audit/documentation only**.
+
+
+### 2026-11-15 — Source compatibility verification (after MOD AUDIT 005)
+
+**Executed checks, not hypothetical:** the original uploaded Standard A+C decoded CFG trees were examined together with TCD's current `main` 2.1 SELL manifest and writer. Reproduction guard: `tools/audit_mod_oxa_generators_21.py` (provide local decoded `--oxa-a` and `--oxa-c` for the full mod scan). Original PAK/CFG payloads are **not** committed.
+
+**Result:**
+
+| Check | Result | Evidence / boundary |
+|---|---|---|
+| All OXA generator roots and bridge references | **PASS** | 22 generator roots: 18 mod-owned + 4 patched native; 119 direct `ItemPrototypeSID` occurrences, 19 `ItemGeneratorPrototypeSID` links; no dangling links or cycles |
+| Original vs modded leaves | **PASS** | 87 occurrences of 80 distinct new item SIDs; 32 occurrences of 32 distinct existing item SIDs in mixed pools |
+| Native trader entrypoints | **PASS** | T2/T3/T4 + Rostok NATO are the four native integration roots; all have exact matches in TCD's current 2.1 SELL inventory |
+| Reachability from these four native roots | **CORRECTION** | Only **76 of the 80 distinct new SIDs** are reachable. **`OXATrade_LaserAdvancedGenerator` has no inbound generator link** in the supplied A/C CFG files; its four unique `OXA_Laser_7`, `OXA_Laser_8`, `OXA_Laser_9`, `OXA_Laser_10` have no verified route to the native trader graph. Its 8 item occurrences do not represent confirmed stock |
+| Safe *symbolic* source-only block | **PASS (model only)** | Removing OXA-new leaf SIDs from the source lists preserves all **32 existing item leaf occurrences** in original order. A per-SID BLOCK must remove all occurrences: 7 modded SIDs appear twice across pools |
+| Trader Stock writer versus OXA `bskipref` | **COMPATIBILITY RISK CONFIRMED** | TCD COW clones inherited roots and removes leaves using **vanilla 2.1 indexed paths**. OXA uses `ItemGenerator {bskipref}` for all three tier roots. After replacing inherited child arrays, the original leaf indices may no longer refer to original entries. **Do not assume a disabled native Attachments category safely coexists with OXA** without engine-level merge and stock testing |
+| Additional generator references in supplied A/C | **PASS** | All `ItemGeneratorPrototypeSID` links found in the decoded package occur in the audited generator CFG. The separate debug quest has four `SetItemGenerator` nodes referring to other rank-gear generators; not a proven direct grant of OXA SIDs |
+| Non-generator direct item grants | **NOT OBSERVED** | No `EQuestNodeType::ItemAdd` or `SpawnedPrototypeSID` in the 58 supplied decoded CFGs. This **does not prove** absence of cooked-asset or game-owned alternate acquisition routes |
+| Actual mod+TCD game engine merge/stock behavior | **NOT RUN** | No running STALKER 2 engine available; exact `bskipref` merge order, COW inheritance timing, final stock, and patch precedence remain unverified |
+
+**Native 2.1 join** (exact rows and trade profiles; these counts describe *original-game manifest occurrences*, not actual OXA products):
+
+| Native root | Source leaf rows | Distinct trade profiles | Distinct original direct indexed leaf paths |
+|---|---:|---:|---:|
+| `Trader_Attachments_T2_ItemGenerator` | 155 | 31 | 5 |
+| `Trader_Attachments_T3_ItemGenerator` | 68 | 17 | 4 |
+| `Trader_Attachments_T4_ItemGenerator` | 54 | 9 | 6 |
+| `RostokTraderNato_TradeItemGenerator` | 41 | 1 | 14 |
+
+**Known unsafe shortcut:** reusing the current TCD original-leaf removal paths against OXA's substituted tier `ItemGenerator` is **not verified safe**. Another unsafe shortcut is globally disabling tier roots or all mod-defined pools: that may delete existing (non-OXA) item selections because OXA pools contain **32 original SID occurrences**. Per-SID source filtering is logically possible but **must be translated into safe, deterministic generator CFG changes** before any shipping implementation.
+
+**Recommended acceptance matrix (requires the game):** test original OXA alone, TCD alone, both with all Trader Stock categories ON, then both with General→Attachments OFF. In both modes test a T2/T3/T4 vendor and Rostok NATO, inspect final generated TradePrototype/ItemGenerator roots and logs, verify newly spawned OXA items, verify native attachments still appear when permitted, and compare mod load order. Test one duplicated SID (e.g. `OXA_Laser_3`) across all pools. Do not infer success from a syntactically valid BPatch alone. For a future item-level OFF, also verify native items in mixed pools remain and unconnected `OXA_Laser_7`–`10` are not incorrectly presented as active generator stock. Use developer logging `LogParserNodePatching` (Verbose) and `-ProtoLoadingMode=2` when inspecting engine patch application; see [Zone Kit patching guide](https://zonekit-support.stalker2.com/en-US/kb/article/172/how-to-patch-contents-of-a-cfg-file).
+
+**Scope decision:** continue designing **only item-generator ALLOW/BLOCK**; no cost, weight, weapon configuration, chance or effect edits. **No gameplay writer/UI change made.**
