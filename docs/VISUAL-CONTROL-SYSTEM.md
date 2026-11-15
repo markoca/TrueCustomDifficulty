@@ -1,3 +1,7 @@
+### 2026-11-16 — NPC wide preview CS0136 build correction
+
+In `DrawNpcLootLoadout`, the wide middle-tier layout uses `middlePreviewWidth` for the panel width and keeps `previewWidth` for the later per-sample tile width. This eliminates a C# nested/local variable name collision (CS0136). Layout geometry, hit targets, gameplay CFG, and preset values are unchanged. The consistency audit guards the distinct names; Wine build and visual verification remain local acceptance steps.
+
 ## 2026-11-16 — CURRENT: NPC loot layout reflow and DEFAULT labeling
 
 The NPC Loot & Equipment panel uses available width instead of constraining four primary controls to a 726-DIP island. **CORPSE SMART LOOT**, **AMMO QTY**, **STANDARD MED** and **MOD ITEMS** fill one 88-DIP strip (10-DIP gaps; source selector 36%, ammo and med 21% each, mod remainder) when the host is at least **820 DIP** wide. Below 820 DIP they form two readable rows (SmartLoot + Ammo, then Medical + Mod), capped at 640 DIP rather than squeezing the three native source-choice chips. Checkbox, mod opt-in and marker interactions are unchanged.

@@ -5302,6 +5302,10 @@ if ('NpcLootThreeMiddle(double hostWidth) => hostWidth >= 900.0;' not in _npc_pr
         or 'NpcLootConditionTop(ActualWidth)' not in _npc_preview_source
         or 'new Rect(sampleCard.Right + NpcLootMiddleGap,' not in _npc_preview_source):
     fail("NPC middle three panels no longer align horizontally at full width")
+if ('var middlePreviewWidth = usable * 0.39;' not in _npc_preview_source
+        or 'middleTop, middlePreviewWidth, NpcLootMiddleHeight);' not in _npc_preview_source
+        or 'usable - supplyWidth - middlePreviewWidth, NpcLootMiddleHeight);' not in _npc_preview_source):
+    fail("NPC wide preview card must use an independent scoped width name (CS0136)")
 _npc_items_ui = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" /
                  "AggregateVisualControl.NpcConsumables.cs").read_text(encoding="utf-8")
 if "var top = NpcLootConsumablesTop(ActualWidth);" not in _npc_items_ui:

@@ -1457,14 +1457,14 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         {
             var usable = width - 2.0 * NpcLootMiddleGap;
             var supplyWidth = usable * 0.22;
-            var previewWidth = usable * 0.39;
+            var middlePreviewWidth = usable * 0.39;
             supplyCard = new Rect(margin,
                 middleTop + (NpcLootMiddleHeight - cardHeight) / 2.0,
                 supplyWidth, cardHeight);
             sampleCard = new Rect(supplyCard.Right + NpcLootMiddleGap,
-                middleTop, previewWidth, NpcLootMiddleHeight);
+                middleTop, middlePreviewWidth, NpcLootMiddleHeight);
             rangeCard = new Rect(sampleCard.Right + NpcLootMiddleGap,
-                middleTop, usable - supplyWidth - previewWidth, NpcLootMiddleHeight);
+                middleTop, usable - supplyWidth - middlePreviewWidth, NpcLootMiddleHeight);
         }
         else
         {
