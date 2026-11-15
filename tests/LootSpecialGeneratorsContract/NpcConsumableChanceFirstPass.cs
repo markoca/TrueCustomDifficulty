@@ -70,14 +70,20 @@ internal static partial class Program
             Parameters = uiVm.AllParameters,
             NpcConsumables = uiVm.NpcConsumableItems
         };
-        npcBoard.Measure(new System.Windows.Size(760.0, 1000.0));
-        Check(Math.Abs(npcBoard.DesiredSize.Height - 640.0) < 0.000001
+        npcBoard.Measure(new System.Windows.Size(920.0, 1000.0));
+        Check(Math.Abs(npcBoard.DesiredSize.Height - 472.0) < 0.000001
             && ReferenceEquals(npcBoard.NpcConsumables, uiVm.NpcConsumableItems),
-            "Ten source-backed item editors did not mount inside the compact NPC board");
-        npcBoard.Measure(new System.Windows.Size(600.0, 1000.0));
-        Check(Math.Abs(npcBoard.DesiredSize.Height - 738.0) < 0.000001,
-            "NPC peer slider row did not wrap into two compact rows at narrow width");
+            "Wide NPC board did not keep all three middle panels side-by-side");
+        npcBoard.Measure(new System.Windows.Size(860.0, 1000.0));
+        Check(Math.Abs(npcBoard.DesiredSize.Height - 623.0) < 0.000001,
+            "Intermediate NPC layout failed to wrap the range without squashing the strip");
         npcBoard.Measure(new System.Windows.Size(760.0, 1000.0));
+        Check(Math.Abs(npcBoard.DesiredSize.Height - 721.0) < 0.000001,
+            "NPC top peers did not wrap into two rows at narrow width");
+        npcBoard.Measure(new System.Windows.Size(600.0, 1000.0));
+        Check(Math.Abs(npcBoard.DesiredSize.Height - 721.0) < 0.000001,
+            "NPC narrow board height drifted");
+        npcBoard.Measure(new System.Windows.Size(920.0, 1000.0));
 
         var npcRationale = uiVm.AllParameters.Single(p => p.Id == "loot.npcCorpseBonus")
             .RationaleDisplay;
@@ -97,7 +103,7 @@ internal static partial class Program
                 Check(vm.NpcConsumableItems.Count == 10
                     && vm.NpcConsumableItems.All(x => !x.Enabled
                         && x.ChancePercent == 100 && x.LegacyMultiplier is null
-                        && x.PercentText == "CFG"),
+                        && x.PercentText == "DEFAULT"),
                     "Optional NPC Chance controls are not OFF/source-backed by default");
                 target.Enabled = true;
                 target.ChancePercent = percent;
@@ -238,7 +244,7 @@ internal static partial class Program
             && legacyBread.ToPreset().Multiplier is null,
             "Editing an old preset did not switch to literal absolute Chance");
         legacyBread.Enabled = false;
-        Check(legacyBread.PercentText == "CFG" && !legacyBread.IsEffectiveChange,
+        Check(legacyBread.PercentText == "DEFAULT" && !legacyBread.IsEffectiveChange,
             "Unchecked NPC Chance must display source mode and remain inert");
 
         Console.WriteLine("PASS 50 absolute per-item Chance boundaries + 104 field parity + "

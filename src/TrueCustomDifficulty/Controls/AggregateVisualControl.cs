@@ -1277,16 +1277,21 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             RaiseParameterSelected(anchor);
     }
 
-    // Four source-backed peer editors share a single compact header row.
-    // The same breakpoint drives measurement and paint, so narrow windows
-    // wrap to two horizontal pairs without truncating three choice chips.
-    private static bool NpcLootOneRow(double hostWidth) => hostWidth >= 714.0;
-    private static double NpcLootPreviewTop(double hostWidth)
-        => NpcLootOneRow(hostWidth) ? 236.0 : 334.0;
+    // Four generous top peers, then three middle peers on a wide host.
+    // At narrower widths retain readable two-row groups, never tiny controls.
+    // Measurement, paint and hit targets share these exact coordinates.
+    private static bool NpcLootOneRow(double hostWidth) => hostWidth >= 820.0;
+    private static bool NpcLootThreeMiddle(double hostWidth) => hostWidth >= 900.0;
+    private const double NpcLootMiddleHeight = 139.0;
+    private const double NpcLootMiddleGap = 12.0;
+    private static double NpcLootMiddleTop(double hostWidth)
+        => NpcLootOneRow(hostWidth) ? 154.0 : 252.0;
     private static double NpcLootConditionTop(double hostWidth)
-        => NpcLootPreviewTop(hostWidth) + 110.0;
+        => NpcLootThreeMiddle(hostWidth)
+            ? NpcLootMiddleTop(hostWidth)
+            : NpcLootMiddleTop(hostWidth) + NpcLootMiddleHeight + NpcLootMiddleGap;
     private static double NpcLootConsumablesTop(double hostWidth)
-        => NpcLootConditionTop(hostWidth) + 127.0;
+        => NpcLootConditionTop(hostWidth) + NpcLootMiddleHeight + NpcLootMiddleGap;
     private static double NpcLootBoardHeight(double hostWidth)
         => NpcLootConsumablesTop(hostWidth) + 167.0;
 
@@ -1355,11 +1360,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
 
         const double margin = 17.0;
-        const double gap = 8.0;
+        const double gap = 10.0;
         const double cardTop = 54.0;
         const double cardHeight = 88.0;
         var width = Math.Max(1.0, ActualWidth - 2.0 * margin);
-        var rowWidth = Math.Min(width, 726.0);
+        var rowWidth = width;
         var left = margin + (width - rowWidth) / 2.0;
         var oneRow = NpcLootOneRow(ActualWidth);
 
@@ -1369,8 +1374,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         Rect modCard;
         if (oneRow)
         {
-            // The package takes 36% for three readable choices; the other
-            // three native peers receive equal, compact slider lanes.
+            // Use the full available width: three source chips must not crowd
+            // the other three controls into narrow, unreadable cardlets.
             var usable = rowWidth - 3.0 * gap;
             var choiceWidth = usable * 0.36;
             var ammoWidth = usable * 0.21;
@@ -1385,7 +1390,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         {
             // On narrow hosts use two centered peer rows instead of four
             // illegibly thin or overlapping rails.
-            rowWidth = Math.Min(rowWidth, 540.0);
+            rowWidth = Math.Min(rowWidth, 640.0);
             left = margin + (width - rowWidth) / 2.0;
             var choiceWidth = (rowWidth - gap) * 0.56;
             choiceCard = new Rect(left, cardTop, choiceWidth, cardHeight);
@@ -1440,12 +1445,41 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             text, muted, border, accent, panel);
         DrawNpcModItemsCard(dc, modCard, text, muted, border, accent, panel);
 
-        // A single compact supply master below the four existing peers.
-        // It never edits the normal weapon/armor loadout or attached ammo.
-        var supplyWidth = Math.Min(width, 328.0);
-        DrawNpcCompactScalar(dc, scarcity, "SUPPLY REDUCTION",
-            new Rect(margin + (width - supplyWidth) / 2.0,
-                NpcLootPreviewTop(ActualWidth) - 82.0, supplyWidth, 74.0),
+        // Middle tier: supply, nine source ammo examples and weapon condition.
+        // They share one horizontal band at >=900 DIP. On smaller hosts,
+        // supply + bonus samples remain peers, with the weapon range below.
+        // Never hide samples, truncate handles or insert full-width whitespace.
+        var middleTop = NpcLootMiddleTop(ActualWidth);
+        Rect supplyCard;
+        Rect sampleCard;
+        Rect rangeCard;
+        if (NpcLootThreeMiddle(ActualWidth))
+        {
+            var usable = width - 2.0 * NpcLootMiddleGap;
+            var supplyWidth = usable * 0.22;
+            var previewWidth = usable * 0.39;
+            supplyCard = new Rect(margin,
+                middleTop + (NpcLootMiddleHeight - cardHeight) / 2.0,
+                supplyWidth, cardHeight);
+            sampleCard = new Rect(supplyCard.Right + NpcLootMiddleGap,
+                middleTop, previewWidth, NpcLootMiddleHeight);
+            rangeCard = new Rect(sampleCard.Right + NpcLootMiddleGap,
+                middleTop, usable - supplyWidth - previewWidth, NpcLootMiddleHeight);
+        }
+        else
+        {
+            var usable = width - NpcLootMiddleGap;
+            var supplyWidth = usable * 0.34;
+            supplyCard = new Rect(margin,
+                middleTop + (NpcLootMiddleHeight - cardHeight) / 2.0,
+                supplyWidth, cardHeight);
+            sampleCard = new Rect(supplyCard.Right + NpcLootMiddleGap,
+                middleTop, usable - supplyWidth, NpcLootMiddleHeight);
+            var conditionWidth = Math.Min(width, 548.0);
+            rangeCard = new Rect(margin + (width - conditionWidth) / 2.0,
+                NpcLootConditionTop(ActualWidth), conditionWidth, NpcLootMiddleHeight);
+        }
+        DrawNpcCompactScalar(dc, scarcity, "SUPPLY REDUCTION", supplyCard,
             text, muted, border, accent, panel);
 
         // One source-backed example per NPC_Ammo_Smart caliber group, with
@@ -1469,17 +1503,14 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var countsModified = ammoPackageActive && ammo.IsValueModifiedFromReference();
         // The nine source/rank examples are read-only. A compact 3x3
         // two-line grid retains all samples without dominating the controls.
-        var sampleWidth = Math.Min(width, 548.0);
-        var sampleCard = new Rect(margin + (width - sampleWidth) / 2.0,
-            NpcLootPreviewTop(ActualWidth), sampleWidth, 98.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
             sampleCard, 4.0, 4.0);
         DrawText(dc, "BONUS AMMO STACKS",
             new Point(sampleCard.Left + 11.0, sampleCard.Top + 7.0),
             10.3, ammoPackageActive ? text : muted, FontWeights.Bold);
 
-        // Nine read-only bonus-ammo samples form a tight central three-column
-        // group; normal weapon-attached ammunition remains independent.
+        // Give each sample two genuinely separated text rows; the former
+        // 23-DIP cells visually crowded the rank label and stack count.
         const double previewGap = 6.0;
         var previewTotalWidth = Math.Min(516.0, sampleCard.Width - 22.0);
         var previewLeft = sampleCard.Left + (sampleCard.Width - previewTotalWidth) / 2.0;
@@ -1489,7 +1520,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             var sample = examples[i];
             var tile = new Rect(previewLeft
                     + (i % 3) * (previewWidth + previewGap),
-                sampleCard.Top + 24.0 + (i / 3) * 24.0, previewWidth, 23.0);
+                sampleCard.Top + 27.0 + (i / 3) * 34.0, previewWidth, 31.0);
             dc.DrawRoundedRectangle(
                 ammoPackageActive ? CloneWithOpacity(panel, 0.95)
                     : CloneWithOpacity(panel, 0.55),
@@ -1498,10 +1529,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             var low = Math.Max(0, (int)Math.Floor(sample.Min * ammo.CurrentNumber + 0.5));
             var high = Math.Max(0, (int)Math.Floor(sample.Max * ammo.CurrentNumber + 0.5));
             DrawCenteredText(dc, sample.Label + " · " + sample.Rank,
-                new Point(tile.Left + tile.Width / 2.0, tile.Top + 1.0),
+                new Point(tile.Left + tile.Width / 2.0, tile.Top + 2.0),
                 8.4, muted, FontWeights.SemiBold);
             DrawCenteredText(dc, $"{low}–{high}",
-                new Point(tile.Left + tile.Width / 2.0, tile.Top + 13.0),
+                new Point(tile.Left + tile.Width / 2.0, tile.Top + 16.0),
                 countsModified ? 12.9 : 12.2,
                 countsModified ? accent : ammoPackageActive ? text : muted,
                 FontWeights.SemiBold);
@@ -1510,9 +1541,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // This is a dual-ended native RANGE, not two normal slider
         // headers. Show the two editable figures together in the middle
         // of the card, immediately above their shared physical rail.
-        var conditionWidth = Math.Min(width, 548.0);
-        var rangeCard = new Rect(margin + (width - conditionWidth) / 2.0,
-            NpcLootConditionTop(ActualWidth), conditionWidth, 115.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
             rangeCard, 4.0, 4.0);
         DrawText(dc, "DROPPED WEAPON CONDITION",
@@ -1521,7 +1549,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var accepted = Linked("economy.traderMinBuyCondition");
         if (accepted is not null)
             DrawDerivedRight(dc, $"TRADER ACCEPTS ≥ {accepted.CurrentNumber * 100.0:0}%",
-                new Point(rangeCard.Right - 11.0, rangeCard.Top + 8.0),
+                new Point(rangeCard.Right - 11.0, rangeCard.Top + 29.0),
                 8.8, muted, accent, FontWeights.SemiBold);
 
         var minModified = Math.Abs(condition.CurrentMinNumber - 0.25) > Epsilon;
@@ -1533,24 +1561,24 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // Fixed central readouts never collide, even at MIN == MAX,
         // unlike labels following handles to the same X coordinate.
         DrawCenteredText(dc, "MIN",
-            new Point(minReadoutX, rangeCard.Top + 27.0),
+            new Point(minReadoutX, rangeCard.Top + 48.0),
             9.6, muted, FontWeights.Bold);
         DrawCenteredText(dc, "MAX",
-            new Point(maxReadoutX, rangeCard.Top + 27.0),
+            new Point(maxReadoutX, rangeCard.Top + 48.0),
             9.6, muted, FontWeights.Bold);
         DrawCenteredText(dc, $"{condition.CurrentMinNumber * 100.0:0}%",
-            new Point(minReadoutX, rangeCard.Top + 43.0),
+            new Point(minReadoutX, rangeCard.Top + 64.0),
             minModified ? 14.2 : 13.0,
             minModified ? accent : text, FontWeights.SemiBold);
         DrawCenteredText(dc, $"{condition.CurrentMaxNumber * 100.0:0}%",
-            new Point(maxReadoutX, rangeCard.Top + 43.0),
+            new Point(maxReadoutX, rangeCard.Top + 64.0),
             maxModified ? 14.2 : 13.0,
             maxModified ? accent : text, FontWeights.SemiBold);
         dc.DrawLine(new Pen(CloneWithOpacity(border, 0.60), 0.8),
-            new Point(center, rangeCard.Top + 28.0),
-            new Point(center, rangeCard.Top + 61.0));
+            new Point(center, rangeCard.Top + 49.0),
+            new Point(center, rangeCard.Top + 82.0));
 
-        var rail = new Rect(rangeCard.Left + 20.0, rangeCard.Top + 75.0,
+        var rail = new Rect(rangeCard.Left + 20.0, rangeCard.Top + 95.0,
             Math.Max(1.0, rangeCard.Width - 40.0), 12.0);
         var y = rail.Top + rail.Height / 2.0;
         var xMin = ValueToX(condition.CurrentMinNumber, 0.0, 1.0, rail, false);

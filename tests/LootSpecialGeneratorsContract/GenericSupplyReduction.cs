@@ -32,12 +32,15 @@ internal static partial class Program
             Family = "NpcLootLoadout", Parameters = pristine.AllParameters,
             NpcConsumables = pristine.NpcConsumableItems
         };
-        npcBoard.Measure(new System.Windows.Size(760.0, 1200.0));
-        Check(Math.Abs(npcBoard.DesiredSize.Height - 640.0) < 0.000001,
-            "Wide NPC scarcity strip does not fit the authored panel");
+        npcBoard.Measure(new System.Windows.Size(920.0, 1200.0));
+        Check(Math.Abs(npcBoard.DesiredSize.Height - 472.0) < 0.000001,
+            "Wide NPC middle cards must occupy one row");
+        npcBoard.Measure(new System.Windows.Size(860.0, 1200.0));
+        Check(Math.Abs(npcBoard.DesiredSize.Height - 623.0) < 0.000001,
+            "Medium NPC middle cards must reflow");
         npcBoard.Measure(new System.Windows.Size(600.0, 1200.0));
-        Check(Math.Abs(npcBoard.DesiredSize.Height - 738.0) < 0.000001,
-            "Narrow NPC scarcity strip does not fit the authored panel");
+        Check(Math.Abs(npcBoard.DesiredSize.Height - 721.0) < 0.000001,
+            "Narrow NPC scarcity strip must retain legible card widths");
 
         // The third native field is not a fictitious group chance.
         var weighted = Baseline.Special.CheapStashProduction.TemplateCategories

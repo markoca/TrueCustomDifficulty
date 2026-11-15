@@ -83,7 +83,7 @@ public sealed class NpcConsumableItemViewModel : ObservableObject
     // 0..2x presets still produce their former source-relative probabilities.
     public double? LegacyMultiplier => _legacyMultiplier;
 
-    public string PercentText => !Enabled ? "CFG"
+    public string PercentText => !Enabled ? "DEFAULT"
         : _legacyMultiplier is double legacy
             ? legacy.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) + "×"
         : $"{ChancePercent}%";

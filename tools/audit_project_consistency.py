@@ -5296,12 +5296,16 @@ if 'var caption = CreateText(corpse.ChoiceOptions[i].Label,' in _npc_preview_sou
     fail("NPC corpse package chips must use short sourced captions, not verbose raw option labels")
 if 'var optionLabel = optionValue.Contains("NPC_Ammo_Smart", StringComparison.Ordinal)' not in _npc_preview_source:
     fail("NPC source package chips must show MED + AMMO / WATER / NONE instead of icons only")
-if '"NpcLootLoadout" => 784.0,' not in _npc_preview_source:
-    fail("NPC board compact height contract drifted")
+if '"NpcLootLoadout" => NpcLootBoardHeight(width),' not in _npc_preview_source:
+    fail("NPC board must measure from its responsive geometry")
+if ('NpcLootThreeMiddle(double hostWidth) => hostWidth >= 900.0;' not in _npc_preview_source
+        or 'NpcLootConditionTop(ActualWidth)' not in _npc_preview_source
+        or 'new Rect(sampleCard.Right + NpcLootMiddleGap,' not in _npc_preview_source):
+    fail("NPC middle three panels no longer align horizontally at full width")
 _npc_items_ui = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" /
                  "AggregateVisualControl.NpcConsumables.cs").read_text(encoding="utf-8")
-if "const double top = 614.0;" not in _npc_items_ui:
-    fail("NPC item Chance group no longer starts immediately after mod controls")
+if "var top = NpcLootConsumablesTop(ActualWidth);" not in _npc_items_ui:
+    fail("NPC item Chance group must follow responsive three-panel middle tier")
 # The selection must use sourced icon shapes, not bespoke medkits or bottle rectangles.
 for _icon_marker in (
     "private static readonly Geometry[] NpcMedkitIcon =",
