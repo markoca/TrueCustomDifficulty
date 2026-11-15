@@ -6744,17 +6744,17 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 e.Handled = true;
                 return;
             }
-            var step = e.Key switch
+            var modStep = e.Key switch
             {
                 Key.Right or Key.Up or Key.Add or Key.OemPlus => 1,
                 Key.Left or Key.Down or Key.Subtract or Key.OemMinus => -1,
                 _ => 0
             };
-            if (ModItemsEnabled && (step != 0 || e.Key is Key.Home or Key.End))
+            if (ModItemsEnabled && (modStep != 0 || e.Key is Key.Home or Key.End))
             {
                 ModItemsRemoval = e.Key == Key.Home ? 0.0
                     : e.Key == Key.End ? 1.0
-                    : Math.Clamp(ModItemsRemoval + step * 0.01, 0.0, 1.0);
+                    : Math.Clamp(ModItemsRemoval + modStep * 0.01, 0.0, 1.0);
                 e.Handled = true;
             }
             return;

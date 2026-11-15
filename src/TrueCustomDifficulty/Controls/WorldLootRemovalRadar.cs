@@ -430,10 +430,10 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
         if (row == ModLane)
         {
             if (!ModItemsEnabled || !IsEnabled || !ModItemsEditorAvailable) return;
-            var ratio = Math.Clamp(
+            var modRatio = Math.Clamp(
                 (target.MapRect.Bottom - point.Y) / Math.Max(1.0, target.MapRect.Height),
                 0.0, 1.0);
-            ModItemsRemoval = Math.Round(ratio, 2, MidpointRounding.AwayFromZero);
+            ModItemsRemoval = Math.Round(modRatio, 2, MidpointRounding.AwayFromZero);
             InvalidateVisual();
             return;
         }

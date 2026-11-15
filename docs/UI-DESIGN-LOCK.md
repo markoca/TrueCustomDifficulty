@@ -3258,3 +3258,10 @@ The legacy BUY source audit now expects the SELL anchor to reveal the **TraderEc
 - Input: checkbox toggles only enablement, with stored percentages retained. The optional editors also bind `ModItemsEditorAvailable` to `IsBuildIdle`, so they cannot be changed during a build. Disabled mod rails cannot be dragged or altered with arrows. Active controls support click/drag, 1% keyboard arrows and individual right-click/R reset. Gold indicates enabled, nonzero reduction; disabled percentages appear muted.
 - Persistence and writer: existing `PresetFile` sidecar fields and migration remain authoritative. `CfgPatchWriterService.ModItems.cs` observes the independent enabled flags and must not scan PAKs, reject a build or patch generators when both mod controls are disabled or at zero. Affected third-party mods are listed in the original board rationale, not in the on-screen control.
 - Required validation on Windows/Wine: six visibly separate World bars with no overlap at 1600×900; complete native NPC cards followed by the independent mod card; checkbox enable/disable, drag, right-click reset, old-preset migration and build CFG.
+
+
+### 2026-11-15 — Native mod editors compiler fix
+
+- World Loot Depletion mod bar uses a separately named local `modRatio` in `UpdateFromPoint` to avoid CS0136 against the native bar's `ratio` local.
+- NPC Loot & Equipment mod card keyboard handler uses a separately named `modStep` to avoid CS0136 against the existing aggregate keyboard handler's `step` local.
+- These are local identifier fixes only: no changes to control appearance, snap increments, preset data, or CFG writer semantics. Validate with `./publish.sh` and Wine before considering the editors visually verified.
