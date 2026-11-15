@@ -1,3 +1,5 @@
+# MOD AUDIT — external item and generator compatibility (S.T.A.L.K.E.R. 2.1)
+
 ## 2026-11-15 — Modded item-generator removal in Loot panels (source-gated first implementation)
 
 **Canonical implementation:** The existing **WORLD LOOT DEPLETION** and **NPC LOOT & EQUIPMENT** boards each receive a compact **REMOVE MOD ITEMS** checkbox at the top-right. Their native percentage tracks, corpse choice chips and condition controls are unchanged. These two checkboxes are optional independent *preset sidecars* `worldModItemsBlocked` and `corpseModItemsBlocked` (default **false**), **not** new vanilla source IDs; the fixed 359-source parameter catalog, factories and writers stay intact. Ordinary left click/Space toggles; **right-click / R over the focused checkbox resets it to OFF**; Reset Loot / Reset All also reset them. Each control's affected-mod list belongs **only** in its existing anchor's right-side WHAT IT DOES rationale, never in the compact checkbox itself.
@@ -17,7 +19,6 @@
 
 ---
 
-# MOD AUDIT — external item and generator compatibility (S.T.A.L.K.E.R. 2.1)
 
 **Canonical incremental audit.** Append a numbered mod entry for each supplied mod; retain source evidence, unresolved questions, and any in-game acceptance results. The objective is to design mod-aware generation without breaking the existing game-2.1, source-exact True Custom Difficulty (TCD) writers. This file records observations and proposed integration contracts, **not an assertion of shipped mod support**.
 
