@@ -3327,3 +3327,8 @@ The legacy BUY source audit now expects the SELL anchor to reveal the **TraderEc
 - The `MOD ITEMS` static audit now inspects the integrated `WorldLootRemovalRadar` sixth lane and `AggregateVisualControl` NPC peer card, their right-click/R/Space/1%-step handlers and current two-way XAML bindings. Removed overlay names and obsolete `MainWindow.xaml.cs` handlers are not a valid live UI contract. Source MOD PAK scope, failure-closed fingerprints, 359 native catalog lock and initial unchecked flags remain enforced.
 - The Master visibility test now distinguishes a composite-family member from its own separate visible anchor; `advanced.starvationMechanics` is retained for the `StarvationTimeline` board and is not a duplicate standalone row.
 - The Economy production fixture test correctly expects 48 cases (including five roaming-guide feature-gate cases), not its older 47 total. No economy writer or CFG scalar changes.
+
+
+### 2026-11-15 — Rare generic NPC stock audit source matching
+
+- `tools/audit_generic_npc_rare_trader_21.py` matches all nine real `GenericRareProfiles` C# rows, including the final array entry that legitimately has no trailing comma. It checks the actual `WriteGenericNpcRareTraderStock(enabled, chance, documents)` call instead of a retired no-argument signature. This restores static audit coverage; no merchant CFG writer, RNG behavior, UI control or preset value changes.
