@@ -24,7 +24,7 @@ with manifest.open(encoding="utf-8", newline="") as f:
             actual[p]["slots"].add(r["trade_generator_slot"])
 
 # Final C# collection element may omit its trailing comma; preserve exact nine-root checks.
-pat = r'^\s*\("([^"]+)", "([^"]+)", ([12])\),?
+pat = r'^\s*\("([^"]+)", "([^"]+)", ([12])\),?$'
 expected = re.findall(pat, service, re.MULTILINE)
 assert len(expected) == 9 and len(set(e[0] for e in expected)) == 9
 assert len(actual) == len(expected)

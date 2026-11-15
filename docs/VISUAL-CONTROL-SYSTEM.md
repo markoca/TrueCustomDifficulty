@@ -3640,3 +3640,8 @@ WPF cross-build revealed shadowing of the existing horizontal renderer's local `
 ### 2026-11-15 — Rare generic NPC stock audit source matching
 
 - `tools/audit_generic_npc_rare_trader_21.py` matches all nine real `GenericRareProfiles` C# rows, including the final array entry that legitimately has no trailing comma. It checks the actual `WriteGenericNpcRareTraderStock(enabled, chance, documents)` call instead of a retired no-argument signature. This restores static audit coverage; no merchant CFG writer, RNG behavior, UI control or preset value changes.
+
+
+### 2026-11-15 — CI rare-trader source parser quoting correction
+
+- The nine-root generic trader audit must compile as Python: its optional C# trailing-comma regex ends with a closed Python raw-string literal (`\),?$'`). Regex-check all nine verified merchant tuples before applying any source/writer assertions. No merchant or loot generator production logic changes.
