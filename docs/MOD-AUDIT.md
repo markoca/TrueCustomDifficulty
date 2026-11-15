@@ -23,6 +23,7 @@ Use source-exact names, including source misspellings. Never quietly map `Junk` 
 | 001 | Sleeping Bag (packaged plugin version `1.0`) | `SBM_Item` | `Trader_Cosnsumables_ItemGenerator` → new `SBM` category | **Source audited, runtime unverified; direct native category filtering does not cover this new leaf** |
 | 002 | ZoneWatch / ZST — Zone Standard Time (NewContent PAK) | Not yet verified (item CFG Oodle) | `ItemGeneratorPrototypes/zZST_FieldWatch110.cfg` (Oodle) | **Container/index audited; exact generator and item definitions pending decompression** |
 | 003 | Point of No Return — Backpacks Pack | Not decoded (Oodle) | Mod-owned ItemGeneratorPrototypes.cfg plus native-path zBackpackGeneratorPatch.cfg | **Container + plaintext audited; generator paths and item SIDs pending Oodle extraction** |
+| 004 | Point of No Return — Repair System | Item prototypes present, SIDs not decoded (Oodle) | Mod-owned `RepairKitItemGenerators.cfg` plus native-path `zRepairKitGeneratorPatch.cfg` | **PAKs and plaintext verified; generator and actual kit identities pending Oodle; additional CoreVariables durability interaction** |
 
 ---
 
@@ -345,3 +346,122 @@ This describes an effects/feedback group, not a generator or a loot entry.
 - [ ] Decide mod-aware overlay/control behavior only after exact CFG routing and runtime evidence. Do not create a generic backpack toggle from filenames.
 
 **Status:** container integrity, full two-archive inventory, four stored CFGs and plugin metadata **verified**. **Nine Oodle CFGs have not been decoded**, including both generator files, so mod item SID lists and direct stock integration remain pending. **Documentation only; no gameplay code, UI, presets or patch writer changed.**
+
+---
+
+## 004 — Point of No Return: Repair System
+
+**Audit date:** 2026-11-15. **Scope:** both uploaded Unreal PAKs examined read-only (no repacking or changes to mod). No UCAS/UTOC or other associated files were supplied. Their filenames distinguish packaging roles and **do not establish game load order**. This entry is source inspection, not a claim that TCD already supports repair kits.
+
+### Package provenance and verified inventory
+
+| User-supplied file | Bytes | SHA-256 | Embedded mount point |
+|---|---:|---|---|
+| `PointOfNoReturn-RepairSystemStalker2-Windows-NewContent.pak` | 24,601 | `4da21f3a08c9ee1eb369c09a30e99a103c7e197a6469ab93cfe55199738e86c3` | `../../../Stalker2/Mods/PointOfNoReturn-RepairSystem/` |
+| `PointOfNoReturn-RepairSystemStalker2-Windows-OverrideContent.pak` | 2,445 | `d22f05b500efdbc89989b9596cb87a2711ba896997f82378bcf99c00fb73c707` | `../../../Stalker2/Content/GameLite/GameData/` |
+
+Both are **PAK format version 11**, with an Oodle compression-method entry and no encrypted index. Independently verified the primary-index, path-hash-index, and full-directory-index SHA-1 values, and each individual payload's SHA-1 against its archived entry header. Parsed the complete directory indexes; **13 total files, 11 CFGs:** NewContent **11 files (9 CFGs + plugin descriptor + AssetRegistry)**; OverrideContent **2 CFGs**. **Three CFGs were stored without compression and read in full; eight CFGs are Oodle-compressed and have not been decoded**. The decompressed byte lengths in the inventory are PAK header values, not a claim that compressed text has been inspected.
+
+Exact relative paths from each mount:
+
+| Archive | Relative file | Encoding | Original size |
+|---|---|---|---:|
+| NewContent | `AssetRegistry.bin` | Oodle | 51,331 B |
+| NewContent | `PointOfNoReturn-RepairSystem.uplugin` | Stored / JSON decoded | 603 B |
+| NewContent | `Content/GameLite/ModGameData/PointOfNoReturn-RepairSystem/CameraShakeGroupPrototypes/RepairKitCameraShakeGroupPrototypes.cfg` | Stored / CFG decoded | 644 B |
+| NewContent | `Content/GameLite/ModGameData/PointOfNoReturn-RepairSystem/CameraShakePrototypes/RepairKitCameraShakePrototypes.cfg` | Oodle | 2,611 B |
+| NewContent | `Content/GameLite/ModGameData/PointOfNoReturn-RepairSystem/EffectPrototypes/RepairKitEffectPrototypes.cfg` | Oodle | 21,778 B |
+| NewContent | `Content/GameLite/ModGameData/PointOfNoReturn-RepairSystem/EffectPrototypes/RepairKitNotificationBlockers.cfg` | Stored / CFG decoded | 728 B |
+| NewContent | `Content/GameLite/ModGameData/PointOfNoReturn-RepairSystem/ItemGeneratorPrototypes/RepairKitItemGenerators.cfg` | **Oodle** | **11,238 B** |
+| NewContent | `Content/GameLite/ModGameData/PointOfNoReturn-RepairSystem/ItemPrototypes/RepairKitPrototypes.cfg` | **Oodle** | **10,363 B** |
+| NewContent | `Content/GameLite/ModGameData/PointOfNoReturn-RepairSystem/MeshPrototypes/RepairKitMeshPrototypes.cfg` | Oodle | 3,886 B |
+| NewContent | `Content/GameLite/ModGameData/PointOfNoReturn-RepairSystem/QuestNodePrototypes/RepairBonusWriteOff.cfg` | Oodle | 118,368 B |
+| NewContent | `Content/GameLite/ModGameData/PointOfNoReturn-RepairSystem/QuestPrototypes/RepairBonusWriteOff.cfg` | Oodle | 6,890 B |
+| OverrideContent | `CoreVariables.cfg_patch_pnr_rs` | Stored / CFG decoded | 609 B |
+| OverrideContent | `ItemGeneratorPrototypes/zRepairKitGeneratorPatch.cfg` | **Oodle** | **56,987 B** |
+
+The **different mount points are important**. The mod-owned `RepairKitItemGenerators.cfg` lives inside the feature's `ModGameData` tree, whereas `zRepairKitGeneratorPatch.cfg` is mounted under the **native** `Content/GameLite/GameData/ItemGeneratorPrototypes/` directory. This provides two *candidate* sides of item distribution: custom definitions and a game-facing patch. Its exact target generator SIDs, whether it uses `{bpatch}`, which vanilla categories it modifies, and whether it reaches traders, stashes, corpse loot or world spawns **cannot be established from the compressed file's name**.
+
+### Verified complete text from the three stored CFGs
+
+**OverrideContent → `CoreVariables.cfg_patch_pnr_rs`:**
+
+~~~cfg
+DefaultConfig : struct.begin {bpatch}
+    DurabilityRound = 0.1
+    LowDurabilityThreshold = 1
+    ArmorDurabilityParamsCoef = 0.1
+    HelmetDurabilityParamsCoef = 0.1
+struct.end
+~~~
+
+The mod explicitly patches **four core durability-related fields** in `DefaultConfig`. The snippet above omits only the file's decorative comment header and preserves the CFG assignments. Interpret them as **authored values**, not as proven in-game percentage/damage multipliers; precise runtime calculations have not been established. In particular, this patch is a materially different compatibility surface than kit item generation.
+
+**NewContent → `CameraShakeGroupPrototypes/RepairKitCameraShakeGroupPrototypes.cfg`:**
+
+~~~cfg
+RepairKitCameraShakeGroup : struct.begin {refurl=@BaseGame/CameraShakeGroupPrototypes.cfg;refkey=[0]}
+    SID = RepairKitCameraShakeGroup
+    Type = ECameraShakeGroupType::MaxCount
+    MaxCount = 1
+struct.end
+~~~
+
+Confirms a mod-owned camera-shake group limited by `MaxCount = 1`. No inference about number of repair kits, use charges or availability follows from this group.
+
+**NewContent → `EffectPrototypes/RepairKitNotificationBlockers.cfg`:**
+
+~~~cfg
+BlockNotificationItemRemoveEffect : struct.begin {refurl=@BaseGame/EffectPrototypes.cfg;refkey=[0]}
+    SID = BlockNotificationItemRemoveEffect
+    Text = BlockNotificationItemRemoveEffect
+    Type = EEffectType::FlagEffect
+    bIsPermanent = true
+    ShowUpgradeEffect = false
+struct.end
+~~~
+
+Confirms one flag-effect prototype intended by its name to block an item-removal notification; its precise call sites and game behavior remain **unverified** until the associated effect/quest sources are decoded.
+
+**Plugin metadata:** `PointOfNoReturn-RepairSystem.uplugin` declares `FriendlyName = PointOfNoReturn-RepairSystem`, `CreatedBy = PNR Team`, `Version = 1`, `VersionName = 1.0`, `CanContainContent = true`, `EnabledByDefault = true`, `ExplicitlyLoaded = true`, `BuiltInInitialFeatureState = Registered`, and `Mod = true`. It contains a plugin entry `LootingItems` with `Enabled = true`, `Optional = true`. This is a declared **optional integration**, not proof that the LootingItems plugin is installed or active. The descriptor's initially `Registered` state is not evidence of runtime activation.
+
+### Item generator and prototype boundary — unverified, do not infer item SIDs
+
+- **`RepairKitPrototypes.cfg` (10,363 B):** item prototype roots, `SID` values, base `refurl/refkey`, tags, `Cost`, `Weight`, use mechanics, counts/charges and ability to repair weapons versus armor **cannot yet be read**.
+- **`RepairKitItemGenerators.cfg` (11,238 B):** generator root names, categories, `PossibleItems`, stock weights, chance, count and nested generators **cannot yet be read**.
+- **`zRepairKitGeneratorPatch.cfg` (56,987 B):** exact native generator targets, `struct.begin {bpatch}` usage, referenced mod generators, add/replace behavior, source-game tier/category integration and vendor/loot distribution **cannot yet be read**.
+- **`RepairBonusWriteOff.cfg`** exists both as a quest prototype (6,890 B) and large quest-node source (118,368 B); both are Oodle. Despite the filename, no specific charge depletion, item consumption, repair-discount or quest-grant behavior is confirmed.
+- **`RepairKitEffectPrototypes.cfg`**, the mesh CFG and camera-shake CFG are also compressed. The one decoded notification-blocking effect does not prove any particular repair amount or object usage.
+
+### TCD 2.1 integration and risk analysis
+
+1. **Vanilla source-manifest boundary.** `src/TrueCustomDifficulty/Data/trader-sells-2.1-runtime.csv` has no textual `RepairKit`, `PointOfNoReturn-RepairSystem`, `RepairBonusWriteOff` or `BlockNotificationItemRemoveEffect` token. This is a negative check against *known names* only, not a check against unknown compressed prototype SIDs. The manifest is deliberately frozen to exact original game 2.1 sources; do not edit its hash, counts or provenance for the sake of a mod.
+2. **Current SELL route.** `CfgPatchWriterService.TraderSells.cs` selects only source-manifest item leaves and creates inherited copy-on-write clones for modified roles/categories. It does not parse externally installed generator CFGs. Consequently no existing Economy checkbox has demonstrated deliberate control over repair kits. A new-root link or native-root `{bpatch}` append could propagate differently; verify decoded root and parent references before promising compatibility.
+3. **Durability interaction is separate from generation.** `CoreVariables.cfg_patch_pnr_rs` edits `DurabilityRound` and `LowDurabilityThreshold`, which `docs/EQUIPMENT-CONTROL-DEEP-AUDIT.md` explicitly identifies as intentionally **unexposed** by TCD. The mod also sets `ArmorDurabilityParamsCoef` and `HelmetDurabilityParamsCoef`. TCD's `equipment.armorDurability` is recorded as editing `EnvironmentDifficulty.Armor_Durability` (runtime-test-required mapping), while `equipment.weaponWearPerShot` operates through weapon `DurabilityDamagePerShot` source entries. Therefore **not an identified same-field patch collision**, but a **possible compounded gameplay effect**: the repair mod's durability globals can change the resulting condition-loss behavior around TCD settings. Avoid silently neutralizing or overwriting these mod-defined coefficients.
+4. **Economy repair prices are not kit generation.** TCD's existing `Service Prices` and reputation-linked repair cost controls must not be assumed to alter repair-kit drop probability, item cost, consumed charges or kit effectiveness. All need source-backed mappings, not a broad match on the word “repair.”
+5. **Optional LootingItems integration.** Separate the item generation path from a possible plugin/Blueprint-managed item acquisition/use path. The optional descriptor entry should appear in a future dependency/compatibility report but is not a reason to change native trader categories.
+6. **No premature UI.** A future mod-aware item overlay should join actual item SIDs from `RepairKitPrototypes.cfg` to *decoded* generator leaves, mod-owned roots, native root patch, and any independent quest paths, preserving owner/scope and collision risk. The classification as Medical/Consumables/Equipment cannot be reliably guessed from `RepairKit` naming alone.
+
+### Contrast to previous audits
+
+- **001 Sleeping Bag:** exact decoded `SBM_Item` and native shared-generator `{bpatch}` addition; independent quest grant known.
+- **002 ZoneWatch:** mod-owned item prototypes + native-path generator file, but relevant CFGs Oodle; additional sprint-drain effects.
+- **003 Backpacks Pack:** separate mod-owned and native-path generator sources, both compressed; extra global slot variable.
+- **004 Repair System:** same **two-generator-source architecture** as 003, but **also explicitly modifies four global durability values**, and declares optional `LootingItems` integration. This must be assessed across **Loot/Trader AND Equipment Wear/repair gameplay**, not only vendor stock.
+
+### Open checks and runtime acceptance
+
+- [x] Verify both PAK v11 directory/index SHA-1 and all 13 entry payload hashes.
+- [x] Record 11 CFG file paths and original lengths: 3 decoded, 8 Oodle.
+- [x] Fully read `CoreVariables.cfg_patch_pnr_rs`, camera-shake group and notification blocker effect.
+- [x] Note `LootingItems` optional descriptor entry and `BuiltInInitialFeatureState = Registered`.
+- [x] Cross-check current TCD 2.1 source manifest for the mod's currently evidenced names; compare durability fields to current Equipment audit.
+- [ ] Oodle-decompress **`zRepairKitGeneratorPatch.cfg` (56,987 B)** to identify exact native root patches, source paths and item SIDs.
+- [ ] Decompress `RepairKitItemGenerators.cfg` and `RepairKitPrototypes.cfg`; enumerate all kit prototypes, inheritance, generation categories and chance/count fields.
+- [ ] Decompress both `RepairBonusWriteOff.cfg` files and `RepairKitEffectPrototypes.cfg`; establish actual per-use repair logic, effect strength, kit consumption and any quest/spawn grants.
+- [ ] Trace presence or absence of `LootingItems` runtime dependency and acquisition interfaces.
+- [ ] Cross-reference decoded generator roots with game 2.1 trader, stash, corpse/world generation and source-safe TCD COW clones.
+- [ ] Run mod-only/TCD-only/combined game 2.1 checks: appearance of each kit; effect of current TCD SELL/loot toggles; actual condition-loss changes at fixed TCD armor-wear settings; repair price independence.
+- [ ] Design any mod-aware overlay/category mapping only once actual source paths and item prototypes are known and runtime interactions are tested.
+
+**Status:** confirmed container integrity, complete 2-PAK inventory, 3 complete CFG texts, and plugin metadata. Critical **8 Oodle CFGs are not decompressed**, so named kit SIDs, exact generator integration, spawn probability and repair behavior are **not yet verifiable**. **Documentation-only audit: no TCD code, UI, presets, baseline manifests or generator writers changed.**
