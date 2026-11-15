@@ -77,6 +77,12 @@ public sealed class MainViewModel : ObservableObject
     public ObservableCollection<PresetListItem> AvailablePresets { get; } = new();
     public IReadOnlyList<ParameterViewModel> AllParameters { get; }
 
+    // Optional per-SID source Chance overrides. A disabled row leaves its
+    // source 1:1; old presets can omit the complete collection.
+    public ObservableCollection<NpcConsumableItemViewModel> NpcConsumableItems { get; }
+        = new(NpcConsumableItemViewModel.SourceItems.Select(
+            source => new NpcConsumableItemViewModel(source)));
+
     // Source-verified seller-to-player inventory exclusions. Kept outside the
     // fixed 359-parameter catalog so legacy presets and CFG source counts stay stable.
     public string TraderItemOverrides
@@ -419,7 +425,9 @@ public sealed class MainViewModel : ObservableObject
                 .ToArray();
 
             visualAnchor.SetAggregateModifiedProvider(
-                () => members.Any(parameter => parameter.IsValueModifiedFromReference()));
+                () => members.Any(parameter => parameter.IsValueModifiedFromReference())
+                    || (anchorId == "loot.npcCorpseBonus"
+                        && NpcConsumableItems.Any(item => item.IsEffectiveChange)));
 
             foreach (var visualMember in members)
             {
@@ -631,6 +639,15 @@ public sealed class MainViewModel : ObservableObject
             "loot.npcMedicalChance",
             "loot.npcWeaponAmmoSupply",
             "loot.droppedWeaponCondition");
+
+        var npcConsumableAnchor = parametersById["loot.npcCorpseBonus"];
+        foreach (var consumable in NpcConsumableItems)
+            consumable.PropertyChanged += (_, args) =>
+            {
+                if (args.PropertyName is nameof(NpcConsumableItemViewModel.Enabled)
+                    or nameof(NpcConsumableItemViewModel.Multiplier))
+                    npcConsumableAnchor.RefreshAggregateModifiedState();
+            };
 
         // Existing World Loot toggles stay independent. Weapon density still
         // observes its catalog requiresToggle dependency on weapon shuffle.
@@ -1396,6 +1413,8 @@ public sealed class MainViewModel : ObservableObject
             CorpseModItemsRemoval = 0.0;
             WorldModItemsEnabled = false;
             CorpseModItemsEnabled = false;
+            foreach (var item in NpcConsumableItems)
+                item.Reset();
             AllParameters.First(p => p.Id == "survival.waterInstantStaminaRestore")
                 .DrinkDurationOverrideEnabled = false;
             AllParameters.First(p => p.Id == "health.bandageHealing")
@@ -1426,6 +1445,8 @@ public sealed class MainViewModel : ObservableObject
                 CorpseModItemsRemoval = 0.0;
                 WorldModItemsEnabled = false;
                 CorpseModItemsEnabled = false;
+                foreach (var item in NpcConsumableItems)
+                    item.Reset();
             }
             if (SelectedTab.Id == "health")
                 AllParameters.First(p => p.Id == "health.bandageHealing")
@@ -1592,6 +1613,8 @@ public sealed class MainViewModel : ObservableObject
             CorpseModItemsRemoval = CorpseModItemsRemoval,
             WorldModItemsEnabled = WorldModItemsEnabled,
             CorpseModItemsEnabled = CorpseModItemsEnabled,
+            NpcConsumableChances = NpcConsumableItems.ToDictionary(
+                item => item.Sid, item => item.ToPreset(), StringComparer.Ordinal),
             DrinkDurationOverride = AllParameters.First(p =>
                 p.Id == "survival.waterInstantStaminaRestore").DrinkDurationOverrideEnabled,
             MedicalOverride = AllParameters.First(p =>
@@ -1669,6 +1692,17 @@ public sealed class MainViewModel : ObservableObject
                 // Existing percentage presets were implicitly active; migrate their effect.
                 WorldModItemsEnabled = preset.WorldModItemsEnabled ?? WorldModItemsRemoval > 0.0;
                 CorpseModItemsEnabled = preset.CorpseModItemsEnabled ?? CorpseModItemsRemoval > 0.0;
+                var npcChances = preset.NpcConsumableChances
+                    ?? new Dictionary<string, NpcConsumableChancePreset>(StringComparer.Ordinal);
+                var knownSids = NpcConsumableItemViewModel.SourceItems
+                    .Select(source => source.Sid).ToHashSet(StringComparer.Ordinal);
+                var unknownSids = npcChances.Keys.Where(sid => !knownSids.Contains(sid)).ToArray();
+                if (unknownSids.Length > 0)
+                    throw new InvalidDataException(
+                        "Unknown NPC consumable Chance SID(s) in preset: "
+                        + string.Join(", ", unknownSids));
+                foreach (var item in NpcConsumableItems)
+                    item.ApplyPreset(npcChances.GetValueOrDefault(item.Sid));
                 OnPropertyChanged(nameof(SelectedReferenceDifficulty));
                 OnPropertyChanged(nameof(BasePresetIndex));
 

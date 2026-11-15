@@ -374,6 +374,7 @@
                                                                                                  SelectedReferenceDifficulty="{Binding DataContext.SelectedReferenceDifficulty, RelativeSource={RelativeSource AncestorType=Window}}"
                                                                                                  Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}"
                                                                                                  ModItemsEnabled="{Binding DataContext.CorpseModItemsEnabled, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                                                 NpcConsumables="{Binding DataContext.NpcConsumableItems, RelativeSource={RelativeSource AncestorType=Window}}"
                                                                                                  ModItemsEditorAvailable="{Binding DataContext.IsBuildIdle, RelativeSource={RelativeSource AncestorType=Window}}"
                                                                                                  ModItemsRemoval="{Binding DataContext.CorpseModItemsRemoval, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Window}}" />
 

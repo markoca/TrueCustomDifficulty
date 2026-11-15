@@ -1507,6 +1507,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // Dedicated peer card inside the same NPC board industrial frame.
         DrawNpcModItemsCard(dc, new Rect(margin, 561.0, width, 88.0),
             text, muted, border, accent, panel);
+        DrawNpcConsumables(dc, text, muted, border, accent, panel);
     }
 
     // World-loot placement operations are four separate booleans. The source
@@ -6303,6 +6304,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         Focus();
 
         var point = e.GetPosition(this);
+        if (NpcConsumableMouseDown(point))
+        {
+            e.Handled = true;
+            return;
+        }
         if (Family == "NpcLootLoadout" && IsEnabled && ModItemsEditorAvailable)
         {
             if (_npcModCheckbox.Contains(point))
@@ -6410,6 +6416,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         base.OnMouseMove(e);
 
         var point = e.GetPosition(this);
+        if (NpcConsumableMouseMove(point, e.LeftButton))
+        {
+            e.Handled = true;
+            return;
+        }
         if (Family == "NpcLootLoadout")
         {
             if (_npcModDragging && e.LeftButton == MouseButtonState.Pressed)
@@ -6567,6 +6578,13 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonUp(e);
+        if (_npcConsumableDragged is not null)
+        {
+            _npcConsumableDragged = null;
+            ReleaseMouseCapture();
+            e.Handled = true;
+            return;
+        }
         if (_npcModDragging)
         {
             _npcModDragging = false;
@@ -6597,6 +6615,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     {
         base.OnMouseLeave(e);
         ToolTip = null;
+        _npcConsumableHoverSid = null;
+        _npcConsumableHoverCheckbox = false;
+        if (Family == "NpcLootLoadout") InvalidateVisual();
         if (_npcModHoverCheckbox)
         {
             _npcModHoverCheckbox = false;
@@ -6617,6 +6638,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     protected override void OnLostMouseCapture(MouseEventArgs e)
     {
         base.OnLostMouseCapture(e);
+        _npcConsumableDragged = null;
         if (_npcModDragging)
         {
             _npcModDragging = false;
@@ -6659,6 +6681,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseRightButtonDown(e);
+        if (NpcConsumableRightClick(e.GetPosition(this)))
+        {
+            e.Handled = true;
+            return;
+        }
         if (Family == "NpcLootLoadout" && IsEnabled && ModItemsEditorAvailable && ModItemsEnabled
             && _npcModRailHit.Contains(e.GetPosition(this)))
         {
@@ -6731,6 +6758,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     {
         base.OnKeyDown(e);
 
+        if (NpcConsumableKeyDown(e.Key))
+        {
+            e.Handled = true;
+            return;
+        }
         if (Family == "NpcLootLoadout" && _npcModFocused && IsEnabled && ModItemsEditorAvailable)
         {
             if (e.Key == Key.Space)
@@ -7537,7 +7569,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "AnomalyGlobalDamage" => 242.0,
             "FlycatcherSlowdown" => FlycatcherBoardHeight(width),
             "AnomalySpecialEffects" => 270.0,
-            "NpcLootLoadout" => 662.0,
+            "NpcLootLoadout" => 836.0,
             "WorldLootLayout" => 275.0,
             "StashContentMix" => StashContentMixHeight(width),
             "StashMedicalComposition" => StashMedicalCompositionHeight(width),

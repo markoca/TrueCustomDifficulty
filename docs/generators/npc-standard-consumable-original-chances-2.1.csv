@@ -1,0 +1,105 @@
+PoolSID,OriginalCategoryNode,OriginalItemNode,DiffRaw,PlayerRankRaw,ItemPrototypeSID,ChanceRaw,MinCountRaw,MaxCountRaw
+GeneralNPC_Consumables_CloseCombat,[0],[0],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Newbie, ERank::Experienced",Bandage,0.2,1,1
+GeneralNPC_Consumables_CloseCombat,[0],[1],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Newbie, ERank::Experienced",Sausage,0.6,1,1
+GeneralNPC_Consumables_CloseCombat,[0],[2],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Newbie, ERank::Experienced",Medkit,0.2,1,1
+GeneralNPC_Consumables_CloseCombat,[0],[3],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Newbie, ERank::Experienced",Beer,0.4,1,1
+GeneralNPC_Consumables_CloseCombat,[1],[0],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",Bandage,1,1,2
+GeneralNPC_Consumables_CloseCombat,[1],[1],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",Sausage,0.6,1,1
+GeneralNPC_Consumables_CloseCombat,[1],[2],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",Medkit,0.4,1,1
+GeneralNPC_Consumables_CloseCombat,[1],[3],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",Beer,1,1,2
+GeneralNPC_Consumables_CloseCombat,[2],[0],EGameDifficulty::Stalker,"ERank::Newbie, ERank::Experienced",Bandage,0.05,1,1
+GeneralNPC_Consumables_CloseCombat,[2],[1],EGameDifficulty::Stalker,"ERank::Newbie, ERank::Experienced",Sausage,0.6,1,1
+GeneralNPC_Consumables_CloseCombat,[2],[2],EGameDifficulty::Stalker,"ERank::Newbie, ERank::Experienced",Medkit,0.06,1,1
+GeneralNPC_Consumables_CloseCombat,[2],[3],EGameDifficulty::Stalker,"ERank::Newbie, ERank::Experienced",Beer,0.4,1,1
+GeneralNPC_Consumables_CloseCombat,[3],[0],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",Bandage,0.5,1,2
+GeneralNPC_Consumables_CloseCombat,[3],[1],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",Sausage,0.6,1,1
+GeneralNPC_Consumables_CloseCombat,[3],[2],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",Medkit,0.3,1,1
+GeneralNPC_Consumables_CloseCombat,[3],[3],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",Beer,1,1,2
+GeneralNPC_Consumables_Heavy,[0],[0],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Newbie, ERank::Experienced",Bandage,0.4,1,1
+GeneralNPC_Consumables_Heavy,[0],[1],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Newbie, ERank::Experienced",Sausage,0.6,1,1
+GeneralNPC_Consumables_Heavy,[0],[2],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Newbie, ERank::Experienced",Medkit,0.25,1,1
+GeneralNPC_Consumables_Heavy,[1],[0],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",Bandage,1,1,2
+GeneralNPC_Consumables_Heavy,[1],[1],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",CannedFood,1.0,1,1
+GeneralNPC_Consumables_Heavy,[1],[2],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",Medkit,1.0,1,1
+GeneralNPC_Consumables_Heavy,[1],[3],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",ArmyMedkit,0.2,1,1
+GeneralNPC_Consumables_Heavy,[1],[4],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",AntiRad,0.3,1,1
+GeneralNPC_Consumables_Heavy,[2],[0],EGameDifficulty::Stalker,"ERank::Newbie, ERank::Experienced",Bandage,0.3,1,1
+GeneralNPC_Consumables_Heavy,[2],[1],EGameDifficulty::Stalker,"ERank::Newbie, ERank::Experienced",Sausage,0.6,1,1
+GeneralNPC_Consumables_Heavy,[2],[2],EGameDifficulty::Stalker,"ERank::Newbie, ERank::Experienced",Medkit,0.17,1,1
+GeneralNPC_Consumables_Heavy,[3],[0],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",Bandage,0.07,1,2
+GeneralNPC_Consumables_Heavy,[3],[1],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",CannedFood,1.0,1,1
+GeneralNPC_Consumables_Heavy,[3],[2],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",Medkit,0.5,1,1
+GeneralNPC_Consumables_Heavy,[3],[3],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",ArmyMedkit,0.2,1,1
+GeneralNPC_Consumables_Heavy,[3],[4],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",AntiRad,0.3,1,1
+GeneralNPC_Consumables_Noon,[0],[0],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Newbie, ERank::Experienced",Bandage,0.2,1,1
+GeneralNPC_Consumables_Noon,[0],[1],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Newbie, ERank::Experienced",Sausage,0.6,1,1
+GeneralNPC_Consumables_Noon,[0],[2],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Newbie, ERank::Experienced",Energetic,0.15,1,1
+GeneralNPC_Consumables_Noon,[0],[3],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Newbie, ERank::Experienced",Medkit,0.1,1,1
+GeneralNPC_Consumables_Noon,[1],[0],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",Bandage,1.0,1,3
+GeneralNPC_Consumables_Noon,[1],[1],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",CannedFood,1.0,1,1
+GeneralNPC_Consumables_Noon,[1],[2],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",Energetic,0.5,0,1
+GeneralNPC_Consumables_Noon,[1],[3],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",Medkit,0.4,1,1
+GeneralNPC_Consumables_Noon,[1],[4],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",ArmyMedkit,0.2,0,1
+GeneralNPC_Consumables_Noon,[1],[5],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",AntiRad,0.5,0,2
+GeneralNPC_Consumables_Noon,[2],[0],EGameDifficulty::Stalker,"ERank::Newbie, ERank::Experienced",Bandage,0.05,1,1
+GeneralNPC_Consumables_Noon,[2],[1],EGameDifficulty::Stalker,"ERank::Newbie, ERank::Experienced",Sausage,0.6,1,1
+GeneralNPC_Consumables_Noon,[2],[2],EGameDifficulty::Stalker,"ERank::Newbie, ERank::Experienced",Energetic,0.15,1,1
+GeneralNPC_Consumables_Noon,[2],[3],EGameDifficulty::Stalker,"ERank::Newbie, ERank::Experienced",Medkit,0.07,1,1
+GeneralNPC_Consumables_Noon,[3],[0],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",Bandage,0.5,1,2
+GeneralNPC_Consumables_Noon,[3],[1],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",CannedFood,1.0,1,1
+GeneralNPC_Consumables_Noon,[3],[2],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",Energetic,0.5,0,1
+GeneralNPC_Consumables_Noon,[3],[3],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",Medkit,0.3,1,1
+GeneralNPC_Consumables_Noon,[3],[4],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",ArmyMedkit,0.2,0,1
+GeneralNPC_Consumables_Noon,[3],[5],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",AntiRad,0.5,0,2
+GeneralNPC_Consumables_Recon,[0],[0],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Newbie, ERank::Experienced",Bandage,0.3,1,1
+GeneralNPC_Consumables_Recon,[0],[1],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Newbie, ERank::Experienced",Bread,0.7,1,1
+GeneralNPC_Consumables_Recon,[0],[2],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Newbie, ERank::Experienced",Energetic,0.2,1,1
+GeneralNPC_Consumables_Recon,[0],[3],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Newbie, ERank::Experienced",Medkit,0.1,1,1
+GeneralNPC_Consumables_Recon,[1],[0],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",Bandage,1,1,2
+GeneralNPC_Consumables_Recon,[1],[1],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",CannedFood,0.5,1,1
+GeneralNPC_Consumables_Recon,[1],[2],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",Energetic,1.0,1,1
+GeneralNPC_Consumables_Recon,[1],[3],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",Medkit,0.25,1,1
+GeneralNPC_Consumables_Recon,[1],[4],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",AntiRad,0.4,1,1
+GeneralNPC_Consumables_Recon,[2],[0],EGameDifficulty::Stalker,"ERank::Newbie, ERank::Experienced",Bandage,0.05,1,1
+GeneralNPC_Consumables_Recon,[2],[1],EGameDifficulty::Stalker,"ERank::Newbie, ERank::Experienced",Bread,0.7,1,1
+GeneralNPC_Consumables_Recon,[2],[2],EGameDifficulty::Stalker,"ERank::Newbie, ERank::Experienced",Energetic,0.2,1,1
+GeneralNPC_Consumables_Recon,[2],[3],EGameDifficulty::Stalker,"ERank::Newbie, ERank::Experienced",Medkit,0.06,1,1
+GeneralNPC_Consumables_Recon,[3],[0],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",Bandage,0.5,1,2
+GeneralNPC_Consumables_Recon,[3],[1],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",CannedFood,0.5,1,1
+GeneralNPC_Consumables_Recon,[3],[2],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",Energetic,1.0,1,1
+GeneralNPC_Consumables_Recon,[3],[3],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",Medkit,0.17,1,1
+GeneralNPC_Consumables_Recon,[3],[4],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",AntiRad,0.4,1,1
+GeneralNPC_Consumables_Sniper,[0],[0],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Newbie, ERank::Experienced",Bandage,0.1,1,1
+GeneralNPC_Consumables_Sniper,[0],[1],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Newbie, ERank::Experienced",CannedFood,0.6,1,1
+GeneralNPC_Consumables_Sniper,[0],[2],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Newbie, ERank::Experienced",Energetic,0.2,1,1
+GeneralNPC_Consumables_Sniper,[1],[0],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",Bandage,1,1,2
+GeneralNPC_Consumables_Sniper,[1],[1],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",CannedFood,0.5,1,1
+GeneralNPC_Consumables_Sniper,[1],[2],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",Energetic,1,1,1
+GeneralNPC_Consumables_Sniper,[1],[3],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",ArmyMedkit,0.3,1,1
+GeneralNPC_Consumables_Sniper,[1],[4],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",Bread,1,1,1
+GeneralNPC_Consumables_Sniper,[2],[0],EGameDifficulty::Stalker,"ERank::Newbie, ERank::Experienced",Bandage,0.07,1,1
+GeneralNPC_Consumables_Sniper,[2],[1],EGameDifficulty::Stalker,"ERank::Newbie, ERank::Experienced",CannedFood,0.6,1,1
+GeneralNPC_Consumables_Sniper,[2],[2],EGameDifficulty::Stalker,"ERank::Newbie, ERank::Experienced",Energetic,0.2,1,1
+GeneralNPC_Consumables_Sniper,[3],[0],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",Bandage,0.07,1,2
+GeneralNPC_Consumables_Sniper,[3],[1],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",CannedFood,0.5,1,1
+GeneralNPC_Consumables_Sniper,[3],[2],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",Energetic,1,1,1
+GeneralNPC_Consumables_Sniper,[3],[3],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",ArmyMedkit,0.2,1,1
+GeneralNPC_Consumables_Sniper,[3],[4],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",Bread,1,1,1
+GeneralNPC_Consumables_Stormtrooper,[0],[0],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Newbie, ERank::Experienced",Bandage,0.3,1,1
+GeneralNPC_Consumables_Stormtrooper,[0],[1],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Newbie, ERank::Experienced",Bread,0.7,1,1
+GeneralNPC_Consumables_Stormtrooper,[0],[2],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Newbie, ERank::Experienced",Medkit,0.1,1,1
+GeneralNPC_Consumables_Stormtrooper,[0],[3],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Newbie, ERank::Experienced",Vodka,0.1,1,1
+GeneralNPC_Consumables_Stormtrooper,[1],[0],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",Bandage,1,1,2
+GeneralNPC_Consumables_Stormtrooper,[1],[1],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",Bread,0.6,1,1
+GeneralNPC_Consumables_Stormtrooper,[1],[2],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",Medkit,0.3,1,1
+GeneralNPC_Consumables_Stormtrooper,[1],[3],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",Vodka,0.5,1,1
+GeneralNPC_Consumables_Stormtrooper,[1],[4],"EGameDifficulty::Easy, EGameDifficulty::Medium, EGameDifficulty::Hard","ERank::Veteran, ERank::Master",AntiRad,0.3,1,1
+GeneralNPC_Consumables_Stormtrooper,[2],[0],EGameDifficulty::Stalker,"ERank::Newbie, ERank::Experienced",Bandage,0.06,1,1
+GeneralNPC_Consumables_Stormtrooper,[2],[1],EGameDifficulty::Stalker,"ERank::Newbie, ERank::Experienced",Bread,0.7,1,1
+GeneralNPC_Consumables_Stormtrooper,[2],[2],EGameDifficulty::Stalker,"ERank::Newbie, ERank::Experienced",Medkit,0.05,1,1
+GeneralNPC_Consumables_Stormtrooper,[2],[3],EGameDifficulty::Stalker,"ERank::Newbie, ERank::Experienced",Vodka,0.1,1,1
+GeneralNPC_Consumables_Stormtrooper,[3],[0],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",Bandage,0.07,1,2
+GeneralNPC_Consumables_Stormtrooper,[3],[1],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",Bread,0.6,1,1
+GeneralNPC_Consumables_Stormtrooper,[3],[2],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",Medkit,0.2,1,1
+GeneralNPC_Consumables_Stormtrooper,[3],[3],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",Vodka,0.5,1,1
+GeneralNPC_Consumables_Stormtrooper,[3],[4],EGameDifficulty::Stalker,"ERank::Veteran, ERank::Master",AntiRad,0.3,1,1

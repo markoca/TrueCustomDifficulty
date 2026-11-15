@@ -2,6 +2,7 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using TrueCustomDifficulty.Models;
+using TrueCustomDifficulty.ViewModels;
 
 namespace TrueCustomDifficulty.Services;
 
@@ -79,6 +80,25 @@ public sealed class PresetService
         {
             if (fraction is double value && (!double.IsFinite(value) || value < 0.0 || value > 1.0))
                 throw new InvalidDataException($"{label} must be between 0% and 100%.");
+        }
+
+        // Optional per-item Chance sidecars do not belong to the fixed native
+        // parameter catalog. Validate their closed source-SID allowlist, exact
+        // 5% step, and finite 0..2 range before any preset is accepted.
+        preset.NpcConsumableChances ??=
+            new Dictionary<string, NpcConsumableChancePreset>(StringComparer.Ordinal);
+        var npcSids = NpcConsumableItemViewModel.SourceItems
+            .Select(item => item.Sid).ToHashSet(StringComparer.Ordinal);
+        foreach (var (sid, settings) in preset.NpcConsumableChances)
+        {
+            if (!npcSids.Contains(sid) || settings is null)
+                throw new InvalidDataException(
+                    $"NPC consumable Chance preset contains an unknown or empty source SID: {sid}");
+            var factor = settings.Multiplier;
+            if (!double.IsFinite(factor) || factor < 0.0 || factor > 2.0
+                || Math.Abs(factor * 20.0 - Math.Round(factor * 20.0)) > 0.0000001)
+                throw new InvalidDataException(
+                    $"NPC consumable Chance for {sid} must use 0–200% in 5% steps.");
         }
 
         foreach (var (id, value) in preset.Values)

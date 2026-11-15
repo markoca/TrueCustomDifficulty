@@ -66,6 +66,14 @@ public sealed class ParameterViewModel : ObservableObject
         + (IsTraderSellsMember
             ? Environment.NewLine + Environment.NewLine + TraderStockRationale.NamedCategories
             : string.Empty)
+        + (Id == "loot.npcMedicalChance"
+            ? Environment.NewLine + Environment.NewLine
+              + "STANDARD NPC MEDICAL CHANCE — 58 source rows across six "
+              + "role pools. Enabled individual Bandage, Medkit, Army Medkit and "
+              + "Anti-Rad controls replace this global multiplier for their "
+              + "exact item SID; the two multipliers are never stacked. "
+              + "Unchecked items continue to use this global control."
+            : string.Empty)
         + (Id == "loot.worldAmmoCratesRemoved"
             ? Environment.NewLine + Environment.NewLine
               + "MOD ITEM REMOVAL — WORLD\n"
@@ -78,6 +86,14 @@ public sealed class ParameterViewModel : ObservableObject
               + "Project Itemization Reborn is not supported (shared generator pools)."
             : Id == "loot.npcCorpseBonus"
                 ? Environment.NewLine + Environment.NewLine
+                  + "STANDARD NPC CONSUMABLE CHANCE — FOOD / DRINKS / MEDICAL\n"
+                  + "Each optional item slider scales its own original Chance "
+                  + "1:1 (100% preserves the exact CFG source). The 104 source "
+                  + "rows remain gated by native difficulty, rank and role, "
+                  + "with original counts unchanged. Food/Drinks have no global "
+                  + "slider; enabled Medical items replace only their own part "
+                  + "of NPC Medical Drops. Water belongs to the separate bonus "
+                  + "package. This never alters named NPCs, zombies or stashes.\n"
                   + "MOD ITEM REMOVAL — CORPSE\n"
                   + "Affected mods: Point of No Return — Backpacks Pack; "
                   + "Point of No Return — Repair System.\n"
@@ -126,7 +142,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "ItemWeightBoard" => "Adjust ammunition, food and medicine, weapons or armor weight independently.",
                     "AnomalyGlobalDamage" => "GLOBAL affects all supported anomaly damage. Each anomaly also has its own damage setting; FINAL includes both before protection.",
                     "AnomalySpecialEffects" => "Adjust Glass Shards bleeding and Psy drain independently. Their other damage effects remain separate.",
-                    "NpcLootLoadout" => "Choose extra corpse loot, medical or bonus ammo drops, and dropped weapon condition. MOD ITEMS is an independent checkbox-enabled mod-drop card; right-click its track to reset.",
+                    "NpcLootLoadout" => "Choose corpse bonus, ordinary Medical Drops, bonus ammo and weapon condition. Food, Drinks and Medical item checks enable source-Chance sliders; 100% preserves the original chance. Right-click a rail to reset.",
                     "WorldLootLayout" => "Shuffle weapons, attachments and blueprints separately. Remove ordinary armor or detectors independently; quest rewards stay. Weapon density only affects weapon shuffle.",
                     "StashContentMix" => "Ammo Quantity changes Basic, Standard and Rare stacks together. Chance sliders scale original item chances; 100% does not guarantee loot. Rare Coupons and Basic RGD-5 have separate absolute chances.",
                     "StashMedicalComposition" => "DROP ROLLS changes medical-item chances, not whole-stash odds. LOOT PRIORITY favors items inside their actual pools. EFFECTIVE PICK previews the Medkit/Army Medkit mix; MIN/MAX sets stack sizes.",

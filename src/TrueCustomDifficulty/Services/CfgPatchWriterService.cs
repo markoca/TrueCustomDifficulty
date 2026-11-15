@@ -196,6 +196,7 @@ public sealed partial class CfgPatchWriterService
             baseline,
             modifiedById,
             allById,
+            vm.NpcConsumableItems,
             hasDlc1,
             documents,
             writtenParameters);
@@ -922,10 +923,15 @@ public sealed partial class CfgPatchWriterService
         return edits + 2;
     }
 
+    // Standard human Food / Drinks / Medical all share ONE set of six cloned
+    // vanilla consumable pools and ONE 33-link standard-human-only redirect.
+    // Write each exact source Chance at most once to avoid competing BPatch
+    // clones from independent optional per-SID controls.
     private static int WriteNpcMedicalLootProduction(
         CfgWriterBaseline baseline,
         IReadOnlyDictionary<string, ParameterViewModel> modifiedById,
         IReadOnlyDictionary<string, ParameterViewModel> allById,
+        IReadOnlyList<NpcConsumableItemViewModel> itemOverrides,
         bool hasDlc1,
         IDictionary<string, PatchDocument> documents,
         ISet<string> writtenParameters)
@@ -934,13 +940,59 @@ public sealed partial class CfgPatchWriterService
         if (string.IsNullOrWhiteSpace(config.ParameterId))
             return 0;
 
-        if (!modifiedById.ContainsKey(config.ParameterId))
+        if (!allById.TryGetValue(config.ParameterId, out var parameter))
+            throw new InvalidDataException($"NPC consumable writer parameter '{config.ParameterId}' was not loaded.");
+        if (parameter.CurrentNumber < 0 || !double.IsFinite(parameter.CurrentNumber))
+            throw new InvalidDataException("Human NPC Medical Loot Frequency must be finite and nonnegative.");
+
+        var known = NpcConsumableItemViewModel.SourceItems.ToDictionary(
+            item => item.Sid, item => item.Group, StringComparer.Ordinal);
+        var overrides = new Dictionary<string, NpcConsumableItemViewModel>(StringComparer.Ordinal);
+        if (itemOverrides.Count != known.Count)
+            throw new InvalidDataException("NPC consumable override item count no longer matches the 10 source SIDs.");
+        foreach (var item in itemOverrides)
+        {
+            if (!known.ContainsKey(item.Sid) || !overrides.TryAdd(item.Sid, item))
+                throw new InvalidDataException($"Unexpected or duplicated NPC consumable override SID '{item.Sid}'.");
+            if (!double.IsFinite(item.Multiplier) || item.Multiplier < 0.0 || item.Multiplier > 2.0)
+                throw new InvalidDataException($"Out-of-range NPC consumable multiplier: {item.Sid}");
+        }
+
+        var globalMedicalChanged = modifiedById.ContainsKey(config.ParameterId);
+        var sidChanged = overrides.Values.Any(item =>
+            item.IsEffectiveChange &&
+            (known[item.Sid] != "MEDICAL"
+                || !globalMedicalChanged
+                || Math.Abs(item.Multiplier - parameter.CurrentNumber) > 0.000001));
+        // A medical override of exactly 1x on an edited global medical
+        // multiplier still affects gameplay; the global change already triggers
+        // this writer, and that item's raw Chance must be restored verbatim.
+        if (!globalMedicalChanged && !sidChanged)
             return 0;
 
-        if (!allById.TryGetValue(config.ParameterId, out var parameter))
-            throw new InvalidDataException($"NPC medical-loot writer parameter '{config.ParameterId}' was not loaded.");
-        if (parameter.CurrentNumber < 0)
-            throw new InvalidDataException("Human NPC Medical Loot Frequency cannot be negative.");
+        // Fail closed on baseline drift. These are the exact 2.1 source
+        // template counts, not runtime drop rates or invented flat chances.
+        if (config.Pools.Count != 6
+            || config.Pools.Sum(pool => pool.TemplateCategories.Sum(c => c.Items.Count)) != 104
+            || config.Pools.Sum(pool => pool.MedicalEntries.Count) != 58)
+            throw new InvalidDataException("2.1 standard NPC consumable baseline inventory drifted (6/104/58).");
+
+        var sourceCounts = config.Pools
+            .SelectMany(pool => pool.TemplateCategories)
+            .SelectMany(category => category.Items)
+            .GroupBy(item => item.Fields.GetValueOrDefault("ItemPrototypeSID") ?? "",
+                StringComparer.Ordinal)
+            .ToDictionary(group => group.Key, group => group.Count(), StringComparer.Ordinal);
+        var expectedCounts = new Dictionary<string, int>(StringComparer.Ordinal)
+        {
+            ["Bread"] = 8, ["Sausage"] = 8, ["CannedFood"] = 10,
+            ["Energetic"] = 12, ["Beer"] = 4, ["Vodka"] = 4,
+            ["Bandage"] = 24, ["Medkit"] = 20, ["ArmyMedkit"] = 6, ["AntiRad"] = 8
+        };
+        if (sourceCounts.Count != expectedCounts.Count
+            || expectedCounts.Any(pair =>
+                !sourceCounts.TryGetValue(pair.Key, out var count) || count != pair.Value))
+            throw new InvalidDataException("2.1 NPC food/drinks/medical source SID inventory drifted.");
 
         var document = GetDocument(documents, config.File);
         var edits = 0;
@@ -952,7 +1004,8 @@ public sealed partial class CfgPatchWriterService
                 config.BaseTemplateRefKey);
             root.SetAssignment("SID", pool.CustomSid);
             edits++;
-            edits += WriteNpcMedicalPoolTemplate(root, pool, parameter.CurrentNumber);
+            edits += WriteNpcMedicalPoolTemplate(root, pool,
+                parameter.CurrentNumber, overrides, known);
         }
 
         foreach (var redirect in LoadNpcMedicalRedirects(config.RedirectManifestResource))
@@ -969,14 +1022,27 @@ public sealed partial class CfgPatchWriterService
             edits++;
         }
 
-        writtenParameters.Add(config.ParameterId);
+        if (globalMedicalChanged)
+            writtenParameters.Add(config.ParameterId);
+        // Sidecars are logical modified UI editors, not new source catalog
+        // parameters. Count only actual per-SID deviations from the effective
+        // (possibly global-medical) source multiplier in the build summary.
+        foreach (var item in overrides.Values)
+        {
+            var inherited = known[item.Sid] == "MEDICAL"
+                ? parameter.CurrentNumber : 1.0;
+            if (item.Enabled && Math.Abs(item.Multiplier - inherited) > 0.000001)
+                writtenParameters.Add("npcConsumableChance:" + item.Sid);
+        }
         return edits;
     }
 
     private static int WriteNpcMedicalPoolTemplate(
         PatchNode root,
         CfgWriterNpcMedicalPool pool,
-        double frequencyMultiplier)
+        double globalMedicalMultiplier,
+        IReadOnlyDictionary<string, NpcConsumableItemViewModel> overrides,
+        IReadOnlyDictionary<string, string> knownGroups)
     {
         var medicalByNode = pool.MedicalEntries.ToDictionary(
             x => (x.CategoryNode, x.EntryNode));
@@ -996,17 +1062,38 @@ public sealed partial class CfgPatchWriterService
             foreach (var itemDefinition in categoryDefinition.Items)
             {
                 var item = possibleItems.GetOrAddChild(itemDefinition.Node, useBpatch: false);
-                medicalByNode.TryGetValue((categoryDefinition.Node, itemDefinition.Node), out var medicalEntry);
+                if (!itemDefinition.Fields.TryGetValue("ItemPrototypeSID", out var sid)
+                    || !knownGroups.TryGetValue(sid, out var group)
+                    || !itemDefinition.Fields.TryGetValue("Chance", out var sourceChanceRaw))
+                    throw new InvalidDataException(
+                        $"Missing source SID/Chance in NPC pool {pool.VanillaSid}:{categoryDefinition.Node}/{itemDefinition.Node}.");
+
+                var isMedical = group == "MEDICAL";
+                var hasMedicalSource = medicalByNode.TryGetValue(
+                    (categoryDefinition.Node, itemDefinition.Node), out var medicalEntry);
+                if (isMedical != hasMedicalSource
+                    || (isMedical && !string.Equals(medicalEntry!.SourceChanceRaw,
+                            sourceChanceRaw, StringComparison.Ordinal)))
+                    throw new InvalidDataException(
+                        $"NPC medical Chance source mismatch for {sid} at {pool.VanillaSid}:{categoryDefinition.Node}/{itemDefinition.Node}.");
+
+                var overrideItem = overrides[sid];
+                // Per-SID medical checked overrides replace, NEVER multiply,
+                // the global medical multiplier. Unchecked medical follows
+                // the existing control. Food/drinks without opt-in are 1:1.
+                var multiplier = overrideItem.Enabled ? overrideItem.Multiplier
+                    : isMedical ? globalMedicalMultiplier : 1.0;
                 foreach (var field in itemDefinition.Fields)
                 {
                     var value = field.Value;
-                    if (medicalEntry is not null && field.Key == "Chance")
+                    if (field.Key == "Chance" && Math.Abs(multiplier - 1.0) > 0.000001)
                     {
-                        var sourceChance = ParseNumber(medicalEntry.SourceChanceRaw);
-                        var scaledChance = Math.Clamp(sourceChance * frequencyMultiplier, 0.0, 1.0);
-                        value = FormatLikeSource(scaledChance, medicalEntry.SourceChanceRaw);
+                        var scaledChance = Math.Clamp(
+                            ParseNumber(sourceChanceRaw) * multiplier, 0.0, 1.0);
+                        value = FormatLikeSource(scaledChance, sourceChanceRaw);
                     }
-
+                    // Exact original source tokens are written 1:1 at 100%;
+                    // all other Chance/count/gate/weight fields are untouched.
                     item.SetAssignment(field.Key, value);
                     edits++;
                 }

@@ -49,6 +49,12 @@ public sealed class PresetFile
     [JsonPropertyName("corpseModItemsEnabled")]
     public bool? CorpseModItemsEnabled { get; set; }
 
+    // Ten independent closed-allowlist standard-human consumable Chance
+    // overrides. Old presets omit this field and load all rows disabled.
+    [JsonPropertyName("npcConsumableChances")]
+    public Dictionary<string, NpcConsumableChancePreset> NpcConsumableChances { get; set; }
+        = new(StringComparer.Ordinal);
+
     // Load-only legacy toggles. Null on saving means they are not serialized.
     [JsonPropertyName("worldModItemsBlocked")]
     public bool? LegacyWorldModItemsBlocked { get; set; }
@@ -85,4 +91,14 @@ public sealed class PresetValue
 
     [JsonPropertyName("text")]
     public string? Text { get; set; }
+}
+
+public sealed class NpcConsumableChancePreset
+{
+    [JsonPropertyName("enabled")]
+    public bool Enabled { get; set; }
+
+    // Relative to each authored raw Chance, 0–2 in 0.05 steps.
+    [JsonPropertyName("multiplier")]
+    public double Multiplier { get; set; } = 1.0;
 }
