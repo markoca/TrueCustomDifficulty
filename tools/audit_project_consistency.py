@@ -5280,7 +5280,7 @@ if any(_tok not in _npc_preview_source for _tok in (
     'var ammoPackageActive = NpcBonusPackageSelected();',
     'private bool NpcBonusPackageSelected()',
     'private bool IsNpcBonusSliderLocked(ParameterViewModel? parameter)',
-    'parameter.Id is "loot.npcMedicalChance" or "loot.npcWeaponAmmoSupply"',
+    'parameter.Id == "loot.npcWeaponAmmoSupply"',
     'var enabled = parameter?.IsControlEnabled == true && !IsNpcBonusSliderLocked(parameter);',
     'IndustrialChrome.DrawRecessedCard(dc, card, panel,',
     'enabled ? border : CloneWithOpacity(border, 0.55)',

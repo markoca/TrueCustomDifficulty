@@ -3660,3 +3660,8 @@ WPF cross-build revealed shadowing of the existing horizontal renderer's local `
 ### 2026-11-15 — Complete duplicate-audit cleanup
 
 - The previous generic-NPC rare-trader audit unexpectedly contained a second copy of the checks after its first PASS footer, including an obsolete invocation assertion. Remove the duplicate while retaining one complete nine-profile test, source scope verification, writer ordering check and UI/preset checks. The script has one regex parse and one PASS footer again. No gameplay CFG or control logic changed.
+
+
+### 2026-11-15 — Corpse SmartLoot bonus ammo gate audit correction
+
+- The current NPC bonus-ammo UI lock is **only** `parameter.Id == "loot.npcWeaponAmmoSupply"` when the bonus ammo package is absent. Standard NPC medical Chance remains independent/editable with WATER and NONE. The whole-project audit previously expected an older gate that also locked `loot.npcMedicalChance`; it now asserts the active source behavior without weakening the bonus-gate regression.
