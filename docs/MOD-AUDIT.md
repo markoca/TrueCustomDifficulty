@@ -17,13 +17,73 @@
 **UI constraint if/when implemented:** compact source-catalog-matching ON/OFF selection with no repeated explanatory copy, no width-expanding matrices or always-visible per-SID lists, modified-only highlighting, and per-control right-click reset to the active preset default. Update `docs/UI-DESIGN-LOCK.md`, `docs/VISUAL-CONTROL-SYSTEM.md`, runtime/preset contracts and tests in the *same commit* as any future UI change. **No UI or writer change is part of this scope clarification.**
 
 
+## GENERATOR DISTRIBUTION DOMAINS — canonical taxonomy (2026-11-15)
+
+**Effective immediately for all audits 001–007 and every subsequent mod.** The item-generator ALLOW/BLOCK scope remains unchanged. Classify by **confirmed acquisition root and graph path**, not by `ItemPrototypeSID` spelling, item template, `EItemGenerationCategory`, mod name or which CFG folder contains the file. A mod and even one modded item may have routes in **both** domains.
+
+### TRADER — item generation in offers
+
+- **`TRADER`**: normal named/unique merchant selling stock via a verified `TradePrototype` → `TradeGenerators` → `ItemGeneratorPrototypeSID` route, including the stock of general traders, medics, bartenders and rare technician **merchants** if the source proves an actual selling profile.
+- **`TRADER.GENERIC`**: generic NPC's *trade offer*, **not** their corpse. Includes `GeneralNPC_TradeItemGenerator` and other `GeneralNPC_TradeItemGenerator_*` roots when joined to actual trade stock.
+- A prototype being saleable/buyable (`Trader Buys`) **does not** itself mean it is generated into a trader's `SELL` inventory. Do not classify merchant **services/repair costs** as item generation.
+
+### OPEN_WORLD — item generation during exploration, outside selling stock
+
+- **`OPEN_WORLD.STASH`**: generated stash/cache contents (e.g. GamePass stash roots), not a trader's hidden stock.
+- **`OPEN_WORLD.CONTAINER`**: destructible and ordinary searchable containers, cupboards and `PackOfItemsGroupPrototypes` / `PackOfItemsSettings` when verified as weighted item generation for containers.
+- **`OPEN_WORLD.NPC_LOOT`**: human, faction, zombie or other NPC inventory/loadout/loot item generators. Even if a generic NPC can trade, its **corpse/loot generator is a different route**.
+- **`OPEN_WORLD.MUTANT_LOOT`**: mutant item/loot generators.
+- **`OPEN_WORLD.OTHER`**: another *verified item generator* accessed in the open world; record exact root and evidence rather than guessing from file or actor names.
+
+### NOT_CLASSIFIED / EXCLUDED
+
+- **`PENDING`**: item-generator CFG exists but the actual roots/links are unreadable, incomplete or not joined to a known acquisition route. Do not label it TRADER or OPEN_WORLD by filename alone.
+- **`DISCONNECTED`**: a defined item or pool has no evidenced path from an eligible native/active acquisition root. Do not advertise it as appearing in either domain until the missing link is demonstrated.
+- **`OUT_OF_SCOPE`**: quest `ItemAdd`, scripted grants, *direct* `SpawnActor` world placements (not using a verified item generator), MCM spawning, static placed pickups, starting inventory, prologue/test/debug/arena-only generators, or items already generated. These routes are recorded to avoid false coverage claims but do **not** enter either ON/OFF generator family.
+
+### Mandatory future audit record
+
+Every audited generator **route**, including nested/shared routes, must carry:
+
+| Field | Required audit meaning |
+|---|---|
+| `domain` | `TRADER`, `OPEN_WORLD`, `PENDING`, `DISCONNECTED` or `OUT_OF_SCOPE` |
+| `subdomain` | For TRADER: `NAMED` / `GENERIC`; for OPEN_WORLD: `STASH` / `CONTAINER` / `NPC_LOOT` / `MUTANT_LOOT` / `OTHER` |
+| `entrypoint` | Exact source acquisition root (TradePrototype/TradeGenerators for TRADER; stash, NPC, mutant, container or weighted PackOfItems root for OPEN_WORLD) |
+| `root_to_leaf` | Full known source CFG, root SID, `{bpatch}/{bskipref}`, `refurl/refkey`, nested generator chain and `PossibleItems` / `PackOfItemsSettings` item path |
+| `item_sids` | **Mod-added** concrete SIDs reachable on that route; separately report existing vanilla items mixed into its pool |
+| `evidence` | `DECODED`, `PARTIAL`, `PENDING`; distinguish static reachability from in-game spawn confirmation |
+| `operation_risk` | Shared-pool paths, inherited TCD copy-on-write clones, multiple mods patching the same root, unknown merge order, or duplicate leaves |
+
+**Spawn switch semantics for a future implementation:** `TRADER OFF` must block only item-generator paths reaching trader offers; `OPEN_WORLD OFF` must block only generator paths reaching world loot, leaving the other domain **unchanged**. Default is ALLOW in both domains. If one mod-owned leaf pool is reachable from both, **do not remove the shared leaf globally**, because that would disable both domains. Make a separate context-specific generator clone/redirect or other proven path-scoped edit that preserves original author weights/conditions and vanilla leaves; otherwise mark the independent toggle **NOT SAFE/NOT IMPLEMENTED**, rather than silently broadening its effect. The same SID may need multiple path-specific removals. Neither category changes actual drop chances/counts, item prototypes, existing saves, or quest/direct placement.
+
+**Validation requirement:** test `TRADER ON + OPEN_WORLD ON`, `OFF + ON`, `ON + OFF` and `OFF + OFF` for a mod with both paths, including at least one shared pool, one ordinary item and one vanilla item in a mixed pool. Validate against the 2.1 TCD writer and game patch/load order before claiming implemented isolation. *Classification itself is documentation only.*
+
+### Retrospective classification — audited mods 001–007
+
+`Yes` means a source-backed CFG generator route was identified, **not** that the item definitely spawns in a running game. Counts below are **generator roots/patch attempts**, not spawn rates, available item quantities, or necessarily unique in-game NPCs.
+
+| Audit / mod | TRADER routes | OPEN_WORLD routes | Limits / excluded paths |
+|---|---|---|---|
+| **001 Sleeping Bag** | **Yes:** `Trader_Cosnsumables_ItemGenerator` `{bpatch}` → `SBM` → `SBM_Item`; shared original generator is present in **30** vanilla trade profiles | **No source-backed open-world generator route in supplied audit** | `SBM_QGet_Item` quest `ItemAdd` is **OUT_OF_SCOPE**, not world loot |
+| **002 ZoneWatch** | **PENDING** | **PENDING** | `zZST_FieldWatch110.cfg` and item prototype CFG remain compressed/unresolved in audit 002; watch/quest names and public mod descriptions are not CFG linkage |
+| **003 Backpacks Pack** | **PENDING** | **PENDING** | Mod-owned `ItemGeneratorPrototypes.cfg` and native `zBackpackGeneratorPatch.cfg` remain compressed/unresolved in audit 003; `BackpacksDemo` world actor filename is **not** evidence of a world *item generator* |
+| **004 Repair System** | **Yes:** **20** named trader stock root patches plus **1** `GeneralNPC_TradeItemGenerator` (`TRADER.GENERIC`) | **Yes:** **4** `GamePass_Stash_*` (`STASH`), **55** `GeneralNPC_*_ItemGenerator` (`NPC_LOOT`) | All share 7 mod pool definitions. Four rank pools underlie **both** trader and world generation; a global pool-level OFF would be cross-domain and is **not allowed** for a domain-specific switch |
+| **005 OXA Standard** | **Yes:** native T2/T3/T4 attachment roots plus NATO Rostok trader root; **76** unique OXA-new SIDs have evidenced trader reachability (32 original mixed SID occurrences are not OXA-new) | **No source-backed open-world generator route** | `OXATrade_LaserAdvancedGenerator` and its 4 unique new item SIDs are **DISCONNECTED** from native trader roots in supplied CFGs. `Arena_R3_Generator` is **OUT_OF_SCOPE** as arena/test generation |
+| **006 Project Itemization Reborn** | **Yes:** **39** named trader/medic/bartender roots + **9** generic NPC trade roots | **Yes:** **25** human NPC loot roots, **50** zombie roots (`NPC_LOOT`), **14** mutant roots (`MUTANT_LOOT`), **3** GamePass stash roots (`STASH`), **23** destructible roots and **12** weighted `PackOfItemsGroup` roots (`CONTAINER`) | **113** distinct PIR SIDs reachable from some native item-generator root (union, **not** separate counts per domain). Two prologue/quest generator roots **OUT_OF_SCOPE**; one other native root **PENDING**; 6 disconnected prototype SIDs and absent `PIR_StashClues_*` roots cannot be assumed active. 21 direct MoneyBriefcase actor placements **OUT_OF_SCOPE** |
+| **007 AR Goggles Pack** | **Yes:** **15** valid named trader generator roots joined to vanilla 2.1; **1** `Trader_Sultansk_TradePrototype` patch is **PENDING/likely mis-targeted**, not a verified item generator root | **Yes:** **4** `GamePass_Stash_*` roots (`STASH`) | All **3** goggle SIDs are in the 4 mod-owned tier pools reachable from both domains; no NPC or mutant loot route was found in the supplied CFG. A global pool-leaf OFF cannot implement independent TRADER/WORLD switches |
+
+**Future audits:** add the same TRADER / OPEN_WORLD / PENDING matrix immediately in each new numbered entry, then record per-route exact SIDs and evidence; **do not** infer or force two categories for a mod without confirmed links. When generator CFG extraction later completes for 002/003, update this table and the corresponding numbered audit without overwriting the historical evidence or conflating absence of evidence with absence of generation.
+
+---
+
 ## Audit protocol
 
 For every new mod, record:
 
 1. **Provenance:** supplied archive filenames, sizes, hashes, mod name/version if evidenced, completeness of each container set (PAK/UTOC/UCAS).
 2. **Actual CFG evidence:** package mount, exact internal CFG paths, added root SIDs, `{bpatch}` targets, `refurl/refkey` inheritance, item SIDs, inventory properties, and all generator nodes (`Category`, `PossibleItems`, Chance, Count, Conditions, Weight).
-3. **Acquisition routes:** trader stock, world/quest pickup, stashes, corpse loot, quest ItemAdd, and any asset or Blueprint-only route. Record **observed** and **unverified** separately.
+3. **Generator distribution domains:** classify each verified path as `TRADER` (named/generic) or `OPEN_WORLD` (stash/container/NPC corpse/mutant loot/other), plus `PENDING`, `DISCONNECTED` or `OUT_OF_SCOPE` when necessary. Keep quest grants, direct world placement and non-generator routes out of the two classes. Include exact entrypoint, chain, item SIDs and independently testable spawn scope.
 4. **2.1 cross-reference:** join generator SIDs and parent links to the authoritative game-2.1 manifests; distinguish base, DLC1, and external-mod provenance; do not confuse a shared generator with individual traders.
 5. **TCD writer interaction:** whether existing controls modify direct leaves, shared roots, inherited clones, or only fixed native SID inventories; note independent mod-added branches that TCD does not enumerate.
 6. **Compatibility and safety:** conflicting patches, load-order unknowns, absent dependencies, runtime selection chance, and effects on item types or categories. No assumptions about runtime behavior from CFG syntax alone.
