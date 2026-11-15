@@ -126,7 +126,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "ItemWeightBoard" => "Adjust ammunition, food and medicine, weapons or armor weight independently.",
                     "AnomalyGlobalDamage" => "GLOBAL affects all supported anomaly damage. Each anomaly also has its own damage setting; FINAL includes both before protection.",
                     "AnomalySpecialEffects" => "Adjust Glass Shards bleeding and Psy drain independently. Their other damage effects remain separate.",
-                    "NpcLootLoadout" => "Choose extra corpse loot, medical or bonus ammo drops, and dropped weapon condition. MOD ITEMS changes only audited mod drops. Right-click its slider to reset it.",
+                    "NpcLootLoadout" => "Choose extra corpse loot, medical or bonus ammo drops, and dropped weapon condition. MOD ITEMS is an independent checkbox-enabled mod-drop card; right-click its track to reset.",
                     "WorldLootLayout" => "Shuffle weapons, attachments and blueprints separately. Remove ordinary armor or detectors independently; quest rewards stay. Weapon density only affects weapon shuffle.",
                     "StashContentMix" => "Ammo Quantity changes Basic, Standard and Rare stacks together. Chance sliders scale original item chances; 100% does not guarantee loot. Rare Coupons and Basic RGD-5 have separate absolute chances.",
                     "StashMedicalComposition" => "DROP ROLLS changes medical-item chances, not whole-stash odds. LOOT PRIORITY favors items inside their actual pools. EFFECTIVE PICK previews the Medkit/Army Medkit mix; MIN/MAX sets stack sizes.",
@@ -159,8 +159,8 @@ public sealed class ParameterViewModel : ObservableObject
                 return "Four HEAL/BLEED pairs and four RAD columns (Scientific, Anti-Rad, Beer, Vodka) edit independent effects."
                     + Environment.NewLine + "Drag a column to adjust it, right-click to reset one source, or press R to reset this card. Food Healing is independent.";
             if (IsWorldLootRemovalMember)
-                return "Drag one box or loose-loot track: left keeps more pickups, right removes more. MOD ITEMS has an independent 0–100% removal slider."
-                    + Environment.NewLine + "Right-click a slider to reset it. R resets the five physical loot categories; the MOD ITEMS slider resets independently.";
+                return "Drag a vertical removal bar. MOD ITEMS is the sixth lane and has its own checkbox; disabled values have no effect."
+                    + Environment.NewLine + "Right-click a bar to reset it. R resets five physical categories; MOD ITEMS resets independently when selected.";
             if (IsMutantDropMember)
                 return "Drag a mutant's track to change its part-drop chance."
                     + Environment.NewLine + "Right-click one species to reset it; R resets all fourteen.";

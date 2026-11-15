@@ -223,58 +223,6 @@ public partial class MainWindow : Window
     // An aggregate is represented by its anchor in the list, but interacting
     // with a mixer strip should explain that specific parameter at the right.
 
-    // Both mod-item sliders live in the existing World and Corpse boards.
-    // Selecting one reveals the source-audited list of affected mods.
-    private void SelectModLootRationale(string domain)
-    {
-        if (DataContext is not MainViewModel vm || vm.SelectedTab is null)
-            return;
-        var anchorId = domain == "world" ? "loot.worldAmmoCratesRemoved" : "loot.npcCorpseBonus";
-        var parameter = vm.SelectedTab.Parameters.FirstOrDefault(p => p.Id == anchorId);
-        if (parameter is not null)
-            vm.SelectedTab.SelectedParameter = parameter;
-    }
-
-    private void ModLootSlider_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-    {
-        if (sender is FrameworkElement { Tag: string domain }
-            && DataContext is MainViewModel { IsBuilding: false })
-            SelectModLootRationale(domain);
-        // Deliberately do not mark handled: the native slider owns dragging,
-        // clicking its track, keyboard input and native step snapping.
-    }
-
-    private void ModLootSlider_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
-    {
-        if (sender is not FrameworkElement { Tag: string domain }
-            || DataContext is not MainViewModel vm || vm.IsBuilding)
-            return;
-        if (domain == "world")
-            vm.WorldModItemsRemoval = 0.0;
-        else if (domain == "corpse")
-            vm.CorpseModItemsRemoval = 0.0;
-        else
-            return;
-        SelectModLootRationale(domain);
-        e.Handled = true;
-    }
-
-    private void ModLootSlider_PreviewKeyDown(object sender, KeyEventArgs e)
-    {
-        if (e.Key != Key.R
-            || sender is not FrameworkElement { Tag: string domain }
-            || DataContext is not MainViewModel vm || vm.IsBuilding)
-            return;
-        if (domain == "world")
-            vm.WorldModItemsRemoval = 0.0;
-        else if (domain == "corpse")
-            vm.CorpseModItemsRemoval = 0.0;
-        else
-            return;
-        SelectModLootRationale(domain);
-        e.Handled = true;
-    }
-
     private void AggregateVisualControl_ParameterSelected(
         object sender, AggregateParameterSelectedEventArgs e)
     {

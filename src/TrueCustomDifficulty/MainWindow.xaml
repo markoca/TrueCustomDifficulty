@@ -246,7 +246,10 @@
                                                                                                 Grid.RowSpan="2"
                                                                                                 MinHeight="330"
                                                                                                 Visibility="Collapsed"
-                                                                                                Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
+                                                                                                Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                                                ModItemsEnabled="{Binding DataContext.WorldModItemsEnabled, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                                                ModItemsEditorAvailable="{Binding DataContext.IsBuildIdle, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                                                ModItemsRemoval="{Binding DataContext.WorldModItemsRemoval, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Window}}" />
         
                                                                 <controls:MedicalHealingRadar x:Name="MedicalHealingRadarControl"
                                                                                                 MaxWidth="920"
@@ -369,7 +372,10 @@
                                                                                                  Visibility="Collapsed"
                                                                                                  Family="{Binding VisualAggregateFamily}"
                                                                                                  SelectedReferenceDifficulty="{Binding DataContext.SelectedReferenceDifficulty, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                                                                 Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
+                                                                                                 Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                                                 ModItemsEnabled="{Binding DataContext.CorpseModItemsEnabled, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                                                 ModItemsEditorAvailable="{Binding DataContext.IsBuildIdle, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                                                 ModItemsRemoval="{Binding DataContext.CorpseModItemsRemoval, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Window}}" />
 
                                                                 <controls:BleedingCurveControl x:Name="BleedingCurveControl"
                                                                                                 MaxWidth="920"
@@ -495,118 +501,7 @@
                                                                     <controls:VanillaMarkerBar Grid.Row="3" Height="17" Margin="34,-1,54,0" IsEnabled="{Binding IsControlEnabled}" Tag="rangeMax" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Markers="{Binding VanillaMarkers}" MarkerClicked="VanillaMarkerControl_MarkerClicked" />
                                                                 </Grid>
         
-                                                                <!-- Compact source-backed 0–100% mod item Chance reduction
-                                                                     overlays; no new native parameter rows or wider boards. -->
-                                                                <Border x:Name="WorldModLootControl"
-                                                                        Grid.Row="0" Grid.RowSpan="2"
-                                                                        Width="290" Height="31"
-                                                                        HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                                                                        Margin="0,0,0,6"
-                                                                        Background="Transparent"
-                                                                        BorderThickness="0"
-                                                                        Visibility="Collapsed"
-                                                                        IsEnabled="{Binding DataContext.IsBuildIdle, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                                        Tag="world"
-                                                                        PreviewMouseLeftButtonDown="ModLootSlider_PreviewMouseLeftButtonDown"
-                                                                        PreviewMouseRightButtonDown="ModLootSlider_PreviewMouseRightButtonDown"
-                                                                        PreviewKeyDown="ModLootSlider_PreviewKeyDown">
-                                                                    <Grid Margin="0" Background="Transparent">
-                                                                        <Grid.ColumnDefinitions>
-                                                                            <ColumnDefinition Width="19" />
-                                                                            <ColumnDefinition Width="76" />
-                                                                            <ColumnDefinition Width="*" />
-                                                                            <ColumnDefinition Width="43" />
-                                                                        </Grid.ColumnDefinitions>
-                                                                        <CheckBox Grid.Column="0" Width="14" Height="14" VerticalAlignment="Center"
-                                                                                  IsChecked="{Binding DataContext.WorldModItemsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=Window}}" />
-                                                                        <TextBlock Grid.Column="1" Text="MOD ITEMS"
-                                                                                   FontSize="9.2" FontWeight="Bold"
-                                                                                   VerticalAlignment="Center"
-                                                                                   Foreground="{StaticResource TextBrush}" />
-                                                                        <Slider Grid.Column="2"
-                                                                                VerticalAlignment="Center" Height="18"
-                                                                                Minimum="0" Maximum="1"
-                                                                                SmallChange="0.01" LargeChange="0.05"
-                                                                                TickFrequency="0.01" IsSnapToTickEnabled="True"
-                                                                                AutoToolTipPlacement="None"
-                                                                                IsEnabled="{Binding DataContext.WorldModItemsEnabled, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                                                Value="{Binding DataContext.WorldModItemsRemoval, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=Window}}" />
-                                                                        <TextBlock Grid.Column="3"
-                                                                                   Text="{Binding DataContext.WorldModItemsRemovalDisplay, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                                                   FontSize="10.4" FontWeight="Bold"
-                                                                                   TextAlignment="Right" VerticalAlignment="Center"
-                                                                                   >
-                                                                            <TextBlock.Style>
-                                                                                <Style TargetType="TextBlock">
-                                                                                    <Setter Property="Foreground" Value="{StaticResource MutedTextBrush}" />
-                                                                                    <Style.Triggers>
-                                                                                        <DataTrigger Binding="{Binding DataContext.WorldModItemsEnabled, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
-                                                                                            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
-                                                                                        </DataTrigger>
-                                                                                        <DataTrigger Binding="{Binding DataContext.IsWorldModItemsRemovalModified, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
-                                                                                            <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
-                                                                                        </DataTrigger>
-                                                                                    </Style.Triggers>
-                                                                                </Style>
-                                                                            </TextBlock.Style>
-                                                                        </TextBlock>
-                                                                    </Grid>
-                                                                </Border>
-                                                                <Border x:Name="CorpseModLootControl"
-                                                                        Grid.Row="0" Grid.RowSpan="2"
-                                                                        Width="290" Height="31"
-                                                                        HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                                                                        Margin="0,0,0,6"
-                                                                        Background="Transparent"
-                                                                        BorderThickness="0"
-                                                                        Visibility="Collapsed"
-                                                                        IsEnabled="{Binding DataContext.IsBuildIdle, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                                        Tag="corpse"
-                                                                        PreviewMouseLeftButtonDown="ModLootSlider_PreviewMouseLeftButtonDown"
-                                                                        PreviewMouseRightButtonDown="ModLootSlider_PreviewMouseRightButtonDown"
-                                                                        PreviewKeyDown="ModLootSlider_PreviewKeyDown">
-                                                                    <Grid Margin="0" Background="Transparent">
-                                                                        <Grid.ColumnDefinitions>
-                                                                            <ColumnDefinition Width="19" />
-                                                                            <ColumnDefinition Width="76" />
-                                                                            <ColumnDefinition Width="*" />
-                                                                            <ColumnDefinition Width="43" />
-                                                                        </Grid.ColumnDefinitions>
-                                                                        <CheckBox Grid.Column="0" Width="14" Height="14" VerticalAlignment="Center"
-                                                                                  IsChecked="{Binding DataContext.CorpseModItemsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=Window}}" />
-                                                                        <TextBlock Grid.Column="1" Text="MOD ITEMS"
-                                                                                   FontSize="9.2" FontWeight="Bold"
-                                                                                   VerticalAlignment="Center"
-                                                                                   Foreground="{StaticResource TextBrush}" />
-                                                                        <Slider Grid.Column="2"
-                                                                                VerticalAlignment="Center" Height="18"
-                                                                                Minimum="0" Maximum="1"
-                                                                                SmallChange="0.01" LargeChange="0.05"
-                                                                                TickFrequency="0.01" IsSnapToTickEnabled="True"
-                                                                                AutoToolTipPlacement="None"
-                                                                                IsEnabled="{Binding DataContext.CorpseModItemsEnabled, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                                                Value="{Binding DataContext.CorpseModItemsRemoval, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=Window}}" />
-                                                                        <TextBlock Grid.Column="3"
-                                                                                   Text="{Binding DataContext.CorpseModItemsRemovalDisplay, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                                                   FontSize="10.4" FontWeight="Bold"
-                                                                                   TextAlignment="Right" VerticalAlignment="Center"
-                                                                                   >
-                                                                            <TextBlock.Style>
-                                                                                <Style TargetType="TextBlock">
-                                                                                    <Setter Property="Foreground" Value="{StaticResource MutedTextBrush}" />
-                                                                                    <Style.Triggers>
-                                                                                        <DataTrigger Binding="{Binding DataContext.CorpseModItemsEnabled, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
-                                                                                            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
-                                                                                        </DataTrigger>
-                                                                                        <DataTrigger Binding="{Binding DataContext.IsCorpseModItemsRemovalModified, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
-                                                                                            <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
-                                                                                        </DataTrigger>
-                                                                                    </Style.Triggers>
-                                                                                </Style>
-                                                                            </TextBlock.Style>
-                                                                        </TextBlock>
-                                                                    </Grid>
-                                                                </Border>
+
                                                             </Grid>
         
                                                             <TextBlock x:Name="PracticalQuantityText"
@@ -665,7 +560,7 @@
                                                              <Setter TargetName="TraderEconomyPanel" Property="Visibility" Value="Visible" />
                                                          </DataTrigger>
                                                          <DataTrigger Binding="{Binding IsWorldLootRemovalAnchor}" Value="True">
-                                                            <Setter TargetName="WorldModLootControl" Property="Visibility" Value="Visible" />
+
                                                             <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
                                                             <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
                                                             <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
@@ -736,9 +631,7 @@
                                                             <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
                                                             <Setter TargetName="MutantGroupSizeRadarControl" Property="Visibility" Value="Visible" />
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Id}" Value="loot.npcCorpseBonus">
-                                                            <Setter TargetName="CorpseModLootControl" Property="Visibility" Value="Visible" />
-                                                        </DataTrigger>
+
                                                         <DataTrigger Binding="{Binding IsVisualAggregateAnchor}" Value="True">
                                                             <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />
                                                             <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />

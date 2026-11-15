@@ -43,6 +43,12 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private bool _radRingCompleted;
 
     private HitTarget? _dragTarget;
+    private Rect _npcModCheckbox = Rect.Empty;
+    private Rect _npcModRailHit = Rect.Empty;
+    private Rect _npcModRail = Rect.Empty;
+    private bool _npcModDragging;
+    private bool _npcModFocused;
+    private bool _npcModHoverCheckbox;
     private HitTarget? _hoverTarget;
     private int _hoverCouponMarker = -1;
     private readonly List<(Rect Hit, double Value, ParameterViewModel Parameter, int Index)> _couponMarkers = new();
@@ -65,6 +71,37 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             or "RadiationBalance" or "StaminaCore" or "ConsumableMixer"
             or "MasterLowHealth" or "MasterRadiationPenalty" or "MasterMedicalHealing")
             ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
+    }
+
+    // Source-audited mod Chance sidecar, not a native ParameterViewModel.
+    public static readonly DependencyProperty ModItemsEnabledProperty = DependencyProperty.Register(
+        nameof(ModItemsEnabled), typeof(bool), typeof(AggregateVisualControl),
+        new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender
+            | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+    public bool ModItemsEnabled
+    {
+        get => (bool)GetValue(ModItemsEnabledProperty);
+        set => SetCurrentValue(ModItemsEnabledProperty, value);
+    }
+
+    // Lock optional mod editing during the same build phase as the former WPF strip.
+    public static readonly DependencyProperty ModItemsEditorAvailableProperty = DependencyProperty.Register(
+        nameof(ModItemsEditorAvailable), typeof(bool), typeof(AggregateVisualControl),
+        new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsRender));
+    public bool ModItemsEditorAvailable
+    {
+        get => (bool)GetValue(ModItemsEditorAvailableProperty);
+        set => SetCurrentValue(ModItemsEditorAvailableProperty, value);
+    }
+
+    public static readonly DependencyProperty ModItemsRemovalProperty = DependencyProperty.Register(
+        nameof(ModItemsRemoval), typeof(double), typeof(AggregateVisualControl),
+        new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender
+            | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+    public double ModItemsRemoval
+    {
+        get => (double)GetValue(ModItemsRemovalProperty);
+        set => SetCurrentValue(ModItemsRemovalProperty, Math.Round(Math.Clamp(value, 0.0, 1.0), 2));
     }
 
     public static readonly DependencyProperty ParametersProperty = DependencyProperty.Register(
@@ -232,6 +269,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             }
         }
 
+        _npcModDragging = false;
+        _npcModFocused = false;
+        _npcModCheckbox = Rect.Empty;
+        _npcModRailHit = Rect.Empty;
+        _npcModRail = Rect.Empty;
         _radRingDragging = false;
         _radRingFocus = false;
         _radRingHadScrub = false;
@@ -1179,6 +1221,63 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             && (parameter.Id is "loot.npcMedicalChance" or "loot.npcWeaponAmmoSupply")
             && !NpcBonusPackageSelected();
 
+    private void DrawNpcModItemsCard(
+        DrawingContext dc, Rect card, Brush text, Brush muted, Brush border,
+        Brush accent, Brush panel)
+    {
+        var enabled = ModItemsEnabled && ModItemsEditorAvailable && IsEnabled;
+        var amount = Math.Clamp(ModItemsRemoval, 0.0, 1.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
+        DrawText(dc, "MOD ITEMS", new Point(card.Left + 12.0, card.Top + 11.0),
+            VisualControlTypography.CardTitle, enabled ? text : muted, FontWeights.Bold);
+        _npcModCheckbox = new Rect(card.Right - 32.0, card.Top + 8.0, 20.0, 20.0);
+        BooleanCheckboxChrome.Draw(dc, _npcModCheckbox, ModItemsEnabled,
+            IsEnabled && ModItemsEditorAvailable, _npcModHoverCheckbox, panel, border, accent);
+        DrawRightAlignedText(dc, $"{amount * 100:0}%",
+            new Point(_npcModCheckbox.Left - 14.0, card.Top + 10.0),
+            12.0, enabled && amount > Epsilon ? accent : enabled ? text : muted,
+            FontWeights.Bold);
+
+        _npcModRail = new Rect(card.Left + 20.0, card.Top + 50.0,
+            Math.Max(1.0, card.Width - 40.0), 12.0);
+        var y = _npcModRail.Top + _npcModRail.Height / 2.0;
+        var x = _npcModRail.Left + _npcModRail.Width * amount;
+        dc.DrawLine(new Pen(CloneWithOpacity(border, enabled ? .85 : .43), 3.5),
+            new Point(_npcModRail.Left, y), new Point(_npcModRail.Right, y));
+        if (enabled)
+            dc.DrawLine(new Pen(CloneWithOpacity(accent, .72), 3.5),
+                new Point(_npcModRail.Left, y), new Point(x, y));
+        IndustrialRulerChrome.DrawNativeTicks(dc, _npcModRail, 0.0, 1.0, 0.1, muted);
+        dc.DrawEllipse(panel, new Pen(enabled ? accent : muted, enabled ? 1.8 : 1.0),
+            new Point(x, y), 6.0, 6.0);
+        if (enabled)
+            dc.DrawEllipse(accent, null, new Point(x, y), 2.2, 2.2);
+        _npcModRailHit = new Rect(_npcModRail.Left - 8.0, _npcModRail.Top - 6.0,
+            _npcModRail.Width + 16.0, _npcModRail.Height + 12.0);
+        DrawText(dc, "0%", new Point(_npcModRail.Left, card.Bottom - 17.0),
+            9.0, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, "100%",
+            new Point(_npcModRail.Right, card.Bottom - 17.0),
+            9.0, muted, FontWeights.Normal);
+    }
+
+    private void UpdateNpcModItems(Point point)
+    {
+        if (Family != "NpcLootLoadout" || !ModItemsEnabled || !IsEnabled || !ModItemsEditorAvailable)
+            return;
+        var ratio = Math.Clamp(
+            (point.X - _npcModRail.Left) / Math.Max(1.0, _npcModRail.Width),
+            0.0, 1.0);
+        ModItemsRemoval = Math.Round(ratio, 2, MidpointRounding.AwayFromZero);
+    }
+
+    private void SelectNpcModItems()
+    {
+        _npcModFocused = true;
+        if (P("loot.npcCorpseBonus") is { } anchor)
+            RaiseParameterSelected(anchor);
+    }
+
     private void DrawNpcLootLoadout(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
@@ -1403,6 +1502,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawRightAlignedText(dc, "100%",
             new Point(rail.Right, rangeCard.Bottom - 19.0),
             9.5, muted, FontWeights.Normal);
+
+        // Dedicated peer card inside the same NPC board industrial frame.
+        DrawNpcModItemsCard(dc, new Rect(margin, 561.0, width, 88.0),
+            text, muted, border, accent, panel);
     }
 
     // World-loot placement operations are four separate booleans. The source
@@ -6199,6 +6302,27 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         Focus();
 
         var point = e.GetPosition(this);
+        if (Family == "NpcLootLoadout" && IsEnabled && ModItemsEditorAvailable)
+        {
+            if (_npcModCheckbox.Contains(point))
+            {
+                SelectNpcModItems();
+                ModItemsEnabled = !ModItemsEnabled;
+                e.Handled = true;
+                return;
+            }
+            if (_npcModRailHit.Contains(point))
+            {
+                SelectNpcModItems();
+                if (!ModItemsEnabled) return;
+                _npcModDragging = true;
+                CaptureMouse();
+                UpdateNpcModItems(point);
+                e.Handled = true;
+                return;
+            }
+            _npcModFocused = false;
+        }
         var couponMarker = Family == "CouponFlow"
             ? _couponMarkers.FirstOrDefault(m => m.Hit.Contains(point)) : default;
         if (couponMarker.Parameter is { IsControlEnabled: true })
@@ -6285,6 +6409,27 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         base.OnMouseMove(e);
 
         var point = e.GetPosition(this);
+        if (Family == "NpcLootLoadout")
+        {
+            if (_npcModDragging && e.LeftButton == MouseButtonState.Pressed)
+            {
+                UpdateNpcModItems(point);
+                e.Handled = true;
+                return;
+            }
+            var hoverCheckbox = ModItemsEditorAvailable && IsEnabled && _npcModCheckbox.Contains(point);
+            if (_npcModHoverCheckbox != hoverCheckbox)
+            {
+                _npcModHoverCheckbox = hoverCheckbox;
+                InvalidateVisual();
+            }
+            if (hoverCheckbox || (ModItemsEnabled && ModItemsEditorAvailable && IsEnabled && _npcModRailHit.Contains(point)))
+            {
+                SetHoverTarget(null);
+                Cursor = hoverCheckbox ? Cursors.Hand : Cursors.SizeWE;
+                return;
+            }
+        }
         UpdateStashChanceTooltip(point);
         if (Family == "CouponFlow" && _dragTarget is null)
         {
@@ -6421,6 +6566,13 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonUp(e);
+        if (_npcModDragging)
+        {
+            _npcModDragging = false;
+            ReleaseMouseCapture();
+            e.Handled = true;
+            return;
+        }
 
         if (_radRingDragging)
         {
@@ -6444,6 +6596,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     {
         base.OnMouseLeave(e);
         ToolTip = null;
+        if (_npcModHoverCheckbox)
+        {
+            _npcModHoverCheckbox = false;
+            InvalidateVisual();
+        }
         if (_hoverCouponMarker >= 0)
         {
             _hoverCouponMarker = -1;
@@ -6459,6 +6616,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     protected override void OnLostMouseCapture(MouseEventArgs e)
     {
         base.OnLostMouseCapture(e);
+        if (_npcModDragging)
+        {
+            _npcModDragging = false;
+            Cursor = Cursors.Arrow;
+        }
         if (_radRingDragging)
         {
             _radRingDragging = false;
@@ -6496,6 +6658,14 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseRightButtonDown(e);
+        if (Family == "NpcLootLoadout" && IsEnabled && ModItemsEditorAvailable && ModItemsEnabled
+            && _npcModRailHit.Contains(e.GetPosition(this)))
+        {
+            SelectNpcModItems();
+            ModItemsRemoval = 0.0;
+            e.Handled = true;
+            return;
+        }
         if (RadiationRingHit(e.GetPosition(this)))
         {
             _radLevel = 0.0;
@@ -6559,6 +6729,36 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     protected override void OnKeyDown(KeyEventArgs e)
     {
         base.OnKeyDown(e);
+
+        if (Family == "NpcLootLoadout" && _npcModFocused && IsEnabled && ModItemsEditorAvailable)
+        {
+            if (e.Key == Key.Space)
+            {
+                ModItemsEnabled = !ModItemsEnabled;
+                e.Handled = true;
+                return;
+            }
+            if (e.Key == Key.R)
+            {
+                ModItemsRemoval = 0.0;
+                e.Handled = true;
+                return;
+            }
+            var step = e.Key switch
+            {
+                Key.Right or Key.Up or Key.Add or Key.OemPlus => 1,
+                Key.Left or Key.Down or Key.Subtract or Key.OemMinus => -1,
+                _ => 0
+            };
+            if (ModItemsEnabled && (step != 0 || e.Key is Key.Home or Key.End))
+            {
+                ModItemsRemoval = e.Key == Key.Home ? 0.0
+                    : e.Key == Key.End ? 1.0
+                    : Math.Clamp(ModItemsRemoval + step * 0.01, 0.0, 1.0);
+                e.Handled = true;
+            }
+            return;
+        }
 
         // Category knobs use the same keys as all other source knobs.
         if (e.Key == Key.R)
@@ -7336,7 +7536,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "AnomalyGlobalDamage" => 242.0,
             "FlycatcherSlowdown" => FlycatcherBoardHeight(width),
             "AnomalySpecialEffects" => 270.0,
-            "NpcLootLoadout" => 564.0,
+            "NpcLootLoadout" => 662.0,
             "WorldLootLayout" => 275.0,
             "StashContentMix" => StashContentMixHeight(width),
             "StashMedicalComposition" => StashMedicalCompositionHeight(width),

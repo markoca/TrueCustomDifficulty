@@ -18,6 +18,7 @@ namespace TrueCustomDifficulty.Controls;
 public sealed class WorldLootRemovalRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
+    private const int ModLane = 5;
     // Shared vertical 0–100% physical ruler.
 
     private static readonly PopulationDefinition[] Populations =
@@ -36,6 +37,38 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
     private int _selectedRow;
     private int _hoverRow = -1;
     private int _dragRow = -1;
+    private Rect _modCheckbox = Rect.Empty;
+
+    // Optional mod item Chance modifier, not an extra native CFG source.
+    public static readonly DependencyProperty ModItemsEnabledProperty = DependencyProperty.Register(
+        nameof(ModItemsEnabled), typeof(bool), typeof(WorldLootRemovalRadar),
+        new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender
+            | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+    public bool ModItemsEnabled
+    {
+        get => (bool)GetValue(ModItemsEnabledProperty);
+        set => SetCurrentValue(ModItemsEnabledProperty, value);
+    }
+
+    // Lock optional mod editing during the same build phase as the former WPF strip.
+    public static readonly DependencyProperty ModItemsEditorAvailableProperty = DependencyProperty.Register(
+        nameof(ModItemsEditorAvailable), typeof(bool), typeof(WorldLootRemovalRadar),
+        new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsRender));
+    public bool ModItemsEditorAvailable
+    {
+        get => (bool)GetValue(ModItemsEditorAvailableProperty);
+        set => SetCurrentValue(ModItemsEditorAvailableProperty, value);
+    }
+
+    public static readonly DependencyProperty ModItemsRemovalProperty = DependencyProperty.Register(
+        nameof(ModItemsRemoval), typeof(double), typeof(WorldLootRemovalRadar),
+        new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender
+            | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+    public double ModItemsRemoval
+    {
+        get => (double)GetValue(ModItemsRemovalProperty);
+        set => SetCurrentValue(ModItemsRemovalProperty, Math.Round(Math.Clamp(value, 0.0, 1.0), 2));
+    }
 
     public static readonly DependencyProperty ParametersProperty = DependencyProperty.Register(
         nameof(Parameters),
@@ -130,16 +163,17 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
             technicalMarks: true);
 
         _targets.Clear();
+        _modCheckbox = Rect.Empty;
 
         DrawCenteredText(dc, "WORLD LOOT DEPLETION", new Point(ActualWidth / 2.0, 21.0),
             VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
 
 
-        // Five independent 0–100% depletion controls, on one physical ruler.
+        // Five native controls and one independent mod-item control share a ruler.
         const double plotTop = 111.0;
         const double plotBottom = 274.0;
         var left = 62.0;
-        var lane = (ActualWidth - left - 19.0) / Populations.Length;
+        var lane = (ActualWidth - left - 19.0) / (Populations.Length + 1);
         for (var step = 0; step <= 4; step++)
         {
             var y = plotBottom - (plotBottom - plotTop) * step / 4.0;
@@ -197,6 +231,35 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
                     Math.Max(32, barWidth + 12), plotBottom - plotTop),
                 new Rect(center - barWidth / 2, plotTop, barWidth, plotBottom - plotTop));
         }
+
+        // Sixth full-size vertical lane, with the same chrome as native controls.
+        var modCenter = left + (ModLane + .5) * lane;
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .33),
+            new Pen(CloneWithOpacity(border, .64), .8),
+            new Rect(left + ModLane * lane + 3, 69, lane - 6, 251), 4, 4);
+        var enabled = ModItemsEnabled && ModItemsEditorAvailable && IsEnabled;
+        var fraction = Math.Clamp(ModItemsRemoval, 0.0, 1.0);
+        var modY = plotBottom - (plotBottom - plotTop) * fraction;
+        var modWidth = Math.Min(39, lane * .37);
+        var modLeft = modCenter - modWidth / 2;
+        dc.DrawRectangle(CloneWithOpacity(border, .12), null,
+            new Rect(modLeft, plotTop, modWidth, plotBottom - plotTop));
+        dc.DrawRectangle(CloneWithOpacity(enabled ? accent : muted, enabled ? .72 : .15),
+            null, new Rect(modLeft, modY, modWidth, Math.Max(.5, plotBottom - modY)));
+        VerticalBarHandleChrome.Draw(dc, new Point(modCenter, modY), modWidth,
+            enabled ? accent : muted, _hoverRow == ModLane && enabled);
+        DrawCenteredText(dc, $"{fraction * 100.0:0}%",
+            new Point(modCenter, 88), 11.3,
+            enabled && fraction > Epsilon ? accent : enabled ? text : muted, FontWeights.Bold);
+        _modCheckbox = new Rect(modCenter - 52.0, 290.0, 18.0, 18.0);
+        BooleanCheckboxChrome.Draw(dc, _modCheckbox, ModItemsEnabled, IsEnabled && ModItemsEditorAvailable,
+            _hoverRow == ModLane, panel, border, accent);
+        DrawCenteredText(dc, "MOD ITEMS", new Point(modCenter + 14.0, 299.0),
+            9.0, enabled ? text : muted, FontWeights.Bold);
+        _targets[ModLane] = new HitTarget(
+            new Rect(modCenter - Math.Max(16, modWidth / 2 + 6), plotTop,
+                Math.Max(32, modWidth + 12), plotBottom - plotTop),
+            new Rect(modLeft, plotTop, modWidth, plotBottom - plotTop));
     }
 
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
@@ -204,8 +267,17 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
         base.OnMouseLeftButtonDown(e);
         Focus();
 
-        var row = FindTarget(e.GetPosition(this));
-        if (row < 0)
+        var point = e.GetPosition(this);
+        if (IsEnabled && ModItemsEditorAvailable && _modCheckbox.Contains(point))
+        {
+            _selectedRow = ModLane;
+            ModItemsEnabled = !ModItemsEnabled;
+            InvalidateVisual();
+            e.Handled = true;
+            return;
+        }
+        var row = FindTarget(point);
+        if (row < 0 || !IsEnabled || !ModItemsEditorAvailable || (row == ModLane && !ModItemsEnabled))
             return;
 
         _selectedRow = row;
@@ -220,7 +292,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
         base.OnMouseMove(e);
 
         var point = e.GetPosition(this);
-        var hover = FindTarget(point);
+        var hover = _modCheckbox.Contains(point) ? ModLane : FindTarget(point);
 
         if (hover != _hoverRow)
         {
@@ -228,7 +300,9 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
             InvalidateVisual();
         }
 
-        Cursor = hover >= 0 ? Cursors.SizeNS : Cursors.Arrow;
+        Cursor = _modCheckbox.Contains(point) && IsEnabled && ModItemsEditorAvailable ? Cursors.Hand
+            : hover >= 0 && (hover != ModLane || ModItemsEnabled) && IsEnabled && ModItemsEditorAvailable
+                ? Cursors.SizeNS : Cursors.Arrow;
 
         if (_dragRow < 0 || e.LeftButton != MouseButtonState.Pressed)
             return;
@@ -265,7 +339,18 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
         base.OnMouseRightButtonDown(e);
 
         var row = FindTarget(e.GetPosition(this));
-        if (row < 0 || _parameters[row] is not { } parameter)
+        if (row < 0 || !IsEnabled || !ModItemsEditorAvailable)
+            return;
+        if (row == ModLane)
+        {
+            if (!ModItemsEnabled) return;
+            _selectedRow = ModLane;
+            ModItemsRemoval = 0.0;
+            InvalidateVisual();
+            e.Handled = true;
+            return;
+        }
+        if (_parameters[row] is not { } parameter)
             return;
 
         _selectedRow = row;
@@ -278,6 +363,34 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
     protected override void OnKeyDown(KeyEventArgs e)
     {
         base.OnKeyDown(e);
+
+        if (_selectedRow == ModLane)
+        {
+            if (e.Key == Key.Space && IsEnabled && ModItemsEditorAvailable)
+            {
+                ModItemsEnabled = !ModItemsEnabled;
+                e.Handled = true;
+                return;
+            }
+            if (e.Key == Key.R && IsEnabled && ModItemsEditorAvailable)
+            {
+                ModItemsRemoval = 0.0;
+                e.Handled = true;
+                return;
+            }
+            var step = e.Key switch
+            {
+                Key.Up or Key.Right or Key.Add or Key.OemPlus => 1,
+                Key.Down or Key.Left or Key.Subtract or Key.OemMinus => -1,
+                _ => 0
+            };
+            if (step != 0 && ModItemsEnabled && IsEnabled && ModItemsEditorAvailable)
+            {
+                ModItemsRemoval = Math.Clamp(ModItemsRemoval + step * 0.01, 0.0, 1.0);
+                e.Handled = true;
+            }
+            return;
+        }
 
         if (e.Key == Key.R)
         {
@@ -312,7 +425,19 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
 
     private void UpdateFromPoint(int row, Point point)
     {
-        if (!_targets.TryGetValue(row, out var target) || _parameters[row] is not { } parameter)
+        if (!_targets.TryGetValue(row, out var target))
+            return;
+        if (row == ModLane)
+        {
+            if (!ModItemsEnabled || !IsEnabled || !ModItemsEditorAvailable) return;
+            var ratio = Math.Clamp(
+                (target.MapRect.Bottom - point.Y) / Math.Max(1.0, target.MapRect.Height),
+                0.0, 1.0);
+            ModItemsRemoval = Math.Round(ratio, 2, MidpointRounding.AwayFromZero);
+            InvalidateVisual();
+            return;
+        }
+        if (_parameters[row] is not { } parameter)
             return;
 
         var ratio = Math.Clamp(
