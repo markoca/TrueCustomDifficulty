@@ -3655,3 +3655,8 @@ WPF cross-build revealed shadowing of the existing horizontal renderer's local `
 ### 2026-11-15 — Eliminate duplicate retired generic stock signature assertion
 
 - Both generic trader audit hook checks now use the same current argument-bearing `WriteGenericNpcRareTraderStock(` signature. A second copy of the stale no-argument assertion was found after the order check. Assert the actual caller arguments separately; retain all nine source-profile, trader-only isolation and preset/UI checks.
+
+
+### 2026-11-15 — Complete duplicate-audit cleanup
+
+- The previous generic-NPC rare-trader audit unexpectedly contained a second copy of the checks after its first PASS footer, including an obsolete invocation assertion. Remove the duplicate while retaining one complete nine-profile test, source scope verification, writer ordering check and UI/preset checks. The script has one regex parse and one PASS footer again. No gameplay CFG or control logic changed.
