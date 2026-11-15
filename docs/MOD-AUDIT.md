@@ -23,7 +23,7 @@ Use source-exact names, including source misspellings. Never quietly map `Junk` 
 | 001 | Sleeping Bag (packaged plugin version `1.0`) | `SBM_Item` | `Trader_Cosnsumables_ItemGenerator` → new `SBM` category | **Source audited, runtime unverified; direct native category filtering does not cover this new leaf** |
 | 002 | ZoneWatch / ZST — Zone Standard Time (NewContent PAK) | Not yet verified (item CFG Oodle) | `ItemGeneratorPrototypes/zZST_FieldWatch110.cfg` (Oodle) | **Container/index audited; exact generator and item definitions pending decompression** |
 | 003 | Point of No Return — Backpacks Pack | Not decoded (Oodle) | Mod-owned ItemGeneratorPrototypes.cfg plus native-path zBackpackGeneratorPatch.cfg | **Container + plaintext audited; generator paths and item SIDs pending Oodle extraction** |
-| 004 | Point of No Return — Repair System | Item prototypes present, SIDs not decoded (Oodle) | Mod-owned `RepairKitItemGenerators.cfg` plus native-path `zRepairKitGeneratorPatch.cfg` | **PAKs and plaintext verified; generator and actual kit identities pending Oodle; additional CoreVariables durability interaction** |
+| 004 | Point of No Return — Repair System | **12 decoded item SIDs, common consumable template** | **7 source pools + 80 native-root BPatch additions** (20 traders, 1 generic trade, 4 stashes, 55 NPC loot) | **Source decoded and joined to TCD 2.1; runtime coexistence/repair effects pending** |
 
 ---
 
@@ -465,3 +465,120 @@ Confirms one flag-effect prototype intended by its name to block an item-removal
 - [ ] Design any mod-aware overlay/category mapping only once actual source paths and item prototypes are known and runtime interactions are tested.
 
 **Status:** confirmed container integrity, complete 2-PAK inventory, 3 complete CFG texts, and plugin metadata. Critical **8 Oodle CFGs are not decompressed**, so named kit SIDs, exact generator integration, spawn probability and repair behavior are **not yet verifiable**. **Documentation-only audit: no TCD code, UI, presets, baseline manifests or generator writers changed.**
+
+### 2026-11-15 decoded-source addendum — definitive generator and item map
+
+**This section supersedes the earlier “not decoded” status for the following three CFGs only.** Original user-supplied PAK bytes were checked against each package's embedded SHA-1 digests before decoding. A Linux CI job compiled the GPL-licensed [q3k/pyooz](https://github.com/q3k/pyooz) (open-source Oodle/Kraken decoder) and successfully expanded the three actual packaged Kraken streams. Every result passed the exact expected decompressed-byte length and UTF-8 decode. Read-only decoding; no changes to either original mod PAK.
+
+| Exact CFG in submitted PAK | Decoded bytes | SHA-256 of decoded content |
+|---|---:|---|
+| OverrideContent: `ItemGeneratorPrototypes/zRepairKitGeneratorPatch.cfg` | 56,987 | `88feb87d1fcf89f7f97a2c55c70a3d9f2d2f32bbfa71d6bf337b1a91230c585a` |
+| NewContent: `ItemGeneratorPrototypes/RepairKitItemGenerators.cfg` | 11,238 | `c12acd2505f5b1ba0c9c398efb2bffb082be83439e6e6cbb757c486a6cd968b5` |
+| NewContent: `ItemPrototypes/RepairKitPrototypes.cfg` | 10,363 | `b446af6e1eb5f71b7a005a13a5199a0c4bc4768d2f0e64fbd4f686705325e8b0` |
+
+**Caution:** eight CFGs were compressed in the supplied 2-PAK set. **Three** of those eight are decoded here; the **five remaining** effect, quest, mesh and shake CFGs are still compressed/not audited at full-text level. TCD runtime coexistence is not proven by decoding alone.
+
+#### Exact item prototype evidence: 12 concrete kits + 1 template
+
+`RepairKitTemplate` inherits `@BaseGame/ItemPrototypes/ConsumablePrototypes.cfg;refkey=TemplateConsumable`. All twelve concrete kit SIDs below inherit `refkey=RepairKitTemplate`. This is a **Consumable prototype lineage**, not proof they should be governed by every vanilla consumable generator toggle. Values below are source-authored kit `Weight` and `Cost`, not spawn probabilities.
+
+| Intended equipment group (source comment) | ItemPrototypeSID | Item Weight | Item Cost |
+|---|---|---:|---:|
+| Weapon | `Ramrod` | 0.3 | 1,200 |
+| Weapon | `GunCleaningSolvent` | 0.2 | 1,700 |
+| Weapon | `WeaponCleaningKit` | 0.6 | 3,100 |
+| Weapon | `WeaponMediumRepairKit` | 1.2 | 3,700 |
+| Weapon | `WeaponHeavyRepairKit` | 2.2 | 7,900 |
+| Armor | `GlueTubeStar` | 0.12 | 1,200 |
+| Armor | `GlueTubeH96` | 0.45 | 1,700 |
+| Armor | `BasicSewingKit` | 0.5 | 3,100 |
+| Helmet | `EmergencyHelmetKit` | 0.35 | 3,100 |
+| Armor | `FieldArmorKit` | 0.7 | 4,300 |
+| Armor | `HeavySewingKit` | 2.1 | 9,000 |
+| Universal | `UniversalRepairKit` | 3.5 | 12,200 |
+
+The source defines per-item `EffectPrototypeSIDs` for description, tier and use-effects; their implementation lives in the still-compressed `RepairKitEffectPrototypes.cfg`. The use-time strength, condition floor/ceiling and consumed-item behavior therefore remain unverified. Items are 1x1 grid by template except three explicit larger items: `WeaponHeavyRepairKit` (2x1), `HeavySewingKit` (2x1) and `UniversalRepairKit` (2x2).
+
+#### Mod-owned pool graph — 7 new generator roots
+
+All seven roots use `{refurl=@BaseGame/ItemGeneratorPrototypes.cfg;refkey=[0]}`, declare their own SID, and define an `ItemGenerator` subtree.
+
+| Modded generator | Contents / source-defined weights |
+|---|---|
+| `RepairKitNewbiePool` | Ramrod 40; GlueTubeStar 40; GunCleaningSolvent 12; GlueTubeH96 12 |
+| `RepairKitExperiencedPool` | Ramrod 25; GlueTubeStar 25; GunCleaningSolvent 30; GlueTubeH96 30; WeaponCleaningKit 12; BasicSewingKit 12; EmergencyHelmetKit 10 |
+| `RepairKitVeteranPool` | GunCleaningSolvent 15; GlueTubeH96 15; WeaponCleaningKit 30; BasicSewingKit 30; EmergencyHelmetKit 25; WeaponMediumRepairKit 20; FieldArmorKit 18; WeaponHeavyRepairKit 5; HeavySewingKit 5 |
+| `RepairKitMasterPool` | WeaponCleaningKit 15; BasicSewingKit 15; EmergencyHelmetKit 12; WeaponMediumRepairKit 25; FieldArmorKit 22; WeaponHeavyRepairKit 18; HeavySewingKit 18; UniversalRepairKit 6 |
+| `RepairKitPoolGeneric` | Four `SubItemGenerator` groups conditioned individually on `PlayerRank` Newbie/Experienced/Veteran/Master, each referencing its matching rank pool with `Weight = 1`, `MinCount = MaxCount = 1` |
+| `RepairKitStashPool` | Four rank-pool references with weights Newbie 85 / Experienced 15 / Veteran 1 / Master 1 |
+| `RepairKitTraderPool` | Four rank-pool references with weights Newbie 65 / Experienced 25 / Veteran 8 / Master 2 |
+
+Each rank pool uses `EItemGenerationCategory::Consumable` and per-item `Weight` fields, **not** per-item guaranteed chance. The selected-weight totals vary (e.g. the stash pool totals 102); don't silently normalize author-authored values or interpret weights as percentages without generator runtime evidence.
+
+#### Exact native patch: 80 independent BPatch root additions
+
+All 80 roots follow the same native-target pattern: `<NativeGeneratorSID> : struct.begin {bpatch}` → `ItemGenerator : struct.begin {bpatch}` → **new named `RepairKits` node**, `Category = EItemGenerationCategory::SubItemGenerator`, `PlayerRank = ERank::Newbie, ERank::Experienced, ERank::Veteran, ERank::Master`, `bAllowSameCategoryGeneration = true`; `PossibleItems/[*]` targets one of the seven mod-owned pool SIDs.
+
+| Native source domain | Affected root count | Pool / chance / authored quantity |
+|---|---:|---|
+| Named trader stock | **20** | Based on trader region: `RepairKitNewbiePool`, `RepairKitExperiencedPool`, `RepairKitVeteranPool` or `RepairKitMasterPool`; `Chance = 1`; `MinCount = 5`, `MaxCount = 15` |
+| Generic NPC **trading inventory** | **1** | `GeneralNPC_TradeItemGenerator` → `RepairKitTraderPool`; `Chance = 0.6`, `MinCount = 1`, `MaxCount = 3` |
+| Stash generators | **4** | `GamePass_Stash_ItemGenerator_Cheap`, `GamePass_Stash_ItemGenerator_Common_Var1`, `GamePass_Stash_ItemGenerator_Common_Var2`, `GamePass_Stash_ItemGenerator_Rare` → `RepairKitStashPool`; `Chance = 0.05`, `MinCount = MaxCount = 1` |
+| Generic NPC **loot** | **55** | faction/loadout `GeneralNPC_..._ItemGenerator` → `RepairKitPoolGeneric`; `Chance = 0.04`, `MinCount = MaxCount = 1` |
+
+The **20 named trader roots**, exactly as authored:
+
+- **Newbie:** `NewbeeVillageTrader_TradeItemGenerator`, `TraderChemicalPlant_TradeItemGenerator`, `TraderZalesie_TradeItemGenerator`.
+- **Experienced:** `AsylumTrader_TradeItemGenerator`, `IkarTrader_TradeItemGenerator`, `ShevchenkoTrader_TradeItemGenerator`, `SultanskTrader_TradeItemGenerator`, `TraderTerikon_TradeItemGenerator`.
+- **Veteran:** `CementPlantTrader_TradeItemGenerator`, `EgerTrader_TradeItemGenerator`, `MalakhitTrader_TradeItemGenerator`, `RedForestTrader_TradeItemGenerator`, `RostokTraderArmor_TradeItemGenerator`, `RostokTraderNato_TradeItemGenerator`, `RostokTraderSoviet_TradeItemGenerator`, `SelmaTrader_TradeItemGenerator`, `TraderSuska_TradeItemGenerator`, `VartaTrader_TradeItemGenerator`.
+- **Master:** `PripyatTrader_TradeItemGenerator`, `YanovTrader_TradeItemGenerator`.
+
+These groupings refer to the specific **pool each trader was assigned**, not the player's active difficulty/preset. One root is not necessarily a unique vendor NPC. All 20 named trader root SIDs are present in the TCD 2.1 source-exact SELL inventory and join to matching trade profiles; `GeneralNPC_TradeItemGenerator` also joins to `GeneralNPC_TradePrototype`. The other 59 additions are stash/corpse routes, not trader SELL inventory entries.
+
+**Example of exact mod-owned patch semantics:**
+
+~~~cfg
+GeneralNPC_TradeItemGenerator : struct.begin {bpatch}
+    ItemGenerator : struct.begin {bpatch}
+        RepairKits : struct.begin
+            Category = EItemGenerationCategory::SubItemGenerator
+            PlayerRank = ERank::Newbie, ERank::Experienced, ERank::Veteran, ERank::Master
+            bAllowSameCategoryGeneration = true
+            PossibleItems : struct.begin
+                [*] : struct.begin
+                    ItemGeneratorPrototypeSID = RepairKitTraderPool
+                    Chance = 0.6
+                    MinCount = 1
+                    MaxCount = 3
+                struct.end
+            struct.end
+        struct.end
+    struct.end
+struct.end
+~~~
+
+The `0.6` and `0.04` are **per-patch PossibleItems Chance fields**, not proven actual percentages of NPCs offering or dropping kits, which may depend on ancestor rolls and refresh rules. Neither the 5–15 count nor pool Weight proves an actual vendor inventory count without runtime tests.
+
+#### TCD compatibility: corrected conclusions after decoding
+
+1. **Confirmed cross-domain overlap.** This mod extends native roots used by existing TCD Trader Stock, Generic NPC trade, Stashes and NPC corpse loot logic. These are all explicit source paths now, rather than speculative filename-based integrations.
+2. **Existing TCD native SELL filters are incomplete for modded branches.** TCD `WriteTraderSells` reads a 2.1 fixed-hash inventory of **native leaves**, uses copy-on-write inherited clone SIDs, and removes only source-manifest leaves. None of the 12 repair-kit SIDs or new `RepairKits` branches appear in that manifest. Disabling Medical or other native category is **not** documented to remove repair-kit branches. The `SubItemGenerator` group category and `Consumable` child category must be tracked distinctly.
+3. **Potential COW inheritance concern is specific and testable.** If a TCD-altered vendor's trade root points to a cloned generator inheriting the same source SID patched by Repair System, the `RepairKits` sibling could propagate — or fail to propagate — depending on BPatch/inheritance/load order. Test this at the actual 20 matching named roots plus the generic NPC trade root before promising automatic inclusion.
+4. **Stashes and NPC loot require independent overlay routes.** TCD's existing native stash/generator controls may target other portions of those shared roots, and repair-kit additions can bypass pre-enumerated loot pools. Map 4 native stash target SIDs and 55 NPC loadout target SIDs explicitly if implementing mod-aware category filtering.
+5. **Do not confuse repair kit item weights with generator weights.** `Weight = 0.2` in an item prototype represents item mass, whereas `Weight = 30` inside `PossibleItems` is weighted selection. Scaling or filtering one must not implicitly edit the other.
+6. **Equipment/economy side effects remain separate:** the decoded item costs and weights alone do not prove that TCD global item-price scalers, service costs, consumable mass, armor wear, or weapon wear apply to them. The mod's independently verified `CoreVariables.cfg_patch_pnr_rs` modifies four durability globals; preserve those values until a deliberate compatibility design is established.
+7. **No runtime claim:** direct CFG decoding validates author intent, not engine acceptance. Actual mod+TCD patch order, quantities, ranks, refresh, corpse rewards and use effects must still be tested in-game.
+
+#### Remaining audit / implementation gates after successful decoding
+
+- [x] Decode the **three critical CFGs**; verify expected sizes and record SHA-256.
+- [x] Enumerate all **12** concrete kit item SIDs and their base `RepairKitTemplate`.
+- [x] Enumerate **seven** new mod-defined generator pool roots and their item/pool weights.
+- [x] Enumerate **80** exact original-game `{bpatch}` root additions (20 named traders + 1 generic trader + 4 stashes + 55 NPC loot).
+- [x] Join 20 named trader roots plus generic trade root to TCD's exact game 2.1 SELL manifest.
+- [ ] Decode remaining **five** compressed CFGs (repair effects, quest nodes/prototype, mesh and camera shake) for actual repair mechanics, quest acquisition and inventory use behavior.
+- [ ] Run game 2.1 mod-only / TCD-only / combined acceptance; verify effect of TCD category/stock controls, native stash quantities, rank pools and actual repair kit results.
+- [ ] Specify mod content overlay and per-domain inheritance/merge rules before implementing a new TCD mod-support feature.
+- [ ] Keep source-payload redistributions out of the public repository; retain this derived SID and field audit as the canonical documentation.
+
+**Revised status: source-level kit identity, rank pools and generation routes VERIFIED; in-game behavior and cross-patch merge behavior NOT YET VERIFIED. No TCD UI, gameplay, preset or writer changes.**
