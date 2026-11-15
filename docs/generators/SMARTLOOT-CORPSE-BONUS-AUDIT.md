@@ -98,3 +98,8 @@ Previous icon-only / 836-DIP UI screenshots in this historical audit are superse
 The related **BONUS AMMO QTY** slider now sits to the left, immediately above a shortened nine-sample **BONUS AMMO STACKS** panel. It edits `NPC_Ammo_Smart` quantity (`MinCount/MaxCount`, 0–3×) only when the Medicine + Ammo package is active. Its saved setting remains intact but muted and non-interactive for Water/None; even a previously changed value cannot paint an inactive preview yellow.
 
 The **STANDARD MED** slider sits separately to the right. It is a distinct 0–2× source-relative `ItemGeneratorPrototypes.cfg` medical Chance control, independent of the chosen bonus package; the checked per-item absolute-Chance sliders below may override its factor for individual SIDs. Both systems preserve their existing source IDs, preset keys, 33 scoped standard-human redirects, quest/named/zombie exclusions and original CFG fields. In-game 100% per-entry Chance is not a per-corpse guarantee.
+
+
+## 2026-11-15 — four-peer horizontal NPC strip
+
+Corpse SmartLoot's same MED + AMMO / WATER / NONE options now occupy the first compact card alongside peer **AMMO QTY**, **STANDARD MED**, and **MOD ITEMS**. At host width >=714 DIP they sit in a single row; narrower windows wrap into two pairs. The option value mapping, conditional ammo gating, medical generator independence, preset keys and CFG writer remain unchanged. The preview now follows immediately below the compact strip. Echo Detector Chance is excluded from the NPC UI.

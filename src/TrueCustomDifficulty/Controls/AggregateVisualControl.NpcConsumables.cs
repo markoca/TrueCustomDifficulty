@@ -71,8 +71,9 @@ public sealed partial class AggregateVisualControl
 
         const double margin = 17.0;
         const double gap = 9.0;
-        // Compact source-aware board: sits directly after mod reduction, no gap.
-        const double top = 553.0;
+        // Compact source-aware board follows the shared top editor strip
+        // and the condition card at both responsive widths.
+        var top = NpcLootConsumablesTop(ActualWidth);
         const double rowHeight = 31.0;
         const double headerHeight = 27.0;
         var fullWidth = Math.Max(1.0, ActualWidth - 2.0 * margin);

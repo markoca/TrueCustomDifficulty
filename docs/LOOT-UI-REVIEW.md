@@ -66,3 +66,8 @@ The actual destructible ammo/grenade yield sliders continue to be edited through
 ## 2026-11-15 — Current NPC SmartLoot grouping
 
 In NPC LOOT & EQUIPMENT, the package choice is labeled CORPSE SMART LOOT and its three chips are MED + AMMO / WATER / NONE. BONUS AMMO QTY is the conditional 0–3× stack quantity slider (not an ammo drop Chance); the nine rank-aware preview amounts follow it and stay muted when bonus ammo is inactive. STANDARD MED is a separate, always-editable 0–2× source-Chance multiplier, and the ten optional per-SID absolute Chance sliders remain in their own compact 3-column group. The total board is now 720 DIP high, with a 98-DIP nine-example preview and a centered 420-DIP-capped MOD ITEMS card; older 784/836-DIP layouts are historical. Gameplay writer, catalog IDs and presets remain unchanged by this reorganization.
+
+
+## 2026-11-15 — current NPC SmartLoot horizontal peer strip
+
+The four compact peers CORPSE SMART LOOT / AMMO QTY / STANDARD MED / MOD ITEMS share one aligned row (>=714 DIP) or two pairs (<714 DIP), with the independent ammo sample preview, condition band, and per-SID consumables below. No full-width slider cards, separate mod band, or Echo Chance control. The measured NPC board is 558 DIP wide / 656 DIP narrow; source values and writer logic are unchanged.

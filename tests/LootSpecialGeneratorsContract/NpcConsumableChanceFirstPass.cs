@@ -71,9 +71,13 @@ internal static partial class Program
             NpcConsumables = uiVm.NpcConsumableItems
         };
         npcBoard.Measure(new System.Windows.Size(760.0, 1000.0));
-        Check(Math.Abs(npcBoard.DesiredSize.Height - 720.0) < 0.000001
+        Check(Math.Abs(npcBoard.DesiredSize.Height - 558.0) < 0.000001
             && ReferenceEquals(npcBoard.NpcConsumables, uiVm.NpcConsumableItems),
             "Ten source-backed item editors did not mount inside the compact NPC board");
+        npcBoard.Measure(new System.Windows.Size(600.0, 1000.0));
+        Check(Math.Abs(npcBoard.DesiredSize.Height - 656.0) < 0.000001,
+            "NPC peer slider row did not wrap into two compact rows at narrow width");
+        npcBoard.Measure(new System.Windows.Size(760.0, 1000.0));
 
         var npcRationale = uiVm.AllParameters.Single(p => p.Id == "loot.npcCorpseBonus")
             .RationaleDisplay;

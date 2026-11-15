@@ -1222,25 +1222,28 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             && parameter.Id == "loot.npcWeaponAmmoSupply"
             && !NpcBonusPackageSelected();
 
+    // The mod generator reduction is a peer of the three ordinary Corpse
+    // SmartLoot editors. Keep it opt-in, with a native compact checkbox and
+    // its own rail rather than a separate full-width band.
     private void DrawNpcModItemsCard(
         DrawingContext dc, Rect card, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
         var enabled = ModItemsEnabled && ModItemsEditorAvailable && IsEnabled;
         var amount = Math.Clamp(ModItemsRemoval, 0.0, 1.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
-        DrawText(dc, "MOD ITEMS", new Point(card.Left + 12.0, card.Top + 11.0),
-            VisualControlTypography.CardTitle, enabled ? text : muted, FontWeights.Bold);
-        _npcModCheckbox = new Rect(card.Right - 32.0, card.Top + 8.0, 20.0, 20.0);
+        IndustrialChrome.DrawRecessedCard(dc, card, panel, border);
+        _npcModCheckbox = new Rect(card.Left + 10.0, card.Top + 12.0, 16.0, 16.0);
         BooleanCheckboxChrome.Draw(dc, _npcModCheckbox, ModItemsEnabled,
             IsEnabled && ModItemsEditorAvailable, _npcModHoverCheckbox, panel, border, accent);
+        DrawText(dc, "MOD ITEMS", new Point(card.Left + 32.0, card.Top + 13.0),
+            9.0, enabled ? text : muted, FontWeights.Bold);
         DrawRightAlignedText(dc, $"{amount * 100:0}%",
-            new Point(_npcModCheckbox.Left - 14.0, card.Top + 10.0),
-            12.0, enabled && amount > Epsilon ? accent : enabled ? text : muted,
-            FontWeights.Bold);
+            new Point(card.Right - 10.0, card.Top + 11.0),
+            10.8, enabled && amount > Epsilon ? accent : enabled ? text : muted,
+            FontWeights.SemiBold);
 
-        _npcModRail = new Rect(card.Left + 20.0, card.Top + 39.0,
-            Math.Max(1.0, card.Width - 40.0), 12.0);
+        _npcModRail = new Rect(card.Left + 13.0, card.Top + 54.0,
+            Math.Max(1.0, card.Width - 26.0), 12.0);
         var y = _npcModRail.Top + _npcModRail.Height / 2.0;
         var x = _npcModRail.Left + _npcModRail.Width * amount;
         dc.DrawLine(new Pen(CloneWithOpacity(border, enabled ? .85 : .43), 3.5),
@@ -1253,8 +1256,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             new Point(x, y), 6.0, 6.0);
         if (enabled)
             dc.DrawEllipse(accent, null, new Point(x, y), 2.2, 2.2);
-        _npcModRailHit = new Rect(_npcModRail.Left - 8.0, _npcModRail.Top - 6.0,
-            _npcModRail.Width + 16.0, _npcModRail.Height + 12.0);
+        _npcModRailHit = new Rect(_npcModRail.Left - 7.0, _npcModRail.Top - 4.0,
+            _npcModRail.Width + 14.0, _npcModRail.Height + 8.0);
     }
 
     private void UpdateNpcModItems(Point point)
@@ -1272,6 +1275,64 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         _npcModFocused = true;
         if (P("loot.npcCorpseBonus") is { } anchor)
             RaiseParameterSelected(anchor);
+    }
+
+    // Four source-backed peer editors share a single compact header row.
+    // The same breakpoint drives measurement and paint, so narrow windows
+    // wrap to two horizontal pairs without truncating three choice chips.
+    private static bool NpcLootOneRow(double hostWidth) => hostWidth >= 714.0;
+    private static double NpcLootPreviewTop(double hostWidth)
+        => NpcLootOneRow(hostWidth) ? 154.0 : 252.0;
+    private static double NpcLootConditionTop(double hostWidth)
+        => NpcLootPreviewTop(hostWidth) + 110.0;
+    private static double NpcLootConsumablesTop(double hostWidth)
+        => NpcLootConditionTop(hostWidth) + 127.0;
+    private static double NpcLootBoardHeight(double hostWidth)
+        => NpcLootConsumablesTop(hostWidth) + 167.0;
+
+    // Stamina Usage grammar in a narrow card: caption on the left, changed
+    // number on the right, one native marker and one editable rail below.
+    // Do not use the general 126-DIP value-reserve track on 140-DIP cards.
+    private void DrawNpcCompactScalar(
+        DrawingContext dc, ParameterViewModel parameter, string label, Rect card,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        var enabled = parameter.IsControlEnabled && !IsNpcBonusSliderLocked(parameter);
+        var hovered = enabled && ReferenceEquals(_hoverTarget?.Parameter, parameter);
+        IndustrialChrome.DrawRecessedCard(dc, card, panel,
+            enabled ? border : CloneWithOpacity(border, 0.55));
+        var value = ComparablePairedValue(parameter, parameter.CurrentNumber);
+        var valueText = CreateText(value, 10.8, enabled && parameter.IsValueModifiedFromReference()
+            ? accent : enabled ? text : muted, FontWeights.SemiBold);
+        var valueLeft = card.Right - 10.0 - valueText.WidthIncludingTrailingWhitespace;
+        dc.DrawText(CreateText(label, 9.1, enabled ? text : muted, FontWeights.Bold,
+                Math.Max(1.0, valueLeft - card.Left - 19.0)),
+            new Point(card.Left + 9.0, card.Top + 12.0));
+        dc.DrawText(valueText, new Point(valueLeft, card.Top + 10.0));
+
+        var rail = new Rect(card.Left + 13.0, card.Top + 54.0,
+            Math.Max(1.0, card.Width - 26.0), 12.0);
+        var y = rail.Top + rail.Height / 2.0;
+        var x = ValueToX(parameter.CurrentNumber, parameter.Minimum,
+            parameter.Maximum, rail, false);
+        dc.DrawLine(new Pen(CloneWithOpacity(border, enabled ? .9 : .45), 3.5),
+            new Point(rail.Left, y), new Point(rail.Right, y));
+        if (enabled)
+            dc.DrawLine(new Pen(CloneWithOpacity(accent, .65), 3.5),
+                new Point(rail.Left, y), new Point(x, y));
+        IndustrialRulerChrome.DrawNativeTicks(dc, rail, parameter.Minimum,
+            parameter.Maximum, parameter.TickFrequency, muted);
+        DrawReferenceTick(dc, parameter, rail, y, muted);
+        dc.DrawEllipse(panel, new Pen(enabled ? accent : muted,
+            hovered || IsSelected(parameter) ? 2.4 : 1.5),
+            new Point(x, y), 5.8, 5.8);
+        if (enabled)
+        {
+            dc.DrawEllipse(accent, null, new Point(x, y), 2.2, 2.2);
+            AddHorizontalTarget(parameter, new Rect(rail.Left - 7.0, rail.Top - 4.0,
+                rail.Width + 14.0, rail.Height + 8.0),
+                rail, parameter.Minimum, parameter.Maximum);
+        }
     }
 
     private void DrawNpcLootLoadout(
@@ -1292,22 +1353,63 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
 
         const double margin = 17.0;
-        const double gap = 10.0;
+        const double gap = 8.0;
+        const double cardTop = 54.0;
+        const double cardHeight = 88.0;
         var width = Math.Max(1.0, ActualWidth - 2.0 * margin);
-        var choiceCard = new Rect(margin, 54.0, width, 90.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
-            choiceCard, 4.0, 4.0);
-        // Only these three authored source combinations are currently verified.
-        // Each chip names the exact bonus package, not a generic drop rate.
-        DrawText(dc, "CORPSE SMART LOOT", new Point(margin + 11.0, 61.0),
-            10.6, text, FontWeights.Bold);
+        var rowWidth = Math.Min(width, 726.0);
+        var left = margin + (width - rowWidth) / 2.0;
+        var oneRow = NpcLootOneRow(ActualWidth);
+
+        Rect choiceCard;
+        Rect ammoCard;
+        Rect medicalCard;
+        Rect modCard;
+        if (oneRow)
+        {
+            // The package takes 36% for three readable choices; the other
+            // three native peers receive equal, compact slider lanes.
+            var usable = rowWidth - 3.0 * gap;
+            var choiceWidth = usable * 0.36;
+            var ammoWidth = usable * 0.21;
+            var medWidth = usable * 0.21;
+            choiceCard = new Rect(left, cardTop, choiceWidth, cardHeight);
+            ammoCard = new Rect(choiceCard.Right + gap, cardTop, ammoWidth, cardHeight);
+            medicalCard = new Rect(ammoCard.Right + gap, cardTop, medWidth, cardHeight);
+            modCard = new Rect(medicalCard.Right + gap, cardTop,
+                rowWidth - (medicalCard.Right + gap - left), cardHeight);
+        }
+        else
+        {
+            // On narrow hosts use two centered peer rows instead of four
+            // illegibly thin or overlapping rails.
+            rowWidth = Math.Min(rowWidth, 540.0);
+            left = margin + (width - rowWidth) / 2.0;
+            var choiceWidth = (rowWidth - gap) * 0.56;
+            choiceCard = new Rect(left, cardTop, choiceWidth, cardHeight);
+            ammoCard = new Rect(choiceCard.Right + gap, cardTop,
+                rowWidth - choiceWidth - gap, cardHeight);
+            var lowerTop = cardTop + cardHeight + 10.0;
+            var half = (rowWidth - gap) / 2.0;
+            medicalCard = new Rect(left, lowerTop, half, cardHeight);
+            modCard = new Rect(left + half + gap, lowerTop, half, cardHeight);
+        }
+
+        // This selector chooses an exact source package, not a drop chance.
+        IndustrialChrome.DrawRecessedCard(dc, choiceCard, panel, border);
+        DrawText(dc, "CORPSE SMART LOOT",
+            new Point(choiceCard.Left + 9.0, choiceCard.Top + 12.0),
+            9.2, text, FontWeights.Bold);
         var count = corpse.ChoiceOptions.Count;
-        var cell = Math.Min(112.0, (width - 22.0 - (count - 1) * gap) / count);
-        var groupWidth = count * cell + (count - 1) * gap;
-        var start = margin + (width - groupWidth) / 2.0;
+        var chipGap = 4.0;
+        var cell = Math.Min(88.0,
+            (choiceCard.Width - 16.0 - (count - 1) * chipGap) / count);
+        var groupWidth = count * cell + (count - 1) * chipGap;
+        var start = choiceCard.Left + (choiceCard.Width - groupWidth) / 2.0;
         for (var i = 0; i < count; i++)
         {
-            var rect = new Rect(start + i * (cell + gap), 88.0, cell, 43.0);
+            var rect = new Rect(start + i * (cell + chipGap),
+                choiceCard.Top + 35.0, cell, 43.0);
             var selected = Math.Abs(corpse.ChoiceIndex - i) < 0.5;
             var hover = _hoverTarget?.Kind == HitKind.Choice
                 && Math.Abs(_hoverTarget.VisualMinimum - i) < Epsilon;
@@ -1315,7 +1417,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 selected ? CloneWithOpacity(accent, 0.10) : panel,
                 new Pen(selected ? accent : hover ? CloneWithOpacity(accent, 0.7) : border,
                     selected ? 1.6 : 0.9), rect, 4.0, 4.0);
-            // Explicit package captions avoid guessing what an icon means.
             var optionValue = corpse.ChoiceOptions[i].Value;
             DrawNpcCorpsePackageIcon(dc, optionValue,
                 new Point(rect.Left + rect.Width / 2.0, rect.Top + 13.0),
@@ -1326,21 +1427,16 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                     ? "WATER" : "NONE";
             DrawCenteredText(dc, optionLabel,
                 new Point(rect.Left + rect.Width / 2.0, rect.Top + 30.0),
-                8.9, selected ? accent : text, FontWeights.Bold);
+                8.1, selected ? accent : text, FontWeights.Bold);
             if (corpse.IsControlEnabled)
                 _hitTargets.Add(new HitTarget(corpse, rect, rect, HitKind.Choice, i, i, false));
         }
 
-        var half = (width - gap) / 2.0;
-        // Keep optional SmartLoot ammo beside its own source package, not
-        // mistaken for a standard NPC drop Chance. Standard medical remains
-        // fully independent (even for Veteran/None).
-        DrawHorizontalTrackCard(dc, ammo, "BONUS AMMO QTY",
-            new Rect(margin, 155.0, half, 72.0),
-            text, muted, border, accent, panel, pairedValueFormatting: true);
-        DrawHorizontalTrackCard(dc, medical, "STANDARD MED",
-            new Rect(margin + half + gap, 155.0, half, 72.0),
-            text, muted, border, accent, panel, pairedValueFormatting: true);
+        DrawNpcCompactScalar(dc, ammo, "AMMO QTY", ammoCard,
+            text, muted, border, accent, panel);
+        DrawNpcCompactScalar(dc, medical, "STANDARD MED", medicalCard,
+            text, muted, border, accent, panel);
+        DrawNpcModItemsCard(dc, modCard, text, muted, border, accent, panel);
 
         // One source-backed example per NPC_Ammo_Smart caliber group, with
         // the first rank containing that caliber shown explicitly. This is
@@ -1363,7 +1459,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var countsModified = ammoPackageActive && ammo.IsValueModifiedFromReference();
         // The nine source/rank examples are read-only. A compact 3x3
         // two-line grid retains all samples without dominating the controls.
-        var sampleCard = new Rect(margin, 238.0, width, 98.0);
+        var sampleWidth = Math.Min(width, 548.0);
+        var sampleCard = new Rect(margin + (width - sampleWidth) / 2.0,
+            NpcLootPreviewTop(ActualWidth), sampleWidth, 98.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
             sampleCard, 4.0, 4.0);
         DrawText(dc, "BONUS AMMO STACKS",
@@ -1402,7 +1500,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // This is a dual-ended native RANGE, not two normal slider
         // headers. Show the two editable figures together in the middle
         // of the card, immediately above their shared physical rail.
-        var rangeCard = new Rect(margin, 348.0, width, 115.0);
+        var conditionWidth = Math.Min(width, 548.0);
+        var rangeCard = new Rect(margin + (width - conditionWidth) / 2.0,
+            NpcLootConditionTop(ActualWidth), conditionWidth, 115.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
             rangeCard, 4.0, 4.0);
         DrawText(dc, "DROPPED WEAPON CONDITION",
@@ -1516,11 +1616,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             new Point(rail.Right, rangeCard.Bottom - 19.0),
             9.5, muted, FontWeights.Normal);
 
-        // Centered, capped-width peer avoids a full-width mod rail.
-        var modCardWidth = Math.Min(width, 420.0);
-        DrawNpcModItemsCard(dc, new Rect(
-                margin + (width - modCardWidth) / 2.0, 474.0, modCardWidth, 68.0),
-            text, muted, border, accent, panel);
         DrawNpcConsumables(dc, text, muted, border, accent, panel);
     }
 
@@ -7583,7 +7678,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "AnomalyGlobalDamage" => 242.0,
             "FlycatcherSlowdown" => FlycatcherBoardHeight(width),
             "AnomalySpecialEffects" => 270.0,
-            "NpcLootLoadout" => 720.0,
+            "NpcLootLoadout" => NpcLootBoardHeight(width),
             "WorldLootLayout" => 275.0,
             "StashContentMix" => StashContentMixHeight(width),
             "StashMedicalComposition" => StashMedicalCompositionHeight(width),

@@ -33,7 +33,7 @@ This is a **static source/writer audit**, not an assertion that every configured
 
 | Potential future control | CFG evidence / precise breadth | Verdict |
 | --- | --- | --- |
-| **NPC Detector Drops** (only Echo) | 36 isolated direct `Echo` rows; 30 original Chance=0.20 and 6 Chance=0.05, MinCount=1 | **Strongest new directly scoped Chance candidate.** Preserve each source Chance; require in-game acceptance |
+| **NPC Detector Drops** (only Echo) | 36 isolated direct `Echo` rows; 30 original Chance=0.20 and 6 Chance=0.05, MinCount=1 | **Excluded from the UI by explicit user decision (2026-11-15).** Retain as historical CFG research only; no control or writer |
 | **Standard medical by item** (Bandage / Medkit / ArmyMedkit / AntiRad) | Split existing 58 medical Chance rows by exact SID inside six private source-copied pools | **Feasible extension** of current audited clone/redirection route; one independent percentage per medical item (not global corpse medical ban) |
 | **Standard consumables by item/category** | 26 food, 12 stimulants/utility, 8 alcohol, all with item-level Chance; 104 overall, 84 fixed 1–1 counts | **Technically feasible** with existing six private pools + 33 redirects; prefer Chance, not quantity. More detailed faction/role gates need explicit consumer validation |
 | **Medical Chance by NPC role** | Six role pools: CloseCombat, Heavy, Noon, Recon, Sniper, Stormtrooper | **Feasible scoped prototype granularity**: six independently changed clone groups, not global faction frequency |
@@ -50,9 +50,9 @@ This is a **static source/writer audit**, not an assertion that every configured
 
 ## Practical proposed design (not implemented by this audit)
 
-If new controls are desired, preserve the compact **NPC LOOT & EQUIPMENT** board and introduce *at most* three meaningful modes rather than a second wall of controls:
+The current UI consolidates SmartLoot package, Bonus Ammo Qty, Standard Med and Mod Items into a single horizontal strip (two pairs when the host is narrow); no separate Echo slider is allowed. If new controls are desired, keep the existing compact **NPC LOOT & EQUIPMENT** board rather than introducing a wall of controls:
 
-1. A source-backed **NPC DETECTORS** Chance percentage, initially disabled until its own acceptance is completed.
+1. **No NPC DETECTORS / Echo Chance control.** The user explicitly excluded it; the 36 source rows remain audit evidence only.
 2. An optional compact **STANDARD MEDICAL MIX** (Bandage / Medkit / Army Medkit / Anti-Rad) using exact Chance scaling, not a new global “corpse has medical item” probability. This would refine (not double-scale) the existing NPC Medical Drops control, so its precedence/preset migration must be explicitly defined before implementation.
 3. If needed, **WEAPON AMMO** as a distinctly named *attached ammo* quantity editor, not another bonus-ammo slider.
 

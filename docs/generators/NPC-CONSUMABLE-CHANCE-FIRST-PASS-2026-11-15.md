@@ -61,3 +61,8 @@ dotnet run --project tests/AllControlsPatchContract/AllControlsPatchContract.csp
 ### NPC SmartLoot board integration (2026-11-15)
 
 The optional standard consumable Chance editors now sit at Y=553 in the compact 720-DIP NPC board. The 98-DIP ammo preview begins at Y=238; the 115-DIP condition card at Y=348; the centered 420-DIP-capped 68-DIP MOD ITEMS card at Y=474. The independent top **CORPSE SMART LOOT** three-chip selector, **BONUS AMMO QTY** (bonus stack quantity, only for Medicine + Ammo), and **STANDARD MED** (source Chance multiplier, independent of SmartLoot) remain separate controls with original writer IDs. See [source-audited package semantics](SMARTLOOT-CORPSE-BONUS-AUDIT.md).
+
+
+### Compact peer-row correction (2026-11-15)
+
+The top four source peers now share one horizontal strip: SmartLoot package, Bonus Ammo Qty, Standard Med, Mod Items; they wrap to two pairs below a 714-DIP host width. The standard Food/Drinks/Medical three-column block moves to Y=391 wide or Y=489 narrow; NPC height is 558/656 DIP. Source-Chance override logic and right-click reset remain unchanged. No Echo Chance control is introduced.
