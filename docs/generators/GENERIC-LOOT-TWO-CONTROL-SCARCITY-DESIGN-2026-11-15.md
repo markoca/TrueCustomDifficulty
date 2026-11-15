@@ -1,5 +1,20 @@
 # Generic loot reduction — two-control architecture proposal (S.T.A.L.K.E.R. 2.1)
 
+## 2026-11-15 — NATIVE SOURCE GATE VALIDATION (latest)
+
+The exact reviewed 2.1 snapshots now establish a hard difference between native group types:
+
+- Ordinary Basic/Standard/Rare `ItemGenerator`: **41** groups: **19 Weight**, **22 Chance**; **no authored group activation Chance/SpawnChance or ItemSetCount on any of the 41**. The 19 Weight-only groups contain **86 weighted item entries**, all with positive MinCount/MaxCount. Uniform Weight scaling leaves group selection ratios intact and cannot honestly guarantee scarcity/empty output.
+- World `StashPrototypes` SmartLoot: **422** groups: **410 Weight**, **12 Chance**, **all with native MinSpawnChance and MaxSpawnChance**. **310** have positive MaxSpawnChance; **112** have source MaxSpawnChance=0 (110 Weight groups, two Chance groups), which must stay zero. Only **30** groups author ItemSetCount; 392 do not. Positive source endpoints give a plausible separate group-scarcity gate but game-level execution is **not yet confirmed**.
+- Generic NPC consumable pools: **104 item Chance entries**, **zero item Weight entries**, reachable via **33** exact normal-human redirects. Those 33 parent links have source `Weight=1` but no independent native bundle activation Chance. Source-native item Chance reduction is feasible; optional NPC SmartLoot packages still require separate suppression acceptance.
+
+Thus the two proposed *full-domain* scarcity masters must **not** ship by just scaling native Weight. Retain Weight as the existing configurable **distribution** mechanism. A true whole-group roll must be based on an actual supported engine gate rather than inferred from native selection weights. Next candidate: group spawn endpoints on World SmartLoot plus per-item Chance rows; unresolved areas are all 19 regular ItemGenerator Weight-only groups and optional NPC corpse bonus packages. Do not silently hide those gaps under a single label.
+
+New pinned [463-group source gate inventory](generic-loot-weight-group-gates-2.1.csv), [read-only audited policy](GENERIC-LOOT-WEIGHT-GROUP-GATING-AUDIT-2.1-2026-11-15.md), and [regression checker](../../tools/audit_generic_loot_scarcity_gates_21.py) are the gate for implementation. Static evidence is not a game RNG proof; source-only approval does not authorize an experimental group-empty SID or unconditional 0/0 fallback behavior. No UI/CFG writer/preset semantics were changed during this check.
+
+---
+
+
 ## Latest design refinement — REUSE NATIVE WEIGHT DISTRIBUTION (2026-11-15)
 
 **Status: approved direction / architecture only.** The request is for a configurable **native Weight distribution** like the TCD project already has; do not create a new, large independent mixer or invent a new player-facing `Weight` interpretation. The two independent reduction masters below remain proposed; **distribution changes what an eligible group selects**, reduction changes **how often optional supplies are generated**. Neither is the other.
