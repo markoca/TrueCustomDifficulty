@@ -3337,3 +3337,8 @@ The legacy BUY source audit now expects the SELL anchor to reveal the **TraderEc
 ### 2026-11-15 — CI rare-trader source parser quoting correction
 
 - The nine-root generic trader audit must compile as Python: its optional C# trailing-comma regex ends with a closed Python raw-string literal (`\),?$'`). Regex-check all nine verified merchant tuples before applying any source/writer assertions. No merchant or loot generator production logic changes.
+
+
+### 2026-11-15 — Rare trader writer ordering audit follow-up
+
+- The generic-NPC rare-stock audit now checks the real argument-bearing `WriteGenericNpcRareTraderStock(` invocation when comparing call order against `WriteTraderSells`. The prior substring asserted an obsolete no-argument call and stopped the audit before its actual CFG/UI/preset validations. No production behavior changed.

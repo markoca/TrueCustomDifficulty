@@ -47,7 +47,7 @@ assert 'WriteGenericNpcRareTraderStock(' in core
 assert 'vm.GenericNpcRareGearEnabled, vm.GenericNpcRareGearChance, documents' in core
 assert 'AddPlainRoot(string prototype)' in core
 assert 'WriteTraderSells(modifiedById, vm.TraderItemOverrides' in core
-assert core.index('WriteTraderSells(modifiedById, vm.TraderItemOverrides') < core.index('WriteGenericNpcRareTraderStock(documents)')
+assert core.index('WriteTraderSells(modifiedById, vm.TraderItemOverrides') < core.index('WriteGenericNpcRareTraderStock(')
 assert 'TCD_GENERIC_NPC_RARE_STOCK' not in service
 assert 'GenericRareSecondChoiceChance = 0.08' in service
 assert 'bool enabled, double chance, IDictionary<string, PatchDocument> documents' in service
