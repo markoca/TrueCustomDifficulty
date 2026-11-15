@@ -207,8 +207,8 @@ public sealed partial class CfgPatchWriterService
     {
         // Preset sidecars retain percentages, not a destructive binary flag.
         // 0% does not write a CFG; full 100% retains exact branch removal.
-        var worldRemoval = vm.WorldModItemsRemoval;
-        var corpseRemoval = vm.CorpseModItemsRemoval;
+        var worldRemoval = vm.WorldModItemsEnabled ? vm.WorldModItemsRemoval : 0.0;
+        var corpseRemoval = vm.CorpseModItemsEnabled ? vm.CorpseModItemsRemoval : 0.0;
         if (worldRemoval <= 0.0 && corpseRemoval <= 0.0)
             return 0;
 

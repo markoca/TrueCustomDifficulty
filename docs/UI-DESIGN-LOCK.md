@@ -3236,3 +3236,12 @@ The live Medical MIN/MAX dual rail calls `StashMedicalMaxDisplay(max.CurrentNumb
 ## 2026-11-14 — Trader Economy host regression assertion
 
 The legacy BUY source audit now expects the SELL anchor to reveal the **TraderEconomyPanel** host, rather than the old standalone **TraderBuysMatrixControl**. The table is a child of this single host. This is a static test update only; existing native UI and writer code remain unchanged.
+
+
+## Mod-item reduction controls (2026-11-15)
+
+- World and corpse MOD ITEMS reductions use compact inline controls within their existing loot boards, not independent right-edge boxed strips or separate cards.
+- Each is a small checkbox, concise MOD ITEMS caption, percentage slider, and right-aligned percentage readout. The slider is visually disabled until its checkbox is checked; unchecked is the default for new sessions and fresh presets.
+- The underlying slider percentage is retained when disabled; only an enabled control contributes to generated mod-item CFG changes. An unchecked control must never trigger mod scanning or an incompatibility error.
+- Existing presets containing nonzero percentages without an enabled field migrate as enabled to retain gameplay behavior. Saving writes explicit independent enable flags.
+- Right click on the control restores the reduction percentage to zero; yellow modified-value emphasis is active only when the control is enabled and nonzero. Mod rationales remain attached to their source board.

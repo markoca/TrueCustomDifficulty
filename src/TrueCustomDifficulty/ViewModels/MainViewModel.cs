@@ -28,6 +28,8 @@ public sealed class MainViewModel : ObservableObject
     private bool _genericNpcRareGearEnabled;
     private double _worldModItemsRemoval;
     private double _corpseModItemsRemoval;
+    private bool _worldModItemsEnabled;
+    private bool _corpseModItemsEnabled;
     private double _genericNpcRareGearChance = 0.02;
     private bool _suppressPresetSelection;
     private bool _isBuilding;
@@ -95,6 +97,26 @@ public sealed class MainViewModel : ObservableObject
 
     // Two optional 0–100% removal fractions, stored outside the locked
     // 359 native CFG parameters. These scale only verified mod generator Chance.
+    public bool WorldModItemsEnabled
+    {
+        get => _worldModItemsEnabled;
+        set
+        {
+            if (SetProperty(ref _worldModItemsEnabled, value))
+                OnPropertyChanged(nameof(IsWorldModItemsRemovalModified));
+        }
+    }
+
+    public bool CorpseModItemsEnabled
+    {
+        get => _corpseModItemsEnabled;
+        set
+        {
+            if (SetProperty(ref _corpseModItemsEnabled, value))
+                OnPropertyChanged(nameof(IsCorpseModItemsRemovalModified));
+        }
+    }
+
     public double WorldModItemsRemoval
     {
         get => _worldModItemsRemoval;
@@ -108,7 +130,7 @@ public sealed class MainViewModel : ObservableObject
         }
     }
     public string WorldModItemsRemovalDisplay => $"{WorldModItemsRemoval * 100:0}%";
-    public bool IsWorldModItemsRemovalModified => WorldModItemsRemoval > 0.000001;
+    public bool IsWorldModItemsRemovalModified => WorldModItemsEnabled && WorldModItemsRemoval > 0.000001;
 
     public double CorpseModItemsRemoval
     {
@@ -123,7 +145,7 @@ public sealed class MainViewModel : ObservableObject
         }
     }
     public string CorpseModItemsRemovalDisplay => $"{CorpseModItemsRemoval * 100:0}%";
-    public bool IsCorpseModItemsRemovalModified => CorpseModItemsRemoval > 0.000001;
+    public bool IsCorpseModItemsRemovalModified => CorpseModItemsEnabled && CorpseModItemsRemoval > 0.000001;
 
     public double GenericNpcRareGearChance
     {
@@ -1359,6 +1381,8 @@ public sealed class MainViewModel : ObservableObject
             GenericNpcRareGearChance = 0.02;
             WorldModItemsRemoval = 0.0;
             CorpseModItemsRemoval = 0.0;
+            WorldModItemsEnabled = false;
+            CorpseModItemsEnabled = false;
             AllParameters.First(p => p.Id == "survival.waterInstantStaminaRestore")
                 .DrinkDurationOverrideEnabled = false;
             AllParameters.First(p => p.Id == "health.bandageHealing")
@@ -1386,6 +1410,8 @@ public sealed class MainViewModel : ObservableObject
             {
                 WorldModItemsRemoval = 0.0;
                 CorpseModItemsRemoval = 0.0;
+                WorldModItemsEnabled = false;
+                CorpseModItemsEnabled = false;
             }
             if (SelectedTab.Id == "health")
                 AllParameters.First(p => p.Id == "health.bandageHealing")
@@ -1550,6 +1576,8 @@ public sealed class MainViewModel : ObservableObject
             GenericNpcRareGearChance = GenericNpcRareGearChance,
             WorldModItemsRemoval = WorldModItemsRemoval,
             CorpseModItemsRemoval = CorpseModItemsRemoval,
+            WorldModItemsEnabled = WorldModItemsEnabled,
+            CorpseModItemsEnabled = CorpseModItemsEnabled,
             DrinkDurationOverride = AllParameters.First(p =>
                 p.Id == "survival.waterInstantStaminaRestore").DrinkDurationOverrideEnabled,
             MedicalOverride = AllParameters.First(p =>
@@ -1624,6 +1652,9 @@ public sealed class MainViewModel : ObservableObject
                     ?? (preset.LegacyWorldModItemsBlocked == true ? 1.0 : 0.0);
                 CorpseModItemsRemoval = preset.CorpseModItemsRemoval
                     ?? (preset.LegacyCorpseModItemsBlocked == true ? 1.0 : 0.0);
+                // Existing percentage presets were implicitly active; migrate their effect.
+                WorldModItemsEnabled = preset.WorldModItemsEnabled ?? WorldModItemsRemoval > 0.0;
+                CorpseModItemsEnabled = preset.CorpseModItemsEnabled ?? CorpseModItemsRemoval > 0.0;
                 OnPropertyChanged(nameof(SelectedReferenceDifficulty));
                 OnPropertyChanged(nameof(BasePresetIndex));
 

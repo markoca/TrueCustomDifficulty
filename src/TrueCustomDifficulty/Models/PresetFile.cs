@@ -43,6 +43,12 @@ public sealed class PresetFile
     [JsonPropertyName("corpseModItemsRemoval")]
     public double? CorpseModItemsRemoval { get; set; }
 
+    [JsonPropertyName("worldModItemsEnabled")]
+    public bool? WorldModItemsEnabled { get; set; }
+
+    [JsonPropertyName("corpseModItemsEnabled")]
+    public bool? CorpseModItemsEnabled { get; set; }
+
     // Load-only legacy toggles. Null on saving means they are not serialized.
     [JsonPropertyName("worldModItemsBlocked")]
     public bool? LegacyWorldModItemsBlocked { get; set; }

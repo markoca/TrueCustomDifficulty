@@ -3544,3 +3544,12 @@ The Stash Content/Gear static test now matches the live compact Standard Stash t
 ## 2026-11-14 — Vertical knob build scope fix
 
 WPF cross-build revealed shadowing of the existing horizontal renderer's local `cellWidth` and `left` variables inside the added portrait branches. These were renamed to `portraitWidth` and `portraitLeft`, preserving the same geometry and source interactions. Both trader layout audits check the corrected expression.
+
+
+## Mod-item reduction controls (2026-11-15)
+
+- World and corpse MOD ITEMS reductions use compact inline controls within their existing loot boards, not independent right-edge boxed strips or separate cards.
+- Each is a small checkbox, concise MOD ITEMS caption, percentage slider, and right-aligned percentage readout. The slider is visually disabled until its checkbox is checked; unchecked is the default for new sessions and fresh presets.
+- The underlying slider percentage is retained when disabled; only an enabled control contributes to generated mod-item CFG changes. An unchecked control must never trigger mod scanning or an incompatibility error.
+- Existing presets containing nonzero percentages without an enabled field migrate as enabled to retain gameplay behavior. Saving writes explicit independent enable flags.
+- Right click on the control restores the reduction percentage to zero; yellow modified-value emphasis is active only when the control is enabled and nonzero. Mod rationales remain attached to their source board.
