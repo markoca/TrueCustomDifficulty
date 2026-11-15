@@ -82,9 +82,8 @@ public sealed class PresetService
                 throw new InvalidDataException($"{label} must be between 0% and 100%.");
         }
 
-        // Optional per-item Chance sidecars do not belong to the fixed native
-        // parameter catalog. Validate their closed source-SID allowlist, exact
-        // 5% step, and finite 0..2 range before any preset is accepted.
+        // Optional per-SID Chance sidecars: new absolute 0–100% (1% steps)
+        // or old 0–2x (0.05x steps), never both in the same item.
         preset.NpcConsumableChances ??=
             new Dictionary<string, NpcConsumableChancePreset>(StringComparer.Ordinal);
         var npcSids = NpcConsumableItemViewModel.SourceItems
@@ -94,11 +93,26 @@ public sealed class PresetService
             if (!npcSids.Contains(sid) || settings is null)
                 throw new InvalidDataException(
                     $"NPC consumable Chance preset contains an unknown or empty source SID: {sid}");
-            var factor = settings.Multiplier;
-            if (!double.IsFinite(factor) || factor < 0.0 || factor > 2.0
-                || Math.Abs(factor * 20.0 - Math.Round(factor * 20.0)) > 0.0000001)
+            if (settings.ChancePercent is double percent)
+            {
+                if (settings.Multiplier is not null || !double.IsFinite(percent)
+                    || percent < 0.0 || percent > 100.0
+                    || Math.Abs(percent - Math.Round(percent)) > 0.0000001)
+                    throw new InvalidDataException(
+                        $"NPC consumable Chance for {sid} must use 0–100% in 1% steps.");
+            }
+            else if (settings.Multiplier is double factor)
+            {
+                if (!double.IsFinite(factor) || factor < 0.0 || factor > 2.0
+                    || Math.Abs(factor * 20.0 - Math.Round(factor * 20.0)) > 0.0000001)
+                    throw new InvalidDataException(
+                        $"Legacy NPC consumable multiplier for {sid} must use 0–2x in 0.05x steps.");
+            }
+            else if (settings.Enabled)
+            {
                 throw new InvalidDataException(
-                    $"NPC consumable Chance for {sid} must use 0–200% in 5% steps.");
+                    $"Enabled NPC consumable Chance for {sid} has no probability value.");
+            }
         }
 
         foreach (var (id, value) in preset.Values)

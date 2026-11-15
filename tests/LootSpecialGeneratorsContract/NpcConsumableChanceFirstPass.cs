@@ -75,35 +75,36 @@ internal static partial class Program
             && ReferenceEquals(npcBoard.NpcConsumables, uiVm.NpcConsumableItems),
             "Ten source-backed item editors did not mount inside the compact NPC board");
 
-        var cases = new[] { 0.0, 0.5, 1.0, 2.0 };
+        // Checked percentages directly author each matching literal CFG Chance:
+        // 0% => 0, 100% => 1 even when the source entry was only 0.05.
+        var cases = new[] { 0, 1, 37, 50, 100 };
         foreach (var id in sourceCounts.Keys)
-            foreach (var fraction in cases)
+            foreach (var percent in cases)
             {
                 var vm = new MainViewModel(Catalog);
                 vm.SelectedReferenceDifficulty = "Veteran";
                 var target = vm.NpcConsumableItems.Single(x => x.Sid == id);
                 Check(vm.NpcConsumableItems.Count == 10
-                    && vm.NpcConsumableItems.All(x => !x.Enabled && x.Multiplier == 1.0),
-                    "Optional item Chance overrides are not OFF at source");
+                    && vm.NpcConsumableItems.All(x => !x.Enabled
+                        && x.ChancePercent == 100 && x.LegacyMultiplier is null
+                        && x.PercentText == "CFG"),
+                    "Optional NPC Chance controls are not OFF/source-backed by default");
                 target.Enabled = true;
-                target.Multiplier = fraction;
+                target.ChancePercent = percent;
+                Check(target.PercentText == percent + "%"
+                    && target.IsEffectiveChange,
+                    "A checked NPC consumable Chance must be an absolute CFG percent");
                 var dir = Path.Combine(Path.GetTempPath(), "TCD_NpcConsumables",
                     Guid.NewGuid().ToString("N"));
                 try
                 {
                     var result = new CfgPatchWriterService().Write(vm, Catalog, null, dir);
-                    if (fraction == 1.0)
-                    {
-                        Check(result.EditCount == 0 && result.ParameterCount == 0,
-                            "1x per-item source chance should not emit a redundant generator");
-                        continue;
-                    }
                     Check(result.EditCount > 0 && result.FileCount == 1
                         && result.ParameterCount == 1,
-                        "Changed NPC item Chance failed to generate a single CFG file: " + id);
+                        "Checked absolute NPC Chance did not generate one CFG: " + id);
                     var output = ReadOutput(dir);
-                    CheckNpcConsumableClones(output, id + "/" + fraction,
-                        target.Sid, target.Multiplier, 1.0);
+                    CheckNpcConsumableClones(output, id + "/" + percent,
+                        target.Sid, target.ChancePercent / 100.0, 1.0);
                 }
                 finally
                 {
@@ -111,21 +112,21 @@ internal static partial class Program
                 }
             }
 
-        // Independent medical override must REPLACE the global medical
-        // multiplier for its SID, not multiply 0.5x by 1.0x or by 2.0x.
+        // Independent absolute medical Chance must REPLACE the global
+        // medical multiplier for its SID, never multiply against it.
         var mixed = new MainViewModel(Catalog);
         mixed.SelectedReferenceDifficulty = "Veteran";
         mixed.AllParameters.Single(p => p.Id == "loot.npcMedicalChance")
             .SnapCurrentNumberToMarker(0.5);
         var bread = mixed.NpcConsumableItems.Single(x => x.Sid == "Bread");
         bread.Enabled = true;
-        bread.Multiplier = 0.0;
+        bread.ChancePercent = 0;
         var medkit = mixed.NpcConsumableItems.Single(x => x.Sid == "Medkit");
         medkit.Enabled = true;
-        medkit.Multiplier = 1.0;
+        medkit.ChancePercent = 100;
         var bandage = mixed.NpcConsumableItems.Single(x => x.Sid == "Bandage");
         bandage.Enabled = true;
-        bandage.Multiplier = 2.0;
+        bandage.ChancePercent = 75;
 
         var mixedDir = Path.Combine(Path.GetTempPath(), "TCD_NpcConsumables",
             Guid.NewGuid().ToString("N"));
@@ -138,7 +139,7 @@ internal static partial class Program
             CheckNpcConsumableClones(output, "mixed-global-and-SID", null, 1.0, 0.5,
                 new Dictionary<string, double>(StringComparer.Ordinal)
                 {
-                    ["Bread"] = 0.0, ["Medkit"] = 1.0, ["Bandage"] = 2.0
+                    ["Bread"] = 0.0, ["Medkit"] = 1.0, ["Bandage"] = 0.75
                 });
         }
         finally
@@ -150,7 +151,7 @@ internal static partial class Program
         // writer dormant until at least one effective source is changed.
         var disabled = new MainViewModel(Catalog);
         var disabledDrink = disabled.NpcConsumableItems.Single(x => x.Sid == "Beer");
-        disabledDrink.Multiplier = 0.0;
+        disabledDrink.ChancePercent = 0;
         Check(!disabledDrink.Enabled && !disabledDrink.IsEffectiveChange,
             "Disabled override was incorrectly counted as active");
         var offDir = Path.Combine(Path.GetTempPath(), "TCD_NpcConsumables",
@@ -183,25 +184,62 @@ internal static partial class Program
             var roundtrip = new PresetService().Load(presetPath);
             Check(roundtrip.NpcConsumableChances.Count == 10
                 && roundtrip.NpcConsumableChances["Bread"].Enabled
-                && roundtrip.NpcConsumableChances["Bread"].Multiplier == 0.0
+                && roundtrip.NpcConsumableChances["Bread"].ChancePercent == 0
                 && roundtrip.NpcConsumableChances["Medkit"].Enabled
-                && roundtrip.NpcConsumableChances["Medkit"].Multiplier == 1.0
+                && roundtrip.NpcConsumableChances["Medkit"].ChancePercent == 100
+                && roundtrip.NpcConsumableChances["Medkit"].Multiplier is null
                 && !roundtrip.NpcConsumableChances["Vodka"].Enabled,
-                "NPC consumable preset roundtrip lost enabled state or exact 1x");
+                "NPC absolute Chance preset roundtrip lost exact CFG probabilities");
         }
         finally
         {
             if (File.Exists(presetPath)) File.Delete(presetPath);
         }
 
-        Console.WriteLine("PASS 40 per-item source Chance boundaries + 104 field parity + "
-            + "33 scope-limited redirects + medical override precedence + preset sidecars");
+        // An older 0.5x preset cannot become one absolute percentage without
+        // changing its distinct 104 source Chances. Preserve that exact mode,
+        // and convert only when the user explicitly moves its control.
+        var oldPreset = new NpcConsumableChancePreset
+            { Enabled = true, Multiplier = 0.5 };
+        var legacy = new MainViewModel(Catalog);
+        var legacyBread = legacy.NpcConsumableItems.Single(x => x.Sid == "Bread");
+        legacyBread.ApplyPreset(oldPreset);
+        Check(legacyBread.LegacyMultiplier == 0.5
+            && legacyBread.PercentText == "0.5×"
+            && legacyBread.ToPreset().Multiplier == 0.5
+            && legacyBread.ToPreset().ChancePercent is null,
+            "Legacy source-relative preset was silently converted to a flat chance");
+        var legacyDir = Path.Combine(Path.GetTempPath(), "TCD_NpcConsumables",
+            Guid.NewGuid().ToString("N"));
+        try
+        {
+            var result = new CfgPatchWriterService().Write(legacy, Catalog, null, legacyDir);
+            Check(result.FileCount == 1 && result.ParameterCount == 1,
+                "Legacy multiplier no longer generates one compatible CFG");
+            CheckNpcConsumableClones(ReadOutput(legacyDir), "legacy-half",
+                "Bread", 0.5, 1.0, legacyMode: true);
+        }
+        finally
+        {
+            if (Directory.Exists(legacyDir)) Directory.Delete(legacyDir, recursive: true);
+        }
+        legacyBread.ChancePercent = 25;
+        Check(legacyBread.LegacyMultiplier is null && legacyBread.PercentText == "25%"
+            && legacyBread.ToPreset().Multiplier is null,
+            "Editing an old preset did not switch to literal absolute Chance");
+        legacyBread.Enabled = false;
+        Check(legacyBread.PercentText == "CFG" && !legacyBread.IsEffectiveChange,
+            "Unchecked NPC Chance must display source mode and remain inert");
+
+        Console.WriteLine("PASS 50 absolute per-item Chance boundaries + 104 field parity + "
+            + "33 scope-limited redirects + medical precedence + legacy preset migration");
     }
 
     private static void CheckNpcConsumableClones(
         IReadOnlyDictionary<string, Dictionary<string, string>> output,
-        string caseName, string? changedSid, double changedFactor,
-        double globalMedicalFactor, IReadOnlyDictionary<string, double>? extraOverrides = null)
+        string caseName, string? changedSid, double changedChance,
+        double globalMedicalFactor, IReadOnlyDictionary<string, double>? extraOverrides = null,
+        bool legacyMode = false)
     {
         Check(output.Count == 1 && output.TryGetValue(
             "GameData/ItemGeneratorPrototypes.cfg", out var generated),
@@ -221,17 +259,32 @@ internal static partial class Program
                     var prefix = root + cat.Node + "/PossibleItems/" + item.Node + "/";
                     var sid = item.Fields["ItemPrototypeSID"];
                     var native = item.Fields["Chance"];
-                    var factor = changedSid == sid ? changedFactor
-                        : medical.Contains(sid) ? globalMedicalFactor : 1.0;
-                    if (extraOverrides is not null && extraOverrides.TryGetValue(sid, out var specific))
-                        factor = specific;
-                    var chance = Math.Clamp(Num(native) * factor, 0.0, 1.0);
+                    var modified = false;
+                    var chance = Num(native);
+                    if (changedSid == sid)
+                    {
+                        chance = legacyMode
+                            ? Math.Clamp(chance * changedChance, 0.0, 1.0)
+                            : changedChance;
+                        modified = true;
+                    }
+                    else if (extraOverrides is not null
+                        && extraOverrides.TryGetValue(sid, out var specific))
+                    {
+                        chance = specific;
+                        modified = true;
+                    }
+                    else if (medical.Contains(sid) && globalMedicalFactor != 1.0)
+                    {
+                        chance = Math.Clamp(chance * globalMedicalFactor, 0.0, 1.0);
+                        modified = true;
+                    }
                     Check(generated!.TryGetValue(prefix + "Chance", out var actual)
                         && Math.Abs(Num(actual!) - chance) < 0.0000001,
-                        caseName + ": wrong source-relative Chance for " + sid);
-                    if (factor == 1.0)
+                        caseName + ": incorrect literal CFG Chance for " + sid);
+                    if (!modified || (legacyMode && changedSid == sid && changedChance == 1.0))
                         Check(actual == native,
-                            caseName + ": original raw Chance was not kept 1:1: " + sid);
+                            caseName + ": unchanged raw Chance was not kept 1:1: " + sid);
                     foreach (var field in item.Fields)
                     {
                         if (field.Key == "Chance") continue;

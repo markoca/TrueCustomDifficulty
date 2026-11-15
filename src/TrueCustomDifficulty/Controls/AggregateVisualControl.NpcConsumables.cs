@@ -56,7 +56,8 @@ public sealed partial class AggregateVisualControl
     private void NpcConsumable_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName is nameof(NpcConsumableItemViewModel.Enabled)
-            or nameof(NpcConsumableItemViewModel.Multiplier))
+            or nameof(NpcConsumableItemViewModel.ChancePercent)
+            or nameof(NpcConsumableItemViewModel.LegacyMultiplier))
             InvalidateVisual();
     }
 
@@ -110,7 +111,9 @@ public sealed partial class AggregateVisualControl
                     10.1, enabled && item.IsEffectiveChange ? accent
                         : enabled ? text : muted, FontWeights.SemiBold);
                 var railY = rail.Top + rail.Height / 2.0;
-                var handleX = rail.Left + rail.Width * (item.Multiplier / 2.0);
+                var handleRatio = item.LegacyMultiplier is double legacy
+                    ? legacy / 2.0 : item.ChancePercent / 100.0;
+                var handleX = rail.Left + rail.Width * handleRatio;
                 dc.DrawLine(new Pen(CloneWithOpacity(border, enabled ? .85 : .5), 2.5),
                     new Point(rail.Left, railY), new Point(rail.Right, railY));
                 if (enabled)
@@ -150,8 +153,8 @@ public sealed partial class AggregateVisualControl
         if (target is null) return;
         var ratio = Math.Clamp((point.X - target.Rail.Left) /
             Math.Max(1.0, target.Rail.Width), 0.0, 1.0);
-        item.Multiplier = Math.Round(ratio * 40.0,
-            MidpointRounding.AwayFromZero) / 20.0;
+        item.ChancePercent = (int)Math.Round(ratio * 100.0,
+            MidpointRounding.AwayFromZero);
     }
 
     private bool NpcConsumableMouseDown(Point point)
@@ -226,8 +229,9 @@ public sealed partial class AggregateVisualControl
         if (target is null)
             return false;
         SelectNpcConsumable(target.Item);
-        // Native default for each per-item Chance scalar is exactly 1x.
-        target.Item.Multiplier = 1.0;
+        // The ten source SIDs each span multiple native Chances. Restore
+        // every original raw Chance by disabling this optional override.
+        target.Item.Enabled = false;
         return true;
     }
 
@@ -243,7 +247,7 @@ public sealed partial class AggregateVisualControl
         }
         if (key == Key.R)
         {
-            item.Multiplier = 1.0;
+            item.Enabled = false;
             return true;
         }
         if (!item.Enabled)
@@ -256,9 +260,9 @@ public sealed partial class AggregateVisualControl
         };
         if (step == 0 && key is not (Key.Home or Key.End))
             return false;
-        item.Multiplier = key == Key.Home ? 0.0
-            : key == Key.End ? 2.0
-            : Math.Clamp(item.Multiplier + step * .05, 0.0, 2.0);
+        item.ChancePercent = key == Key.Home ? 0
+            : key == Key.End ? 100
+            : Math.Clamp(item.ChancePercent + step, 0, 100);
         return true;
     }
 }

@@ -645,7 +645,8 @@ public sealed class MainViewModel : ObservableObject
             consumable.PropertyChanged += (_, args) =>
             {
                 if (args.PropertyName is nameof(NpcConsumableItemViewModel.Enabled)
-                    or nameof(NpcConsumableItemViewModel.Multiplier))
+                    or nameof(NpcConsumableItemViewModel.ChancePercent)
+                    or nameof(NpcConsumableItemViewModel.LegacyMultiplier))
                     npcConsumableAnchor.RefreshAggregateModifiedState();
             };
 

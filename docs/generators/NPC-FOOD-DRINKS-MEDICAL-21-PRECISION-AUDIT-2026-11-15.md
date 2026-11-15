@@ -1,7 +1,7 @@
 # NPC food, drinks and medical — precise source audit (S.T.A.L.K.E.R. 2.1)
 
 **Date:** 2026-11-15  
-**Status:** source-structure audit and UI design proposal; **no new gameplay control or CFG writer enabled**.
+**Status:** historical source audit and original design proposal. **Superseded for implemented UI semantics** by [NPC Consumable Chance — Literal CFG Chance](NPC-CONSUMABLE-CHANCE-FIRST-PASS-2026-11-15.md). Its earlier 0–200% scaling design is kept below as an audit record, not as the current UI contract.
 
 ## Evidence
 

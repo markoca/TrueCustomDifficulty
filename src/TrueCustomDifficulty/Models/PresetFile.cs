@@ -98,7 +98,12 @@ public sealed class NpcConsumableChancePreset
     [JsonPropertyName("enabled")]
     public bool Enabled { get; set; }
 
-    // Relative to each authored raw Chance, 0–2 in 0.05 steps.
+    // New controls directly author literal CFG Chance: 0..100 in 1% steps.
+    [JsonPropertyName("chancePercent")]
+    public double? ChancePercent { get; set; }
+
+    // Load/save only for old source-relative presets. Never convert those
+    // multipliers into one invented absolute percent across multiple NPC pools.
     [JsonPropertyName("multiplier")]
-    public double Multiplier { get; set; } = 1.0;
+    public double? Multiplier { get; set; }
 }

@@ -954,19 +954,23 @@ public sealed partial class CfgPatchWriterService
         {
             if (!known.ContainsKey(item.Sid) || !overrides.TryAdd(item.Sid, item))
                 throw new InvalidDataException($"Unexpected or duplicated NPC consumable override SID '{item.Sid}'.");
-            if (!double.IsFinite(item.Multiplier) || item.Multiplier < 0.0 || item.Multiplier > 2.0)
-                throw new InvalidDataException($"Out-of-range NPC consumable multiplier: {item.Sid}");
+            if (item.ChancePercent is < 0 or > 100
+                || (item.LegacyMultiplier is double legacy
+                    && (!double.IsFinite(legacy) || legacy < 0.0 || legacy > 2.0)))
+                throw new InvalidDataException($"Out-of-range NPC consumable Chance: {item.Sid}");
         }
 
         var globalMedicalChanged = modifiedById.ContainsKey(config.ParameterId);
         var sidChanged = overrides.Values.Any(item =>
-            item.IsEffectiveChange &&
-            (known[item.Sid] != "MEDICAL"
-                || !globalMedicalChanged
-                || Math.Abs(item.Multiplier - parameter.CurrentNumber) > 0.000001));
-        // A medical override of exactly 1x on an edited global medical
-        // multiplier still affects gameplay; the global change already triggers
-        // this writer, and that item's raw Chance must be restored verbatim.
+            item.Enabled
+            && (item.LegacyMultiplier is null
+                || (item.IsEffectiveChange
+                    && (known[item.Sid] != "MEDICAL"
+                        || !globalMedicalChanged
+                        || Math.Abs(item.LegacyMultiplier.Value - parameter.CurrentNumber) > 0.000001))));
+        // An old medical override of exactly 1x on an edited global
+        // multiplier still restores its raw Chance; the global edit triggers
+        // the writer. New checked percentages always author absolute Chance.
         if (!globalMedicalChanged && !sidChanged)
             return 0;
 
@@ -1024,14 +1028,16 @@ public sealed partial class CfgPatchWriterService
 
         if (globalMedicalChanged)
             writtenParameters.Add(config.ParameterId);
-        // Sidecars are logical modified UI editors, not new source catalog
-        // parameters. Count only actual per-SID deviations from the effective
-        // (possibly global-medical) source multiplier in the build summary.
+        // Sidecars remain logical editors, never catalog parameter IDs.
+        // Absolute Chance on a checked row replaces the heterogeneous source
+        // chances. Legacy multipliers retain the former source-relative rules.
         foreach (var item in overrides.Values)
         {
             var inherited = known[item.Sid] == "MEDICAL"
                 ? parameter.CurrentNumber : 1.0;
-            if (item.Enabled && Math.Abs(item.Multiplier - inherited) > 0.000001)
+            if (item.Enabled
+                && (item.LegacyMultiplier is null
+                    || Math.Abs(item.LegacyMultiplier.Value - inherited) > 0.000001))
                 writtenParameters.Add("npcConsumableChance:" + item.Sid);
         }
         return edits;
@@ -1078,22 +1084,33 @@ public sealed partial class CfgPatchWriterService
                         $"NPC medical Chance source mismatch for {sid} at {pool.VanillaSid}:{categoryDefinition.Node}/{itemDefinition.Node}.");
 
                 var overrideItem = overrides[sid];
-                // Per-SID medical checked overrides replace, NEVER multiply,
-                // the global medical multiplier. Unchecked medical follows
-                // the existing control. Food/drinks without opt-in are 1:1.
-                var multiplier = overrideItem.Enabled ? overrideItem.Multiplier
+                // Checked new controls author literal CFG Chance, not a
+                // multiplier: 100%=1 on every matching source entry. They
+                // override the global medical scaler; unchecked medical
+                // keeps its original global behavior. Old presets retain
+                // source-relative multipliers without silent migration.
+                var multiplier = overrideItem.Enabled
+                    ? overrideItem.LegacyMultiplier ?? 1.0
                     : isMedical ? globalMedicalMultiplier : 1.0;
                 foreach (var field in itemDefinition.Fields)
                 {
                     var value = field.Value;
-                    if (field.Key == "Chance" && Math.Abs(multiplier - 1.0) > 0.000001)
+                    if (field.Key == "Chance")
                     {
-                        var scaledChance = Math.Clamp(
-                            ParseNumber(sourceChanceRaw) * multiplier, 0.0, 1.0);
-                        value = FormatLikeSource(scaledChance, sourceChanceRaw);
+                        if (overrideItem.Enabled && overrideItem.LegacyMultiplier is null)
+                        {
+                            value = FormatLikeSource(overrideItem.ChancePercent / 100.0,
+                                sourceChanceRaw);
+                        }
+                        else if (Math.Abs(multiplier - 1.0) > 0.000001)
+                        {
+                            var scaledChance = Math.Clamp(
+                                ParseNumber(sourceChanceRaw) * multiplier, 0.0, 1.0);
+                            value = FormatLikeSource(scaledChance, sourceChanceRaw);
+                        }
                     }
-                    // Exact original source tokens are written 1:1 at 100%;
-                    // all other Chance/count/gate/weight fields are untouched.
+                    // Unmodified raw source tokens and all non-Chance fields
+                    // (count, gate, weight) remain identical to their CFG.
                     item.SetAssignment(field.Key, value);
                     edits++;
                 }

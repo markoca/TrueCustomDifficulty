@@ -3301,3 +3301,12 @@ The legacy BUY source audit now expects the SELL anchor to reveal the **TraderEc
 
 - `ParameterViewModel.IsControlVisible` combines the `IsAvailableForReferenceDifficulty` property with the UI exposure/anchor condition using the explicit boolean `&&` operator. Treat this property as a boolean, not an invocable method (CS1955).
 - Syntax-only correction: no changes to control visuals, interaction, default values, preset serialization or CFG output. Confirm the Windows publish build before UI validation.
+
+
+### 2026-11-15 — NPC consumables: literal CFG Chance percent (0–100%)
+
+- Applies ONLY to the ten checked FOOD/DRINKS/MEDICAL item rows inside the existing compact NPC Loot & Equipment board (836 DIP). No separate panel, full-width rail, redundant BASE/Vanilla text or layout expansion. Keep the 3-column/3+3+4 rows, left item labels, right aligned 0–100% readouts, short horizontal rails and small opt-in checkboxes.
+- A checked percent writes literal `Chance = percentage / 100` into every matching `ItemPrototypeSID` entry of the six cloned 2.1 standard-human consumable generators; 0% writes 0 and 100% writes 1. The control is NOT a source-relative multiplier. Arrow keys move 1%, Home/End select 0/100, and R/right-click **disable** the override to restore each distinct original raw CFG `Chance`.
+- Unchecked defaults to `CFG` in muted text, preserves the current edit for re-enable, and leaves all source rows unmodified unless the independent global Medical Drops control is changed. No single source percentage can represent the same SID across role/rank/difficulty source rows (104 entries with differing Chances); therefore never display a fabricated shared baseline.
+- Checked numbers use the existing yellow modified treatment; keep inactive rows visually disabled. Unchanged source gates, native item counts and other loot packages remain outside this editor. 100% guarantees only that an *eligible, executed Chance entry* passes its roll; it does not add a missing SID to an NPC role pool or guarantee one on every corpse.
+- Existing saved `npcConsumableChances[*].multiplier` values remain loadable and preserve their 0–2× source-relative semantics exactly; while loaded they visibly use `×`, not a misleading `%`. Moving a rail or pressing an arrow converts that item to the literal percentage format, persisted as `chancePercent` (1% increments). See `docs/generators/NPC-CONSUMABLE-CHANCE-FIRST-PASS-2026-11-15.md`.
