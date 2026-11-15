@@ -61,3 +61,8 @@ Below the graph, three fixed columns show the current concrete ammo count ranges
 ## 2026-10-15 — Loot retired mixer cleanup
 
 The actual destructible ammo/grenade yield sliders continue to be edited through `AmmoDistribution`. The inert `BreakableBoxYields` aggregate case (empty member list and obsolete height) and the entire unreachable vertical-strip mixer chain were removed, including their dedicated `MixerSelect` / `MixerBaseMarker` input dispatch and dead helper formatters. No Loot values, native CFG targets, presets, or visible controls changed. Existing `StashRewardProfile`, `NpcLootLoadout`, `WorldLootLayout`, the ammo-family weight editor and the shared live drawing helpers remain intact. `UI-DESIGN-LOCK.md` and `VISUAL-CONTROL-SYSTEM.md` record the current active UI contract; `audit_project_consistency.py` guards against restoring retired paths. Static source contract verified; local WPF build/Wine visual test remain pending.
+
+
+## 2026-11-15 — Current NPC SmartLoot grouping
+
+In NPC LOOT & EQUIPMENT, the package choice is labeled CORPSE SMART LOOT and its three chips are MED + AMMO / WATER / NONE. BONUS AMMO QTY is the conditional 0–3× stack quantity slider (not an ammo drop Chance); the nine rank-aware preview amounts follow it and stay muted when bonus ammo is inactive. STANDARD MED is a separate, always-editable 0–2× source-Chance multiplier, and the ten optional per-SID absolute Chance sliders remain in their own compact 3-column group. The total board is now 784 DIP high; old 836-DIP layout references above are historical. Gameplay writer, catalog IDs and presets remain unchanged by this reorganization.

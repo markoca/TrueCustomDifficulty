@@ -61,6 +61,13 @@ internal static partial class Program
             };
             var corpseChoice = vm.AllParameters.Single(p =>
                 p.Id == "loot.npcCorpseBonus");
+            Check(corpseChoice.ChoiceOptions.Count == 3
+                && corpseChoice.ChoiceOptions.Any(x =>
+                    x.Value == "NPC_Medicine_Smart, NPC_Ammo_Smart")
+                && corpseChoice.ChoiceOptions.Any(x =>
+                    x.Value == "NPC_Water_Smart")
+                && corpseChoice.ChoiceOptions.Any(x => x.Value == string.Empty),
+                difficulty + ": corpse SmartLoot choices must remain three source-backed states");
             var medical = vm.AllParameters.Single(p =>
                 p.Id == "loot.npcMedicalChance");
             var ammo = vm.AllParameters.Single(p =>

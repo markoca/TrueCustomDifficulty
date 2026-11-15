@@ -89,3 +89,12 @@ The existing `loot.npcCorpseBonus` parameter still selects the package list at `
 **Breakable Box Ammo** is unrelated: `GameData/ItemGeneratorPrototypes.cfg` has `DestructibleStash_AmmoSNG` and `DestructibleStash_AmmoNATO` with four rows each. SNG: `A918D 3–6`, `A919D 5–10`, `A545D 5–10`, `A012D 2–4`. NATO: `A045D`, `A919D`, `A556D`, `A012D` each 5–10. All eight rows have source `Weight=2`. Base `GameData/SpawnActorPrototypes.cfg` places them in `D_WoodenAmmoCrate_01` objects. The DLC1 dump independently contains physical references to these base generator names (SNG 151 occurrences, NATO 150), and no separate DLC1 StashPrototypes definition. Source numbers are not cross-distributed into the NPC panel.
 
 **Validation limit:** the uploaded CFG dump confirms exact source topology and count inventories, not that the WPF changes compile, that the game's runtime accepts a source-derived SmartLoot clone, or that final corpse drop stacks equal the displayed source ranges after conditional spawn policies. Explicit local publish and in-game tests remain required.
+
+
+## 2026-11-15 — Current NPC SmartLoot editor placement and meaning
+
+Previous icon-only / 836-DIP UI screenshots in this historical audit are superseded by the live 784-DIP `NpcLootLoadout` renderer. The three exact authoritative `CorpseSmartLoot.GeneralNPC` list values remain **Medicine + Ammo**, **Water**, **None**. The compact chip captions are now **MED + AMMO**, **WATER**, **NONE**, under source-derived symbols. This is package selection, **not 0–100% Chance**.
+
+The related **BONUS AMMO QTY** slider now sits to the left, immediately above a shortened nine-sample **BONUS AMMO STACKS** panel. It edits `NPC_Ammo_Smart` quantity (`MinCount/MaxCount`, 0–3×) only when the Medicine + Ammo package is active. Its saved setting remains intact but muted and non-interactive for Water/None; even a previously changed value cannot paint an inactive preview yellow.
+
+The **STANDARD MED** slider sits separately to the right. It is a distinct 0–2× source-relative `ItemGeneratorPrototypes.cfg` medical Chance control, independent of the chosen bonus package; the checked per-item absolute-Chance sliders below may override its factor for individual SIDs. Both systems preserve their existing source IDs, preset keys, 33 scoped standard-human redirects, quest/named/zombie exclusions and original CFG fields. In-game 100% per-entry Chance is not a per-corpse guarantee.

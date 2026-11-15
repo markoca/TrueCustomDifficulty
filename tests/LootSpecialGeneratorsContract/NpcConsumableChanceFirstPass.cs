@@ -71,7 +71,7 @@ internal static partial class Program
             NpcConsumables = uiVm.NpcConsumableItems
         };
         npcBoard.Measure(new System.Windows.Size(760.0, 1000.0));
-        Check(Math.Abs(npcBoard.DesiredSize.Height - 836.0) < 0.000001
+        Check(Math.Abs(npcBoard.DesiredSize.Height - 784.0) < 0.000001
             && ReferenceEquals(npcBoard.NpcConsumables, uiVm.NpcConsumableItems),
             "Ten source-backed item editors did not mount inside the compact NPC board");
 

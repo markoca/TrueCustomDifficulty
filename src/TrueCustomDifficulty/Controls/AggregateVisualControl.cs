@@ -1191,17 +1191,17 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         {
             // Clearly separated first-aid kit + real ammunition pictograms.
             DrawNpcOutlineIcon(dc, NpcMedkitIcon,
-                new Point(center.X - 17.5, center.Y), 30.0, ink);
+                new Point(center.X - 13.5, center.Y), 22.0, ink);
             DrawNpcFilledIcon(dc, NpcAmmunitionIcon,
-                new Point(center.X + 17.5, center.Y), 29.0, ink);
+                new Point(center.X + 13.5, center.Y), 22.0, ink);
         }
         else if (optionValue.Contains("NPC_Water_Smart", StringComparison.Ordinal))
         {
-            DrawNpcOutlineIcon(dc, NpcWaterBottleIcon, center, 34.0, ink);
+            DrawNpcOutlineIcon(dc, NpcWaterBottleIcon, center, 25.0, ink);
         }
         else
         {
-            DrawNpcOutlineIcon(dc, NpcNoBonusIcon, center, 30.0, ink);
+            DrawNpcOutlineIcon(dc, NpcNoBonusIcon, center, 24.0, ink);
         }
     }
 
@@ -1302,7 +1302,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var choiceCard = new Rect(margin, 54.0, width, 90.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
             choiceCard, 4.0, 4.0);
-        DrawText(dc, "EXTRA CORPSE LOOT", new Point(margin + 11.0, 61.0),
+        // Only these three authored source combinations are currently verified.
+        // Each chip names the exact bonus package, not a generic drop rate.
+        DrawText(dc, "CORPSE SMART LOOT", new Point(margin + 11.0, 61.0),
             10.6, text, FontWeights.Bold);
         var count = corpse.ChoiceOptions.Count;
         var cell = Math.Min(112.0, (width - 22.0 - (count - 1) * gap) / count);
@@ -1318,19 +1320,30 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 selected ? CloneWithOpacity(accent, 0.10) : panel,
                 new Pen(selected ? accent : hover ? CloneWithOpacity(accent, 0.7) : border,
                     selected ? 1.6 : 0.9), rect, 4.0, 4.0);
-            // Icon-only selector; the source-backed choice stays visible.
-            DrawNpcCorpsePackageIcon(dc, corpse.ChoiceOptions[i].Value,
-                new Point(rect.Left + rect.Width / 2.0, rect.Top + rect.Height / 2.0),
+            // Explicit package captions avoid guessing what an icon means.
+            var optionValue = corpse.ChoiceOptions[i].Value;
+            DrawNpcCorpsePackageIcon(dc, optionValue,
+                new Point(rect.Left + rect.Width / 2.0, rect.Top + 13.0),
                 hover ? Brushes.White : selected ? accent : text);
+            var optionLabel = optionValue.Contains("NPC_Ammo_Smart", StringComparison.Ordinal)
+                ? "MED + AMMO"
+                : optionValue.Contains("NPC_Water_Smart", StringComparison.Ordinal)
+                    ? "WATER" : "NONE";
+            DrawCenteredText(dc, optionLabel,
+                new Point(rect.Left + rect.Width / 2.0, rect.Top + 30.0),
+                8.9, selected ? accent : text, FontWeights.Bold);
             if (corpse.IsControlEnabled)
                 _hitTargets.Add(new HitTarget(corpse, rect, rect, HitKind.Choice, i, i, false));
         }
 
         var half = (width - gap) / 2.0;
-        DrawHorizontalTrackCard(dc, medical, "MEDICAL DROPS",
+        // Keep optional SmartLoot ammo beside its own source package, not
+        // mistaken for a standard NPC drop Chance. Standard medical remains
+        // fully independent (even for Veteran/None).
+        DrawHorizontalTrackCard(dc, ammo, "BONUS AMMO QTY",
             new Rect(margin, 155.0, half, 72.0),
             text, muted, border, accent, panel, pairedValueFormatting: true);
-        DrawHorizontalTrackCard(dc, ammo, "BONUS AMMO DROPS",
+        DrawHorizontalTrackCard(dc, medical, "STANDARD MED",
             new Rect(margin + half + gap, 155.0, half, 72.0),
             text, muted, border, accent, panel, pairedValueFormatting: true);
 
@@ -1350,11 +1363,15 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             ("9×39", "MASTER", 15, 20)
         };
         var ammoPackageActive = NpcBonusPackageSelected();
-        var countsModified = ammo.IsValueModifiedFromReference();
-        var sampleCard = new Rect(margin, 238.0, width, 172.0);
+        // A stored but inactive ammo amount must not glow yellow or imply
+        // the selected Water/None package produces bonus ammunition.
+        var countsModified = ammoPackageActive && ammo.IsValueModifiedFromReference();
+        // The nine source/rank examples are read-only. A compact 3x3
+        // two-line grid retains all samples without dominating the controls.
+        var sampleCard = new Rect(margin, 238.0, width, 124.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
             sampleCard, 4.0, 4.0);
-        DrawText(dc, "BONUS AMMO PREVIEW",
+        DrawText(dc, "BONUS AMMO STACKS",
             new Point(sampleCard.Left + 11.0, sampleCard.Top + 7.0),
             10.3, ammoPackageActive ? text : muted, FontWeights.Bold);
 
@@ -1369,7 +1386,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             var sample = examples[i];
             var tile = new Rect(previewLeft
                     + (i % 3) * (previewWidth + previewGap),
-                sampleCard.Top + 25.0 + (i / 3) * 41.0, previewWidth, 36.0);
+                sampleCard.Top + 25.0 + (i / 3) * 31.0, previewWidth, 29.0);
             dc.DrawRoundedRectangle(
                 ammoPackageActive ? CloneWithOpacity(panel, 0.95)
                     : CloneWithOpacity(panel, 0.55),
@@ -1378,11 +1395,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             var low = Math.Max(0, (int)Math.Floor(sample.Min * ammo.CurrentNumber + 0.5));
             var high = Math.Max(0, (int)Math.Floor(sample.Max * ammo.CurrentNumber + 0.5));
             DrawCenteredText(dc, sample.Label + " · " + sample.Rank,
-                new Point(tile.Left + tile.Width / 2.0, tile.Top + 3.0),
-                9.0, muted, FontWeights.SemiBold);
+                new Point(tile.Left + tile.Width / 2.0, tile.Top + 1.0),
+                8.4, muted, FontWeights.SemiBold);
             DrawCenteredText(dc, $"{low}–{high}",
-                new Point(tile.Left + tile.Width / 2.0, tile.Top + 18.0),
-                countsModified ? 14.2 : 13.0,
+                new Point(tile.Left + tile.Width / 2.0, tile.Top + 13.0),
+                countsModified ? 12.9 : 12.2,
                 countsModified ? accent : ammoPackageActive ? text : muted,
                 FontWeights.SemiBold);
         }
@@ -1390,7 +1407,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // This is a dual-ended native RANGE, not two normal slider
         // headers. Show the two editable figures together in the middle
         // of the card, immediately above their shared physical rail.
-        var rangeCard = new Rect(margin, 420.0, width, 130.0);
+        var rangeCard = new Rect(margin, 374.0, width, 130.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
             rangeCard, 4.0, 4.0);
         DrawText(dc, "DROPPED WEAPON CONDITION",
@@ -1505,7 +1522,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             9.5, muted, FontWeights.Normal);
 
         // Dedicated peer card inside the same NPC board industrial frame.
-        DrawNpcModItemsCard(dc, new Rect(margin, 561.0, width, 88.0),
+        DrawNpcModItemsCard(dc, new Rect(margin, 515.0, width, 88.0),
             text, muted, border, accent, panel);
         DrawNpcConsumables(dc, text, muted, border, accent, panel);
     }
@@ -7569,7 +7586,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "AnomalyGlobalDamage" => 242.0,
             "FlycatcherSlowdown" => FlycatcherBoardHeight(width),
             "AnomalySpecialEffects" => 270.0,
-            "NpcLootLoadout" => 836.0,
+            "NpcLootLoadout" => 784.0,
             "WorldLootLayout" => 275.0,
             "StashContentMix" => StashContentMixHeight(width),
             "StashMedicalComposition" => StashMedicalCompositionHeight(width),

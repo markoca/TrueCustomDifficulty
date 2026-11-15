@@ -5263,18 +5263,20 @@ if _loot_param is None or _loot_param.get("label") != "Ammo Boxes Removed":
     fail("Loot world-ammo parameter must not display redundant World Loot Removal label")
 _npc_preview_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs").read_text(encoding="utf-8")
 _npc_ammo_def = next((p for p in parameters if p.get("id") == "loot.npcWeaponAmmoSupply"), None)
-if _npc_ammo_def is None or _npc_ammo_def.get("label") != "Bonus Ammo Drops":
+if _npc_ammo_def is None or _npc_ammo_def.get("label") != "Bonus Ammo Amount":
     fail("NPC ammo drops source label changed")
 if any(_tok not in _npc_preview_source for _tok in (
-    'DrawHorizontalTrackCard(dc, ammo, "BONUS AMMO DROPS",',
-    'DrawText(dc, "BONUS AMMO PREVIEW",',
+    'DrawHorizontalTrackCard(dc, ammo, "BONUS AMMO QTY",',
+    'DrawText(dc, "BONUS AMMO STACKS",',
     "Math.Min(516.0, sampleCard.Width - 22.0)",
     "var cell = Math.Min(112.0, (width - 22.0 - (count - 1) * gap) / count);",
     "var previewLeft = sampleCard.Left +",
-    "(i / 3) * 41.0, previewWidth, 36.0",
-    "DrawNpcCorpsePackageIcon(dc, corpse.ChoiceOptions[i].Value,",
+    "(i / 3) * 31.0, previewWidth, 29.0",
+    "DrawNpcCorpsePackageIcon(dc, optionValue,",
     'optionValue.Contains("NPC_Ammo_Smart", StringComparison.Ordinal)',
     'optionValue.Contains("NPC_Water_Smart", StringComparison.Ordinal)',
+    'DrawCenteredText(dc, optionLabel,',
+    'var countsModified = ammoPackageActive && ammo.IsValueModifiedFromReference();',
     'var ammoPackageActive = NpcBonusPackageSelected();',
     'private bool NpcBonusPackageSelected()',
     'private bool IsNpcBonusSliderLocked(ParameterViewModel? parameter)',
@@ -5287,11 +5289,19 @@ if any(_tok not in _npc_preview_source for _tok in (
     'IsNpcBonusSliderLocked(_selectedParameter)',
     'IsNpcBonusSliderLocked(target.Parameter)',
 )):
-    fail("NPC bonus ammo preview, icon-only selector or active-package UI drifted")
+    fail("NPC SmartLoot package captions, compact ammo samples or active-package UI drifted")
 if '"Bonus ammo off · weapon ammo unaffected"' in _npc_preview_source or 'Inactive until Medicine + Ammo is selected' in _npc_preview_source:
     fail("NPC bonus preview must not display an inactive explanatory sentence")
 if 'var caption = CreateText(corpse.ChoiceOptions[i].Label,' in _npc_preview_source:
-    fail("NPC corpse package icons must not have permanent text captions")
+    fail("NPC corpse package chips must use short sourced captions, not verbose raw option labels")
+if 'var optionLabel = optionValue.Contains("NPC_Ammo_Smart", StringComparison.Ordinal)' not in _npc_preview_source:
+    fail("NPC source package chips must show MED + AMMO / WATER / NONE instead of icons only")
+if '"NpcLootLoadout" => 784.0,' not in _npc_preview_source:
+    fail("NPC board compact height contract drifted")
+_npc_items_ui = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" /
+                 "AggregateVisualControl.NpcConsumables.cs").read_text(encoding="utf-8")
+if "const double top = 614.0;" not in _npc_items_ui:
+    fail("NPC item Chance group no longer starts immediately after mod controls")
 # The selection must use sourced icon shapes, not bespoke medkits or bottle rectangles.
 for _icon_marker in (
     "private static readonly Geometry[] NpcMedkitIcon =",
@@ -5302,8 +5312,8 @@ for _icon_marker in (
     "private static void DrawNpcFilledIcon(",
     "DrawNpcOutlineIcon(dc, NpcMedkitIcon,",
     "DrawNpcFilledIcon(dc, NpcAmmunitionIcon,",
-    "DrawNpcOutlineIcon(dc, NpcWaterBottleIcon, center, 34.0, ink);",
-    "DrawNpcOutlineIcon(dc, NpcNoBonusIcon, center, 30.0, ink);",
+    "DrawNpcOutlineIcon(dc, NpcWaterBottleIcon, center, 25.0, ink);",
+    "DrawNpcOutlineIcon(dc, NpcNoBonusIcon, center, 24.0, ink);",
     "M5.7 5.7l12.6 12.6",
     "docs/ICON-ASSET-CREDITS.md",
 ):
