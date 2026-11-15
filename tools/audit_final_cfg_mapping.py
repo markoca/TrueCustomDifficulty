@@ -198,6 +198,7 @@ def main():
     code += "\n" + (WRITER_PATH.parent / "CfgPatchWriterService.WorldArmorRemovals.cs").read_text(encoding="utf-8")
     code += "\n" + (WRITER_PATH.parent / "CfgPatchWriterService.TraderBuys.cs").read_text(encoding="utf-8")
     code += "\n" + (WRITER_PATH.parent / "CfgPatchWriterService.TraderSells.cs").read_text(encoding="utf-8")
+    code += "\n" + (WRITER_PATH.parent / "CfgPatchWriterService.GenericLootReduction.cs").read_text(encoding="utf-8")
     definitions = {p["id"]: p for p in catalog["parameters"]}
     require(len(definitions) == len(catalog["parameters"]) == 361, "361 unique CFG source IDs expected")
     require(baseline["supportedParameterCount"] == 361, "writer expected coverage drift")
