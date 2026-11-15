@@ -1,3 +1,9 @@
+## 2026-11-15 — CURRENT: NPC standard medical drop independence (baseline audit fix)
+
+**Authoritative correction; supersedes the earlier 2026-10-14 dual-slider lock:** In `NpcLootLoadout`, **MEDICAL DROPS** (`loot.npcMedicalChance`) is always interactive when the normal panel is editable, even when Extra Corpse Loot is Water or None. Its separate 2.1 source-backed ItemGenerator clone/33-redirect writer does not depend on CorpseSmartLoot. Only **BONUS AMMO DROPS** (`loot.npcWeaponAmmoSupply`) is muted and locked until Extra Corpse Loot contains `NPC_Ammo_Smart`. Preserve saved values and right-click reset, no synthetic medicine/ammo dependency. Source ownership, 2.1 baseline row counts, scope, static regression and in-game limits: `docs/generators/NPC-LOOT-2.1-END-TO-END-AUDIT-2026-11-15.md`. The former instruction to grey out both scalar cards is retired.
+
+---
+
 **PRE-GAME SOURCE/WINDOWS CFG DIAGNOSTICS (2026-10-17):** [Production generator execution map and 13-source fixture suite](GENERIC-NPC-STASH-EXECUTION-AND-CFG-PARITY-2026-10-17.md) checks ordinary-human medical 0x/2x, separate corpse package states and selected/inactive 43-entry extra ammo source. These verify emitted CFG, not which items a live NPC will actually drop. Every manual NPC case remains NOT_RUN.
 
 # Ordinary human NPC corpses — source-separated in-game loot validation

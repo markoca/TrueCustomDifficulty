@@ -1,3 +1,9 @@
+## 2026-11-15 — CURRENT: NPC standard medical drop independence (baseline audit fix)
+
+**Authoritative correction; supersedes the earlier 2026-10-14 dual-slider lock:** In `NpcLootLoadout`, **MEDICAL DROPS** (`loot.npcMedicalChance`) is always interactive when the normal panel is editable, even when Extra Corpse Loot is Water or None. Its separate 2.1 source-backed ItemGenerator clone/33-redirect writer does not depend on CorpseSmartLoot. Only **BONUS AMMO DROPS** (`loot.npcWeaponAmmoSupply`) is muted and locked until Extra Corpse Loot contains `NPC_Ammo_Smart`. Preserve saved values and right-click reset, no synthetic medicine/ammo dependency. Source ownership, 2.1 baseline row counts, scope, static regression and in-game limits: `docs/generators/NPC-LOOT-2.1-END-TO-END-AUDIT-2026-11-15.md`. The former instruction to grey out both scalar cards is retired.
+
+---
+
 ## 2026-11-15 — CURRENT: MOD ITEMS as native peer controls in World and NPC Loot
 
 The **WORLD LOOT DEPLETION** board has **six equally spaced vertical lanes**: the five unchanged physical-loot sources plus a sixth **MOD ITEMS** lane with the same bar, border, readout-above and caption-below grammar, and a small in-lane checkbox. All six share the single 0–100% REMOVED ruler and fit within the existing 330-DIP chart. The sixth editor is a mod-generator sidecar, not an additional vanilla CFG source or an overlapping strip.

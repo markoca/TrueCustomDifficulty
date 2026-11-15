@@ -103,6 +103,7 @@ internal static partial class Program
             VerifyDlcStashExpansion();
             VerifyStashEffectiveParity();
             VerifyStashBranchBrowserParity();
+            VerifyNpcLootBaseline21();
             VerifyGenericLootPreGame();
             VerifyExtraStashGearWeaponRemoval();
             VerifyStashGearCoverage();

@@ -1205,8 +1205,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
     }
 
-    // UI-only gate. The regular medical generator and both preset values
-    // keep their original CFG behavior while these editors are greyed out.
+    // Bonus ammo requires the optional NPC_Ammo_Smart corpse package.
+    // Standard human medical drops use separate ItemGenerator clones and remain
+    // fully editable with Water/None (including the default Veteran preset).
     private bool NpcBonusPackageSelected()
     {
         var corpse = P("loot.npcCorpseBonus");
@@ -1218,7 +1219,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private bool IsNpcBonusSliderLocked(ParameterViewModel? parameter)
         => Family == "NpcLootLoadout"
             && parameter is not null
-            && (parameter.Id is "loot.npcMedicalChance" or "loot.npcWeaponAmmoSupply")
+            && parameter.Id == "loot.npcWeaponAmmoSupply"
             && !NpcBonusPackageSelected();
 
     private void DrawNpcModItemsCard(
