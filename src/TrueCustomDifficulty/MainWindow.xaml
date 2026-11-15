@@ -539,12 +539,10 @@
                                                                             <TextBlock.Style>
                                                                                 <Style TargetType="TextBlock">
                                                                                     <Setter Property="Foreground" Value="{StaticResource MutedTextBrush}" />
-                                                                                        <Style.Triggers>
-                                                                                            <DataTrigger Binding="{Binding DataContext.WorldModItemsEnabled, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
-                                                                                                <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
-                                                                                            </DataTrigger>
-                                                                                        </Style.Triggers>
                                                                                     <Style.Triggers>
+                                                                                        <DataTrigger Binding="{Binding DataContext.WorldModItemsEnabled, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                                                                                            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+                                                                                        </DataTrigger>
                                                                                         <DataTrigger Binding="{Binding DataContext.IsWorldModItemsRemovalModified, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
                                                                                             <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
                                                                                         </DataTrigger>
@@ -596,12 +594,10 @@
                                                                             <TextBlock.Style>
                                                                                 <Style TargetType="TextBlock">
                                                                                     <Setter Property="Foreground" Value="{StaticResource MutedTextBrush}" />
-                                                                                        <Style.Triggers>
-                                                                                            <DataTrigger Binding="{Binding DataContext.CorpseModItemsEnabled, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
-                                                                                                <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
-                                                                                            </DataTrigger>
-                                                                                        </Style.Triggers>
                                                                                     <Style.Triggers>
+                                                                                        <DataTrigger Binding="{Binding DataContext.CorpseModItemsEnabled, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                                                                                            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+                                                                                        </DataTrigger>
                                                                                         <DataTrigger Binding="{Binding DataContext.IsCorpseModItemsRemovalModified, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
                                                                                             <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
                                                                                         </DataTrigger>
