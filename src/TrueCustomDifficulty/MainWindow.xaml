@@ -495,54 +495,82 @@
                                                                     <controls:VanillaMarkerBar Grid.Row="3" Height="17" Margin="34,-1,54,0" IsEnabled="{Binding IsControlEnabled}" Tag="rangeMax" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Markers="{Binding VanillaMarkers}" MarkerClicked="VanillaMarkerControl_MarkerClicked" />
                                                                 </Grid>
         
-                                                                <!-- Sidecar loot filters: compact controls owned by the two existing boards.
-                                                                     They are NOT part of the locked native 359-parameter catalog. -->
+                                                                <!-- Compact source-backed 0–100% mod item Chance reduction
+                                                                     overlays; no new native parameter rows or wider boards. -->
                                                                 <Border x:Name="WorldModLootControl"
                                                                         Grid.Row="0" Grid.RowSpan="2"
-                                                                        Width="190" Height="27"
+                                                                        Width="254" Height="30"
                                                                         HorizontalAlignment="Right" VerticalAlignment="Top"
-                                                                        Margin="0,35,19,0"
+                                                                        Margin="0,47,19,0"
                                                                         Background="{StaticResource PanelAltBrush}"
                                                                         BorderBrush="{StaticResource BorderBrush}"
                                                                         BorderThickness="1" CornerRadius="4"
-                                                                        Visibility="Collapsed" Focusable="True"
-                                                                        Cursor="Hand" Tag="world"
-                                                                        PreviewMouseLeftButtonDown="ModLootToggle_PreviewMouseLeftButtonDown"
-                                                                        PreviewMouseRightButtonDown="ModLootToggle_PreviewMouseRightButtonDown"
-                                                                        PreviewKeyDown="ModLootToggle_PreviewKeyDown">
-                                                                    <Grid Background="Transparent">
-                                                                        <TextBlock Text="REMOVE MOD ITEMS" FontSize="9.5"
-                                                                                   Margin="9,0,0,0" FontWeight="Bold"
+                                                                        Visibility="Collapsed"
+                                                                        IsEnabled="{Binding DataContext.IsBuildIdle, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                        Tag="world"
+                                                                        PreviewMouseLeftButtonDown="ModLootSlider_PreviewMouseLeftButtonDown"
+                                                                        PreviewMouseRightButtonDown="ModLootSlider_PreviewMouseRightButtonDown"
+                                                                        PreviewKeyDown="ModLootSlider_PreviewKeyDown">
+                                                                    <Grid Margin="7,0" Background="Transparent">
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="73" />
+                                                                            <ColumnDefinition Width="*" />
+                                                                            <ColumnDefinition Width="43" />
+                                                                        </Grid.ColumnDefinitions>
+                                                                        <TextBlock Text="MOD ITEMS"
+                                                                                   FontSize="9.2" FontWeight="Bold"
                                                                                    VerticalAlignment="Center"
                                                                                    Foreground="{StaticResource TextBrush}" />
-                                                                        <CheckBox HorizontalAlignment="Right" VerticalAlignment="Center"
-                                                                                  Margin="0,0,8,0" Focusable="False"
-                                                                                  IsHitTestVisible="False"
-                                                                                  IsChecked="{Binding DataContext.WorldModItemsBlocked, Mode=OneWay, RelativeSource={RelativeSource AncestorType=Window}}" />
+                                                                        <Slider Grid.Column="1"
+                                                                                VerticalAlignment="Center" Height="18"
+                                                                                Minimum="0" Maximum="1"
+                                                                                SmallChange="0.01" LargeChange="0.05"
+                                                                                TickFrequency="0.01" IsSnapToTickEnabled="True"
+                                                                                AutoToolTipPlacement="None"
+                                                                                Value="{Binding DataContext.WorldModItemsRemoval, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=Window}}" />
+                                                                        <TextBlock Grid.Column="2"
+                                                                                   Text="{Binding DataContext.WorldModItemsRemovalDisplay, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                                   FontSize="10.4" FontWeight="Bold"
+                                                                                   TextAlignment="Right" VerticalAlignment="Center"
+                                                                                   Foreground="{StaticResource TextBrush}" />
                                                                     </Grid>
                                                                 </Border>
                                                                 <Border x:Name="CorpseModLootControl"
                                                                         Grid.Row="0" Grid.RowSpan="2"
-                                                                        Width="190" Height="27"
+                                                                        Width="254" Height="30"
                                                                         HorizontalAlignment="Right" VerticalAlignment="Top"
-                                                                        Margin="0,59,19,0"
+                                                                        Margin="0,56,28,0"
                                                                         Background="{StaticResource PanelAltBrush}"
                                                                         BorderBrush="{StaticResource BorderBrush}"
                                                                         BorderThickness="1" CornerRadius="4"
-                                                                        Visibility="Collapsed" Focusable="True"
-                                                                        Cursor="Hand" Tag="corpse"
-                                                                        PreviewMouseLeftButtonDown="ModLootToggle_PreviewMouseLeftButtonDown"
-                                                                        PreviewMouseRightButtonDown="ModLootToggle_PreviewMouseRightButtonDown"
-                                                                        PreviewKeyDown="ModLootToggle_PreviewKeyDown">
-                                                                    <Grid Background="Transparent">
-                                                                        <TextBlock Text="REMOVE MOD ITEMS" FontSize="9.5"
-                                                                                   Margin="9,0,0,0" FontWeight="Bold"
+                                                                        Visibility="Collapsed"
+                                                                        IsEnabled="{Binding DataContext.IsBuildIdle, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                        Tag="corpse"
+                                                                        PreviewMouseLeftButtonDown="ModLootSlider_PreviewMouseLeftButtonDown"
+                                                                        PreviewMouseRightButtonDown="ModLootSlider_PreviewMouseRightButtonDown"
+                                                                        PreviewKeyDown="ModLootSlider_PreviewKeyDown">
+                                                                    <Grid Margin="7,0" Background="Transparent">
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="73" />
+                                                                            <ColumnDefinition Width="*" />
+                                                                            <ColumnDefinition Width="43" />
+                                                                        </Grid.ColumnDefinitions>
+                                                                        <TextBlock Text="MOD ITEMS"
+                                                                                   FontSize="9.2" FontWeight="Bold"
                                                                                    VerticalAlignment="Center"
                                                                                    Foreground="{StaticResource TextBrush}" />
-                                                                        <CheckBox HorizontalAlignment="Right" VerticalAlignment="Center"
-                                                                                  Margin="0,0,8,0" Focusable="False"
-                                                                                  IsHitTestVisible="False"
-                                                                                  IsChecked="{Binding DataContext.CorpseModItemsBlocked, Mode=OneWay, RelativeSource={RelativeSource AncestorType=Window}}" />
+                                                                        <Slider Grid.Column="1"
+                                                                                VerticalAlignment="Center" Height="18"
+                                                                                Minimum="0" Maximum="1"
+                                                                                SmallChange="0.01" LargeChange="0.05"
+                                                                                TickFrequency="0.01" IsSnapToTickEnabled="True"
+                                                                                AutoToolTipPlacement="None"
+                                                                                Value="{Binding DataContext.CorpseModItemsRemoval, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=Window}}" />
+                                                                        <TextBlock Grid.Column="2"
+                                                                                   Text="{Binding DataContext.CorpseModItemsRemovalDisplay, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                                   FontSize="10.4" FontWeight="Bold"
+                                                                                   TextAlignment="Right" VerticalAlignment="Center"
+                                                                                   Foreground="{StaticResource TextBrush}" />
                                                                     </Grid>
                                                                 </Border>
                                                             </Grid>

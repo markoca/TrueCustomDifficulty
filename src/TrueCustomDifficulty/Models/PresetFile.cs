@@ -35,12 +35,20 @@ public sealed class PresetFile
     [JsonPropertyName("genericNpcRareGearEnabled")]
     public bool GenericNpcRareGearEnabled { get; set; }
 
-    // Optional mod generator-only removal settings; missing old preset fields default OFF.
+    // New 0–100% mod generator removal fractions. Null means an older preset,
+    // which may contain the legacy binary flags below.
+    [JsonPropertyName("worldModItemsRemoval")]
+    public double? WorldModItemsRemoval { get; set; }
+
+    [JsonPropertyName("corpseModItemsRemoval")]
+    public double? CorpseModItemsRemoval { get; set; }
+
+    // Load-only legacy toggles. Null on saving means they are not serialized.
     [JsonPropertyName("worldModItemsBlocked")]
-    public bool WorldModItemsBlocked { get; set; }
+    public bool? LegacyWorldModItemsBlocked { get; set; }
 
     [JsonPropertyName("corpseModItemsBlocked")]
-    public bool CorpseModItemsBlocked { get; set; }
+    public bool? LegacyCorpseModItemsBlocked { get; set; }
 
     [JsonPropertyName("genericNpcRareGearChance")]
     public double GenericNpcRareGearChance { get; set; } = 0.02;

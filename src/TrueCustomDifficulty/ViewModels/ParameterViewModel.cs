@@ -68,20 +68,23 @@ public sealed class ParameterViewModel : ObservableObject
             : string.Empty)
         + (Id == "loot.worldAmmoCratesRemoved"
             ? Environment.NewLine + Environment.NewLine
-              + "REMOVE MOD ITEMS — WORLD\n"
+              + "MOD ITEM REMOVAL — WORLD\n"
               + "Affected mods: ZoneWatch; Point of No Return — Backpacks Pack; "
               + "Point of No Return — Repair System; Point of No Return — AR Goggles Pack.\n"
-              + "Only audited stashes and world containers, not traders or corpses. "
-              + "Project Itemization Reborn is NOT supported (shared bskipref/PackOfItems pools). "
-              + "The five native physical-loot reduction bars remain independent."
+              + "Reduces the original Chance of audited mod additions in world stashes "
+              + "and containers by the chosen percent. 0% leaves them unchanged; 100% "
+              + "blocks their generator branch. Does not alter traders, NPC corpses "
+              + "or the five normal physical-loot reduction bars. "
+              + "Project Itemization Reborn is not supported (shared generator pools)."
             : Id == "loot.npcCorpseBonus"
                 ? Environment.NewLine + Environment.NewLine
-                  + "REMOVE MOD ITEMS — CORPSE\n"
+                  + "MOD ITEM REMOVAL — CORPSE\n"
                   + "Affected mods: Point of No Return — Backpacks Pack; "
                   + "Point of No Return — Repair System.\n"
-                  + "Only audited human corpse generators, not trader offers, world stashes "
-                  + "or extra corpse package. Project Itemization Reborn is NOT supported "
-                  + "(unsafe shared pools)."
+                  + "Reduces the original Chance of audited mod additions on human NPC "
+                  + "corpses by the chosen percent. 0% leaves them unchanged; 100% "
+                  + "blocks their generator branch. Does not change traders, stashes "
+                  + "or Extra Corpse Loot. Project Itemization Reborn is unsupported."
                 : string.Empty);
 
     /// <summary>
@@ -123,7 +126,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "ItemWeightBoard" => "Adjust ammunition, food and medicine, weapons or armor weight independently.",
                     "AnomalyGlobalDamage" => "GLOBAL affects all supported anomaly damage. Each anomaly also has its own damage setting; FINAL includes both before protection.",
                     "AnomalySpecialEffects" => "Adjust Glass Shards bleeding and Psy drain independently. Their other damage effects remain separate.",
-                    "NpcLootLoadout" => "Choose extra corpse loot, medical or bonus ammo drops, and dropped weapon condition. Bonus ammo requires Medicine + Ammo.",
+                    "NpcLootLoadout" => "Choose extra corpse loot, medical or bonus ammo drops, and dropped weapon condition. MOD ITEMS changes only audited mod drops. Right-click its slider to reset it.",
                     "WorldLootLayout" => "Shuffle weapons, attachments and blueprints separately. Remove ordinary armor or detectors independently; quest rewards stay. Weapon density only affects weapon shuffle.",
                     "StashContentMix" => "Ammo Quantity changes Basic, Standard and Rare stacks together. Chance sliders scale original item chances; 100% does not guarantee loot. Rare Coupons and Basic RGD-5 have separate absolute chances.",
                     "StashMedicalComposition" => "DROP ROLLS changes medical-item chances, not whole-stash odds. LOOT PRIORITY favors items inside their actual pools. EFFECTIVE PICK previews the Medkit/Army Medkit mix; MIN/MAX sets stack sizes.",
@@ -156,8 +159,8 @@ public sealed class ParameterViewModel : ObservableObject
                 return "Four HEAL/BLEED pairs and four RAD columns (Scientific, Anti-Rad, Beer, Vodka) edit independent effects."
                     + Environment.NewLine + "Drag a column to adjust it, right-click to reset one source, or press R to reset this card. Food Healing is independent.";
             if (IsWorldLootRemovalMember)
-                return "Drag one box or loose-loot track: left keeps more pickups, right removes more."
-                    + Environment.NewLine + "Right-click one category to reset it; R resets all five.";
+                return "Drag one box or loose-loot track: left keeps more pickups, right removes more. MOD ITEMS has an independent 0–100% removal slider."
+                    + Environment.NewLine + "Right-click a slider to reset it. R resets the five physical loot categories; the MOD ITEMS slider resets independently.";
             if (IsMutantDropMember)
                 return "Drag a mutant's track to change its part-drop chance."
                     + Environment.NewLine + "Right-click one species to reset it; R resets all fourteen.";

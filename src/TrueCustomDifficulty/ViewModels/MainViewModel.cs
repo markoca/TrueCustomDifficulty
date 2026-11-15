@@ -26,8 +26,8 @@ public sealed class MainViewModel : ObservableObject
     private string? _loadedPresetName;
     private string _traderItemOverrides = string.Empty;
     private bool _genericNpcRareGearEnabled;
-    private bool _worldModItemsBlocked;
-    private bool _corpseModItemsBlocked;
+    private double _worldModItemsRemoval;
+    private double _corpseModItemsRemoval;
     private double _genericNpcRareGearChance = 0.02;
     private bool _suppressPresetSelection;
     private bool _isBuilding;
@@ -93,19 +93,33 @@ public sealed class MainViewModel : ObservableObject
         set => SetProperty(ref _genericNpcRareGearEnabled, value);
     }
 
-    // Optional mod item-generator removal: sidecars, not fake base-game CFG parameters.
-    // Keep the locked 359-source parameter catalog and factory presets unchanged.
-    public bool WorldModItemsBlocked
+    // Two optional 0–100% removal fractions, stored outside the locked
+    // 359 native CFG parameters. These scale only verified mod generator Chance.
+    public double WorldModItemsRemoval
     {
-        get => _worldModItemsBlocked;
-        set => SetProperty(ref _worldModItemsBlocked, value);
+        get => _worldModItemsRemoval;
+        set
+        {
+            if (!double.IsFinite(value))
+                throw new ArgumentOutOfRangeException(nameof(value));
+            if (SetProperty(ref _worldModItemsRemoval, Math.Round(Math.Clamp(value, 0.0, 1.0), 2)))
+                OnPropertyChanged(nameof(WorldModItemsRemovalDisplay));
+        }
     }
+    public string WorldModItemsRemovalDisplay => $"{WorldModItemsRemoval * 100:0}%";
 
-    public bool CorpseModItemsBlocked
+    public double CorpseModItemsRemoval
     {
-        get => _corpseModItemsBlocked;
-        set => SetProperty(ref _corpseModItemsBlocked, value);
+        get => _corpseModItemsRemoval;
+        set
+        {
+            if (!double.IsFinite(value))
+                throw new ArgumentOutOfRangeException(nameof(value));
+            if (SetProperty(ref _corpseModItemsRemoval, Math.Round(Math.Clamp(value, 0.0, 1.0), 2)))
+                OnPropertyChanged(nameof(CorpseModItemsRemovalDisplay));
+        }
     }
+    public string CorpseModItemsRemovalDisplay => $"{CorpseModItemsRemoval * 100:0}%";
 
     public double GenericNpcRareGearChance
     {
@@ -1339,8 +1353,8 @@ public sealed class MainViewModel : ObservableObject
             TraderItemOverrides = string.Empty;
             GenericNpcRareGearEnabled = false;
             GenericNpcRareGearChance = 0.02;
-            WorldModItemsBlocked = false;
-            CorpseModItemsBlocked = false;
+            WorldModItemsRemoval = 0.0;
+            CorpseModItemsRemoval = 0.0;
             AllParameters.First(p => p.Id == "survival.waterInstantStaminaRestore")
                 .DrinkDurationOverrideEnabled = false;
             AllParameters.First(p => p.Id == "health.bandageHealing")
@@ -1366,8 +1380,8 @@ public sealed class MainViewModel : ObservableObject
             }
             if (SelectedTab.Id == "loot")
             {
-                WorldModItemsBlocked = false;
-                CorpseModItemsBlocked = false;
+                WorldModItemsRemoval = 0.0;
+                CorpseModItemsRemoval = 0.0;
             }
             if (SelectedTab.Id == "health")
                 AllParameters.First(p => p.Id == "health.bandageHealing")
@@ -1530,8 +1544,8 @@ public sealed class MainViewModel : ObservableObject
             TraderItemOverrides = TraderItemOverrides,
             GenericNpcRareGearEnabled = GenericNpcRareGearEnabled,
             GenericNpcRareGearChance = GenericNpcRareGearChance,
-            WorldModItemsBlocked = WorldModItemsBlocked,
-            CorpseModItemsBlocked = CorpseModItemsBlocked,
+            WorldModItemsRemoval = WorldModItemsRemoval,
+            CorpseModItemsRemoval = CorpseModItemsRemoval,
             DrinkDurationOverride = AllParameters.First(p =>
                 p.Id == "survival.waterInstantStaminaRestore").DrinkDurationOverrideEnabled,
             MedicalOverride = AllParameters.First(p =>
@@ -1600,8 +1614,12 @@ public sealed class MainViewModel : ObservableObject
                 TraderItemOverrides = preset.TraderItemOverrides;
                 GenericNpcRareGearChance = preset.GenericNpcRareGearChance;
                 GenericNpcRareGearEnabled = preset.GenericNpcRareGearEnabled;
-                WorldModItemsBlocked = preset.WorldModItemsBlocked;
-                CorpseModItemsBlocked = preset.CorpseModItemsBlocked;
+                // Old boolean presets migrate without loss: true = full 100%
+                // removal, false/omitted = 0%. New saved fractions win.
+                WorldModItemsRemoval = preset.WorldModItemsRemoval
+                    ?? (preset.LegacyWorldModItemsBlocked == true ? 1.0 : 0.0);
+                CorpseModItemsRemoval = preset.CorpseModItemsRemoval
+                    ?? (preset.LegacyCorpseModItemsBlocked == true ? 1.0 : 0.0);
                 OnPropertyChanged(nameof(SelectedReferenceDifficulty));
                 OnPropertyChanged(nameof(BasePresetIndex));
 

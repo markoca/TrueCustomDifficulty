@@ -71,6 +71,16 @@ public sealed class PresetService
             throw new InvalidDataException(
                 "Generic NPC rare GEAR chance must be between 1% and 100%.");
 
+        foreach (var (label, fraction) in new[]
+        {
+            ("World mod item removal", preset.WorldModItemsRemoval),
+            ("Corpse mod item removal", preset.CorpseModItemsRemoval)
+        })
+        {
+            if (fraction is double value && (!double.IsFinite(value) || value < 0.0 || value > 1.0))
+                throw new InvalidDataException($"{label} must be between 0% and 100%.");
+        }
+
         foreach (var (id, value) in preset.Values)
         {
             if (string.IsNullOrWhiteSpace(id))

@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 using TrueCustomDifficulty.Models;
@@ -6,7 +7,7 @@ using TrueCustomDifficulty.ViewModels;
 namespace TrueCustomDifficulty.Services;
 
 /// <summary>
-/// Strict, source-audited opt-in blocker for mod-added named generator branches.
+/// Strict, source-audited percentage reduction of mod-added generator Chance.
 /// No installed third-party content is copied, unpacked or edited. An unmatched
 /// version fails closed instead of claiming to affect that mod's loot.
 /// </summary>
@@ -17,7 +18,9 @@ public sealed partial class CfgPatchWriterService
         string Name,
         AuditedPak[] Packages,
         (string Root, string Branch)[] WorldBranches,
-        (string Root, string Branch)[] CorpseBranches);
+        (string Root, string Branch)[] CorpseBranches,
+        double WorldSourceChance,
+        double CorpseSourceChance);
 
     private static readonly string[] GamePassStashRoots =
     {
@@ -154,10 +157,11 @@ public sealed partial class CfgPatchWriterService
             {
                 ("LesserZone_PostOffice_StashGenerator1_47ED900C400F3D651EA30EBBD5B58EA6", "ZST_FieldWatch110"),
                 ("Promzona_AhropromResearchInstitute_StashGenerator3_1B259E604F001F533511BD889B771B3C", "ZST_LabSentinel207"),
-                ("Promzona_AhropromResearchInstitute_StashGenerator3_1B259E604F001F533511BD889B771B3C", "ZST_SignalmanHold207"),
+                ("DugaRadar_Officer\'sQuarters_StashGenerator1_D729B70449C0E7FDE1D0C8A18659D10C", "ZST_SignalmanHold207"),
                 ("CementPlant_IslandNearKopachi_Safe", "ZST_FerrymanTally207")
             },
-            Array.Empty<(string, string)>()),
+            Array.Empty<(string, string)>(),
+            1.0, 0.0),
         new(
             "PointOfNoReturn-BackpacksPack",
             new[]
@@ -168,7 +172,8 @@ public sealed partial class CfgPatchWriterService
                     "5326668aba6a7a9fe2b1cfefe7081e2624f3c3dbb4a073244990520084089816")
             },
             GamePassStashRoots.Select(root => (root, "Backpacks")).ToArray(),
-            BackpackCorpseRoots.Select(root => (root, "Backpacks")).ToArray()),
+            BackpackCorpseRoots.Select(root => (root, "Backpacks")).ToArray(),
+            0.10, 0.10),
         new(
             "PointOfNoReturn-RepairSystem",
             new[]
@@ -179,7 +184,8 @@ public sealed partial class CfgPatchWriterService
                     "d22f05b500efdbc89989b9596cb87a2711ba896997f82378bcf99c00fb73c707")
             },
             GamePassStashRoots.Select(root => (root, "RepairKits")).ToArray(),
-            RepairCorpseRoots.Select(root => (root, "RepairKits")).ToArray()),
+            RepairCorpseRoots.Select(root => (root, "RepairKits")).ToArray(),
+            0.05, 0.04),
         new(
             "PointOfNoReturn-ArGogglesPack",
             new[]
@@ -190,7 +196,8 @@ public sealed partial class CfgPatchWriterService
                     "298598de23359b5397550a4c44331055e3c02665503d1cdddd617942731e03e2")
             },
             GamePassStashRoots.Select(root => (root, "ArGoggles")).ToArray(),
-            Array.Empty<(string, string)>())
+            Array.Empty<(string, string)>(),
+            0.05, 0.0)
     };
 
     private static int WriteAuditedModItemRemovals(
@@ -198,13 +205,15 @@ public sealed partial class CfgPatchWriterService
         string? modsFolder,
         IDictionary<string, PatchDocument> documents)
     {
-        var removeWorld = vm.WorldModItemsBlocked;
-        var removeCorpse = vm.CorpseModItemsBlocked;
-        if (!removeWorld && !removeCorpse)
+        // Preset sidecars retain percentages, not a destructive binary flag.
+        // 0% does not write a CFG; full 100% retains exact branch removal.
+        var worldRemoval = vm.WorldModItemsRemoval;
+        var corpseRemoval = vm.CorpseModItemsRemoval;
+        if (worldRemoval <= 0.0 && corpseRemoval <= 0.0)
             return 0;
 
         if (string.IsNullOrWhiteSpace(modsFolder) || !Directory.Exists(modsFolder))
-            throw new InvalidDataException("REMOVE MOD ITEMS requires a configured, accessible ~mods folder.");
+            throw new InvalidDataException("MOD ITEMS removal requires a configured, accessible ~mods folder.");
 
         var packagePaths = Directory.EnumerateFiles(modsFolder, "*", SearchOption.AllDirectories)
             .Where(path => path.EndsWith(".pak", StringComparison.OrdinalIgnoreCase))
@@ -214,7 +223,7 @@ public sealed partial class CfgPatchWriterService
             throw new InvalidDataException(
                 "Project Itemization Reborn is installed. Its bskipref / PackOfItems "
                 + "generator replacements have no safe independent mod-loot removal writer yet. "
-                + "Disable REMOVE MOD ITEMS before building; original PIR content stays untouched.");
+                + "Set both MOD ITEMS removal sliders to 0% before building; original PIR content stays untouched.");
 
         var changes = 0;
         var worldMatches = 0;
@@ -222,8 +231,8 @@ public sealed partial class CfgPatchWriterService
         var seen = new HashSet<string>(StringComparer.Ordinal);
         foreach (var mod in AuditedLootMods)
         {
-            if (!(removeWorld && mod.WorldBranches.Length > 0)
-                && !(removeCorpse && mod.CorpseBranches.Length > 0))
+            if (!(worldRemoval > 0.0 && mod.WorldBranches.Length > 0)
+                && !(corpseRemoval > 0.0 && mod.CorpseBranches.Length > 0))
                 continue;
 
             var candidates = packagePaths
@@ -252,35 +261,50 @@ public sealed partial class CfgPatchWriterService
                         + package.Name + "). No mod-item removal BPatch was generated.");
             }
 
-            void RemoveBranches((string Root, string Branch)[] branches)
+            void ScaleBranches(
+                (string Root, string Branch)[] branches, double removal, double sourceChance)
             {
+                if (removal <= 0.0)
+                    return;
+                if (sourceChance <= 0.0 || sourceChance > 1.0)
+                    throw new InvalidDataException("Invalid audited source Chance for " + mod.Name);
+                var effectiveChance = Math.Round(sourceChance * (1.0 - removal), 6,
+                    MidpointRounding.AwayFromZero);
                 foreach (var (root, branch) in branches)
                 {
-                    // Native shared generator only; never patch mod-defined pool
-                    // roots because trader and world sources may share those.
+                    // Patch only the named mod-added acquisition branch, NEVER
+                    // the shared mod-owned item pool (also used by merchants).
+                    // All audited World/Corpse branches have exactly one
+                    // PossibleItems leaf. Authored [*] resolves to [0] inside
+                    // a newly-added named branch, as verified in original PAKs.
                     if (!seen.Add(root + "|" + branch))
                         throw new InvalidDataException("Duplicate audited loot branch: " + root + "/" + branch);
                     var document = GetDocument(documents, "GameData/ItemGeneratorPrototypes.cfg");
-                    document.AddRemovalNode(root, new[] { "ItemGenerator" }, branch);
+                    if (removal >= 1.0)
+                        document.AddRemovalNode(root, new[] { "ItemGenerator" }, branch);
+                    else
+                        document.AddAssignment(root,
+                            new[] { "ItemGenerator", branch, "PossibleItems", "[0]" },
+                            "Chance", effectiveChance.ToString("0.######", CultureInfo.InvariantCulture));
                     changes++;
                 }
             }
-            if (removeWorld)
+            if (worldRemoval > 0.0)
             {
-                RemoveBranches(mod.WorldBranches);
+                ScaleBranches(mod.WorldBranches, worldRemoval, mod.WorldSourceChance);
                 if (mod.WorldBranches.Length > 0) worldMatches++;
             }
-            if (removeCorpse)
+            if (corpseRemoval > 0.0)
             {
-                RemoveBranches(mod.CorpseBranches);
+                ScaleBranches(mod.CorpseBranches, corpseRemoval, mod.CorpseSourceChance);
                 if (mod.CorpseBranches.Length > 0) corpseMatches++;
             }
         }
 
-        if ((removeWorld && worldMatches == 0) || (removeCorpse && corpseMatches == 0))
+        if ((worldRemoval > 0.0 && worldMatches == 0) || (corpseRemoval > 0.0 && corpseMatches == 0))
             throw new InvalidDataException(
-                "REMOVE MOD ITEMS: no matching audited mod PAK set was found for "
-                + (removeWorld && worldMatches == 0 ? "WORLD" : "CORPSE")
+                "MOD ITEMS: no matching audited mod PAK set was found for "
+                + (worldRemoval > 0.0 && worldMatches == 0 ? "WORLD" : "CORPSE")
                 + ". Install the documented exact mod version or reset the checkbox. "
                 + "No unverified mod content was changed.");
 
