@@ -241,9 +241,12 @@ internal static partial class Program
         double globalMedicalFactor, IReadOnlyDictionary<string, double>? extraOverrides = null,
         bool legacyMode = false)
     {
-        Check(output.Count == 1 && output.TryGetValue(
-            "GameData/ItemGeneratorPrototypes.cfg", out var generated),
-            caseName + ": source isolation failed; expected only NPC ItemGenerator CFG");
+        Check(output.Count == 1, caseName
+            + ": source isolation failed; expected only NPC ItemGenerator CFG");
+        var generated = output.TryGetValue(
+            "GameData/ItemGeneratorPrototypes.cfg", out var source)
+            ? source : throw new InvalidDataException(
+                caseName + ": NPC ItemGenerator CFG output is missing");
 
         var medical = new HashSet<string>(StringComparer.Ordinal)
             { "Bandage", "Medkit", "ArmyMedkit", "AntiRad" };

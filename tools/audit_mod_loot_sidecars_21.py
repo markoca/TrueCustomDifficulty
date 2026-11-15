@@ -20,7 +20,8 @@ preset_svc = read("src/TrueCustomDifficulty/Services/PresetService.cs")
 service = read("src/TrueCustomDifficulty/Services/CfgPatchWriterService.cs")
 build = read("src/TrueCustomDifficulty/Services/ModBuildService.cs")
 xaml = read("src/TrueCustomDifficulty/MainWindow.xaml")
-cs = read("src/TrueCustomDifficulty/MainWindow.xaml.cs")
+world_ui = read("src/TrueCustomDifficulty/Controls/WorldLootRemovalRadar.cs")
+npc_ui = read("src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs")
 vm = read("src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs")
 for prop, field in [
     ("WorldModItemsRemoval", "worldModItemsRemoval"),
@@ -35,7 +36,8 @@ for prop, field in [
     required(preset_svc, "must be between 0% and 100%", "saved range validation")
     required(xaml, "DataContext." + prop + ", Mode=TwoWay", "live slider binding")
     required(writer, "vm." + prop, "writer sidecar")
-    required(cs, "vm." + prop + " = 0.0;", "right-click reset")
+    required(world_ui if prop.startswith("World") else npc_ui,
+             "ModItemsRemoval = 0.0;", "native right-click/R reset")
 for legacy in ("worldModItemsBlocked", "corpseModItemsBlocked"):
     required(preset, 'JsonPropertyName("' + legacy + '")', "legacy flag load")
     required(main, "== true ? 1.0 : 0.0", "legacy true => full removal")
@@ -54,20 +56,45 @@ required(writer, "SHA256.HashData(stream)", "exact PAK fingerprint")
 required(writer, "ProjectItemizationReborn", "unsafe PIR exclusion")
 required(writer, "no matching audited mod PAK set was found", "fail closed without mod")
 assert not re.search(r'AddRemovalNode\([^;\n]*Pool', writer), "never globally remove shared rank pools"
-required(cs, "ModLootSlider_PreviewMouseRightButtonDown", "right-click reset")
-required(cs, "e.Key != Key.R", "keyboard reset")
-for name in ("WorldModLootControl", "CorpseModLootControl"):
-    required(xaml, 'TargetName="' + name + '" Property="Visibility" Value="Visible"',
-             "existing panel context")
-assert xaml.count('Text="MOD ITEMS"') == 2, "exactly two compact labels"
-assert xaml.count('TickFrequency="0.01" IsSnapToTickEnabled="True"') >= 2, "1% steps"
+# Native integrated editors replaced the retired XAML overlay and its
+# MainWindow handlers. Assert actual source controls, not obsolete names.
+required(world_ui, "protected override void OnMouseRightButtonDown",
+         "world native right-click reset")
+required(npc_ui, "protected override void OnMouseRightButtonDown",
+         "corpse native right-click reset")
+required(world_ui, "protected override void OnKeyDown", "world native keyboard")
+required(npc_ui, "protected override void OnKeyDown", "corpse native keyboard")
+required(world_ui, "if (e.Key == Key.R && IsEnabled && ModItemsEditorAvailable)",
+         "world R reset")
+required(npc_ui, "if (e.Key == Key.R)", "corpse R reset")
+required(world_ui, "step * 0.01", "world 1% keyboard increment")
+required(npc_ui, "modStep * 0.01", "corpse 1% keyboard increment")
+required(world_ui, "Math.Round(modRatio, 2", "world 1% pointer snapping")
+required(npc_ui, "Math.Round(ratio, 2", "corpse 1% pointer snapping")
+required(world_ui, "private const int ModLane = 5;", "sixth world lane")
+required(world_ui, 'DrawCenteredText(dc, "MOD ITEMS"', "world native caption")
+required(npc_ui, 'DrawText(dc, "MOD ITEMS"', "corpse native caption")
+required(npc_ui, 'DrawNpcModItemsCard(dc, new Rect(', "corpse integrated card")
+required(world_ui, "BooleanCheckboxChrome.Draw", "world checkbox")
+required(npc_ui, "BooleanCheckboxChrome.Draw", "corpse checkbox")
+assert xaml.count('Text="MOD ITEMS"') == 0, "obsolete floating XAML strips returned"
+for prefix in ("World", "Corpse"):
+    for suffix in ("ModItemsEnabled", "ModItemsRemoval"):
+        required(xaml, "DataContext." + prefix + suffix + ", Mode=TwoWay",
+                 "native two-way enabled/value binding")
+required(xaml, "DataContext.IsBuildIdle", "build-phase editor lock binding")
+required(world_ui, "ModItemsEditorAvailable", "world disabled during build")
+required(npc_ui, "ModItemsEditorAvailable", "corpse disabled during build")
+required(world_ui, 'new("loot.worldAmmoCratesRemoved"', "world source anchor")
+required(npc_ui, 'P("loot.npcCorpseBonus")', "corpse source anchor")
+mod_audit = read("docs/MOD-AUDIT.md")
 for mod in ("ZoneWatch", "Backpacks Pack", "Repair System", "AR Goggles Pack",
             "Project Itemization Reborn"):
-    required(vm, mod, "rationale mod roster")
-for anchor in ('Id == "loot.worldAmmoCratesRemoved"', 'Id == "loot.npcCorpseBonus"'):
-    required(vm, anchor, "rationale anchor")
-for source in ("docs/UI-DESIGN-LOCK.md", "docs/VISUAL-CONTROL-SYSTEM.md", "docs/MOD-AUDIT.md"):
-    required(read(source), "Percentage-based MOD ITEMS removal", "new current docs")
+    required(mod_audit, mod, "audited mod rationale roster")
+required(mod_audit, "Percentage-based MOD ITEMS removal", "original source audit")
+for source in ("docs/UI-DESIGN-LOCK.md", "docs/VISUAL-CONTROL-SYSTEM.md"):
+    required(read(source), "Mod-item reduction controls (2026-11-15)",
+             "current native integrated UI contract")
 for name, expected in (("BackpackCorpseRoots", 48), ("RepairCorpseRoots", 55)):
     match = re.search(r"private static readonly string\[\] " + name +
                       r" =\s*\{(.*?)\n    \};", writer, re.S)

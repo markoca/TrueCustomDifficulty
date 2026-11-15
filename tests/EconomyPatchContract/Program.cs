@@ -67,7 +67,7 @@ internal static class Program
             TestTraderSellsCombinedWithBuys();
             TestGenericNpcRareStock();
             TestLinkedRoamingGuides();
-            Check(_passed == 47, "Expected exactly 47 Economy writer scenarios");
+            Check(_passed == 48, "Expected exactly 48 Economy writer scenarios");
             Console.WriteLine($"PASS: {_passed} Economy production BPatch writer scenarios");
             Console.WriteLine("NOT VERIFIED: original CFG archives, DLC1-installed patches or game behavior");
             return 0;

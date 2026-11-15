@@ -41,7 +41,11 @@ internal static partial class Program
             foreach (var id in masterRoots)
             {
                 var root = vm.AllParameters.Single(p => p.Id == id);
-                Check(root.IsControlVisible == available,
+                // Composite members are deliberately hidden as standalone
+                // rows; their visible board is owned by the family's anchor.
+                var standalone = !root.IsVisualAggregateMember
+                    || root.IsVisualAggregateAnchor;
+                Check(root.IsControlVisible == (available && standalone),
                     difficulty + ": Master root visibility mismatch: " + id);
             }
             var normalCorpse = vm.AllParameters.Single(p => p.Id == "loot.npcCorpseBonus");
