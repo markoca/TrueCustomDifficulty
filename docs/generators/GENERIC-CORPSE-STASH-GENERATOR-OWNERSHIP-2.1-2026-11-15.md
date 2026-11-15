@@ -1,5 +1,8 @@
 # Generic NPC corpses and ordinary world stashes — generator ownership (2.1)
 
+> **Current design decision (2026-11-15):** Weapon-attached NPC ammo is explicitly excluded from future TCD tuning, as is Echo detector Chance. Earlier “strongest next candidate” text below is historical research, **not an approved feature**. The requested ordinary-loot simplification is exactly **two proposed high-level source-scoped reduction controls**, not new per-weapon or detector controls; see [two-control scarcity design](GENERIC-LOOT-TWO-CONTROL-SCARCITY-DESIGN-2026-11-15.md). This decision record changes documentation only, not the shipped UI or CFG writer.
+
+
 **Date:** 2026-11-15
 **Scope:** Static source-to-consumer ownership; ordinary repeatable human NPCs versus normal world ItemContainer stashes. This is a **classification**, not a gameplay generator rewrite or evidence that an item will drop in a live game.
 

@@ -1,5 +1,8 @@
 # Generic NPC corpse vs Basic / Standard / Rare stash content — CFG coverage matrix
 
+> **Current design decision (2026-11-15):** Weapon-attached NPC ammo is explicitly excluded from future TCD tuning, as is Echo detector Chance. Earlier “strongest next candidate” text below is historical research, **not an approved feature**. The requested ordinary-loot simplification is exactly **two proposed high-level source-scoped reduction controls**, not new per-weapon or detector controls; see [two-control scarcity design](GENERIC-LOOT-TWO-CONTROL-SCARCITY-DESIGN-2026-11-15.md). This decision record changes documentation only, not the shipped UI or CFG writer.
+
+
 **Audit date:** 2026-11-15  
 **Game source:** pinned S.T.A.L.K.E.R. **2.1** TCD baseline, with original specialist catalogs retained from 2.0.5 where their ItemGenerator domain was verified unchanged in the repository 2.1 migration notes. **Nature:** static generator/consumer coverage, not measured gameplay drop rates.
 
