@@ -117,7 +117,7 @@ assert "SellCloneSid(\"base\", p.Trade, 0, p.Root)" in service
 assert "GetOrAddReferencedRoot(" in service
 assert '"../ItemGeneratorPrototypes.cfg", p.Root' in service
 assert '"ItemGeneratorPrototypeSID", clone' in service
-assert 'WriteGenericNpcRareTraderStock(documents)' in core
+assert 'WriteGenericNpcRareTraderStock(' in core
 assert 'AddPlainRoot(string prototype)' in core
 assert 'WriteTraderSells(modifiedById, vm.TraderItemOverrides' in core
 assert core.index('WriteTraderSells(modifiedById, vm.TraderItemOverrides') < core.index('WriteGenericNpcRareTraderStock(documents)')

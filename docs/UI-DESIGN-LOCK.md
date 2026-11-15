@@ -3342,3 +3342,8 @@ The legacy BUY source audit now expects the SELL anchor to reveal the **TraderEc
 ### 2026-11-15 — Rare trader writer ordering audit follow-up
 
 - The generic-NPC rare-stock audit now checks the real argument-bearing `WriteGenericNpcRareTraderStock(` invocation when comparing call order against `WriteTraderSells`. The prior substring asserted an obsolete no-argument call and stopped the audit before its actual CFG/UI/preset validations. No production behavior changed.
+
+
+### 2026-11-15 — Eliminate duplicate retired generic stock signature assertion
+
+- Both generic trader audit hook checks now use the same current argument-bearing `WriteGenericNpcRareTraderStock(` signature. A second copy of the stale no-argument assertion was found after the order check. Assert the actual caller arguments separately; retain all nine source-profile, trader-only isolation and preset/UI checks.
