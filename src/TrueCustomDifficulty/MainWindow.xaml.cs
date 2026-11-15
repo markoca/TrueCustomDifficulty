@@ -222,6 +222,55 @@ public partial class MainWindow : Window
 
     // An aggregate is represented by its anchor in the list, but interacting
     // with a mixer strip should explain that specific parameter at the right.
+
+    // Mod-content controls are optional preset sidecars, not fake vanilla
+    // parameter IDs. Each card selects its existing native anchor rationale.
+    private void SelectModLootRationale(string domain)
+    {
+        if (DataContext is not MainViewModel vm || vm.SelectedTab is null)
+            return;
+        var anchorId = domain == "world" ? "loot.worldAmmoCratesRemoved" : "loot.npcCorpseBonus";
+        var parameter = vm.SelectedTab.Parameters.FirstOrDefault(p => p.Id == anchorId);
+        if (parameter is not null)
+            vm.SelectedTab.SelectedParameter = parameter;
+    }
+
+    private void ApplyModLootToggle(object sender, bool reset)
+    {
+        if (sender is not FrameworkElement { Tag: string domain }
+            || DataContext is not MainViewModel vm || vm.IsBuilding)
+            return;
+        if (domain == "world")
+            vm.WorldModItemsBlocked = !reset && !vm.WorldModItemsBlocked;
+        else if (domain == "corpse")
+            vm.CorpseModItemsBlocked = !reset && !vm.CorpseModItemsBlocked;
+        else
+            return;
+        SelectModLootRationale(domain);
+    }
+
+    private void ModLootToggle_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is FrameworkElement element)
+            element.Focus();
+        ApplyModLootToggle(sender, reset: false);
+        e.Handled = true;
+    }
+
+    private void ModLootToggle_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        ApplyModLootToggle(sender, reset: true);
+        e.Handled = true;
+    }
+
+    private void ModLootToggle_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key is not (Key.Space or Key.Enter or Key.R))
+            return;
+        ApplyModLootToggle(sender, reset: e.Key == Key.R);
+        e.Handled = true;
+    }
+
     private void AggregateVisualControl_ParameterSelected(
         object sender, AggregateParameterSelectedEventArgs e)
     {

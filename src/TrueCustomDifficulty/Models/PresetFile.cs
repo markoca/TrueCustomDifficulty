@@ -35,6 +35,13 @@ public sealed class PresetFile
     [JsonPropertyName("genericNpcRareGearEnabled")]
     public bool GenericNpcRareGearEnabled { get; set; }
 
+    // Optional mod generator-only removal settings; missing old preset fields default OFF.
+    [JsonPropertyName("worldModItemsBlocked")]
+    public bool WorldModItemsBlocked { get; set; }
+
+    [JsonPropertyName("corpseModItemsBlocked")]
+    public bool CorpseModItemsBlocked { get; set; }
+
     [JsonPropertyName("genericNpcRareGearChance")]
     public double GenericNpcRareGearChance { get; set; } = 0.02;
 

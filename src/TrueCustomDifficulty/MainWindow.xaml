@@ -495,6 +495,56 @@
                                                                     <controls:VanillaMarkerBar Grid.Row="3" Height="17" Margin="34,-1,54,0" IsEnabled="{Binding IsControlEnabled}" Tag="rangeMax" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Markers="{Binding VanillaMarkers}" MarkerClicked="VanillaMarkerControl_MarkerClicked" />
                                                                 </Grid>
         
+                                                                <!-- Sidecar loot filters: compact controls owned by the two existing boards.
+                                                                     They are NOT part of the locked native 359-parameter catalog. -->
+                                                                <Border x:Name="WorldModLootControl"
+                                                                        Grid.Row="0" Grid.RowSpan="2"
+                                                                        Width="190" Height="27"
+                                                                        HorizontalAlignment="Right" VerticalAlignment="Top"
+                                                                        Margin="0,35,19,0"
+                                                                        Background="{StaticResource PanelAltBrush}"
+                                                                        BorderBrush="{StaticResource BorderBrush}"
+                                                                        BorderThickness="1" CornerRadius="4"
+                                                                        Visibility="Collapsed" Focusable="True"
+                                                                        Cursor="Hand" Tag="world"
+                                                                        PreviewMouseLeftButtonDown="ModLootToggle_PreviewMouseLeftButtonDown"
+                                                                        PreviewMouseRightButtonDown="ModLootToggle_PreviewMouseRightButtonDown"
+                                                                        PreviewKeyDown="ModLootToggle_PreviewKeyDown">
+                                                                    <Grid Background="Transparent">
+                                                                        <TextBlock Text="REMOVE MOD ITEMS" FontSize="9.5"
+                                                                                   Margin="9,0,0,0" FontWeight="Bold"
+                                                                                   VerticalAlignment="Center"
+                                                                                   Foreground="{StaticResource TextBrush}" />
+                                                                        <CheckBox HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                                                  Margin="0,0,8,0" Focusable="False"
+                                                                                  IsHitTestVisible="False"
+                                                                                  IsChecked="{Binding DataContext.WorldModItemsBlocked, Mode=OneWay, RelativeSource={RelativeSource AncestorType=Window}}" />
+                                                                    </Grid>
+                                                                </Border>
+                                                                <Border x:Name="CorpseModLootControl"
+                                                                        Grid.Row="0" Grid.RowSpan="2"
+                                                                        Width="190" Height="27"
+                                                                        HorizontalAlignment="Right" VerticalAlignment="Top"
+                                                                        Margin="0,32,19,0"
+                                                                        Background="{StaticResource PanelAltBrush}"
+                                                                        BorderBrush="{StaticResource BorderBrush}"
+                                                                        BorderThickness="1" CornerRadius="4"
+                                                                        Visibility="Collapsed" Focusable="True"
+                                                                        Cursor="Hand" Tag="corpse"
+                                                                        PreviewMouseLeftButtonDown="ModLootToggle_PreviewMouseLeftButtonDown"
+                                                                        PreviewMouseRightButtonDown="ModLootToggle_PreviewMouseRightButtonDown"
+                                                                        PreviewKeyDown="ModLootToggle_PreviewKeyDown">
+                                                                    <Grid Background="Transparent">
+                                                                        <TextBlock Text="REMOVE MOD ITEMS" FontSize="9.5"
+                                                                                   Margin="9,0,0,0" FontWeight="Bold"
+                                                                                   VerticalAlignment="Center"
+                                                                                   Foreground="{StaticResource TextBrush}" />
+                                                                        <CheckBox HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                                                  Margin="0,0,8,0" Focusable="False"
+                                                                                  IsHitTestVisible="False"
+                                                                                  IsChecked="{Binding DataContext.CorpseModItemsBlocked, Mode=OneWay, RelativeSource={RelativeSource AncestorType=Window}}" />
+                                                                    </Grid>
+                                                                </Border>
                                                             </Grid>
         
                                                             <TextBlock x:Name="PracticalQuantityText"
@@ -553,6 +603,7 @@
                                                              <Setter TargetName="TraderEconomyPanel" Property="Visibility" Value="Visible" />
                                                          </DataTrigger>
                                                          <DataTrigger Binding="{Binding IsWorldLootRemovalAnchor}" Value="True">
+                                                            <Setter TargetName="WorldModLootControl" Property="Visibility" Value="Visible" />
                                                             <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
                                                             <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
                                                             <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
@@ -622,6 +673,9 @@
                                                             <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
                                                             <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
                                                             <Setter TargetName="MutantGroupSizeRadarControl" Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Id}" Value="loot.npcCorpseBonus">
+                                                            <Setter TargetName="CorpseModLootControl" Property="Visibility" Value="Visible" />
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding IsVisualAggregateAnchor}" Value="True">
                                                             <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />

@@ -24,7 +24,8 @@ public sealed partial class CfgPatchWriterService
         MainViewModel vm,
         ParameterCatalog catalog,
         GameInstallInfo? gameInstall,
-        string outputRoot)
+        string outputRoot,
+        string? modsFolder = null)
     {
         var baseline = _baselineService.Load();
         ValidateBaseline(baseline, catalog);
@@ -338,6 +339,9 @@ public sealed partial class CfgPatchWriterService
 
         var looseRemoval = WriteLooseWorldLootRemovals(modifiedById, hasDlc1, outputRoot, writtenParameters);
         editCount += looseRemoval.EditCount;
+        // Optional, source-hash-verified third-party generator removals.
+        // Kept out of the 359 native parameter catalog/writer accounting.
+        editCount += WriteAuditedModItemRemovals(vm, modsFolder, documents);
 
         var uniqueWeaponShuffle = WriteLooseUniqueWeaponShuffle(baseline.Special.LooseUniqueWeaponShuffle,
             modifiedById, outputRoot, writtenParameters);

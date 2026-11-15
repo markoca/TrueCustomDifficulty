@@ -55,7 +55,7 @@ public sealed class ModBuildService
                 writerInstall = RoamingGuideSourceDetector.Resolve(
                     gameInstall, modsFolder, _tools.Require("repak"));
 
-            var cfgResult = _cfgWriter.Write(vm, catalog, writerInstall, stagingRoot);
+            var cfgResult = _cfgWriter.Write(vm, catalog, writerInstall, stagingRoot, modsFolder);
 
             if (cfgResult.FileCount == 0)
             {

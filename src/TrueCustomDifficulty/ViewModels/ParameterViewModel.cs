@@ -65,7 +65,24 @@ public sealed class ParameterViewModel : ObservableObject
             : Definition.Rationale.Trim())
         + (IsTraderSellsMember
             ? Environment.NewLine + Environment.NewLine + TraderStockRationale.NamedCategories
-            : string.Empty);
+            : string.Empty)
+        + (Id == "loot.worldAmmoCratesRemoved"
+            ? Environment.NewLine + Environment.NewLine
+              + "REMOVE MOD ITEMS — WORLD\n"
+              + "Affected mods: ZoneWatch; Point of No Return — Backpacks Pack; "
+              + "Point of No Return — Repair System; Point of No Return — AR Goggles Pack.\n"
+              + "Only audited stashes and world containers, not traders or corpses. "
+              + "Project Itemization Reborn is NOT supported (shared bskipref/PackOfItems pools). "
+              + "The five native physical-loot reduction bars remain independent."
+            : Id == "loot.npcCorpseBonus"
+                ? Environment.NewLine + Environment.NewLine
+                  + "REMOVE MOD ITEMS — CORPSE\n"
+                  + "Affected mods: Point of No Return — Backpacks Pack; "
+                  + "Point of No Return — Repair System.\n"
+                  + "Only audited human corpse generators, not trader offers, world stashes "
+                  + "or extra corpse package. Project Itemization Reborn is NOT supported "
+                  + "(unsafe shared pools)."
+                : string.Empty);
 
     /// <summary>
     /// Player-facing interaction guide. These entries describe the ACTUAL

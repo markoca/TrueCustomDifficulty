@@ -26,6 +26,8 @@ public sealed class MainViewModel : ObservableObject
     private string? _loadedPresetName;
     private string _traderItemOverrides = string.Empty;
     private bool _genericNpcRareGearEnabled;
+    private bool _worldModItemsBlocked;
+    private bool _corpseModItemsBlocked;
     private double _genericNpcRareGearChance = 0.02;
     private bool _suppressPresetSelection;
     private bool _isBuilding;
@@ -89,6 +91,20 @@ public sealed class MainViewModel : ObservableObject
     {
         get => _genericNpcRareGearEnabled;
         set => SetProperty(ref _genericNpcRareGearEnabled, value);
+    }
+
+    // Optional mod item-generator removal: sidecars, not fake base-game CFG parameters.
+    // Keep the locked 359-source parameter catalog and factory presets unchanged.
+    public bool WorldModItemsBlocked
+    {
+        get => _worldModItemsBlocked;
+        set => SetProperty(ref _worldModItemsBlocked, value);
+    }
+
+    public bool CorpseModItemsBlocked
+    {
+        get => _corpseModItemsBlocked;
+        set => SetProperty(ref _corpseModItemsBlocked, value);
     }
 
     public double GenericNpcRareGearChance
@@ -1323,6 +1339,8 @@ public sealed class MainViewModel : ObservableObject
             TraderItemOverrides = string.Empty;
             GenericNpcRareGearEnabled = false;
             GenericNpcRareGearChance = 0.02;
+            WorldModItemsBlocked = false;
+            CorpseModItemsBlocked = false;
             AllParameters.First(p => p.Id == "survival.waterInstantStaminaRestore")
                 .DrinkDurationOverrideEnabled = false;
             AllParameters.First(p => p.Id == "health.bandageHealing")
@@ -1345,6 +1363,11 @@ public sealed class MainViewModel : ObservableObject
                 TraderItemOverrides = string.Empty;
                 GenericNpcRareGearEnabled = false;
                 GenericNpcRareGearChance = 0.02;
+            }
+            if (SelectedTab.Id == "loot")
+            {
+                WorldModItemsBlocked = false;
+                CorpseModItemsBlocked = false;
             }
             if (SelectedTab.Id == "health")
                 AllParameters.First(p => p.Id == "health.bandageHealing")
@@ -1507,6 +1530,8 @@ public sealed class MainViewModel : ObservableObject
             TraderItemOverrides = TraderItemOverrides,
             GenericNpcRareGearEnabled = GenericNpcRareGearEnabled,
             GenericNpcRareGearChance = GenericNpcRareGearChance,
+            WorldModItemsBlocked = WorldModItemsBlocked,
+            CorpseModItemsBlocked = CorpseModItemsBlocked,
             DrinkDurationOverride = AllParameters.First(p =>
                 p.Id == "survival.waterInstantStaminaRestore").DrinkDurationOverrideEnabled,
             MedicalOverride = AllParameters.First(p =>
@@ -1575,6 +1600,8 @@ public sealed class MainViewModel : ObservableObject
                 TraderItemOverrides = preset.TraderItemOverrides;
                 GenericNpcRareGearChance = preset.GenericNpcRareGearChance;
                 GenericNpcRareGearEnabled = preset.GenericNpcRareGearEnabled;
+                WorldModItemsBlocked = preset.WorldModItemsBlocked;
+                CorpseModItemsBlocked = preset.CorpseModItemsBlocked;
                 OnPropertyChanged(nameof(SelectedReferenceDifficulty));
                 OnPropertyChanged(nameof(BasePresetIndex));
 
