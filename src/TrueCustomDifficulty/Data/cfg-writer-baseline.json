@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.1",
-  "supportedParameterCount": 359,
+  "supportedParameterCount": 361,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -21070,6 +21070,7 @@
       "combat.psyDurabilityDamage": "PsyNPCDurabilityDamageMultiplier"
     },
     "cheapStashProduction": {
+      "genericReductionParameterId": "loot.genericStashReduction",
       "ammoQuantityParameterId": "loot.cheapStashAmmoQuantity",
       "grenadeChanceParameterId": "loot.cheapStashGrenadeChance",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -23340,6 +23341,7 @@
       "redirectManifestResource": "TrueCustomDifficulty.Data.expensive-stash-production-redirect-manifest.csv"
     },
     "npcMedicalLootProduction": {
+      "genericReductionParameterId": "loot.genericCorpseReduction",
       "parameterId": "loot.npcMedicalChance",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
       "baseTemplateRefUrl": "../ItemGeneratorPrototypes.cfg",

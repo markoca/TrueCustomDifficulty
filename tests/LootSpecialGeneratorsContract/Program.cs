@@ -106,6 +106,7 @@ internal static partial class Program
             VerifyNpcLootBaseline21();
             VerifyNpcConsumableChanceFirstPass();
             VerifyGenericLootPreGame();
+            VerifyGenericSupplyReduction();
             VerifyExtraStashGearWeaponRemoval();
             VerifyStashGearCoverage();
             VerifySharedAttachmentAndGearActorSlots();

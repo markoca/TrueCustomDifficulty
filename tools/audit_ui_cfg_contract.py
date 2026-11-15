@@ -10,7 +10,7 @@ SRC = ROOT / "src" / "TrueCustomDifficulty"
 DATA = SRC / "Data"
 
 AGGREGATES = {
-    "Stash Content": ["loot.stashMixAmmo","loot.stashMixMedical","loot.stashMixFood","loot.stashMixDrinks","loot.stashMixGrenades","loot.stashMixCoupons"],
+    "Stash Content": ["loot.genericStashReduction","loot.stashMixAmmo","loot.stashMixMedical","loot.stashMixFood","loot.stashMixDrinks","loot.stashMixGrenades","loot.stashMixCoupons"],
     "Stash Medical Composition": [
         "loot.stashMedicalBandageBias","loot.stashMedicalMedkitBias",
         "loot.stashMedicalArmyMedkitBias","loot.stashMedicalAntiRadBias",
@@ -146,8 +146,8 @@ def main():
     # These are the CURRENT catalog invariants, not v0.9.26.51's 199/188
     # obsolete snapshot. The core must route every parameter, even hidden
     # aggregate backings; 13 independent source IDs are audit-only.
-    if len(parameters) != 359:
-        fail(f"catalog count drifted: {len(parameters)} != 359")
+    if len(parameters) != 361:
+        fail(f"catalog count drifted: {len(parameters)} != 361")
     if len(all_ids) != len(parameters):
         fail("duplicate catalog parameter IDs")
 
@@ -158,11 +158,11 @@ def main():
     hidden_non_ui = all_ids - effective_ui_ids
     backing_ids = hidden_ids - EXPECTED_HIDDEN_NON_UI
 
-    if len(visible_ids) != 184 or len(hidden_ids) != 175:
-        fail(f"live visible/hidden catalog drift: {len(visible_ids)}/{len(hidden_ids)} != 184/175")
+    if len(visible_ids) != 186 or len(hidden_ids) != 175:
+        fail(f"live visible/hidden catalog drift: {len(visible_ids)}/{len(hidden_ids)} != 186/175")
     if not EXPECTED_HIDDEN_NON_UI.issubset(hidden_ids):
         fail(f"declared non-UI controls became visible or vanished: {sorted(EXPECTED_HIDDEN_NON_UI-hidden_ids)}")
-    if len(effective_ui_ids) != 342 or len(backing_ids) != 158:
+    if len(effective_ui_ids) != 344 or len(backing_ids) != 158:
         fail(f"active source dimension count drifted: {len(effective_ui_ids)} / {len(backing_ids)} backing")
 
     # Named legacy aggregate cohorts are evidence, not the complete editor

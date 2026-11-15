@@ -249,11 +249,14 @@ public sealed partial class CfgPatchWriterService
     {
         // Leave original world SmartLoot and all actors untouched at VANILLA.
         var relevant = StashMixParameterIds.Concat(StashMedicalParameterIds)
+            .Append(StashSupplyReductionId)
             .Where(modified.ContainsKey).ToArray();
         if (relevant.Length == 0)
             return 0;
         // One numeric source snapshot for all affected SmartLoot groups.
         var effective = new StashEffectiveState(all.Values, modified.Keys, "Easy");
+        var masterChanged = modified.ContainsKey(StashSupplyReductionId);
+        var remaining = GenericSupplyRemaining(all, StashSupplyReductionId);
         var source = LoadSmartStashItems();
         var actors = LoadSmartStashActors();
         var groups = source.GroupBy(x => x.Prototype, StringComparer.Ordinal).ToArray();
@@ -263,7 +266,8 @@ public sealed partial class CfgPatchWriterService
         foreach (var group in groups)
         {
             var affected = group.Where(item =>
-                Math.Abs(effective.SmartSelectionFactor(item.ItemSid,
+                masterChanged
+                || Math.Abs(effective.SmartSelectionFactor(item.ItemSid,
                     item.Chance.Length > 0 ? "Chance" : "Weight") - 1.0) > 0.0000001
                 || (item.ItemSid is "Medkit" or "ArmyMedkit")
                 && (StashTuningCurrent(all, $"loot.stash{item.ItemSid}MinCount", 0) > 0
@@ -287,8 +291,14 @@ public sealed partial class CfgPatchWriterService
                 var biases = items.Select(item =>
                     effective.SmartSelectionFactor(item.ItemSid, selectionField)).ToArray();
                 var groupNode = SmartStashGroupNode(root, items[0]);
-                if (StashEffectiveState.UniformSmartFactor(biases, out var factor)
-                    && (selectionField == "Chance" || factor <= 0.0000001))
+                var useCategoryEndpoint =
+                    StashEffectiveState.UniformSmartFactor(biases, out var factor)
+                    && (selectionField == "Chance" || factor <= 0.0000001);
+                // Apply the master once, AFTER the existing uniform source
+                // correction. Never multiply two separately emitted endpoint
+                // assignments or use a Weight sum as spawn probability.
+                var endpointFactor = (useCategoryEndpoint ? factor : 1.0) * remaining;
+                if (Math.Abs(endpointFactor - 1.0) > 0.0000001)
                 {
                     foreach (var pair in new[]
                     {
@@ -298,10 +308,11 @@ public sealed partial class CfgPatchWriterService
                     {
                         if (string.IsNullOrWhiteSpace(pair.Raw)) continue;
                         groupNode.SetAssignment(pair.Name,
-                            StashEffectiveState.SmartSpawnEndpoint(pair.Raw, factor));
+                            StashEffectiveState.SmartSpawnEndpoint(pair.Raw, endpointFactor));
                         edits++;
                     }
-                    if (factor <= 0.0 && !string.IsNullOrWhiteSpace(items[0].ItemSetCount))
+                    if (endpointFactor <= 0.0
+                        && !string.IsNullOrWhiteSpace(items[0].ItemSetCount))
                     {
                         groupNode.SetAssignment("ItemSetCount", "0");
                         edits++;
@@ -313,14 +324,16 @@ public sealed partial class CfgPatchWriterService
             {
                 var selectionField = item.Chance.Length > 0 ? "Chance" : "Weight";
                 var factor = effective.SmartSelectionFactor(item.ItemSid, selectionField);
-                var disabled = factor <= 0.0000001;
+                var disabled = factor <= 0.0000001 || remaining <= 0.0000001;
                 var itemNode = SmartStashGroupNode(root, item)
                     .GetOrAddChild("Items", useBpatch: true)
                     .GetOrAddChild($"[{item.Item}]", useBpatch: true);
                 foreach (var field in new[] { ("Weight", item.Weight), ("Chance", item.Chance) })
                 {
                     if (field.Item2.Length == 0) continue;
-                    var tuned = effective.SmartSelection(item.ItemSid, field.Item1, field.Item2);
+                    var tuned = disabled
+                        ? StashEffectiveState.FormatLikeSource(0, field.Item2)
+                        : effective.SmartSelection(item.ItemSid, field.Item1, field.Item2);
                     itemNode.SetAssignment(field.Item1, tuned);
                     edits++;
                 }
@@ -333,8 +346,9 @@ public sealed partial class CfgPatchWriterService
                         { ("MinCount", item.MinCount), ("MaxCount", item.MaxCount) })
                     {
                         if (raw.Length == 0) continue;
-                        var tuned = effective.SmartCount(item.ItemSid, fieldName,
-                            raw, item.MinCount, item.MaxCount, selectionField);
+                        var tuned = remaining <= 0.0000001 ? "0"
+                            : effective.SmartCount(item.ItemSid, fieldName,
+                                raw, item.MinCount, item.MaxCount, selectionField);
                         if (!disabled && tuned == raw) continue;
                         itemNode.SetAssignment(fieldName, tuned);
                         edits++;

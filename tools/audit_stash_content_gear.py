@@ -28,7 +28,7 @@ medical = ["loot.stashMedical" + kind + "Bias" for kind in
 quantity = ["loot.stash" + kind + end + "Count" for kind in
             ("Medkit", "ArmyMedkit") for end in ("Min", "Max")]
 
-assert len(catalog["parameters"]) == baseline["supportedParameterCount"] == 359
+assert len(catalog["parameters"]) == baseline["supportedParameterCount"] == 361
 # A master checkbox is ONE routable source ID, not an extra duplicate.
 # Match exact production dispatch order and require unique members so a
 # superseded Stashes roster cannot silently pass on set equivalence alone.
@@ -135,7 +135,7 @@ assert "DrawStashBasicNativePools(dc," in ui
 assert '"RGD-5 AMOUNT"' in ui
 assert "percentage: false" in ui
 assert "wide ? 146.0 : 300.0" in ui
-assert "=> width >= 700.0 ? 785.0 : 1095.0;" in ui
+assert "=> width >= 700.0 ? 785.0 : 1159.0;" in ui
 assert 'DrawStashChanceTier(dc, "STANDARD STASH", "Medium", 10,' in ui
 assert "wide ? 122.0 : 200.0" in ui
 assert "private void DrawStashChanceTier(" in mixer

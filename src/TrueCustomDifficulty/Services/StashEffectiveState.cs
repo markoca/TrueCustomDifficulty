@@ -234,6 +234,21 @@ public sealed class StashEffectiveState
     /// then item Chance/Weight bias, then medical count rules. Preview calls
     /// this exact method for its native examples, not a parallel formula.
     /// </summary>
+    // Source quantity, not whole-stash presence. A positive nonzero native
+    // one-item stack stays one item; zero means an explicit native zero count.
+    // Keep this transform last so it composes with the existing AMMO and
+    // Medical quantity controls without mutating the original source range.
+    public static string ReduceSourceCount(string raw, double remaining)
+    {
+        if (remaining >= 1.0) return raw;
+        if (!int.TryParse(raw, NumberStyles.Integer, CultureInfo.InvariantCulture,
+                out var source) || source < 0)
+            throw new InvalidDataException("Invalid weighted stash source count: " + raw);
+        if (source == 0 || remaining <= 0.0) return "0";
+        return Math.Max(1, (int)Math.Floor(source * remaining + 0.5))
+            .ToString(CultureInfo.InvariantCulture);
+    }
+
     public string TierField(
         CfgWriterBaseline baseline, string tier,
         CfgWriterCheapStashCategory category, CfgWriterCheapStashItem item,
@@ -316,7 +331,26 @@ public sealed class StashEffectiveState
                 updated = FormatLikeSource(
                     Math.Clamp(Number(updated) * factor, 0.0, 1.0), updated);
         }
-        return TuneCount(item.Fields, field, updated);
+        updated = TuneCount(item.Fields, field, updated);
+        var remaining = 1.0 - Value("loot.genericStashReduction", 0.0);
+        if (!double.IsFinite(remaining) || remaining < 0.0 || remaining > 1.0)
+            throw new InvalidDataException("Invalid generic stash supply reduction");
+        if (remaining < 1.0)
+        {
+            if (field == "Chance")
+                updated = FormatLikeSource(
+                    Math.Clamp(Number(updated) * remaining, 0, 1), updated);
+            else if (item.Fields.ContainsKey("Weight"))
+            {
+                // Preserve native relative distribution at every positive
+                // reduction value: only stack sizes, never Weight ratios.
+                if (field == "Weight" && remaining <= 0)
+                    updated = FormatLikeSource(0, updated);
+                else if (field is "MinCount" or "MaxCount")
+                    updated = ReduceSourceCount(updated, remaining);
+            }
+        }
+        return updated;
     }
 
     // One item-type mapping shared by tier and SmartLoot source families.

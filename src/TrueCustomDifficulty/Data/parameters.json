@@ -5669,6 +5669,53 @@
       "interaction": "Encumbrance thresholds and equipment-derived carry-weight bonuses can affect how the load feels before the absolute maximum is reached."
     },
     {
+      "id": "loot.genericCorpseReduction",
+      "tab": "loot",
+      "group": "NPC Loot & Equipment",
+      "label": "Corpse Supply Reduction",
+      "description": "Reduces optional Food, Drinks and Medical source Chance on the 33 approved ordinary-human generators, plus native bonus Corpse SmartLoot group spawn endpoints. This is not a percentage of corpses that will be empty.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0.00",
+        "valueLabel": "Optional corpse supplies reduction"
+      },
+      "vanilla": {
+        "All": 0
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_GeneralNPC_Consumables_*",
+          "path": "104 private-cloned item Chance rows + selected CorpseSmartLoot native group spawn endpoints",
+          "operation": "reduceGenericCorpseSupplies"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Source Chance is scaled last after the per-item Chance overrides and Standard Med multiplier.",
+          "All optional bonus packages use their original 39 rank/caliber/consumable group spawn endpoints, not Weapon Attached Ammo or the normal NPC equipment generator.",
+          "0% is a no-op; 100% keeps ordinary NPC gear intact and removes the optional CorpseSmartLoot package on the selected difficulty.",
+          "Engine execution of new spawn endpoints requires fresh-NPC validation."
+        ]
+      },
+      "rationale": "Makes ordinary human corpses carry fewer optional supplies. Preserves weapons, their attached ammo, armor and special/quest NPCs.",
+      "logic": "Chance rows and optional Corpse SmartLoot group activation are reduced separately. 0% leaves their original behavior; 100% disables eligible ordinary supplies.",
+      "interaction": "Does not change the saved SmartLoot package choice, Bonus Ammo Qty, Mod Items or the individually configured raw Chance values."
+    },
+    {
       "id": "loot.npcCorpseBonus",
       "tab": "loot",
       "group": "NPC Loot & Equipment",
@@ -5849,6 +5896,54 @@
       "rationale": "Sets the minimum and maximum condition of weapons found on ordinary human enemies.",
       "logic": "Higher MIN improves the worst condition you can find. Higher MAX allows better-condition weapons; MIN cannot exceed MAX.",
       "interaction": "Changes only the condition of weapons dropped by ordinary human enemies. It does not change which weapons they use, their ammo, health, traders, zombies, or story characters."
+    },
+    {
+      "id": "loot.genericStashReduction",
+      "tab": "stashes",
+      "group": "Stash Content",
+      "label": "Stash Supply Reduction",
+      "description": "Reduces optional supplies in approved ordinary Basic, Standard and Rare stash generators, using native Chance, integer quantities for Weight-only groups, and world SmartLoot group spawn endpoints. This is not a chance that a physical stash is empty.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0.00",
+        "valueLabel": "Optional stash supplies reduction"
+      },
+      "vanilla": {
+        "All": 0
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_GamePass_Stash_ItemGenerator_*",
+          "path": "guarded 41 tier groups and 422 source World SmartLoot group endpoints",
+          "operation": "reduceGenericStashSupplies"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Exactly 22 Chance-only ItemGenerator groups receive source-relative reduction.",
+          "19 Weight-only groups preserve their selection ratios and reduce native MinCount/MaxCount. One-item entries remain one for positive reduction factors.",
+          "422 world SmartLoot group spawn endpoints are scaled after existing category-specific overrides; authored 0/0 remains 0/0.",
+          "0% preserves source output; at 100% targeted source counts and endpoints are zeroed, but actual in-game fallback must be checked.",
+          "Protected actors, Extra Stash Gear, mod-added items and direct scripted rewards are excluded."
+        ]
+      },
+      "rationale": "Reduces optional ordinary stash supplies while preserving the existing category distribution mixer, rank gates and special/quest protections.",
+      "logic": "Chance items are less likely, weighted item bundles are smaller and world SmartLoot groups get lower native spawn bounds. A 1-item weighted bundle cannot be halved.",
+      "interaction": "Does not change relative stash Weight distribution or independent Extra Stash Gear; test with unopened ordinary containers."
     },
     {
       "id": "loot.stashMixAmmo",

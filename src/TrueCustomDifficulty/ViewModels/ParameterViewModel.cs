@@ -142,9 +142,9 @@ public sealed class ParameterViewModel : ObservableObject
                     "ItemWeightBoard" => "Adjust ammunition, food and medicine, weapons or armor weight independently.",
                     "AnomalyGlobalDamage" => "GLOBAL affects all supported anomaly damage. Each anomaly also has its own damage setting; FINAL includes both before protection.",
                     "AnomalySpecialEffects" => "Adjust Glass Shards bleeding and Psy drain independently. Their other damage effects remain separate.",
-                    "NpcLootLoadout" => "Choose corpse bonus, standard medical, bonus ammo quantity and weapon condition. Checking a Food, Drinks or Medical item sets its literal Chance (100% = 1 when eligible). Right-click a rail to reset.",
+                    "NpcLootLoadout" => "SUPPLY REDUCTION scales eligible ordinary NPC consumable Chance and optional corpse SmartLoot activation, not weapons. Other controls select packages, bonus stacks, medical Chance and condition. Right-click a rail to reset.",
                     "WorldLootLayout" => "Shuffle weapons, attachments and blueprints separately. Remove ordinary armor or detectors independently; quest rewards stay. Weapon density only affects weapon shuffle.",
-                    "StashContentMix" => "Ammo Quantity changes Basic, Standard and Rare stacks together. Chance sliders scale original item chances; 100% does not guarantee loot. Rare Coupons and Basic RGD-5 have separate absolute chances.",
+                    "StashContentMix" => "SUPPLY REDUCTION scales native Chance, weighted stack counts and ordinary SmartLoot activation without changing relative Weight priority. Ammo Quantity controls all tiers; existing Chance rolls remain independent. Right-click a rail to reset.",
                     "StashMedicalComposition" => "DROP ROLLS changes medical-item chances, not whole-stash odds. LOOT PRIORITY favors items inside their actual pools. EFFECTIVE PICK previews the Medkit/Army Medkit mix; MIN/MAX sets stack sizes.",
                     "StashGear" => "BONUS GEAR COVERAGE chooses eligible stash locations. PRIORITY favors item categories; BONUS CHANCE checks each candidate. Quest and unique loot are protected.",
                     "AmmoDistribution" => "AMMO PER BOX and GRENADES PER BOX change amounts. Ammo type settings favor calibers; SNG/NATO bars only preview the mix.",
@@ -552,6 +552,7 @@ public sealed class ParameterViewModel : ObservableObject
         ["environment.diamondBleeding"] = "FlycatcherSlowdown",
         ["environment.psyAnomalyIntensity"] = "FlycatcherSlowdown",
 
+        ["loot.genericCorpseReduction"] = "NpcLootLoadout",
         ["loot.npcCorpseBonus"] = "NpcLootLoadout",
         ["loot.npcMedicalChance"] = "NpcLootLoadout",
         ["loot.npcWeaponAmmoSupply"] = "NpcLootLoadout",
@@ -565,6 +566,7 @@ public sealed class ParameterViewModel : ObservableObject
         ["loot.worldArmorRemoved"] = "WorldLootLayout",
         ["loot.blueprintShuffle"] = "WorldLootLayout",
 
+        ["loot.genericStashReduction"] = "StashContentMix",
         ["loot.stashMixAmmo"] = "StashContentMix",
         ["loot.stashMixMedical"] = "StashContentMix",
         ["loot.stashMixFood"] = "StashContentMix",

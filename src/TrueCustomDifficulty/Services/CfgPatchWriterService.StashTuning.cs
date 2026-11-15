@@ -59,7 +59,8 @@ public sealed partial class CfgPatchWriterService
 
     private static bool HasStashTuningChange(
         IReadOnlyDictionary<string, ParameterViewModel> modified, string tier)
-        => StashMixParameterIds.Any(modified.ContainsKey)
+        => modified.ContainsKey(StashSupplyReductionId)
+           || StashMixParameterIds.Any(modified.ContainsKey)
            || StashTierChanceParameterIds.Any(id =>
                ((tier == "Medium" && id == "loot.standardStashChanceScale")
                 || (tier == "Expensive" && id == "loot.rareStashChanceScale")
@@ -102,6 +103,8 @@ public sealed partial class CfgPatchWriterService
         IReadOnlyDictionary<string, ParameterViewModel> modified,
         string tier, ISet<string> written)
     {
+        if (modified.ContainsKey(StashSupplyReductionId))
+            written.Add(StashSupplyReductionId);
         foreach (var id in StashMixParameterIds)
             if (modified.ContainsKey(id)) written.Add(id);
         foreach (var id in StashTierChanceParameterIds)

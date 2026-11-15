@@ -120,6 +120,8 @@ def method_routes(special):
     add("WriteCorpseSmartLoot", *(x["parameterId"] for x in special["setList"]))
     add("WriteNpcCorpseAmmoProduction", special["npcCorpseAmmoProduction"]["parameterId"])
     add("WriteNpcMedicalLootProduction", special["npcMedicalLootProduction"]["parameterId"])
+    add("WriteNpcBonusSupplyReduction", special["npcMedicalLootProduction"]["genericReductionParameterId"])
+    add("WriteWorldStashSmartLoot", special["cheapStashProduction"]["genericReductionParameterId"])
     add("WriteCheapStashProduction", *(
         special["cheapStashProduction"][key] for key in
         ("ammoQuantityParameterId", "grenadeChanceParameterId", "grenadeQuantityParameterId")))
@@ -197,8 +199,8 @@ def main():
     code += "\n" + (WRITER_PATH.parent / "CfgPatchWriterService.TraderBuys.cs").read_text(encoding="utf-8")
     code += "\n" + (WRITER_PATH.parent / "CfgPatchWriterService.TraderSells.cs").read_text(encoding="utf-8")
     definitions = {p["id"]: p for p in catalog["parameters"]}
-    require(len(definitions) == len(catalog["parameters"]) == 359, "359 unique CFG source IDs expected")
-    require(baseline["supportedParameterCount"] == 359, "writer expected coverage drift")
+    require(len(definitions) == len(catalog["parameters"]) == 361, "361 unique CFG source IDs expected")
+    require(baseline["supportedParameterCount"] == 361, "writer expected coverage drift")
     require(not baseline["deferredParameterIds"], "deferred production parameters")
     require(baseline["gameVersion"] == catalog["source"]["gameVersion"] == "2.1", "source/game baseline mismatch")
     require(set(catalog["difficultyProfiles"]) == set(SIDS), "difficulty baseline drift")
@@ -229,10 +231,10 @@ def main():
     require(len(baseline["editPoints"]) == 1448 and len(direct) == 217,
             "direct writer point count drift")
     special = method_routes(baseline["special"])
-    require(len(special) == 142, "special writer route count drift")
+    require(len(special) == 144, "special writer route count drift")
     require(not set(direct).intersection(special), "direct/special parameter double ownership")
     require(set(direct) | set(special) == set(definitions), "unrouted CFG IDs")
-    require(len(definitions) - len(NON_UI) == 342, "UI dimension count drift")
+    require(len(definitions) - len(NON_UI) == 344, "UI dimension count drift")
     require(len(NON_UI) == 17 and NON_UI.issubset(definitions),
             "17 non-mounted catalog source IDs required")
     for pid in NON_UI:
@@ -331,7 +333,7 @@ def main():
     inert = []
     for name in NAMES:
         doc = json.loads((PRESETS / (name + ".json")).read_text(encoding="utf-8"))
-        require(len(doc["values"]) == 359 and set(doc["values"]) == set(definitions),
+        require(len(doc["values"]) == 359 and set(doc["values"]) == set(definitions) - {"loot.genericCorpseReduction", "loot.genericStashReduction"},
                 "factory catalog source ID drift " + name)
         sid = SIDS[doc["referenceDifficulty"]]
         for pid, p in definitions.items():

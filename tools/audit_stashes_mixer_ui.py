@@ -26,6 +26,7 @@ tier_preview = coverage.split("private void DrawStashChanceTier(", 1)[1]
 
 expected = {
     "StashContentMix": [
+        "loot.genericStashReduction",
         "loot.stashMixAmmo", "loot.stashMixMedical", "loot.stashMixFood",
         "loot.stashMixDrinks", "loot.stashMixGrenades", "loot.stashMixCoupons",
         "loot.cheapStashAmmoQuantity", "loot.mediumStashAmmoQuantity",
@@ -50,7 +51,7 @@ expected = {
                   "loot.stashGearBonusChance"],
 }
 ids = [p["id"] for p in catalog["parameters"] if p["tab"] == "stashes"]
-assert len(ids) == len(set(ids)) == 41
+assert len(ids) == len(set(ids)) == 42
 assert set(ids) == set(sum(expected.values(), []))
 family_ids = source.split("private static IReadOnlyList<string> GetFamilyIds(", 1)[1]
 for family, expected_ids in expected.items():
@@ -72,7 +73,7 @@ quantity_rail = method("DrawStashQuantityDualRail", "DrawStashGear")
 gear = method("DrawStashGear", "DrawStashPoolBar")
 preview = method("DrawStashPoolBar", "DrawStashNumericReadout")
 
-assert 'DrawStashWeightMixer(dc, new Rect(left, 141.0, width,' in content
+assert 'DrawStashWeightMixer(dc, new Rect(left, 141.0 + narrowShift, width,' in content
 assert all(f'("{label}"' in medical for label in
     ("BANDAGES", "MEDKITS", "ARMY MEDKITS", "ANTI-RAD"))
 assert quantity.count('("MEDKITS"') + quantity.count('("ARMY MEDKITS"') == 2
@@ -263,12 +264,12 @@ assert 'DrawStashChanceTier(dc, "STANDARD STASH", "Medium", 10,' in content
 assert 'DrawStashChanceTier(dc, "RARE STASH", "Expensive", 19,' in content
 assert 'DrawStashChanceTier(dc, "STANDARD", "Medium", 10,' not in content
 assert 'DrawStashChanceTier(dc, "RARE", "Expensive", 19,' not in content
-assert "wide ? 441.0 : 595.0, width," in content
+assert "(wide ? 441.0 : 595.0) + narrowShift, width," in content
 assert "wide ? 122.0 : 200.0" in content
-assert "wide ? 571.0 : 803.0, width," in content
+assert "(wide ? 571.0 : 803.0) + narrowShift, width," in content
 assert "wide ? 200.0 : 278.0" in content
-assert "wide ? 295.0 : 449.0, width, 74.0" in content
-assert "var pairTop = wide ? 377.0 : 531.0;" in content
+assert "(wide ? 295.0 : 449.0) + narrowShift, width, 74.0" in content
+assert "var pairTop = (wide ? 377.0 : 531.0) + narrowShift;" in content
 assert '"WEIGHT APPLIES TO ALL TIERS"' not in content
 assert '"RELATIVE SELECTION"' not in source
 assert '"BASIC POOL COMPOSITION"' not in coverage
@@ -400,20 +401,20 @@ height_match = re.search(
     source,
 )
 mixer_match = re.search(
-    r"DrawStashWeightMixer\(dc, new Rect\(left, ([\d.]+), width,\s*"
+    r"DrawStashWeightMixer\(dc, new Rect\(left, ([\d.]+) \+ narrowShift, width,\s*"
     r"wide \? ([\d.]+) : ([\d.]+)\)",
     content,
 )
 assert height_match is not None, "missing StashContentMix measured height"
 assert mixer_match is not None, "missing StashContentMix mixer"
-assert tuple(map(float, height_match.groups())) == (700.0, 785.0, 1095.0)
+assert tuple(map(float, height_match.groups())) == (700.0, 785.0, 1159.0)
 assert tuple(map(float, mixer_match.groups())) == (141.0, 146.0, 300.0)
-assert "wide ? 441.0 : 595.0, width," in content
+assert "(wide ? 441.0 : 595.0) + narrowShift, width," in content
 assert "wide ? 122.0 : 200.0" in content
-assert "wide ? 571.0 : 803.0, width," in content
+assert "(wide ? 571.0 : 803.0) + narrowShift, width," in content
 assert "wide ? 200.0 : 278.0" in content
-assert "wide ? 295.0 : 449.0, width, 74.0" in content
-assert "var pairTop = wide ? 377.0 : 531.0;" in content
+assert "(wide ? 295.0 : 449.0) + narrowShift, width, 74.0" in content
+assert "var pairTop = (wide ? 377.0 : 531.0) + narrowShift;" in content
 assert '"WEIGHT APPLIES TO ALL TIERS"' not in content
 assert '"RELATIVE SELECTION"' not in source
 assert '"BASIC POOL COMPOSITION"' not in coverage
@@ -421,7 +422,7 @@ assert "var wide = width >= 670.0;" in content
 # Old fixed 373/409, 220/383 and 839/1185 lane calculations
 # were retired with the current compact Stashes rendering. Guard the
 # actual measured heights rather than asserting removed helper formulas.
-assert '=> width >= 700.0 ? 785.0 : 1095.0;' in source
+assert '=> width >= 700.0 ? 785.0 : 1159.0;' in source
 assert '=> width >= 700.0 ? 609.0 : 1050.0;' in source
 assert '=> width < 570.0 ? 670.0 : 502.0;' in source
 for name, document in [("UI-DESIGN-LOCK", lock),
@@ -487,7 +488,7 @@ print("PASS: shared writer/preview tier and SmartLoot calculation, bonus Chance 
 
 # Stashes edits are genuinely GLOBAL by item SID, not branch or rank.
 # The fixed authored native group catalog remains backend-only parity evidence.
-mix_ids = expected["StashContentMix"][:6]  # global Weight only; remaining two are native Chance
+mix_ids = [pid for pid in expected["StashContentMix"] if pid.startswith("loot.stashMix")][:6]  # global Weight only; remaining two are native Chance
 for pid in mix_ids:
     item = next(p for p in catalog["parameters"] if p["id"] == pid)
     slider = item["slider"]
@@ -507,7 +508,7 @@ for pid in mix_ids:
 coverage = (root / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.StashBranch.cs").read_text()
 branches = (root / "src/TrueCustomDifficulty/Services/StashBranchPreviewCatalog.cs").read_text()
 csproj = (root / "src/TrueCustomDifficulty/TrueCustomDifficulty.csproj").read_text()
-assert 'DrawStashWeightMixer(dc, new Rect(left, 141.0, width,' in content
+assert 'DrawStashWeightMixer(dc, new Rect(left, 141.0 + narrowShift, width,' in content
 assert "StashContentMixHeight(width)" in source
 assert '"loot.mediumStashMedicalChance"' in source
 assert '"loot.mediumStashCouponsChance"' in source
@@ -519,7 +520,7 @@ assert 'CreateText("V "' not in tier_preview and "vanillaX" not in tier_preview
 assert "Math.Clamp(Number(updated) * factor, 0.0, 1.0)" in effective
 assert 'StashTierChanceParameterIds.Any(id =>' in tuning
 
-assert '=> width >= 700.0 ? 785.0 : 1095.0;' in source
+assert '=> width >= 700.0 ? 785.0 : 1159.0;' in source
 assert "GlobalStashKindsVerified.Value" in coverage
 assert "StashBranchPreviewCatalog.Load(StashPreviewBaseline.Value)" in coverage
 assert "groups.Sum(x => x.Items.Count) != 1124" in coverage

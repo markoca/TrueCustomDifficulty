@@ -1282,7 +1282,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     // wrap to two horizontal pairs without truncating three choice chips.
     private static bool NpcLootOneRow(double hostWidth) => hostWidth >= 714.0;
     private static double NpcLootPreviewTop(double hostWidth)
-        => NpcLootOneRow(hostWidth) ? 154.0 : 252.0;
+        => NpcLootOneRow(hostWidth) ? 236.0 : 334.0;
     private static double NpcLootConditionTop(double hostWidth)
         => NpcLootPreviewTop(hostWidth) + 110.0;
     private static double NpcLootConsumablesTop(double hostWidth)
@@ -1341,10 +1341,12 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     {
         var corpse = P("loot.npcCorpseBonus");
         var medical = P("loot.npcMedicalChance");
+        var scarcity = P("loot.genericCorpseReduction");
         var ammo = P("loot.npcWeaponAmmoSupply");
         var condition = P("loot.droppedWeaponCondition");
         DrawHeader(dc, "NPC LOOT & EQUIPMENT", "", text, muted, accent);
         if (corpse is null || medical is null || ammo is null || condition is null
+            || scarcity is null
             || corpse.ChoiceOptions.Count == 0)
         {
             DrawCenteredText(dc, "NPC loot data unavailable.",
@@ -1437,6 +1439,14 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawNpcCompactScalar(dc, medical, "STANDARD MED", medicalCard,
             text, muted, border, accent, panel);
         DrawNpcModItemsCard(dc, modCard, text, muted, border, accent, panel);
+
+        // A single compact supply master below the four existing peers.
+        // It never edits the normal weapon/armor loadout or attached ammo.
+        var supplyWidth = Math.Min(width, 328.0);
+        DrawNpcCompactScalar(dc, scarcity, "SUPPLY REDUCTION",
+            new Rect(margin + (width - supplyWidth) / 2.0,
+                NpcLootPreviewTop(ActualWidth) - 82.0, supplyWidth, 74.0),
+            text, muted, border, accent, panel);
 
         // One source-backed example per NPC_Ammo_Smart caliber group, with
         // the first rank containing that caliber shown explicitly. This is
@@ -4896,27 +4906,35 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         // Single global source-facing quantity control; the VM propagates
         // this real source multiplier to all three eligible stash tiers.
+        // Two source-backed compact peers: one abundance control and the
+        // existing amount slider.  No duplicate category mixer is created.
+        var firstRowWidth = wide ? (width - 38.0) / 2.0 : width - 28.0;
+        var narrowShift = wide ? 0.0 : 64.0;
+        DrawStashNativeRollControl(dc, "loot.genericStashReduction",
+            "SUPPLY REDUCTION", 1,
+            new Rect(left + 14.0, 53.0, firstRowWidth, 56.0),
+            text, muted, border, accent, panel);
         DrawStashNativeRollControl(dc, "loot.cheapStashAmmoQuantity",
             "AMMO QUANTITY · ALL TIERS", 0,
-            new Rect(left + 14.0, 53.0,
-                Math.Min(360.0, Math.Max(1.0, width - 28.0)), 56.0),
+            new Rect(wide ? left + 24.0 + firstRowWidth : left + 14.0,
+                53.0 + narrowShift, firstRowWidth, 56.0),
             text, muted, border, accent, panel,
             percentage: false, multiplier: true);
 
         DrawText(dc, "LOOT PRIORITY · ALL TIERS",
-            new Point(left + 13.0, 125.0), 10.7, text, FontWeights.Bold);
-        DrawStashWeightMixer(dc, new Rect(left, 141.0, width,
+            new Point(left + 13.0, 125.0 + narrowShift), 10.7, text, FontWeights.Bold);
+        DrawStashWeightMixer(dc, new Rect(left, 141.0 + narrowShift, width,
                 wide ? 146.0 : 300.0), text, muted, border, accent, panel);
 
         DrawStashBasicNativePools(dc,
-            new Rect(left, wide ? 295.0 : 449.0, width, 74.0),
+            new Rect(left, (wide ? 295.0 : 449.0) + narrowShift, width, 74.0),
             text, muted, border, panel);
 
         // Basic RGD-5 Chance is a native absolute probability, while
         // Amount is an integer stack override. Neither is ammo quantity.
         const double pairGap = 10.0;
         var pairWidth = Math.Max(1.0, (width - 28.0 - pairGap) / 2.0);
-        var pairTop = wide ? 377.0 : 531.0;
+        var pairTop = (wide ? 377.0 : 531.0) + narrowShift;
         DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeChance",
             "RGD-5 CHANCE", 4,
             new Rect(left + 14.0, pairTop, pairWidth, 56.0),
@@ -4927,10 +4945,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             text, muted, border, accent, panel, percentage: false);
 
         DrawStashChanceTier(dc, "STANDARD STASH", "Medium", 10,
-            new Rect(left, wide ? 441.0 : 595.0, width,
+            new Rect(left, (wide ? 441.0 : 595.0) + narrowShift, width,
                 wide ? 122.0 : 200.0), text, muted, border, accent, panel);
         DrawStashChanceTier(dc, "RARE STASH", "Expensive", 19,
-            new Rect(left, wide ? 571.0 : 803.0, width,
+            new Rect(left, (wide ? 571.0 : 803.0) + narrowShift, width,
                 wide ? 200.0 : 278.0), text, muted, border, accent, panel);
     }
 
@@ -6178,6 +6196,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "environment.flycatcherMovementSpeed" or
             "environment.flycatcherTurnSpeed" => $"{rawValue * 100.0:0.#}%",
             "loot.npcMedicalChance" or "loot.npcWeaponAmmoSupply" => $"{rawValue:0.##}x",
+            "loot.genericCorpseReduction" or "loot.genericStashReduction" => $"{rawValue * 100.0:0}%",
             "loot.destructibleAmmoQuantity" or "loot.destructibleGrenadeQuantity" or
             "loot.cheapStashAmmoQuantity" or "loot.mediumStashAmmoQuantity" or
             "loot.expensiveStashAmmoQuantity" or
@@ -7708,7 +7727,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     // Measured heights follow the painted responsive editors, so the
     // last mixer lane and every remaining gear/medical dial stay visible.
     private double StashContentMixHeight(double width)
-        => width >= 700.0 ? 785.0 : 1095.0;
+        => width >= 700.0 ? 785.0 : 1159.0;
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 609.0 : 1050.0;
     // Paint width is ActualWidth - 30 DIP. At host widths 540–569 DIP
@@ -7784,6 +7803,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "NpcLootLoadout" => new[]
             {
                 "loot.npcCorpseBonus",
+                "loot.genericCorpseReduction",
                 "loot.npcMedicalChance",
                 "loot.npcWeaponAmmoSupply",
                 "loot.droppedWeaponCondition"
@@ -7800,6 +7820,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             },
             "StashContentMix" => new[]
             {
+                "loot.genericStashReduction",
                 "loot.stashMixAmmo", "loot.stashMixMedical", "loot.stashMixFood",
                 "loot.stashMixDrinks", "loot.stashMixGrenades", "loot.stashMixCoupons",
                 "loot.cheapStashAmmoQuantity", "loot.mediumStashAmmoQuantity",

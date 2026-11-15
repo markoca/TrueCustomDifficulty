@@ -636,6 +636,7 @@ public sealed class MainViewModel : ObservableObject
         WireVisualAggregate(
             "loot.npcCorpseBonus",
             "loot.npcCorpseBonus",
+            "loot.genericCorpseReduction",
             "loot.npcMedicalChance",
             "loot.npcWeaponAmmoSupply",
             "loot.droppedWeaponCondition");
@@ -685,6 +686,7 @@ public sealed class MainViewModel : ObservableObject
         // visual family; legacy tier-wide multipliers remain preset-compatible.
         WireVisualAggregate(
             "loot.stashMixMedical",
+            "loot.genericStashReduction",
             "loot.stashMixAmmo",
             "loot.stashMixMedical",
             "loot.stashMixFood",

@@ -192,6 +192,10 @@ public sealed partial class CfgPatchWriterService
             documents,
             writtenParameters);
 
+        editCount += WriteNpcBonusSupplyReduction(
+            baseline, modifiedById, allById, difficulty.Sid,
+            documents, writtenParameters);
+
         editCount += WriteNpcMedicalLootProduction(
             baseline,
             modifiedById,
@@ -465,6 +469,8 @@ public sealed partial class CfgPatchWriterService
         supported.Add("loot.worldF1GrenadeBoxes");
         supported.Add("loot.blueprintShuffle");
         supported.Add("loot.looseWorldLootRemoved");
+        supported.Add(NpcSupplyReductionId);
+        supported.Add(StashSupplyReductionId);
         supported.UnionWith(StashMixParameterIds);
         supported.UnionWith(StashMedicalParameterIds);
         supported.UnionWith(StashGearParameterIds);
@@ -960,6 +966,8 @@ public sealed partial class CfgPatchWriterService
                 throw new InvalidDataException($"Out-of-range NPC consumable Chance: {item.Sid}");
         }
 
+        var corpseScarcityChanged = modifiedById.ContainsKey(NpcSupplyReductionId);
+        var corpseRemaining = GenericSupplyRemaining(allById, NpcSupplyReductionId);
         var globalMedicalChanged = modifiedById.ContainsKey(config.ParameterId);
         var sidChanged = overrides.Values.Any(item =>
             item.Enabled
@@ -971,7 +979,7 @@ public sealed partial class CfgPatchWriterService
         // An old medical override of exactly 1x on an edited global
         // multiplier still restores its raw Chance; the global edit triggers
         // the writer. New checked percentages always author absolute Chance.
-        if (!globalMedicalChanged && !sidChanged)
+        if (!globalMedicalChanged && !sidChanged && !corpseScarcityChanged)
             return 0;
 
         // Fail closed on baseline drift. These are the exact 2.1 source
@@ -1009,7 +1017,7 @@ public sealed partial class CfgPatchWriterService
             root.SetAssignment("SID", pool.CustomSid);
             edits++;
             edits += WriteNpcMedicalPoolTemplate(root, pool,
-                parameter.CurrentNumber, overrides, known);
+                parameter.CurrentNumber, corpseRemaining, overrides, known);
         }
 
         foreach (var redirect in LoadNpcMedicalRedirects(config.RedirectManifestResource))
@@ -1028,6 +1036,8 @@ public sealed partial class CfgPatchWriterService
 
         if (globalMedicalChanged)
             writtenParameters.Add(config.ParameterId);
+        if (corpseScarcityChanged)
+            writtenParameters.Add(NpcSupplyReductionId);
         // Sidecars remain logical editors, never catalog parameter IDs.
         // Absolute Chance on a checked row replaces the heterogeneous source
         // chances. Legacy multipliers retain the former source-relative rules.
@@ -1047,6 +1057,7 @@ public sealed partial class CfgPatchWriterService
         PatchNode root,
         CfgWriterNpcMedicalPool pool,
         double globalMedicalMultiplier,
+        double corpseRemaining,
         IReadOnlyDictionary<string, NpcConsumableItemViewModel> overrides,
         IReadOnlyDictionary<string, string> knownGroups)
     {
@@ -1108,6 +1119,9 @@ public sealed partial class CfgPatchWriterService
                                 ParseNumber(sourceChanceRaw) * multiplier, 0.0, 1.0);
                             value = FormatLikeSource(scaledChance, sourceChanceRaw);
                         }
+                        // The master is the LAST native Chance transform. Even
+                        // checked absolute 100% item Chance is reduced here.
+                        value = ReduceNativeChance(value, corpseRemaining);
                     }
                     // Unmodified raw source tokens and all non-Chance fields
                     // (count, gate, weight) remain identical to their CFG.

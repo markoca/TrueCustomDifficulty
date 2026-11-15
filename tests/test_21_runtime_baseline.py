@@ -14,7 +14,7 @@ class Game21BaselineContract(unittest.TestCase):
         baseline = json.loads((DATA / "cfg-writer-baseline.json").read_text(encoding="utf-8"))
         self.assertEqual("2.1", catalog["source"]["gameVersion"])
         self.assertEqual("2.1", baseline["gameVersion"])
-        self.assertEqual(359, len(catalog["parameters"]))
+        self.assertEqual(361, len(catalog["parameters"]))
         self.assertEqual(1448, len(baseline["editPoints"]))
         self.assertEqual(25, len(baseline["special"]))
 
