@@ -1359,6 +1359,19 @@ public sealed class MainViewModel : ObservableObject
             }
     }
 
+    // Keep the tab row and rationale selection synchronized with reference
+    // changes and preset loading. Hidden Master source models remain mounted.
+    private void RefreshReferenceVisibility()
+    {
+        foreach (var tab in Tabs)
+        {
+            tab.RefreshVisibility();
+            tab.EnsureVisibleSelection();
+        }
+        if (SelectedTab?.IsVisible != true)
+            SelectedTab = Tabs.FirstOrDefault(tab => tab.IsVisible);
+    }
+
     private void ApplyReferenceDifficulty(bool resetAll)
     {
         _isApplyingReference = true;
@@ -1389,6 +1402,7 @@ public sealed class MainViewModel : ObservableObject
                 .MedicalOverrideEnabled = false;
         }
         NormalizeEditorConstraints();
+        RefreshReferenceVisibility();
         RefreshState();
     }
 
@@ -1916,6 +1930,7 @@ public sealed class MainViewModel : ObservableObject
             }
 
             NormalizeEditorConstraints();
+            RefreshReferenceVisibility();
             RefreshState();
             _loadedPresetName = string.IsNullOrWhiteSpace(preset.Name)
                 ? Path.GetFileNameWithoutExtension(path)

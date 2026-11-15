@@ -893,6 +893,15 @@
                         IsHitTestVisible="{Binding IsBuildIdle}"
                         ItemsSource="{Binding Tabs}"
                         SelectedItem="{Binding SelectedTab}">
+                <TabControl.ItemContainerStyle>
+                    <Style TargetType="{x:Type TabItem}" BasedOn="{StaticResource {x:Type TabItem}}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsVisible}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TabControl.ItemContainerStyle>
                 <TabControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type vm:TabViewModel}">
                         <TextBlock Text="{Binding Label}" FontSize="12" />

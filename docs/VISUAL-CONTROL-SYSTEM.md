@@ -1,3 +1,15 @@
+## 2026-11-15 — CURRENT: Base Difficulty visibility for source-exclusive controls
+
+**Authoritative visibility rule:** only the five Master-only native punishment bundles and their dependent members on the `master` tab are available when Base Difficulty is **Master**. On **Novice / Stalker / Veteran** the complete Master tab is collapsed (not a blank or grey panel); its five aggregates and members are hidden and non-editable. On Master the tab and its existing compact controls are visible and work unchanged.
+
+The `ParameterViewModel.IsAvailableForReferenceDifficulty` predicate applies uniformly to the Master tab and all of its backing source members, not just visual anchor cards. `TabViewModel.IsVisible` controls the TabItem via a `BasedOn` style that retains the canonical App.xaml tab chrome. Changing Base Difficulty or loading a preset refreshes visibility and moves selection away from a hidden tab. Disabled/unavailable controls contribute **no** modified source fields to the CFG writer; their preset values remain serializable for backward compatibility. No new catalog IDs, data files or fake BPatch branches.
+
+**Do not overgeneralize:** a source having different defaults at each difficulty does **not** mean the editor belongs only to one of those difficulties. The baseline contains 27 direct selected-difficulty parameter families, each with all four SID routes (Easy/Medium/Hard/Stalker). In particular, **Extra Corpse Loot** remains a selectable custom package on *all* four Base Difficulties, as does ordinary NPC Medical Drops; the additional Bonus Ammo editor is gated by the chosen `NPC_Ammo_Smart` package, not by the Novice label. Ordinary Survival, Combat, Economy and Stashes controls remain in their current tabs.
+
+Source scope and proposed safe future NPC corpse loot granularity are documented in `docs/generators/NPC-CORPSE-LOOT-GRANULARITY-2.1-2026-11-15.md`. No new corpse loot writer controls are introduced by this audit. Static contract: `tests/AllControlsPatchContract/ReferenceDifficultyVisibility.cs`.
+
+---
+
 ## 2026-11-15 — CURRENT: NPC standard medical drop independence (baseline audit fix)
 
 **Authoritative correction; supersedes the earlier 2026-10-14 dual-slider lock:** In `NpcLootLoadout`, **MEDICAL DROPS** (`loot.npcMedicalChance`) is always interactive when the normal panel is editable, even when Extra Corpse Loot is Water or None. Its separate 2.1 source-backed ItemGenerator clone/33-redirect writer does not depend on CorpseSmartLoot. Only **BONUS AMMO DROPS** (`loot.npcWeaponAmmoSupply`) is muted and locked until Extra Corpse Loot contains `NPC_Ammo_Smart`. Preserve saved values and right-click reset, no synthetic medicine/ammo dependency. Source ownership, 2.1 baseline row counts, scope, static regression and in-game limits: `docs/generators/NPC-LOOT-2.1-END-TO-END-AUDIT-2026-11-15.md`. The former instruction to grey out both scalar cards is retired.

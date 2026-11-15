@@ -16,6 +16,14 @@ public sealed class TabViewModel : ObservableObject
 
     public string TabSummary => GetTabSummary(Id);
 
+    // Master mechanics are not authored for the other Base Difficulty
+    // references. Collapse the entire tab rather than leaving empty controls.
+    public bool IsVisible => Id != "master"
+        || Parameters.Any(parameter => parameter.IsAvailableForReferenceDifficulty);
+
+    public void RefreshVisibility()
+        => OnPropertyChanged(nameof(IsVisible));
+
     public ParameterViewModel? SelectedParameter
     {
         get => _selectedParameter;

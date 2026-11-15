@@ -676,10 +676,18 @@ public sealed class ParameterViewModel : ObservableObject
     // stamina-cost slider is both the anchor and a Master-only child.
     // Disabled children remain visible for inspection, but their handles,
     // accent paint and CFG writer edits must all be gated by the parent.
-    public bool IsControlEnabled => _dependencyEnabledProvider?.Invoke() ?? true;
+    // The Master tab is an authored Master-only editor. Keep all backing
+    // values alive for preset compatibility, but never expose or emit them
+    // when a different Base Difficulty is selected.
+    public bool IsAvailableForReferenceDifficulty =>
+        Definition.Tab != "master" || _referenceDifficulty == "Master";
+
+    public bool IsControlEnabled =>
+        IsAvailableForReferenceDifficulty && (_dependencyEnabledProvider?.Invoke() ?? true);
     // Backing parameters for semantic visual families remain in the live VM/preset/writer graph
     // but are collapsed as individual rows. Each family exposes one visible anchor control.
     public bool IsControlVisible =>
+        IsAvailableForReferenceDifficulty
         // Catalog-hidden constraint members must not leak into standalone UI rows.
         (Definition.ExposeInUi || IsVisualControlAnchor)
         && !Id.Equals("environment.anomalyDamage", StringComparison.Ordinal) // Combined AnomalyDamageRadar.
@@ -1647,6 +1655,9 @@ public sealed class ParameterViewModel : ObservableObject
         OnPropertyChanged(nameof(ReferenceChoiceIndex));
         OnPropertyChanged(nameof(VanillaReferenceText));
         OnPropertyChanged(nameof(TickFrequency));
+        OnPropertyChanged(nameof(IsAvailableForReferenceDifficulty));
+        OnPropertyChanged(nameof(IsControlEnabled));
+        OnPropertyChanged(nameof(IsControlVisible));
 
         if (resetValue)
             ResetToReference();

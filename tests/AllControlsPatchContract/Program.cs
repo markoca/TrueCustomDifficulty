@@ -8,7 +8,7 @@ namespace AllControlsPatchContract;
 // Black-box acceptance: exercise the actual WPF view models and production
 // CfgPatchWriterService for every player-editable native source ID.
 // A route name in JSON is not sufficient: Write() must produce a real staged CFG.
-internal static class Program
+internal static partial class Program
 {
     private static readonly ParameterCatalog Catalog = new ParameterCatalogService().Load();
     private static readonly CfgWriterBaseline Baseline = new CfgWriterBaselineService().Load();
@@ -46,6 +46,7 @@ internal static class Program
             // The ordinary Master/Stalker corpse package contains no bonus
             // NPC_Ammo_Smart, so that source must be explicitly probed where
             // the real native ammo package is active (Novice).
+            VerifyReferenceDifficultyVisibility();
             VerifyDormantNpcAmmoNotCounted();
             VerifySingletonCfgPatchAndFileAccounting();
             var executed = 0;
