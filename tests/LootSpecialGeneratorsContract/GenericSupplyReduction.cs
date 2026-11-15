@@ -133,7 +133,8 @@ internal static partial class Program
                         var prefix = cheap.CustomGeneratorSid + "/ItemGenerator/"
                             + group.Node + "/PossibleItems/" + item.Node + "/";
                         Check(itemgen.TryGetValue(prefix + "Weight", out var weight)
-                            && weight == item.Fields["Weight"],
+                            && (reduction < 1.0 ? weight == item.Fields["Weight"]
+                                : Math.Abs(Num(weight!)) < 0.000001),
                             "Stash master changed original Weight choice ratios");
                         Check(itemgen.TryGetValue(prefix + "MinCount", out var minCount)
                             && (reduction < 1.0 ? int.Parse(minCount!) >= 1 :
