@@ -40,6 +40,7 @@ Use source-exact names, including source misspellings. Never quietly map `Junk` 
 | 003 | Point of No Return — Backpacks Pack | Not decoded (Oodle) | Mod-owned ItemGeneratorPrototypes.cfg plus native-path zBackpackGeneratorPatch.cfg | **Container + plaintext audited; generator paths and item SIDs pending Oodle extraction** |
 | 004 | Point of No Return — Repair System | **12 decoded item SIDs, common consumable template** | **7 source pools + 80 native-root BPatch additions** (20 traders, 1 generic trade, 4 stashes, 55 NPC loot) | **Source decoded and joined to TCD 2.1; runtime coexistence/repair effects pending** |
 | 005 | OXA Standard / Oxide (A+B+C PAK set) | **80 new concrete SIDs** in decoded direct generator leaves; 32 original patched SIDs also referenced | **18 new generator roots + 4 native-root BPatch**; T2/T3/T4 attachment pools and Rostok NATO trader | **Generator CFG fully decoded; source-level ALLOW/BLOCK feasible with mixed-pool guards; runtime unverified** |
+| 006 | Project Itemization Reborn (4 PAKs; ItemGenerators + Main, NC/OC) | **150 distinct mod item prototype SIDs, 113 statically reachable from native item generator patches** | **109 non-BPatch generator definitions, 217 patch definitions, plus 12 PackOfItemsGroup patches** | **All 101 CFGs decoded; mixed vanilla pools, 56 bskipref operations, two unresolved stash-clue generator references; game runtime unverified** |
 
 ---
 
@@ -732,3 +733,111 @@ The current `CfgPatchWriterService.TraderSells.cs` filters only pre-enumerated o
 **Recommended acceptance matrix (requires the game):** test original OXA alone, TCD alone, both with all Trader Stock categories ON, then both with General→Attachments OFF. In both modes test a T2/T3/T4 vendor and Rostok NATO, inspect final generated TradePrototype/ItemGenerator roots and logs, verify newly spawned OXA items, verify native attachments still appear when permitted, and compare mod load order. Test one duplicated SID (e.g. `OXA_Laser_3`) across all pools. Do not infer success from a syntactically valid BPatch alone. For a future item-level OFF, also verify native items in mixed pools remain and unconnected `OXA_Laser_7`–`10` are not incorrectly presented as active generator stock. Use developer logging `LogParserNodePatching` (Verbose) and `-ProtoLoadingMode=2` when inspecting engine patch application; see [Zone Kit patching guide](https://zonekit-support.stalker2.com/en-US/kb/article/172/how-to-patch-contents-of-a-cfg-file).
 
 **Scope decision:** continue designing **only item-generator ALLOW/BLOCK**; no cost, weight, weapon configuration, chance or effect edits. **No gameplay writer/UI change made.**
+
+---
+
+## 006 — Project Itemization Reborn — four PAKs
+
+**Audit date:** 2026-11-15. **Scope locked:** item-generator ALLOW/BLOCK only; *not* item effects, cost, mass, use, durability, or game difficulty. Four user-supplied PAKs were examined read-only. The figures below are from directly decoded CFG files, **not observed engine spawn rates**.
+
+### Provenance and complete CFG decoding
+
+| Uploaded file | Bytes | SHA-256 | PAK mount | CFGs successfully decoded |
+|---|---:|---|---|---:|
+| `ProjectItemizationReborn_ItemGenerators_NC.pak` | 49,993 | `43bf9bee5036f2d0a0a8debd2ba5216f6552c3cb2e4abfe677df89d17f648bc3` | `../../../Stalker2/Mods/ProjectItemizationReborn_ItemGenerators/` | 36 |
+| `ProjectItemizationReborn_ItemGenerators_OC.pak` | 28,227 | `54937c3f31e5b92ace60ba845c34becf3b290107931a619a015ebcacca2fa613` | `../../../Stalker2/Content/GameLite/GameData/` | 31 |
+| `ProjectItemizationReborn_Main_NC.pak` | 101,785 | `96bcb7a0f3eb34254c07c2f47982e8b8a43058ca4c802f6a939a1af4be1111bd` | `../../../Stalker2/Mods/ProjectItemizationReborn_Main/` | 33 |
+| `ProjectItemizationReborn_Main_OC.pak` | 580 | `1dc20fbb6cf6b6f3b3ba905e9a7f6341e36af19bcd0b605a1ef075adfbacac03` | `../../../Stalker2/Content/GameLite/GameData/` | 1 |
+| **Total** | | | | **101** |
+
+All four are Unreal **PAK v11**. The primary, path-hash and directory indexes, as well as individual payload SHA-1 values, were checked by the extractor. All **101 actual CFG / CFG patch files** were decoded completely; the 344,201-byte `PackOfItemsGroupPrototypes/PIR_PackOfItemsGroupPrototypes.cfg` required independently expanding **two Kraken compression blocks**, not pretending a multi-block payload is one block. Neither original PAK nor unpacked original CFG bytes were written to the GitHub repository. Non-CFG binary assets and game runtime are outside this audit.
+
+This is a materially larger mod than audits 001–005: both a mod-owned item-generator tree and extensive direct rewrites of vanilla generator roots, plus *another* native weighted-item generation system.
+
+### Source census: definition ≠ generator eligibility
+
+| Source class | Source-verified count | Important interpretation |
+|---|---:|---|
+| NewContent `ItemPrototypes` top-level declarations | **151** | **150 distinct SID names**; `PIR_cns_CigarettesDreamRegular` is defined **twice** (identical prototype body; repeated SID may still matter to the CFG loader) |
+| Item-generator top-level declarations | **326** | **274 distinct root names**; 109 non-`{bpatch}` declarations (108 distinct names), 217 `{bpatch}` declarations (166 distinct target names) |
+| Generator child links (`ItemGeneratorPrototypeSID`) | **375** | 363 refer to named generator roots declared in these PAKs, 11 refer to missing mod-owned stash-clue roots, 1 refers to a separately known base-game generator |
+| Source `ItemPrototypeSID` occurrences in all `ItemGeneratorPrototypes` CFGs | **2,949** | Includes repeated difficulty/rank leaves and one *empty placeholder*; **1,519 occurrences** identify mod-defined items; source occurrence totals are **not** item counts in game |
+| Distinct mod-defined SIDs referenced in those generator leaves | **119** | 31 of 150 prototype SIDs never appear in a `PossibleItems` leaf in the supplied item-generator graph |
+| **Mod-defined SIDs reachable from a patched original generator root** | **113** | **Source-level ON/OFF candidates**. Their runtime activation and final roll/stock outcome still need testing |
+| Distinct mod-defined generator-leaf SIDs with no demonstrated path from native root | **6** | Keep *out* of any “actively spawning” control until additional generator/actor references are verified |
+
+The **51 duplicated native patch-target names** are principally repeated zombie roots and `MedicNoon_TradeItemGenerator` across source files; a further duplicated **mod-owned** root is `PIR_Stash_Ammo_A556E`, declared twice with identical source bodies. Do not treat declaration counts as unique engine roots. No generator-reference cycle was found among the declared roots, but see the unresolved references below.
+
+### Generator families and corresponding spawn routes
+
+The 166 **distinct patched native generator roots** fall into the following source-name and patch-file domains. A SID may be reachable through *several* families, so family counts must never be summed to obtain 113.
+
+| Native target category | Distinct patched roots | Distinct newly defined item SIDs reachable through the graph |
+|---|---:|---:|
+| Named traders, medics and bartenders | **39** | 87 |
+| Generic NPC **trading stock** | **9** | 87 |
+| Human NPC loadout / loot | **25** | 87 |
+| Zombie loadout / loot | **50** | 4 |
+| Mutant loot generators | **14** | 24 |
+| GamePass stash generators | **3** | 82 |
+| Destructible stash / container generators | **23** | 27 |
+| Prologue/quest-related original generator roots | **2** | 1 (also reached elsewhere; **do not target quest/prologue**) |
+| Other native root | **1** | 0 |
+
+Core mod-defined generator CFG locations (relative to `ItemGenerators_NC`'s `Content/GameLite/ModGameData/ProjectItemizationReborn_ItemGenerators/`):
+- `ItemGeneratorPrototypes/ItemGeneratorPrototypes_PIR.cfg` (ammo and destructible generator definitions; 43 top-level roots; 543 item references).
+- `ItemGeneratorPrototypes/PIR_ItemPools.cfg` (42 roots, 1,309 item references; named misc, food, medical, money and stash pools).
+- Five `PIR_ItemPools_NPC_*.cfg` files (Bandits, Freedom, General, Monolith, Scientific; one root each).
+- Seven `DynamicItemGenerator/DynamicItemGenerator_PIR_*.cfg` files (Bandit, Bartenders, Freedom, GeneralNPC, Medics, Monolith, Scientific).
+- The native-path `ItemGenerators_OC/ItemGeneratorPrototypes` patches cover original traders, medics, bartenders, faction NPCs, zombies, mutants, destructibles and GamePass stashes.
+
+**Generator-only classification:** from the 113 source-reachable new item SID names: **6** base components (`PIR_bcp_*`), **30** consumables (`PIR_cns_*`), **52** miscellaneous (`PIR_msc_*`), **25** mutant loot (`PIR_mlt_*`). These are namespace families from author-supplied SID names and prototype files, **not** replacements for native in-game item categories.
+
+**Concrete candidate SID inventory, grouped for later whitelist/blacklist mapping:**
+
+- **Base components (6):** `PIR_bcp_ElectronicParts`, `PIR_bcp_FabricParts`, `PIR_bcp_GlassParts`, `PIR_bcp_MetalParts`, `PIR_bcp_PlasticParts`, `PIR_bcp_WoodenParts`.
+- **Consumables (30):** `PIR_cns_AdrenalineShot`, `PIR_cns_Amoxicillin`, `PIR_cns_Antidote`, `PIR_cns_Apple`, `PIR_cns_ArmyStimpak`, `PIR_cns_BagOfWeed`, `PIR_cns_CaffeineTablets`, `PIR_cns_CigarettesDreamLight`, `PIR_cns_CigarettesDreamMenthol`, `PIR_cns_CigarettesDreamRegular`, `PIR_cns_CigarettesSpark`, `PIR_cns_CigarettesWinston`, `PIR_cns_Cocaine`, `PIR_cns_EnergyBar`, `PIR_cns_GlucoseInjector`, `PIR_cns_GoldenCigaretteCase`, `PIR_cns_GunOil`, `PIR_cns_HomemadeStimpak`, `PIR_cns_Ibuprofen`, `PIR_cns_JarOfPickles`, `PIR_cns_Joint`, `PIR_cns_MorphineInjector`, `PIR_cns_Radioprotectant`, `PIR_cns_StaleApple`, `PIR_cns_StaleBread`, `PIR_cns_StaleSausage`, `PIR_cns_WrappedApple`, `PIR_cns_WrappedBread`, `PIR_cns_WrappedSausage`, `PIR_cns_Yadulin`.
+- **Miscellaneous (52):** `PIR_msc_BoxOfSteelNails`, `PIR_msc_BrokenWalkieTalkie`, `PIR_msc_CellBatteries`, `PIR_msc_CircuitBoard`, `PIR_msc_CleanRag`, `PIR_msc_CookingPot`, `PIR_msc_CouponBundleSmall`, `PIR_msc_CouponBundleMedium`, `PIR_msc_CouponBundleLarge`, `PIR_msc_Dice`, `PIR_msc_DiceRigged`, `PIR_msc_DirtyRag`, `PIR_msc_DogCollar`, `PIR_msc_DollarBundle`, `PIR_msc_DuctTape`, `PIR_msc_FryingPan`, `PIR_msc_GlassCup`, `PIR_msc_GlassJar`, `PIR_msc_GlassVessel`, `PIR_msc_GoldChain`, `PIR_msc_GoldenCigaretteCaseEmpty`, `PIR_msc_GoldenRing`, `PIR_msc_GoldenTooth`, `PIR_msc_HemostaticClamp`, `PIR_msc_LeatherBelt`, `PIR_msc_LeatherGloves`, `PIR_msc_MagnifyingGlass`, `PIR_msc_Multitool`, `PIR_msc_NailHammer`, `PIR_msc_OldBook`, `PIR_msc_OldBoots`, `PIR_msc_OldRustyKeys`, `PIR_msc_Pencil`, `PIR_msc_PlasticWrap`, `PIR_msc_PlayingCards`, `PIR_msc_Pysanka1`, `PIR_msc_ReadingGlasses`, `PIR_msc_SafetyMatches`, `PIR_msc_SaltShaker`, `PIR_msc_Scalpel`, `PIR_msc_Screwdriver`, `PIR_msc_SharpeningStone`, `PIR_msc_Silverware`, `PIR_msc_SmokingPipe`, `PIR_msc_Socks`, `PIR_msc_SpoolOfThread`, `PIR_msc_SteelCompass`, `PIR_msc_SteelSpring`, `PIR_msc_ToiletPaperRoll`, `PIR_msc_Wrench`, `PIR_msc_WristWatch`, `PIR_msc_ZippoLighter`.
+- **Mutant loot (25):** `PIR_mlt_BloodBlindDog`, `PIR_mlt_BloodBloodsucker`, `PIR_mlt_BloodBoar`, `PIR_mlt_BloodBurer`, `PIR_mlt_BloodCat`, `PIR_mlt_BloodChimera`, `PIR_mlt_BloodController`, `PIR_mlt_BloodDeer`, `PIR_mlt_BloodFlesh`, `PIR_mlt_BloodPoltergeist`, `PIR_mlt_BloodPseudogiant`, `PIR_mlt_BloodPseudodog`, `PIR_mlt_BloodRodent`, `PIR_mlt_BloodSnork`, `PIR_mlt_BloodZombie`, `PIR_mlt_BlindDogPaw`, `PIR_mlt_BlindDogTail`, `PIR_mlt_BloodsuckerHand`, `PIR_mlt_BoarEye`, `PIR_mlt_BoarHide`, `PIR_mlt_ControllerScalp`, `PIR_mlt_FleshHoof`, `PIR_mlt_PseudodogEar`, `PIR_mlt_RodentTail`, `PIR_mlt_SnorkFoot`.
+
+**Six defined but not demonstrably reachable through any supplied patched native generator:** `PIR_dct_EchoUpgrade`, `PIR_dct_BearUpgrade`, `PIR_dct_GilkaUpgrade`, `PIR_dct_VelesUpgrade` (each appears in its own standalone, unreferenced `PIR_Detector_*Pool`); `PIR_msc_EmptyPropaneTank` and `PIR_msc_MoneyBriefcase` (only via the otherwise disconnected `PIR_MiscAllPool`). Importantly, `PIR_msc_MoneyBriefcase` also occurs in **21 explicitly authored world-actor SpawnActor CFGs**; these direct world placements are **outside the generator-only ON/OFF scope**, and blocking its unconnected generator leaf would not remove them.
+
+**31 additional prototype SIDs never appear in direct item-generator leaves** (150 minus 119), chiefly 13 `PIR_fcp_*` faction patches, 16 `PIR_sci_*` stash-clue prototype definitions including template, `PIR_ItemTemplate`, and `PIR_msc_Empty`. Do not offer these as confirmed item-generator candidates solely because their prototypes exist. Any externally or dynamically supplied spawn source would require its own evidence.
+
+### Second item-generation route: PackOfItemsGroupPrototypes
+
+**Exact source:** `ItemGenerators_OC/PackOfItemsGroupPrototypes/PIR_PackOfItemsGroupPrototypes.cfg` (344,201 bytes decoded). It patches **12 existing root groups**: `Medkits`, `Stimulator`, `Drink`, `Food`, `Bandage`, `AntiRad`, `Cabinet_metal_big`, `Cabinet_metal_small`, `Cabinet_village`, `Cabinet_city`, `Cabinet_admin`, `Cabinet_science`.
+
+- Each is `{bpatch}` with `PackOfItemsSettings : struct.begin {bskipref}`, carrying weighted `Items` across difficulty/rank groups.
+- Contains **3,310 authored `ItemPrototypeSID` entries**, including **3,126 occurrences of 74 distinct PIR mod-defined item SIDs**, alongside **184 occurrences of 19 distinct non-PIR items**.
+- The 74 PIR SIDs are **already within** the 119 identified `ItemGeneratorPrototypes` leaf SIDs; they are **not additional unique mod objects**. Yet they are an **independent generation route**. Blocking a PIR item solely from `ItemGeneratorPrototypes` can therefore **fail to stop its appearance** from cupboards/containers with `PackOfItemsSettings`.
+- **TCD implementation must treat this as a separate generator overlay**, preserving the 19 existing items and all original constraints. A 1-click OFF must cover **both** item generation mechanisms if the selected SID occurs in both. No mass category removal and no weight/chance tuning are authorized.
+
+### Explicit unresolved references, duplicates and CFG merge risk
+
+1. **Missing mod-owned generator targets in the supplied four PAKs:** `PIR_StashClues_Loot` (10 `ItemGeneratorPrototypeSID` references) and `PIR_StashClues_Trade` (1 reference) have **no matching declared item-generator roots** in these decoded packages. This is a real cross-file graph gap; do **not** treat it as a valid or test-passed spawn route for `PIR_sci_*` stash clues. `Trader_T1_Guns_ItemGenerator` is the third external link target (one occurrence), and unlike those two it is confirmed in TCD's original 2.1 SELL manifest.
+2. **Duplicate declarations:** `PIR_cns_CigarettesDreamRegular` appears twice with identical prototype body; `PIR_Stash_Ammo_A556E` appears twice with identical generator body. **51** native generator patch names also occur twice across different CFG files (mostly zombie targets, plus `MedicNoon_TradeItemGenerator`). Whether the engine merges/rejects duplicate named roots is **not established** by source parsing.
+3. **Native COW compatibility:** PIR issues **56 `ItemGenerator {bskipref}` directives across 55 distinct native generator roots** in the ItemGenerator CFG sources (especially traders/medics, destructible and GamePass stashes). This replaces source inheritance; TCD's native 2.1 Trader Stock COW writer relies on inherited originals and pre-indexed native item leaves. A disabled native category **cannot be presumed safe** if PIR rewrites the target `ItemGenerator`. TCD's serializer does not presently have a mod-aware skip-ref reconciliation contract.
+4. **TCD 2.1 verified shared roots:** `Trader_Cosnsumables_ItemGenerator` is in **510** vanilla SELL manifest leaf rows across **30** trade profiles; `GeneralNPC_TradeItemGenerator` appears in the generic NPC trader role; `MedicUniversal_TradeItemGenerator` is in **350** vanilla SELL rows across **14** profiles. PIR targets all three, as well as regional trader roots. This confirms a material intersecting source graph, **not** that these vendor stocks work together in game.
+5. **Cross-mod risk with earlier audits:** PIR's `Trader_Cosnsumables_ItemGenerator` uses `ItemGenerator {bskipref}`, potentially conflicting with Sleeping Bag's `SBM` append (audit 001). PIR's GamePass stash root replacement may conflict with Repair System's `RepairKits` append (audit 004). PIR and OXA both patch `RostokTraderNato_TradeItemGenerator` but use separate named additions (`PIR_Items_Core` vs `OXA`); they *may* coexist, but load-order/merge acceptance remains untested. These are overlap risks, **not established defects**.
+6. **Direct world placement and quest behavior excluded:** 21 direct MoneyBriefcase world actors, quest/item grants, pre-generated inventories and item effects are not within the approved TCD generator ON/OFF feature. Prologue/quest-specific generator roots likewise remain excluded.
+7. **Do not equate CPP/CFG weights with item mass.** The mixed generator pools include original items, author-defined probabilities, counts and ranks. A correct BLOCK should suppress only the exact PIR SID in **every reachable leaf/weighted entry**, with default ALLOW leaving source CFGs unchanged. Do not remove parent pools containing vanilla items.
+
+### Result, compatibility decision and acceptance tests
+
+**Source status: COMPLETE for all four supplied PAK CFGs.** Parsed and cross-checked the independent new item prototype SIDs, 326 generator root declarations, 375 generator links and 12 additional weighted PackOfItems groups. **113 distinct PIR item SID candidates** have a source path from a patched native generator. The **6 disconnected leaves** and **31 prototype-only definitions** must not be exposed as positively spawnable without additional proof.
+
+**Implementation status: NOT IMPLEMENTED.** Do not ship a blanket “disable PIR” by deleting shared generator roots, since that would remove vanilla items and risk affecting original trader, stash and corpse pools. A safe item-spawn filter must use exact item SIDs and all actual source paths (including `PackOfItemsSettings`) while preserving native pool entries; it must also handle source load order and generator inheritance.
+
+**Required game 2.1 acceptance matrix:**
+- [x] Extract/verify four PAKs and decode all 101 CFGs (including Kraken multi-block group).
+- [x] Resolve item SID prototypes, source generator links, distinct native targets, mixed vanilla-vs-PIR leaf sets and disconnected paths.
+- [x] Identify the separate weighted PackOfItemsGroups branch and its 12 root replacements.
+- [ ] In game, compare PIR-only, TCD-only and PIR+TCD with default ALLOW; inspect native and modded drops at a named trader, Generic NPC trader, NPC corpse, mutant, stash and cabinet/medkit group.
+- [ ] Specifically test `Trader_Cosnsumables_ItemGenerator` with TCD General→Medical/Food/Drinks filters and verify safe behavior of the `{bskipref}` rewritten root, including TCD copy-on-write references.
+- [ ] Test item-specific OFF for one mixed-pool modded SID in both `ItemGenerator` and `PackOfItems` paths, confirming a native item in the same pool remains eligible. Test duplicate leaves/rank groups.
+- [ ] Test combined PIR + Sleeping Bag, PIR + Repair System, PIR + OXA around the cited common roots and record real CFG patch precedence; no coexistence conclusion before engine tests.
+- [ ] Determine why `PIR_StashClues_Loot` and `PIR_StashClues_Trade` are absent; verify whether an additional required companion mod provides them. Avoid generating dangling new references.
+- [ ] Audit debug/prologue exclusions and store confirmed results before adding compact ON/OFF controls per UI catalog.
+
+**No gameplay writer, UI control, preset storage, vanilla source manifest, or mod PAK has been changed by this audit.**
