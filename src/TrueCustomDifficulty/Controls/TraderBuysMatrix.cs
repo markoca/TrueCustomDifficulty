@@ -259,7 +259,7 @@ public sealed class TraderBuysMatrix : FrameworkElement
                 || (role.Id == "genericNpc" && RareGearEnabled);
             dc.DrawTrackedRoundedRectangle(Clone(panel, selected ? .9 : .45),
                 new Pen(selected ? accent : Clone(border, .8), selected ? 1.4 : .9), chip, 3, 3);
-            var label = Text(role.Label.ToUpperInvariant(), 9.6,
+            var label = Text(TraderSellsPolicy.DisplayName(role.Id).ToUpperInvariant(), 9.6,
                 selected ? accent : text, FontWeights.Bold);
             dc.DrawText(label, new Point(chip.Left + (chip.Width - label.Width) / 2.0,
                 chip.Top + (chip.Height - label.Height) / 2.0));
@@ -454,7 +454,7 @@ public sealed class TraderBuysMatrix : FrameworkElement
         => ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
 
     // GEAR is a preset sidecar without its own catalog id; the panel shows the
-    // Generic NPC category help, which explains GEAR.
+    // STALKERS category help, which explains RARE GEAR.
     private void SelectGearOwner()
     {
         var role = TraderSellsPolicy.Roles.Single(r => r.Id == "genericNpc");

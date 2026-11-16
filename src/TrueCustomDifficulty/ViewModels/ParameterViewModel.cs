@@ -208,7 +208,7 @@ public sealed class ParameterViewModel : ObservableObject
                     + Environment.NewLine + "Right-click one species to reset it; R resets all fourteen.";
 
             if (IsTraderSellsMember || IsTraderSupply)
-                return "Pick a trader type, then drag a category's rail: 100% keeps the game's odds for those offers, lower makes them rarer, 0% removes the category. AMMO / MEDICAL SUPPLY change stack sizes for every trader; where a stack is already 1 a lower supply makes the offer rarer instead. RARE GEAR (Generic NPC only): chance to offer one rare item, occasionally two (8% second roll); 0% = off."
+                return "Pick a trader type, then drag a category's rail: 100% keeps the game's odds for those offers, lower makes them rarer, 0% removes the category. AMMO / MEDICAL SUPPLY change stack sizes for every trader; where a stack is already 1 a lower supply makes the offer rarer instead. RARE GEAR (STALKERS only): chance to offer one rare item, occasionally two (8% second roll); 0% = off."
                     + Environment.NewLine + "Right-click a rail to reset it; R resets the board. CLEAR removes restrictions left by older presets.";
             if (IsRange)
                 return "Drag MIN or MAX to choose the range. Use Arrow keys for small changes and Home/End for the limits."

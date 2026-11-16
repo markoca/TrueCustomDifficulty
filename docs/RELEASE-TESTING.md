@@ -1,6 +1,6 @@
 ## 2026-11-16 — TRADER STOCK board checks
 
-* Wine: the board draws like the other boards at wide and narrow widths (supply rails side by side / stacked, chips in one or two rows); right-click, R, arrow keys, role chips and CLEAR work; four chips, no TECHNICIAN.
+* Wine: the board draws like the other boards at wide and narrow widths (supply rails side by side / stacked, chips in one or two rows); right-click, R, arrow keys, role chips and CLEAR work; four chips SHOPKEEPERS · MEDICS · BARTENDERS · STALKERS, no TECHNICIAN.
 * Load an older preset with item exclusions or BUY restrictions: the notice appears, CLEAR removes it and the board is no longer marked modified.
 * MEDICAL SUPPLY 0.25x: a medic's single bandages/medkits appear clearly less often (odds), larger stacks shrink. AMMO SUPPLY 2x: stacks double, odds unchanged.
 * RARE GEAR 0% = off (no rare branch written), 5% = rare branch with 5% chance.

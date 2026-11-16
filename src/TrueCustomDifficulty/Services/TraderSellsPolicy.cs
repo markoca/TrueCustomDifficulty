@@ -23,6 +23,17 @@ public static class TraderSellsPolicy
 
     public static bool IsEditableRole(string roleId) => roleId != "technician";
 
+    /// <summary>Player-facing role names (internal ids and CFG roles unchanged).</summary>
+    public static string DisplayName(string roleId) => roleId switch
+    {
+        "general" => "Shopkeepers",
+        "medic" => "Medics",
+        "bartender" => "Bartenders",
+        "genericNpc" => "Stalkers",
+        "technician" => "Technicians",
+        _ => roleId
+    };
+
     /// <summary>Category ids that have a rail and are written.</summary>
     public static IEnumerable<string> EditableParameterIds =>
         EditorRoles.SelectMany(role => Categories.Where(category => IsAvailable(role, category))

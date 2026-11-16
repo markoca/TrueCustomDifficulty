@@ -2,11 +2,11 @@
 
 * **TRADER STOCK** is now a custom-drawn board like every other (was native WPF Slider / Button / CheckBox): BoardTitle heading, `100% = GAME ODDS · 0% = REMOVED`, compact rail cards with the reference tick, gold handle and gold value when changed, white card hover. Same `TraderBuysMatrix` class / XAML slot.
 * Top: **AMMO SUPPLY** and **MEDICAL SUPPLY** rails (0.25x–3x) replace the separate STOCK AMOUNT knob bank; the Economy trader row is now TRADER STOCK (42%) + SERVICE PRICES.
-* Role chips **GENERAL · MEDIC · BARTENDER · GENERIC NPC** (a gold dot marks a changed role). TECHNICIAN is not edited: only Bolshak (DLC1) sells items; its catalog values stay saved-only and are never written, so nothing invisible reaches the CFG (AMMO / MEDICAL SUPPLY still apply to every trader).
-* One rail per category (0% = removed). Generic NPC: **RARE GEAR** is one rail, 0% = OFF, 1–100% = chance (was checkbox + CHANCE row).
+* Role chips **SHOPKEEPERS · MEDICS · BARTENDERS · STALKERS** (player-facing names; internal role ids `general` / `genericNpc` and CFG roles unchanged, labels *Shopkeeper Sells …* / *Stalker Sells …*) (a gold dot marks a changed role). TECHNICIAN is not edited: only Bolshak (DLC1) sells items; its catalog values stay saved-only and are never written, so nothing invisible reaches the CFG (AMMO / MEDICAL SUPPLY still apply to every trader).
+* One rail per category (0% = removed). STALKERS: **RARE GEAR** is one rail, 0% = OFF, 1–100% = chance (was checkbox + CHANCE row).
 * Older presets: a notice `OLDER PRESET: n item exclusions + m BUY restrictions still active` with **CLEAR** (was text only, impossible to undo).
 * Click a track or card = its own panel text (GEAR and role chips included); right-click resets one rail; **R resets the board** (rails, odds, RARE GEAR, supplies; CLEAR stays separate). Arrow keys / Home / End on the selected rail.
-* The board is marked modified also by RARE GEAR and legacy restrictions. Panel title of General → Weapons is *General Sells Weapons* (was *Trader Stock*).
+* The board is marked modified also by RARE GEAR and legacy restrictions. Panel title of Shopkeepers → Weapons is *Shopkeeper Sells Weapons* (was *Trader Stock*).
 
 ## 2026-11-16 — CURRENT: Mutant Health covers variants
 
