@@ -6755,11 +6755,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             && ModItemsEditorAvailable && ModItemsEnabled
             && _npcModKnobHit.Contains(pointer))
         {
-            var direction = Math.Sign(e.Delta);
-            if (direction == 0) return;
+            var modWheelDirection = Math.Sign(e.Delta);
+            if (modWheelDirection == 0) return;
             SelectNpcModItems();
             Focus();
-            ModItemsRemoval = Math.Clamp(ModItemsRemoval + direction * 0.01,
+            ModItemsRemoval = Math.Clamp(ModItemsRemoval + modWheelDirection * 0.01,
                 0.0, 1.0);
             e.Handled = true;
             return;

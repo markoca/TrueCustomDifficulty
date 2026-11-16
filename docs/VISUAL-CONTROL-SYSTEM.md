@@ -1,3 +1,7 @@
+### 2026-11-16 — NPC knob wheel CS0136 fix
+
+In `AggregateVisualControl.OnMouseWheel`, the optional MOD ITEMS sub-branch now uses `modWheelDirection` rather than declaring `direction`, which already exists in the enclosing method scope for all native knob wheel handlers. This removes C# CS0136 without affecting 1% wheel increments, other knob input, selected-state layout, presets, or CFG output. The project consistency audit now checks both distinct wheel variable names; local .NET/Wine compilation is still the acceptance gate.
+
 ## 2026-11-16 — CURRENT: three matched NPC supply knobs
 
 The always-relevant middle tier of **NPC LOOT & EQUIPMENT** is three equal-height **88-DIP native 270-degree knob cards**: **SUPPLY REDUCTION**, **STANDARD MED**, and **MOD ITEMS**. All share one precise dial renderer (same arc, native tick sampling, neutral reference pointer, center value, small muted min/max labels and white hover pointer). The actual range matters, not the graphic: corpse supply reduction is **0–100% in 5% increments**, Standard Med remains its native **0–2×** multiplier, and Mod Items remains an optional **0–100% in 1% increments** source-mod reduction. Only modified numeric digits become yellow. Keep the fourth, wider **DROPPED WEAPON CONDITION** two-ended range rail unchanged. The centered three-mode SmartLoot selector and optional MED + AMMO amount knob/preview remain unchanged.

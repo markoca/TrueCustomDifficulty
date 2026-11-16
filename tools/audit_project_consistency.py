@@ -5289,7 +5289,7 @@ if any(_tok not in _npc_preview_source for _tok in (
     '_npcModKnobHit.Contains(pointer)',
     'var clockwise = (angle - WeaponKnobStartAngle + 360.0) % 360.0;',
     'ModItemsRemoval = Math.Round(ratio, 2, MidpointRounding.AwayFromZero);',
-    'ModItemsRemoval = Math.Clamp(ModItemsRemoval + direction * 0.01,',
+    'ModItemsRemoval = Math.Clamp(ModItemsRemoval + modWheelDirection * 0.01,',
     'KnobVisibleStepStride(pxPerStep)',
     'var enabled = parameter.IsControlEnabled && !IsNpcBonusSliderLocked(parameter);',
     '_hitTargets.Add(new HitTarget(parameter, hit, hit, HitKind.Knob,',
@@ -5324,6 +5324,13 @@ if '"NpcLootLoadout" => NpcLootBoardHeight(width),' not in _npc_preview_source:
     fail("NPC board must measure the current selected package geometry")
 if 'DrawNpcCompactScalar(' in _npc_paint:
     fail("NPC native knobs regressed to cramped horizontal rails")
+_npc_wheel = _npc_preview_source.split(
+    "protected override void OnMouseWheel(MouseWheelEventArgs e)", 1)[-1].split(
+    "protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)", 1)[0]
+if (_npc_wheel.count("var modWheelDirection = Math.Sign(e.Delta);") != 1
+        or _npc_wheel.count("var direction = Math.Sign(e.Delta);") != 1
+        or "ModItemsRemoval + direction * 0.01" in _npc_wheel):
+    fail("NPC mod-item knob wheel local must not shadow native knob direction (CS0136)")
 _knob_shared = _npc_preview_source.split("private void DrawNpcCompactDial(", 1)[-1].split("private void DrawNpcCompactMultiplierKnob(", 1)[0]
 _knob_native = _npc_preview_source.split("private void DrawNpcCompactMultiplierKnob(", 1)[-1].split("private void DrawNpcLootLoadout(", 1)[0]
 _knob_mod = _npc_preview_source.split("private void DrawNpcModItemsCard(", 1)[-1].split("private void SelectNpcModItems(", 1)[0]
