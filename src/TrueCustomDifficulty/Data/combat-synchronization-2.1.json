@@ -1,0 +1,2282 @@
+{
+ "source": "GameData/CombatSynchronizationPrototypes.cfg (S.T.A.L.K.E.R. 2 2.1 base dump)",
+ "note": "Full per-rank tables. Default is inherited by CombatSynchronizerEasy/Medium/Hard; CombatSynchronizerStalker owns its own ranks.",
+ "tables": {
+  "Default": {
+   "Newbie": {
+    "fields": {},
+    "children": {
+     "SynchronizationPrimitives": {
+      "fields": {},
+      "children": {
+       "[0]": {
+        "fields": {
+         "Score": "0.f",
+         "TokenTag": "TokenTag.Range.Shot"
+        },
+        "children": {}
+       },
+       "[1]": {
+        "fields": {
+         "Score": "1.f",
+         "TokenTag": "TokenTag"
+        },
+        "children": {}
+       }
+      }
+     },
+     "FilterGroups": {
+      "fields": {},
+      "children": {
+       "[0]": {
+        "fields": {
+         "MaxScore": "2.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Movement"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[1]": {
+        "fields": {
+         "MaxScore": "1000.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Range"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[2]": {
+        "fields": {
+         "MaxScore": "5.f",
+         "CooldownMin": "1.f",
+         "CooldownMax": "1.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Melee"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[3]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "8.f",
+         "CooldownMax": "12.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Ability"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[4]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "8.f",
+         "CooldownMax": "12.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Ability.Knockdown"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[5]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "10.f",
+         "CooldownMax": "20.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Flank"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[6]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "12.f",
+         "CooldownMax": "25.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Advance.Action"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[7]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "25.f",
+         "CooldownMax": "40.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Advance.Approach"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[8]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "2.f",
+         "CooldownMax": "5.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CamperPunish"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[9]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "20.f",
+         "CooldownMax": "35.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.ThrowGrenade"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[10]": {
+        "fields": {
+         "MaxScore": "2.f",
+         "CooldownMin": "15.f",
+         "CooldownMax": "25.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.SuppressiveFire"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[11]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "10.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Range.ActivateAnomaly.Poltergeist"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[12]": {
+        "fields": {
+         "MaxScore": "2.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "15.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Evade.Side",
+           "[1]": "TokenTag.CombatAction.Evade.Granit.Side"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[13]": {
+        "fields": {
+         "MaxScore": "2.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "15.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Evade.Back",
+           "[1]": "TokenTag.CombatAction.Evade.Granit.Back"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[14]": {
+        "fields": {
+         "MaxScore": "1000.f",
+         "CooldownMin": "2.f",
+         "CooldownMax": "3.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Evade.Back",
+           "[1]": "TokenTag.CombatAction.Evade.Granit.Back",
+           "[2]": "TokenTag.CombatAction.Advance.Action"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[15]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "4.f",
+         "CooldownMax": "6.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Alerted.Growl"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[16]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "20.f",
+         "CooldownMax": "35.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Special.ThrowGrenade"
+          },
+          "children": {}
+         }
+        }
+       }
+      }
+     }
+    }
+   },
+   "Experienced": {
+    "fields": {},
+    "children": {
+     "SynchronizationPrimitives": {
+      "fields": {},
+      "children": {
+       "[0]": {
+        "fields": {
+         "Score": "0.f",
+         "TokenTag": "TokenTag.Range.Shot"
+        },
+        "children": {}
+       },
+       "[1]": {
+        "fields": {
+         "Score": "1.f",
+         "TokenTag": "TokenTag"
+        },
+        "children": {}
+       }
+      }
+     },
+     "FilterGroups": {
+      "fields": {},
+      "children": {
+       "[0]": {
+        "fields": {
+         "MaxScore": "3.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Movement"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[1]": {
+        "fields": {
+         "MaxScore": "1000.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Range"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[2]": {
+        "fields": {
+         "MaxScore": "5.f",
+         "CooldownMin": "1.f",
+         "CooldownMax": "2.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Melee"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[3]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "8.f",
+         "CooldownMax": "12.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Ability"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[4]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "8.f",
+         "CooldownMax": "12.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Ability.Knockdown"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[5]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "10.f",
+         "CooldownMax": "20.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Flank"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[6]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "10.f",
+         "CooldownMax": "20.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Advance.Action"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[7]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "25.f",
+         "CooldownMax": "40.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Advance.Approach"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[8]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "2.f",
+         "CooldownMax": "3.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CamperPunish"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[9]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "20.f",
+         "CooldownMax": "35.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.ThrowGrenade"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[10]": {
+        "fields": {
+         "MaxScore": "3.f",
+         "CooldownMin": "10.f",
+         "CooldownMax": "20.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.SuppressiveFire"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[11]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "10.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Range.ActivateAnomaly.Poltergeist"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[12]": {
+        "fields": {
+         "MaxScore": "2.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "15.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Evade.Side",
+           "[1]": "TokenTag.CombatAction.Evade.Granit.Side"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[13]": {
+        "fields": {
+         "MaxScore": "2.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "15.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Evade.Back",
+           "[1]": "TokenTag.CombatAction.Evade.Granit.Back"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[14]": {
+        "fields": {
+         "MaxScore": "1000.f",
+         "CooldownMin": "2.f",
+         "CooldownMax": "3.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Evade.Back",
+           "[1]": "TokenTag.CombatAction.Evade.Granit.Back",
+           "[2]": "TokenTag.CombatAction.Advance.Action"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[15]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "4.f",
+         "CooldownMax": "6.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Alerted.Growl"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[16]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "20.f",
+         "CooldownMax": "35.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Special.ThrowGrenade"
+          },
+          "children": {}
+         }
+        }
+       }
+      }
+     }
+    }
+   },
+   "Veteran": {
+    "fields": {},
+    "children": {
+     "SynchronizationPrimitives": {
+      "fields": {},
+      "children": {
+       "[0]": {
+        "fields": {
+         "Score": "0.f",
+         "TokenTag": "TokenTag.Range.Shot"
+        },
+        "children": {}
+       },
+       "[1]": {
+        "fields": {
+         "Score": "1.f",
+         "TokenTag": "TokenTag"
+        },
+        "children": {}
+       }
+      }
+     },
+     "FilterGroups": {
+      "fields": {},
+      "children": {
+       "[0]": {
+        "fields": {
+         "MaxScore": "3.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Movement"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[1]": {
+        "fields": {
+         "MaxScore": "1000.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Range"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[2]": {
+        "fields": {
+         "MaxScore": "5.f",
+         "CooldownMin": "1.f",
+         "CooldownMax": "2.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Melee"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[3]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "8.f",
+         "CooldownMax": "12.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Ability"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[4]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "8.f",
+         "CooldownMax": "12.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Ability.Knockdown"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[5]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "10.f",
+         "CooldownMax": "20.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Flank"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[6]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "10.f",
+         "CooldownMax": "20.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Advance.Action"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[7]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "25.f",
+         "CooldownMax": "40.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Advance.Approach"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[8]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "2.f",
+         "CooldownMax": "3.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CamperPunish"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[9]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "20.f",
+         "CooldownMax": "35.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.ThrowGrenade"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[10]": {
+        "fields": {
+         "MaxScore": "4.f",
+         "CooldownMin": "15.f",
+         "CooldownMax": "25.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.SuppressiveFire"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[11]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "10.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Range.ActivateAnomaly.Poltergeist"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[12]": {
+        "fields": {
+         "MaxScore": "2.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "15.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Evade.Side",
+           "[1]": "TokenTag.CombatAction.Evade.Granit.Side"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[13]": {
+        "fields": {
+         "MaxScore": "2.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "15.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Evade.Back",
+           "[1]": "TokenTag.CombatAction.Evade.Granit.Back"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[14]": {
+        "fields": {
+         "MaxScore": "1000.f",
+         "CooldownMin": "2.f",
+         "CooldownMax": "3.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Evade.Back",
+           "[1]": "TokenTag.CombatAction.Evade.Granit.Back",
+           "[2]": "TokenTag.CombatAction.Advance.Action"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[15]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "4.f",
+         "CooldownMax": "6.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Alerted.Growl"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[16]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "20.f",
+         "CooldownMax": "35.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Special.ThrowGrenade"
+          },
+          "children": {}
+         }
+        }
+       }
+      }
+     }
+    }
+   },
+   "Master": {
+    "fields": {},
+    "children": {
+     "SynchronizationPrimitives": {
+      "fields": {},
+      "children": {
+       "[0]": {
+        "fields": {
+         "Score": "0.f",
+         "TokenTag": "TokenTag.Range.Shot"
+        },
+        "children": {}
+       },
+       "[1]": {
+        "fields": {
+         "Score": "1.f",
+         "TokenTag": "TokenTag"
+        },
+        "children": {}
+       }
+      }
+     },
+     "FilterGroups": {
+      "fields": {},
+      "children": {
+       "[0]": {
+        "fields": {
+         "MaxScore": "3.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Movement"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[1]": {
+        "fields": {
+         "MaxScore": "1000.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Range"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[2]": {
+        "fields": {
+         "MaxScore": "5.f",
+         "CooldownMin": "1.f",
+         "CooldownMax": "2.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Melee"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[3]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "8.f",
+         "CooldownMax": "12.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Ability"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[4]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "8.f",
+         "CooldownMax": "12.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Ability.Knockdown"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[5]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "10.f",
+         "CooldownMax": "20.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Flank"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[6]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "10.f",
+         "CooldownMax": "20.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Advance.Action"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[7]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "25.f",
+         "CooldownMax": "40.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Advance.Approach"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[8]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "2.f",
+         "CooldownMax": "3.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CamperPunish"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[9]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "20.f",
+         "CooldownMax": "35.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.ThrowGrenade"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[10]": {
+        "fields": {
+         "MaxScore": "5.f",
+         "CooldownMin": "15.f",
+         "CooldownMax": "25.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.SuppressiveFire"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[11]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "10.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Range.ActivateAnomaly.Poltergeist"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[12]": {
+        "fields": {
+         "MaxScore": "2.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "15.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Evade.Side",
+           "[1]": "TokenTag.CombatAction.Evade.Granit.Side"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[13]": {
+        "fields": {
+         "MaxScore": "2.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "15.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Evade.Back",
+           "[1]": "TokenTag.CombatAction.Evade.Granit.Back"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[14]": {
+        "fields": {
+         "MaxScore": "1000.f",
+         "CooldownMin": "2.f",
+         "CooldownMax": "3.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Evade.Back",
+           "[1]": "TokenTag.CombatAction.Evade.Granit.Back",
+           "[2]": "TokenTag.CombatAction.Advance.Action"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[15]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "4.f",
+         "CooldownMax": "6.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Alerted.Growl"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[16]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "20.f",
+         "CooldownMax": "35.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Special.ThrowGrenade"
+          },
+          "children": {}
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "CombatSynchronizerStalker": {
+   "Newbie": {
+    "fields": {},
+    "children": {
+     "SynchronizationPrimitives": {
+      "fields": {},
+      "children": {
+       "[0]": {
+        "fields": {
+         "Score": "0.f",
+         "TokenTag": "TokenTag.Range.Shot"
+        },
+        "children": {}
+       },
+       "[1]": {
+        "fields": {
+         "Score": "1.f",
+         "TokenTag": "TokenTag"
+        },
+        "children": {}
+       }
+      }
+     },
+     "FilterGroups": {
+      "fields": {},
+      "children": {
+       "[0]": {
+        "fields": {
+         "MaxScore": "2.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Movement"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[1]": {
+        "fields": {
+         "MaxScore": "1000.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Range"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[2]": {
+        "fields": {
+         "MaxScore": "5.f",
+         "CooldownMin": "1.f",
+         "CooldownMax": "1.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Melee"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[3]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "4.f",
+         "CooldownMax": "6.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Ability"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[4]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "4.f",
+         "CooldownMax": "6.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Ability.Knockdown"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[5]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "10.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Flank"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[6]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "6.f",
+         "CooldownMax": "12.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Advance.Action"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[7]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "12.f",
+         "CooldownMax": "20.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Advance.Approach"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[8]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "2.f",
+         "CooldownMax": "5.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CamperPunish"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[9]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "10.f",
+         "CooldownMax": "17.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.ThrowGrenade"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[10]": {
+        "fields": {
+         "MaxScore": "2.f",
+         "CooldownMin": "7.f",
+         "CooldownMax": "12.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.SuppressiveFire"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[11]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "10.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Range.ActivateAnomaly.Poltergeist"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[12]": {
+        "fields": {
+         "MaxScore": "3.f",
+         "CooldownMin": "1.f",
+         "CooldownMax": "3.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Evade.Side",
+           "[1]": "TokenTag.CombatAction.Evade.Granit.Side"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[13]": {
+        "fields": {
+         "MaxScore": "2.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "10.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Evade.Back",
+           "[1]": "TokenTag.CombatAction.Evade.Granit.Back"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[14]": {
+        "fields": {
+         "MaxScore": "1000.f",
+         "CooldownMin": "2.f",
+         "CooldownMax": "3.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Evade.Back",
+           "[1]": "TokenTag.CombatAction.Evade.Granit.Back",
+           "[2]": "TokenTag.CombatAction.Advance.Action"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[15]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "4.f",
+         "CooldownMax": "6.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Alerted.Growl"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[16]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "10.f",
+         "CooldownMax": "17.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Special.ThrowGrenade"
+          },
+          "children": {}
+         }
+        }
+       }
+      }
+     }
+    }
+   },
+   "Experienced": {
+    "fields": {},
+    "children": {
+     "SynchronizationPrimitives": {
+      "fields": {},
+      "children": {
+       "[0]": {
+        "fields": {
+         "Score": "0.f",
+         "TokenTag": "TokenTag.Range.Shot"
+        },
+        "children": {}
+       },
+       "[1]": {
+        "fields": {
+         "Score": "1.f",
+         "TokenTag": "TokenTag"
+        },
+        "children": {}
+       }
+      }
+     },
+     "FilterGroups": {
+      "fields": {},
+      "children": {
+       "[0]": {
+        "fields": {
+         "MaxScore": "3.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Movement"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[1]": {
+        "fields": {
+         "MaxScore": "1000.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Range"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[2]": {
+        "fields": {
+         "MaxScore": "5.f",
+         "CooldownMin": "1.f",
+         "CooldownMax": "2.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Melee"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[3]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "4.f",
+         "CooldownMax": "6.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Ability"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[4]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "4.f",
+         "CooldownMax": "6.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Ability.Knockdown"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[5]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "10.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Flank"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[6]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "10.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Advance.Action"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[7]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "12.f",
+         "CooldownMax": "20.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Advance.Approach"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[8]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "2.f",
+         "CooldownMax": "3.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CamperPunish"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[9]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "10.f",
+         "CooldownMax": "12.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.ThrowGrenade"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[10]": {
+        "fields": {
+         "MaxScore": "3.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "10.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.SuppressiveFire"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[11]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "10.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Range.ActivateAnomaly.Poltergeist"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[12]": {
+        "fields": {
+         "MaxScore": "2.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "15.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Evade.Side",
+           "[1]": "TokenTag.CombatAction.Evade.Granit.Side"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[13]": {
+        "fields": {
+         "MaxScore": "2.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "15.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Evade.Back",
+           "[1]": "TokenTag.CombatAction.Evade.Granit.Back"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[14]": {
+        "fields": {
+         "MaxScore": "1000.f",
+         "CooldownMin": "2.f",
+         "CooldownMax": "3.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Evade.Back",
+           "[1]": "TokenTag.CombatAction.Evade.Granit.Back",
+           "[2]": "TokenTag.CombatAction.Advance.Action"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[15]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "4.f",
+         "CooldownMax": "6.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Alerted.Growl"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[16]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "10.f",
+         "CooldownMax": "12.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Special.ThrowGrenade"
+          },
+          "children": {}
+         }
+        }
+       }
+      }
+     }
+    }
+   },
+   "Veteran": {
+    "fields": {},
+    "children": {
+     "SynchronizationPrimitives": {
+      "fields": {},
+      "children": {
+       "[0]": {
+        "fields": {
+         "Score": "0.f",
+         "TokenTag": "TokenTag.Range.Shot"
+        },
+        "children": {}
+       },
+       "[1]": {
+        "fields": {
+         "Score": "1.f",
+         "TokenTag": "TokenTag"
+        },
+        "children": {}
+       }
+      }
+     },
+     "FilterGroups": {
+      "fields": {},
+      "children": {
+       "[0]": {
+        "fields": {
+         "MaxScore": "3.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Movement"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[1]": {
+        "fields": {
+         "MaxScore": "1000.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Range"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[2]": {
+        "fields": {
+         "MaxScore": "5.f",
+         "CooldownMin": "1.f",
+         "CooldownMax": "2.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Melee"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[3]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "4.f",
+         "CooldownMax": "6.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Ability"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[4]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "4.f",
+         "CooldownMax": "6.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Ability.Knockdown"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[5]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "10.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Flank"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[6]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "10.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Advance.Action"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[7]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "12.f",
+         "CooldownMax": "20.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Advance.Approach"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[8]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "2.f",
+         "CooldownMax": "3.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CamperPunish"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[9]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "10.f",
+         "CooldownMax": "12.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.ThrowGrenade"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[10]": {
+        "fields": {
+         "MaxScore": "4.f",
+         "CooldownMin": "7.f",
+         "CooldownMax": "12.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.SuppressiveFire"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[11]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "10.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Range.ActivateAnomaly.Poltergeist"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[12]": {
+        "fields": {
+         "MaxScore": "2.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "15.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Evade.Side",
+           "[1]": "TokenTag.CombatAction.Evade.Granit.Side"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[13]": {
+        "fields": {
+         "MaxScore": "2.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "15.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Evade.Back",
+           "[1]": "TokenTag.CombatAction.Evade.Granit.Back"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[14]": {
+        "fields": {
+         "MaxScore": "1000.f",
+         "CooldownMin": "2.f",
+         "CooldownMax": "3.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Evade.Back",
+           "[1]": "TokenTag.CombatAction.Evade.Granit.Back",
+           "[2]": "TokenTag.CombatAction.Advance.Action"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[15]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "4.f",
+         "CooldownMax": "6.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Alerted.Growl"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[16]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "10.f",
+         "CooldownMax": "12.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Special.ThrowGrenade"
+          },
+          "children": {}
+         }
+        }
+       }
+      }
+     }
+    }
+   },
+   "Master": {
+    "fields": {},
+    "children": {
+     "SynchronizationPrimitives": {
+      "fields": {},
+      "children": {
+       "[0]": {
+        "fields": {
+         "Score": "0.f",
+         "TokenTag": "TokenTag.Range.Shot"
+        },
+        "children": {}
+       },
+       "[1]": {
+        "fields": {
+         "Score": "1.f",
+         "TokenTag": "TokenTag"
+        },
+        "children": {}
+       }
+      }
+     },
+     "FilterGroups": {
+      "fields": {},
+      "children": {
+       "[0]": {
+        "fields": {
+         "MaxScore": "3.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Movement"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[1]": {
+        "fields": {
+         "MaxScore": "1000.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Range"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[2]": {
+        "fields": {
+         "MaxScore": "5.f",
+         "CooldownMin": "1.f",
+         "CooldownMax": "2.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Melee"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[3]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "4.f",
+         "CooldownMax": "6.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Ability"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[4]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "4.f",
+         "CooldownMax": "6.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Ability.Knockdown"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[5]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "10.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Flank"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[6]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "10.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Advance.Action"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[7]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "12.f",
+         "CooldownMax": "20.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Advance.Approach"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[8]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "2.f",
+         "CooldownMax": "3.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CamperPunish"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[9]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "10.f",
+         "CooldownMax": "17.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.ThrowGrenade"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[10]": {
+        "fields": {
+         "MaxScore": "5.f",
+         "CooldownMin": "7.f",
+         "CooldownMax": "12.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.SuppressiveFire"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[11]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "10.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Range.ActivateAnomaly.Poltergeist"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[12]": {
+        "fields": {
+         "MaxScore": "2.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "15.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Evade.Side",
+           "[1]": "TokenTag.CombatAction.Evade.Granit.Side"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[13]": {
+        "fields": {
+         "MaxScore": "2.f",
+         "CooldownMin": "5.f",
+         "CooldownMax": "15.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Evade.Back",
+           "[1]": "TokenTag.CombatAction.Evade.Granit.Back"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[14]": {
+        "fields": {
+         "MaxScore": "1000.f",
+         "CooldownMin": "2.f",
+         "CooldownMax": "3.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Evade.Back",
+           "[1]": "TokenTag.CombatAction.Evade.Granit.Back",
+           "[2]": "TokenTag.CombatAction.Advance.Action"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[15]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "4.f",
+         "CooldownMax": "6.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.Alerted.Growl"
+          },
+          "children": {}
+         }
+        }
+       },
+       "[16]": {
+        "fields": {
+         "MaxScore": "1.f",
+         "CooldownMin": "10.f",
+         "CooldownMax": "17.f"
+        },
+        "children": {
+         "AllowedTags": {
+          "fields": {
+           "[0]": "TokenTag.CombatAction.Special.ThrowGrenade"
+          },
+          "children": {}
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

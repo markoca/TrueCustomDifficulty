@@ -286,6 +286,15 @@ public sealed partial class CfgPatchWriterService
             documents,
             writtenParameters);
 
+        // MUTANT AGGRESSION: per-family attack rate and shared special
+        // ability pacing on the selected difficulty.
+        editCount += WriteMutantAggression(
+            modifiedById,
+            allById,
+            difficulty.Sid,
+            documents,
+            writtenParameters);
+
         var worldWeaponDistribution = WriteWorldWeaponDistribution(
             modifiedById,
             allById,
@@ -520,6 +529,7 @@ public sealed partial class CfgPatchWriterService
         supported.UnionWith(baseline.Special.ListMembership.Select(p => p.ParameterId));
         supported.UnionWith(baseline.Special.SetList.Select(p => p.ParameterId));
         supported.UnionWith(baseline.Special.PsyParameterKeys.Keys);
+        supported.UnionWith(MutantAggressionPolicy.ParameterIds);
         if (!string.IsNullOrWhiteSpace(baseline.Special.CheapStashProduction.AmmoQuantityParameterId))
             supported.Add(baseline.Special.CheapStashProduction.AmmoQuantityParameterId);
         if (!string.IsNullOrWhiteSpace(baseline.Special.CheapStashProduction.GrenadeChanceParameterId))

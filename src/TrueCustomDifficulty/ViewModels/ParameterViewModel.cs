@@ -196,8 +196,8 @@ public sealed class ParameterViewModel : ObservableObject
                 return "Drag a category's price track to tune its multiplier."
                     + Environment.NewLine + "Right-click one category to reset it; R resets the price group.";
             if (IsMutantHealthMember)
-                return "Drag a mutant's multiplier track; its resulting HP updates beside it."
-                    + Environment.NewLine + "Right-click one mutant to reset it; R resets the health roster.";
+                return "Each species card has two tracks: HEALTH (resulting HP beside it) and ATTACK RATE (2× = attacks twice as often). SPECIAL ABILITY RATE paces special and knockdown moves for all mutants; the grey tick is the selected difficulty's vanilla."
+                    + Environment.NewLine + "Right-click one track to reset it; R resets the whole board.";
             if (IsHumanGroupSizeMember)
                 return "Drag NEWBIE, EXPERIENCED, VETERAN or MASTER to set that rank's maximum human squad size."
                     + Environment.NewLine + "Right-click one rank to reset it; R resets all four.";
@@ -419,7 +419,16 @@ public sealed class ParameterViewModel : ObservableObject
         "combat.mutantHealth.flesh",
         "combat.mutantHealth.poltergeist",
         "combat.mutantHealth.snork",
-        "combat.mutantHealth.tushkan"
+        "combat.mutantHealth.tushkan",
+        // MUTANT AGGRESSION lives on the same board (one card per species).
+        "combat.mutantAttackRate.bayun", "combat.mutantAttackRate.blinddog",
+        "combat.mutantAttackRate.bloodsucker", "combat.mutantAttackRate.boar",
+        "combat.mutantAttackRate.burer", "combat.mutantAttackRate.chimera",
+        "combat.mutantAttackRate.controller", "combat.mutantAttackRate.deer",
+        "combat.mutantAttackRate.flesh", "combat.mutantAttackRate.poltergeist",
+        "combat.mutantAttackRate.pseudodog", "combat.mutantAttackRate.pseudogiant",
+        "combat.mutantAttackRate.snork", "combat.mutantAttackRate.tushkan",
+        "combat.mutantSpecialAbilityRate"
     };
 
     public bool IsMutantHealthMember => MutantHealthParameterIds.Contains(Id);
@@ -1145,6 +1154,9 @@ public sealed class ParameterViewModel : ObservableObject
             "combat.npcHealth" => Times(CurrentNumber, "HP"),
             "combat.npcWeaponDamage" => Times(CurrentNumber, "gun dmg"),
             "combat.mutantDamage" => Times(CurrentNumber, "hit dmg"),
+            MutantAggressionPolicy.SpecialAbilityRateId => Times(CurrentNumber, "special moves"),
+            _ when Id.StartsWith(MutantAggressionPolicy.Prefix, StringComparison.Ordinal)
+                => Times(CurrentNumber, "attack rate"),
             "combat.playerWeaponDamage" => Times(CurrentNumber, "weapon dmg"),
             "combat.playerHeadshotMultiplier" => Times(CurrentNumber, "headshot dmg"),
             "combat.weaponJamming" => Times(CurrentNumber, "jam rate"),
@@ -2080,10 +2092,10 @@ public sealed class ParameterViewModel : ObservableObject
         {
             var labels = new Dictionary<string, (string Long, string Short)>(StringComparer.Ordinal)
             {
-                ["Novice"] = (definition.Id == "combat.mutantDamage" ? "Novice" : "N", "N"),
-                ["Stalker"] = (definition.Id == "combat.mutantDamage" ? "Stalker" : "S", "S"),
-                ["Veteran"] = (definition.Id == "combat.mutantDamage" ? "Veteran" : "V", "V"),
-                ["Master"] = (definition.Id == "combat.mutantDamage" ? "Master" : "M", "M")
+                ["Novice"] = (definition.Id is "combat.mutantDamage" or MutantAggressionPolicy.SpecialAbilityRateId ? "Novice" : "N", "N"),
+                ["Stalker"] = (definition.Id is "combat.mutantDamage" or MutantAggressionPolicy.SpecialAbilityRateId ? "Stalker" : "S", "S"),
+                ["Veteran"] = (definition.Id is "combat.mutantDamage" or MutantAggressionPolicy.SpecialAbilityRateId ? "Veteran" : "V", "V"),
+                ["Master"] = (definition.Id is "combat.mutantDamage" or MutantAggressionPolicy.SpecialAbilityRateId ? "Master" : "M", "M")
             };
 
             var raw = new List<(string Difficulty, string Long, string Short, double Value)>();

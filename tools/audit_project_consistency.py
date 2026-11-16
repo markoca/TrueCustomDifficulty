@@ -821,7 +821,7 @@ else:
             fail(f"Mutant Health source not loaded in MainViewModel: {_id}")
     if _mhr_text.count('new("combat.mutantHealth.') != 14:
         fail("MutantHealthRadar must show exactly 14 real mutant groups")
-    if ("DesiredHeight = 605.0" not in _mhr_text
+    if ("DesiredHeight = 905.0" not in _mhr_text
         or "MaxContentWidth = 1080.0" not in _mhr_text
         or 'var cardWidth = (content.Width - ColumnGap) / 2.0;' not in _mhr_text):
         fail("MutantHealthRadar compact 2-column geometry drifted")
@@ -850,7 +850,8 @@ _mhr_roster_sources = re.findall(
 )
 if len(_mhr_roster_sources) != 14:
     fail('Mutant Health 14 CFG-backed (id, label, vanilla HP) rows drifted')
-for _active in ('private Rect ContentRect()', 'private void DrawDamageTrack(',
+for _active in ('private Rect ContentRect()', 'private void DrawGlobalTrack(',
+                'private void DrawSpeciesTrack(',
                 'private void DrawRow(', 'private static double ValueToX(',
                 'private void DrawSourceNumber(',
                 'protected override void OnMouseRightButtonDown(',
@@ -2076,6 +2077,10 @@ _factory_legacy_catalog = {pid: p for pid, p in _factory_catalog.items()
                            # Post-legacy supply masters: factory presets omit
                            # them and load at the 0% (no edit) default.
                            and pid not in {"loot.genericCorpseReduction", "loot.genericStashReduction"}
+                           # MUTANT AGGRESSION (2026-11-16): omitted by factory
+                           # presets, loads at the difficulty's vanilla value.
+                           and not pid.startswith("combat.mutantAttackRate.")
+                           and pid != "combat.mutantSpecialAbilityRate"
                            and not pid.startswith(("loot.stashMix", "loot.stashGear",
                                "loot.stashMedical", "loot.stashMedkit", "loot.stashArmyMedkit"))}
 _factory_tuning = json.loads((ROOT / "tools/factory_preset_expansion.json").read_text(encoding="utf-8"))

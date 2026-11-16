@@ -77,7 +77,7 @@ These remain independent controls because vanilla itself treats base player weap
 |---|---:|---:|---:|---:|
 | `Mutant_BaseDamage` | 0.35 | 1.00 | 1.35 | 1.50 |
 
-Mutant Hit Damage is the only active global mutant-combat scalar. Mutant Health is a separate source-backed 14-species editor; both write existing gameplay fields without affecting human-enemy attack pacing.
+Mutant Hit Damage is the global mutant damage scalar; `Mutant_AttackCooldown` stays untouched. Mutant Health is a separate source-backed 14-species editor. Mutant ATTACK RATE (per family, `AgentCooldownMultipliers`) and SPECIAL ABILITY RATE (`CombatSynchronizer` FilterGroups [3]/[4]) are described in [combat/MUTANT-AGGRESSION.md](combat/MUTANT-AGGRESSION.md); none of them change human-enemy attack pacing.
 
 ## PSY combat overrides
 

@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using TrueCustomDifficulty.Services;
 using TrueCustomDifficulty.ViewModels;
 
 namespace TrueCustomDifficulty.Controls;
@@ -32,8 +33,16 @@ public sealed class MutantHealthRadar : FrameworkElement
     }
 
     private const double Epsilon = 0.000001;
-    private const double DesiredHeight = 605.0;
+    // Two global cards (hit damage, special ability pacing) and 14 species
+    // cards, each with HEALTH and ATTACK RATE tracks.
+    private const double DesiredHeight = 905.0;
     private const int DamageRow = 14;
+    private const int SpecialRow = 15;
+    private const int RateRowBase = 16;
+    private const double GlobalCardHeight = 71.0;
+    private const double SpeciesTop = 205.0;
+    private const double SpeciesCardHeight = 92.0;
+    private const double SpeciesRowPitch = 99.0;
     private const double MaxContentWidth = 1080.0;
     private const double ColumnGap = 12.0;
 
@@ -56,6 +65,8 @@ public sealed class MutantHealthRadar : FrameworkElement
     };
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Mutants.Length];
+    private readonly ParameterViewModel?[] _rates = new ParameterViewModel?[Mutants.Length];
+    private ParameterViewModel? _special;
     private readonly Dictionary<int, HitTarget> _targets = new();
     // Marker labels are separate clickable hit regions, not part of the fader.
     private readonly List<DamageMarkerHitTarget> _damageMarkerTargets = new();
@@ -104,9 +115,18 @@ public sealed class MutantHealthRadar : FrameworkElement
                 parameter.PropertyChanged -= Parameter_PropertyChanged;
         }
 
+        foreach (var rate in _rates)
+        {
+            if (rate is not null)
+                rate.PropertyChanged -= Parameter_PropertyChanged;
+        }
         if (_damage is not null)
             _damage.PropertyChanged -= Parameter_PropertyChanged;
+        if (_special is not null)
+            _special.PropertyChanged -= Parameter_PropertyChanged;
         _damage = null;
+        _special = null;
+        Array.Clear(_rates, 0, _rates.Length);
         _hoverDamageMarker = -1;
         _damageMarkerTargets.Clear();
         Array.Clear(_parameters, 0, _parameters.Length);
@@ -116,6 +136,8 @@ public sealed class MutantHealthRadar : FrameworkElement
             var byId = Parameters.OfType<ParameterViewModel>().ToDictionary(x => x.Id, StringComparer.Ordinal);
             if (byId.TryGetValue("combat.mutantDamage", out _damage))
                 _damage.PropertyChanged += Parameter_PropertyChanged;
+            if (byId.TryGetValue(MutantAggressionPolicy.SpecialAbilityRateId, out _special))
+                _special.PropertyChanged += Parameter_PropertyChanged;
             for (var i = 0; i < Mutants.Length; i++)
             {
                 if (!byId.TryGetValue(Mutants[i].ParameterId, out var parameter))
@@ -123,6 +145,11 @@ public sealed class MutantHealthRadar : FrameworkElement
 
                 _parameters[i] = parameter;
                 parameter.PropertyChanged += Parameter_PropertyChanged;
+                if (byId.TryGetValue(Mutants[i].RateId, out var rate))
+                {
+                    _rates[i] = rate;
+                    rate.PropertyChanged += Parameter_PropertyChanged;
+                }
             }
         }
 
@@ -159,15 +186,22 @@ public sealed class MutantHealthRadar : FrameworkElement
 
         _targets.Clear();
         _damageMarkerTargets.Clear();
-        DrawCenteredText(dc, "MUTANT DAMAGE AND HEALTH", new Point(ActualWidth / 2.0, 21.0),
+        DrawCenteredText(dc, "MUTANT DAMAGE, HEALTH AND AGGRESSION", new Point(ActualWidth / 2.0, 21.0),
             VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
 
         // Stamina Usage-style grouped, independent horizontal controls.
         // Seven rows, two columns, alphabetically ordered down each column.
         var content = ContentRect();
-        DrawDamageTrack(dc, content, text, muted, border, accent, panel);
-        const double cardHeight = 58.0;
-        const double rowPitch = 65.0;
+        if (_damage is { } damage)
+            DrawGlobalTrack(dc, damage, DamageRow, "MUTANT HIT DAMAGE",
+                $"{damage.CurrentNumber:0.##}x hit dmg",
+                new Rect(content.Left, 43.0, content.Width, GlobalCardHeight),
+                text, muted, border, accent, panel);
+        if (_special is { } special)
+            DrawGlobalTrack(dc, special, SpecialRow, "SPECIAL ABILITY RATE",
+                $"{special.CurrentNumber:0.##}x · pause {8.0 / special.CurrentNumber:0.#}–{12.0 / special.CurrentNumber:0.#} s",
+                new Rect(content.Left, 43.0 + GlobalCardHeight + 8.0, content.Width, GlobalCardHeight),
+                text, muted, border, accent, panel);
         var cardWidth = (content.Width - ColumnGap) / 2.0;
         for (var i = 0; i < Mutants.Length; i++)
         {
@@ -175,31 +209,32 @@ public sealed class MutantHealthRadar : FrameworkElement
             var row = i % 7;
             DrawRow(dc, i, new Rect(
                 content.Left + column * (cardWidth + ColumnGap),
-                125.0 + row * rowPitch, cardWidth, cardHeight),
+                SpeciesTop + row * SpeciesRowPitch, cardWidth, SpeciesCardHeight),
                 text, muted, border, accent, panel);
         }
     }
 
-    private void DrawDamageTrack(DrawingContext dc, Rect content, Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    // Full-width global track (hit damage / special ability rate) with
+    // clickable per-difficulty vanilla markers.
+    private void DrawGlobalTrack(DrawingContext dc, ParameterViewModel parameter, int row,
+        string title, string valueLabel, Rect card,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
-        if (_damage is not { } damage)
-            return;
-        var card = new Rect(content.Left, 43.0, content.Width, 71.0);
-        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0, damage);
-        DrawText(dc, "MUTANT HIT DAMAGE", new Point(card.Left + 11.0, card.Top + 7.0), VisualControlTypography.CardTitle, text, FontWeights.Bold);
-        var value = CreateText($"{damage.CurrentNumber:0.##}x hit dmg", 11.0,
-            damage.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
+        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0, parameter);
+        DrawText(dc, title, new Point(card.Left + 11.0, card.Top + 7.0), VisualControlTypography.CardTitle, text, FontWeights.Bold);
+        var value = CreateText(valueLabel, 11.0,
+            parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
         dc.DrawText(value, new Point(card.Right - 11.0 - value.Width, card.Top + 7.0));
         var rail = new Rect(card.Left + 14.0, card.Top + 34.0, card.Width - 28.0, 9.0);
         var y = rail.Top + rail.Height / 2.0;
-        var currentX = ValueToX(damage.CurrentNumber, damage.Minimum, damage.Maximum, rail);
+        var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, rail);
         dc.DrawLine(new Pen(border, 3), new Point(rail.Left, y), new Point(rail.Right, y));
         dc.DrawLine(new Pen(accent, 3), new Point(rail.Left, y), new Point(currentX, y));
-        for (var i = 0; i < damage.VanillaMarkers.Count; i++)
+        for (var i = 0; i < parameter.VanillaMarkers.Count; i++)
         {
-            var marker = damage.VanillaMarkers[i];
-            var markerX = ValueToX(marker.Value, damage.Minimum, damage.Maximum, rail);
-            var hovered = i == _hoverDamageMarker;
+            var marker = parameter.VanillaMarkers[i];
+            var markerX = ValueToX(marker.Value, parameter.Minimum, parameter.Maximum, rail);
+            var hovered = _damageMarkerTargets.Count == _hoverDamageMarker;
             var markerBrush = hovered ? Brushes.White : muted;
             dc.DrawEllipse(markerBrush, null, new Point(markerX, y + 10.0), 2, 2);
             var label = CreateText(marker.Label.ToUpperInvariant(), 9.5,
@@ -214,18 +249,21 @@ public sealed class MutantHealthRadar : FrameworkElement
             var hit = new Rect(markerX - 8.0, y + 5.0, 16.0, 14.0);
             hit.Union(new Rect(labelX - 5.0, labelY - 2.0,
                 label.Width + 10.0, label.Height + 4.0));
-            _damageMarkerTargets.Add(new DamageMarkerHitTarget(marker.Value, hit));
+            _damageMarkerTargets.Add(new DamageMarkerHitTarget(parameter, row, marker.Value, hit));
         }
-        ControlHoverGlow.Draw(dc, new Point(currentX, y), accent, _hoverRow == DamageRow);
-        dc.DrawEllipse(panel, new Pen(accent, _selectedRow == DamageRow ? 2.5 : 1.5),
+        ControlHoverGlow.Draw(dc, new Point(currentX, y), accent, _hoverRow == row);
+        dc.DrawEllipse(panel, new Pen(accent, _selectedRow == row ? 2.5 : 1.5),
             new Point(currentX, y), 6, 6);
         dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
-        _targets[DamageRow] = new HitTarget(new Rect(rail.Left - 6.0, rail.Top - 8.0,
+        _targets[row] = new HitTarget(new Rect(rail.Left - 6.0, rail.Top - 8.0,
             rail.Width + 12.0, 23.0), rail);
     }
 
     private ParameterViewModel? ParameterAt(int row)
-        => row == DamageRow ? _damage : row >= 0 && row < _parameters.Length ? _parameters[row] : null;
+        => row == DamageRow ? _damage
+            : row == SpecialRow ? _special
+            : row >= RateRowBase && row < RateRowBase + _rates.Length ? _rates[row - RateRowBase]
+            : row >= 0 && row < _parameters.Length ? _parameters[row] : null;
 
     private void DrawRow(
         DrawingContext dc, int row, Rect card,
@@ -236,8 +274,6 @@ public sealed class MutantHealthRadar : FrameworkElement
 
         var mutant = Mutants[row];
         var modified = parameter.IsValueModifiedFromReference();
-        var hovered = row == _hoverRow;
-        var selected = row == _selectedRow;
 
         // Static captions and card fill never turn gold on slider hover.
         dc.DrawTrackedRoundedRectangle(panel,
@@ -268,8 +304,33 @@ public sealed class MutantHealthRadar : FrameworkElement
             new Point(card.Right - 11.0 - hpText.WidthIncludingTrailingWhitespace,
                 card.Top + 6.0));
 
-        var track = new Rect(card.Left + 12.0, card.Top + 42.0,
-            Math.Max(1.0, card.Width - 24.0), 10.0);
+        DrawSpeciesTrack(dc, parameter, row, new Rect(card.Left + 12.0, card.Top + 30.0,
+            Math.Max(1.0, card.Width - 24.0), 10.0), muted, border, accent, panel);
+
+        // ATTACK RATE: how often this species may repeat its attacks.
+        if (_rates[row] is not { } rate)
+            return;
+        var rateModified = rate.IsValueModifiedFromReference();
+        DrawText(dc, "ATTACK RATE", new Point(card.Left + 11.0, card.Top + 49.0),
+            9.4, muted, FontWeights.Bold);
+        var rateLabel = $"{rate.CurrentNumber:0.##}x";
+        var rateText = CreateText(rateLabel, 12.5, text, FontWeights.Bold);
+        if (rateModified)
+        {
+            rateText.SetForegroundBrush(accent, 0, rateLabel.Length);
+            rateText.SetFontSize(13.7, 0, rateLabel.Length);
+        }
+        dc.DrawText(rateText, new Point(
+            card.Right - 11.0 - rateText.WidthIncludingTrailingWhitespace, card.Top + 46.0));
+        DrawSpeciesTrack(dc, rate, RateRowBase + row, new Rect(card.Left + 12.0, card.Top + 70.0,
+            Math.Max(1.0, card.Width - 24.0), 10.0), muted, border, accent, panel);
+    }
+
+    private void DrawSpeciesTrack(DrawingContext dc, ParameterViewModel parameter, int row,
+        Rect track, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        var hovered = row == _hoverRow;
+        var selected = row == _selectedRow;
         var y = track.Top + track.Height / 2.0;
         var currentX = ValueToX(parameter.CurrentNumber,
             parameter.Minimum, parameter.Maximum, track);
@@ -309,12 +370,13 @@ public sealed class MutantHealthRadar : FrameworkElement
         // Hit-test markers before the rail: their dots partially overlap it.
         // A marker click must never start a drag or go through normal tick snapping.
         var point = e.GetPosition(this);
-        SelectCardAt(point);
         var markerIndex = FindDamageMarker(point);
-        if (markerIndex >= 0 && _damage is { } damage)
+        if (markerIndex >= 0)
         {
-            _selectedRow = DamageRow;
-            damage.SnapCurrentNumberToMarker(_damageMarkerTargets[markerIndex].Value);
+            var marker = _damageMarkerTargets[markerIndex];
+            _selectedRow = marker.Row;
+            marker.Parameter.SnapCurrentNumberToMarker(marker.Value);
+            ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(marker.Parameter));
             _status.Clear();
             InvalidateVisual();
             e.Handled = true;
@@ -322,6 +384,12 @@ public sealed class MutantHealthRadar : FrameworkElement
         }
 
         var row = FindTarget(point);
+        // A track explains its own setting (HEALTH or ATTACK RATE); elsewhere
+        // in a card the card's owner is explained.
+        if (row >= 0 && ParameterAt(row) is { } trackParameter)
+            ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(trackParameter));
+        else
+            SelectCardAt(point);
         if (row < 0)
             return;
 
@@ -381,14 +449,24 @@ public sealed class MutantHealthRadar : FrameworkElement
     {
         base.OnMouseRightButtonDown(e);
         var point = e.GetPosition(this);
-        SelectCardAt(point);
-        var row = FindDamageMarker(point) >= 0 ? DamageRow : FindTarget(point);
+        var markerIndex = FindDamageMarker(point);
+        var row = markerIndex >= 0 ? _damageMarkerTargets[markerIndex].Row : FindTarget(point);
         if (row < 0 || ParameterAt(row) is not { } parameter)
+        {
+            SelectCardAt(point);
             return;
+        }
 
+        ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
         _selectedRow = row;
         parameter.ResetToReference();
-        _status.ShowTransient(row == DamageRow ? "Mutant hit damage reset." : $"{Mutants[row].Label} health reset to Base Preset.");
+        _status.ShowTransient(row switch
+        {
+            DamageRow => "Mutant hit damage reset.",
+            SpecialRow => "Special ability rate reset.",
+            >= RateRowBase => $"{Mutants[row - RateRowBase].Label} attack rate reset to Base Preset.",
+            _ => $"{Mutants[row].Label} health reset to Base Preset."
+        });
         InvalidateVisual();
         e.Handled = true;
     }
@@ -401,9 +479,12 @@ public sealed class MutantHealthRadar : FrameworkElement
         {
             foreach (var parameter in _parameters)
                 parameter?.ResetToReference();
+            foreach (var rate in _rates)
+                rate?.ResetToReference();
             _damage?.ResetToReference();
+            _special?.ResetToReference();
 
-            _status.ShowTransient("Mutant health reset to Base Preset.");
+            _status.ShowTransient("Mutant board reset to Base Preset.");
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -441,7 +522,9 @@ public sealed class MutantHealthRadar : FrameworkElement
         // minimum-anchored grid at 0.25x excluded 1.00x for 0.10x steps.
         var snapped = 1.0 + Math.Round((raw - 1.0) / tick, MidpointRounding.AwayFromZero) * tick;
 
-        parameter.CurrentNumber = Math.Clamp(snapped, parameter.Minimum, parameter.Maximum);
+        // Off-grid vanilla (e.g. 0.35x hit damage on Novice) stays reachable.
+        parameter.CurrentNumber = parameter.ReferenceMagnet(raw,
+            Math.Clamp(snapped, parameter.Minimum, parameter.Maximum));
         _status.Clear();
         InvalidateVisual();
     }
@@ -529,7 +612,10 @@ public sealed class MutantHealthRadar : FrameworkElement
         return formatted;
     }
 
-    private sealed record MutantDefinition(string ParameterId, string Label, double VanillaHp);
+    private sealed record MutantDefinition(string ParameterId, string Label, double VanillaHp)
+    {
+        public string RateId => MutantAggressionPolicy.Prefix + ParameterId["combat.mutantHealth.".Length..];
+    }
     private sealed record HitTarget(Rect HitRect, Rect MapRect);
-    private sealed record DamageMarkerHitTarget(double Value, Rect HitRect);
+    private sealed record DamageMarkerHitTarget(ParameterViewModel Parameter, int Row, double Value, Rect HitRect);
 }

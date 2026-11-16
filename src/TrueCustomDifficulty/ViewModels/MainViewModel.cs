@@ -361,6 +361,8 @@ public sealed class MainViewModel : ObservableObject
         "combat.mutantHealth.snork",
         "combat.mutantHealth.tushkan"
         };
+        // MUTANT AGGRESSION shares the mutant board (hidden catalog members).
+        mutantHealthParameterIds.UnionWith(MutantAggressionPolicy.ParameterIds);
 
         var humanGroupSizeParameterIds = new HashSet<string>(StringComparer.Ordinal)
         {
@@ -1108,8 +1110,10 @@ public sealed class MainViewModel : ObservableObject
                 .Cast<ParameterViewModel>()
                 .ToArray();
 
+            // Health multipliers are 1x everywhere; attack rates have
+            // per-difficulty vanilla values (Master 2x), so compare to reference.
             mutantHealthAnchor.SetAggregateModifiedProvider(
-                () => mutantHealthMembers.Any(parameter => Math.Abs(parameter.CurrentNumber - 1.0) > 0.0000001));
+                () => mutantHealthMembers.Any(parameter => parameter.IsValueModifiedFromReference()));
 
             foreach (var member in mutantHealthMembers)
             {

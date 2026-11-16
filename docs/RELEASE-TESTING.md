@@ -1,3 +1,11 @@
+## 2026-11-16 — MUTANT AGGRESSION in-game checks (runtime_test_required)
+
+* **ATTACK RATE**: on Veteran set Bloodsucker 3× and Snork 3×, build, fight each: attacks/leaps clearly more frequent than at 1×. Then 0.25×: long pauses between attacks. Repeat Snork (a family vanilla never lists) — if it does not change, report it; the exact-SID entry is not honoured for that family.
+* On Master leave every family at its vanilla (2× / 1×) and change only Tushkan: the eight vanilla families must still behave as vanilla Master (written list keeps their 0.5 entries).
+* **SPECIAL ABILITY RATE**: on Stalker set 3× (`pause 2.67–4 s`): in a fight with several mutants (e.g. dog pack + pseudodog, or two bloodsuckers) special / knockdown moves follow each other faster; 0.5× (`pause 16–24 s`) clearly slower. Check that ordinary human combat pacing is unchanged (only [3]/[4] filter groups are edited).
+* Inspect the built pak: `DifficultyPrototypes` has the full `AgentCooldownMultipliers` list; `CombatSynchronizationPrototypes` has all four rank tables under `CombatSynchronizer{difficulty}` with only FilterGroups [3]/[4] cooldowns scaled.
+* `python3 tools/audit_mutant_aggression.py` (optionally `TCD_BASE_DUMP=<dump>/base`).
+
 ## 2026-10-20 — Windows startup: Presets README is best-effort
 
 `Presets/README.md` is documentation only and must never block application startup. `PresetDirectoryService` now leaves an existing README untouched and only tries to seed the embedded copy when the file is absent. `UnauthorizedAccessException` and `IOException` from that optional README write are ignored; required factory-preset migrations and writes still fail normally if the actual preset directory is unusable. This specifically prevents a read-only or ACL-protected `C:\TrueCustomDifficulty\Presets\README.md` from surfacing as a misleading parameter-catalog load failure on Windows.

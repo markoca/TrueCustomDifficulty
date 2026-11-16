@@ -1,3 +1,9 @@
+## 2026-11-16 — CURRENT: MUTANT AGGRESSION (ATTACK RATE per family, SPECIAL ABILITY RATE)
+
+* Mutant board renamed **MUTANT DAMAGE, HEALTH AND AGGRESSION** (height 905). Under MUTANT HIT DAMAGE a second global track, **SPECIAL ABILITY RATE** (0.5×–3×, value `2× · pause 4–6 s`), paces special / knockdown moves for all mutants (`CombatSynchronizer` token groups).
+* Each of the 14 species cards has two compact tracks: HEALTH and **ATTACK RATE** (0.25×–3×; 2× = attacks twice as often → `AgentCooldownMultipliers`, 1/rate for every variant). Grey tick = the difficulty's vanilla (2× on Master for the eight families the game lists).
+* Click a track to select it in the panel, right-click resets that row, R resets the board; vanilla always reachable by dragging (`ReferenceMagnet`). Details: `docs/combat/MUTANT-AGGRESSION.md`.
+
 ## 2026-11-16 — CURRENT: factory presets match MEDICAL COMPOSITION (option a)
 
 * All 12 factory presets now store each medical Weight factor (`loot.stashMedical{Item}Bias`) equal to its Chance scale, i.e. what loading already produced since one MEDICAL COMPOSITION cell drives both (0–100%). The old 1.25–1.75× Weight boosts (Field Medic, Anomaly Runner, Mutant Hunter, Scavenger, Wanderer, Immersive, Smuggler) were silently dropped on load; they are now gone from the files too. Field Medic's stash medicine is therefore vanilla (100%); its medical identity stays in healing, bleeding and trader/NPC supply.

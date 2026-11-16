@@ -123,6 +123,8 @@ The production Mutant Health editor now lists all fourteen supported families al
 
 Only eight family-specific ability cooldown mappings are currently verified and implemented through `MutantCombatDifficulty.AgentCooldownMultipliers` in selected difficulty profiles: Bloodsucker, Chimera, Deer, Pseudogiant, Pseudodog, Burer, Bayun, Controller (with authored related variants). Blind Dog, Boar, Flesh, Poltergeist, Snork and Tushkan have audited MaxHP but **no verified equivalent special ability cooldown entry**. This does not prove those mutants have no cooldown of any kind; it prohibits representing unverified special ability controls as genuine CFG mappings. Global ordinary attack frequency is a separate control. No new cooldown CFG mappings were fabricated.
 
+> **2026-11-16 update:** superseded by [MUTANT-AGGRESSION.md](MUTANT-AGGRESSION.md). ATTACK RATE now covers all 14 families through exact-SID `AgentCooldownMultipliers` entries (tags from `AbilityPrototypes.cfg`); the six families vanilla never lists are `runtime_test_required`.
+
 
 ## DLC1 Amok — pending original CFG verification (2026-10-09)
 

@@ -19,9 +19,9 @@ internal static partial class Program
         var stashId = "loot.genericStashReduction";
         var corpse = pristine.AllParameters.Single(p => p.Id == corpseId);
         var stash = pristine.AllParameters.Single(p => p.Id == stashId);
-        Check(Catalog.Parameters.Count == 361
-            && Baseline.SupportedParameterCount == 361,
-            "361 supported 2.1 sources / two scarcity masters drifted");
+        Check(Catalog.Parameters.Count == 376
+            && Baseline.SupportedParameterCount == 376,
+            "376 supported 2.1 sources / two scarcity masters drifted");
         foreach (var p in new[] { corpse, stash })
             Check(p.Minimum == 0 && p.Maximum == 1
                 && p.TickFrequency == 0.05

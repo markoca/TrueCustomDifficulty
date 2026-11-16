@@ -1296,6 +1296,738 @@
       "exposeInUi": false
     },
     {
+      "id": "combat.mutantAttackRate.bayun",
+      "tab": "combat",
+      "group": "Mutant Health",
+      "label": "Bayun Attack Rate",
+      "description": "How often a Bayun can use its attacks and abilities (claw swipes, leaps, growls and blink teleports). Rate r writes cooldown multiplier 1/r for every ability cooldown of every Bayun variant on the selected difficulty.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Attack rate"
+      },
+      "vanilla": {
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
+        "Master": 2
+      },
+      "default": {
+        "mode": "referenceDifficulty"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/DifficultyPrototypes.cfg",
+          "prototype": "$selectedDifficultySID",
+          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
+          "operation": "set1/x"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Native per-agent, per-tag cooldown multiplier list of the selected difficulty (vanilla: Master only).",
+          "Agent entries match exact prototype SIDs, so every variant of the family is listed.",
+          "Families the game never lists (Blind Dog, Boar, Flesh, Poltergeist, Snork, Tushkan) need an in-game check."
+        ]
+      },
+      "rationale": "How often Bayuns attack — claw swipes, leaps, growls and blink teleports. Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves its cooldowns there). 2× = attacks come twice as often; 0.5× = twice the breathing room between attacks. How hard each hit lands is MUTANT HIT DAMAGE.",
+      "logic": "Each Bayun ability starts its own cooldown after use; this scales all of them. 1× keeps the game's timing.",
+      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
+      "exposeInUi": false
+    },
+    {
+      "id": "combat.mutantAttackRate.blinddog",
+      "tab": "combat",
+      "group": "Mutant Health",
+      "label": "Blind Dog Attack Rate",
+      "description": "How often a Blind Dog can use its attacks and abilities (bites and running bites). Rate r writes cooldown multiplier 1/r for every ability cooldown of every Blind Dog variant on the selected difficulty.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Attack rate"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/DifficultyPrototypes.cfg",
+          "prototype": "$selectedDifficultySID",
+          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
+          "operation": "set1/x"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Native per-agent, per-tag cooldown multiplier list of the selected difficulty (vanilla: Master only).",
+          "Agent entries match exact prototype SIDs, so every variant of the family is listed.",
+          "Families the game never lists (Blind Dog, Boar, Flesh, Poltergeist, Snork, Tushkan) need an in-game check."
+        ]
+      },
+      "rationale": "How often Blind Dogs attack — bites and running bites. Vanilla: 1× on every difficulty (the game never changes it). 2× = attacks come twice as often; 0.5× = twice the breathing room between attacks. How hard each hit lands is MUTANT HIT DAMAGE.",
+      "logic": "Each Blind Dog ability starts its own cooldown after use; this scales all of them. 1× keeps the game's timing.",
+      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
+      "exposeInUi": false
+    },
+    {
+      "id": "combat.mutantAttackRate.bloodsucker",
+      "tab": "combat",
+      "group": "Mutant Health",
+      "label": "Bloodsucker Attack Rate",
+      "description": "How often a Bloodsucker can use its attacks and abilities (running slashes, leaps, claws and roars (Mist and electro-collar variants included)). Rate r writes cooldown multiplier 1/r for every ability cooldown of every Bloodsucker variant on the selected difficulty.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Attack rate"
+      },
+      "vanilla": {
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
+        "Master": 2
+      },
+      "default": {
+        "mode": "referenceDifficulty"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/DifficultyPrototypes.cfg",
+          "prototype": "$selectedDifficultySID",
+          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
+          "operation": "set1/x"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Native per-agent, per-tag cooldown multiplier list of the selected difficulty (vanilla: Master only).",
+          "Agent entries match exact prototype SIDs, so every variant of the family is listed.",
+          "Families the game never lists (Blind Dog, Boar, Flesh, Poltergeist, Snork, Tushkan) need an in-game check."
+        ]
+      },
+      "rationale": "How often Bloodsuckers attack — running slashes, leaps, claws and roars (Mist and electro-collar variants included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves its cooldowns there). 2× = attacks come twice as often; 0.5× = twice the breathing room between attacks. How hard each hit lands is MUTANT HIT DAMAGE.",
+      "logic": "Each Bloodsucker ability starts its own cooldown after use; this scales all of them. 1× keeps the game's timing.",
+      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
+      "exposeInUi": false
+    },
+    {
+      "id": "combat.mutantAttackRate.boar",
+      "tab": "combat",
+      "group": "Mutant Health",
+      "label": "Boar Attack Rate",
+      "description": "How often a Boar can use its attacks and abilities (charges, running rams and gores). Rate r writes cooldown multiplier 1/r for every ability cooldown of every Boar variant on the selected difficulty.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Attack rate"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/DifficultyPrototypes.cfg",
+          "prototype": "$selectedDifficultySID",
+          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
+          "operation": "set1/x"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Native per-agent, per-tag cooldown multiplier list of the selected difficulty (vanilla: Master only).",
+          "Agent entries match exact prototype SIDs, so every variant of the family is listed.",
+          "Families the game never lists (Blind Dog, Boar, Flesh, Poltergeist, Snork, Tushkan) need an in-game check."
+        ]
+      },
+      "rationale": "How often Boars attack — charges, running rams and gores. Vanilla: 1× on every difficulty (the game never changes it). 2× = attacks come twice as often; 0.5× = twice the breathing room between attacks. How hard each hit lands is MUTANT HIT DAMAGE.",
+      "logic": "Each Boar ability starts its own cooldown after use; this scales all of them. 1× keeps the game's timing.",
+      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
+      "exposeInUi": false
+    },
+    {
+      "id": "combat.mutantAttackRate.burer",
+      "tab": "combat",
+      "group": "Mutant Health",
+      "label": "Burer Attack Rate",
+      "description": "How often a Burer can use its attacks and abilities (weapon pulls, shields, throws and claw swipes). Rate r writes cooldown multiplier 1/r for every ability cooldown of every Burer variant on the selected difficulty.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Attack rate"
+      },
+      "vanilla": {
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
+        "Master": 2
+      },
+      "default": {
+        "mode": "referenceDifficulty"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/DifficultyPrototypes.cfg",
+          "prototype": "$selectedDifficultySID",
+          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
+          "operation": "set1/x"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Native per-agent, per-tag cooldown multiplier list of the selected difficulty (vanilla: Master only).",
+          "Agent entries match exact prototype SIDs, so every variant of the family is listed.",
+          "Families the game never lists (Blind Dog, Boar, Flesh, Poltergeist, Snork, Tushkan) need an in-game check."
+        ]
+      },
+      "rationale": "How often Burers attack — weapon pulls, shields, throws and claw swipes. Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves its cooldowns there). 2× = attacks come twice as often; 0.5× = twice the breathing room between attacks. How hard each hit lands is MUTANT HIT DAMAGE.",
+      "logic": "Each Burer ability starts its own cooldown after use; this scales all of them. 1× keeps the game's timing.",
+      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
+      "exposeInUi": false
+    },
+    {
+      "id": "combat.mutantAttackRate.chimera",
+      "tab": "combat",
+      "group": "Mutant Health",
+      "label": "Chimera Attack Rate",
+      "description": "How often a Chimera can use its attacks and abilities (claws, short and long leaps and fly-through attacks). Rate r writes cooldown multiplier 1/r for every ability cooldown of every Chimera variant on the selected difficulty.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Attack rate"
+      },
+      "vanilla": {
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
+        "Master": 2
+      },
+      "default": {
+        "mode": "referenceDifficulty"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/DifficultyPrototypes.cfg",
+          "prototype": "$selectedDifficultySID",
+          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
+          "operation": "set1/x"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Native per-agent, per-tag cooldown multiplier list of the selected difficulty (vanilla: Master only).",
+          "Agent entries match exact prototype SIDs, so every variant of the family is listed.",
+          "Families the game never lists (Blind Dog, Boar, Flesh, Poltergeist, Snork, Tushkan) need an in-game check."
+        ]
+      },
+      "rationale": "How often Chimeras attack — claws, short and long leaps and fly-through attacks. Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves its cooldowns there). 2× = attacks come twice as often; 0.5× = twice the breathing room between attacks. How hard each hit lands is MUTANT HIT DAMAGE.",
+      "logic": "Each Chimera ability starts its own cooldown after use; this scales all of them. 1× keeps the game's timing.",
+      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
+      "exposeInUi": false
+    },
+    {
+      "id": "combat.mutantAttackRate.controller",
+      "tab": "combat",
+      "group": "Mutant Health",
+      "label": "Controller Attack Rate",
+      "description": "How often a Controller can use its attacks and abilities (psy attacks, raising the dead, zombifying and claws). Rate r writes cooldown multiplier 1/r for every ability cooldown of every Controller variant on the selected difficulty.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Attack rate"
+      },
+      "vanilla": {
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
+        "Master": 2
+      },
+      "default": {
+        "mode": "referenceDifficulty"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/DifficultyPrototypes.cfg",
+          "prototype": "$selectedDifficultySID",
+          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
+          "operation": "set1/x"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Native per-agent, per-tag cooldown multiplier list of the selected difficulty (vanilla: Master only).",
+          "Agent entries match exact prototype SIDs, so every variant of the family is listed.",
+          "Families the game never lists (Blind Dog, Boar, Flesh, Poltergeist, Snork, Tushkan) need an in-game check."
+        ]
+      },
+      "rationale": "How often Controllers attack — psy attacks, raising the dead, zombifying and claws. Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves its cooldowns there). 2× = attacks come twice as often; 0.5× = twice the breathing room between attacks. How hard each hit lands is MUTANT HIT DAMAGE.",
+      "logic": "Each Controller ability starts its own cooldown after use; this scales all of them. 1× keeps the game's timing.",
+      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
+      "exposeInUi": false
+    },
+    {
+      "id": "combat.mutantAttackRate.deer",
+      "tab": "combat",
+      "group": "Mutant Health",
+      "label": "Deer Attack Rate",
+      "description": "How often a Deer can use its attacks and abilities (charges, leaps and running attacks). Rate r writes cooldown multiplier 1/r for every ability cooldown of every Deer variant on the selected difficulty.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Attack rate"
+      },
+      "vanilla": {
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
+        "Master": 2
+      },
+      "default": {
+        "mode": "referenceDifficulty"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/DifficultyPrototypes.cfg",
+          "prototype": "$selectedDifficultySID",
+          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
+          "operation": "set1/x"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Native per-agent, per-tag cooldown multiplier list of the selected difficulty (vanilla: Master only).",
+          "Agent entries match exact prototype SIDs, so every variant of the family is listed.",
+          "Families the game never lists (Blind Dog, Boar, Flesh, Poltergeist, Snork, Tushkan) need an in-game check."
+        ]
+      },
+      "rationale": "How often Deers attack — charges, leaps and running attacks. Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves its cooldowns there). 2× = attacks come twice as often; 0.5× = twice the breathing room between attacks. How hard each hit lands is MUTANT HIT DAMAGE.",
+      "logic": "Each Deer ability starts its own cooldown after use; this scales all of them. 1× keeps the game's timing.",
+      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
+      "exposeInUi": false
+    },
+    {
+      "id": "combat.mutantAttackRate.flesh",
+      "tab": "combat",
+      "group": "Mutant Health",
+      "label": "Flesh Attack Rate",
+      "description": "How often a Flesh can use its attacks and abilities (leaps and claw swipes). Rate r writes cooldown multiplier 1/r for every ability cooldown of every Flesh variant on the selected difficulty.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Attack rate"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/DifficultyPrototypes.cfg",
+          "prototype": "$selectedDifficultySID",
+          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
+          "operation": "set1/x"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Native per-agent, per-tag cooldown multiplier list of the selected difficulty (vanilla: Master only).",
+          "Agent entries match exact prototype SIDs, so every variant of the family is listed.",
+          "Families the game never lists (Blind Dog, Boar, Flesh, Poltergeist, Snork, Tushkan) need an in-game check."
+        ]
+      },
+      "rationale": "How often Fleshs attack — leaps and claw swipes. Vanilla: 1× on every difficulty (the game never changes it). 2× = attacks come twice as often; 0.5× = twice the breathing room between attacks. How hard each hit lands is MUTANT HIT DAMAGE.",
+      "logic": "Each Flesh ability starts its own cooldown after use; this scales all of them. 1× keeps the game's timing.",
+      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
+      "exposeInUi": false
+    },
+    {
+      "id": "combat.mutantAttackRate.poltergeist",
+      "tab": "combat",
+      "group": "Mutant Health",
+      "label": "Poltergeist Attack Rate",
+      "description": "How often a Poltergeist can use its attacks and abilities (throws, anomaly activations and shields). Rate r writes cooldown multiplier 1/r for every ability cooldown of every Poltergeist variant on the selected difficulty.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Attack rate"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/DifficultyPrototypes.cfg",
+          "prototype": "$selectedDifficultySID",
+          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
+          "operation": "set1/x"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Native per-agent, per-tag cooldown multiplier list of the selected difficulty (vanilla: Master only).",
+          "Agent entries match exact prototype SIDs, so every variant of the family is listed.",
+          "Families the game never lists (Blind Dog, Boar, Flesh, Poltergeist, Snork, Tushkan) need an in-game check."
+        ]
+      },
+      "rationale": "How often Poltergeists attack — throws, anomaly activations and shields. Vanilla: 1× on every difficulty (the game never changes it). 2× = attacks come twice as often; 0.5× = twice the breathing room between attacks. How hard each hit lands is MUTANT HIT DAMAGE.",
+      "logic": "Each Poltergeist ability starts its own cooldown after use; this scales all of them. 1× keeps the game's timing.",
+      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
+      "exposeInUi": false
+    },
+    {
+      "id": "combat.mutantAttackRate.pseudodog",
+      "tab": "combat",
+      "group": "Mutant Health",
+      "label": "Pseudodog Attack Rate",
+      "description": "How often a Pseudodog can use its attacks and abilities (bites, running attacks and shockwaves). Rate r writes cooldown multiplier 1/r for every ability cooldown of every Pseudodog variant on the selected difficulty.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Attack rate"
+      },
+      "vanilla": {
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
+        "Master": 2
+      },
+      "default": {
+        "mode": "referenceDifficulty"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/DifficultyPrototypes.cfg",
+          "prototype": "$selectedDifficultySID",
+          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
+          "operation": "set1/x"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Native per-agent, per-tag cooldown multiplier list of the selected difficulty (vanilla: Master only).",
+          "Agent entries match exact prototype SIDs, so every variant of the family is listed.",
+          "Families the game never lists (Blind Dog, Boar, Flesh, Poltergeist, Snork, Tushkan) need an in-game check."
+        ]
+      },
+      "rationale": "How often Pseudodogs attack — bites, running attacks and shockwaves. Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves its cooldowns there). 2× = attacks come twice as often; 0.5× = twice the breathing room between attacks. How hard each hit lands is MUTANT HIT DAMAGE.",
+      "logic": "Each Pseudodog ability starts its own cooldown after use; this scales all of them. 1× keeps the game's timing.",
+      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
+      "exposeInUi": false
+    },
+    {
+      "id": "combat.mutantAttackRate.pseudogiant",
+      "tab": "combat",
+      "group": "Mutant Health",
+      "label": "Pseudogiant Attack Rate",
+      "description": "How often a Pseudogiant can use its attacks and abilities (stomp shockwaves, charges and running attacks). Rate r writes cooldown multiplier 1/r for every ability cooldown of every Pseudogiant variant on the selected difficulty.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Attack rate"
+      },
+      "vanilla": {
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
+        "Master": 2
+      },
+      "default": {
+        "mode": "referenceDifficulty"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/DifficultyPrototypes.cfg",
+          "prototype": "$selectedDifficultySID",
+          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
+          "operation": "set1/x"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Native per-agent, per-tag cooldown multiplier list of the selected difficulty (vanilla: Master only).",
+          "Agent entries match exact prototype SIDs, so every variant of the family is listed.",
+          "Families the game never lists (Blind Dog, Boar, Flesh, Poltergeist, Snork, Tushkan) need an in-game check."
+        ]
+      },
+      "rationale": "How often Pseudogiants attack — stomp shockwaves, charges and running attacks. Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves its cooldowns there). 2× = attacks come twice as often; 0.5× = twice the breathing room between attacks. How hard each hit lands is MUTANT HIT DAMAGE.",
+      "logic": "Each Pseudogiant ability starts its own cooldown after use; this scales all of them. 1× keeps the game's timing.",
+      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
+      "exposeInUi": false
+    },
+    {
+      "id": "combat.mutantAttackRate.snork",
+      "tab": "combat",
+      "group": "Mutant Health",
+      "label": "Snork Attack Rate",
+      "description": "How often a Snork can use its attacks and abilities (claws, kicks, leaps and fly-through attacks). Rate r writes cooldown multiplier 1/r for every ability cooldown of every Snork variant on the selected difficulty.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Attack rate"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/DifficultyPrototypes.cfg",
+          "prototype": "$selectedDifficultySID",
+          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
+          "operation": "set1/x"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Native per-agent, per-tag cooldown multiplier list of the selected difficulty (vanilla: Master only).",
+          "Agent entries match exact prototype SIDs, so every variant of the family is listed.",
+          "Families the game never lists (Blind Dog, Boar, Flesh, Poltergeist, Snork, Tushkan) need an in-game check."
+        ]
+      },
+      "rationale": "How often Snorks attack — claws, kicks, leaps and fly-through attacks. Vanilla: 1× on every difficulty (the game never changes it). 2× = attacks come twice as often; 0.5× = twice the breathing room between attacks. How hard each hit lands is MUTANT HIT DAMAGE.",
+      "logic": "Each Snork ability starts its own cooldown after use; this scales all of them. 1× keeps the game's timing.",
+      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
+      "exposeInUi": false
+    },
+    {
+      "id": "combat.mutantAttackRate.tushkan",
+      "tab": "combat",
+      "group": "Mutant Health",
+      "label": "Tushkan Attack Rate",
+      "description": "How often a Tushkan can use its attacks and abilities (leaps and claw swipes). Rate r writes cooldown multiplier 1/r for every ability cooldown of every Tushkan variant on the selected difficulty.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Attack rate"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/DifficultyPrototypes.cfg",
+          "prototype": "$selectedDifficultySID",
+          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
+          "operation": "set1/x"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Native per-agent, per-tag cooldown multiplier list of the selected difficulty (vanilla: Master only).",
+          "Agent entries match exact prototype SIDs, so every variant of the family is listed.",
+          "Families the game never lists (Blind Dog, Boar, Flesh, Poltergeist, Snork, Tushkan) need an in-game check."
+        ]
+      },
+      "rationale": "How often Tushkans attack — leaps and claw swipes. Vanilla: 1× on every difficulty (the game never changes it). 2× = attacks come twice as often; 0.5× = twice the breathing room between attacks. How hard each hit lands is MUTANT HIT DAMAGE.",
+      "logic": "Each Tushkan ability starts its own cooldown after use; this scales all of them. 1× keeps the game's timing.",
+      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
+      "exposeInUi": false
+    },
+    {
+      "id": "combat.mutantSpecialAbilityRate",
+      "tab": "combat",
+      "group": "Mutant Health",
+      "label": "Special Ability Rate",
+      "description": "How often mutants in a fight may use special and knockdown moves (growls, shields, knockdown leaps and charges). Scales the shared TokenTag.Ability and TokenTag.Ability.Knockdown group cooldowns (8–12 s by default) for every player rank on the selected difficulty.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Special ability rate"
+      },
+      "vanilla": {
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
+        "Master": 2
+      },
+      "default": {
+        "mode": "referenceDifficulty"
+      },
+      "slider": {
+        "min": 0.5,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/CombatSynchronizationPrototypes.cfg",
+          "prototype": "CombatSynchronizer{Easy|Medium|Hard|Stalker}",
+          "path": "{Newbie|Experienced|Veteran|Master}.FilterGroups[3|4].CooldownMin/CooldownMax",
+          "operation": "set 8–12 s / x"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Shared group token: one special / knockdown move at a time among all fighters, then a pause.",
+          "Novice–Veteran inherit the Default tables; the writer emits the full rank tables for the selected difficulty.",
+          "Human combat actions (flank, grenades) are untouched."
+        ]
+      },
+      "rationale": "How often mutants in a fight get to use their special and knockdown moves — growls, shields, knockdown leaps and charges. Vanilla: 1× (a pause of 8–12 s after each one) on Novice, Stalker and Veteran; 2× (4–6 s) on Master. Higher = one special move after another; lower = more time to recover.",
+      "logic": "After a mutant uses a special or knockdown move, every mutant in the fight waits a random 8–12 s before the next one (divided by this rate).",
+      "interaction": "Each mutant's own ATTACK RATE still decides how soon that mutant can repeat its attacks.",
+      "exposeInUi": false
+    },
+    {
       "id": "combat.psySpawnCycleDelay",
       "tab": "combat",
       "group": "Psy Combat",

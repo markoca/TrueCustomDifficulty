@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.1",
-  "supportedParameterCount": 361,
+  "supportedParameterCount": 376,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -46405,6 +46405,29 @@
       "manifestResource": "TrueCustomDifficulty.Data.trader-sells-2.1-runtime.csv",
       "expectedSourceRows": 2939,
       "expectedProfiles": 86
+    },
+    "mutantAggression": {
+      "note": "Special writer route CfgPatchWriterService.WriteMutantAggression (MutantAggressionPolicy): AgentCooldownMultipliers of the selected difficulty and CombatSynchronizer ability token cooldowns.",
+      "parameterIds": [
+        "combat.mutantAttackRate.bayun",
+        "combat.mutantAttackRate.blinddog",
+        "combat.mutantAttackRate.bloodsucker",
+        "combat.mutantAttackRate.boar",
+        "combat.mutantAttackRate.burer",
+        "combat.mutantAttackRate.chimera",
+        "combat.mutantAttackRate.controller",
+        "combat.mutantAttackRate.deer",
+        "combat.mutantAttackRate.flesh",
+        "combat.mutantAttackRate.poltergeist",
+        "combat.mutantAttackRate.pseudodog",
+        "combat.mutantAttackRate.pseudogiant",
+        "combat.mutantAttackRate.snork",
+        "combat.mutantAttackRate.tushkan"
+      ],
+      "parameterId": "combat.mutantSpecialAbilityRate",
+      "difficultyFile": "GameData/DifficultyPrototypes.cfg",
+      "synchronizationFile": "GameData/CombatSynchronizationPrototypes.cfg",
+      "synchronizationResource": "TrueCustomDifficulty.Data.combat-synchronization-2.1.json"
     }
   }
 }
