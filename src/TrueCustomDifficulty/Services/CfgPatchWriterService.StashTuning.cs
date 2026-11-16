@@ -71,6 +71,38 @@ public sealed partial class CfgPatchWriterService
                IsStashMedicalSourceInTier(id, tier) && modified.ContainsKey(id))
            ;
 
+    // STASH LOOT MIX presence sidecars for the current Write() call.
+    [ThreadStatic] private static IReadOnlyDictionary<string, double>? s_stashPresence;
+
+    private static bool StashPresenceChanged(string tier)
+    {
+        if (s_stashPresence is null) return false;
+        bool Changed(string id) => s_stashPresence.TryGetValue(id, out var value)
+            && Math.Abs(value - 1.0) > 0.0000001;
+        return tier switch
+        {
+            "Cheap" => Changed(StashPresenceViewModel.CheapAmmoId)
+                || Changed(StashPresenceViewModel.CheapDrinksId),
+            "Medium" => Changed(StashPresenceViewModel.MediumAmmoId),
+            _ => false
+        };
+    }
+
+    /// <summary>
+    /// Appends the native weighted "nothing" entry after the source entries
+    /// of a single-category Weight pick (see StashEffectiveState.PresenceEdit).
+    /// </summary>
+    private static int WriteStashPresenceEmpty(
+        PatchNode possibleItems, Models.CfgWriterCheapStashCategory category, string? emptyWeight)
+    {
+        if (emptyWeight is null)
+            return 0;
+        var empty = possibleItems.GetOrAddChild($"[{category.Items.Count}]", useBpatch: false);
+        empty.SetAssignment("ItemPrototypeSID", "Empty");
+        empty.SetAssignment("Weight", emptyWeight);
+        return 2;
+    }
+
     private static double StashTuningCurrent(
         IReadOnlyDictionary<string, ParameterViewModel> all,
         string id, double otherwise)

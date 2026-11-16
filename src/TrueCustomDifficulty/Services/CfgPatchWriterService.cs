@@ -205,30 +205,40 @@ public sealed partial class CfgPatchWriterService
             documents,
             writtenParameters);
 
-        editCount += WriteCheapStashProduction(
-            baseline,
-            modifiedById,
-            allById,
-            hasDlc1,
-            documents,
-            writtenParameters);
+        // STASH LOOT MIX presence sidecars reach the three tier template
+        // writers through one scoped value (no catalog parameters).
+        s_stashPresence = vm.StashPresence.Values;
+        try
+        {
+            editCount += WriteCheapStashProduction(
+                baseline,
+                modifiedById,
+                allById,
+                hasDlc1,
+                documents,
+                writtenParameters);
 
-        editCount += WriteMediumStashAmmoProduction(
-            baseline,
-            modifiedById,
-            allById,
-            hasDlc1,
-            documents,
-            writtenParameters);
+            editCount += WriteMediumStashAmmoProduction(
+                baseline,
+                modifiedById,
+                allById,
+                hasDlc1,
+                documents,
+                writtenParameters);
 
-        editCount += WriteExpensiveStashProduction(
-            baseline,
-            modifiedById,
-            allById,
-            difficulty.Sid,
-            hasDlc1,
-            documents,
-            writtenParameters);
+            editCount += WriteExpensiveStashProduction(
+                baseline,
+                modifiedById,
+                allById,
+                difficulty.Sid,
+                hasDlc1,
+                documents,
+                writtenParameters);
+        }
+        finally
+        {
+            s_stashPresence = null;
+        }
 
         editCount += WriteWorldStashSmartLoot(
             modifiedById,
@@ -1217,7 +1227,8 @@ public sealed partial class CfgPatchWriterService
         var grenadeChanceChanged = modifiedById.ContainsKey(config.GrenadeChanceParameterId);
         var grenadeQuantityChanged = modifiedById.ContainsKey(config.GrenadeQuantityParameterId);
         if (!ammoChanged && !grenadeChanceChanged && !grenadeQuantityChanged
-            && !HasStashTuningChange(modifiedById, "Cheap"))
+            && !HasStashTuningChange(modifiedById, "Cheap")
+            && !StashPresenceChanged("Cheap"))
             return 0;
 
         if (!allById.TryGetValue(config.AmmoQuantityParameterId, out var ammoParameter))
@@ -1289,7 +1300,7 @@ public sealed partial class CfgPatchWriterService
         // Immutable snapshot shared by the actual CFG writer and Stashes UI.
         var effective = new StashEffectiveState(
             allById.Values, modifiedById.Keys,
-            "Easy");
+            "Easy").WithValues(s_stashPresence);
         if (ammoMultiplier <= 0)
             throw new InvalidDataException("Cheap Stash Ammo Quantity must be greater than zero.");
         if (grenadeQuantity < 0)
@@ -1308,17 +1319,21 @@ public sealed partial class CfgPatchWriterService
             }
 
             var possibleItems = category.GetOrAddChild("PossibleItems", useBpatch: false);
+            var (emptyWeight, presenceZero) = effective.PresenceEdit(baseline, "Cheap", categoryDefinition);
             foreach (var itemDefinition in categoryDefinition.Items)
             {
                 var item = possibleItems.GetOrAddChild(itemDefinition.Node, useBpatch: false);
                 foreach (var field in itemDefinition.Fields)
                 {
-                    var value = effective.TierField(
-                        baseline, "Cheap", categoryDefinition, itemDefinition, field.Key);
+                    var value = presenceZero && field.Key == "Weight"
+                        ? "0"
+                        : effective.TierField(
+                            baseline, "Cheap", categoryDefinition, itemDefinition, field.Key);
                     item.SetAssignment(field.Key, value);
                     edits++;
                 }
             }
+            edits += WriteStashPresenceEmpty(possibleItems, categoryDefinition, emptyWeight);
         }
 
         return edits;
@@ -1404,7 +1419,8 @@ public sealed partial class CfgPatchWriterService
             return 0;
 
         if (!modifiedById.ContainsKey(config.ParameterId)
-            && !HasStashTuningChange(modifiedById, "Medium"))
+            && !HasStashTuningChange(modifiedById, "Medium")
+            && !StashPresenceChanged("Medium"))
             return 0;
 
         if (!allById.TryGetValue(config.ParameterId, out var parameter))
@@ -1463,7 +1479,7 @@ public sealed partial class CfgPatchWriterService
         // Immutable snapshot shared by the actual CFG writer and Stashes UI.
         var effective = new StashEffectiveState(
             allById.Values, modifiedById.Keys,
-            "Easy");
+            "Easy").WithValues(s_stashPresence);
         var itemGenerator = root.GetOrAddChild("ItemGenerator", useBpatch: false);
         var edits = 0;
 
@@ -1477,18 +1493,22 @@ public sealed partial class CfgPatchWriterService
             }
 
             var possibleItems = category.GetOrAddChild("PossibleItems", useBpatch: false);
+            var (emptyWeight, presenceZero) = effective.PresenceEdit(baseline, "Medium", categoryDefinition);
             foreach (var itemDefinition in categoryDefinition.Items)
             {
                 var item = possibleItems.GetOrAddChild(itemDefinition.Node, useBpatch: false);
 
                 foreach (var field in itemDefinition.Fields)
                 {
-                    var value = effective.TierField(
-                        baseline, "Medium", categoryDefinition, itemDefinition, field.Key);
+                    var value = presenceZero && field.Key == "Weight"
+                        ? "0"
+                        : effective.TierField(
+                            baseline, "Medium", categoryDefinition, itemDefinition, field.Key);
                     item.SetAssignment(field.Key, value);
                     edits++;
                 }
             }
+            edits += WriteStashPresenceEmpty(possibleItems, categoryDefinition, emptyWeight);
         }
 
         return edits;
@@ -1643,7 +1663,7 @@ public sealed partial class CfgPatchWriterService
         // Immutable snapshot shared by the actual CFG writer and Stashes UI.
         var effective = new StashEffectiveState(
             allById.Values, modifiedById.Keys,
-            difficultySid);
+            difficultySid).WithValues(s_stashPresence);
         var itemGenerator = root.GetOrAddChild("ItemGenerator", useBpatch: false);
         var edits = 0;
 
@@ -1657,18 +1677,22 @@ public sealed partial class CfgPatchWriterService
             }
 
             var possibleItems = category.GetOrAddChild("PossibleItems", useBpatch: false);
+            var (emptyWeight, presenceZero) = effective.PresenceEdit(baseline, "Expensive", categoryDefinition);
             foreach (var itemDefinition in categoryDefinition.Items)
             {
                 var item = possibleItems.GetOrAddChild(itemDefinition.Node, useBpatch: false);
 
                 foreach (var field in itemDefinition.Fields)
                 {
-                    var value = effective.TierField(
-                        baseline, "Expensive", categoryDefinition, itemDefinition, field.Key);
+                    var value = presenceZero && field.Key == "Weight"
+                        ? "0"
+                        : effective.TierField(
+                            baseline, "Expensive", categoryDefinition, itemDefinition, field.Key);
                     item.SetAssignment(field.Key, value);
                     edits++;
                 }
             }
+            edits += WriteStashPresenceEmpty(possibleItems, categoryDefinition, emptyWeight);
         }
 
         return edits;

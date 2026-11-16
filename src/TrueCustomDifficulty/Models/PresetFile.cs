@@ -53,6 +53,10 @@ public sealed class PresetFile
     [JsonPropertyName("corpseSmartLootNeedBoost")]
     public double? CorpseSmartLootNeedBoost { get; set; }
 
+    // STASH LOOT MIX presence sidecars (0–1, 0.05 steps); only changed ids.
+    [JsonPropertyName("stashPresence")]
+    public Dictionary<string, double>? StashPresence { get; set; }
+
     // Ten independent closed-allowlist standard-human consumable Chance
     // overrides. Old presets omit this field and load all rows disabled.
     [JsonPropertyName("npcConsumableChances")]

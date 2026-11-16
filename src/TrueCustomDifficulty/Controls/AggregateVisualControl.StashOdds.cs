@@ -58,10 +58,14 @@ public sealed partial class AggregateVisualControl
                 if (group.Field == "Weight")
                 {
                     var total = values.Sum(v => v.Value);
-                    if (total <= Epsilon) continue;
+                    // Presence < 100% adds a weighted Empty pick (writer
+                    // PresenceEdit): every real share scales by presence.
+                    var presence = group.TierCategory is null ? 1.0
+                        : state.Presence(tier, group.TierCategory);
+                    if (total <= Epsilon || presence <= Epsilon) continue;
                     foreach (var kind in values.Where(v => v.Kind >= 0)
                                  .Select(v => v.Kind).Distinct())
-                        none[kind] *= 1.0 - values.Where(v => v.Kind == kind)
+                        none[kind] *= 1.0 - presence * values.Where(v => v.Kind == kind)
                             .Sum(v => v.Value) / total;
                 }
                 else

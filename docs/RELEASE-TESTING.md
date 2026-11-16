@@ -709,3 +709,8 @@ OFF/ON round-trips. It parses the real generated CFG to verify
 exact path sets, accurate transformed values and no unrelated edits.
 Original-source parity is independently verified by B6 against
 the real decoded ZIP pair; Unreal runtime remains untested.
+
+
+## Stash presence (Empty weighted pick) — in-game check
+
+After building with Basic AMMO, Basic DRINKS or Standard AMMO in ADJUST ODDS set to 0%, open several unopened ordinary Basic / Standard stashes: those categories must never appear and the game must not error. At 50%, roughly half of the stashes should miss that category. Repeat with Rare AMMO at 0%. Confirm the generated ItemGeneratorPrototypes patch contains `ItemPrototypeSID = Empty` entries only in the TCD stash template clones.

@@ -173,6 +173,10 @@ public sealed class MainViewModel : ObservableObject
             }
         }
     }
+    // STASH LOOT MIX presence sidecars (Basic ammo / Basic drinks /
+    // Standard ammo). Not catalog parameters; saved in presets when changed.
+    public StashPresenceViewModel StashPresence { get; } = new();
+
     public bool IsCorpseSmartLootNeedBoostModified =>
         Math.Abs(CorpseSmartLootNeedBoost - 1.0) > 0.000001;
     public bool IsCorpseModItemsRemovalModified => CorpseModItemsEnabled && CorpseModItemsRemoval > 0.000001;
@@ -452,7 +456,10 @@ public sealed class MainViewModel : ObservableObject
                 () => members.Any(parameter => parameter.IsValueModifiedFromReference())
                     || (anchorId == "loot.npcCorpseBonus"
                         && (NpcConsumableItems.Any(item => item.IsEffectiveChange)
-                            || IsCorpseSmartLootNeedBoostModified)));
+                            || IsCorpseSmartLootNeedBoostModified))
+                    || (anchorId == "loot.stashMixMedical" && StashPresence.IsModified));
+            if (anchorId == "loot.stashMixMedical")
+                StashPresence.Changed += (_, _) => visualAnchor.RefreshAggregateModifiedState();
 
             foreach (var visualMember in members)
             {
@@ -1442,6 +1449,7 @@ public sealed class MainViewModel : ObservableObject
             WorldModItemsEnabled = false;
             CorpseModItemsEnabled = false;
             CorpseSmartLootNeedBoost = 1.0;
+            StashPresence.Reset();
             foreach (var item in NpcConsumableItems)
                 item.Reset();
             AllParameters.First(p => p.Id == "survival.waterInstantStaminaRestore")
@@ -1478,6 +1486,8 @@ public sealed class MainViewModel : ObservableObject
                 foreach (var item in NpcConsumableItems)
                     item.Reset();
             }
+            if (SelectedTab.Id == "stashes")
+                StashPresence.Reset();
             if (SelectedTab.Id == "health")
                 AllParameters.First(p => p.Id == "health.bandageHealing")
                     .MedicalOverrideEnabled = false;
@@ -1645,6 +1655,7 @@ public sealed class MainViewModel : ObservableObject
             CorpseModItemsEnabled = CorpseModItemsEnabled,
             CorpseSmartLootNeedBoost = IsCorpseSmartLootNeedBoostModified
                 ? CorpseSmartLootNeedBoost : null,
+            StashPresence = StashPresence.ToPreset(),
             NpcConsumableChances = NpcConsumableItems.ToDictionary(
                 item => item.Sid, item => item.ToPreset(), StringComparer.Ordinal),
             DrinkDurationOverride = AllParameters.First(p =>
@@ -1726,6 +1737,8 @@ public sealed class MainViewModel : ObservableObject
                 CorpseModItemsEnabled = preset.CorpseModItemsEnabled ?? CorpseModItemsRemoval > 0.0;
                 // Older presets omit NEED BOOST and load at vanilla 1x.
                 CorpseSmartLootNeedBoost = preset.CorpseSmartLootNeedBoost ?? 1.0;
+                // Older presets omit stash presence and load at vanilla 100%.
+                StashPresence.FromPreset(preset.StashPresence);
                 var npcChances = preset.NpcConsumableChances
                     ?? new Dictionary<string, NpcConsumableChancePreset>(StringComparer.Ordinal);
                 var knownSids = NpcConsumableItemViewModel.SourceItems

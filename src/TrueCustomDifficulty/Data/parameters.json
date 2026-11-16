@@ -6162,7 +6162,7 @@
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
-      "rationale": "How much Basic stashes (and the game's smart world stashes) lean towards drinks compared with meds and food. Vanilla: 1×. Lower = fewer drinks in the mix.",
+      "rationale": "How much Basic stashes lean towards milk in their shared food / milk / bandage pick (shown as MILK IN MIX), and towards drinks in the game's smart world stashes. Vanilla: 1×. Basic water and energy drinks have their own control: the Basic DRINKS cell in ADJUST ODDS.",
       "logic": "Higher priority favors drinks against other eligible stash categories. Zero removes its relative weight where supported.",
       "interaction": "Priority does not raise original chance checks or bypass a stash's rank and loot restrictions.",
       "exposeInUi": true
@@ -6270,7 +6270,7 @@
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
-      "rationale": "How much stashes lean towards coupons (money) compared with other supplies. Vanilla: 1×. Lower = less cash from stashes.",
+      "rationale": "How much Basic stashes (and the game's smart world stashes) lean towards coupons in their mix. Vanilla: 1×. In vanilla only Novice and Stalker Basic stashes have coupons in that mix, so on Veteran and Master this has no Basic effect.",
       "logic": "Native Weight is relative within its own generator group. Multiplying all members of a single-category pool may leave its normalized ratios unchanged; independent Chance is never modified by this global control.",
       "interaction": "Legacy preset compatibility only. Not an editable Stash Content mixer knob; the retained Veteran Basic source pool has no coupon Weight member.",
       "exposeInUi": false
@@ -8240,7 +8240,7 @@
       ],
       "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
       "interaction": "Affects eligible Rare stash ammo only. Availability, selection priority and stack size remain separate.",
-      "rationale": "Scales the chance of ammo in Rare stashes on the early-game rolls. Vanilla: 100%. Later ranks pick ammo differently and aren't affected."
+      "rationale": "How often Rare stashes have ammo. Vanilla: 100% = the game's odds. Lower it and both the early-game ammo rolls and the regular Rare ammo picks come up empty more often (a native Empty pick is added). 0% = no ammo from Rare stashes."
     },
     {
       "id": "loot.expensiveStashMedicalChance",

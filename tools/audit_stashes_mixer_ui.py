@@ -22,6 +22,7 @@ lock = (root / "docs/UI-DESIGN-LOCK.md").read_text()
 system = (root / "docs/VISUAL-CONTROL-SYSTEM.md").read_text()
 proposal = (root / "docs/STASHES-TAB-AND-REDESIGN-PROPOSAL.md").read_text()
 coverage = (root / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.StashBranch.cs").read_text()
+grid_source = (root / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.StashControls.cs").read_text()
 tier_preview = coverage.split("private void DrawStashChanceTier(", 1)[1]
 
 expected = {
@@ -73,7 +74,7 @@ quantity_rail = method("DrawStashQuantityDualRail", "DrawStashGear")
 gear = method("DrawStashGear", "DrawStashPoolBar")
 preview = method("DrawStashPoolBar", "DrawStashNumericReadout")
 
-assert 'DrawStashWeightMixer(dc, new Rect(left, knobTop, width, knobHeight),' in content
+assert 'DrawStashControlGrid(dc, new Rect(left, controlsTop, width, StashControlsHeight),' in content
 assert all(f'("{label}"' in medical for label in
     ("BANDAGES", "MEDKITS", "ARMY MEDKITS", "ANTI-RAD"))
 assert quantity.count('("MEDKITS"') + quantity.count('("ARMY MEDKITS"') == 2
@@ -226,7 +227,7 @@ assert '(i % mixColumns)' in gear and '(i / mixColumns)' in gear
 assert 'AddHorizontalTarget(weight,' not in gear
 assert 'labelY = 204.0 + i * 52.0' not in gear
 assert 'DrawSourceKnob(' not in content
-assert "DrawStashWeightMixer(dc," in content
+assert "DrawStashControlGrid(dc," in content
 assert "DrawStashBasicNativePools(dc," in content
 assert "DrawStashRewardGraphRow(dc, P(entries[i].Id)" not in medical
 assert "DrawStashMedicalSourcePreview(" not in source
@@ -259,20 +260,20 @@ assert "AddHorizontalTarget(" not in preview  # never an editable preview
 assert "DrawStashNumericReadout" not in preview
 assert "MULTIPLIERS, NOT DROP ODDS" not in source
 assert "weights.Sum()" not in preview # normalized six source multipliers retired
-assert 'DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeChance",' in content
-assert 'DrawStashChanceTier(dc, "STANDARD STASH", "Medium", 10,' in content
-assert 'DrawStashChanceTier(dc, "RARE STASH", "Expensive", 19,' in content
+# Odds-centred layout: every odds cell's own control sits in the ADJUST ODDS
+# grid (same rows/columns as ODDS PER STASH); Standard/Rare cards are retired.
+assert '"loot.cheapStashGrenadeChance", null, "loot.expensiveStashGrenadesChance"' in grid_source
+assert 'DrawStashChanceTier(dc,' not in content
 assert 'DrawStashChanceTier(dc, "STANDARD", "Medium", 10,' not in content
 assert 'DrawStashChanceTier(dc, "RARE", "Expensive", 19,' not in content
 # Tier-grouped layout: one BASIC STASH card (knobs, mix preview, RGD-5
 # pair) followed by the STANDARD and RARE cards, all stacked from basicTop.
-assert "var basicTop = 121.0 + narrowShift + StashOddsHeight + 8.0;" in content
-assert "DrawStashOdds(dc, new Rect(left, 121.0 + narrowShift, width, StashOddsHeight)," in content
-assert "var knobHeight = wide ? 146.0 : 300.0;" in content
-assert "var pairTop = basicPreviewTop + 74.0 + 8.0;" in content
-assert 'dc.DrawText(CreateText("BASIC STASH", 11.4, text, FontWeights.Bold),' in content
-assert "var standardHeight = wide ? 122.0 : 200.0;" in content
-assert "wide ? 200.0 : 278.0" in content
+assert "var oddsTop = 121.0 + narrowShift;" in content
+assert "DrawStashOdds(dc, new Rect(left, oddsTop, width, StashOddsHeight)," in content
+assert "var controlsTop = oddsTop + StashOddsHeight + 8.0;" in content
+assert "var mixTop = controlsTop + StashControlsHeight + 8.0;" in content
+assert 'dc.DrawText(CreateText("BASIC MIX", 11.4, text, FontWeights.Bold),' in content
+assert '"MILK IN MIX"' in content
 assert '"WEIGHT APPLIES TO ALL TIERS"' not in content
 assert '"RELATIVE SELECTION"' not in source
 assert '"BASIC POOL COMPOSITION"' not in coverage
@@ -280,7 +281,7 @@ assert '"BASIC POOL COMPOSITION"' not in coverage
 # One bounded 3x2/6x1 relative-Weight mixer, not six rotary dials
 # and never an invented 100% stash-wide probability.
 assert "Math.Min(778.0, Math.Max(1.0, ActualWidth - 30.0))" in content
-assert "DrawStashWeightMixer(dc," in content
+assert "DrawStashControlGrid(dc," in content
 assert "DrawStashBasicNativePools(dc," in content
 assert "DrawSourceKnob(" not in content
 assert "DrawStashBasicNativePools(dc," in content
@@ -406,7 +407,7 @@ height_match = re.search(
 assert height_match is not None, "missing StashContentMix measured height"
 # 121 + 30 title + knobs + 8 + 74 preview + 8 + 56 pair + 12 + 8 + Standard
 # + 8 + Rare + bottom padding (wide 797, narrow 1175 incl. 64 narrow shift).
-assert tuple(map(float, height_match.groups())) == (700.0, 977.0, 1355.0)
+assert tuple(map(float, height_match.groups())) == (700.0, 741.0, 823.0)
 assert '"WEIGHT APPLIES TO ALL TIERS"' not in content
 assert '"RELATIVE SELECTION"' not in source
 assert '"BASIC POOL COMPOSITION"' not in coverage
@@ -414,7 +415,7 @@ assert "var wide = width >= 670.0;" in content
 # Old fixed 373/409, 220/383 and 839/1185 lane calculations
 # were retired with the current compact Stashes rendering. Guard the
 # actual measured heights rather than asserting removed helper formulas.
-assert '=> width >= 700.0 ? 977.0 : 1355.0;' in source
+assert '=> width >= 700.0 ? 741.0 : 823.0;' in source
 assert '=> width >= 700.0 ? 609.0 : 1050.0;' in source
 assert '=> width < 570.0 ? 670.0 : 502.0;' in source
 for name, document in [("UI-DESIGN-LOCK", lock),
@@ -500,7 +501,7 @@ for pid in mix_ids:
 coverage = (root / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.StashBranch.cs").read_text()
 branches = (root / "src/TrueCustomDifficulty/Services/StashBranchPreviewCatalog.cs").read_text()
 csproj = (root / "src/TrueCustomDifficulty/TrueCustomDifficulty.csproj").read_text()
-assert 'DrawStashWeightMixer(dc, new Rect(left, knobTop, width, knobHeight),' in content
+assert 'DrawStashControlGrid(dc, new Rect(left, controlsTop, width, StashControlsHeight),' in content
 assert "StashContentMixHeight(width)" in source
 assert '"loot.mediumStashMedicalChance"' in source
 assert '"loot.mediumStashCouponsChance"' in source
@@ -512,7 +513,7 @@ assert 'CreateText("V "' not in tier_preview and "vanillaX" not in tier_preview
 assert "Math.Clamp(Number(updated) * factor, 0.0, 1.0)" in effective
 assert 'StashTierChanceParameterIds.Any(id =>' in tuning
 
-assert '=> width >= 700.0 ? 977.0 : 1355.0;' in source
+assert '=> width >= 700.0 ? 741.0 : 823.0;' in source
 assert "GlobalStashKindsVerified.Value" in coverage
 assert "StashBranchPreviewCatalog.Load(StashPreviewBaseline.Value)" in coverage
 assert "groups.Sum(x => x.Items.Count) != 1124" in coverage
@@ -596,7 +597,7 @@ assert basic_preview[7]["fields"]["PlayerRank"] == "ERank::Experienced"
 assert basic_preview[1]["fields"]["Diff"] == "EGameDifficulty::Hard"
 assert "PlayerRank" not in basic_preview[1]["fields"]
 
-assert '"LOOT PRIORITY"' in content and '"LOOT PRIORITY · ALL TIERS"' not in content
+assert '"LOOT PRIORITY · ALL TIERS"' not in content and '"LOOT PRIORITY"' not in content
 assert '"BASIC  ·  WEIGHT MIX"' not in content
 assert 'DrawText(dc, "MIX PREVIEW · "' in coverage
 assert '"Easy" or "Medium" => 10,' in coverage and '"Stalker" => 11,' in coverage
@@ -747,7 +748,7 @@ assert "private static readonly int[] BasicVisibleWeightKinds = { 1, 2, 3 };" in
 assert "BasicVisibleWeightKinds.Length" in coverage
 assert "previewGroup.Items" in coverage
 assert "var columns = outer.Width >= 670.0 ? 3 : 2;" in coverage
-assert '"RGD-5 CHANCE"' in source
+assert '"loot.cheapStashGrenadeChance"' in grid_source  # RGD-5 chance is the Basic GRENADES cell
 assert '"loot.expensiveStashMoneyChance"' in coverage
 for doc in (lock, system, proposal):
     assert "STASHES — ACTUAL TIER CONTENT / WEIGHT-CHANCE COVERAGE (CURRENT)" in doc

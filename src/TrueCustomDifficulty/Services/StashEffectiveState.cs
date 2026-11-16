@@ -43,6 +43,76 @@ public sealed class StashEffectiveState
     public double Value(string id, double fallback = 1.0)
         => _values.TryGetValue(id, out var value) ? value : fallback;
 
+    /// <summary>
+    /// Same state plus non-catalog sidecar values (STASH LOOT MIX presence).
+    /// A sidecar away from 1.0 counts as changed.
+    /// </summary>
+    public StashEffectiveState WithValues(IReadOnlyDictionary<string, double>? extra)
+    {
+        if (extra is null || extra.Count == 0)
+            return this;
+        var merged = new Dictionary<string, double>(_values, StringComparer.Ordinal);
+        foreach (var (id, value) in extra)
+            merged[id] = value;
+        return new StashEffectiveState(merged,
+            _modified.Concat(extra.Where(pair => Math.Abs(pair.Value - 1.0) > 0.0000001)
+                .Select(pair => pair.Key)),
+            DifficultySid);
+    }
+
+    // ---- Presence of single-category Weight picks ------------------------
+    // A Weight category whose every entry is the same kind always yields one
+    // item; the game has no category-level Chance. Presence < 100% appends a
+    // native `Empty` entry (ItemPrototypeSID = Empty, used natively as a
+    // weighted "nothing" pick) so the pick sometimes yields nothing.
+
+    /// <summary>The value id that sets this category's presence, or null.</summary>
+    public static string? PresenceId(string tier, CfgWriterCheapStashCategory category)
+    {
+        if (category.Items.Count == 0
+            || category.Items.Any(item => !item.Fields.ContainsKey("Weight")
+                || !item.Fields.ContainsKey("ItemPrototypeSID")))
+            return null;
+        var kinds = category.Items
+            .Select(item => ItemBiasId(item.Fields["ItemPrototypeSID"]))
+            .Distinct().ToArray();
+        if (kinds.Length != 1)
+            return null;
+        return (tier, kinds[0]) switch
+        {
+            ("Cheap", "loot.stashMixAmmo") => StashPresenceViewModel.CheapAmmoId,
+            ("Cheap", "loot.stashMixDrinks") => StashPresenceViewModel.CheapDrinksId,
+            ("Medium", "loot.stashMixAmmo") => StashPresenceViewModel.MediumAmmoId,
+            // Rare ammo: the existing catalog Rare Ammo Chance also thins
+            // the Rare ammo Weight picks, so one control means "Rare ammo".
+            ("Expensive", "loot.stashMixAmmo") => "loot.expensiveStashAmmoChance",
+            _ => null
+        };
+    }
+
+    public double Presence(string tier, CfgWriterCheapStashCategory category)
+        => PresenceId(tier, category) is { } id ? Math.Clamp(Value(id), 0.0, 1.0) : 1.0;
+
+    /// <summary>
+    /// Weight of the appended Empty entry (null = none) and whether the real
+    /// entries must be zeroed (presence 0%). Empty / (total + Empty) = 1 − p.
+    /// </summary>
+    public (string? EmptyWeight, bool ZeroItems) PresenceEdit(
+        CfgWriterBaseline baseline, string tier, CfgWriterCheapStashCategory category)
+    {
+        var presence = Presence(tier, category);
+        if (presence >= 1.0 - 0.0000001)
+            return (null, false);
+        if (presence <= 0.0000001)
+            return ("1", true);
+        var total = category.Items.Sum(item => Math.Max(0.0, Number(
+            TierField(baseline, tier, category, item, "Weight"))));
+        if (total <= 0.0000001)
+            return (null, false);
+        var empty = total * (1.0 - presence) / presence;
+        return (empty.ToString("0.####", CultureInfo.InvariantCulture), false);
+    }
+
     public bool Changed(string id) => _modified.Contains(id);
 
     public static double Number(string raw)

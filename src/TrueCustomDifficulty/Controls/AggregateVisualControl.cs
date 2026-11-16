@@ -29,7 +29,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private ParameterViewModel? _starvationMaxHp;
     private readonly List<HitTarget> _hitTargets = new();
     // Nine compact Standard/Rare Chance cards; tooltips are confined to their bounds.
-    private readonly List<(Rect Area, bool AbsoluteChance)> _stashChanceTooltipAreas = new();
+    private readonly List<(Rect Area, string Hint)> _stashChanceTooltipAreas = new();
     // Medical effective-pick preview uses the single original Veteran source pool.
     private readonly VisualStatusMessage _status;
     private bool _fatigueReloadInteraction;
@@ -5209,53 +5209,61 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // frame — priority knobs, the mix preview directly under them, and
         // the Basic-only RGD-5 pair. Standard and Rare keep their own cards.
         // What a stash holds, per tier, after every control below.
-        DrawStashOdds(dc, new Rect(left, 121.0 + narrowShift, width, StashOddsHeight),
+        var oddsTop = 121.0 + narrowShift;
+        DrawStashOdds(dc, new Rect(left, oddsTop, width, StashOddsHeight),
             text, muted, border, accent, panel);
 
-        var basicTop = 121.0 + narrowShift + StashOddsHeight + 8.0;
-        var knobTop = basicTop + StashBasicTitleHeight;
-        var knobHeight = wide ? 146.0 : 300.0;
-        var basicPreviewTop = knobTop + knobHeight + 8.0;
-        var pairTop = basicPreviewTop + 74.0 + 8.0;
-        var basicCard = new Rect(left, basicTop, width,
-            pairTop + 56.0 + 12.0 - basicTop);
+        // Every odds cell's own control, in the same rows and columns.
+        var controlsTop = oddsTop + StashOddsHeight + 8.0;
+        DrawStashControlGrid(dc, new Rect(left, controlsTop, width, StashControlsHeight),
+            text, muted, border, accent, panel);
+
+        // BASIC MIX: what the shared Basic food / drink / bandage pick looks
+        // like, plus the two Basic extras that change amounts, not odds.
+        var mixTop = controlsTop + StashControlsHeight + 8.0;
+        var mixCard = new Rect(left, mixTop, width, wide ? StashMixCardWide : StashMixCardNarrow);
         dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .65),
-            new Pen(CloneWithOpacity(border, .61), .9), basicCard, 4.0, 4.0);
-        dc.DrawText(CreateText("BASIC STASH", 11.4, text, FontWeights.Bold),
-            new Point(left + 12.0, basicTop + 8.0));
-        DrawRightAlignedText(dc, "LOOT PRIORITY",
-            new Point(left + width - 12.0, basicTop + 9.0),
-            9.4, muted, FontWeights.SemiBold);
-        DrawStashWeightMixer(dc, new Rect(left, knobTop, width, knobHeight),
-            text, muted, border, accent, panel, drawFrame: false);
-
-        DrawStashBasicNativePools(dc,
-            new Rect(left + 12.0, basicPreviewTop, width - 24.0, 74.0),
-            text, muted, border, panel);
-
-        // Basic RGD-5 Chance is a native absolute probability, while
-        // Amount is an integer stack override. Neither is ammo quantity.
+            new Pen(CloneWithOpacity(border, .61), .9), mixCard, 4.0, 4.0);
+        dc.DrawText(CreateText("BASIC MIX", 11.4, text, FontWeights.Bold),
+            new Point(left + 12.0, mixTop + 8.0));
         const double pairGap = 10.0;
-        var pairWidth = Math.Max(1.0, (width - 24.0 - pairGap) / 2.0);
-        DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeChance",
-            "RGD-5 CHANCE", 4,
-            new Rect(left + 12.0, pairTop, pairWidth, 56.0),
-            text, muted, border, accent, panel);
-        DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeQuantity",
-            "RGD-5 AMOUNT", 4,
-            new Rect(left + 12.0 + pairWidth + pairGap, pairTop, pairWidth, 56.0),
-            text, muted, border, accent, panel, percentage: false);
-
-        var standardTop = basicCard.Bottom + 8.0;
-        var standardHeight = wide ? 122.0 : 200.0;
-        DrawStashChanceTier(dc, "STANDARD STASH", "Medium", 10,
-            new Rect(left, standardTop, width, standardHeight),
-            text, muted, border, accent, panel);
-        DrawStashChanceTier(dc, "RARE STASH", "Expensive", 19,
-            new Rect(left, standardTop + standardHeight + 8.0, width,
-                wide ? 200.0 : 278.0), text, muted, border, accent, panel);
+        if (wide)
+        {
+            var previewWidth = Math.Max(1.0, (width - 24.0) * .58);
+            DrawStashBasicNativePools(dc,
+                new Rect(left + 12.0, mixTop + StashBasicTitleHeight, previewWidth, 74.0),
+                text, muted, border, panel);
+            var sideLeft = left + 12.0 + previewWidth + pairGap;
+            var sideWidth = Math.Max(1.0, left + width - 12.0 - sideLeft);
+            DrawStashNativeRollControl(dc, "loot.stashMixDrinks",
+                "MILK IN MIX", 3,
+                new Rect(sideLeft, mixTop + StashBasicTitleHeight, sideWidth, 56.0),
+                text, muted, border, accent, panel);
+            DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeQuantity",
+                "RGD-5 AMOUNT", 4,
+                new Rect(sideLeft, mixTop + StashBasicTitleHeight + 64.0, sideWidth, 56.0),
+                text, muted, border, accent, panel, percentage: false);
+        }
+        else
+        {
+            DrawStashBasicNativePools(dc,
+                new Rect(left + 12.0, mixTop + StashBasicTitleHeight, width - 24.0, 74.0),
+                text, muted, border, panel);
+            var pairWidth = Math.Max(1.0, (width - 24.0 - pairGap) / 2.0);
+            var pairTop = mixTop + StashBasicTitleHeight + 82.0;
+            DrawStashNativeRollControl(dc, "loot.stashMixDrinks",
+                "MILK IN MIX", 3,
+                new Rect(left + 12.0, pairTop, pairWidth, 56.0),
+                text, muted, border, accent, panel);
+            DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeQuantity",
+                "RGD-5 AMOUNT", 4,
+                new Rect(left + 12.0 + pairWidth + pairGap, pairTop, pairWidth, 56.0),
+                text, muted, border, accent, panel, percentage: false);
+        }
     }
 
+    private const double StashMixCardWide = 30.0 + 120.0 + 12.0;
+    private const double StashMixCardNarrow = 30.0 + 82.0 + 56.0 + 12.0;
     private const double StashBasicTitleHeight = 30.0;
 
     // Native selectors are separate sources: Chance is never a normalized
@@ -5816,7 +5824,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             .Select(g => g.First()).ToArray();
         return new StashEffectiveState(sources,
             sources.Where(p => p.IsValueModifiedFromReference()).Select(p => p.Id),
-            difficultySid);
+            difficultySid).WithValues(StashPresence?.Values);
     }
 
     private void DrawStashPoolBar(
@@ -6767,7 +6775,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var point = e.GetPosition(this);
         NpcCardSelectAt(point);
         GenericCardSelectAt(point);
-        if (NpcNeedBoostMouseDown(point))
+        if (NpcNeedBoostMouseDown(point) || StashPresenceMouseDown(point))
         {
             e.Handled = true;
             return;
@@ -6865,13 +6873,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         string? hint = null;
         if (Family == "StashContentMix")
         {
-            foreach (var (area, absoluteChance) in _stashChanceTooltipAreas)
+            foreach (var (area, areaHint) in _stashChanceTooltipAreas)
             {
                 if (!area.Contains(point))
                     continue;
-                hint = absoluteChance
-                    ? "The number is the real chance of a coupon reward in a Rare stash. Drag to set it."
-                    : "The number is the real chance of each item in this group (e.g. 40–100%). Drag left to make them rarer; all the way right keeps the game's odds.";
+                hint = areaHint;
                 break;
             }
         }
@@ -6888,7 +6894,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             NpcCardHover(point);
         else if (_cardHover.UpdateHover(point))
             InvalidateVisual();
-        if (NpcNeedBoostMouseMove(point, e.LeftButton))
+        if (NpcNeedBoostMouseMove(point, e.LeftButton)
+            || StashPresenceMouseMove(point, e.LeftButton))
         {
             e.Handled = true;
             return;
@@ -7082,7 +7089,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonUp(e);
-        if (NpcNeedBoostMouseUp())
+        if (NpcNeedBoostMouseUp() || StashPresenceMouseUp())
         {
             e.Handled = true;
             return;
@@ -7153,6 +7160,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         base.OnLostMouseCapture(e);
         _npcConsumableDragged = null;
         NpcNeedBoostLostCapture();
+        StashPresenceLostCapture();
         if (_npcModDragging)
         {
             _npcModDragging = false;
@@ -7196,7 +7204,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     {
         base.OnMouseRightButtonDown(e);
         NpcCardSelectAt(e.GetPosition(this));
-        if (NpcNeedBoostRightClick(e.GetPosition(this)))
+        if (NpcNeedBoostRightClick(e.GetPosition(this))
+            || StashPresenceRightClick(e.GetPosition(this)))
         {
             e.Handled = true;
             return;
@@ -8127,10 +8136,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
     // Measured heights follow the painted responsive editors, so the
     // last mixer lane and every remaining gear/medical dial stay visible.
-    // Mirrors DrawStashContentMix: row 1, ODDS PER STASH (172 + 8), BASIC
-    // card (title, knobs, mix preview, RGD-5 pair), STANDARD, RARE, padding.
+    // Mirrors DrawStashContentMix: 121 (+64 narrow) + ODDS 172 + 8 + ADJUST
+    // ODDS 258 + 8 + BASIC MIX (162 wide / 180 narrow) + 12 padding.
     private double StashContentMixHeight(double width)
-        => width >= 700.0 ? 977.0 : 1355.0;
+        => width >= 700.0 ? 741.0 : 823.0;
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 609.0 : 1050.0;
     // Paint width is ActualWidth - 30 DIP. At host widths 540–569 DIP

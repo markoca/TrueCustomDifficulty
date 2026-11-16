@@ -1,3 +1,18 @@
+## 2026-11-16 — CURRENT: STASH LOOT MIX built around ODDS PER STASH (ADJUST ODDS grid + presence sidecars)
+
+**Supersedes the BASIC STASH card, the STANDARD STASH / RARE STASH chance cards and the IN MIX knobs.** Board order: SUPPLY REDUCTION + AMMO QUANTITY · ALL TIERS → **ODDS PER STASH** (unchanged) → **ADJUST ODDS** → **BASIC MIX**.
+
+* **ADJUST ODDS** (258 DIP): same rows (AMMO, MEDS, FOOD, DRINKS, GRENADES, COUPONS) and same BASIC / STANDARD / RARE columns as ODDS PER STASH, so each control sits under the cell it moves. Each cell is its own small card (white hover, click selects it) with a compact rail, a subtle reference tick and the value in % (gold when changed); "—" where the game has no such loot in that tier (Standard food / grenades). Header right: `100% = GAME ODDS`. Hover hints explain the three cell kinds (share of game odds, share in the Basic mix, real chance for Basic RGD-5 and Rare coupons).
+  * AMMO: Basic presence · Standard presence · Rare Ammo Chance
+  * MEDS: `stashMixMedical` · Standard medical chance · Rare medical chance
+  * FOOD: `stashMixFood` · — · Rare food chance
+  * DRINKS: Basic drinks presence · Standard drinks chance · Rare drinks chance
+  * GRENADES: Basic RGD-5 chance · — · Rare grenades chance
+  * COUPONS: `stashMixCoupons` · Standard coupon chance · Rare coupon chance
+* **Presence sidecars** (`StashPresenceViewModel`, preset block `stashPresence`, 0–100% in 5% steps, not catalog parameters): Basic ammo, Basic water/energy drinks and Standard ammo are single-category native Weight picks that always yield one item, and ItemGenerator has no category-level Chance. Below 100% the writer appends a native **`Empty`** weighted entry (`ItemPrototypeSID = Empty`, the game's own weighted "nothing" SID) so Empty / (total + Empty) = 1 − presence; 0% zeroes the real entries and writes Empty = 1. **Rare ammo** reuses the existing catalog *Rare Ammo Chance*: it now thins the Rare ammo Weight picks the same way, in addition to the early-game ammo Chance rows (older presets with Rare Ammo Chance below 100% therefore give less Rare ammo than before). The shared math is `StashEffectiveState.PresenceEdit` and is used by the writer and ODDS PER STASH alike. ⚠ `Empty` is native but no vanilla list mixes it with real items — confirm in game.
+* **BASIC MIX** (162 wide / 180 narrow): MIX PREVIEW for the selected difficulty, **MILK IN MIX** (`stashMixDrinks`: the only drink in the Basic shared food/milk/bandage pick; also smart world stashes) and RGD-5 AMOUNT.
+* Heights: 741 DIP wide / 823 DIP narrow. Audit: `tools/audit_stash_presence.py`.
+
 ## 2026-11-16 — CURRENT: STASH LOOT MIX in player terms (odds view, real chances, IN MIX knobs, difficulty preview)
 
 Builds on the tier-grouped layout below. Parameters, presets and writer output are unchanged; only what the board shows changed.

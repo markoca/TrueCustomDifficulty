@@ -86,6 +86,19 @@ public sealed class PresetService
                 || Math.Abs(needBoost * 20.0 - Math.Round(needBoost * 20.0)) > 0.0000001))
             throw new InvalidDataException("Corpse SmartLoot NEED BOOST must use 0–2x in 0.05x steps.");
 
+        // STASH LOOT MIX presence sidecars: known ids only, 0–100% in 5% steps.
+        if (preset.StashPresence is { } stashPresence)
+        {
+            foreach (var (id, value) in stashPresence)
+            {
+                if (!StashPresenceViewModel.Ids.Contains(id))
+                    throw new InvalidDataException($"Unknown stash presence entry '{id}'.");
+                if (!double.IsFinite(value) || value < 0.0 || value > 1.0
+                    || Math.Abs(value * 20.0 - Math.Round(value * 20.0)) > 0.0000001)
+                    throw new InvalidDataException($"Stash presence '{id}' must use 0–100% in 5% steps.");
+            }
+        }
+
         // Optional per-SID Chance sidecars: current 0–3x multiplier (0.05x
         // steps) or legacy absolute 0–100% (1% steps), never both.
         preset.NpcConsumableChances ??=

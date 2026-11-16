@@ -397,7 +397,7 @@ public sealed partial class AggregateVisualControl
             var cell = new Rect(x, y, cellWidth, 70.0);
             // Source Chance diagnostics stay in the backend, not on player cards.
             // The card itself owns a brief contextual tooltip on hover.
-            _stashChanceTooltipAreas.Add((cell, id == "loot.expensiveStashMoneyChance"));
+            _stashChanceTooltipAreas.Add((cell, StashControlHint(id)));
             var tone = StashMixPalette[kind];
             dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .5),
                 new Pen(CloneWithOpacity(tone, .75), .9), cell, 3.0, 3.0);
