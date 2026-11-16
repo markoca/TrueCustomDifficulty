@@ -177,6 +177,9 @@ public sealed class MainViewModel : ObservableObject
     // Standard ammo). Not catalog parameters; saved in presets when changed.
     public StashPresenceViewModel StashPresence { get; } = new();
 
+    // TRADER STOCK partial odds per role x category (0 = SELL toggle off).
+    public TraderSellOddsViewModel TraderSellOdds { get; } = new();
+
     public bool IsCorpseSmartLootNeedBoostModified =>
         Math.Abs(CorpseSmartLootNeedBoost - 1.0) > 0.000001;
     public bool IsCorpseModItemsRemovalModified => CorpseModItemsEnabled && CorpseModItemsRemoval > 0.000001;
@@ -457,9 +460,12 @@ public sealed class MainViewModel : ObservableObject
                     || (anchorId == "loot.npcCorpseBonus"
                         && (NpcConsumableItems.Any(item => item.IsEffectiveChange)
                             || IsCorpseSmartLootNeedBoostModified))
-                    || (anchorId == "loot.stashMixMedical" && StashPresence.IsModified));
+                    || (anchorId == "loot.stashMixMedical" && StashPresence.IsModified)
+                    || (anchorId == TraderSellsPolicy.AnchorId && TraderSellOdds.IsModified));
             if (anchorId == "loot.stashMixMedical")
                 StashPresence.Changed += (_, _) => visualAnchor.RefreshAggregateModifiedState();
+            if (anchorId == TraderSellsPolicy.AnchorId)
+                TraderSellOdds.Changed += (_, _) => visualAnchor.RefreshAggregateModifiedState();
 
             foreach (var visualMember in members)
             {
@@ -623,6 +629,17 @@ public sealed class MainViewModel : ObservableObject
         WireVisualAggregate(
             TraderSellsPolicy.AnchorId,
             traderSellsParameterIds.OrderBy(id => id, StringComparer.Ordinal).ToArray());
+        // A removed category (toggle off) owns 0%; drop any partial odds.
+        foreach (var sellId in TraderSellsPolicy.ParameterIds)
+        {
+            if (!parametersById.TryGetValue(sellId, out var sell)) continue;
+            sell.PropertyChanged += (_, args) =>
+            {
+                if (args.PropertyName == nameof(ParameterViewModel.CurrentBoolean)
+                    && !sell.CurrentBoolean)
+                    TraderSellOdds.Set(sell.Id, 1.0);
+            };
+        }
 
         WireVisualAggregate(
             "economy.traderAmmoStock",
@@ -1473,6 +1490,7 @@ public sealed class MainViewModel : ObservableObject
         if (resetAll)
         {
             TraderItemOverrides = string.Empty;
+            TraderSellOdds.Reset();
             GenericNpcRareGearEnabled = false;
             GenericNpcRareGearChance = 0.02;
             WorldModItemsRemoval = 0.0;
@@ -1504,6 +1522,7 @@ public sealed class MainViewModel : ObservableObject
             if (SelectedTab.Id == "economy")
             {
                 TraderItemOverrides = string.Empty;
+            TraderSellOdds.Reset();
                 GenericNpcRareGearEnabled = false;
                 GenericNpcRareGearChance = 0.02;
             }
@@ -1678,6 +1697,7 @@ public sealed class MainViewModel : ObservableObject
             GameVersion = GameVersion,
             ReferenceDifficulty = SelectedReferenceDifficulty,
             TraderItemOverrides = TraderItemOverrides,
+            TraderSellOdds = TraderSellOdds.ToPreset(),
             GenericNpcRareGearEnabled = GenericNpcRareGearEnabled,
             GenericNpcRareGearChance = GenericNpcRareGearChance,
             WorldModItemsRemoval = WorldModItemsRemoval,
@@ -1755,6 +1775,7 @@ public sealed class MainViewModel : ObservableObject
             {
                 _selectedReferenceDifficulty = preset.ReferenceDifficulty;
                 TraderItemOverrides = preset.TraderItemOverrides;
+                TraderSellOdds.FromPreset(preset.TraderSellOdds);
                 GenericNpcRareGearChance = preset.GenericNpcRareGearChance;
                 GenericNpcRareGearEnabled = preset.GenericNpcRareGearEnabled;
                 // Old boolean presets migrate without loss: true = full 100%

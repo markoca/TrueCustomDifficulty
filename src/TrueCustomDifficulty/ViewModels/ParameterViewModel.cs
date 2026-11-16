@@ -146,7 +146,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "CouponFlow" => "Drag Starting Coupons to change your new-game wallet. Main and side quest payouts are separate.",
                     "TradingDashboard" => "PRICES TRADERS PAY controls selling; PRICES YOU PAY controls buying. The lower tracks handle sellable condition and broken-gear value.",
                     "RepairCurve" => "Drag one reputation point vertically to set its repair-price multiplier. Linked values follow the existing source-value ordering.",
-                    "TraderStockBoard" => "AMMO SUPPLY and MEDIC SUPPLIES change quantities carried by traders and medics, not the items they can unlock.",
+                    "TraderStockBoard" => "AMMO SUPPLY and MEDICAL SUPPLY change how much every trader carries, not which items they can offer.",
                     "ServiceCostsBoard" => "Adjust guide travel, upgrades and repairs separately. Discounts and reputation may still affect final prices.",
                     "ItemWeightBoard" => "Adjust ammunition, food and medicine, weapons or armor weight independently.",
                     "AnomalyGlobalDamage" => "GLOBAL affects all supported anomaly damage. Each anomaly also has its own damage setting; FINAL includes both before protection.",

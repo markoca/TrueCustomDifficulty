@@ -34,7 +34,7 @@ names={
   "economy.traderMinBuyCondition": "Minimum Sellable Condition",
   "economy.itemValueFloor": "Broken Gear Value",
   "economy.traderAmmoStock": "Trader Ammo Supply",
-  "economy.medicStock": "Medic Supplies",
+  "economy.medicStock": "Trader Medical Supply",
   "economy.consumableCost": "Item Values",
   "economy.fastTravelCost": "Guide Travel Fees",
   "equipment.weaponWearPerShot": "Weapon Wear per Shot",

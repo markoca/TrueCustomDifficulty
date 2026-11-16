@@ -753,7 +753,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var channels = new (string Id, string Label)[]
         {
             ("economy.traderAmmoStock", "AMMO SUPPLY"),
-            ("economy.medicStock", "MEDIC SUPPLIES")
+            ("economy.medicStock", "MEDICAL SUPPLY")
         };
         // Exceptionally narrow windows may use a two-row fallback so neither
         // dial or its caption gets cropped.

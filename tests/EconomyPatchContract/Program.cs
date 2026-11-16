@@ -109,6 +109,30 @@ internal static class Program
             var result = new CfgPatchWriterService().Write(vm, Catalog, null, path);
             var files = changed.Select(p => ExpectedFile(path, p.File))
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            // AMMO / MEDICAL SUPPLY (2026-11-16) additionally scale every
+            // trader's Ammo / Medical offers in per-trader clones, so their
+            // output is a superset: the audited in-place points must still
+            // be present with the exact values; extra clone edits are allowed.
+            var supply = id is "economy.medicStock" or "economy.traderAmmoStock";
+            if (supply)
+            {
+                Check(result.ParameterCount == 1 && result.EditCount > changed.Length,
+                    label + ": supply should add per-trader clone edits");
+                foreach (var file in files)
+                {
+                    var patch = Parse(File.ReadAllText(file));
+                    foreach (var entry in changed.Where(p => string.Equals(ExpectedFile(path, p.File),
+                                 file, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        var node = patch.Get(entry.Prototype);
+                        foreach (var segment in entry.NodePath) node = node.Get(segment);
+                        Approx(node.Value(entry.Key), Expected(par, entry), label + ": " + entry.Prototype + "." + entry.Key);
+                    }
+                }
+                _passed++;
+                Console.WriteLine("PASS " + label + " (" + changed.Length + " in-place fields + trader clones)");
+                return;
+            }
             Check(result.FileCount == files.Count && result.ParameterCount == 1 && result.EditCount == changed.Length,
                 label + ": file/parameter/edit count mismatch: "
                 + result.FileCount + "/" + result.ParameterCount + "/" + result.EditCount

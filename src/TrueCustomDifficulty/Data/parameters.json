@@ -8704,7 +8704,7 @@
       "tab": "economy",
       "group": "Trader Stock",
       "label": "Trader Ammo Supply",
-      "description": "Changes how much ammo regular traders carry. Ammo types, progression requirements, and restock behavior stay vanilla.",
+      "description": "Changes how much ammo every trader carries: all 39 trader profiles that sell ammo (general traders, bartenders, generic NPC traders, the one stocking technician and DLC1 traders).",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -8736,22 +8736,21 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The audited surface contains exactly 32 direct T1-T4 trader ammo rows and 64 MinCount/MaxCount edit points.",
-          "The writer changes only MinCount/MaxCount; ItemPrototypeSID, Chance, PlayerRank, wrapper links and trader refresh remain vanilla.",
-          "Trader_SovietAmmo_ItemGenerator and Trader_NatoAmmo_ItemGenerator are deliberately excluded until their consumer scope is separately proven safe.",
-          "DLC1 has no direct rows in this audited T1-T4 ammo surface; DLC trader behavior is not claimed by this control."
+          "The 64 audited T1-T4 MinCount/MaxCount points are still written in place.",
+          "Since 2026-11-16 every Ammo offer of every trader profile is also written as explicit source x factor counts in per-trader generator clones (trader-stock-entries-2.1.csv); originals shared with quests or NPCs are never mutated by that path.",
+          "AVOG in Trader_SovietAmmo_ItemGenerator has no authored count and keeps its native default."
         ]
       },
-      "rationale": "How much ammo traders have on the shelf. Vanilla: 1×. Lower = ammo runs out at the counter too. Doesn't add new calibers.",
+      "rationale": "How much ammo every trader has on the shelf — general traders, bartenders, generic stalkers and DLC traders alike. Vanilla: 1×. Lower = ammo runs out at the counter too; higher = bigger stacks. Doesn't add new calibers.",
       "logic": "1x keeps vanilla trader ammo stock. Lower settings reduce how much ammo traders carry; higher settings increase it.",
-      "interaction": "Changes amount only. It does not add ammo types, alter availability chance, bypass player-rank progression, or change refresh timing."
+      "interaction": "Changes amount only. It does not add ammo types, alter availability chance, bypass player-rank progression, or change refresh timing. TRADER STOCK odds sliders change how often ammo is offered."
     },
     {
       "id": "economy.medicStock",
       "tab": "economy",
       "group": "Trader Stock",
-      "label": "Medic Supplies",
-      "description": "Changes how many medical supplies medics carry for sale. Item availability, progression requirements, and restock timing stay vanilla.",
+      "label": "Trader Medical Supply",
+      "description": "Changes how many meds every trader carries: all 55 trader profiles that sell medical items (15 medics, 30 general traders, 9 generic NPC traders, 1 technician).",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -8783,14 +8782,13 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The audited surface contains exactly 48 direct stock rows: 25 MedicUniversal and 23 MedicNoon.",
-          "All 48 rows have MinCount/MaxCount. The writer changes only those fields and preserves item SID, Chance, PlayerRank, wrapper links and TradePrototype refresh.",
-          "42 rows use Chance=1; the six progression/rarity Chance rows remain untouched. Runtime verification requires a genuine trader stock refresh."
+          "The 96 audited MedicUniversal / MedicNoon MinCount/MaxCount points are still written in place.",
+          "Since 2026-11-16 every Medical offer of every trader profile is also written as explicit source x factor counts in per-trader generator clones (trader-stock-entries-2.1.csv)."
         ]
       },
-      "rationale": "How many meds medics have for sale. Vanilla: 1×. Lower = you can't just restock everything in one visit.",
+      "rationale": "How many meds every trader has for sale — medics, general traders and generic stalkers alike. Vanilla: 1×. Lower = you can't restock everything in one visit.",
       "logic": "100% keeps vanilla medic stock. Lower settings reduce stock; higher settings increase it.",
-      "interaction": "Affects medic supplies only. Other traders, progression requirements, availability, and restock timing stay vanilla."
+      "interaction": "Changes amount only. Availability chance, progression and restock timing stay vanilla. TRADER STOCK odds sliders change how often meds are offered."
     },
     {
       "id": "economy.consumableCost",

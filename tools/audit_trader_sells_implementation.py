@@ -29,8 +29,10 @@ writer = (src / "Services/CfgPatchWriterService.TraderSells.cs").read_text(encod
 policy = (src / "Services/TraderSellsPolicy.cs").read_text(encoding="utf-8")
 assert 'TraderSellsPolicy.Categories.Where' in ui
 assert 'TraderSellsPolicy.IsAvailable(role, c)' in ui
-assert 'parameter.CurrentBoolean = cell.IsChecked == true' in ui
-assert 'parameter.IsValueModifiedFromReference()' in ui
+# One "keep X% of game odds" rail per category: 0% = SELL toggle off,
+# 5–95% = TraderSellOdds sidecar, 100% = vanilla.
+assert 'parameter.CurrentBoolean = value > 0.0000001;' in ui
+assert 'SellOdds?.Set(id, value);' in ui
 assert 'TraderItemOverrides' in ui
 assert 'legacy item-specific exclusions' in ui
 assert 'legacy BUY restrictions' in ui

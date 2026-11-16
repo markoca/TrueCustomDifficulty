@@ -37,6 +37,25 @@ public sealed class TraderBuysMatrix : UserControl
         new FrameworkPropertyMetadata(0.02, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
             (o, _) => ((TraderBuysMatrix)o).Refresh()));
 
+    public static readonly DependencyProperty SellOddsProperty = DependencyProperty.Register(
+        nameof(SellOdds), typeof(TraderSellOddsViewModel), typeof(TraderBuysMatrix),
+        new PropertyMetadata(null, (o, e) =>
+        {
+            var matrix = (TraderBuysMatrix)o;
+            if (e.OldValue is TraderSellOddsViewModel old) old.Changed -= matrix.OnOddsChanged;
+            if (e.NewValue is TraderSellOddsViewModel now) now.Changed += matrix.OnOddsChanged;
+            matrix.Refresh();
+        }));
+
+    /// <summary>Partial "keep X% of game odds" per role x category.</summary>
+    public TraderSellOddsViewModel? SellOdds
+    {
+        get => (TraderSellOddsViewModel?)GetValue(SellOddsProperty);
+        set => SetValue(SellOddsProperty, value);
+    }
+
+    private void OnOddsChanged(object? sender, EventArgs e) => Refresh();
+
     public bool RareGearEnabled
     {
         get => (bool)GetValue(RareGearEnabledProperty);
@@ -65,7 +84,9 @@ public sealed class TraderBuysMatrix : UserControl
 
     private Dictionary<string, ParameterViewModel> _source = new(StringComparer.Ordinal);
     private readonly List<ParameterViewModel> _observed = new();
-    private readonly Dictionary<string, CheckBox> _cells = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, (Slider Slider, TextBlock Value, Border Row)> _cells =
+        new(StringComparer.Ordinal);
+    private bool _syncingSliders;
     private TextBlock? _legacyNotice;
     private CheckBox? _gearCheck;
     private Border? _gearOutline;
@@ -117,7 +138,7 @@ public sealed class TraderBuysMatrix : UserControl
         root.Children.Add(Text("TRADER STOCK", 13, accent));
         root.Children.Add(new TextBlock
         {
-            Text = "ON keeps original offers  ·  OFF removes the category",
+            Text = "100% = game odds  ·  0% removes the category",
             Foreground = muted, FontSize = 10, Margin = new Thickness(0, 4, 0, 10)
         });
         _roles = new StackPanel { Orientation = Orientation.Horizontal };
@@ -189,53 +210,60 @@ public sealed class TraderBuysMatrix : UserControl
         {
             var id = TraderSellsPolicy.ParameterId(role, category);
             var parameter = _source[id];
+            // One compact "keep X% of the game's odds" rail per category:
+            // 0% = the native SELL toggle off (category removed), 5–95% =
+            // TraderSellOdds sidecar (scaled native Chance), 100% = vanilla.
             var grid = new Grid { Height = 34 };
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(110) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(58) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(46) });
             var name = Text(category.Label.ToUpperInvariant(), 11, fg);
             name.Margin = new Thickness(10, 0, 0, 0);
             grid.Children.Add(name);
-            var cell = new CheckBox
+            var slider = new Slider
             {
-                IsChecked = parameter.CurrentBoolean,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                ToolTip = "ON: original " + category.Label + " stock. OFF: remove " +
-                          category.Label + " from " + role.Label + " stock."
+                Minimum = 0.0, Maximum = 1.0, TickFrequency = TraderSellOddsViewModel.Step,
+                SmallChange = TraderSellOddsViewModel.Step, LargeChange = 0.1,
+                IsSnapToTickEnabled = true, VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(4, 0, 8, 0), MaxWidth = 360,
+                ToolTip = "How much of the game's odds for " + category.Label + " offers "
+                    + role.Label + " traders keep. 100% = game odds, 0% = removed."
             };
-            cell.Click += (_, _) =>
+            slider.ValueChanged += (_, _) =>
             {
-                parameter.CurrentBoolean = cell.IsChecked == true;
+                if (_syncingSliders) return;
+                var value = TraderSellOddsViewModel.Snap(slider.Value);
+                SellOdds?.Set(id, value);
+                parameter.CurrentBoolean = value > 0.0000001;
                 ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
                 Refresh();
             };
-            var outline = new Border
-            {
-                BorderBrush = parameter.IsValueModifiedFromReference() ? accent : Brushes.Transparent,
-                BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(3),
-                Width = 28, Height = 27, HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center, Child = cell
-            };
-            Grid.SetColumn(outline, 1);
-            grid.Children.Add(outline);
+            Grid.SetColumn(slider, 1);
+            grid.Children.Add(slider);
+            var valueText = Text("100%", 11, fg);
+            valueText.HorizontalAlignment = HorizontalAlignment.Right;
+            valueText.Margin = new Thickness(0, 0, 8, 0);
+            Grid.SetColumn(valueText, 2);
+            grid.Children.Add(valueText);
             var row = new Border
             {
                 BorderBrush = border, BorderThickness = new Thickness(1),
                 CornerRadius = new CornerRadius(3), Background = background,
                 Margin = new Thickness(1, 2, 1, 2), Child = grid
             };
-            // Preview catches right-clicks on the row, checkbox and its chrome.
-            // Reset only this native SELL category, never the selected role.
+            // Preview catches right-clicks on the row and its slider.
+            // Reset only this category (toggle and partial odds).
             row.PreviewMouseRightButtonDown += (_, e) =>
             {
                 if (!parameter.IsControlEnabled) return;
                 parameter.ResetToReference();
+                SellOdds?.Set(id, 1.0);
                 ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
                 Refresh();
                 e.Handled = true;
             };
             _categories.Children.Add(row);
-            _cells[id] = cell;
+            _cells[id] = (slider, valueText, row);
         }
 
         if (_roleId == "genericNpc")
@@ -337,13 +365,18 @@ public sealed class TraderBuysMatrix : UserControl
 
     private void Refresh()
     {
-        foreach (var (id, checkbox) in _cells)
+        foreach (var (id, cell) in _cells)
         {
             if (!_source.TryGetValue(id, out var parameter)) continue;
-            checkbox.IsChecked = parameter.CurrentBoolean;
-            if (checkbox.Parent is Border outline)
-                outline.BorderBrush = parameter.IsValueModifiedFromReference()
-                    ? BrushFor("AccentBrush", Brushes.Gold) : Brushes.Transparent;
+            var value = parameter.CurrentBoolean ? SellOdds?.Get(id) ?? 1.0 : 0.0;
+            var modified = Math.Abs(value - 1.0) > 0.0000001;
+            _syncingSliders = true;
+            try { if (Math.Abs(cell.Slider.Value - value) > 0.0000001) cell.Slider.Value = value; }
+            finally { _syncingSliders = false; }
+            cell.Value.Text = Math.Round(value * 100.0)
+                .ToString(System.Globalization.CultureInfo.InvariantCulture) + "%";
+            cell.Value.Foreground = modified
+                ? BrushFor("AccentBrush", Brushes.Gold) : BrushFor("TextBrush", Brushes.White);
         }
         if (_gearCheck is not null)
         {

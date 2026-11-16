@@ -30,6 +30,10 @@ public sealed class PresetFile
     [JsonPropertyName("traderItemOverrides")]
     public string TraderItemOverrides { get; set; } = string.Empty;
 
+    // TRADER STOCK partial odds (role x category, 0.05–0.95); only changed ids.
+    [JsonPropertyName("traderSellOdds")]
+    public Dictionary<string, double>? TraderSellOdds { get; set; }
+
     // Optional backwards-compatible trade-only bonus fields. Older factory
     // presets omit them and load with GEAR OFF and the 2% stored chance.
     [JsonPropertyName("genericNpcRareGearEnabled")]

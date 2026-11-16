@@ -331,7 +331,8 @@ public sealed partial class CfgPatchWriterService
             documents,
             writtenParameters);
         editCount += WriteTraderBuys(modifiedById, hasDlc1, documents, writtenParameters);
-        editCount += WriteTraderSells(modifiedById, vm.TraderItemOverrides, hasDlc1, documents, writtenParameters);
+        editCount += WriteTraderSells(modifiedById, vm.TraderItemOverrides,
+            vm.TraderSellOdds.Values, hasDlc1, documents, writtenParameters);
         // The Generic NPC GEAR checkbox/slider own this trade-only bonus.
         // No environment variable, item corpse drop or unrelated trader edits.
         editCount += WriteGenericNpcRareTraderStock(

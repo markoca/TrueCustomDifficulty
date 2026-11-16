@@ -4367,7 +4367,7 @@ _stock_knob_source = _knob_source
 if (not all(v in _stock_knob_source for v in (
     'private void DrawTraderStockKnobs(',
     '("economy.traderAmmoStock", "AMMO SUPPLY")',
-    '("economy.medicStock", "MEDIC SUPPLIES")',
+    '("economy.medicStock", "MEDICAL SUPPLY")',
     '"TraderStockBoard" => StockAmountBoardHeight(width)',
 )) or not knob_wheel_gate_contains(_stock_knob_source, "TraderStockBoard") or any('2026-10-11 — Trader Stock native knobs' not in d
           for d in _knob_catalog_texts)):

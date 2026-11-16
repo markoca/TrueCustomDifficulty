@@ -101,6 +101,46 @@ public sealed partial class CfgPatchWriterService
         return rows;
     }
 
+    private const string TraderStockEntriesResource = "TrueCustomDifficulty.Data.trader-stock-entries-2.1.csv";
+    private const string TraderStockEntriesHash =
+        "98811084DAEED22AE2DEEB9A8A9FAE7DB119E07C9D875879F18E49519A586B3B";
+
+    /// <summary>Source values of one trader stock entry (built from the 2.1 dump).</summary>
+    private sealed record TraderStockEntry(
+        string Scope, string GeneratorSid, string EntryPath, string ItemSid,
+        string Field, string Value, string MinCount, string MaxCount,
+        int ListCount, double ListWeightTotal);
+
+    private static IReadOnlyDictionary<(string, string, string), TraderStockEntry> LoadTraderStockEntries()
+    {
+        using var stream = Assembly.GetExecutingAssembly()
+            .GetManifestResourceStream(TraderStockEntriesResource)
+            ?? throw new InvalidDataException("Missing trader stock entry values resource.");
+        using var reader = new StreamReader(stream);
+        var text = reader.ReadToEnd().Replace("\r\n", "\n", StringComparison.Ordinal);
+        var hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(text)));
+        if (!hash.Equals(TraderStockEntriesHash, StringComparison.Ordinal))
+            throw new InvalidDataException("Trader stock entry values require the exact 2.1 manifest.");
+        var lines = text.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+        if (lines[0] != "generator_scope,generator_sid,entry_cfg_path,item_sid,field,value,"
+                + "min_count,max_count,list_count,list_weight_total")
+            throw new InvalidDataException("Trader stock entry values header changed.");
+        var result = new Dictionary<(string, string, string), TraderStockEntry>();
+        foreach (var line in lines.Skip(1))
+        {
+            var x = line.Split(',');
+            if (x.Length != 10 || x[4] is not ("Chance" or "Weight"))
+                throw new InvalidDataException("Unexpected trader stock entry value row.");
+            result.Add((x[0], x[1], x[2]), new TraderStockEntry(x[0], x[1], x[2], x[3], x[4], x[5],
+                x[6], x[7],
+                x[8].Length == 0 ? 0 : int.Parse(x[8], System.Globalization.CultureInfo.InvariantCulture),
+                x[9].Length == 0 ? 0 : double.Parse(x[9], System.Globalization.CultureInfo.InvariantCulture)));
+        }
+        if (result.Count != 608 || result.Values.Count(e => e.Field == "Weight") != 5)
+            throw new InvalidDataException("Trader stock entry value census drifted (608 / 5 Weight).");
+        return result;
+    }
+
     private static string SellCloneSid(string scope, string tradeSid, int slot, string sourceSid)
     {
         var seed = slot == 0
@@ -126,10 +166,22 @@ public sealed partial class CfgPatchWriterService
     private static int WriteTraderSells(
         IReadOnlyDictionary<string, ParameterViewModel> modifiedById,
         string traderItemOverrides,
+        IReadOnlyDictionary<string, double> sellOdds,
         bool hasDlc1,
         IDictionary<string, PatchDocument> documents,
         ISet<string> writtenParameters)
     {
+        // Supply amounts: every Ammo / Medical offer of EVERY trader profile,
+        // written as explicit source x factor counts into the per-trader
+        // clones (never relying on inherited in-place edits).
+        double Factor(string id) => modifiedById.TryGetValue(id, out var p) ? p.CurrentNumber : 1.0;
+        var ammoFactor = Factor("economy.traderAmmoStock");
+        var medicalFactor = Factor("economy.medicStock");
+        // Partial odds per role x category (0 < x < 1); 0 is the SELL toggle.
+        var odds = sellOdds.Where(pair => pair.Value > 0.0000001 && pair.Value < 1.0 - 0.0000001
+                && TraderSellsPolicy.ParameterIds.Contains(pair.Key)
+                && !modifiedById.ContainsKey(pair.Key))
+            .ToDictionary(pair => pair.Key, pair => pair.Value, StringComparer.Ordinal);
         var changed = TraderSellsPolicy.Roles.SelectMany(role =>
             TraderSellsPolicy.Categories.Where(c => TraderSellsPolicy.IsAvailable(role, c))
                 .Select(category => (Role: role, Category: category,
@@ -139,11 +191,15 @@ public sealed partial class CfgPatchWriterService
         // 359 gameplay parameter IDs and the old role-level SELL flags survive.
         // Only existing source item SIDs may be removed.
         var disabledItems = TraderOffersPolicy.Decode(traderItemOverrides);
-        if (changed.Length == 0 && disabledItems.Count == 0) return 0;
+        var amountsChanged = Math.Abs(ammoFactor - 1.0) > 0.0000001
+            || Math.Abs(medicalFactor - 1.0) > 0.0000001;
+        if (changed.Length == 0 && disabledItems.Count == 0 && odds.Count == 0 && !amountsChanged)
+            return 0;
         if (changed.Any(x => !modifiedById[x.Id].IsToggle || modifiedById[x.Id].CurrentBoolean))
             throw new InvalidDataException("Trader Sells only supports explicitly unchecked category removals.");
 
         var source = LoadTraderSellOffers();
+        var entryValues = LoadTraderStockEntries();
         var edited = 0;
         var cloneIdentities = new Dictionary<string, (string Scope, string Source)>(StringComparer.Ordinal);
         void RegisterClone(string sid, string scope, string original)
@@ -163,10 +219,18 @@ public sealed partial class CfgPatchWriterService
             var roleItemKeys = disabledItems.Where(x =>
                 x.StartsWith(role.Id + "|", StringComparison.Ordinal))
                 .ToHashSet(StringComparer.Ordinal);
-            if (roleChanges.Length == 0 && roleItemKeys.Count == 0) continue;
             var labels = roleChanges.Select(c => c.Category.Label).ToHashSet(StringComparer.Ordinal);
-            var affected = profile.Where(r => labels.Contains(r.Category) ||
-                roleItemKeys.Contains(TraderOffersPolicy.Key(role.Id, r.ItemSid)))
+            double OddsFor(TraderSellOffer r) => odds.TryGetValue(
+                TraderSellsPolicy.Prefix + role.Id + "." + r.Category.ToLowerInvariant(), out var v) ? v : 1.0;
+            double AmountFor(TraderSellOffer r) => r.Category switch
+            {
+                "Ammo" => ammoFactor, "Medical" => medicalFactor, _ => 1.0
+            };
+            bool Removed(TraderSellOffer r) => labels.Contains(r.Category)
+                || roleItemKeys.Contains(TraderOffersPolicy.Key(role.Id, r.ItemSid));
+            var affected = profile.Where(r => Removed(r)
+                    || Math.Abs(OddsFor(r) - 1.0) > 0.0000001
+                    || Math.Abs(AmountFor(r) - 1.0) > 0.0000001)
                 .GroupBy(r => (r.GeneratorScope, r.GeneratorSid, r.EntryPath, r.ItemSid,
                     r.NestedChain, r.OuterLinks)).Select(g => g.First()).ToArray();
             if (affected.Length == 0) continue;
@@ -231,8 +295,52 @@ public sealed partial class CfgPatchWriterService
                     .Select(g => g.First()))
                 {
                     var path = leaf.EntryPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
-                    document.AddRemovalNode(targetClone, path[..^1], path[^1]);
-                    edited++;
+                    var entry = entryValues[(leaf.GeneratorScope, leaf.GeneratorSid, leaf.EntryPath)];
+                    if (entry.ItemSid != leaf.ItemSid)
+                        throw new InvalidDataException("Trader stock entry value mismatch: " + leaf.EntryPath);
+                    var keep = Removed(leaf) ? 0.0 : OddsFor(leaf);
+                    if (entry.Field == "Chance" && keep <= 0.0000001)
+                    {
+                        // Chance offer removed: no other offer gains from it.
+                        document.AddRemovalNode(targetClone, path[..^1], path[^1]);
+                        edited++;
+                        continue;
+                    }
+                    if (Math.Abs(keep - 1.0) > 0.0000001)
+                    {
+                        var sourceValue = ParseNumber(entry.Value);
+                        if (entry.Field == "Chance")
+                            document.AddAssignment(targetClone, path, "Chance",
+                                FormatLikeSource(Math.Clamp(sourceValue * keep, 0.0, 1.0), entry.Value));
+                        else
+                        {
+                            // Weight offer (single-entry native lists): keep x
+                            // of its odds, the rest goes to a native Empty pick.
+                            document.AddAssignment(targetClone, path, "Weight",
+                                FormatLikeSource(sourceValue * keep, entry.Value));
+                            var removed = sourceValue * (1.0 - keep);
+                            if (removed > 0.0000001)
+                            {
+                                var emptyPath = path[..^1].Append($"[{entry.ListCount}]").ToArray();
+                                document.AddAssignment(targetClone, emptyPath, "ItemPrototypeSID", "Empty");
+                                document.AddAssignment(targetClone, emptyPath, "Weight",
+                                    removed.ToString("0.####", System.Globalization.CultureInfo.InvariantCulture));
+                                edited++;
+                            }
+                        }
+                        edited++;
+                    }
+                    var amount = AmountFor(leaf);
+                    if (Math.Abs(amount - 1.0) > 0.0000001)
+                        foreach (var (countKey, countRaw) in new[] { ("MinCount", entry.MinCount), ("MaxCount", entry.MaxCount) })
+                        {
+                            if (!int.TryParse(countRaw, System.Globalization.NumberStyles.Integer,
+                                    System.Globalization.CultureInfo.InvariantCulture, out var sourceCount) || sourceCount <= 0)
+                                continue;
+                            document.AddAssignment(targetClone, path, countKey,
+                                ScalePositiveInteger(sourceCount, amount).ToString(System.Globalization.CultureInfo.InvariantCulture));
+                            edited++;
+                        }
                 }
             }
 
@@ -243,6 +351,10 @@ public sealed partial class CfgPatchWriterService
             foreach (var c in roleChanges)
                 if (affected.Any(r => r.Category == c.Category.Label))
                     writtenParameters.Add(c.Id);
+            if (Math.Abs(ammoFactor - 1.0) > 0.0000001 && affected.Any(r => r.Category == "Ammo"))
+                writtenParameters.Add("economy.traderAmmoStock");
+            if (Math.Abs(medicalFactor - 1.0) > 0.0000001 && affected.Any(r => r.Category == "Medical"))
+                writtenParameters.Add("economy.medicStock");
         }
 
         return edited;

@@ -716,3 +716,8 @@ the real decoded ZIP pair; Unreal runtime remains untested.
 After building with Basic AMMO, Basic MEDS, Basic DRINKS or Standard AMMO in ADJUST ODDS set to 0%, open several unopened ordinary Basic / Standard stashes: those categories must never appear and the game must not error. At 50%, roughly half of the stashes should miss that category. Repeat with Rare AMMO at 0%. Confirm the generated ItemGeneratorPrototypes patch contains `ItemPrototypeSID = Empty` entries only in the TCD stash template clones.
 
 With Basic MEDS at 0% on Veteran, Basic stashes must still give food/milk exactly as often as before (the bandage share becomes nothing, not extra food).
+
+
+## Trader stock odds and supply — in-game check
+
+Set General Traders · WEAPONS to 50% and AMMO SUPPLY to 0.5×, build, and refresh a general trader's stock (wait for the restock): fewer weapon offers, smaller ammo stacks. Repeat with a generic NPC trader (ammo and meds were not reachable before). Set a category to 0% and confirm it disappears. Check the patch: per-trader `TCD_TS_*` clones carry `Chance` / `MinCount` / `MaxCount` assignments; `DynamicTraderItemGenerator` clones carry an `ItemPrototypeSID = Empty` entry only when a Weapons/Armor rail is between 5% and 95%.

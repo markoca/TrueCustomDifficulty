@@ -1,3 +1,10 @@
+## 2026-11-16 — CURRENT: TRADER STOCK — odds per category, supply for every trader
+
+* **Category rails replace the SELL checkboxes** in `TraderBuysMatrix`: one compact "keep X% of the game's odds" rail per role × category (5% steps, value right, gold when changed, right-click resets). **0%** = the existing catalog SELL toggle off (offer entries removed), **5–95%** = `TraderSellOddsViewModel` sidecar (preset block `traderSellOdds`), **100%** = vanilla. Header: `100% = game odds · 0% removes the category`.
+* **Writer** (`WriteTraderSells`, same per-trader generator clones): Chance offers (603 of 608 entries) get `Chance × X`; the 5 Weight offers (single-entry `DynamicTraderItemGenerator` lists) get `Weight × X` plus a native `Empty` pick with the rest. Source values come from the new hash-locked `Data/trader-stock-entries-2.1.csv` (608 entries, built from the 2.1 base + DLC1 dumps by `tools/build_trader_stock_entries_21.py`).
+* **AMMO SUPPLY** now reaches all **39** trader profiles that sell ammo (was 29 fully + 1 partly); **MEDICAL SUPPLY** (renamed from MEDIC SUPPLIES; label *Trader Medical Supply*) reaches all **55** profiles that sell meds (was the 15 medics). Counts are written explicitly as source × factor in the clones; the audited in-place T1–T4 / medic points stay.
+* Audit: `tools/audit_trader_stock_odds.py`. C# `EconomyPatchContract` accepts the supply superset.
+
 ## 2026-11-16 — CURRENT: MEDICAL COMPOSITION — one keep-odds control per item, odds table, SmartLoot kept-share rule
 
 **Supersedes DROP ROLLS · CHANCE %, LOOT PRIORITY · NATIVE WEIGHTS, EFFECTIVE PICK and the ANTI-RAD ON/OFF switch.** Same grammar as STASH LOOT MIX (definition: `docs/STASH-WEIGHT-VS-CHANCE.md`).
