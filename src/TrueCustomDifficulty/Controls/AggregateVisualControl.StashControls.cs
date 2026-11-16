@@ -211,6 +211,7 @@ public sealed partial class AggregateVisualControl
             _selectedParameter = null;
             _selectedHitKind = null;
             Focus();
+            SelectStashPresence(id);
             CaptureMouse();
             SetStashPresenceFromPoint(id, rail, point);
             return true;
@@ -249,6 +250,35 @@ public sealed partial class AggregateVisualControl
     }
 
     private void StashPresenceLostCapture() => _stashPresenceDragging = null;
+
+    // Presence cells are sidecars, not catalog parameters: like the NPC LOOT
+    // sidecar cards they report a gamer-facing card on the board anchor, so
+    // the panel explains the clicked cell instead of keeping a stale one.
+    private static readonly IReadOnlyDictionary<string, NpcLootCard> StashPresenceCards =
+        new Dictionary<string, NpcLootCard>(StringComparer.Ordinal)
+        {
+            [StashPresenceViewModel.CheapAmmoId] = new(StashPresenceViewModel.CheapAmmoId,
+                "loot.stashMixMedical", "BASIC AMMO", "Basic Ammo Odds",
+                "How often a Basic stash gives ammo. In the game every Basic stash picks one ammo stack "
+                + "(9×18, 9×19 or 12 gauge); lower this and that pick comes up empty that share of the time.\n\n"
+                + "100% = the game's odds, 50% = ammo in about half as many Basic stashes, 0% = never.\n\n"
+                + "Smart world ammo stashes are a separate game system and keep their own odds. "
+                + "How much ammo you get is AMMO AMOUNT.",
+                "Drag the rail. ←/→ change it by 5%, Home = 0%, End = 100%. Right-click resets to 100%; R resets the whole board."),
+            [StashPresenceViewModel.MediumAmmoId] = new(StashPresenceViewModel.MediumAmmoId,
+                "loot.stashMixMedical", "STANDARD AMMO", "Standard Ammo Odds",
+                "How often a Standard stash gives ammo. In the game every Standard stash picks one ammo stack "
+                + "from a caliber list that grows with your rank; lower this and that pick comes up empty that share of the time.\n\n"
+                + "100% = the game's odds, 50% = ammo in about half as many Standard stashes, 0% = never.\n\n"
+                + "Smart world ammo stashes keep their own odds. How much ammo you get is AMMO AMOUNT.",
+                "Drag the rail. ←/→ change it by 5%, Home = 0%, End = 100%. Right-click resets to 100%; R resets the whole board.")
+        };
+
+    private void SelectStashPresence(string id)
+    {
+        if (StashPresenceCards.TryGetValue(id, out var card) && P(card.OwnerId) is { } owner)
+            ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(owner, card));
+    }
 
     private bool StashPresenceKeyDown(Key key)
     {

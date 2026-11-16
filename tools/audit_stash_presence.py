@@ -189,6 +189,9 @@ assert "_afterPresetLoadSyncs.Add(SyncStashAmmoQuantity);" in vm
 assert "_afterPresetLoadSyncs.Add(() => Mirror(scale, bias));" in vm
 assert "foreach (var sync in _afterPresetLoadSyncs)" in vm
 
+# ---- 17. Presence cells explain themselves in the panel -------------------
+assert "SelectStashPresence(id);" in grid and '"Basic Ammo Odds"' in grid and '"Standard Ammo Odds"' in grid
+
 for token in ("ONE entry", "Empty", "Desolation", "13564", "never mix", "SmartKeptShare",
               "Basic Chance rows", "CHANCE", "CheapNoFresh", "SUPPLY REDUCTION",
               "Smart Chance groups"):

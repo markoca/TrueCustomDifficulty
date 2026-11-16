@@ -1,3 +1,7 @@
+## 2026-11-16 — CURRENT: presence cells select their own panel text
+
+* Clicking a BASIC / STANDARD AMMO cell in ADJUST ODDS now shows its own panel card (*Basic Ammo Odds* / *Standard Ammo Odds*: what it does, 100% / 50% / 0%, smart ammo stashes separate, AMMO AMOUNT for amounts, key help), like the NPC LOOT sidecar cards. Before, the panel kept the previously clicked control.
+
 ## 2026-11-16 — CURRENT: control behaviour consistency (R reset, keyboard, vanilla reachable, preset mirrors)
 
 * **R (group reset)** on STASH LOOT MIX also resets the BASIC / STANDARD AMMO presence cells; on NPC LOOT it also resets NEED BOOST and the per-item rows (MOD LOOT SCARCITY stays independent, like WORLD LOOT REMOVAL). Before, the board kept those values and its modified marker after "Visual group reset".
