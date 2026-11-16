@@ -42,5 +42,5 @@ public static class TraderStockRationale
         string.Join(Environment.NewLine,
             NamedProfiles.Select(p => p.Name + " — " + p.Categories)) +
         Environment.NewLine + Environment.NewLine +
-        "MQ11, SQ14 and Stage 2 are distinct story-stage inventories. Binoculars are source-listed but have no category rail. Technicians mostly repair and upgrade; the TECHNICIAN rails matter mainly for Bolshak (DLC1). Trader Stock rails change whole trader types, not one named trader. Availability still depends on the original chance, rank and refresh rules.";
+        "MQ11, SQ14 and Stage 2 are distinct story-stage inventories. Binoculars are source-listed but have no category rail. Technicians repair and upgrade; only Bolshak (DLC1) sells items and his stock is not edited (AMMO / MEDICAL SUPPLY still apply). Trader Stock rails change whole trader types, not one named trader. Availability still depends on the original chance, rank and refresh rules.";
 }

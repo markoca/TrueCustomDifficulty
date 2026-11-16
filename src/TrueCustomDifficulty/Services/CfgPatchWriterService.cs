@@ -403,6 +403,8 @@ public sealed partial class CfgPatchWriterService
 
         if (!hasDlc1)
             dormantSavedOnly.UnionWith(TraderSellsPolicy.Dlc1OnlyParameterIds);
+        // TECHNICIAN stock is not edited: old preset values stay saved only.
+        dormantSavedOnly.UnionWith(TraderSellsPolicy.ParameterIds.Except(TraderSellsPolicy.EditableParameterIds));
 
         var missing = modifiedSupported
             .Where(id => !writtenParameters.Contains(id) && !dormantSavedOnly.Contains(id))

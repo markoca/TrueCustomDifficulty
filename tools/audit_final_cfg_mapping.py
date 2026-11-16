@@ -41,6 +41,10 @@ NON_UI = {
     # They are still covered by static direct/special CFG ownership checks.
     "environment.diamondHealthDamage", "environment.diamondBleeding",
     "loot.standardStashChanceScale", "loot.rareStashChanceScale",
+    # TECHNICIAN stock: saved only, never written (2026-11-16).
+    "economy.traderSells.technician.weapons", "economy.traderSells.technician.attachments",
+    "economy.traderSells.technician.ammo", "economy.traderSells.technician.medical",
+    "economy.traderSells.technician.food", "economy.traderSells.technician.drinks",
 }
 
 def require(value, message):

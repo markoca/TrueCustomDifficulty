@@ -243,7 +243,7 @@ public sealed class TraderBuysMatrix : FrameworkElement
             text, muted, border, accent, panel);
 
         // Trader role chips.
-        var roles = TraderSellsPolicy.Roles;
+        var roles = TraderSellsPolicy.EditorRoles;
         var perRow = ChipRows(ActualWidth) == 1 ? roles.Count : 3;
         var chipWidth = (width - (perRow - 1) * 6.0) / perRow;
         for (var i = 0; i < roles.Count; i++)
@@ -429,7 +429,7 @@ public sealed class TraderBuysMatrix : FrameworkElement
 
     private void ResetBoard()
     {
-        foreach (var id in TraderSellsPolicy.ParameterIds)
+        foreach (var id in TraderSellsPolicy.EditableParameterIds)
             if (_source.TryGetValue(id, out var sell)) sell.ResetToReference();
         SellOdds?.Reset();
         RareGearEnabled = false;

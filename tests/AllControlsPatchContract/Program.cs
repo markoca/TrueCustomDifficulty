@@ -27,7 +27,11 @@ internal static partial class Program
         // instantiated in the current ViewModel. Do not manufacture
         // invisible controls merely to satisfy the all-controls probe.
         "environment.diamondHealthDamage", "environment.diamondBleeding",
-        "loot.standardStashChanceScale", "loot.rareStashChanceScale"
+        "loot.standardStashChanceScale", "loot.rareStashChanceScale",
+        // TECHNICIAN stock has no rail and is never written (2026-11-16).
+        "economy.traderSells.technician.weapons", "economy.traderSells.technician.attachments",
+        "economy.traderSells.technician.ammo", "economy.traderSells.technician.medical",
+        "economy.traderSells.technician.food", "economy.traderSells.technician.drinks"
     };
 
     [STAThread]
@@ -40,8 +44,8 @@ internal static partial class Program
 
             var ids = Catalog.Parameters.Select(p => p.Id).ToHashSet(StringComparer.Ordinal);
             var tested = ids.Except(NonUi, StringComparer.Ordinal).OrderBy(x => x, StringComparer.Ordinal).ToArray();
-            Check(ids.Count == 390 && NonUi.IsSubsetOf(ids) && tested.Length == 373,
-                "Expected 390 catalog sources and 373 mounted editable writer probes");
+            Check(ids.Count == 390 && NonUi.IsSubsetOf(ids) && tested.Length == 367,
+                "Expected 390 catalog sources and 367 mounted editable writer probes");
 
             // The ordinary Master/Stalker corpse package contains no bonus
             // NPC_Ammo_Smart, so that source must be explicitly probed where

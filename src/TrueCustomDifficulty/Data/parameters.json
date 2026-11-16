@@ -17890,7 +17890,8 @@
           "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
-          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role.",
+          "Not edited since 2026-11-16: only one technician (Bolshak, DLC1) sells items. No rail; a saved value is kept for preset compatibility but never written."
         ]
       },
       "rationale": "How often technicians offer weapons. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = technicians never sell weapons, so you have to find them out in the Zone.",
@@ -17929,7 +17930,8 @@
           "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
-          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role.",
+          "Not edited since 2026-11-16: only one technician (Bolshak, DLC1) sells items. No rail; a saved value is kept for preset compatibility but never written."
         ]
       },
       "rationale": "How often technicians offer attachments. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = technicians never sell attachments, so you have to find them out in the Zone.",
@@ -17968,7 +17970,8 @@
           "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
-          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role.",
+          "Not edited since 2026-11-16: only one technician (Bolshak, DLC1) sells items. No rail; a saved value is kept for preset compatibility but never written."
         ]
       },
       "rationale": "How often technicians offer ammo. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = technicians never sell ammo, so you have to find them out in the Zone.",
@@ -18007,7 +18010,8 @@
           "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
-          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role.",
+          "Not edited since 2026-11-16: only one technician (Bolshak, DLC1) sells items. No rail; a saved value is kept for preset compatibility but never written."
         ]
       },
       "rationale": "How often technicians offer meds. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = technicians never sell meds, so you have to find them out in the Zone.",
@@ -18046,7 +18050,8 @@
           "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
-          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role.",
+          "Not edited since 2026-11-16: only one technician (Bolshak, DLC1) sells items. No rail; a saved value is kept for preset compatibility but never written."
         ]
       },
       "rationale": "How often technicians offer food. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = technicians never sell food, so you have to find them out in the Zone.",
@@ -18085,7 +18090,8 @@
           "The source-exact 2.1 2939-row seller offer manifest drives per-trader inherited generator clones.",
           "Shared quest/NPC and cross-role generators are never modified directly; the affected trade profile gets a private generator graph.",
           "All original rank gates, probabilities, quantity, refresh, and prices remain unchanged.",
-          "No change at default. An OFF cell removes only the selected item category from the selected trader role."
+          "No change at default. An OFF cell removes only the selected item category from the selected trader role.",
+          "Not edited since 2026-11-16: only one technician (Bolshak, DLC1) sells items. No rail; a saved value is kept for preset compatibility but never written."
         ]
       },
       "rationale": "How often technicians offer drinks. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = technicians never sell drinks, so you have to find them out in the Zone.",

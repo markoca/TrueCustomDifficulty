@@ -14,9 +14,19 @@ public static class TraderSellsPolicy
     public sealed record Category(string Id, string Label);
     public static readonly IReadOnlyList<TraderBuysPolicy.Role> Roles = TraderBuysPolicy.Roles;
 
-    // Every role is editable: a role whose values are written must be visible
-    // (technician stock is small and mostly DLC1 Bolshak, but real).
-    public static readonly IReadOnlyList<TraderBuysPolicy.Role> EditorRoles = Roles;
+    // Technicians repair and upgrade; only one (Bolshak, DLC1) sells items.
+    // TECHNICIAN is not edited: no rail, and its saved catalog values are
+    // ignored by the writer (kept only for preset compatibility), so nothing
+    // invisible reaches the CFG. AMMO / MEDICAL SUPPLY still apply to every trader.
+    public static readonly IReadOnlyList<TraderBuysPolicy.Role> EditorRoles =
+        Roles.Where(role => role.Id != "technician").ToArray();
+
+    public static bool IsEditableRole(string roleId) => roleId != "technician";
+
+    /// <summary>Category ids that have a rail and are written.</summary>
+    public static IEnumerable<string> EditableParameterIds =>
+        EditorRoles.SelectMany(role => Categories.Where(category => IsAvailable(role, category))
+            .Select(category => ParameterId(role, category)));
 
     public static readonly IReadOnlyList<Category> Categories = new[]
     {

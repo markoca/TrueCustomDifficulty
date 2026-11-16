@@ -198,11 +198,12 @@ public sealed partial class CfgPatchWriterService
         var ammoFactor = Factor("economy.traderAmmoStock");
         var medicalFactor = Factor("economy.medicStock");
         // Partial odds per role x category (0 < x < 1); 0 is the SELL toggle.
+        // TECHNICIAN is not edited: its saved values never reach the CFG.
         var odds = sellOdds.Where(pair => pair.Value > 0.0000001 && pair.Value < 1.0 - 0.0000001
-                && TraderSellsPolicy.ParameterIds.Contains(pair.Key)
+                && TraderSellsPolicy.EditableParameterIds.Contains(pair.Key)
                 && !modifiedById.ContainsKey(pair.Key))
             .ToDictionary(pair => pair.Key, pair => pair.Value, StringComparer.Ordinal);
-        var changed = TraderSellsPolicy.Roles.SelectMany(role =>
+        var changed = TraderSellsPolicy.EditorRoles.SelectMany(role =>
             TraderSellsPolicy.Categories.Where(c => TraderSellsPolicy.IsAvailable(role, c))
                 .Select(category => (Role: role, Category: category,
                     Id: TraderSellsPolicy.ParameterId(role, category))))

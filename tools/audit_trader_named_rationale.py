@@ -23,7 +23,7 @@ assert 'public string PanelRationale => _panelCard?.Text ?? RationaleDisplay;' i
 assert '"id": "economy.traderSells.general.weapons"' in catalog
 assert 'NamedProfiles.Select(p => p.Name + " — " + p.Categories)' in rationale
 assert "Binoculars are source-listed but have no category rail" in rationale
-assert "TECHNICIAN rails matter mainly for Bolshak (DLC1)" in rationale
+assert "only Bolshak (DLC1) sells items and his stock is not edited" in rationale
 assert "checkboxes" not in rationale
 
 source = defaultdict(set)

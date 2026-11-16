@@ -609,7 +609,8 @@ internal static class Program
             }
             var result = new CfgPatchWriterService().Write(vm, Catalog,
                 new GameInstallInfo { HasDlc1 = true }, path);
-            Check(result.ParameterCount == 5 && result.EditCount > 40 && result.FileCount >= 3,
+            // TECHNICIAN is not edited (2026-11-16): its value stays saved only.
+            Check(result.ParameterCount == 4 && result.EditCount > 40 && result.FileCount >= 3,
                 label + ": source generator copies/redirects missing");
             var cfgs = Directory.GetFiles(path, "*.cfg", SearchOption.AllDirectories);
             var content = string.Join("\n", cfgs.Select(File.ReadAllText));
@@ -630,7 +631,7 @@ internal static class Program
                     label + ": a shared vanilla item generator was edited directly");
             }
             _passed++;
-            Console.WriteLine("PASS " + label + " (5 roles, private copies, nested deletion and trade redirects)");
+            Console.WriteLine("PASS " + label + " (4 edited roles + saved-only technician, private copies, nested deletion and trade redirects)");
         }
         finally { if (_keep is null && Directory.Exists(path)) Directory.Delete(path, true); }
     }
@@ -650,16 +651,13 @@ internal static class Program
             Check(inactive.FileCount == 0 && inactive.EditCount == 0
                 && inactive.ParameterCount == 0,
                 label + ": disabled DLC must be a saved-only preference, not a false CFG patch");
+            // TECHNICIAN (only Bolshak, DLC1) is not edited: saved only, also with DLC1.
             var active = new CfgPatchWriterService().Write(vm, Catalog,
                 new GameInstallInfo { HasDlc1 = true }, path);
-            Check(active.EditCount > 0 && active.FileCount >= 2 && active.ParameterCount == 1,
-                label + ": installed DLC weapon seller source did not route");
-            var expectedDlc = ExpectedFile(path, "DLCGameData/DLC1/TradePrototypes.cfg");
-            Check(File.Exists(expectedDlc)
-                && File.ReadAllText(expectedDlc).Contains("ItemGeneratorPrototypeSID = TCD_TS_",
-                    StringComparison.Ordinal), label + ": missing DLC merchant rewire");
+            Check(active.EditCount == 0 && active.FileCount == 0 && active.ParameterCount == 0,
+                label + ": technician stock must stay saved-only");
             _passed++;
-            Console.WriteLine("PASS " + label + " (DLC1-only stock ignored without DLC1)");
+            Console.WriteLine("PASS " + label + " (technician stock saved-only with and without DLC1)");
         }
         finally { if (_keep is null && Directory.Exists(path)) Directory.Delete(path, true); }
     }

@@ -645,7 +645,7 @@ public sealed class MainViewModel : ObservableObject
         // TRADER STOCK board: category rails plus AMMO / MEDICAL SUPPLY.
         WireVisualAggregate(
             TraderSellsPolicy.AnchorId,
-            traderSellsParameterIds.OrderBy(id => id, StringComparer.Ordinal)
+            TraderSellsPolicy.EditableParameterIds.OrderBy(id => id, StringComparer.Ordinal)
                 .Append("economy.traderAmmoStock").Append("economy.medicStock").ToArray());
         // A removed category (toggle off) owns 0%; drop any partial odds.
         foreach (var sellId in TraderSellsPolicy.ParameterIds)

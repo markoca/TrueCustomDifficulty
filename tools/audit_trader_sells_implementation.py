@@ -36,9 +36,11 @@ assert 'SellOdds?.Set(rail.Id, value);' in ui
 # Legacy restrictions from older presets are visible and clearable.
 assert 'OLDER PRESET: ' in ui and '"CLEAR"' in ui and 'private void ClearLegacy()' in ui
 assert 'TraderItemOverrides = string.Empty;' in ui
-# Every role whose values are written is editable (TECHNICIAN included).
-assert 'public static readonly IReadOnlyList<TraderBuysPolicy.Role> EditorRoles = Roles;' in policy
-assert 'var roles = TraderSellsPolicy.Roles;' in ui
+# TECHNICIAN (only Bolshak sells) has no rail and is never written.
+assert 'Roles.Where(role => role.Id != "technician").ToArray();' in policy
+assert 'var roles = TraderSellsPolicy.EditorRoles;' in ui
+assert 'TraderSellsPolicy.EditableParameterIds.Contains(pair.Key)' in writer
+assert 'var changed = TraderSellsPolicy.EditorRoles.SelectMany(' in writer
 assert 'TraderSellsPolicy.ParameterIds\n            .Concat(' in ui.replace("\r", "")
 assert '["technician"] = new HashSet<string>(StringComparer.Ordinal)' in policy
 assert 'Binding="{Binding IsTraderSellsAnchor}"' in xaml
