@@ -9627,7 +9627,7 @@
         "status": "runtime_test_required",
         "notes": []
       },
-      "rationale": "Changes how quickly your armor loses condition. It does not change how much damage armor blocks.",
+      "rationale": "How long your armor holds up before it's falling apart. Vanilla: 1.35× on Novice, 1× on Stalker, 0.9× on Veteran, 0.6× on Master. Higher = fewer repair trips; protection itself doesn't change.",
       "logic": "",
       "interaction": "Changes armor condition durability only. It does not change armor protection values, weapon wear or jamming thresholds."
     },
@@ -9671,7 +9671,7 @@
           "Inherited ammo weights are resolved to their effective vanilla values and patched on the concrete child prototype so every ammo type follows the same multiplier."
         ]
       },
-      "rationale": "Makes ammunition heavier or lighter in your inventory, keeping differences between ammo types.",
+      "rationale": "How heavy ammo is in your backpack. Vanilla: 1×. 0× = weightless; 2× = double. Heavy calibers stay heavier than light ones.",
       "logic": "",
       "interaction": "Carry-capacity and encumbrance controls remain separate. This changes item Weight itself, so existing inventory-weight rules continue to apply normally."
     },
@@ -9722,7 +9722,7 @@
           "Inherited consumable weights are patched on the concrete prototype so quest/special variants keep the same multiplier instead of depending on parent inheritance."
         ]
       },
-      "rationale": "Makes food and medical supplies heavier or lighter without changing their effects.",
+      "rationale": "How heavy food and meds are in your backpack. Vanilla: 1×. 0× = weightless. Their effects don't change.",
       "logic": "",
       "interaction": "This does not change consumable effect strength or duration. DLC1 dry-ration weight is patched only when DLC1 is installed."
     },
@@ -9774,7 +9774,7 @@
           "Zero-weight, template, and tutorial-only weapon prototypes remain unchanged; runtime loading requires in-game validation."
         ]
       },
-      "rationale": "Makes weapons heavier or lighter to carry without changing damage, wear or jamming.",
+      "rationale": "How heavy weapons are in your backpack. Vanilla: 1×. Lower it to carry a spare rifle without being slowed down; damage and handling don't change.",
       "logic": "1× keeps the original weight. 0× makes mapped items weightless; 2× doubles their original weight.",
       "interaction": "Preserves original weight differences between items. Does not change maximum carry weight or any equipment protection statistics."
     },
@@ -9826,7 +9826,7 @@
           "Zero-weight, template, and tutorial-only weapon prototypes remain unchanged; runtime loading requires in-game validation."
         ]
       },
-      "rationale": "Makes suits and helmets heavier or lighter without changing armor protection or wear.",
+      "rationale": "How heavy suits and helmets are. Vanilla: 1×. Lower it to wear heavy armor without the weight penalty; protection doesn't change.",
       "logic": "1× keeps the original weight. 0× makes mapped items weightless; 2× doubles their original weight.",
       "interaction": "Preserves original weight differences between items. Does not change maximum carry weight or any equipment protection statistics."
     },
@@ -12515,7 +12515,7 @@
           "DLC1 uses its own DLCGameData/DLC1/WeaponData/CharacterWeaponSettingsPrototypes.cfg with 11 non-zero player entries."
         ]
       },
-      "rationale": "Changes how quickly your weapons lose condition when fired. Weapon jamming is separate.",
+      "rationale": "How fast your guns wear out when you shoot. Vanilla: 100%. 50% = about twice as many shots between repairs; 200% = half as many. A healthier gun also jams less.",
       "logic": "100% keeps vanilla wear. 50% roughly halves condition loss per shot. 200% roughly doubles it.",
       "interaction": "Weapon Jam Rate is separate. Slower wear indirectly delays condition-related jams because your gun stays healthy longer."
     },
