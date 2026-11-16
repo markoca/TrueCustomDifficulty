@@ -1,3 +1,13 @@
+## 2026-11-16 — CURRENT: STASH LOOT MIX in player terms (odds view, real chances, IN MIX knobs, difficulty preview)
+
+Builds on the tier-grouped layout below. Parameters, presets and writer output are unchanged; only what the board shows changed.
+
+* **ODDS PER STASH** (new card under the two global sliders, 172 DIP): rows AMMO / MEDS / FOOD / DRINKS / GRENADES / COUPONS × columns BASIC / STANDARD / RARE. Each cell is the ≈ odds that one regular stash of that tier holds at least one item of that category, for the selected base difficulty, averaged over the four player ranks, computed from the native branches with the writer's own `StashEffectiveState` (Weight category = one weighted pick, its share counts; every Chance entry rolls on its own). Bar in the category color, subtle grey tick at the untouched value, number gold when changed. Vanilla examples: Basic meds Novice 100% / Veteran 51% / Master 5%; Rare coupons 20% / 10%. Smart world stashes are not in this table.
+* **Standard / Rare chance cards** show the **real resulting chance range** of the category's rows at the selected difficulty (e.g. Standard meds `40–100%` on Stalker), not "% of original". Rail ends read **NONE** / **GAME ODDS**; only Rare Coupons keeps a direct `0%`/`100%` rail. Hover hints say the same.
+* **Basic priority knobs** are captioned **MEDS IN MIX / FOOD IN MIX / DRINKS IN MIX** and read as a percentage (100% = full share, 0% = out of the mix).
+* **MIX PREVIEW** follows the selected base difficulty (`MIX PREVIEW · NOVICE` …): Novice/Stalker show the Newbie Weight branch (higher ranks add a coupon entry), Veteran the Hard branch, Master the game's "Stalker" branch.
+* Heights: 977 DIP wide / 1355 DIP narrow.
+
 ## 2026-11-16 — CURRENT: STASH LOOT MIX grouped by tier (BASIC / STANDARD / RARE cards)
 
 **Supersedes the free-floating LOOT PRIORITY · ALL TIERS knob row, BASIC · LOOT PREVIEW and the unlabeled RGD-5 pair.** Row 1 keeps the two global sliders (SUPPLY REDUCTION, AMMO QUANTITY · ALL TIERS). Below it everything Basic lives in one **BASIC STASH** card, matching the STANDARD STASH and RARE STASH cards:

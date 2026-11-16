@@ -213,6 +213,9 @@ public sealed partial class AggregateVisualControl
     // they stay native and preset-compatible but have no mixer knob.
     // Ammo and grenade Weight IDs likewise remain hidden legacy inputs.
     private static readonly int[] BasicVisibleWeightKinds = { 1, 2, 3 };
+    private static readonly string[] StashMixKnobLabels =
+        { "AMMO IN MIX", "MEDS IN MIX", "FOOD IN MIX", "DRINKS IN MIX",
+          "GRENADES IN MIX", "COUPONS IN MIX" };
 
     // Breakable Boxes-style compact source dials; global eligible Weight
     // behavior stays independent of these Basic-only preview samples.
@@ -258,10 +261,13 @@ public sealed partial class AggregateVisualControl
             var y = outer.Top + (i / columns) * (cardHeight + gap);
             // True 0..1x bounds / 0.05x steps, original at 1x. Reducing one
             // category boosts other positive categories' RELATIVE share.
+            // Gamer wording: these 0..1x Weight factors only thin a
+            // category out of the mix, so read them as "share kept in mix".
             DrawSourceKnob(dc, P(GlobalStashParameterIds[kind]),
-                GlobalStashCategoryNames[kind],
+                StashMixKnobLabels[kind],
                 new Rect(x, y, cardWidth, cardHeight),
                 text, muted, border, accent, panel,
+                percentageReadout: true,
                 dialAccent: StashMixPalette[kind], dialScale: .74);
         }
     }
@@ -273,7 +279,16 @@ public sealed partial class AggregateVisualControl
         DrawingContext dc, Rect outer,
         Brush text, Brush muted, Brush border, Brush panel)
     {
-        var hard = StashPreviewGroup("BASIC", 1);
+        // The source Basic Weight branch for the selected difficulty
+        // (Novice/Stalker: Newbie branch without coupons; Veteran: Hard;
+        // Master: the game's "Stalker" difficulty branch).
+        var difficultySid = StashDifficultySid();
+        var hard = StashPreviewGroup("BASIC", difficultySid switch
+        {
+            "Easy" or "Medium" => 10,
+            "Stalker" => 11,
+            _ => 1
+        });
         if (hard is null
             || hard.Items.Any(item => !item.Fields.ContainsKey("Weight")
                 || item.Fields.ContainsKey("Chance"))
@@ -283,9 +298,10 @@ public sealed partial class AggregateVisualControl
                 "Veteran Basic source Weight categories changed.");
         dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .66),
             new Pen(CloneWithOpacity(border, .66), .9), outer, 4.0, 4.0);
-        // Shows the source Veteran Basic Weight branch; the other difficulty
-        // branches use the same food/drink/bandage mix (some add coupons).
-        DrawText(dc, "MIX PREVIEW · VETERAN",
+        // Shows the source Basic Weight branch of the selected difficulty;
+        // on Novice/Stalker higher ranks add a coupon entry to this mix.
+        DrawText(dc, "MIX PREVIEW · "
+                + (SelectedReferenceDifficulty ?? "Veteran").ToUpperInvariant(),
             new Point(outer.Left + 12.0, outer.Top + 3.0),
             10.6, text, FontWeights.Bold);
         var inner = new Rect(outer.Left + 12.0, outer.Top + 21.0,
@@ -397,12 +413,12 @@ public sealed partial class AggregateVisualControl
                 continue;
             }
             var enabled = parameter.IsControlEnabled;
-            // Visible category factors are 0..100% of authored native
-            // per-entry Chance; 100% retains its source, not guaranteed loot.
-            // Only Rare Coupons edits a truly absolute native Chance.
-            var digits = (parameter.CurrentNumber * 100.0).ToString("0.##",
-                System.Globalization.CultureInfo.InvariantCulture);
-            var number = CreateText(digits + "%", 11.8,
+            // The rail scales the authored native per-entry Chance (Rare
+            // Coupons sets it directly); the number is the REAL resulting
+            // chance range of this category's rows at the selected difficulty,
+            // e.g. Standard meds "40–100%" (bandage 40%, medkit 100%).
+            var digits = StashTierChanceRange(tierName, kind);
+            var number = CreateText(digits, 11.8,
                 enabled ? text : muted, FontWeights.Bold);
             if (enabled && parameter.IsValueModifiedFromReference())
                 number.SetForegroundBrush(accent, 0, digits.Length);
@@ -428,11 +444,14 @@ public sealed partial class AggregateVisualControl
                 new Pen(hovered ? Brushes.White : enabled ? tone : muted,
                     hovered || IsSelected(parameter) ? 2.3 : 1.5),
                 new Point(now, cy), 5.0, 5.0);
+            // Rail ends in player words: a scale rail runs from NONE to the
+            // game's own odds; only Rare Coupons is a direct 0–100% chance.
+            var absoluteRail = id == "loot.expensiveStashMoneyChance";
             var maximum = (parameter.Maximum * 100.0).ToString("0.##",
                 System.Globalization.CultureInfo.InvariantCulture);
-            DrawText(dc, "0%",
+            DrawText(dc, absoluteRail ? "0%" : "NONE",
                 new Point(rail.Left, y + 53.0), 9.1, muted, FontWeights.SemiBold);
-            DrawRightAlignedText(dc, maximum + "%",
+            DrawRightAlignedText(dc, absoluteRail ? maximum + "%" : "GAME ODDS",
                 new Point(rail.Right, y + 53.0), 9.1, muted, FontWeights.SemiBold);
             AddHorizontalTarget(parameter,
                 new Rect(rail.Left - 8.0, y + 29.0,

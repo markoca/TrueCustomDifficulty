@@ -5208,7 +5208,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // BASIC STASH card: everything that belongs to the Basic tier in one
         // frame — priority knobs, the mix preview directly under them, and
         // the Basic-only RGD-5 pair. Standard and Rare keep their own cards.
-        var basicTop = 121.0 + narrowShift;
+        // What a stash holds, per tier, after every control below.
+        DrawStashOdds(dc, new Rect(left, 121.0 + narrowShift, width, StashOddsHeight),
+            text, muted, border, accent, panel);
+
+        var basicTop = 121.0 + narrowShift + StashOddsHeight + 8.0;
         var knobTop = basicTop + StashBasicTitleHeight;
         var knobHeight = wide ? 146.0 : 300.0;
         var basicPreviewTop = knobTop + knobHeight + 8.0;
@@ -6866,8 +6870,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 if (!area.Contains(point))
                     continue;
                 hint = absoluteChance
-                    ? "Sets the per-entry Chance for Rare Coupons. This is not a guaranteed stash-wide reward."
-                    : "100% keeps each item's original Chance. It does not guarantee that the item or category will appear in a stash.";
+                    ? "The number is the real chance of a coupon reward in a Rare stash. Drag to set it."
+                    : "The number is the real chance of each item in this group (e.g. 40–100%). Drag left to make them rarer; all the way right keeps the game's odds.";
                 break;
             }
         }
@@ -8123,10 +8127,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
     // Measured heights follow the painted responsive editors, so the
     // last mixer lane and every remaining gear/medical dial stay visible.
-    // Mirrors DrawStashContentMix: row 1, BASIC card (title, knobs, mix
-    // preview, RGD-5 pair), STANDARD and RARE cards, bottom padding.
+    // Mirrors DrawStashContentMix: row 1, ODDS PER STASH (172 + 8), BASIC
+    // card (title, knobs, mix preview, RGD-5 pair), STANDARD, RARE, padding.
     private double StashContentMixHeight(double width)
-        => width >= 700.0 ? 797.0 : 1175.0;
+        => width >= 700.0 ? 977.0 : 1355.0;
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 609.0 : 1050.0;
     // Paint width is ActualWidth - 30 DIP. At host widths 540–569 DIP

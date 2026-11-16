@@ -66,7 +66,7 @@ check={
     "RADIATION STAMINA PENALTY"
   ],
   "src/TrueCustomDifficulty/Controls/AggregateVisualControl.StashBranch.cs": [
-    "MIX PREVIEW · VETERAN"
+    "MIX PREVIEW · "
   ],
   "src/TrueCustomDifficulty/Controls/ItemPriceScalersRadar.cs": [
     "ITEM VALUES"

@@ -266,7 +266,8 @@ assert 'DrawStashChanceTier(dc, "STANDARD", "Medium", 10,' not in content
 assert 'DrawStashChanceTier(dc, "RARE", "Expensive", 19,' not in content
 # Tier-grouped layout: one BASIC STASH card (knobs, mix preview, RGD-5
 # pair) followed by the STANDARD and RARE cards, all stacked from basicTop.
-assert "var basicTop = 121.0 + narrowShift;" in content
+assert "var basicTop = 121.0 + narrowShift + StashOddsHeight + 8.0;" in content
+assert "DrawStashOdds(dc, new Rect(left, 121.0 + narrowShift, width, StashOddsHeight)," in content
 assert "var knobHeight = wide ? 146.0 : 300.0;" in content
 assert "var pairTop = basicPreviewTop + 74.0 + 8.0;" in content
 assert 'dc.DrawText(CreateText("BASIC STASH", 11.4, text, FontWeights.Bold),' in content
@@ -405,7 +406,7 @@ height_match = re.search(
 assert height_match is not None, "missing StashContentMix measured height"
 # 121 + 30 title + knobs + 8 + 74 preview + 8 + 56 pair + 12 + 8 + Standard
 # + 8 + Rare + bottom padding (wide 797, narrow 1175 incl. 64 narrow shift).
-assert tuple(map(float, height_match.groups())) == (700.0, 797.0, 1175.0)
+assert tuple(map(float, height_match.groups())) == (700.0, 977.0, 1355.0)
 assert '"WEIGHT APPLIES TO ALL TIERS"' not in content
 assert '"RELATIVE SELECTION"' not in source
 assert '"BASIC POOL COMPOSITION"' not in coverage
@@ -413,7 +414,7 @@ assert "var wide = width >= 670.0;" in content
 # Old fixed 373/409, 220/383 and 839/1185 lane calculations
 # were retired with the current compact Stashes rendering. Guard the
 # actual measured heights rather than asserting removed helper formulas.
-assert '=> width >= 700.0 ? 797.0 : 1175.0;' in source
+assert '=> width >= 700.0 ? 977.0 : 1355.0;' in source
 assert '=> width >= 700.0 ? 609.0 : 1050.0;' in source
 assert '=> width < 570.0 ? 670.0 : 502.0;' in source
 for name, document in [("UI-DESIGN-LOCK", lock),
@@ -511,7 +512,7 @@ assert 'CreateText("V "' not in tier_preview and "vanillaX" not in tier_preview
 assert "Math.Clamp(Number(updated) * factor, 0.0, 1.0)" in effective
 assert 'StashTierChanceParameterIds.Any(id =>' in tuning
 
-assert '=> width >= 700.0 ? 797.0 : 1175.0;' in source
+assert '=> width >= 700.0 ? 977.0 : 1355.0;' in source
 assert "GlobalStashKindsVerified.Value" in coverage
 assert "StashBranchPreviewCatalog.Load(StashPreviewBaseline.Value)" in coverage
 assert "groups.Sum(x => x.Items.Count) != 1124" in coverage
@@ -597,12 +598,13 @@ assert "PlayerRank" not in basic_preview[1]["fields"]
 
 assert '"LOOT PRIORITY"' in content and '"LOOT PRIORITY · ALL TIERS"' not in content
 assert '"BASIC  ·  WEIGHT MIX"' not in content
-assert '"MIX PREVIEW · VETERAN"' in coverage
+assert 'DrawText(dc, "MIX PREVIEW · "' in coverage
+assert '"Easy" or "Medium" => 10,' in coverage and '"Stalker" => 11,' in coverage
 native_preview_method = coverage.split("private void DrawStashBasicNativePools(", 1)[1].split("private void DrawStashChanceTier(", 1)[0]
 assert '"NOVICE / STALKER"' not in native_preview_method
 assert 'rankCaption: "RANK: EXPERIENCED"' not in native_preview_method
 assert 'StashPreviewGroup("BASIC", 7)' not in native_preview_method
-assert 'StashPreviewGroup("BASIC", 1)' in native_preview_method
+assert 'var hard = StashPreviewGroup("BASIC", difficultySid switch' in native_preview_method
 assert 'DrawStashPoolBar(dc, hard, string.Empty, inner,' in native_preview_method
 assert 'DrawStashPoolBar(dc, hard, "VETERAN"' not in native_preview_method
 assert '"EASY/MEDIUM · EXPERIENCED"' not in coverage
@@ -689,13 +691,16 @@ assert '"loot.mediumStashAmmoQuantity"' not in tier_preview
 assert '"loot.expensiveStashAmmoQuantity"' not in tier_preview
 assert "SyncStashAmmoQuantity();" in main_vm_source
 assert "stashAmmoSources.Skip(1)" in main_vm_source
-assert 'var digits = (parameter.CurrentNumber * 100.0).ToString("0.##"' in tier_preview
-assert 'var number = CreateText(digits + "%", 11.8,' in tier_preview
-assert 'DrawText(dc, "0%"' in tier_preview
-assert 'DrawRightAlignedText(dc, maximum + "%"' in tier_preview
+# The number is the REAL resulting chance range of the category's rows at
+# the selected difficulty; the rail ends read NONE / GAME ODDS (Rare Coupons
+# is the one direct 0–100% chance rail).
+assert 'var digits = StashTierChanceRange(tierName, kind);' in tier_preview
+assert 'var number = CreateText(digits, 11.8,' in tier_preview
+assert 'DrawText(dc, absoluteRail ? "0%" : "NONE",' in tier_preview
+assert 'DrawRightAlignedText(dc, absoluteRail ? maximum + "%" : "GAME ODDS",' in tier_preview
 assert 'var now = ValueToX(parameter.CurrentNumber,' in tier_preview
 assert 'rail, parameter.Minimum, parameter.Maximum);' in tier_preview
-assert 'Visible category factors are 0..100%' in tier_preview
+assert 'The rail scales the authored native per-entry Chance' in tier_preview
 assert 'digits + (absolute ? "%" : "×")' not in tier_preview
 for pid in ("loot.mediumStashMedicalChance", "loot.mediumStashDrinksChance",
             "loot.mediumStashCouponsChance", "loot.expensiveStashAmmoChance",
@@ -724,7 +729,7 @@ assert 'var parameter = P(id);' in tier_preview
 assert 'AddHorizontalTarget(parameter,' in tier_preview
 assert 'AddHorizontalTarget(scale,' not in tier_preview
 assert 'var y = outer.Top + 35.0' in tier_preview
-assert 'var digits = (parameter.CurrentNumber * 100.0).ToString("0.##",' in tier_preview
+assert 'var digits = StashTierChanceRange(tierName, kind);' in tier_preview
 assert 'if (parameter is null)' in tier_preview
 assert 'var label = Parameters is null' not in tier_preview
 assert "continue;" in tier_preview
