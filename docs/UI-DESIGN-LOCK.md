@@ -1,3 +1,11 @@
+## 2026-11-16 — CURRENT: BREAKABLE BOXES — one preview, sliders beside it
+
+**Supersedes the separate AMMO POOL COMPOSITION section (SNG POOL / NATO POOL bars) and the fixed 715-DIP board.** SNG and NATO stay two rows because they are different physical boxes with different source pools (2.1 `DestructibleStash_AmmoSNG`: 9×18, 9×19, 5.45, 12 GA 2–4; `DestructibleStash_AmmoNATO`: .45 ACP, 9×19, 5.56, 12 GA 5–10; every row Weight 2), but their composition is no longer drawn twice.
+
+* **AMMO YIELD PREVIEW** tiles now show caliber, **rounds if rolled** and the row's **share of its own box** (from the four family weights, normalized per pool) with a 6-DIP swatch in the family knob color. Header: `ROUNDS IF ROLLED · SHARE OF BOX`. A zero-weight family dims its tiles and swatch.
+* **Layout** (`LayoutAmmoDistribution(width)`): at ≥ 760 DIP the two yield sliders (AMMO PER BOX, GRENADES PER BOX) are stacked in a compact 220–270 DIP left column and the preview fills the space beside them; below 760 DIP the sliders sit side by side above the preview. AMMO TYPE MIX knobs follow. Board height is measured from the same geometry (~447 DIP wide, ~527 DIP narrow) instead of 715.
+* Writer output, parameters, knob snap and SNG validity guard are unchanged.
+
 ## 2026-11-16 — CURRENT: NPC LOOT mod card renamed MOD LOOT SCARCITY
 
 The NPC LOOT corpse mod-sidecar dial is captioned **MOD LOOT SCARCITY** (card title *Mod Loot Scarcity*), pairing with SCARCITY. `DrawNpcCompactDial(..., captionInset)` centers a caption in the space right of a caption-row checkbox and shrinks it (9.4 → min 7.4 DIP) only when it would not fit, so the card never widens. Behavior, preset fields and writer output are unchanged.

@@ -1161,16 +1161,16 @@ else:
         'DrawHorizontalTrackCard(dc, ammoYield,',
         'DrawHorizontalTrackCard(dc, P("loot.destructibleGrenadeQuantity"),',
         '"AMMO YIELD PREVIEW"',
-        '"ROUNDS IF ROLLED"',
+        '"ROUNDS IF ROLLED · SHARE OF BOX"',
         'var countsModified = ammoYield.IsValueModifiedFromReference();',
         'item.MinCount * ammoYield.CurrentNumber + 0.5',
         'item.MaxCount * ammoYield.CurrentNumber + 0.5',
-        'YieldRow("SNG", 173.0, new[]',
-        'YieldRow("NATO", 219.0, new[]',
-        'Pool("SNG POOL",',
-        'Pool("NATO POOL",',
+        'YieldRow("SNG", preview.Top + 28.0, new[]',
+        'YieldRow("NATO", preview.Top + 28.0 + AmmoYieldTileHeight + 9.0, new[]',
+        'private static AmmoDistributionGeometry LayoutAmmoDistribution(double width)',
+        'if (width >= AmmoDistributionWideWidth)',
         'EnforceAmmoPoolValidity(',
-        '"AmmoDistribution" => 715.0,',
+        '"AmmoDistribution" => LayoutAmmoDistribution(width).Height,',
         '"AmmoDistribution" => new[]',
         'protected override void OnMouseLeftButtonDown(',
         'protected override void OnMouseRightButtonDown(',
@@ -1182,7 +1182,7 @@ else:
     # The only Loot knob bank must be the existing four independently mapped
     # ammo-family weights. Yield controls and the two pool previews are not knobs.
     _abd_knob_start = _abd_control_text.find('DrawText(dc, "AMMO TYPE MIX"')
-    _abd_knob_end = _abd_control_text.find('DrawText(dc, "AMMO POOL COMPOSITION"', _abd_knob_start)
+    _abd_knob_end = _abd_control_text.find('private const double AmmoYieldTileHeight', _abd_knob_start)
     _abd_knob_code = (
         _abd_control_text[_abd_knob_start:_abd_knob_end]
         if _abd_knob_start >= 0 and _abd_knob_end > _abd_knob_start else ""
@@ -1194,7 +1194,7 @@ else:
         '(weight012, "12 GAUGE")',
         'DrawSourceKnob(dc, weights[i].Parameter, weights[i].Label,',
         'knobBankWidth = Math.Min(780.0, ActualWidth - margin * 2.0)',
-        'const double knobCardTop = 298.0',
+        'var knobCardTop = geometry.KnobTop;',
         'const double knobCardHeight = 181.0',
         'dialAccent: BreakableAmmoPalette[i]',
     )
@@ -1216,8 +1216,12 @@ else:
     )
     if any(color not in _abd_palette_code for color in _abd_colors):
         _abd_errors.append("breakable ammo family palette missing unique four-color mapping")
-    if _abd_control_text.count('dc.DrawRectangle(BreakableAmmoPalette[colorIndices[i]], null') != 2:
-        _abd_errors.append("pool segments and legend must use the same family brush")
+    # The separate SNG/NATO pool bars are retired: each preview tile carries
+    # its own pool share with a swatch in the same family brush as its knob.
+    if 'Pool("SNG POOL",' in _abd_control_text or 'Pool("NATO POOL",' in _abd_control_text:
+        _abd_errors.append("retired SNG/NATO pool composition bars returned")
+    if 'CloneWithOpacity(BreakableAmmoPalette[item.Color]' not in _abd_control_text:
+        _abd_errors.append("preview share swatch must use the same family brush as its knob")
     if 'var tones = new[] { 0.95, 0.72, 0.50, 0.30 };' in _abd_control_text:
         _abd_errors.append("legacy single-yellow pool tint mix returned")
     _abd_knob_input = (
@@ -1251,7 +1255,8 @@ else:
             (".45 ACP", 5, 10, "weight045"), ("9×19", 5, 10, "weight918"),
             ("5.56", 5, 10, "weight545"), ("12 GA", 5, 10, "weight012"),
         ):
-            _token = f'(Caliber: "{_caliber}", MinCount: {_low}, MaxCount: {_high}, Weight: {_weight})'
+            _color = {"weight918": 0, "weight045": 1, "weight545": 2, "weight012": 3}[_weight]
+            _token = f'(Caliber: "{_caliber}", MinCount: {_low}, MaxCount: {_high}, Weight: {_weight}, Color: {_color})'
             if _token not in _abd_control_text:
                 _abd_errors.append(f"source-backed count preview missing {_token!r}")
 if '<controls:AggregateVisualControl x:Name="AggregateVisualControl"' not in _abd_xaml or 'Family="{Binding VisualAggregateFamily}"' not in _abd_xaml:
