@@ -1,4 +1,4 @@
-## 2026-11-16 — CURRENT: gamer-facing WHAT IT DOES text, tab by tab (Combat, Survival, Health, Stamina, Loot, Stashes, Economy, Equipment, Environment, A-Life done)
+## 2026-11-16 — CURRENT: gamer-facing WHAT IT DOES text, tab by tab (all tabs done)
 
 Every catalog `rationale` is being rewritten tab by tab (Combat → Survival → Health → Stamina → Loot → Stashes → Economy → Equipment → Environment → A-Life → Master) into plain gamer language: what you feel in play, the vanilla value per difficulty taken from the catalog's own `vanilla` field, and one practical tip — no CFG keys or file names. Technical detail stays in the separate value / logic / interaction sections. Custom radar controls of each tab get per-card selection as the tab is done: the card's owning parameter is passed to `dc.DrawTrackedRoundedRectangle(..., owner)` and a click anywhere in the card raises `ParameterSelected`.
 
@@ -12,6 +12,9 @@ Every catalog `rationale` is being rewritten tab by tab (Combat → Survival →
 * **Equipment (done):** all 6 parameters (armor durability, weapon wear, ammo / consumable / weapon / armor weight). Equipment has no custom radar: its WEAR and WEIGHT boards are `AggregateVisualControl` families, which already select per card.
 * **Environment (done):** all 17 parameters (global anomaly multiplier per difficulty, per-anomaly base damage, Clicker / Glass Shards / Soap Bubble / Fireball / Diamond effects, Flycatcher slowdown, psy drain). `AnomalyDamageRadar`: a click anywhere in an anomaly lane selects that anomaly; the borderless GLOBAL MULTIPLIER area is recorded as a card with `CardHoverTracker.Record(card, 4, global)`, so it gets the white hover outline and selects the global multiplier.
 * **A-Life (done):** all 19 parameters (human squad cap per player rank — vanilla 3 / 4 / 5 / 6 — and per-species mutant group caps with their vanilla Newbie / Experienced / Veteran / Master limits; the hidden generic mutant limit says why it is unused). `HumanGroupSizeRadar` and `MutantGroupSizeRadar`: a click anywhere in a rank lane or species card selects it, not only on the bar.
+* **Master (done):** all 20 parameters (low-HP, weaker meds, starvation, radiation and severe-fatigue bundles with their vanilla Master values; every bundle switch states it is ON only on vanilla Master). Its boards are `AggregateVisualControl` families, which already select per card.
+
+**Result:** all 361 catalog parameters carry gamer-facing WHAT IT DOES text, and every custom control selects per card (owner tag or nearest control inside the card via `CardHoverTracker.SelectAt`).
 
 ## 2026-11-16 — CURRENT: white card hover on every control, all tabs
 
@@ -19,7 +22,7 @@ Every catalog `rationale` is being rewritten tab by tab (Combat → Survival →
 
 * **Shared layer:** `Controls/CardHoverTracker.cs`. While a control renders inside `BeginRender()`, every filled + outlined rounded rectangle drawn with `dc.DrawTrackedRoundedRectangle(...)` (drop-in for `DrawRoundedRectangle`) and every `IndustrialChrome.DrawRecessedCard` is recorded as a card. Shapes smaller than 46 × 30 DIP, shapes equal to a clickable element (chips, pills, buttons) and shapes covering > 80% of the control (board frames) are not cards. The **smallest card under the pointer** gets a 1.2-DIP **white** outline along its own border and corner radius, drawn on top.
 * **Coverage:** `AggregateVisualControl` (every family; NPC LOOT keeps its explicit `NpcLootCards` layer) and all twelve custom controls — ActionCosts, AnomalyDamage, HumanGroupSize, ItemPriceScalers, MedicalHealing, MutantDrop, MutantGroupSize, MutantHealth, StashAmmo, WorldLootRemoval radars, BleedingCurve and Drunkenness (their former `OnRender` is now `RenderCardContent`, wrapped by the tracker). Plain parameter rows in the list get the same white border on hover via a `MultiDataTrigger` (not on rows that host a visual control).
-* **Click → rationale:** in every `AggregateVisualControl` family a click anywhere in a card selects the control in that card nearest to the click and shows its WHAT IT DOES text (even for families that previously kept the anchor text). NPC LOOT cards show their own gamer-facing card text. Plain rows already select on click. The twelve custom controls still select their row anchor; per-card selection there is the next step.
+* **Click → rationale:** in every `AggregateVisualControl` family a click anywhere in a card selects the control in that card nearest to the click and shows its WHAT IT DOES text (even for families that previously kept the anchor text). NPC LOOT cards show their own gamer-facing card text. Plain rows already select on click. The twelve custom controls now select per card as well (see the gamer-facing WHAT IT DOES entry above).
 
 ## 2026-11-16 — CURRENT: NPC LOOT card names, white card hover and per-card panel text
 

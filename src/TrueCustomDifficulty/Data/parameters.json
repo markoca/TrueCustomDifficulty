@@ -3969,7 +3969,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Enables the extra low-health penalty used on Master difficulty. Normal low-health recovery stays separate.",
+      "rationale": "Master's extra punishment for being badly hurt: your health barely recovers until you patch up. Vanilla: OFF on Novice, Stalker and Veteran, ON on Master. The normal low-health system works either way.",
       "logic": "OFF leaves only the normal low-health system. ON adds the extra Master recovery penalty whenever the game enters its Master low-health state.",
       "interaction": "The game keeps the vanilla activation point for this state. The child control only changes how strong the recovery penalty is."
     },
@@ -4010,7 +4010,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Slows HP recovery while badly wounded when Master low-health penalties are enabled.",
+      "rationale": "How much that Master low-health punishment slows your healing. Vanilla: 70%. 0 removes it. Only works while Master Low-HP Penalties is ON.",
       "logic": "Higher values suppress health regeneration more strongly; zero removes this penalty component.",
       "interaction": "This remains inactive while Master Low-HP Penalties is OFF. It layers on top of ordinary low-health recovery and the Health Regen Strength setting.",
       "requiresToggle": "advanced.lowHealthMechanics"
@@ -4281,7 +4281,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes how much a Bandage heals when Master consumable penalties are enabled.",
+      "rationale": "How much of a bandage's heal you keep under Master's weaker meds. Vanilla: 25% — about 5 HP from a 20 HP bandage. 100% = no cut.",
       "logic": "100% means no Master healing penalty. Lower values make the Bandage heal less. With the untouched base heal of 20 HP, vanilla Master gives about 5.0 HP.",
       "interaction": "This setting only has an effect while Master Consumable Effect Penalties are ON. Changing both the base heal and this Master percentage compounds the result.",
       "requiresToggle": "advanced.masterEffectModifierMechanics"
@@ -4323,7 +4323,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes how much a regular Medkit heals when Master consumable penalties are enabled.",
+      "rationale": "How much of a medkit's heal you keep under Master's weaker meds. Vanilla: 71% — about 50 HP from a 70 HP medkit. 100% = no cut.",
       "logic": "100% means no Master healing penalty. Lower values make the Medkit heal less. With the untouched base heal of 70 HP, vanilla Master gives about 49.7 HP.",
       "interaction": "This setting only has an effect while Master Consumable Effect Penalties are ON. Changing both the base heal and this Master percentage compounds the result.",
       "requiresToggle": "advanced.masterEffectModifierMechanics"
@@ -4365,7 +4365,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes how much an Army Medkit heals when Master consumable penalties are enabled.",
+      "rationale": "How much of an army medkit's heal you keep under Master's weaker meds. Vanilla: 82% — about 70 HP from an 85 HP army medkit. 100% = no cut.",
       "logic": "100% means no Master healing penalty. Lower values make the Army Medkit heal less. With the untouched base heal of 85 HP, vanilla Master gives about 69.7 HP.",
       "interaction": "This setting only has an effect while Master Consumable Effect Penalties are ON. Changing both the base heal and this Master percentage compounds the result.",
       "requiresToggle": "advanced.masterEffectModifierMechanics"
@@ -9905,7 +9905,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Enables Master's extra starvation penalties on top of ordinary hunger.",
+      "rationale": "Master's starvation punishment once you're severely hungry: actions cost much more stamina, you lose health every few seconds and stop healing. Vanilla: OFF on Novice, Stalker and Veteran, ON on Master. Normal hunger effects work either way.",
       "logic": "When the game reaches its severe-hunger state, this bundle adds +200% stamina drain, periodic 4 HP starvation damage on a 10-second interval after its delay, and -100% health regeneration. OFF leaves only the normal hunger effects.",
       "interaction": "The game keeps the vanilla starvation activation point. The child controls only change stamina drain, damage, interval, delay and health-recovery strength."
     },
@@ -9940,7 +9940,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Enables Master's extra stamina penalty during heavy radiation. Radiation HP damage stays separate.",
+      "rationale": "Master's extra stamina cost while you're heavily irradiated. Vanilla: OFF on Novice, Stalker and Veteran, ON on Master. Radiation still builds up and hurts you either way.",
       "logic": "When the game enters the heavy-radiation state used by this Master bundle, it adds an extra stamina-drain penalty (50% in vanilla). The normal radiation system remains active either way.",
       "interaction": "The activation point stays vanilla. Radiation Accumulation and Radiation Recovery determine how quickly the player reaches and leaves that state."
     },
@@ -9975,7 +9975,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Enables Master's extra penalties for severe fatigue. Normal fatigue effects stay separate.",
+      "rationale": "Master's punishment for being exhausted: smaller stamina bar, less carry capacity, more recoil, more sway and wider spread. Vanilla: OFF on Novice, Stalker and Veteran, ON on Master. Normal tiredness effects work either way.",
       "logic": "When the game enters the Master severe-fatigue state, this bundle adds -20% maximum stamina, -20% carry capacity, +55% recoil, extra aim sway and shot spread in vanilla.",
       "interaction": "The activation point stays vanilla. The child controls only change how strong each severe-fatigue penalty becomes."
     },
@@ -10059,7 +10059,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Makes actions cost more stamina while Master's starvation effect is active. This is not passive drain.",
+      "rationale": "How much more stamina actions cost while you're starving under Master rules. Vanilla: +200% — three times the normal cost. 0 removes the extra.",
       "logic": "100% means +100% extra stamina cost, not normal cost. 0% removes this extra starvation cost.",
       "interaction": "Severe hunger also slows stamina recovery. This changes the extra cost of actions, not an ongoing drain.",
       "requiresToggle": "advanced.starvationMechanics"
@@ -10103,7 +10103,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes the HP lost each time Master's starvation damage hits.",
+      "rationale": "Health lost each time starvation hits under Master rules. Vanilla: 4 HP. 0 = starving no longer hurts directly.",
       "logic": "Higher values increase each starvation-damage charge; zero retains the bundle but removes direct HP damage from this component.",
       "interaction": "Starvation Damage Interval controls how often the charge repeats, while Starvation Penalty Delay controls when this effect begins after activation.",
       "requiresToggle": "advanced.starvationMechanics"
@@ -10147,7 +10147,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Sets the time between starvation damage ticks while the Master effect is active.",
+      "rationale": "Seconds between starvation hits. Vanilla: 10. Lower = the same damage comes faster.",
       "logic": "Lower values make the same damage arrive more frequently; higher values spread the damage out over a longer interval.",
       "interaction": "Practical starvation pressure depends on both this interval and Starvation Damage.",
       "requiresToggle": "advanced.starvationMechanics"
@@ -10204,7 +10204,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes how long Master's starvation penalties wait before taking effect.",
+      "rationale": "Grace period before the starvation penalties kick in. Vanilla: 3 seconds.",
       "logic": "Lower values make the penalties engage sooner after the starvation state activates; higher values provide a longer grace period.",
       "interaction": "Master Starvation Penalties decides whether this bundle exists. This control only changes the grace period before its active penalties begin.",
       "requiresToggle": "advanced.starvationMechanics"
@@ -10246,7 +10246,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Reduces HP recovery while Master's starvation effect is active.",
+      "rationale": "How much starving blocks your healing under Master rules. Vanilla: 100% — no healing at all. 0 removes it.",
       "logic": "Higher values suppress health regeneration more strongly; zero removes this component.",
       "interaction": "This acts on regeneration rather than direct damage, so it combines with Starvation Damage and the Health tab regeneration settings.",
       "requiresToggle": "advanced.starvationMechanics"
@@ -10577,7 +10577,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Reduces maximum stamina while Master's severe-fatigue effect is active.",
+      "rationale": "How much of your stamina bar you lose while exhausted under Master rules. Vanilla: 20%. 0 removes it.",
       "logic": "Higher values reduce the available stamina pool further; zero removes this component.",
       "interaction": "Max Stamina defines your normal pool; this loss applies only during Master severe fatigue.",
       "requiresToggle": "advanced.fatigueMechanics"
@@ -10626,7 +10626,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Reduces how much you can carry while Master's severe-fatigue effect is active.",
+      "rationale": "How much carry capacity you lose while exhausted under Master rules. Vanilla: 20%. 0 removes it.",
       "logic": "Higher values make fatigue reduce carrying capability more strongly; zero removes both carry-related components together.",
       "interaction": "Your normal carrying limit and equipment carry bonuses remain separate.",
       "requiresToggle": "advanced.fatigueMechanics"
@@ -10668,7 +10668,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Increases weapon recoil during Master's severe-fatigue effect.",
+      "rationale": "How much harder your guns kick while exhausted under Master rules. Vanilla: +55% recoil. 0 removes it.",
       "logic": "",
       "interaction": "This stacks with other recoil sources but does not change reload or aim-time penalties.",
       "requiresToggle": "advanced.fatigueMechanics"
@@ -10717,7 +10717,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Makes your aim sway more during Master's severe-fatigue effect.",
+      "rationale": "How much more your sights wobble while exhausted under Master rules. Vanilla: +40%. 0 removes it.",
       "logic": "",
       "interaction": "Recoil and bullet spread are separate penalties in the same Master fatigue bundle.",
       "requiresToggle": "advanced.fatigueMechanics"
@@ -10759,7 +10759,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Makes shots spread wider during Master's severe-fatigue effect.",
+      "rationale": "How much wider your shots spread while exhausted under Master rules. Vanilla: +50%. 0 removes it.",
       "logic": "",
       "interaction": "Recoil and aim sway are separate penalties in the same Master fatigue bundle.",
       "requiresToggle": "advanced.fatigueMechanics"
@@ -10801,7 +10801,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Makes actions cost more stamina during Master's heavy-radiation effect, without passive drain.",
+      "rationale": "How much more stamina actions cost while heavily irradiated under Master rules. Vanilla: +50%. 0 removes it.",
       "logic": "50% means +50% extra stamina cost. 0% removes this extra radiation cost.",
       "interaction": "",
       "requiresToggle": "advanced.radiationMechanics"
@@ -11060,7 +11060,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Enables Master's weaker medical healing, plus other bundled consumable penalties.",
+      "rationale": "Master's weaker meds: bandages and medkits heal less, plus a few food, energy-drink and artifact tweaks. Vanilla: OFF on Novice, Stalker and Veteran, ON on Master. The healing cuts are the bars below.",
       "logic": "OFF leaves these extra Master penalties inactive. ON applies the Master-only changes on top of the normal item effects.",
       "interaction": "The healing controls directly below only matter while this switch is ON. Some food, energy-drink and Weird Kettle changes are still part of the same switch and are not individually adjustable yet."
     },
