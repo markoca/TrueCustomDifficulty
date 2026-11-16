@@ -1,9 +1,10 @@
-## 2026-11-16 — CURRENT: gamer-facing WHAT IT DOES text, tab by tab (Combat, Survival done)
+## 2026-11-16 — CURRENT: gamer-facing WHAT IT DOES text, tab by tab (Combat, Survival, Health done)
 
 Every catalog `rationale` is being rewritten tab by tab (Combat → Survival → Health → Stamina → Loot → Stashes → Economy → Equipment → Environment → A-Life → Master) into plain gamer language: what you feel in play, the vanilla value per difficulty taken from the catalog's own `vanilla` field, and one practical tip — no CFG keys or file names. Technical detail stays in the separate value / logic / interaction sections. Custom radar controls of each tab get per-card selection as the tab is done: the card's owning parameter is passed to `dc.DrawTrackedRoundedRectangle(..., owner)` and a click anywhere in the card raises `ParameterSelected`.
 
 * **Combat (done):** all 28 parameters, including the 13 per-species mutant health entries that previously had no text (vanilla HP from the radar's source table). `MutantHealthRadar` now selects the clicked mutant or MUTANT HIT DAMAGE card.
 * **Survival (done):** 57 parameters rewritten (consumable effects, hunger, fatigue, bleeding, sleeping, alcohol, radiation). `BleedingCurveControl`: the BLEED SEVERITY / RECOVERY cards select their parameter, the MEDIUM / SEVERE stage cards select their threshold. `DrunkennessControl`: BEER / VODKA cards and their progression strips select that drink's strength. `CardHoverTracker.PushOffset(Vector)` mirrors a `TranslateTransform` on the drawing context (Drunkenness draws below its header through one) so hover and selection stay aligned; a card recorded twice (chrome + owner tag) keeps the owner.
+* **Health (done):** all 18 parameters (core health, low-HP recovery, healing amounts, bleed removal, radiation removal). `MedicalHealingRadar`: a click anywhere in an item lane selects the HEAL or BLEED bar of that item nearest to the click; a click in the RADIATION REMOVAL group selects the nearest radiation bar.
 
 ## 2026-11-16 — CURRENT: white card hover on every control, all tabs
 

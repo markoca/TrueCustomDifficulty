@@ -2425,7 +2425,7 @@
           "Original signed CFG delta is inverted when writing positive RAD points."
         ]
       },
-      "rationale": "Independent Beer radiation-removal strength; keeps the vanilla alcohol cure mechanic.",
+      "rationale": "How much radiation one beer flushes out. Vanilla: 10 — a little help, not a cure. You still get drunk as usual.",
       "logic": "Original Beer removes 10 radiation points (1x); editor permits 0–30 RAD (0x–3x) in 5-RAD steps; production writer saves the negative original CFG amount.",
       "interaction": "Does not alter intoxication, drink duration or the other alcohol.",
       "exposeInUi": false
@@ -2472,7 +2472,7 @@
           "Original signed CFG delta is inverted when writing positive RAD points."
         ]
       },
-      "rationale": "Independent Vodka radiation-removal strength; keeps the vanilla alcohol cure mechanic.",
+      "rationale": "How much radiation one bottle of vodka flushes out. Vanilla: 50 — the classic stalker remedy. You still get drunk as usual.",
       "logic": "Original Vodka removes 50 radiation points.",
       "interaction": "Does not alter intoxication, drink duration or the other alcohol.",
       "exposeInUi": false
@@ -3758,7 +3758,7 @@
           "Direct MaxHP field is confirmed; broader assumptions about the 100-point HP scale require runtime validation."
         ]
       },
-      "rationale": "Changes your total HP. Healing strength and damage resistance stay separate.",
+      "rationale": "Your total health pool. Vanilla: 100 HP on every difficulty. More HP lets you survive more hits; healing items still restore the same flat amount, so each medkit covers a smaller share of a bigger pool.",
       "logic": "",
       "interaction": "The game keeps its vanilla low-health state boundary. Other systems may also assume a 100-point health scale, so very large Max Health changes should be tested in game."
     },
@@ -3803,7 +3803,7 @@
           "Field and vanilla value are confirmed; exact tick semantics and interaction with effect-based regeneration require runtime validation."
         ]
       },
-      "rationale": "Controls whether your HP recovers slowly on its own. Zero keeps the original no-passive-healing behavior.",
+      "rationale": "Slow healing over time without using anything. Vanilla: 0 — in the original game you never heal just by waiting. Even a small value makes minor wounds close up on their own.",
       "logic": "Zero keeps vanilla behavior. Raising it adds passive healing over time.",
       "interaction": "Health Recovery Delay decides when recovery can begin. Other healing sources, such as low-health recovery and medkits, stay separate."
     },
@@ -3848,7 +3848,7 @@
           "The field explicitly uses seconds; the exact set of regeneration sources that honor it requires runtime validation."
         ]
       },
-      "rationale": "Sets the wait before compatible HP recovery can start. It won't create healing if no recovery effect is active.",
+      "rationale": "How long after taking damage your health starts coming back. Vanilla: 5 seconds. Only matters if something is actually healing you, so with Passive HP Regen at 0 you may not notice it.",
       "logic": "Higher values postpone actor-level HP regeneration for longer; lower values shorten the configured delay.",
       "interaction": "If Passive HP Regen is set to 0, this delay may have no visible effect until another compatible health-recovery effect is active."
     },
@@ -3892,7 +3892,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Makes active HP recovery stronger or weaker. It does not start passive healing by itself.",
+      "rationale": "How strong all health recovery over time is. Vanilla: 100% on Novice and Stalker, 75% on Veteran, 50% on Master. Doesn't start healing by itself — it boosts or weakens healing that is already running.",
       "logic": "100% keeps compatible regeneration effects at full strength. Lower values weaken them; higher values strengthen them. Vanilla uses 100% on Novice/Stalker, 75% on Veteran and 50% on Master.",
       "interaction": "Passive HP Regen is 0 in vanilla, so this matters mainly when another effect is already restoring health, such as low-health recovery."
     },
@@ -3934,7 +3934,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes the recovery speed of the game's normal low-health effect. Master penalties can reduce it.",
+      "rationale": "The small comeback heal the game gives you when you're almost dead. Vanilla: 100%. 0 removes it, so near-death means near-death; Master penalties can cut it further.",
       "logic": "",
       "interaction": "Health Regen Strength can scale this effect, and the Master low-health penalty can reduce it further."
     },
@@ -4054,7 +4054,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes how much HP Bandages and the three Medkit types restore. Bleeding and radiation treatment stay separate.",
+      "rationale": "How much health one bandage gives back. Vanilla: 20 HP — a patch-up, not a full heal. Its bleed-stopping power is a separate setting.",
       "logic": "",
       "interaction": "",
       "exposeInUi": true
@@ -4098,7 +4098,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Controls how much health a standard Medkit restores before any Master-only healing penalty is applied.",
+      "rationale": "How much health a regular medkit gives back. Vanilla: 70 HP — most of a vanilla health bar.",
       "logic": "",
       "interaction": "Bleeding treatment is separate. If Master Consumable Effect Penalties are ON, the Master Medkit Healing setting further changes the final heal.",
       "exposeInUi": false
@@ -4142,7 +4142,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Controls how much health an Army Medkit restores before any Master-only healing penalty is applied.",
+      "rationale": "How much health an army medkit gives back. Vanilla: 85 HP.",
       "logic": "",
       "interaction": "Bleeding treatment is separate. If Master Consumable Effect Penalties are ON, Master Army Medkit Healing further changes the final heal.",
       "exposeInUi": false
@@ -4186,7 +4186,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Controls how much health a Scientific Medkit restores. Vanilla restores 100 HP.",
+      "rationale": "How much health a scientific medkit gives back. Vanilla: 100 HP — a full vanilla bar in one go.",
       "logic": "",
       "interaction": "Scientific Medkit bleeding and radiation treatment are separate. Vanilla Master does not apply the same healing penalty to Scientific Medkits that it applies to Bandages and the other Medkits.",
       "exposeInUi": false
@@ -4239,7 +4239,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Decides whether ordinary food can restore HP. Hunger relief and special food effects still work.",
+      "rationale": "Whether bread, fresh bread, canned food and sausage also heal you a bit. Vanilla: ON. Turn it OFF to make food only fix hunger, so medical items are your only way to heal.",
       "logic": "ON keeps vanilla food healing. OFF removes healing from the supported food items.",
       "interaction": "Bandage healing remains controlled by the Healing Amount radar. Weird Kettle alternative food effects are deliberately outside this switch.",
       "exposeInUi": true
@@ -4409,7 +4409,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes how much bleeding a Bandage removes. Natural recovery is separate.",
+      "rationale": "How much bleeding one bandage stops. Vanilla: 100 — it fully stops any bleed. Lower it and a bad wound needs more than one bandage.",
       "logic": "",
       "interaction": "This changes direct treatment only. Natural Bleeding Recovery and bleeding damage remain separate."
     },
@@ -4452,7 +4452,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes how much bleeding a regular Medkit removes. Its HP healing is separate.",
+      "rationale": "How much bleeding a regular medkit stops. Vanilla: 15 — barely a dent, so you still want a bandage for a real bleed.",
       "logic": "",
       "interaction": "This changes direct treatment only. Natural Bleeding Recovery and bleeding damage remain separate."
     },
@@ -4495,7 +4495,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes how much bleeding an Army Medkit removes. Its HP healing is separate.",
+      "rationale": "How much bleeding an army medkit stops. Vanilla: 35.",
       "logic": "",
       "interaction": "This changes direct treatment only. Natural Bleeding Recovery and bleeding damage remain separate."
     },
@@ -4538,7 +4538,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes how much bleeding a Scientific Medkit removes. Its HP healing is separate.",
+      "rationale": "How much bleeding a scientific medkit stops. Vanilla: 25.",
       "logic": "",
       "interaction": "This changes direct treatment only. Natural Bleeding Recovery and bleeding damage remain separate."
     },
@@ -4581,7 +4581,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes how much radiation a Scientific Medkit removes. Its HP healing is separate.",
+      "rationale": "How much radiation a scientific medkit clears on top of healing. Vanilla: 60 — handy after a trip through a hot zone.",
       "logic": "",
       "interaction": "This changes direct treatment only. Radiation build-up and natural radiation recovery remain separate."
     },
@@ -4624,7 +4624,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes how much radiation Anti-Rad removes when used.",
+      "rationale": "How much radiation one anti-rad clears. Vanilla: 100 — a full cleanse. Lower it and heavy doses need more than one shot.",
       "logic": "",
       "interaction": "This changes direct treatment only. Radiation build-up and natural radiation recovery remain separate."
     },

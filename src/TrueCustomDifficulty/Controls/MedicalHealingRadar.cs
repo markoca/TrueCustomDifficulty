@@ -396,9 +396,45 @@ public sealed class MedicalHealingRadar : FrameworkElement
         _hits.Add(new HitArea(hit, row, action));
     }
 
+    public event EventHandler<AggregateParameterSelectedEventArgs>? ParameterSelected;
+
+    /// <summary>
+    /// A click anywhere in an item lane (HEAL + BLEED) or in the RADIATION
+    /// REMOVAL group selects the bar in that card nearest to the click.
+    /// </summary>
+    private void SelectCardAt(Point point)
+    {
+        if (_cardHover.CardAt(point) is not Rect card)
+            return;
+        ParameterViewModel? best = null;
+        var bestDistance = double.MaxValue;
+        foreach (var hit in _hits)
+        {
+            var parameter = hit.Action switch
+            {
+                HitAction.Healing when hit.Row >= 0 && hit.Row < _medical.Length => _medical[hit.Row],
+                HitAction.Bleeding when hit.Row >= 0 && hit.Row < _bleeding.Length => _bleeding[hit.Row],
+                HitAction.Radiation when hit.Row >= 0 && hit.Row < _radiation.Length => _radiation[hit.Row],
+                _ => null
+            };
+            var centerX = hit.Bounds.Left + hit.Bounds.Width / 2.0;
+            if (parameter is null || centerX < card.Left || centerX > card.Right)
+                continue;
+            var distance = Math.Abs(centerX - point.X);
+            if (distance < bestDistance)
+            {
+                best = parameter;
+                bestDistance = distance;
+            }
+        }
+        if (best is not null)
+            ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(best));
+    }
+
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonDown(e);
+        SelectCardAt(e.GetPosition(this));
         var hit = FindHit(e.GetPosition(this));
         if (hit is null) return;
         Focus();
@@ -422,6 +458,7 @@ public sealed class MedicalHealingRadar : FrameworkElement
     protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseRightButtonDown(e);
+        SelectCardAt(e.GetPosition(this));
         var hit = FindHit(e.GetPosition(this));
         if (hit is null) return;
         if (hit.Action == HitAction.Override)

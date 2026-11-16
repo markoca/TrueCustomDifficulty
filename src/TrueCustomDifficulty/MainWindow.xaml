@@ -252,6 +252,7 @@
                                                                                                 ModItemsRemoval="{Binding DataContext.WorldModItemsRemoval, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Window}}" />
         
                                                                 <controls:MedicalHealingRadar x:Name="MedicalHealingRadarControl"
+                                                                                                ParameterSelected="AggregateVisualControl_ParameterSelected"
                                                                                                 MaxWidth="920"
                                                                                                 HorizontalAlignment="Center"
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
