@@ -359,16 +359,6 @@
 
                                                                  
 
-                                                                 <controls:StashAmmoRadar x:Name="StashAmmoRadarControl"
-                                                                                                ParameterSelected="AggregateVisualControl_ParameterSelected"
-                                                                                                MaxWidth="920"
-                                                                                                HorizontalAlignment="Center"
-                                                                                                PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
-                                                                                         Grid.Row="0"
-                                                                                         Grid.RowSpan="2"
-                                                                                         MinHeight="390"
-                                                                                         Visibility="Collapsed"
-                                                                                         Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
 
                                                                 <controls:AggregateVisualControl x:Name="AggregateVisualControl"
                                                                                                 ParameterSelected="AggregateVisualControl_ParameterSelected"
@@ -538,14 +528,6 @@
                                                         <DataTrigger Binding="{Binding IsSlider}" Value="False">
                                                             <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
                                                             <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding IsStashAmmoAnchor}" Value="True">
-                                                            <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
-                                                            <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
-                                                            <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
-                                                            <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
-                                                            <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
-                                                            <Setter TargetName="StashAmmoRadarControl" Property="Visibility" Value="Visible" />
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding IsMutantDropAnchor}" Value="True">
                                                             <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />

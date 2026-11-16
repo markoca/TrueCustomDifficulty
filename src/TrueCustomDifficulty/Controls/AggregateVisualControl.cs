@@ -29,7 +29,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private ParameterViewModel? _starvationMaxHp;
     private readonly List<HitTarget> _hitTargets = new();
     // Nine compact Standard/Rare Chance cards; tooltips are confined to their bounds.
-    private readonly List<(Rect Area, string Hint)> _stashChanceTooltipAreas = new();
     // Medical effective-pick preview uses the single original Veteran source pool.
     private readonly VisualStatusMessage _status;
     private bool _fatigueReloadInteraction;
@@ -173,8 +172,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         MinHeight = 0.0;
         SnapsToDevicePixels = true;
         Cursor = Cursors.Arrow;
-        ToolTipService.SetInitialShowDelay(this, 450);
-        ToolTipService.SetShowDuration(this, 12000);
         Loaded += (_, _) => RebindParameters();
     }
 
@@ -290,7 +287,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         _radRingCompleted = false;
         _dragTarget = null;
         _hoverTarget = null;
-        ToolTip = null;
         Cursor = Cursors.Arrow;
         _selectedParameter = null;
         _selectedHitKind = null;
@@ -339,7 +335,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // Every card drawn below reports itself to the shared white-hover layer.
         using var cardScope = _cardHover.BeginRender();
         _hitTargets.Clear();
-        _stashChanceTooltipAreas.Clear();
 
         var text = FindBrush("TextBrush", Brushes.White);
         var muted = FindBrush("RadarMutedTextBrush", Brushes.Gray);
@@ -5339,8 +5334,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .45),
             new Pen(CloneWithOpacity(border, .45), .7), cell, 3.0, 3.0, parameter);
         if (parameter is null) return;
-        _stashChanceTooltipAreas.Add((cell,
-            "How much of the game's odds for this item you keep in stashes. 100% = game odds, 0% = never. Other items are not affected."));
         var enabled = parameter.IsControlEnabled;
         dc.DrawRectangle(tone, null, new Rect(cell.Left + 7.0, cell.Top + 7.0, 3.0, 11.0));
         dc.DrawText(CreateText(label, 9.8, enabled ? text : muted, FontWeights.SemiBold,
@@ -6592,23 +6585,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         e.Handled = true;
     }
 
-    private void UpdateStashChanceTooltip(Point point)
-    {
-        string? hint = null;
-        if (Family is "StashContentMix" or "StashMedicalComposition")
-        {
-            foreach (var (area, areaHint) in _stashChanceTooltipAreas)
-            {
-                if (!area.Contains(point))
-                    continue;
-                hint = areaHint;
-                break;
-            }
-        }
-        if (!string.Equals(ToolTip as string, hint, StringComparison.Ordinal))
-            ToolTip = hint;
-    }
-
     protected override void OnMouseMove(MouseEventArgs e)
     {
         base.OnMouseMove(e);
@@ -6655,7 +6631,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 return;
             }
         }
-        UpdateStashChanceTooltip(point);
         if (Family == "CouponFlow" && _dragTarget is null)
         {
             var marker = _couponMarkers.FirstOrDefault(m => m.Hit.Contains(point));
@@ -6854,7 +6829,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     protected override void OnMouseLeave(MouseEventArgs e)
     {
         base.OnMouseLeave(e);
-        ToolTip = null;
         _npcConsumableHoverSid = null;
         _npcConsumableHoverCheckbox = false;
         NpcNeedBoostMouseLeave();

@@ -196,7 +196,7 @@ public sealed class ParameterViewModel : ObservableObject
                 return "Drag a category's price track to tune its multiplier."
                     + Environment.NewLine + "Right-click one category to reset it; R resets the price group.";
             if (IsMutantHealthMember)
-                return "Each species card has two tracks: HEALTH (resulting HP beside it) and ATTACK RATE (2× = attacks twice as often). SPECIAL ABILITY RATE paces special and knockdown moves for all mutants; the grey tick is the selected difficulty's vanilla."
+                return "Each species card has a health track (multiplier and resulting HP on its top line) and an ATTACK RATE track (2x = attacks twice as often). SPECIAL ABILITY RATE paces special and knockdown moves for all mutants."
                     + Environment.NewLine + "Right-click one track to reset it; R resets the whole board.";
             if (IsHumanGroupSizeMember)
                 return "Drag NEWBIE, EXPERIENCED, VETERAN or MASTER to set that rank's maximum human squad size."
@@ -208,7 +208,7 @@ public sealed class ParameterViewModel : ObservableObject
                     + Environment.NewLine + "Right-click one species to reset it; R resets all fourteen.";
 
             if (IsTraderSellsMember)
-                return "Drag a category's rail: 100% keeps the game's odds for those offers, lower makes them rarer, 0% removes the category. AMMO SUPPLY and MEDICAL SUPPLY change how much traders carry."
+                return "Drag a category's rail: 100% keeps the game's odds for those offers, lower makes them rarer, 0% removes the category. AMMO SUPPLY and MEDICAL SUPPLY change how much traders carry. GEAR (Generic traders only) adds a CHANCE to offer one rare item, occasionally two (8% second roll); corpse loot is unchanged."
                     + Environment.NewLine + "Right-click a rail to reset that category.";
             if (IsRange)
                 return "Drag MIN or MAX to choose the range. Use Arrow keys for small changes and Home/End for the limits."
@@ -1154,7 +1154,7 @@ public sealed class ParameterViewModel : ObservableObject
             "combat.npcHealth" => Times(CurrentNumber, "HP"),
             "combat.npcWeaponDamage" => Times(CurrentNumber, "gun dmg"),
             "combat.mutantDamage" => Times(CurrentNumber, "hit dmg"),
-            MutantAggressionPolicy.SpecialAbilityRateId => Times(CurrentNumber, "special moves"),
+            MutantAggressionPolicy.SpecialAbilityRateId => MutantAggressionPolicy.SpecialAbilityDisplay(CurrentNumber),
             _ when Id.StartsWith(MutantAggressionPolicy.Prefix, StringComparison.Ordinal)
                 => Times(CurrentNumber, "attack rate"),
             "combat.playerWeaponDamage" => Times(CurrentNumber, "weapon dmg"),

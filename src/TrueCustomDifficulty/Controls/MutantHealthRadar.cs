@@ -199,7 +199,7 @@ public sealed class MutantHealthRadar : FrameworkElement
                 text, muted, border, accent, panel);
         if (_special is { } special)
             DrawGlobalTrack(dc, special, SpecialRow, "SPECIAL ABILITY RATE",
-                $"{special.CurrentNumber:0.##}x · pause {8.0 / special.CurrentNumber:0.#}–{12.0 / special.CurrentNumber:0.#} s",
+                MutantAggressionPolicy.SpecialAbilityDisplay(special.CurrentNumber),
                 new Rect(content.Left, 43.0 + GlobalCardHeight + 8.0, content.Width, GlobalCardHeight),
                 text, muted, border, accent, panel);
         var cardWidth = (content.Width - ColumnGap) / 2.0;

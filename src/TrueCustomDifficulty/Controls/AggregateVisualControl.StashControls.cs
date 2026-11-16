@@ -61,19 +61,6 @@ public sealed partial class AggregateVisualControl
     private static bool IsStashPresenceId(string id)
         => id.StartsWith("stashPresence.", StringComparison.Ordinal);
 
-    private static string StashControlHint(string id) => id switch
-    {
-        _ when IsStashAbsoluteChanceId(id)
-            => "CHANCE: the real chance per stash (not a share of game odds). The grey tick is the game's value.",
-        "loot.stashMixMedical" or "loot.stashMixFood" or "loot.stashMixDrinks" or "loot.stashMixCoupons"
-            => "How much of the game's odds you keep in Basic stashes and smart world stashes. Other items are not affected. 100% = game odds, 0% = never.",
-        StashPresenceViewModel.CheapAmmoId
-            => "How often a Basic stash's ammo pick gives anything (Basic stash ammo pick only: smart world ammo stashes are a separate game system and keep their own odds). 100% = game odds, 0% = never.",
-        _ when IsStashPresenceId(id)
-            => "How often a Standard stash's ammo pick gives anything (smart world ammo stashes keep their own odds). 100% = game odds, 0% = never.",
-        _ => "How much of the game's own odds you keep. 100% = game odds, 0% = never."
-    };
-
     private readonly List<(string Id, Rect Hit, Rect Rail)> _stashPresenceHits = new();
     private string? _stashPresenceDragging;
     private string? _stashPresenceHover;
@@ -143,8 +130,6 @@ public sealed partial class AggregateVisualControl
         // Each cell is its own small card: white hover + click selects it.
         dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .45),
             new Pen(CloneWithOpacity(border, .45), .7), cell, 3.0, 3.0, parameter);
-        _stashChanceTooltipAreas.Add((cell, StashControlHint(id)));
-
         const double numberWidth = 40.0;
         // Absolute chance cells carry a quiet CHANCE tag before the rail.
         var tagWidth = 0.0;

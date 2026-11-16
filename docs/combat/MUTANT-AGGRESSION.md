@@ -41,7 +41,7 @@ Default **8–12 s**, Master **4–6 s** (= 2×).
 * Because Easy/Medium/Hard have no own ranks, the writer copies the full rank tables
   (embedded `Data/combat-synchronization-2.1.json`: Default and CombatSynchronizerStalker) into
   `CombatSynchronizer{difficulty}` and changes only those two groups. The loader guards the tags.
-* UI value: `2× · pause 4–6 s`.
+* UI value: `2x · pause 4–6 s`.
 
 ## Not done
 

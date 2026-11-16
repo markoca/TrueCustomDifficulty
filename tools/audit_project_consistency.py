@@ -934,7 +934,7 @@ else:
 verify_current_editor("Damage by Anomaly", "AnomalyDamageRadar", ("environment.electroAnomalyDamage", "environment.chemicalAnomalyDamage", "environment.fireAnomalyDamage", "environment.carouselAnomalyDamage", "environment.toxicCloudDamage", "environment.steamAnomalyDamage", "environment.clickerHealthDamage", "environment.razorHealthDamage", "environment.soapBubbleHealthDamage", "environment.fireballHealthDamage",), "individualAnomalyDamageParameterIds.Contains(p.Id)", ("IsIndividualAnomalyDamageAnchor", "IsIndividualAnomalyDamageMember"))
 
 # Stash Ammo is now a single source-backed native editor inside StashContentMix.
-# The retired StashAmmoRadar flags must not be required by the current audit.
+# The retired StashAmmoRadar control and its anchor flag are removed (2026-11-16).
 _stash_native_ui = (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
 if ('private void DrawStashContentMix(' not in _stash_native_ui
     or '"AMMO AMOUNT"' not in _stash_native_ui):
@@ -1361,7 +1361,10 @@ else:
         fail("trader minimum buy-condition node path drifted")
     elif any(r.get("weapon_key") != "WeaponSellMinDurability" or r.get("armor_key") != "ArmorSellMinDurability" for r in _tb_rows):
         fail("trader minimum buy-condition field contract drifted")
-    elif any(r.get("vanilla") != "0.4f" for r in _tb_rows):
+    elif any(r.get("vanilla") != ("0.0f" if r.get("prototype") in
+             ("SelmaTrader_TradePrototype", "Trader_Soviet_Rostok_TradePrototype") else "0.4f")
+             for r in _tb_rows):
+        # Two source-authored 0% exceptions (TRADER-BUY-BPATCH-CONTRACT-2026-11-13.md).
         fail("trader minimum buy-condition vanilla threshold drifted")
     else:
         note("trader minimum buy condition locked: 86 production profiles = 68 base + 18 DLC1; weapon+armor gate 40% vanilla")
@@ -1627,8 +1630,8 @@ _semantic_ids = [entry[0] for entry in _semantic_slots]
 _semantic_catalog = {p["id"]: p for p in parameters}
 if _semantic_start < 0 or _semantic_end <= _semantic_start or len(_semantic_ids) != len(set(_semantic_ids)):
     fail("Responsive semantic slot registry missing or duplicate layout keys")
-if len(_semantic_slots) != 104:
-    fail(f"Responsive semantic slot count drifted: expected 104, got {len(_semantic_slots)}")
+if len(_semantic_slots) != 100:
+    fail(f"Responsive semantic slot count drifted: expected 100, got {len(_semantic_slots)}")
 _semantic_unknown = sorted(set(_semantic_ids) - id_set)
 if _semantic_unknown:
     fail(f"Responsive slots refer to nonexistent CFG catalog IDs: {_semantic_unknown}")
@@ -1646,7 +1649,7 @@ if ('public bool IsExhaustionRecoveryAnchor => Id == "stamina.sprintDisableThres
         'new("economy-moneyflow", 0)', 'new("economy-moneyflow", 1)',
         'new("economy-expenses", 0)', 'new("economy-expenses", 1)'))):
     fail("Responsive layout lost visible Stamina/Economy anchor or collapse guard")
-note("Responsive layout: 19 stale slot entries pruned; 104 live maps remain, Exhaustion/Economy anchors intact")
+note("Responsive layout: 21 stale slot entries pruned; 100 live maps remain, Exhaustion/Economy anchors intact")
 
 # Orphaned card-width converter was a keyed XAML resource with no consumer.
 # Preserve the two active responsive panels; remove only the unused resource/class.
@@ -2817,7 +2820,7 @@ else:
 
 # Current user-help contract no longer describes retired polar-radar gestures.
 _control_help_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
-for _required_help in ("public string ControlHelp", "IsVisualAggregateAnchor", "IsMutantHealthAnchor", "IsStashAmmoAnchor"):
+for _required_help in ("public string ControlHelp", "IsVisualAggregateAnchor", "IsMutantHealthAnchor"):
     if _required_help not in _control_help_vm:
         fail(f"current type-aware control-help/aggregate classifier missing {_required_help!r}")
 else:
@@ -2834,7 +2837,6 @@ _semantic_radar_controls = [
     "WorldLootRemovalRadar.cs", "MedicalHealingRadar.cs",
     "ActionCostsRadar.cs", "ItemPriceScalersRadar.cs",
     "MutantHealthRadar.cs",
-    "StashAmmoRadar.cs",
 ]
 _semantic_editor_errors = []
 _semantic_source_dir = ROOT / "src" / "TrueCustomDifficulty" / "Controls"
@@ -5448,7 +5450,7 @@ if any(_tok not in _npc_paint for _tok in (
 _ctrl_dir = ROOT / "src" / "TrueCustomDifficulty" / "Controls"
 _hover_controls = ("ActionCostsRadar", "AnomalyDamageRadar", "HumanGroupSizeRadar",
     "ItemPriceScalersRadar", "MedicalHealingRadar", "MutantDropRadar", "MutantGroupSizeRadar",
-    "MutantHealthRadar", "StashAmmoRadar", "WorldLootRemovalRadar", "BleedingCurveControl",
+    "MutantHealthRadar", "WorldLootRemovalRadar", "BleedingCurveControl",
     "DrunkennessControl")
 _missing_hover = [n for n in _hover_controls if any(t not in (_ctrl_dir / (n + ".cs")).read_text(encoding="utf-8") for t in (
     "private readonly CardHoverTracker _cardHover = new();", "using (_cardHover.BeginRender())",
@@ -5833,7 +5835,6 @@ _visual_boards = {
     "MutantGroupSizeRadar.cs": 1,
     "MutantHealthRadar.cs": 1,
     "MutantDropRadar.cs": 1,
-    "StashAmmoRadar.cs": 1,
     "WorldLootRemovalRadar.cs": 1,
     "AnomalyDamageRadar.cs": 1,
     "AggregateVisualControl.cs": 6,

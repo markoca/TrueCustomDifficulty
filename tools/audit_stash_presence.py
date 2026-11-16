@@ -168,7 +168,9 @@ assert "vm.StashPresence.Values," in writer
 # ---- 12. Smart Chance groups follow the Basic cells ------------------------
 assert '"loot.stashMixMedical" or "loot.stashMixFood"' in state.split("public double SmartSelectionFactor(", 1)[1].split("public string SmartSelection(", 1)[0]
 # ---- 13. Basic AMMO = the Basic stash ammo pick only (CFG: smart stashes are a separate system)
-assert "Basic stash ammo pick only" in grid
+# (explained in the cell's own panel card; hover tooltips are retired)
+assert "Smart world ammo stashes are a separate game system" in grid
+assert "ToolTip" not in grid and "StashControlHint" not in grid
 
 # ---- 14. CONTROLS help matches the boards --------------------------------
 pvm = read("ViewModels/ParameterViewModel.cs")

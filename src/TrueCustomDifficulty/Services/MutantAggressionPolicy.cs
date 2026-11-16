@@ -131,6 +131,12 @@ public static class MutantAggressionPolicy
             ("[4]", "TokenTag.Ability.Knockdown", 8.0, 12.0)
         };
 
+    /// <summary>Board and panel value: rate plus the resulting pause (Default 8–12 s ÷ rate,
+    /// the same rounding the writer uses).</summary>
+    public static string SpecialAbilityDisplay(double rate)
+        => string.Create(System.Globalization.CultureInfo.InvariantCulture,
+            $"{rate:0.##}x · pause {8.0 / rate:0.##}–{12.0 / rate:0.##} s");
+
     public static IReadOnlyList<string> Ranks { get; } = new[] { "Newbie", "Experienced", "Veteran", "Master" };
 
     public static string SynchronizerSid(string difficultySid) => difficultySid switch

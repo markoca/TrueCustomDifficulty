@@ -225,9 +225,7 @@ public sealed class TraderBuysMatrix : UserControl
                 Minimum = 0.0, Maximum = 1.0, TickFrequency = TraderSellOddsViewModel.Step,
                 SmallChange = TraderSellOddsViewModel.Step, LargeChange = 0.1,
                 IsSnapToTickEnabled = true, VerticalAlignment = VerticalAlignment.Center,
-                Margin = new Thickness(4, 0, 8, 0), MaxWidth = 360,
-                ToolTip = "How much of the game's odds for " + category.Label + " offers "
-                    + role.Label + " traders keep. 100% = game odds, 0% = removed."
+                Margin = new Thickness(4, 0, 8, 0), MaxWidth = 360
             };
             slider.ValueChanged += (_, _) =>
             {
@@ -289,8 +287,7 @@ public sealed class TraderBuysMatrix : UserControl
         {
             IsChecked = RareGearEnabled,
             HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center,
-            ToolTip = "Rare gear in Generic NPC trade offers only. No corpse loot."
+            VerticalAlignment = VerticalAlignment.Center
         };
         _gearCheck.Click += (_, _) => RareGearEnabled = _gearCheck.IsChecked == true;
         _gearOutline = new Border
@@ -326,8 +323,7 @@ public sealed class TraderBuysMatrix : UserControl
             Value = RareGearChance, TickFrequency = 0.01,
             SmallChange = 0.01, LargeChange = 0.01, IsSnapToTickEnabled = true,
             VerticalAlignment = VerticalAlignment.Center,
-            Margin = new Thickness(2, 0, 8, 0),
-            ToolTip = "Chance to offer one rare item, occasionally two (8% second roll)."
+            Margin = new Thickness(2, 0, 8, 0)
         };
         _gearChanceSlider.ValueChanged += (_, _) =>
         {

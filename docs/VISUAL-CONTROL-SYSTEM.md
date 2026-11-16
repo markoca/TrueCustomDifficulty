@@ -1,6 +1,12 @@
+## 2026-11-16 — CURRENT: consistency pass (no hover tooltips, mutant texts, dead StashAmmoRadar)
+
+* **Hover tooltips removed again** (2026-10-15 rule: no on-hover WPF tooltips): ADJUST ODDS / MEDICAL COMPOSITION cell hints, the TRADER STOCK rails and the GEAR checkbox / CHANCE rail. The same information is in the panel: each cell's own text (presence cells: their *Basic / Standard Ammo Odds* cards) and the TRADER STOCK CONTROLS help, which now also explains GEAR (Generic traders only, one rare item, 8% second roll, corpse loot unchanged). Entries above that mention hover hints are superseded.
+* **Mutant board texts**: CONTROLS help no longer names a HEALTH caption the card does not draw and no longer calls the reference tick "vanilla" (it is the Base Preset reference). SPECIAL ABILITY RATE shows the same value on the board and in the panel (`MutantAggressionPolicy.SpecialAbilityDisplay`, e.g. `3x · pause 2.67–4 s`, the same rounding as the written CFG).
+* **Dead code**: the retired `StashAmmoRadar` (collapsed in every parameter card, bound to a removed `IsStashAmmoAnchor`) and two responsive layout slots for removed ids (`combat.npcAttackCooldown`, `combat.npcHipAccuracy`) are deleted. No visible layout change.
+
 ## 2026-11-16 — CURRENT: MUTANT AGGRESSION (ATTACK RATE per family, SPECIAL ABILITY RATE)
 
-* Mutant board renamed **MUTANT DAMAGE, HEALTH AND AGGRESSION** (height 905). Under MUTANT HIT DAMAGE a second global track, **SPECIAL ABILITY RATE** (0.5×–3×, value `2× · pause 4–6 s`), paces special / knockdown moves for all mutants (`CombatSynchronizer` token groups).
+* Mutant board renamed **MUTANT DAMAGE, HEALTH AND AGGRESSION** (height 905). Under MUTANT HIT DAMAGE a second global track, **SPECIAL ABILITY RATE** (0.5×–3×, value `2x · pause 4–6 s`), paces special / knockdown moves for all mutants (`CombatSynchronizer` token groups).
 * Each of the 14 species cards has two compact tracks: HEALTH and **ATTACK RATE** (0.25×–3×; 2× = attacks twice as often → `AgentCooldownMultipliers`, 1/rate for every variant). Grey tick = the difficulty's vanilla (2× on Master for the eight families the game lists).
 * Click a track to select it in the panel, right-click resets that row, R resets the board; vanilla always reachable by dragging (`ReferenceMagnet`). Details: `docs/combat/MUTANT-AGGRESSION.md`.
 

@@ -20,8 +20,6 @@ public sealed class ResponsiveParameterGridPanel : Panel
             // Combat
             ["combat.npcHealth"] = new("combat-human-1", 0),
             ["combat.npcWeaponDamage"] = new("combat-human-1", 1),
-            ["combat.npcAttackCooldown"] = new("combat-human-2", 0),
-            ["combat.npcHipAccuracy"] = new("combat-human-2", 1),
             // Mutant Hit Damage and Mutant Health use their own live composite boards.
             ["combat.playerWeaponDamage"] = new("combat-player-weapons", 0),
             ["combat.playerHeadshotMultiplier"] = new("combat-player-weapons", 1),
