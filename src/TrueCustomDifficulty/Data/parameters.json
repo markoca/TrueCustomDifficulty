@@ -5947,7 +5947,7 @@
           "Protected actors, Extra Stash Gear, mod-added items and direct scripted rewards are excluded."
         ]
       },
-      "rationale": "Reduces optional ordinary stash supplies while preserving the existing category distribution mixer, rank gates and special/quest protections.",
+      "rationale": "Makes ordinary stashes hold fewer spare supplies. Vanilla: 0 — no change. Higher = leaner stashes. It doesn't empty stashes outright, and special and quest stashes are never touched.",
       "logic": "Chance items are less likely, weighted item bundles are smaller and world SmartLoot groups get lower native spawn bounds. A 1-item weighted bundle cannot be halved.",
       "interaction": "Does not change relative stash Weight distribution or independent Extra Stash Gear; test with unopened ordinary containers."
     },
@@ -6000,7 +6000,7 @@
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
-      "rationale": "Adjust relative ammo presence without touching ammo stack size or quest rewards.",
+      "rationale": "Old preset setting for how much ammo stashes favor. Vanilla: 1×. Kept so older presets still load; the stash boards use their own ammo controls.",
       "logic": "Native Weight is relative within its own generator group. Multiplying all members of a single-category pool may leave its normalized ratios unchanged; independent Chance is never modified by this global control.",
       "interaction": "Legacy preset compatibility only. Not an editable Basic mixer knob: does not change either displayed mixed native Weight group.",
       "exposeInUi": false
@@ -6054,7 +6054,7 @@
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
-      "rationale": "Makes medical items more or less favored in eligible stash loot pools. This is priority, not a drop percentage.",
+      "rationale": "How much stashes lean towards meds compared with other supplies. Vanilla: 1×. Lower = meds show up less often in the mix. It changes the mix, not a drop chance.",
       "logic": "Higher priority favors medical loot against other eligible stash categories. Zero removes its relative weight where supported.",
       "interaction": "Priority does not raise original chance checks or bypass a stash's rank and loot restrictions.",
       "exposeInUi": true
@@ -6108,7 +6108,7 @@
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
-      "rationale": "Makes food more or less favored in eligible stash loot pools. This is priority, not a drop percentage.",
+      "rationale": "How much stashes lean towards food compared with other supplies. Vanilla: 1×. Lower = less food in the mix.",
       "logic": "Higher priority favors food against other eligible stash categories. Zero removes its relative weight where supported.",
       "interaction": "Priority does not raise original chance checks or bypass a stash's rank and loot restrictions.",
       "exposeInUi": true
@@ -6162,7 +6162,7 @@
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
-      "rationale": "Makes drinks more or less favored in eligible stash loot pools. This is priority, not a drop percentage.",
+      "rationale": "How much stashes lean towards drinks compared with other supplies. Vanilla: 1×. Lower = fewer drinks in the mix.",
       "logic": "Higher priority favors drinks against other eligible stash categories. Zero removes its relative weight where supported.",
       "interaction": "Priority does not raise original chance checks or bypass a stash's rank and loot restrictions.",
       "exposeInUi": true
@@ -6216,7 +6216,7 @@
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
-      "rationale": "Adjust relative grenades presence without touching ammo stack size or quest rewards.",
+      "rationale": "Old preset setting for how much grenades show up in stashes. Vanilla: 1×. Kept so older presets still load.",
       "logic": "Native Weight is relative within its own generator group. Multiplying all members of a single-category pool may leave its normalized ratios unchanged; independent Chance is never modified by this global control.",
       "interaction": "Legacy preset compatibility only. Not an editable Basic mixer knob: does not change either displayed mixed native Weight group.",
       "exposeInUi": false
@@ -6270,7 +6270,7 @@
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
-      "rationale": "Adjust relative coupons presence without touching ammo stack size or quest rewards.",
+      "rationale": "How much stashes lean towards coupons (money) compared with other supplies. Vanilla: 1×. Lower = less cash from stashes.",
       "logic": "Native Weight is relative within its own generator group. Multiplying all members of a single-category pool may leave its normalized ratios unchanged; independent Chance is never modified by this global control.",
       "interaction": "Legacy preset compatibility only. Not an editable Stash Content mixer knob; the retained Veteran Basic source pool has no coupon Weight member.",
       "exposeInUi": false
@@ -6317,7 +6317,7 @@
           "0× disables the matching Weight entries, not separate Chance rolls. Source eligibility and excluded quest/unique stashes remain unchanged."
         ]
       },
-      "rationale": "Changes how strongly Bandages compete for a place in eligible medical loot pools. Chance is separate.",
+      "rationale": "How often bandages win when a stash picks a med. Vanilla: 1×. 0 takes bandages out of that pick; the chance roll is a separate setting.",
       "logic": "Higher priority favors Bandages relative to other supported medical loot. Zero excludes this type from the weighted selection.",
       "interaction": "The separate Bandage Chance Modifier still controls original chance rolls.",
       "exposeInUi": true
@@ -6364,7 +6364,7 @@
           "Native chance rows can differ by tier/difficulty; this is a percentage-of-native control, not a single absolute drop chance."
         ]
       },
-      "rationale": "Scales the original chance for eligible Bandages. 100% keeps that chance, without changing priority.",
+      "rationale": "Scales the game's own chance of a bandage turning up in stashes. Vanilla: 100%. 50% = half as likely; 0% = no bandages from those rolls.",
       "logic": "100% keeps the original Bandage chance; 50% halves it and 0% disables that chance roll. This is not a whole-stash drop rate.",
       "interaction": "Bandage priority or availability is separate; the stash's existing eligibility rules still apply.",
       "exposeInUi": true
@@ -6411,7 +6411,7 @@
           "0× disables the matching Weight entries, not separate Chance rolls. Source eligibility and excluded quest/unique stashes remain unchanged."
         ]
       },
-      "rationale": "Changes how strongly Medkits compete for a place in eligible medical loot pools. Chance is separate.",
+      "rationale": "How often medkits win when a stash picks a med. Vanilla: 1×. 0 takes medkits out of that pick.",
       "logic": "Higher priority favors Medkits relative to other supported medical loot. Zero excludes this type from the weighted selection.",
       "interaction": "The separate Medkit Chance Modifier still controls original chance rolls.",
       "exposeInUi": true
@@ -6458,7 +6458,7 @@
           "Native chance rows can differ by tier/difficulty; this is a percentage-of-native control, not a single absolute drop chance."
         ]
       },
-      "rationale": "Scales the original chance for eligible Medkits. 100% keeps that chance, without changing priority.",
+      "rationale": "Scales the game's own chance of a medkit turning up in stashes. Vanilla: 100%. 50% = half as likely.",
       "logic": "100% keeps the original Medkit chance; 50% halves it and 0% disables that chance roll. This is not a whole-stash drop rate.",
       "interaction": "Medkit priority or availability is separate; the stash's existing eligibility rules still apply.",
       "exposeInUi": true
@@ -6505,7 +6505,7 @@
           "0× disables the matching Weight entries, not separate Chance rolls. Source eligibility and excluded quest/unique stashes remain unchanged."
         ]
       },
-      "rationale": "Changes how strongly Army Medkits compete for a place in eligible medical loot pools. Chance is separate.",
+      "rationale": "How often army medkits win when a stash picks a med. Vanilla: 1×. 0 takes them out of that pick.",
       "logic": "Higher priority favors Army Medkits relative to other supported medical loot. Zero excludes this type from the weighted selection.",
       "interaction": "The separate Army Medkit Chance Modifier still controls original chance rolls.",
       "exposeInUi": true
@@ -6552,7 +6552,7 @@
           "Native chance rows can differ by tier/difficulty; this is a percentage-of-native control, not a single absolute drop chance."
         ]
       },
-      "rationale": "Scales the original chance for eligible Army Medkits. 100% keeps that chance, without changing priority.",
+      "rationale": "Scales the game's own chance of an army medkit turning up in stashes. Vanilla: 100%. 50% = half as likely.",
       "logic": "100% keeps the original Army Medkit chance; 50% halves it and 0% disables that chance roll. This is not a whole-stash drop rate.",
       "interaction": "Army Medkit priority or availability is separate; the stash's existing eligibility rules still apply.",
       "exposeInUi": true
@@ -6599,7 +6599,7 @@
           "0× disables the matching Weight entries, not separate Chance rolls. Source eligibility and excluded quest/unique stashes remain unchanged."
         ]
       },
-      "rationale": "Enables or disables Anti-Rad entries in eligible medical stash loot pools. Drop chance is controlled separately.",
+      "rationale": "Whether anti-rads can be picked in stash med pools. Vanilla: ON. Turn OFF to make anti-rads a trader-only buy; the chance roll is a separate setting.",
       "logic": "ON allows Anti-Rad in its eligible stash pool; OFF excludes it from that pool. The original chance check still applies.",
       "interaction": "Anti-Rad Chance Modifier scales the separate chance check while Anti-Rad is allowed.",
       "exposeInUi": true
@@ -6646,7 +6646,7 @@
           "Native chance rows can differ by tier/difficulty; this is a percentage-of-native control, not a single absolute drop chance."
         ]
       },
-      "rationale": "Scales the original chance for eligible Anti-Rad items. 100% keeps that chance.",
+      "rationale": "Scales the game's own chance of an anti-rad turning up in stashes. Vanilla: 100%. 50% = half as likely.",
       "logic": "100% keeps the original Anti-Rad chance; 50% halves it and 0% disables that chance roll. This is not a whole-stash drop rate.",
       "interaction": "Anti-Rad priority or availability is separate; the stash's existing eligibility rules still apply.",
       "exposeInUi": true
@@ -6694,7 +6694,7 @@
           "Underlying -1/0/1–6 sentinel values are retained for legacy preset compatibility."
         ]
       },
-      "rationale": "Sets the minimum number of Medkits in an eligible stack when that loot entry appears. It does not guarantee a drop.",
+      "rationale": "The minimum medkit stack a stash can give when it has medkits. Vanilla: 0 = the game's own minimum. Raise it so a medkit find is always worth the trip. It doesn't make medkits appear more often.",
       "logic": "Raises or lowers the minimum Medkit stack size. Zero keeps the original minimum where the item is eligible.",
       "interaction": "Only stack size changes; chance checks and which stashes may contain this item stay separate.",
       "exposeInUi": true
@@ -6742,7 +6742,7 @@
           "Underlying -1/0/1–6 sentinel values are retained for legacy preset compatibility."
         ]
       },
-      "rationale": "Sets the maximum number of Medkits in an eligible stack when that loot entry appears. Zero can exclude them.",
+      "rationale": "The maximum medkit stack a stash can give. Vanilla: 5 = the game's own cap. Lower it to stop finding piles of medkits; 0 takes medkits out of these stacks.",
       "logic": "Caps the Medkit stack size. Zero excludes it from eligible stacks; five preserves the original supported maximum.",
       "interaction": "Only stack size changes; chance checks and which stashes may contain this item stay separate.",
       "exposeInUi": true
@@ -6790,7 +6790,7 @@
           "Underlying -1/0/1–6 sentinel values are retained for legacy preset compatibility."
         ]
       },
-      "rationale": "Sets the minimum Army Medkits in an eligible stack when that loot entry appears. It does not guarantee a drop.",
+      "rationale": "The minimum army medkit stack a stash can give when it has them. Vanilla: 0 = the game's own minimum. It doesn't make them appear more often.",
       "logic": "Raises or lowers the minimum Army Medkit stack size. Zero keeps the original minimum where the item is eligible.",
       "interaction": "Only stack size changes; chance checks and which stashes may contain this item stay separate.",
       "exposeInUi": true
@@ -6838,7 +6838,7 @@
           "Underlying -1/0/1–6 sentinel values are retained for legacy preset compatibility."
         ]
       },
-      "rationale": "Sets the maximum Army Medkits in an eligible stack when that loot entry appears. Zero can exclude them.",
+      "rationale": "The maximum army medkit stack a stash can give. Vanilla: 5 = the game's own cap. 0 takes army medkits out of these stacks.",
       "logic": "Caps the Army Medkit stack size. Zero excludes it from eligible stacks; five preserves the original supported maximum.",
       "interaction": "Only stack size changes; chance checks and which stashes may contain this item stay separate.",
       "exposeInUi": true
@@ -6898,7 +6898,7 @@
           "Final native engine generation and existing-save behavior require in-game validation."
         ]
       },
-      "rationale": "Adds optional progression gear to eligible regular stashes. Scripted, unique and quest rewards stay protected.",
+      "rationale": "Adds a chance of bonus gear (weapons, armor, artifacts, attachments) in regular stashes, matched to the area's progression. Vanilla: OFF. While ON, 13 plain weapon spots in stashes are replaced by this system; quest and unique rewards stay.",
       "logic": "ON enables extra, rank-appropriate gear in eligible stashes. OFF disables that bonus system.",
       "interaction": "The bonus system also replaces 13 verified regular-weapon stash placements. Quest and unique rewards remain protected.",
       "exposeInUi": true
@@ -6953,7 +6953,7 @@
           "Rank tiers and 142-item rank-scoped SID catalog originate from gear-progression-ranks.csv."
         ]
       },
-      "rationale": "Sets the share of eligible regular stash locations offered bonus gear. It is not the chance of getting an item.",
+      "rationale": "How many regular stashes get a shot at bonus gear. Vanilla: 0%. 50% = about half of them. Each picked stash still rolls the Bonus Chance.",
       "logic": "Higher covers more eligible stashes; zero covers none. Full coverage still does not guarantee an item.",
       "interaction": "Bonus Chance controls each offered item's roll; category priorities choose which gear can be offered.",
       "requiresToggle": "loot.stashGearEnabled",
@@ -7008,7 +7008,7 @@
           "Quest/Weird/special/unique items are excluded. If all three weights are zero, no extra generators are emitted."
         ]
       },
-      "rationale": "Favors or discourages weapons as a bonus gear category. Zero removes weapons from that bonus mix.",
+      "rationale": "How often bonus gear is a weapon. Vanilla: 1×. 0 = never a weapon.",
       "logic": "Higher priority favors weapons when a supported stash chooses its bonus gear types. Zero excludes this category.",
       "interaction": "Coverage decides which stashes participate; Bonus Chance checks each offered item. Rank limits still apply.",
       "requiresToggle": "loot.stashGearEnabled",
@@ -7063,7 +7063,7 @@
           "Quest/Weird/special/unique items are excluded. If all three weights are zero, no extra generators are emitted."
         ]
       },
-      "rationale": "Favors or discourages armor as a bonus gear category. Zero removes armor from that bonus mix.",
+      "rationale": "How often bonus gear is armor. Vanilla: 1×. 0 = never armor.",
       "logic": "Higher priority favors armor when a supported stash chooses its bonus gear types. Zero excludes this category.",
       "interaction": "Coverage decides which stashes participate; Bonus Chance checks each offered item. Rank limits still apply.",
       "requiresToggle": "loot.stashGearEnabled",
@@ -7118,7 +7118,7 @@
           "Quest/Weird/special/unique items are excluded. If all three weights are zero, no extra generators are emitted."
         ]
       },
-      "rationale": "Favors or discourages artifacts as a bonus gear category. Zero removes artifacts from that bonus mix.",
+      "rationale": "How often bonus gear is an artifact. Vanilla: 1×. 0 = never an artifact.",
       "logic": "Higher priority favors artifacts when a supported stash chooses its bonus gear types. Zero excludes this category.",
       "interaction": "Coverage decides which stashes participate; Bonus Chance checks each offered item. Rank limits still apply.",
       "requiresToggle": "loot.stashGearEnabled",
@@ -7175,7 +7175,7 @@
           "Default weight 0x preserves existing three-category presets."
         ]
       },
-      "rationale": "Favors or discourages attachments as bonus gear. Only suitable progression tiers are used.",
+      "rationale": "How often bonus gear is a weapon attachment, matched to the area's progression. Vanilla: 0 — off. Raise it to find scopes and other attachments in stashes.",
       "logic": "Higher priority favors attachments when a supported stash chooses its bonus gear types. Zero excludes this category.",
       "interaction": "Coverage decides which stashes participate; Bonus Chance checks each offered item. Rank limits still apply.",
       "requiresToggle": "loot.stashGearEnabled",
@@ -7232,7 +7232,7 @@
           "Existing presets missing this new key inherit 50% to preserve the prior authored Chance 0.5. Master OFF disables the editor."
         ]
       },
-      "rationale": "Sets the chance check for each eligible bonus gear candidate. Even 100% does not guarantee gear in every stash.",
+      "rationale": "The roll for each bonus gear item in a picked stash. Vanilla: 50%. Even 100% isn't a guarantee in every stash — Coverage decides which stashes get a roll at all.",
       "logic": "Higher improves the odds for each offered bonus item. Even 100% still needs an eligible stash and item candidate.",
       "interaction": "Use Bonus Gear Coverage for the number of eligible locations and category priority for the types of gear offered.",
       "requiresToggle": "loot.stashGearEnabled",
@@ -7282,7 +7282,7 @@
           "The existing production-only stash fan-out and exclusions remain unchanged."
         ]
       },
-      "rationale": "Changes the number of rounds in eligible Basic, Standard and Rare stash ammo stacks together. Item selection stays separate.",
+      "rationale": "How many rounds you get from ammo in Basic stashes. Vanilla: 1×. Standard and Rare stashes have their own ammo amounts.",
       "logic": "",
       "interaction": "One Ammo Quantity control changes eligible ammo stack sizes in Basic, Standard and Rare stashes together.",
       "lootHint": {
@@ -7353,7 +7353,7 @@
           "The production-only redirect manifest excludes quest/test/unresolved Cheap paths."
         ]
       },
-      "rationale": "Changes the chance of an RGD-5 reward in an eligible Basic stash. Grenade quantity stays separate.",
+      "rationale": "Chance a Basic stash has an RGD-5 grenade in it. Vanilla: 10%.",
       "logic": "0% means Basic stashes never contain the RGD-5 from this setting. 10% is vanilla. 100% sets the native Basic RGD-5 chance when that eligible source branch is evaluated; it does not force every physical stash to contain grenades.",
       "interaction": "Pair it with Basic Stash RGD-5 Grenade Amount: Chance decides whether the grenade appears; Amount decides how many you get.",
       "lootHint": {
@@ -7405,7 +7405,7 @@
           "The same audited production-only Cheap stash redirect surface is used as the Chance and Ammo Quantity controls."
         ]
       },
-      "rationale": "Changes how many RGD-5 grenades appear when the eligible Basic stash grenade reward succeeds.",
+      "rationale": "How many RGD-5s you get when a Basic stash has grenades. Vanilla: 1.",
       "logic": "Choose an exact 0-4 grenades when the grenade entry is present. Vanilla is 1.",
       "interaction": "Chance and Amount are separate: 0% Chance means no grenade appears; Amount decides how many are given when it does.",
       "lootHint": {
@@ -7459,7 +7459,7 @@
           "The vanilla Newbie block intentionally contains A919D twice; the TCD template preserves that duplicate source row."
         ]
       },
-      "rationale": "Changes only the number of rounds found in Standard stashes, not which ammo types can appear.",
+      "rationale": "How many rounds you get from ammo in Standard stashes. Vanilla: 1×. Which calibers turn up still follows the game's progression.",
       "logic": "25-200% scales the amount of ammo found in Standard stashes. For example, a vanilla 18-24 round stack becomes about 9-12 at 50% and 36-48 at 200%.",
       "interaction": "One global AMMO QUANTITY slider adjusts native MinCount/MaxCount in Basic, Standard and Rare with the same multiplier; tier-specific IDs remain CFG/preset backings.",
       "lootHint": {
@@ -7899,7 +7899,7 @@
           "The existing Expensive Stash Coupon Chance remains independent and is materialized into TCD-owned Expensive roots whenever this ammo control causes production redirects."
         ]
       },
-      "rationale": "Changes only the number of rounds found in Rare stashes, not which ammo types can appear.",
+      "rationale": "How many rounds you get from ammo in Rare stashes. Vanilla: 1×. Which calibers turn up still follows the game's progression.",
       "logic": "25-200% changes the amount of ammo found in Rare stashes. 100% keeps vanilla amounts.",
       "interaction": "One global AMMO QUANTITY slider adjusts native MinCount/MaxCount in Basic, Standard and Rare with the same multiplier; tier-specific IDs remain CFG/preset backings.",
       "lootHint": {
@@ -8006,7 +8006,7 @@
           "Original hidden per-category multipliers and coupon presets remain effective."
         ]
       },
-      "rationale": "Scale eligible Standard stash native Chance entries together without removing original per-item differences.",
+      "rationale": "Scales every item chance in Standard stashes at once. Vanilla: 1×. Lower = emptier Standard stashes; higher = fuller. Items that were rarer stay rarer.",
       "logic": "One multiplier per tier is applied after legacy per-category modifiers to the authored native per-entry Chance. Results are clamped 0–1; no global stash drop chance is invented.",
       "interaction": "Edit independent native per-category Chance. NATIVE is a source percentage, never whole-stash drop odds.",
       "exposeInUi": false
@@ -8053,7 +8053,7 @@
           "Original hidden per-category multipliers and coupon presets remain effective."
         ]
       },
-      "rationale": "Scale eligible Rare stash native Chance entries together without removing original per-item differences.",
+      "rationale": "Scales every item chance in Rare stashes at once. Vanilla: 1×. Lower = less exciting Rare finds; higher = more generous ones.",
       "logic": "One multiplier per tier is applied after legacy per-category modifiers to the authored native per-entry Chance. Results are clamped 0–1; no global stash drop chance is invented.",
       "interaction": "Edit independent native per-category Chance. NATIVE is a source percentage, never whole-stash drop odds.",
       "exposeInUi": false
@@ -8102,7 +8102,7 @@
       ],
       "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
       "interaction": "Affects eligible Standard stash medical items only. Availability, selection priority and stack size remain separate.",
-      "rationale": "Scales the original chance of medical items in Standard stashes. 100% keeps their original odds; it does not guarantee a drop."
+      "rationale": "Scales the chance of meds in Standard stashes. Vanilla: 100% (bandages 40%, medkits 100% in the game's own rolls). 50% = half as likely."
     },
     {
       "id": "loot.mediumStashDrinksChance",
@@ -8148,7 +8148,7 @@
       ],
       "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
       "interaction": "Affects eligible Standard stash drinks only. Availability, selection priority and stack size remain separate.",
-      "rationale": "Scales the original chance of drinks in Standard stashes. 100% keeps their original odds; it does not guarantee a drop."
+      "rationale": "Scales the chance of drinks in Standard stashes. Vanilla: 100% (vodka 50%, energy drinks 100% in the game's own rolls)."
     },
     {
       "id": "loot.mediumStashCouponsChance",
@@ -8194,7 +8194,7 @@
       ],
       "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
       "interaction": "Affects eligible Standard stash coupons only. Availability, selection priority and stack size remain separate.",
-      "rationale": "Scales the original chance of coupons in Standard stashes. 100% keeps their original odds; it does not guarantee a payout."
+      "rationale": "Scales the chance of a coupon (money) reward in Standard stashes. Vanilla: 100% of the game's 10%."
     },
     {
       "id": "loot.expensiveStashAmmoChance",
@@ -8240,7 +8240,7 @@
       ],
       "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
       "interaction": "Affects eligible Rare stash ammo only. Availability, selection priority and stack size remain separate.",
-      "rationale": "Scales the original chance of ammo in Rare stashes. 100% keeps the original odds, not a guaranteed drop."
+      "rationale": "Scales the chance of ammo in Rare stashes on the early-game rolls. Vanilla: 100%. Later ranks pick ammo differently and aren't affected."
     },
     {
       "id": "loot.expensiveStashMedicalChance",
@@ -8286,7 +8286,7 @@
       ],
       "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
       "interaction": "Affects eligible Rare stash medical items only. Availability, selection priority and stack size remain separate.",
-      "rationale": "Scales the original chance of medical items in Rare stashes. 100% keeps the original odds, not a guaranteed drop."
+      "rationale": "Scales the chance of meds (bandages, medkits, anti-rads, army medkits) in Rare stashes. Vanilla: 100% — the game always rolls them in."
     },
     {
       "id": "loot.expensiveStashFoodChance",
@@ -8332,7 +8332,7 @@
       ],
       "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
       "interaction": "Affects eligible Rare stash food only. Availability, selection priority and stack size remain separate.",
-      "rationale": "Scales the original chance of food in Rare stashes. 100% keeps the original odds, not a guaranteed drop."
+      "rationale": "Scales the chance of canned food in Rare stashes. Vanilla: 100%."
     },
     {
       "id": "loot.expensiveStashDrinksChance",
@@ -8378,7 +8378,7 @@
       ],
       "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
       "interaction": "Affects eligible Rare stash drinks only. Availability, selection priority and stack size remain separate.",
-      "rationale": "Scales the original chance of drinks in Rare stashes. 100% keeps the original odds, not a guaranteed drop."
+      "rationale": "Scales the chance of energy drinks in Rare stashes. Vanilla: 100%."
     },
     {
       "id": "loot.expensiveStashGrenadesChance",
@@ -8424,7 +8424,7 @@
       ],
       "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
       "interaction": "Affects eligible Rare stash grenades only. Availability, selection priority and stack size remain separate.",
-      "rationale": "Scales the original chance of grenades in Rare stashes. 100% keeps the original odds, not a guaranteed drop."
+      "rationale": "Scales the chance of RGD-5 grenades in Rare stashes. Vanilla: 100%."
     },
     {
       "id": "loot.expensiveStashMoneyChance",
@@ -8468,7 +8468,7 @@
           "Runtime CFG uses 0.20 on Easy/Medium and 0.10 on Hard/Stalker for the Progression-Rank-matched MoneyCommon/Rare/Epic/Legendary entry."
         ]
       },
-      "rationale": "Changes the chance for coupon rewards in eligible Rare stashes. Reward size still depends on progression.",
+      "rationale": "Chance a Rare stash pays out coupons (money). Vanilla: 20% on Novice and Stalker, 10% on Veteran and Master. How much you get still follows the game's progression.",
       "logic": "Novice and Stalker use 20%; Veteran and Master use 10%. This setting only changes whether coupons can appear, not which Common, Rare, Epic or Legendary coupon tier is selected.",
       "interaction": "This is a chance for the eligible Rare coupon reward entry, not the chance to find a Rare stash or its reward tier.",
       "exposeInUi": true,

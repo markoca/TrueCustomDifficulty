@@ -358,6 +358,7 @@
                                                                  
 
                                                                  <controls:StashAmmoRadar x:Name="StashAmmoRadarControl"
+                                                                                                ParameterSelected="AggregateVisualControl_ParameterSelected"
                                                                                                 MaxWidth="920"
                                                                                                 HorizontalAlignment="Center"
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"

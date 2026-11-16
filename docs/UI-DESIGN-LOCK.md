@@ -1,4 +1,4 @@
-## 2026-11-16 — CURRENT: gamer-facing WHAT IT DOES text, tab by tab (Combat, Survival, Health, Stamina, Loot done)
+## 2026-11-16 — CURRENT: gamer-facing WHAT IT DOES text, tab by tab (Combat, Survival, Health, Stamina, Loot, Stashes done)
 
 Every catalog `rationale` is being rewritten tab by tab (Combat → Survival → Health → Stamina → Loot → Stashes → Economy → Equipment → Environment → A-Life → Master) into plain gamer language: what you feel in play, the vanilla value per difficulty taken from the catalog's own `vanilla` field, and one practical tip — no CFG keys or file names. Technical detail stays in the separate value / logic / interaction sections. Custom radar controls of each tab get per-card selection as the tab is done: the card's owning parameter is passed to `dc.DrawTrackedRoundedRectangle(..., owner)` and a click anywhere in the card raises `ParameterSelected`.
 
@@ -7,6 +7,7 @@ Every catalog `rationale` is being rewritten tab by tab (Combat → Survival →
 * **Health (done):** all 18 parameters (core health, low-HP recovery, healing amounts, bleed removal, radiation removal). `MedicalHealingRadar`: a click anywhere in an item lane selects the HEAL or BLEED bar of that item nearest to the click; a click in the RADIATION REMOVAL group selects the nearest radiation bar.
 * **Stamina (done):** all 23 parameters (core stamina, action costs, exhaustion & second wind, movement drain, traversal, water, carry weight). Both `ActionCostsRadar` boards (ACTION COSTS and EXHAUSTION & RECOVERY) select per card through the shared `CardHoverTracker.SelectAt(point, targets)`: the card's owner if it has one, otherwise the control inside that card nearest to the click (MOVEMENT / MELEE groups pick the nearest action bar).
 * **Loot (done):** all 37 parameters (NPC loot, breakable boxes, 14 mutant part chances, world loot removal and shuffles). `MutantDropRadar`: each mutant card selects its part chance. `WorldLootRemovalRadar`: each removal lane selects its population (the MOD ITEMS lane is a preset sidecar, not a catalog parameter, so it keeps the anchor text). NPC LOOT keeps its own `NpcLootCards` card texts.
+* **Stashes (done):** all 42 parameters (supply reduction, content mix, medical composition incl. medkit stack floors/caps as shown on the board — MAX 5 = game cap, MAX 0 = none, MIN 0 = game floor — stash gear, Basic / Standard / Rare amounts and chances). `StashAmmoRadar`: each tier card selects its ammo amount.
 
 ## 2026-11-16 — CURRENT: white card hover on every control, all tabs
 

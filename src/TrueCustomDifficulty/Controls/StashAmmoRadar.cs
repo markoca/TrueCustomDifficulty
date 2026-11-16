@@ -182,7 +182,8 @@ public sealed class StashAmmoRadar : FrameworkElement
             new Pen(border, 0.9),
             card,
             4.0,
-            4.0);
+            4.0,
+            parameter);
 
         DrawText(
             dc,
@@ -296,10 +297,19 @@ public sealed class StashAmmoRadar : FrameworkElement
     private static int ScaleCount(double source, double multiplier)
         => Math.Max(1, (int)Math.Floor(source * multiplier + 0.5));
 
+    public event EventHandler<AggregateParameterSelectedEventArgs>? ParameterSelected;
+
+    private void SelectCardAt(Point point)
+    {
+        if (_cardHover.OwnerAt(point) is { } owner)
+            ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(owner));
+    }
+
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonDown(e);
         Focus();
+        SelectCardAt(e.GetPosition(this));
 
         var tier = FindTarget(e.GetPosition(this));
         if (tier < 0)
@@ -361,6 +371,7 @@ public sealed class StashAmmoRadar : FrameworkElement
     protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseRightButtonDown(e);
+        SelectCardAt(e.GetPosition(this));
 
         var tier = FindTarget(e.GetPosition(this));
         if (tier < 0 || _parameters[tier] is not { } parameter)
