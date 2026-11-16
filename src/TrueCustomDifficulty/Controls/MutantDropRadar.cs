@@ -224,7 +224,8 @@ public sealed class MutantDropRadar : FrameworkElement
             new Pen(CloneWithOpacity(border, 0.45), 0.8),
             card,
             3.0,
-            3.0);
+            3.0,
+            parameter);
 
         DrawText(
             dc,
@@ -267,10 +268,19 @@ public sealed class MutantDropRadar : FrameworkElement
             track);
     }
 
+    public event EventHandler<AggregateParameterSelectedEventArgs>? ParameterSelected;
+
+    private void SelectCardAt(Point point)
+    {
+        if (_cardHover.OwnerAt(point) is { } owner)
+            ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(owner));
+    }
+
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonDown(e);
         Focus();
+        SelectCardAt(e.GetPosition(this));
 
         var row = FindTarget(e.GetPosition(this));
         if (row < 0)
@@ -333,6 +343,7 @@ public sealed class MutantDropRadar : FrameworkElement
     protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseRightButtonDown(e);
+        SelectCardAt(e.GetPosition(this));
 
         var row = FindTarget(e.GetPosition(this));
         if (row < 0 || _parameters[row] is not { } parameter)

@@ -5717,7 +5717,7 @@
           "Engine execution of new spawn endpoints requires fresh-NPC validation."
         ]
       },
-      "rationale": "Makes ordinary human corpses carry fewer optional supplies. Preserves weapons, their attached ammo, armor and special/quest NPCs.",
+      "rationale": "Makes ordinary human bodies carry less food, drinks and meds. Vanilla: 0 — no change. Higher = leaner pickings, so you rely more on stashes and traders. Weapons, their loaded ammo, armor and quest/special NPCs are never touched.",
       "logic": "Chance rows and optional Corpse SmartLoot group activation are reduced separately. 0% leaves their original behavior; 100% disables eligible ordinary supplies.",
       "interaction": "Does not change the saved SmartLoot package choice, Bonus Ammo Qty, Mod Items or the individually configured raw Chance values."
     },
@@ -5756,7 +5756,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Adds bonus loot packages to ordinary human corpses: Medicine, Ammo and Water can be switched on in any combination. Normal NPC loot is separate.",
+      "rationale": "Extra loot packages ordinary human bodies can carry: Medicine, Ammo and Water, in any combination. Vanilla: Novice gets Medicine + Ammo, Stalker gets Water, Veteran and Master get none.",
       "logic": "Each chip adds one native SmartLoot package to EconomyDifficulty.CorpseSmartLoot.GeneralNPC of the selected difficulty, written in the canonical order Medicine, Ammo, Water. Vanilla authors Medicine + Ammo (Novice), Water (Stalker) and none (Veteran, Master); other combinations are the same list format.",
       "interaction": "Bonus ammo quantity applies whenever the Ammo package is on. Standard medical items are not switched off by any package choice."
     },
@@ -5803,7 +5803,7 @@
           "92 ordinary-human SubItemGenerator links (88 base + 4 DLC1 NORD; roaming GeneralNPC_* and settlement GuardNPC_*) are redirected to TCD-owned pool clones; disabled Prologue edges, named MIK, unspawned No_Armor roots, zombies (which re-declare their own link) and the shared vanilla pools themselves remain vanilla."
         ]
       },
-      "rationale": "Changes the original standard-NPC medical Chance entries. Does not affect optional SmartLoot medicine or item stack sizes.",
+      "rationale": "How often ordinary human enemies carry their usual meds. Vanilla: 1× (the game's own chances). 0 = they never carry meds; 2× = twice as likely.",
       "logic": "A relative 0–200% scaler of source Chance. A checked item-specific multiplier (0–3x of native Chance) replaces this global standard-medical scaler for that item.",
       "interaction": "Always editable, including when Corpse Smart Loot is Water or None; does not affect zombies, quests, traders or stashes."
     },
@@ -5852,7 +5852,7 @@
           "Actual in-game corpse drop result and source-derived clone inheritance require a Wine build and runtime test."
         ]
       },
-      "rationale": "Sets the quantity of bonus rounds from the NPC_Ammo_Smart corpse package. It does not change whether ammo drops or ammunition inside carried weapons.",
+      "rationale": "How many rounds the bonus Ammo package gives when it drops. Vanilla: 1×. Only matters while the Ammo package is on; the ammo loaded in their guns stays the same.",
       "logic": "The 0–3× amount multiplier scales only original MinCount/MaxCount. Zero removes these optional stacks; progression rank still controls which calibers can appear.",
       "interaction": "Active only when the Ammo package of Corpse Smart Loot is on; otherwise this value stays saved but inactive."
     },
@@ -5899,7 +5899,7 @@
           "Two Prologue roots, four named MIK/Mykluha roots and three spawner-less No_Armor roots are excluded."
         ]
       },
-      "rationale": "Sets the minimum and maximum condition of weapons found on ordinary human enemies.",
+      "rationale": "How worn the guns you pick up from ordinary human enemies are. Untouched = the game's own condition rolls. Push it down to make looted guns repair projects; up to make them worth keeping.",
       "logic": "Higher MIN improves the worst condition you can find. Higher MAX allows better-condition weapons; MIN cannot exceed MAX.",
       "interaction": "Changes only the condition of weapons dropped by ordinary human enemies. It does not change which weapons they use, their ammo, health, traders, zombies, or story characters."
     },
@@ -7564,7 +7564,7 @@
           "Test/debug destructibles and the three non-destructible DLC ItemContainer paths remain on vanilla generators."
         ]
       },
-      "rationale": "Changes how many rounds breakable ammo boxes give you. Ammo type selection is separate.",
+      "rationale": "How many rounds you get from smashing an ammo box. Vanilla: 1×. Which calibers show up is a separate setting.",
       "logic": "50-200% changes how many rounds are found in breakable ammo boxes. 100% keeps vanilla amounts.",
       "interaction": "Works with Ammo Box Distribution: Amount changes how many rounds you get, while Distribution changes which ammo families appear more often.",
       "lootHint": {
@@ -7653,7 +7653,7 @@
           "Ammo from Breakable Boxes remains independent and changes only MinCount/MaxCount."
         ]
       },
-      "rationale": "Favors or discourages ammo types in breakable boxes. This changes the mix, not the number of rounds.",
+      "rationale": "How often breakable ammo boxes give 9×18 mm pistol rounds. Vanilla: 1×. Together with the other calibers this sets the ammo mix, not the number of rounds.",
       "logic": "Higher priority makes an ammo family more likely within supported box pools. 1× preserves the original mix.",
       "interaction": "Ammo per Box changes how many rounds appear, not which caliber families are favored.",
       "exposeInUi": true
@@ -7698,7 +7698,7 @@
           "Hidden backing parameter for the .45 ACP radar axis."
         ]
       },
-      "rationale": "Changes how common .45 ACP ammo is in breakable ammo boxes.",
+      "rationale": "How often breakable ammo boxes give .45 ACP rounds. Vanilla: 1×. 0 removes them from the mix.",
       "logic": "1x keeps the vanilla chance. Lower settings make .45 ACP less common; higher settings make it more common.",
       "interaction": "Controlled through the Ammo Box Distribution radar.",
       "exposeInUi": false
@@ -7743,7 +7743,7 @@
           "Hidden backing parameter for the 5.45 / 5.56 mm family axis."
         ]
       },
-      "rationale": "Changes how common 5.45 / 5.56 mm ammo is in breakable ammo boxes.",
+      "rationale": "How often breakable ammo boxes give 5.45 / 5.56 mm rifle rounds. Vanilla: 1×. 0 removes them from the mix.",
       "logic": "1x keeps the vanilla chance. Lower settings make 5.45 / 5.56 mm less common; higher settings make it more common.",
       "interaction": "Controlled through the Ammo Box Distribution radar.",
       "exposeInUi": false
@@ -7788,7 +7788,7 @@
           "Hidden backing parameter for the 12 Gauge radar axis."
         ]
       },
-      "rationale": "Changes how common 12 Gauge ammo is in breakable ammo boxes.",
+      "rationale": "How often breakable ammo boxes give 12 gauge shells. Vanilla: 1×. 0 removes them from the mix.",
       "logic": "1x keeps the vanilla chance. Lower settings make 12 Gauge less common; higher settings make it more common.",
       "interaction": "Controlled through the Ammo Box Distribution radar.",
       "exposeInUi": false
@@ -7836,7 +7836,7 @@
           "There are no audited non-destructible consumers of these two leaf grenade pools."
         ]
       },
-      "rationale": "Changes how many grenades come from breakable grenade boxes. Grenade type stays the same.",
+      "rationale": "How many grenades you get from smashing a grenade box. Vanilla: 1×. F1 boxes still give F1s and RGD-5 boxes still give RGD-5s.",
       "logic": "50-200% in 50% steps. Vanilla 1-2 becomes 1-1 at 50%, 1-2 at 100%, 2-3 at 150%, and 2-4 at 200%.",
       "interaction": "Changes grenade amounts in breakable grenade boxes only. Normal stashes, corpse loot, and NPC grenade loadouts are unaffected.",
       "lootHint": {
@@ -11839,7 +11839,7 @@
           "Runtime CFG explicitly stores Chance = 0.15 and Count = 1 for BlinddogLootGenerator."
         ]
       },
-      "rationale": "Sets the chance to find one mutant part after an eligible kill. Each mutant family has its own setting.",
+      "rationale": "Chance a dead blind dog leaves one part you can sell or use. Vanilla: 15% — most kills give nothing. Doesn't change how many blind dogs spawn.",
       "logic": "",
       "interaction": ""
     },
@@ -11887,7 +11887,7 @@
           "Runtime CFG explicitly stores Chance = 0.5 and Count = 1 for BloodsuckerLootGenerator."
         ]
       },
-      "rationale": "Changes the chance of finding one Bloodsucker part after an eligible kill. It doesn't change mutant spawns.",
+      "rationale": "Chance a dead bloodsucker leaves one part you can sell or use. Vanilla: 50%. Doesn't change how many bloodsuckers spawn.",
       "logic": "",
       "interaction": ""
     },
@@ -11935,7 +11935,7 @@
           "Runtime CFG explicitly stores Chance = 0.2 and Count = 1 for BoarLootGenerator."
         ]
       },
-      "rationale": "Changes the chance of finding one Boar part after an eligible kill. It doesn't change mutant spawns.",
+      "rationale": "Chance a dead boar leaves one part you can sell or use. Vanilla: 20% — most kills give nothing. Doesn't change how many boars spawn.",
       "logic": "",
       "interaction": ""
     },
@@ -11983,7 +11983,7 @@
           "Runtime CFG explicitly stores Chance = 1 and Count = 1 for BurerLootGenerator."
         ]
       },
-      "rationale": "Changes the chance of finding one Burer part after an eligible kill. It doesn't change mutant spawns.",
+      "rationale": "Chance a dead burer leaves one part you can sell or use. Vanilla: 100% — every kill pays out. Doesn't change how many burers spawn.",
       "logic": "",
       "interaction": ""
     },
@@ -12031,7 +12031,7 @@
           "Runtime CFG explicitly stores Chance = 1 and Count = 1 for CatLootGenerator."
         ]
       },
-      "rationale": "Changes the chance of finding one Bayun part after an eligible kill. It doesn't change mutant spawns.",
+      "rationale": "Chance a dead bayun leaves one part you can sell or use. Vanilla: 100% — every kill pays out. Doesn't change how many bayuns spawn.",
       "logic": "",
       "interaction": ""
     },
@@ -12079,7 +12079,7 @@
           "Runtime CFG explicitly stores Chance = 1 and Count = 1 for ChimeraLootGenerator."
         ]
       },
-      "rationale": "Changes the chance of finding one Chimera part after an eligible kill. It doesn't change mutant spawns.",
+      "rationale": "Chance a dead chimera leaves one part you can sell or use. Vanilla: 100% — every kill pays out. Doesn't change how many chimeras spawn.",
       "logic": "",
       "interaction": ""
     },
@@ -12127,7 +12127,7 @@
           "Runtime CFG explicitly stores Chance = 1 and Count = 1 for ControllerLootGenerator."
         ]
       },
-      "rationale": "Changes the chance of finding one Controller part after an eligible kill. It doesn't change mutant spawns.",
+      "rationale": "Chance a dead controller leaves one part you can sell or use. Vanilla: 100% — every kill pays out. Doesn't change how many controllers spawn.",
       "logic": "",
       "interaction": ""
     },
@@ -12175,7 +12175,7 @@
           "Runtime CFG explicitly stores Chance = 1 and Count = 1 for DeerLootGenerator."
         ]
       },
-      "rationale": "Changes the chance of finding one Deer part after an eligible kill. It doesn't change mutant spawns.",
+      "rationale": "Chance a dead deer leaves one part you can sell or use. Vanilla: 100% — every kill pays out. Doesn't change how many deers spawn.",
       "logic": "",
       "interaction": ""
     },
@@ -12223,7 +12223,7 @@
           "Runtime CFG explicitly stores Chance = 0.2 and Count = 1 for FleshLootGenerator."
         ]
       },
-      "rationale": "Changes the chance of finding one Flesh part after an eligible kill. It doesn't change mutant spawns.",
+      "rationale": "Chance a dead flesh leaves one part you can sell or use. Vanilla: 20% — most kills give nothing. Doesn't change how many fleshs spawn.",
       "logic": "",
       "interaction": ""
     },
@@ -12271,7 +12271,7 @@
           "Runtime CFG explicitly stores Chance = 0.65 and Count = 1 for PoltergeistLootGenerator."
         ]
       },
-      "rationale": "Changes the chance of finding one Poltergeist part after an eligible kill. It doesn't change mutant spawns.",
+      "rationale": "Chance a dead poltergeist leaves one part you can sell or use. Vanilla: 65%. Doesn't change how many poltergeists spawn.",
       "logic": "",
       "interaction": ""
     },
@@ -12319,7 +12319,7 @@
           "Runtime CFG explicitly stores Chance = 1 and Count = 1 for PseudodogLootGenerator."
         ]
       },
-      "rationale": "Changes the chance of finding one Pseudodog part after an eligible kill. It doesn't change mutant spawns.",
+      "rationale": "Chance a dead pseudodog leaves one part you can sell or use. Vanilla: 100% — every kill pays out. Doesn't change how many pseudodogs spawn.",
       "logic": "",
       "interaction": ""
     },
@@ -12367,7 +12367,7 @@
           "Runtime CFG explicitly stores Chance = 1 and Count = 1 for PseudogiantLootGenerator."
         ]
       },
-      "rationale": "Changes the chance of finding one Pseudogiant part after an eligible kill. It doesn't change mutant spawns.",
+      "rationale": "Chance a dead pseudogiant leaves one part you can sell or use. Vanilla: 100% — every kill pays out. Doesn't change how many pseudogiants spawn.",
       "logic": "",
       "interaction": ""
     },
@@ -12415,7 +12415,7 @@
           "Runtime CFG explicitly stores Chance = 0.1 and Count = 1 for TushkanLootGenerator."
         ]
       },
-      "rationale": "Changes the chance of finding one Tushkan part after an eligible kill. It doesn't change mutant spawns.",
+      "rationale": "Chance a dead tushkan leaves one part you can sell or use. Vanilla: 10% — most kills give nothing. Doesn't change how many tushkans spawn.",
       "logic": "",
       "interaction": ""
     },
@@ -12463,7 +12463,7 @@
           "Runtime CFG explicitly stores Chance = 0.2 and Count = 1 for SnorkLootGenerator."
         ]
       },
-      "rationale": "Changes the chance of finding one Snork part after an eligible kill. It doesn't change mutant spawns.",
+      "rationale": "Chance a dead snork leaves one part you can sell or use. Vanilla: 20% — most kills give nothing. Doesn't change how many snorks spawn.",
       "logic": "",
       "interaction": ""
     },
@@ -12568,7 +12568,7 @@
           "Selection is random without replacement at Build time."
         ]
       },
-      "rationale": "Controls how many eligible world loot pickups are removed when you build the mod. Zero keeps them all.",
+      "rationale": "Share of breakable ammo and RGD grenade boxes taken out of the world. Vanilla: 0% — every box stays. 50% = about half of them are gone.",
       "logic": "",
       "interaction": "This radar targets supported exploration loot categories, not quest or story rewards.",
       "exposeInUi": true
@@ -12626,7 +12626,7 @@
           "World Ammo Boxes cannot remove dedicated F1 boxes: the audited F1 and ammo/RGD physical actor populations are disjoint."
         ]
       },
-      "rationale": "Controls physical F1 box abundance directly using the same removed-percentage convention as the other world box controls.",
+      "rationale": "Share of F1 grenade boxes taken out of the world. Vanilla: 0% — every box stays. Separate from the ammo boxes.",
       "logic": "0% keeps every vanilla F1 grenade box. Higher settings remove more of them from the world when you build the mod.",
       "interaction": "Composes with World Ammo Boxes; the global ammo-box removal slider may further reduce the F1 boxes that survive this control.",
       "exposeInUi": false
@@ -12680,7 +12680,7 @@
           "Selection is random without replacement at Build time."
         ]
       },
-      "rationale": "Controls physical food/drink box presence directly without a separate enable checkbox or shared percentage control.",
+      "rationale": "Share of food and drink boxes taken out of the world. Vanilla: 0%. Higher = you eat what you buy or loot, not what you find lying around.",
       "logic": "0% keeps vanilla food and drink boxes. Higher settings remove more of them from the world.",
       "interaction": "Independent of the other World Loot sliders and does not change the contents of surviving boxes.",
       "exposeInUi": false
@@ -12734,7 +12734,7 @@
           "Selection is random without replacement at Build time."
         ]
       },
-      "rationale": "Controls physical medical box presence directly without a separate enable checkbox or shared percentage control.",
+      "rationale": "Share of medical boxes taken out of the world. Vanilla: 0%. Higher = every bandage counts.",
       "logic": "0% keeps vanilla medical boxes. Higher settings remove more of them from the world.",
       "interaction": "Independent of the other World Loot sliders and does not change the contents of surviving boxes.",
       "exposeInUi": false
@@ -12789,7 +12789,7 @@
           "Selection is random without replacement at Build time. Existing/explored world state may retain actors already instantiated in a save."
         ]
       },
-      "rationale": "Reduces vanilla world generosity without changing stashes, boxes, NPC loot, traders, weapons/armor or scripted rewards.",
+      "rationale": "Share of ammo, consumables and grenades lying around loose that disappears. Vanilla: 0%. Stashes, boxes, NPC loot, traders, weapons, armor and quest rewards are not affected.",
       "logic": "0% keeps vanilla loose world loot. Higher settings remove more eligible loose pickups from the world.",
       "interaction": "Independent of World Ammo/Food/Medical Boxes and World Weapon Shuffle. Surviving PackOfItems keep their vanilla item pools.",
       "exposeInUi": false
@@ -12831,7 +12831,7 @@
           "This toggle is independent from regular World Weapon Shuffle and Weapon Density."
         ]
       },
-      "rationale": "Move source-verified loose unique weapons between known pickup locations without removing them.",
+      "rationale": "Moves nine loose unique weapons to each other's spots, so you can't walk straight to a guide location. Vanilla: OFF. All nine are still out there, once each.",
       "logic": "OFF retains original pickups; ON always moves all nine weapons, exactly once each, to other audited loose unique weapon locations.",
       "interaction": "Compact independent toggle in World Placement, with native right-click reset and group R reset.",
       "exposeInUi": false
@@ -12881,7 +12881,7 @@
           "Every Build creates a fresh compatible distribution."
         ]
       },
-      "rationale": "Shuffles regular world weapons between suitable pickup spots when building. Pistols and main weapons stay in their own slots.",
+      "rationale": "Mixes up which regular weapons lie where, every time you build. Vanilla: OFF. Pistols stay in pistol spots and main guns in main-gun spots, so early areas stay early-game.",
       "logic": "OFF keeps vanilla weapon placement. ON reshuffles compatible world weapons. World Weapon Density decides how many weapon locations remain occupied.",
       "interaction": "World Weapon Density changes both location density and the guaranteed minimum copies of each of the 36 regular weapons."
     },
@@ -12938,7 +12938,7 @@
           "The layout is freshly randomized on every Build."
         ]
       },
-      "rationale": "Controls how many eligible world weapon spots stay filled after shuffling. All supported regular models remain represented.",
+      "rationale": "How many of the world weapon spots actually have a gun. Vanilla: 100% — every spot is filled. Lower it for a scarcer Zone; every one of the 36 regular models still shows up.",
       "logic": "Higher density leaves more world weapon locations populated; lower density makes found weapons scarcer. Every regular weapon model is still kept in the pool.",
       "interaction": "Only shuffled regular weapons use this density; quest and unique weapon placements remain separate."
     },
@@ -12988,7 +12988,7 @@
           "Every Build creates a fresh compatible distribution."
         ]
       },
-      "rationale": "Shuffles eligible world attachments between suitable spots without adding extra copies.",
+      "rationale": "Mixes up where attachments lie in the world, every time you build. Vanilla: OFF. No extra copies are added.",
       "logic": "OFF keeps vanilla attachment placement. ON reshuffles world attachments across compatible locations without changing how many exist.",
       "interaction": "Weapon and blueprint shuffles remain independent."
     },
@@ -13042,7 +13042,7 @@
           "Base loose multiset is Echo x2 + Gilka x2; DLC1 adds Gilka x3 and one stash Bear."
         ]
       },
-      "rationale": "Removes eligible non-quest detector pickups from the world. Quest and trader detectors stay untouched.",
+      "rationale": "Removes detectors lying around in the world and in safe stashes. Vanilla: OFF. Quest and trader detectors stay, so you'll have to earn or buy one.",
       "logic": "OFF keeps vanilla detector placement. ON removes supported non-quest detector pickups from the world while leaving quest detectors alone.",
       "interaction": "Quest detectors and trader supplies stay untouched."
     },
@@ -13097,7 +13097,7 @@
           "Existing-save and engine runtime behavior needs testing."
         ]
       },
-      "rationale": "Removes ordinary suits and helmets found in the world or regular stashes. Quest and special equipment stay available.",
+      "rationale": "Removes ordinary suits and helmets lying in the world and regular stashes. Vanilla: OFF. Quest rewards, traders and NPC gear stay — armor has to be bought or earned.",
       "logic": "OFF preserves normal armor placement. ON removes eligible non-quest suits and helmets from world pickups and safe stashes.",
       "interaction": "Quest rewards, traders and NPC equipment stay. Extra Stash Gear will not add bonus armor while this is ON.",
       "exposeInUi": true
@@ -13136,7 +13136,7 @@
           "When enabled, the build uses a derangement so every included blueprint moves away from its vanilla location."
         ]
       },
-      "rationale": "Shuffles eligible world blueprint locations when building. Quest blueprints and total counts stay unchanged.",
+      "rationale": "Mixes up where blueprints are found, every time you build. Vanilla: OFF. Same blueprints, same number of spots; quest blueprints stay put.",
       "logic": "OFF keeps vanilla blueprint locations. ON reshuffles the supported world blueprints so each build gives you a fresh layout with no duplicates.",
       "interaction": "Quest blueprint placements and total eligible blueprint counts remain unchanged."
     },

@@ -206,7 +206,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
             var center = left + (i + .5) * lane;
             dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .33),
                 new Pen(CloneWithOpacity(border, .64), .8),
-                new Rect(left + i * lane + 3, 69, lane - 6, 251), 4, 4);
+                new Rect(left + i * lane + 3, 69, lane - 6, 251), 4, 4, parameter);
             var current = Math.Clamp(parameter.CurrentNumber, 0, 1);
             var y = plotBottom - (plotBottom - plotTop) * current;
             var referenceY = plotBottom - (plotBottom - plotTop) *
@@ -274,12 +274,21 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
             new Rect(modLeft, plotTop, modWidth, plotBottom - plotTop));
     }
 
+    public event EventHandler<AggregateParameterSelectedEventArgs>? ParameterSelected;
+
+    private void SelectCardAt(Point point)
+    {
+        if (_cardHover.OwnerAt(point) is { } owner)
+            ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(owner));
+    }
+
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonDown(e);
         Focus();
 
         var point = e.GetPosition(this);
+        SelectCardAt(point);
         if (IsEnabled && ModItemsEditorAvailable && _modCheckbox.Contains(point))
         {
             _selectedRow = ModLane;
@@ -351,6 +360,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
     protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseRightButtonDown(e);
+        SelectCardAt(e.GetPosition(this));
 
         var row = FindTarget(e.GetPosition(this));
         if (row < 0 || !IsEnabled || !ModItemsEditorAvailable)
