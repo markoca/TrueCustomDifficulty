@@ -1417,16 +1417,16 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             // in the remaining space and step the size down until it fits.
             var region = new Rect(card.Left + captionInset, card.Top,
                 Math.Max(1.0, card.Width - captionInset - 6.0), 1.0);
-            var size = 9.4;
-            var formatted = CreateText(caption, size, enabled ? text : muted, FontWeights.Bold);
-            while (formatted.WidthIncludingTrailingWhitespace > region.Width && size > 7.4)
+            var captionSize = 9.4;
+            var captionText = CreateText(caption, captionSize, enabled ? text : muted, FontWeights.Bold);
+            while (captionText.WidthIncludingTrailingWhitespace > region.Width && captionSize > 7.4)
             {
-                size -= 0.2;
-                formatted = CreateText(caption, size, enabled ? text : muted, FontWeights.Bold);
+                captionSize -= 0.2;
+                captionText = CreateText(caption, captionSize, enabled ? text : muted, FontWeights.Bold);
             }
-            dc.DrawText(formatted, new Point(
-                region.Left + (region.Width - formatted.WidthIncludingTrailingWhitespace) / 2.0,
-                card.Top + 8.0 + (9.4 - size) / 2.0));
+            dc.DrawText(captionText, new Point(
+                region.Left + (region.Width - captionText.WidthIncludingTrailingWhitespace) / 2.0,
+                card.Top + 8.0 + (9.4 - captionSize) / 2.0));
         }
 
         var center = new Point(card.Left + card.Width / 2.0, card.Top + 54.0);
