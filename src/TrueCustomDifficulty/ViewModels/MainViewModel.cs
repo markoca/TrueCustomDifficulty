@@ -683,6 +683,12 @@ public sealed class MainViewModel : ObservableObject
         WireVisualAggregate(
             ArtifactSpawnPolicy.RespawnRateId,
             ArtifactSpawnPolicy.ParameterIds.ToArray());
+        WireVisualAggregate(
+            HumanCombatPolicy.GrenadeRateId,
+            HumanCombatPolicy.TacticsBoardIds.ToArray());
+        WireVisualAggregate(
+            HumanCombatPolicy.SightRangeId,
+            HumanCombatPolicy.AwarenessIds.ToArray());
 
         // Global damage is edited inside the Individual Anomaly Damage radar
         // alongside ten confirmed, player-facing source controls. Keep this legacy

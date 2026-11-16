@@ -104,28 +104,68 @@ public sealed partial class CfgPatchWriterService
             edits++;
         }
 
-        // ---- SPECIAL ABILITY RATE: group token cooldowns ---------------------
-        if (modifiedById.TryGetValue(MutantAggressionPolicy.SpecialAbilityRateId, out var special)
-            && special.IsValueModifiedFromReference())
+        // ---- Group token cooldowns: SPECIAL ABILITY RATE + HUMAN TACTICS -----
+        edits += WriteCombatSynchronization(modifiedById, allById, difficultySid, documents, writtenParameters);
+
+        return edits;
+    }
+
+    /// <summary>
+    /// One writer for every CombatSynchronizer control (they share the rank
+    /// tables): when any is changed, the four full rank tables of the selected
+    /// difficulty are written (non-bpatch, since Easy/Medium/Hard only inherit
+    /// Default) with each control's groups scaled by reference / rate.
+    /// </summary>
+    private static int WriteCombatSynchronization(
+        IReadOnlyDictionary<string, ParameterViewModel> modifiedById,
+        IReadOnlyDictionary<string, ParameterViewModel> allById,
+        string difficultySid,
+        IDictionary<string, PatchDocument> documents,
+        ISet<string> writtenParameters)
+    {
+        var controls = new List<(string Id, IReadOnlyList<string> Indices, double Reference)>
         {
-            var rate = special.CurrentNumber;
+            (MutantAggressionPolicy.SpecialAbilityRateId,
+                MutantAggressionPolicy.AbilityTokenGroups.Select(g => g.Index).ToArray(),
+                difficultySid == "Stalker" ? 2.0 : 1.0)
+        };
+        controls.AddRange(HumanCombatPolicy.Tactics.Select(c => (c.Id,
+            (IReadOnlyList<string>)c.Groups.Select(g => g.Index).ToArray(),
+            HumanCombatPolicy.Reference(c, difficultySid))));
+
+        var changed = controls.Where(c => modifiedById.TryGetValue(c.Id, out var p)
+            && p.IsValueModifiedFromReference()).Select(c => c.Id).ToArray();
+        if (changed.Length == 0)
+            return 0;
+
+        // Factor per FilterGroups index: source x reference / rate.
+        var factors = new Dictionary<string, double>(StringComparer.Ordinal);
+        foreach (var (id, indices, reference) in controls)
+        {
+            if (!allById.TryGetValue(id, out var parameter))
+                throw new InvalidDataException("Missing combat synchronization source: " + id);
+            var rate = parameter.CurrentNumber;
             if (!double.IsFinite(rate) || rate <= 0.0)
-                throw new InvalidDataException("Invalid special ability rate.");
-            var tables = LoadCombatSynchronizationTables();
-            var sourceSid = difficultySid == "Stalker" ? "CombatSynchronizerStalker" : "Default";
-            var document = GetDocument(documents, "GameData/CombatSynchronizationPrototypes.cfg");
-            var root = document.GetOrAddNode(MutantAggressionPolicy.SynchronizerSid(difficultySid),
-                Array.Empty<string>());
-            foreach (var rank in MutantAggressionPolicy.Ranks)
-            {
-                var table = tables.GetProperty(sourceSid).GetProperty(rank);
-                root.RemoveChild(rank);
-                var rankNode = root.GetOrAddChild(rank, useBpatch: false);
-                edits += WriteCombatSyncTree(rankNode, table, rate, new List<string> { rank });
-            }
-            writtenParameters.Add(MutantAggressionPolicy.SpecialAbilityRateId);
+                throw new InvalidDataException("Invalid combat synchronization rate: " + id);
+            foreach (var index in indices)
+                factors[index] = reference / rate;
         }
 
+        var tables = LoadCombatSynchronizationTables();
+        var sourceSid = difficultySid == "Stalker" ? "CombatSynchronizerStalker" : "Default";
+        var document = GetDocument(documents, "GameData/CombatSynchronizationPrototypes.cfg");
+        var root = document.GetOrAddNode(MutantAggressionPolicy.SynchronizerSid(difficultySid),
+            Array.Empty<string>());
+        var edits = 0;
+        foreach (var rank in MutantAggressionPolicy.Ranks)
+        {
+            var table = tables.GetProperty(sourceSid).GetProperty(rank);
+            root.RemoveChild(rank);
+            var rankNode = root.GetOrAddChild(rank, useBpatch: false);
+            edits += WriteCombatSyncTree(rankNode, table, factors, new List<string> { rank });
+        }
+        foreach (var id in changed)
+            writtenParameters.Add(id);
         return edits;
     }
 
@@ -135,13 +175,16 @@ public sealed partial class CfgPatchWriterService
             ?? throw new InvalidDataException("Missing combat synchronization tables resource.");
         using var json = JsonDocument.Parse(stream);
         var tables = json.RootElement.GetProperty("tables").Clone();
-        // Guard the two scaled filter groups in every table and rank.
+        // Guard every scaled filter group in every table and rank.
+        var guarded = MutantAggressionPolicy.AbilityTokenGroups.Select(g => (g.Index, g.Tag))
+            .Concat(HumanCombatPolicy.Tactics.SelectMany(c => c.Groups))
+            .ToArray();
         foreach (var sid in new[] { "Default", "CombatSynchronizerStalker" })
         foreach (var rank in MutantAggressionPolicy.Ranks)
         {
             var groups = tables.GetProperty(sid).GetProperty(rank)
                 .GetProperty("children").GetProperty("FilterGroups").GetProperty("children");
-            foreach (var (index, tag, _, _) in MutantAggressionPolicy.AbilityTokenGroups)
+            foreach (var (index, tag) in guarded)
             {
                 var allowed = groups.GetProperty(index).GetProperty("children")
                     .GetProperty("AllowedTags").GetProperty("fields");
@@ -152,20 +195,19 @@ public sealed partial class CfgPatchWriterService
         return tables;
     }
 
-    // Full non-bpatch copy of one rank table; only the ability token groups
-    // take the scaled Default cooldowns (8–12 s divided by the rate).
-    private static int WriteCombatSyncTree(PatchNode node, JsonElement source, double rate, List<string> path)
+    // Full non-bpatch copy of one rank table; the cooldowns of the controlled
+    // filter groups are multiplied by their factor (1 = source value).
+    private static int WriteCombatSyncTree(PatchNode node, JsonElement source,
+        IReadOnlyDictionary<string, double> factors, List<string> path)
     {
         var edits = 0;
-        var tokenGroup = path.Count == 3 && path[1] == "FilterGroups"
-            ? MutantAggressionPolicy.AbilityTokenGroups.FirstOrDefault(g => g.Index == path[2])
-            : default;
+        var factor = path.Count == 3 && path[1] == "FilterGroups"
+            && factors.TryGetValue(path[2], out var f) ? f : 1.0;
         foreach (var field in source.GetProperty("fields").EnumerateObject())
         {
             var value = field.Value.GetString() ?? string.Empty;
-            if (tokenGroup.Index is not null && field.Name is "CooldownMin" or "CooldownMax")
-                value = ((field.Name == "CooldownMin" ? tokenGroup.Min : tokenGroup.Max) / rate)
-                    .ToString("0.##", CultureInfo.InvariantCulture);
+            if (Math.Abs(factor - 1.0) > 0.0000001 && field.Name is "CooldownMin" or "CooldownMax")
+                value = (ParseNumber(value) * factor).ToString("0.##", CultureInfo.InvariantCulture);
             node.SetAssignment(field.Name, value);
             edits++;
         }
@@ -173,7 +215,7 @@ public sealed partial class CfgPatchWriterService
         {
             var childNode = node.GetOrAddChild(child.Name, useBpatch: false);
             path.Add(child.Name);
-            edits += WriteCombatSyncTree(childNode, child.Value, rate, path);
+            edits += WriteCombatSyncTree(childNode, child.Value, factors, path);
             path.RemoveAt(path.Count - 1);
         }
         return edits;

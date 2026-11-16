@@ -25,11 +25,18 @@ def verify() -> None:
     for point in points:
         grouped[point["parameterId"]].append(point)
 
-    assert len(combat) == 53, f"Combat catalog changed: {len(combat)}"  # +25 MUTANT AGGRESSION (2026-11-16)
-    assert len(grouped) == 24, f"Direct Combat parameter count changed: {len(grouped)}"
-    assert len(points) == 67, f"Concrete direct Combat route count changed: {len(points)}"
+    # +25 MUTANT AGGRESSION, +9 HUMAN TACTICS / ENEMY AWARENESS (2026-11-16)
+    assert len(combat) == 62, f"Combat catalog changed: {len(combat)}"
+    human_direct = {"combat.npcAccuracy", "combat.npcSightRange", "combat.npcHearingRange", "combat.npcAlertMemory"}
+    human_tactics = {"combat.npcGrenadeRate", "combat.npcSuppressionRate", "combat.npcFlankRate",
+                     "combat.npcPushRate", "combat.npcCamperPunishRate"}
+    assert human_direct | human_tactics <= set(combat)
+    assert len(grouped) == 28, f"Direct Combat parameter count changed: {len(grouped)}"
+    assert len(points) == 164, f"Concrete direct Combat route count changed: {len(points)}"
     assert sum(e["file"] == "GameData/DifficultyPrototypes.cfg" for e in points) == 40
     assert sum(e["file"] == "GameData/ObjPrototypes.cfg" for e in points) == 27
+    assert sum(e["parameterId"] == "combat.npcAccuracy" for e in points) == 77
+    assert sum(e["parameterId"] in human_direct for e in points) == 97
 
     # Retired systems are not represented by oversimplified single-source controls.
     retired = {"combat.npcAttackCooldown", "combat.npcHipAccuracy"}
@@ -47,8 +54,10 @@ def verify() -> None:
             source + ": retired control still wired into UI"
         )
 
-    direct_ids = set(grouped)
-    special_ids = set(combat) - direct_ids
+    direct_ids = set(grouped) - human_direct
+    special_ids = set(combat) - set(grouped) - human_tactics
+    assert all(combat[pid]["support"]["status"] == "runtime_test_required"
+               for pid in human_direct | human_tactics)
     aggression_ids = {pid for pid in special_ids
                       if pid.startswith(("combat.mutantAttackRate.", "combat.mutantAbilityRate."))
                       or pid == "combat.mutantSpecialAbilityRate"}
@@ -70,6 +79,8 @@ def verify() -> None:
     }
     ownership = {}
     for pid, route_points in grouped.items():
+        if pid in human_direct:
+            continue  # summary targets; exact routes in tools/audit_human_tactics.py
         definition = combat[pid]
         for point in route_points:
             path = ".".join([*point.get("nodePath", []), point["key"]])
@@ -130,7 +141,7 @@ def verify() -> None:
                        for t in targets) for effect in effects)
 
     print("Combat static contract PASS: 28 sources (24 direct + 4 PSY special),")
-    print("  67 direct routes (40 difficulty fields + 27 nested mutant MaxHP).")
+    print("  67 difficulty/MaxHP routes + 97 human accuracy / awareness routes.")
     print("  2 PSY effects / 4 controls; no retired mutant pacing routes.")
     print("  No direct ownership collision, target-path drift or vanilla marker drift.")
     print("NOT VERIFIED: original decoded CFG, BPatch runtime and gameplay effects.")

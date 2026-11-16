@@ -1,3 +1,8 @@
+## 2026-11-16 — CURRENT: HUMAN TACTICS and ENEMY AWARENESS boards (Combat)
+
+* Two new compact card boards after HUMAN ENEMIES, same grammar as ITEM WEIGHT / ARTIFACT HUNTING (two columns when wide): **HUMAN TACTICS** — GRENADES, SUPPRESSION, FLANKING, PUSH, CAMPING PENALTY, ENEMY ACCURACY; **ENEMY AWARENESS** — SIGHT, HEARING, MEMORY.
+* Card readouts show the result, not just the rate: `2x · grenade every 10–17 s`, `1x · spread 100%`, `1x · 80 m / 25 m`, `1x · steps 12 m`, `1x · search 30 s`; rail ends stay plain `x`. Drag, right-click reset, R board reset, click selects the card's own panel text. Details: `docs/combat/HUMAN-TACTICS-AND-AWARENESS.md`.
+
 ## 2026-11-16 — CURRENT: TRADER STOCK redrawn as a board (supply rails, all roles, CLEAR, R)
 
 * **TRADER STOCK** is now a custom-drawn board like every other (was native WPF Slider / Button / CheckBox): BoardTitle heading, `100% = GAME ODDS · 0% = REMOVED`, compact rail cards with the reference tick, gold handle and gold value when changed, white card hover. Same `TraderBuysMatrix` class / XAML slot.

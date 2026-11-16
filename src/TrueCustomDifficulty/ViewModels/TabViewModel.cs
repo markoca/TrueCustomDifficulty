@@ -50,9 +50,11 @@ public sealed class TabViewModel : ObservableObject
             {
                 "Your Weapons" => 0,
                 "Human Enemies" => 1,
-                "Mutant Combat" => 2,
-                "Mutant Health" => 3,
-                _ => 4
+                "Human Tactics" => 2,
+                "Enemy Awareness" => 3,
+                "Mutant Combat" => 4,
+                "Mutant Health" => 5,
+                _ => 6
             }).ToList()
             : parameters.ToList();
         Parameters = new ObservableCollection<ParameterViewModel>(ordered);

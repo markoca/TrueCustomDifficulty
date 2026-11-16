@@ -203,7 +203,7 @@ internal static class Program
                 ?? throw new InvalidDataException("Missing embedded factory preset: " + name);
             var preset = JsonSerializer.Deserialize<PresetFile>(resource)
                 ?? throw new InvalidDataException("Cannot parse embedded factory preset: " + name);
-            Check(preset.Values.Count == 359 && Catalog.Parameters.Count == 390
+            Check(preset.Values.Count == 359 && Catalog.Parameters.Count == 399
                 && !preset.Values.ContainsKey("loot.genericCorpseReduction")
                 && !preset.Values.ContainsKey("loot.genericStashReduction"),
                 "Incomplete factory source count: " + name);

@@ -62,7 +62,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private void RaiseParameterSelected(ParameterViewModel parameter)
     {
         if (Family is "AnomalyGlobalDamage" or "FlycatcherSlowdown" or "AnomalySpecialEffects" or "ServiceCostsBoard"
-            or "CouponFlow" or "ItemWeightBoard" or "ArtifactHunting" or "EquipmentWearBalance"
+            or "CouponFlow" or "ItemWeightBoard" or "ArtifactHunting" or "HumanTactics" or "EnemyAwareness" or "EquipmentWearBalance"
             or "StashContentMix" or "StashMedicalComposition"
             or "StashGear" or "NpcLootLoadout" or "HumanCombatProfile" or "PlayerWeaponProfile"
             or "StarvationTimeline" or "SevereFatiguePenaltyBoard"
@@ -368,6 +368,25 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             case "ArtifactHunting":
                 DrawArtifactHunting(dc, text, muted, border, accent, panel);
                 break;
+            case "HumanTactics":
+                DrawCardBoard(dc, "HUMAN TACTICS", new (string, string)[]
+                {
+                    (HumanCombatPolicy.GrenadeRateId, "GRENADES"),
+                    (HumanCombatPolicy.SuppressionRateId, "SUPPRESSION"),
+                    (HumanCombatPolicy.FlankRateId, "FLANKING"),
+                    (HumanCombatPolicy.PushRateId, "PUSH"),
+                    (HumanCombatPolicy.CamperPunishRateId, "CAMPING PENALTY"),
+                    (HumanCombatPolicy.AccuracyId, "ENEMY ACCURACY")
+                }, text, muted, border, accent, panel);
+                break;
+            case "EnemyAwareness":
+                DrawCardBoard(dc, "ENEMY AWARENESS", new (string, string)[]
+                {
+                    (HumanCombatPolicy.SightRangeId, "SIGHT"),
+                    (HumanCombatPolicy.HearingRangeId, "HEARING"),
+                    (HumanCombatPolicy.AlertMemoryId, "MEMORY")
+                }, text, muted, border, accent, panel);
+                break;
             case "AnomalyGlobalDamage":
                 DrawAnomalyGlobalDamage(dc, text, muted, border, accent, panel);
                 break;
@@ -598,6 +617,37 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private static double ServicePriceBoardHeight(double width)
         => width >= 470.0 ? 242.0 : 438.0;
 
+    // Card readout: the current value, or a derived line (seconds, metres)
+    // for the human tactics / awareness cards; rail ends stay EconomyValue.
+    private static string CardReadout(ParameterViewModel parameter)
+        => parameter.Id switch
+        {
+            HumanCombatPolicy.AccuracyId or HumanCombatPolicy.SightRangeId
+                or HumanCombatPolicy.HearingRangeId or HumanCombatPolicy.AlertMemoryId => parameter.CurrentDisplay,
+            _ when HumanCombatPolicy.TacticIds.Contains(parameter.Id) => parameter.CurrentDisplay,
+            _ => EconomyValue(parameter, parameter.CurrentNumber)
+        };
+
+    // Generic compact board of economy-style cards (two columns when wide).
+    private void DrawCardBoard(DrawingContext dc, string title, (string Id, string Label)[] controls,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        DrawCenteredText(dc, title,
+            new Point(ActualWidth / 2.0, 21.0), VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
+        var columns = EconomyColumns(ActualWidth);
+        var cardWidth = EconomyCardWidth(ActualWidth, columns);
+        const double gap = 12.0;
+        var bankWidth = columns * cardWidth + (columns - 1) * gap;
+        var left = (ActualWidth - bankWidth) / 2.0;
+        for (var i = 0; i < controls.Length; i++)
+        {
+            var rect = new Rect(left + (i % columns) * (cardWidth + gap),
+                48.0 + (i / columns) * 94.0, cardWidth, 80.0);
+            DrawEconomyCard(dc, P(controls[i].Id), controls[i].Label,
+                rect, text, muted, border, accent, panel);
+        }
+    }
+
     private static string EconomyValue(ParameterViewModel parameter, double value)
         => parameter.Id switch
         {
@@ -750,7 +800,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
 
         var modified = parameter.IsValueModifiedFromReference();
-        var value = EconomyValue(parameter, parameter.CurrentNumber);
+        var value = CardReadout(parameter);
         var readout = CreateText(value, modified ? 13.0 : 11.8,
             modified ? accent : text, FontWeights.Bold);
         // Reserve the measured readout width, not an arbitrary 95-DIP lane.
@@ -7877,6 +7927,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "ServiceCostsBoard" => ServicePriceBoardHeight(width),
             "ItemWeightBoard" => EconomyBoardHeight(width, 4),
             "ArtifactHunting" => ArtifactHuntingHeight(width),
+            "HumanTactics" => EconomyBoardHeight(width, 6),
+            "EnemyAwareness" => EconomyBoardHeight(width, 3),
             "AnomalyGlobalDamage" => 242.0,
             "FlycatcherSlowdown" => FlycatcherBoardHeight(width),
             "AnomalySpecialEffects" => 270.0,
@@ -7960,6 +8012,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 "economy.repairCostBase"
             },
             "ArtifactHunting" => ArtifactSpawnPolicy.ParameterIds,
+            "HumanTactics" => HumanCombatPolicy.TacticsBoardIds,
+            "EnemyAwareness" => HumanCombatPolicy.AwarenessIds,
             "ItemWeightBoard" => new[]
             {
                 "equipment.ammoWeight",

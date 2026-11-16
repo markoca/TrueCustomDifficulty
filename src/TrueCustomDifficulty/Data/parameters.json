@@ -346,6 +346,421 @@
       "interaction": "Each explosion still has its own base damage. This setting scales the difficulty layer applied on top of those base values."
     },
     {
+      "id": "combat.npcGrenadeRate",
+      "tab": "combat",
+      "group": "Human Tactics",
+      "label": "Grenades",
+      "description": "How often a squad of human enemies may throw a grenade. Rate r divides the pause of the CombatSynchronizer group tokens ThrowGrenade, Special.ThrowGrenade (all enemy ranks) on the selected difficulty.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Grenades"
+      },
+      "vanilla": {
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
+        "Master": 2
+      },
+      "default": {
+        "mode": "referenceDifficulty"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/CombatSynchronizationPrototypes.cfg",
+          "prototype": "CombatSynchronizer{difficulty}",
+          "path": "{Newbie|Experienced|Veteran|Master}.FilterGroups[9]|[16].CooldownMin|CooldownMax",
+          "operation": "sourceTimesReferenceOverRate"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Group token pauses decide how often anyone in the fight may start this action; Easy/Medium/Hard inherit the Default table, Master owns its own (CombatSynchronizerStalker).",
+          "The four full rank tables are written together with SPECIAL ABILITY RATE and the other tactics (one writer)."
+        ]
+      },
+      "rationale": "How often human enemies throw grenades at you. Vanilla: every 20–35 s per squad; Master halves it (10–17 s). 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (grenade every 20–35 s at 1×).",
+      "logic": "1× keeps the selected difficulty's own pauses. The rate divides the pause of every enemy rank; who may act still depends on the game's tactics.",
+      "interaction": "Other tactics, ENEMY ACCURACY and ENEMY AWARENESS are independent. Enemy gun damage is HUMAN ENEMIES."
+    },
+    {
+      "id": "combat.npcSuppressionRate",
+      "tab": "combat",
+      "group": "Human Tactics",
+      "label": "Suppression",
+      "description": "How often a squad of human enemies may lay down suppressive fire. Rate r divides the pause of the CombatSynchronizer group token SuppressiveFire (all enemy ranks) on the selected difficulty.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Suppression"
+      },
+      "vanilla": {
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
+        "Master": 2
+      },
+      "default": {
+        "mode": "referenceDifficulty"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/CombatSynchronizationPrototypes.cfg",
+          "prototype": "CombatSynchronizer{difficulty}",
+          "path": "{Newbie|Experienced|Veteran|Master}.FilterGroups[10].CooldownMin|CooldownMax",
+          "operation": "sourceTimesReferenceOverRate"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Group token pauses decide how often anyone in the fight may start this action; Easy/Medium/Hard inherit the Default table, Master owns its own (CombatSynchronizerStalker).",
+          "The four full rank tables are written together with SPECIAL ABILITY RATE and the other tactics (one writer)."
+        ]
+      },
+      "rationale": "How often human enemies pin you down with suppressive fire. Vanilla: every 15–25 s; Master about every 7–12 s. 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (suppressive fire every 15–25 s at 1×).",
+      "logic": "1× keeps the selected difficulty's own pauses. The rate divides the pause of every enemy rank; who may act still depends on the game's tactics.",
+      "interaction": "Other tactics, ENEMY ACCURACY and ENEMY AWARENESS are independent. Enemy gun damage is HUMAN ENEMIES."
+    },
+    {
+      "id": "combat.npcFlankRate",
+      "tab": "combat",
+      "group": "Human Tactics",
+      "label": "Flanking",
+      "description": "How often a squad of human enemies may start a flanking move. Rate r divides the pause of the CombatSynchronizer group token Flank (all enemy ranks) on the selected difficulty.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Flanking"
+      },
+      "vanilla": {
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
+        "Master": 2
+      },
+      "default": {
+        "mode": "referenceDifficulty"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/CombatSynchronizationPrototypes.cfg",
+          "prototype": "CombatSynchronizer{difficulty}",
+          "path": "{Newbie|Experienced|Veteran|Master}.FilterGroups[5].CooldownMin|CooldownMax",
+          "operation": "sourceTimesReferenceOverRate"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Group token pauses decide how often anyone in the fight may start this action; Easy/Medium/Hard inherit the Default table, Master owns its own (CombatSynchronizerStalker).",
+          "The four full rank tables are written together with SPECIAL ABILITY RATE and the other tactics (one writer)."
+        ]
+      },
+      "rationale": "How often human enemies try to flank you. Vanilla: every 10–20 s; Master 5–10 s. 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (flank every 10–20 s at 1×).",
+      "logic": "1× keeps the selected difficulty's own pauses. The rate divides the pause of every enemy rank; who may act still depends on the game's tactics.",
+      "interaction": "Other tactics, ENEMY ACCURACY and ENEMY AWARENESS are independent. Enemy gun damage is HUMAN ENEMIES."
+    },
+    {
+      "id": "combat.npcPushRate",
+      "tab": "combat",
+      "group": "Human Tactics",
+      "label": "Push",
+      "description": "How often a squad of human enemies may advance on you. Rate r divides the pause of the CombatSynchronizer group tokens Advance.Action, Advance.Approach (all enemy ranks) on the selected difficulty.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Push"
+      },
+      "vanilla": {
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
+        "Master": 2
+      },
+      "default": {
+        "mode": "referenceDifficulty"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/CombatSynchronizationPrototypes.cfg",
+          "prototype": "CombatSynchronizer{difficulty}",
+          "path": "{Newbie|Experienced|Veteran|Master}.FilterGroups[6]|[7].CooldownMin|CooldownMax",
+          "operation": "sourceTimesReferenceOverRate"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Group token pauses decide how often anyone in the fight may start this action; Easy/Medium/Hard inherit the Default table, Master owns its own (CombatSynchronizerStalker).",
+          "The four full rank tables are written together with SPECIAL ABILITY RATE and the other tactics (one writer)."
+        ]
+      },
+      "rationale": "How often human enemies rush and close in on your cover. Vanilla: advance every 12–25 s, approach every 25–40 s; Master about twice as often. 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (push every 12–25 s at 1×).",
+      "logic": "1× keeps the selected difficulty's own pauses. The rate divides the pause of every enemy rank; who may act still depends on the game's tactics.",
+      "interaction": "Other tactics, ENEMY ACCURACY and ENEMY AWARENESS are independent. Enemy gun damage is HUMAN ENEMIES."
+    },
+    {
+      "id": "combat.npcCamperPunishRate",
+      "tab": "combat",
+      "group": "Human Tactics",
+      "label": "Camping Penalty",
+      "description": "How often a squad of human enemies may flush you out of a camped spot. Rate r divides the pause of the CombatSynchronizer group token CamperPunish (all enemy ranks) on the selected difficulty.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Camping Penalty"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/CombatSynchronizationPrototypes.cfg",
+          "prototype": "CombatSynchronizer{difficulty}",
+          "path": "{Newbie|Experienced|Veteran|Master}.FilterGroups[8].CooldownMin|CooldownMax",
+          "operation": "sourceTimesReferenceOverRate"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Group token pauses decide how often anyone in the fight may start this action; Easy/Medium/Hard inherit the Default table, Master owns its own (CombatSynchronizerStalker).",
+          "The four full rank tables are written together with SPECIAL ABILITY RATE and the other tactics (one writer)."
+        ]
+      },
+      "rationale": "How often human enemies punish you for staying in one spot. Vanilla: every 2–5 s on every difficulty. 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (flush-out every 2–5 s at 1×).",
+      "logic": "1× keeps the selected difficulty's own pauses. The rate divides the pause of every enemy rank; who may act still depends on the game's tactics.",
+      "interaction": "Other tactics, ENEMY ACCURACY and ENEMY AWARENESS are independent. Enemy gun damage is HUMAN ENEMIES."
+    },
+    {
+      "id": "combat.npcAccuracy",
+      "tab": "combat",
+      "group": "Human Tactics",
+      "label": "Enemy Accuracy",
+      "description": "Scales how tightly human enemies group their shots: divides DispersionRadius of all 77 NPC weapon settings (75 base game, 2 DLC1).",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Accuracy"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 2,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame+DLC1",
+          "file": "GameData/WeaponData/CharacterWeaponSettingsPrototypes.cfg + DLCGameData/DLC1/WeaponData/CharacterWeaponSettingsPrototypes.cfg",
+          "prototype": "77 *_NPC weapon settings",
+          "path": "DispersionRadius",
+          "operation": "inverseScale"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "DispersionRadius is the NPC weapon's own bullet spread (e.g. AK74 300); the distance curve and the zombie addend are unchanged.",
+          "Not changed by the game's difficulty; 1x is vanilla on every difficulty."
+        ]
+      },
+      "rationale": "How accurately human enemies shoot. Vanilla: 1×. 2× = half the spread, so more bullets find you at range; 0.5× = twice the spread. Damage per hit is ENEMY GUN DAMAGE.",
+      "logic": "Accuracy a divides every NPC weapon's DispersionRadius by a. 1× keeps the game's spread.",
+      "interaction": "Independent of the tactics; ENEMY GUN DAMAGE sets how much each hit hurts."
+    },
+    {
+      "id": "combat.npcSightRange",
+      "tab": "combat",
+      "group": "Enemy Awareness",
+      "label": "Enemy Sight",
+      "description": "Scales how far human enemies see: CentralVisionDistance (80 m) and PeripheralVisionDistance (25 m) of the DefaultNPC vision scanner.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Enemy Sight"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.5,
+        "max": 2,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/AIPrototypes/VisionScannerPrototypes.cfg",
+          "prototype": "DefaultNPC",
+          "path": "CentralVisionDistance|PeripheralVisionDistance",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Human NPCs use the DefaultNPC vision scanner (ObjPrototypes NPCBase); bosses and zombies inherit from it.",
+          "Light, distance and angle penalty curves are unchanged."
+        ]
+      },
+      "rationale": "How far human enemies can spot you. Vanilla: 80 m straight ahead, 25 m at the edge of vision. 0.5× = sneak much closer; 1.5× = they notice you from further away.",
+      "logic": "Both vision distances are multiplied. Darkness, flashlights and night vision still change what they see.",
+      "interaction": "SIGHT, HEARING and MEMORY are independent; together they decide how easy stealth is. Mutants use their own senses and are not changed."
+    },
+    {
+      "id": "combat.npcHearingRange",
+      "tab": "combat",
+      "group": "Enemy Awareness",
+      "label": "Enemy Hearing",
+      "description": "Scales how far human enemies hear sounds: every non-zero HearingDistance of the base hearing sensor (shots 46 m, steps 12 m, voice 30 m, reload 7.5 m, explosions 60 m …).",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Enemy Hearing"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 2,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/AIPrototypes/HearingSensorPrototypes.cfg",
+          "prototype": "BaseHearingSensor",
+          "path": "SoundEvents[*].HearingDistance",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Human NPCs use DefaultNPC, which inherits the base sensor; zombie humans follow where they do not override. Mutants have their own sensor (unchanged)."
+        ]
+      },
+      "rationale": "How far human enemies hear you. Vanilla: footsteps 12 m, gunshots 46 m. 0.5× = you can move and shoot closer unnoticed; 2× = every step gives you away.",
+      "logic": "Every sound distance is multiplied (zero entries stay zero).",
+      "interaction": "SIGHT, HEARING and MEMORY are independent; together they decide how easy stealth is. Mutants use their own senses and are not changed."
+    },
+    {
+      "id": "combat.npcAlertMemory",
+      "tab": "combat",
+      "group": "Enemy Awareness",
+      "label": "Enemy Memory",
+      "description": "Scales how long human enemies keep hunting you after losing track: DefaultNPC threat freeze time (30 s) and SearchEnemy freeze (30 s) are multiplied, their per-second threat loss divided.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Enemy Memory"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/AIPrototypes/ThreatPrototypes.cfg",
+          "prototype": "[1] DefaultNPC",
+          "path": "DefaultThreatValueFreezeTimeSeconds|DefaultThreatValueLossPerSecond|Actions[3].ThreatValueFreezeTimeSeconds|ThreatValueLossPerSecond",
+          "operation": "scale / inverseScale"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Threat memory of human NPCs; BossNPC inherits it. Individual threat sources (ConfidenceDropToZeroTimeSeconds) are unchanged."
+        ]
+      },
+      "rationale": "How long human enemies keep searching after they lose you. Vanilla: they hold their alert about 30 s. 2× = they hunt you twice as long; 0.5× = they give up quickly.",
+      "logic": "Freeze times are multiplied and the threat loss per second divided, so the whole alert lasts m times as long.",
+      "interaction": "SIGHT, HEARING and MEMORY are independent; together they decide how easy stealth is. Mutants use their own senses and are not changed."
+    },
+    {
       "id": "combat.playerWeaponDamage",
       "tab": "combat",
       "group": "Your Weapons",

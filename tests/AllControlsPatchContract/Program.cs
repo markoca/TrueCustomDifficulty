@@ -44,8 +44,8 @@ internal static partial class Program
 
             var ids = Catalog.Parameters.Select(p => p.Id).ToHashSet(StringComparer.Ordinal);
             var tested = ids.Except(NonUi, StringComparer.Ordinal).OrderBy(x => x, StringComparer.Ordinal).ToArray();
-            Check(ids.Count == 390 && NonUi.IsSubsetOf(ids) && tested.Length == 367,
-                "Expected 390 catalog sources and 367 mounted editable writer probes");
+            Check(ids.Count == 399 && NonUi.IsSubsetOf(ids) && tested.Length == 376,
+                "Expected 399 catalog sources and 376 mounted editable writer probes");
 
             // The ordinary Master/Stalker corpse package contains no bonus
             // NPC_Ammo_Smart, so that source must be explicitly probed where

@@ -57,6 +57,7 @@ Default **8–12 s**, Master **4–6 s** (= 2×).
   (embedded `Data/combat-synchronization-2.1.json`: Default and CombatSynchronizerStalker) into
   `CombatSynchronizer{difficulty}` and changes only those two groups. The loader guards the tags.
 * UI value: `2x · pause 4–6 s`.
+* Since the HUMAN TACTICS controls, one writer (`WriteCombatSynchronization`) writes the rank tables for SPECIAL ABILITY RATE and the five tactics together (source × reference / rate); see `HUMAN-TACTICS-AND-AWARENESS.md`.
 
 ## Not done
 

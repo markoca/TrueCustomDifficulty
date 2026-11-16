@@ -539,11 +539,15 @@ _combat_doc = DOCS / "COMBAT-CONTROL-DEEP-AUDIT.md"
 _combat_rows = {p.get("id"): p for p in parameters if p.get("tab") == "combat" and p.get("exposeInUi", True)}
 _combat_runtime_expected = {
     "combat.psySpawnCycleDelay", "combat.psyPhantomCount", "combat.psyBleeding", "combat.psyDurabilityDamage",
+    # HUMAN TACTICS / ENEMY AWARENESS (2026-11-16)
+    "combat.npcGrenadeRate", "combat.npcSuppressionRate", "combat.npcFlankRate", "combat.npcPushRate",
+    "combat.npcCamperPunishRate", "combat.npcAccuracy", "combat.npcSightRange", "combat.npcHearingRange",
+    "combat.npcAlertMemory",
 }
 _combat_runtime_actual = {pid for pid, row in _combat_rows.items() if row.get("support", {}).get("status") == "runtime_test_required"}
 _headshot = _combat_rows.get("combat.playerHeadshotMultiplier", {})
 _repeated = next((c for c in parameters_doc.get("sliderConstraints", []) if c.get("id") == "repeatedHitProtectionRange"), {})
-if len(_combat_rows) != 15 or _combat_runtime_actual != _combat_runtime_expected:
+if len(_combat_rows) != 24 or _combat_runtime_actual != _combat_runtime_expected:
     fail(f"combat source-catalog exposed entries drifted: entries={len(_combat_rows)}, runtime={sorted(_combat_runtime_actual)}")
 elif _repeated.get("order") != "nondecreasing" or _repeated.get("parameterIds") != ["combat.accumulatedDamageWeightMin", "combat.accumulatedDamageWeightMax"]:
     fail("repeated-hit Min<=Max CFG-value constraint drifted")
@@ -2087,6 +2091,11 @@ _factory_legacy_catalog = {pid: p for pid, p in _factory_catalog.items()
                            # ARTIFACT HUNTING (2026-11-16): omitted by factory
                            # presets until they are tuned; loads at vanilla 1x.
                            and not pid.startswith("environment.artifact")
+                           # HUMAN TACTICS / ENEMY AWARENESS (2026-11-16): same.
+                           and pid not in {"combat.npcGrenadeRate", "combat.npcSuppressionRate",
+                               "combat.npcFlankRate", "combat.npcPushRate", "combat.npcCamperPunishRate",
+                               "combat.npcAccuracy", "combat.npcSightRange", "combat.npcHearingRange",
+                               "combat.npcAlertMemory"}
                            and not pid.startswith(("loot.stashMix", "loot.stashGear",
                                "loot.stashMedical", "loot.stashMedkit", "loot.stashArmyMedkit"))}
 _factory_tuning = json.loads((ROOT / "tools/factory_preset_expansion.json").read_text(encoding="utf-8"))
@@ -5839,7 +5848,7 @@ _visual_boards = {
     "MutantDropRadar.cs": 1,
     "WorldLootRemovalRadar.cs": 1,
     "AnomalyDamageRadar.cs": 1,
-    "AggregateVisualControl.cs": 7,
+    "AggregateVisualControl.cs": 8,
 }
 for _file, _expected in _visual_boards.items():
     _source = (_visual_dir / _file).read_text(encoding="utf-8")

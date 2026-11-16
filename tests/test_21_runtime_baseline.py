@@ -14,10 +14,10 @@ class Game21BaselineContract(unittest.TestCase):
         baseline = json.loads((DATA / "cfg-writer-baseline.json").read_text(encoding="utf-8"))
         self.assertEqual("2.1", catalog["source"]["gameVersion"])
         self.assertEqual("2.1", baseline["gameVersion"])
-        self.assertEqual(390, len(catalog["parameters"]))
+        self.assertEqual(399, len(catalog["parameters"]))
         # 1448 + 1234 roaming-NPC weapon-condition leaves (2026-11-16 scope).
-        self.assertEqual(2733, len(baseline["editPoints"]))
-        self.assertEqual(27, len(baseline["special"]))
+        self.assertEqual(2830, len(baseline["editPoints"]))
+        self.assertEqual(28, len(baseline["special"]))
 
     def test_factory_presets_target_21_and_protect_user_edits(self):
         names = ("Anomaly Runner", "Field Medic", "Hardcore", "Hardcore+",

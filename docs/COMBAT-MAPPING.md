@@ -120,3 +120,8 @@ The following fields are not exposed in this pass:
 - ability damage values outside the difficulty struct
 
 They either remain zero across vanilla profiles, have unclear semantics in the supplied CFG, or belong to a broader combat-overhaul editor rather than a difficulty-layer editor.
+
+
+## Human tactics, accuracy and awareness (2026-11-16)
+
+See [combat/HUMAN-TACTICS-AND-AWARENESS.md](combat/HUMAN-TACTICS-AND-AWARENESS.md): group-token pauses (grenades, suppression, flanking, push, camping penalty), NPC weapon DispersionRadius (accuracy) and DefaultNPC sight / hearing / threat memory.

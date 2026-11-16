@@ -536,6 +536,7 @@ public sealed partial class CfgPatchWriterService
         supported.UnionWith(baseline.Special.PsyParameterKeys.Keys);
         supported.UnionWith(MutantAggressionPolicy.ParameterIds);
         supported.Add(ArtifactSpawnPolicy.RareLuckId);
+        supported.UnionWith(HumanCombatPolicy.TacticIds);
         if (!string.IsNullOrWhiteSpace(baseline.Special.CheapStashProduction.AmmoQuantityParameterId))
             supported.Add(baseline.Special.CheapStashProduction.AmmoQuantityParameterId);
         if (!string.IsNullOrWhiteSpace(baseline.Special.CheapStashProduction.GrenadeChanceParameterId))
