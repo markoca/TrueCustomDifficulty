@@ -1,3 +1,8 @@
+## 2026-11-16 — CURRENT: factory presets match MEDICAL COMPOSITION (option a)
+
+* All 12 factory presets now store each medical Weight factor (`loot.stashMedical{Item}Bias`) equal to its Chance scale, i.e. what loading already produced since one MEDICAL COMPOSITION cell drives both (0–100%). The old 1.25–1.75× Weight boosts (Field Medic, Anomaly Runner, Mutant Hunter, Scavenger, Wanderer, Immersive, Smuggler) were silently dropped on load; they are now gone from the files too. Field Medic's stash medicine is therefore vanilla (100%); its medical identity stays in healing, bleeding and trader/NPC supply.
+* `PresetDirectoryService.PreMedicalMirrorFactoryBlobs` holds the previous stock hashes, so byte-identical installed factory copies upgrade; edited presets stay untouched. Older tuning matrices under `tools/factory_preset_*.json` still list the retired Weight values.
+
 ## 2026-10-20 — RC candidate cleanup: diagnostic profile retired from app
 
 The **RC - CFG Signal** diagnostic is no longer shipped, embedded or auto-created by the application. The preset picker contains the **12 official factory roles** plus any unrelated user profiles. During the first run after updating, the exact byte-for-byte stock diagnostic file is deleted. A user-edited diagnostic file is **moved without overwriting** into `Presets/Archived/` (with a numbered name if necessary), so it disappears from the picker without losing user changes. The 13-signal CFG contract remains in `tests/RCSignalPatchContract/Fixtures/RC-CFG-Signal.json`, embedded **only in the test assembly**, not in the published EXE. This is release-candidate cleanup, **not** proof of a passing post-change build, Wine UI test, game-load test or in-game effects.

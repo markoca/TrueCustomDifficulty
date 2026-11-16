@@ -1,3 +1,8 @@
+## 2026-11-16 — CURRENT: factory presets match MEDICAL COMPOSITION (option a)
+
+* All 12 factory presets now store each medical Weight factor (`loot.stashMedical{Item}Bias`) equal to its Chance scale, i.e. what loading already produced since one MEDICAL COMPOSITION cell drives both (0–100%). The old 1.25–1.75× Weight boosts (Field Medic, Anomaly Runner, Mutant Hunter, Scavenger, Wanderer, Immersive, Smuggler) were silently dropped on load; they are now gone from the files too. Field Medic's stash medicine is therefore vanilla (100%); its medical identity stays in healing, bleeding and trader/NPC supply.
+* `PresetDirectoryService.PreMedicalMirrorFactoryBlobs` holds the previous stock hashes, so byte-identical installed factory copies upgrade; edited presets stay untouched. Older tuning matrices under `tools/factory_preset_*.json` still list the retired Weight values.
+
 ## 2026-11-16 — CURRENT: presence cells select their own panel text
 
 * Clicking a BASIC / STANDARD AMMO cell in ADJUST ODDS now shows its own panel card (*Basic Ammo Odds* / *Standard Ammo Odds*: what it does, 100% / 50% / 0%, smart ammo stashes separate, AMMO AMOUNT for amounts, key help), like the NPC LOOT sidecar cards. Before, the panel kept the previously clicked control.

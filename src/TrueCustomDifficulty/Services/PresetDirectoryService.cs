@@ -608,6 +608,26 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "f8c6f8441756ef9c749b8023765628e68fefd5cb",
     };
 
+    // Exact stock files before the medical Weight factors were set equal to
+    // their Chance scale (one MEDICAL COMPOSITION cell per item, 0–100%,
+    // 2026-11-16). Byte-identical copies upgrade; edited presets stay.
+    private static readonly Dictionary<string, string> PreMedicalMirrorFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "a97ac2089ddf7e6bea0f21c0e60c820a641b6cc9",
+        ["Field Medic"] = "ac53ba9497f984b1b5b7a8b76b61f0ce089e4765",
+        ["Hardcore+"] = "2d2077bc4f62bb4f108461cfc7480a75e19b608e",
+        ["Hardcore"] = "5c3068d71dd5064c3f84fb1060a44d8316cb5555",
+        ["Immersive"] = "84784b604b12095a43d20c19ae7e7f90c5a4ac8b",
+        ["Mercenary"] = "e24202071f3ecd5237d0c914f672327ffd002a80",
+        ["Mutant Hunter"] = "1548af475c40f148cdb4f9da8c98f0c7acd1fbe1",
+        ["Outcast"] = "98966b1a6a48f0b4a3200933696a65a0ac485fc1",
+        ["Scavenger"] = "cf69b866a3c9f82caf409c562d650d2dc0a75c2f",
+        ["Smuggler"] = "2d10be0ded45f23eec3e8c43e5f8748b25a0167f",
+        ["Tactical"] = "1794cb7f0e792ec6444e45487055995047b8d95a",
+        ["Wanderer"] = "eef85efa9c5e5051fdb6bcff02bdb9c8440e8044",
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -629,7 +649,8 @@ public sealed class PresetDirectoryService
             && !PreRoleCoverageFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreWorldArmorRemovalFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreWeaponArmorWeightFactoryBlobs.TryGetValue(name, out knownHash)
-            && !Pre21FactoryBlobs.TryGetValue(name, out knownHash))
+            && !Pre21FactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreMedicalMirrorFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -681,7 +702,9 @@ public sealed class PresetDirectoryService
                 || (PreWeaponArmorWeightFactoryBlobs.TryGetValue(name, out var preWeightHash)
                     && actual.Equals(preWeightHash, StringComparison.OrdinalIgnoreCase))
                 || (Pre21FactoryBlobs.TryGetValue(name, out var pre21Hash)
-                    && actual.Equals(pre21Hash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(pre21Hash, StringComparison.OrdinalIgnoreCase))
+                || (PreMedicalMirrorFactoryBlobs.TryGetValue(name, out var preMirrorHash)
+                    && actual.Equals(preMirrorHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

@@ -1039,7 +1039,7 @@
     },
     "loot.stashMedicalBandageBias": {
       "kind": "slider",
-      "number": 1
+      "number": 0.85
     },
     "loot.stashMedicalMedkitBias": {
       "kind": "slider",
@@ -1051,7 +1051,7 @@
     },
     "loot.stashMedicalAntiRadBias": {
       "kind": "slider",
-      "number": 1
+      "number": 0.8
     },
     "loot.stashMedkitMinCount": {
       "kind": "slider",

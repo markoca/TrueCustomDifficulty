@@ -192,6 +192,18 @@ assert "foreach (var sync in _afterPresetLoadSyncs)" in vm
 # ---- 17. Presence cells explain themselves in the panel -------------------
 assert "SelectStashPresence(id);" in grid and '"Basic Ammo Odds"' in grid and '"Standard Ammo Odds"' in grid
 
+# ---- 18. Factory presets: medical Weight factor == Chance scale ---------
+import glob as _glob
+for _f in sorted(_glob.glob(str(src / "Presets" / "*.json"))):
+    _v = json.loads(open(_f, encoding="utf-8").read())["values"]
+    for _sid in ("Bandage", "Medkit", "ArmyMedkit", "AntiRad"):
+        _b = _v.get(f"loot.stashMedical{_sid}Bias", {}).get("number", 1)
+        _c = _v.get(f"loot.stashMedical{_sid}ChanceScale", {}).get("number", 1)
+        assert _b == _c and 0 <= _b <= 1, (_f, _sid, _b, _c)
+_pds = read("Services/PresetDirectoryService.cs")
+assert _pds.count("PreMedicalMirrorFactoryBlobs") == 3
+assert len(_pds.split("PreMedicalMirrorFactoryBlobs =", 1)[1].split("};", 1)[0].split('"] = "')) == 13
+
 for token in ("ONE entry", "Empty", "Desolation", "13564", "never mix", "SmartKeptShare",
               "Basic Chance rows", "CHANCE", "CheapNoFresh", "SUPPLY REDUCTION",
               "Smart Chance groups"):
