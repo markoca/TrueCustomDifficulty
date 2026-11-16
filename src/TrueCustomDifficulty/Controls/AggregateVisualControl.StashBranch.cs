@@ -218,7 +218,8 @@ public sealed partial class AggregateVisualControl
     // behavior stays independent of these Basic-only preview samples.
     private void DrawStashWeightMixer(
         DrawingContext dc, Rect outer,
-        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel,
+        bool drawFrame = true)
     {
         _ = GlobalStashKindsVerified.Value;
         var basicGroups = StashSourceGroups.Value
@@ -243,8 +244,10 @@ public sealed partial class AggregateVisualControl
         const double cardHeight = 146.0;
         var cardWidth = Math.Max(1.0,
             (outer.Width - 2.0 * inset - (columns - 1) * gap) / columns);
-        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .72),
-            new Pen(CloneWithOpacity(border, .68), 1.0), outer, 4.0, 4.0);
+        // Inside the BASIC STASH card the card itself is the frame.
+        if (drawFrame)
+            dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .72),
+                new Pen(CloneWithOpacity(border, .68), 1.0), outer, 4.0, 4.0);
 
         for (var i = 0; i < BasicVisibleWeightKinds.Length; i++)
         {
@@ -280,7 +283,9 @@ public sealed partial class AggregateVisualControl
                 "Veteran Basic source Weight categories changed.");
         dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .66),
             new Pen(CloneWithOpacity(border, .66), .9), outer, 4.0, 4.0);
-        DrawText(dc, "BASIC · LOOT PREVIEW",
+        // Shows the source Veteran Basic Weight branch; the other difficulty
+        // branches use the same food/drink/bandage mix (some add coupons).
+        DrawText(dc, "MIX PREVIEW · VETERAN",
             new Point(outer.Left + 12.0, outer.Top + 3.0),
             10.6, text, FontWeights.Bold);
         var inner = new Rect(outer.Left + 12.0, outer.Top + 21.0,

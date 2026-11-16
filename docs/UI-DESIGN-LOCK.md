@@ -1,3 +1,14 @@
+## 2026-11-16 — CURRENT: STASH LOOT MIX grouped by tier (BASIC / STANDARD / RARE cards)
+
+**Supersedes the free-floating LOOT PRIORITY · ALL TIERS knob row, BASIC · LOOT PREVIEW and the unlabeled RGD-5 pair.** Row 1 keeps the two global sliders (SUPPLY REDUCTION, AMMO QUANTITY · ALL TIERS). Below it everything Basic lives in one **BASIC STASH** card, matching the STANDARD STASH and RARE STASH cards:
+
+* title row: **BASIC STASH** left, muted **LOOT PRIORITY** right;
+* the MEDICAL / FOOD / DRINKS priority knobs (no own frame inside the card — `DrawStashWeightMixer(..., drawFrame: false)`); they act on Basic stashes and the smart world stashes, not on Standard/Rare (those are Chance-only for these categories), so the old "ALL TIERS" label is gone and the WHAT IT DOES texts say so;
+* **MIX PREVIEW · VETERAN** directly under the knobs (source Veteran Basic Weight branch; the other difficulty branches use the same food/drink/bandage mix, some with coupons);
+* RGD-5 CHANCE / RGD-5 AMOUNT inside the card.
+
+Heights: 797 DIP wide / 1175 DIP narrow (was 785 / 1159). Parameters, writer output and interactions are unchanged.
+
 ## 2026-11-16 — CURRENT: BREAKABLE BOXES — sliders beside the preview, one consolidated AMMO MIX card
 
 **Supersedes the two separate SNG POOL / NATO POOL cards and the fixed 715-DIP board.** SNG and NATO stay two bars because they are different physical boxes with different source pools (2.1 `DestructibleStash_AmmoSNG`: 9×18, 9×19, 5.45, 12 GA 2–4; `DestructibleStash_AmmoNATO`: .45 ACP, 9×19, 5.56, 12 GA 5–10; every row Weight 2), but the weight-share visual is now **one card**.

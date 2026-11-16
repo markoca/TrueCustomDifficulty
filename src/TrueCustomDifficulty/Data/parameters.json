@@ -6054,7 +6054,7 @@
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
-      "rationale": "How much stashes lean towards meds compared with other supplies. Vanilla: 1×. Lower = meds show up less often in the mix. It changes the mix, not a drop chance.",
+      "rationale": "How much Basic stashes (and the game's smart world stashes) lean towards meds compared with food and drinks. Vanilla: 1×. Lower = meds show up less often in the mix. Standard and Rare stashes use their own chance sliders.",
       "logic": "Higher priority favors medical loot against other eligible stash categories. Zero removes its relative weight where supported.",
       "interaction": "Priority does not raise original chance checks or bypass a stash's rank and loot restrictions.",
       "exposeInUi": true
@@ -6108,7 +6108,7 @@
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
-      "rationale": "How much stashes lean towards food compared with other supplies. Vanilla: 1×. Lower = less food in the mix.",
+      "rationale": "How much Basic stashes (and the game's smart world stashes) lean towards food compared with meds and drinks. Vanilla: 1×. Lower = less food in the mix.",
       "logic": "Higher priority favors food against other eligible stash categories. Zero removes its relative weight where supported.",
       "interaction": "Priority does not raise original chance checks or bypass a stash's rank and loot restrictions.",
       "exposeInUi": true
@@ -6162,7 +6162,7 @@
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
-      "rationale": "How much stashes lean towards drinks compared with other supplies. Vanilla: 1×. Lower = fewer drinks in the mix.",
+      "rationale": "How much Basic stashes (and the game's smart world stashes) lean towards drinks compared with meds and food. Vanilla: 1×. Lower = fewer drinks in the mix.",
       "logic": "Higher priority favors drinks against other eligible stash categories. Zero removes its relative weight where supported.",
       "interaction": "Priority does not raise original chance checks or bypass a stash's rank and loot restrictions.",
       "exposeInUi": true

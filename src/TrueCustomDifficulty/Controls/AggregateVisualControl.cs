@@ -5205,37 +5205,54 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             text, muted, border, accent, panel,
             percentage: false, multiplier: true);
 
-        DrawText(dc, "LOOT PRIORITY · ALL TIERS",
-            new Point(left + 13.0, 125.0 + narrowShift), 10.7, text, FontWeights.Bold);
-        DrawStashWeightMixer(dc, new Rect(left, 141.0 + narrowShift, width,
-                wide ? 146.0 : 300.0), text, muted, border, accent, panel);
+        // BASIC STASH card: everything that belongs to the Basic tier in one
+        // frame — priority knobs, the mix preview directly under them, and
+        // the Basic-only RGD-5 pair. Standard and Rare keep their own cards.
+        var basicTop = 121.0 + narrowShift;
+        var knobTop = basicTop + StashBasicTitleHeight;
+        var knobHeight = wide ? 146.0 : 300.0;
+        var basicPreviewTop = knobTop + knobHeight + 8.0;
+        var pairTop = basicPreviewTop + 74.0 + 8.0;
+        var basicCard = new Rect(left, basicTop, width,
+            pairTop + 56.0 + 12.0 - basicTop);
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .65),
+            new Pen(CloneWithOpacity(border, .61), .9), basicCard, 4.0, 4.0);
+        dc.DrawText(CreateText("BASIC STASH", 11.4, text, FontWeights.Bold),
+            new Point(left + 12.0, basicTop + 8.0));
+        DrawRightAlignedText(dc, "LOOT PRIORITY",
+            new Point(left + width - 12.0, basicTop + 9.0),
+            9.4, muted, FontWeights.SemiBold);
+        DrawStashWeightMixer(dc, new Rect(left, knobTop, width, knobHeight),
+            text, muted, border, accent, panel, drawFrame: false);
 
         DrawStashBasicNativePools(dc,
-            new Rect(left, (wide ? 295.0 : 449.0) + narrowShift, width, 74.0),
+            new Rect(left + 12.0, basicPreviewTop, width - 24.0, 74.0),
             text, muted, border, panel);
 
         // Basic RGD-5 Chance is a native absolute probability, while
         // Amount is an integer stack override. Neither is ammo quantity.
         const double pairGap = 10.0;
-        var pairWidth = Math.Max(1.0, (width - 28.0 - pairGap) / 2.0);
-        var pairTop = (wide ? 377.0 : 531.0) + narrowShift;
+        var pairWidth = Math.Max(1.0, (width - 24.0 - pairGap) / 2.0);
         DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeChance",
             "RGD-5 CHANCE", 4,
-            new Rect(left + 14.0, pairTop, pairWidth, 56.0),
+            new Rect(left + 12.0, pairTop, pairWidth, 56.0),
             text, muted, border, accent, panel);
         DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeQuantity",
             "RGD-5 AMOUNT", 4,
-            new Rect(left + 14.0 + pairWidth + pairGap, pairTop, pairWidth, 56.0),
+            new Rect(left + 12.0 + pairWidth + pairGap, pairTop, pairWidth, 56.0),
             text, muted, border, accent, panel, percentage: false);
 
+        var standardTop = basicCard.Bottom + 8.0;
+        var standardHeight = wide ? 122.0 : 200.0;
         DrawStashChanceTier(dc, "STANDARD STASH", "Medium", 10,
-            new Rect(left, (wide ? 441.0 : 595.0) + narrowShift, width,
-                wide ? 122.0 : 200.0), text, muted, border, accent, panel);
+            new Rect(left, standardTop, width, standardHeight),
+            text, muted, border, accent, panel);
         DrawStashChanceTier(dc, "RARE STASH", "Expensive", 19,
-            new Rect(left, (wide ? 571.0 : 803.0) + narrowShift, width,
+            new Rect(left, standardTop + standardHeight + 8.0, width,
                 wide ? 200.0 : 278.0), text, muted, border, accent, panel);
     }
 
+    private const double StashBasicTitleHeight = 30.0;
 
     // Native selectors are separate sources: Chance is never a normalized
     // four-medical-item share; Weight only competes within each actual group.
@@ -8106,8 +8123,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
     // Measured heights follow the painted responsive editors, so the
     // last mixer lane and every remaining gear/medical dial stay visible.
+    // Mirrors DrawStashContentMix: row 1, BASIC card (title, knobs, mix
+    // preview, RGD-5 pair), STANDARD and RARE cards, bottom padding.
     private double StashContentMixHeight(double width)
-        => width >= 700.0 ? 785.0 : 1159.0;
+        => width >= 700.0 ? 797.0 : 1175.0;
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 609.0 : 1050.0;
     // Paint width is ActualWidth - 30 DIP. At host widths 540–569 DIP
