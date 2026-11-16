@@ -69,29 +69,36 @@ public sealed partial class AggregateVisualControl
         if (Family != "NpcLootLoadout")
             return;
 
-        const double margin = 17.0;
-        const double gap = 9.0;
+        const double gap = 10.0;
         // Compact source-aware board follows the shared top editor strip
-        // and the condition card at both responsive widths.
+        // and the condition card, inside the same width-capped column.
+        var layout = CurrentNpcLootLayout(ActualWidth);
         var top = NpcLootConsumablesTop(ActualWidth);
         const double rowHeight = 31.0;
         const double headerHeight = 27.0;
-        var fullWidth = Math.Max(1.0, ActualWidth - 2.0 * margin);
-        var colWidth = Math.Max(1.0, (fullWidth - gap * 2.0) / 3.0);
+        var colWidth = Math.Max(1.0, (layout.ContentWidth - gap * 2.0) / 3.0);
         var editorAvailable = IsEnabled && ModItemsEditorAvailable;
 
-        foreach (var (group, col) in new[]
+        // Same category tints as STASH LOOT MIX (food / drinks / medical).
+        foreach (var (group, col, tint) in new[]
         {
-            ("FOOD", 0), ("DRINKS", 1), ("MEDICAL", 2)
+            ("FOOD", 0, StashMixPalette[2]),
+            ("DRINKS", 1, StashMixPalette[3]),
+            ("MEDICAL", 2, StashMixPalette[1])
         })
         {
             var items = _npcConsumableItems
                 .Where(item => item.Group == group).ToArray();
-            var card = new Rect(margin + col * (colWidth + gap), top,
+            var card = new Rect(layout.ContentLeft + col * (colWidth + gap), top,
                 colWidth, headerHeight + items.Length * rowHeight + 7.0);
-            dc.DrawRoundedRectangle(panel, new Pen(border, 0.95), card, 4.0, 4.0);
-            DrawText(dc, group, new Point(card.Left + 10.0, card.Top + 7.0),
+            IndustrialChrome.DrawRecessedCard(dc, card, panel, border);
+            dc.DrawEllipse(tint, null,
+                new Point(card.Left + 14.0, card.Top + 13.5), 3.6, 3.6);
+            DrawText(dc, group, new Point(card.Left + 23.0, card.Top + 7.0),
                 10.0, text, FontWeights.Bold);
+            dc.DrawLine(new Pen(CloneWithOpacity(border, 0.55), 0.8),
+                new Point(card.Left + 9.0, card.Top + headerHeight - 3.0),
+                new Point(card.Right - 9.0, card.Top + headerHeight - 3.0));
 
             for (var i = 0; i < items.Length; i++)
             {
@@ -99,32 +106,40 @@ public sealed partial class AggregateVisualControl
                 var enabled = item.Enabled && editorAvailable;
                 var rowTop = top + headerHeight + i * rowHeight;
                 var box = new Rect(card.Left + 9.0, rowTop + 3.0, 15.0, 15.0);
-                var rail = new Rect(card.Left + 13.0, rowTop + 23.0,
-                    Math.Max(1.0, card.Width - 26.0), 2.5);
-                var trackHit = new Rect(rail.Left, rowTop + 17.5,
-                    rail.Width, 13.5);
+                var rail = new Rect(card.Left + 14.0, rowTop + 23.0,
+                    Math.Max(1.0, card.Width - 28.0), 2.5);
+                var trackHit = new Rect(rail.Left - 5.0, rowTop + 16.5,
+                    rail.Width + 10.0, 14.5);
                 var hovered = _npcConsumableHoverSid == item.Sid;
                 BooleanCheckboxChrome.Draw(dc, box, item.Enabled, editorAvailable,
                     hovered && _npcConsumableHoverCheckbox, panel, border, accent);
-                DrawText(dc, item.Label, new Point(card.Left + 28.0, rowTop + 2.0),
-                    9.4, enabled ? text : muted, FontWeights.SemiBold);
+                // Stamina Usage grammar: label left, single value right.
+                DrawText(dc, item.Label, new Point(card.Left + 30.0, rowTop + 2.0),
+                    9.6, enabled ? text : muted, FontWeights.SemiBold);
                 DrawRightAlignedText(dc, item.PercentText,
-                    new Point(card.Right - 9.0, rowTop + 2.0),
-                    10.1, enabled && item.IsEffectiveChange ? accent
-                        : enabled ? text : muted, FontWeights.SemiBold);
+                    new Point(card.Right - 12.0, rowTop + 2.0),
+                    enabled && item.IsEffectiveChange ? 10.8 : 10.1,
+                    enabled && item.IsEffectiveChange ? accent
+                        : enabled ? text : CloneWithOpacity(muted, 0.7),
+                    FontWeights.SemiBold);
                 var railY = rail.Top + rail.Height / 2.0;
-                var handleRatio = item.LegacyMultiplier is double legacy
-                    ? legacy / 2.0 : item.ChancePercent / 100.0;
-                var handleX = rail.Left + rail.Width * handleRatio;
-                dc.DrawLine(new Pen(CloneWithOpacity(border, enabled ? .85 : .5), 2.5),
+                dc.DrawLine(new Pen(CloneWithOpacity(border, enabled ? 1.0 : .45), 3.5)
+                    {
+                        StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round
+                    },
                     new Point(rail.Left, railY), new Point(rail.Right, railY));
                 if (enabled)
-                    dc.DrawLine(new Pen(CloneWithOpacity(accent, .72), 2.5),
+                {
+                    var handleRatio = item.LegacyMultiplier is double legacy
+                        ? legacy / 2.0 : item.ChancePercent / 100.0;
+                    var handleX = rail.Left + rail.Width * handleRatio;
+                    dc.DrawLine(new Pen(CloneWithOpacity(accent, .65), 3.5),
                         new Point(rail.Left, railY), new Point(handleX, railY));
-                dc.DrawEllipse(panel, new Pen(enabled ? accent : muted,
-                    enabled ? 1.55 : .9), new Point(handleX, railY), 4.3, 4.3);
-                if (enabled)
-                    dc.DrawEllipse(accent, null, new Point(handleX, railY), 1.4, 1.4);
+                    dc.DrawEllipse(panel, new Pen(accent, hovered
+                            && !_npcConsumableHoverCheckbox ? 2.4 : 1.5),
+                        new Point(handleX, railY), 5.5, 5.5);
+                    dc.DrawEllipse(accent, null, new Point(handleX, railY), 2.2, 2.2);
+                }
                 _npcConsumableTargets.Add(new NpcConsumableTarget(
                     item, box, trackHit, rail));
             }

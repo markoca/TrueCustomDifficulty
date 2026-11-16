@@ -37,14 +37,14 @@ internal static partial class Program
         smart.CurrentText = smart.ChoiceOptions.Single(x =>
             x.Value.Contains("NPC_Ammo_Smart", StringComparison.Ordinal)).Value;
         npcBoard.Measure(new System.Windows.Size(920.0, 1200.0));
-        Check(Math.Abs(npcBoard.DesiredSize.Height - 619.0) < 0.000001,
-            "NPC bonus mode must reveal its optional cards");
+        Check(Math.Abs(npcBoard.DesiredSize.Height - 470.0) < 0.000001,
+            "NPC bonus card must sit beside weapon condition");
         npcBoard.Measure(new System.Windows.Size(860.0, 1200.0));
-        Check(Math.Abs(npcBoard.DesiredSize.Height - 717.0) < 0.000001,
-            "NPC bonus layout must reflow at medium width");
+        Check(Math.Abs(npcBoard.DesiredSize.Height - 470.0) < 0.000001,
+            "NPC board must stay width-capped at medium width");
         npcBoard.Measure(new System.Windows.Size(600.0, 1200.0));
-        Check(Math.Abs(npcBoard.DesiredSize.Height - 815.0) < 0.000001,
-            "Narrow NPC ammo mode must stack bonus controls");
+        Check(Math.Abs(npcBoard.DesiredSize.Height - 568.0) < 0.000001,
+            "Narrow NPC ammo mode must keep the two-column middle tier");
         smart.CurrentText = smart.ChoiceOptions.Single(x =>
             !x.Value.Contains("NPC_Ammo_Smart", StringComparison.Ordinal)
             && !x.Value.Contains("NPC_Water_Smart", StringComparison.Ordinal)).Value;

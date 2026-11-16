@@ -5269,13 +5269,14 @@ if any(_tok not in _npc_preview_source for _tok in (
     'private static NpcLootGeometry LayoutNpcLoot(double hostWidth, bool showBonusAmmo)',
     'private NpcLootGeometry CurrentNpcLootLayout(double width)',
     '=> LayoutNpcLoot(width, NpcBonusPackageSelected());',
-    'new Rect(margin + (width - selectorWidth) / 2.0,',
+    'private const double NpcLootMaxContentWidth = 780.0;',
+    'var unit = (contentWidth - 3.0 * gap) / 4.5;',
     'if (showBonusAmmo)',
-    'if (hostWidth < 680.0)',
-    'if (hostWidth >= 900.0)',
+    'if (contentWidth >= 600.0)',
+    'if (contentWidth >= 520.0)',
     'if (NpcBonusPackageSelected())',
-    'DrawNpcCompactMultiplierKnob(dc, ammo, "AMMO QTY", layout.Ammo,',
-    'DrawText(dc, "BONUS AMMO STACKS",',
+    'DrawHorizontalTrackCard(dc, ammo, "BONUS AMMO", ammoCard,',
+    'var ammoCard = layout.Ammo;',
     'DrawNpcCompactMultiplierKnob(dc, scarcity, "SUPPLY REDUCTION", layout.Supply,',
     'DrawNpcCompactMultiplierKnob(dc, medical, "STANDARD MED", layout.Medical,',
     'DrawNpcModItemsCard(dc, layout.Mod,',
@@ -5310,7 +5311,7 @@ if any(_tok not in _npc_preview_source for _tok in (
     fail("NPC SmartLoot context or original source control drifted")
 _npc_paint = _npc_preview_source.split("private void DrawNpcLootLoadout(", 1)[-1].split("private void DrawWorldLootLayout(", 1)[0]
 _parts = _npc_paint.split("if (NpcBonusPackageSelected())", 1)
-if len(_parts) != 2 or 'DrawNpcCompactMultiplierKnob(dc, ammo,' in _parts[0]:
+if len(_parts) != 2 or 'DrawHorizontalTrackCard(dc, ammo,' in _parts[0]:
     fail("NPC bonus control is not guarded by MED + AMMO selection")
 if '"Bonus ammo off · weapon ammo unaffected"' in _npc_preview_source or 'Inactive until Medicine + Ammo is selected' in _npc_preview_source:
     fail("NPC bonus preview must not display an inactive explanatory sentence")
@@ -5354,6 +5355,16 @@ _npc_items_ui = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" /
                  "AggregateVisualControl.NpcConsumables.cs").read_text(encoding="utf-8")
 if "var top = NpcLootConsumablesTop(ActualWidth);" not in _npc_items_ui:
     fail("NPC item Chance group must follow responsive three-panel middle tier")
+if any(_tok not in _npc_items_ui for _tok in (
+    "var layout = CurrentNpcLootLayout(ActualWidth);",
+    "layout.ContentLeft + col * (colWidth + gap)",
+    'StashMixPalette[2]', 'StashMixPalette[3]', 'StashMixPalette[1]',
+)) or '"DEFAULT"' in _npc_items_ui:
+    fail("NPC item Chance columns must share the capped board column and stash category tints")
+_npc_item_vm = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" /
+                "NpcConsumableItemViewModel.cs").read_text(encoding="utf-8")
+if 'public const string UntouchedText = "—";' not in _npc_item_vm or '"DEFAULT"' in _npc_item_vm:
+    fail("Unchecked NPC item rows must show a muted dash, not redundant DEFAULT text")
 # The selection must use sourced icon shapes, not bespoke medkits or bottle rectangles.
 for _icon_marker in (
     "private static readonly Geometry[] NpcMedkitIcon =",

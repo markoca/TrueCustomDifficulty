@@ -80,9 +80,9 @@ internal static partial class Program
             x.Value != ammoPackage && x.Value != waterPackage).Value;
         foreach (var (option, wide, middle, narrow) in new[]
         {
-            (ammoPackage, 619.0, 717.0, 815.0),
-            (waterPackage, 470.0, 568.0, 568.0),
-            (nonePackage, 470.0, 568.0, 568.0)
+            (ammoPackage, 470.0, 470.0, 568.0),
+            (waterPackage, 470.0, 470.0, 568.0),
+            (nonePackage, 470.0, 470.0, 568.0)
         })
         {
             smart.CurrentText = option;
@@ -117,7 +117,7 @@ internal static partial class Program
                 Check(vm.NpcConsumableItems.Count == 10
                     && vm.NpcConsumableItems.All(x => !x.Enabled
                         && x.ChancePercent == 100 && x.LegacyMultiplier is null
-                        && x.PercentText == "DEFAULT"),
+                        && x.PercentText == NpcConsumableItemViewModel.UntouchedText),
                     "Optional NPC Chance controls are not OFF/source-backed by default");
                 target.Enabled = true;
                 target.ChancePercent = percent;
@@ -258,7 +258,7 @@ internal static partial class Program
             && legacyBread.ToPreset().Multiplier is null,
             "Editing an old preset did not switch to literal absolute Chance");
         legacyBread.Enabled = false;
-        Check(legacyBread.PercentText == "DEFAULT" && !legacyBread.IsEffectiveChange,
+        Check(legacyBread.PercentText == NpcConsumableItemViewModel.UntouchedText && !legacyBread.IsEffectiveChange,
             "Unchecked NPC Chance must display source mode and remain inert");
 
         Console.WriteLine("PASS 50 absolute per-item Chance boundaries + 104 field parity + "

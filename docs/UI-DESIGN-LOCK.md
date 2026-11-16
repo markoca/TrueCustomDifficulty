@@ -1,3 +1,19 @@
+## 2026-11-16 — CURRENT: NPC Loot three-tier redesign
+
+**Supersedes every earlier NPC LOOT & EQUIPMENT layout entry** (centered lone selector, AMMO QTY knob + 3×3 BONUS AMMO STACKS tiles, condition beside three knobs, DEFAULT item labels). Behaviour, sources, CFG writers, presets and hit/reset semantics are unchanged; only layout and paint change.
+
+**One centered column, capped at 780 DIP** (`NpcLootMaxContentWidth`), never full host width. `LayoutNpcLoot(hostWidth, showBonusAmmo)` returns `ContentLeft` / `ContentWidth` and drives paint, hit targets and measurement. Three tiers:
+
+1. **Top row (88 DIP):** CORPSE SMART LOOT selector (1.5 units) + SUPPLY REDUCTION, STANDARD MED, MOD ITEMS knobs (1 unit each), 10-DIP gaps, when content width ≥ 600 DIP. Below that the selector (max 330 DIP) sits centered on its own row and the three knobs share the next row. Knob grammar, MOD ITEMS checkbox and 270° interaction are unchanged.
+2. **Middle row (139 DIP):** DROPPED WEAPON CONDITION in the left half, **BONUS AMMO** in the right half (content ≥ 520 DIP; otherwise stacked). With WATER/NONE the ammo card is not drawn and the condition card keeps its half width — it never stretches.
+3. **Item Chance columns:** FOOD / DRINKS / MEDICAL inside the same capped column, each header with a small category dot using the STASH LOOT MIX tints (`StashMixPalette` food / drinks / medical).
+
+**BONUS AMMO card** is the shared Stamina Usage `DrawHorizontalTrackCard`: label left, single live `N×` value right (only modified digits yellow), native rail with reference tick and muted 0/3 endpoints; drag, wheel, keyboard and right-click reset. The AMMO QTY knob is retired. Beneath a hairline, nine compact `calibre … min–max` rows (3 columns) show the scaled stacks; calibre muted, counts yellow only when the multiplier is modified. No rank captions, no tiles.
+
+**Per-item rows** keep checkbox, Stamina Usage label-left / value-right, 3.5-DIP rail and 5.5-DIP handle. Unchecked rows show a muted **—** (`NpcConsumableItemViewModel.UntouchedText`) and a faded rail with no handle — the word DEFAULT is retired as redundant text.
+
+**Measured heights:** 470 DIP at host ≥ 634 (content ≥ 600) for every package; 568 DIP at 600-DIP host. Contract tests (`GenericSupplyReduction`, `NpcConsumableChanceFirstPass`) and `tools/audit_project_consistency.py` assert this geometry. Wine visual acceptance remains a local step.
+
 ### 2026-11-16 — NPC knob wheel CS0136 fix
 
 In `AggregateVisualControl.OnMouseWheel`, the optional MOD ITEMS sub-branch now uses `modWheelDirection` rather than declaring `direction`, which already exists in the enclosing method scope for all native knob wheel handlers. This removes C# CS0136 without affecting 1% wheel increments, other knob input, selected-state layout, presets, or CFG output. The project consistency audit now checks both distinct wheel variable names; local .NET/Wine compilation is still the acceptance gate.

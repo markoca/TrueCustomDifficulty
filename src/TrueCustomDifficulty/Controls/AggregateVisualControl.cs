@@ -1291,81 +1291,81 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
 
     // Identical geometry is used by OnRender and MeasureOverride.
+    // Three tiers inside one centered, width-capped column:
+    //   1) SmartLoot package selector + three peer knobs (one 88-DIP row),
+    //   2) Dropped Weapon Condition + optional Bonus Ammo card side by side,
+    //   3) FOOD / DRINKS / MEDICAL per-item Chance columns.
     private readonly record struct NpcLootGeometry(
-        Rect Selector, Rect Ammo, Rect Samples, Rect Supply, Rect Medical,
-        Rect Mod, Rect Condition, double ConsumablesTop, double Height);
+        Rect Selector, Rect Ammo, Rect Supply, Rect Medical,
+        Rect Mod, Rect Condition, double ContentLeft, double ContentWidth,
+        double ConsumablesTop, double Height);
+
+    private const double NpcLootMaxContentWidth = 780.0;
 
     private static NpcLootGeometry LayoutNpcLoot(double hostWidth, bool showBonusAmmo)
     {
         const double margin = 17.0;
         const double gap = 10.0;
         const double scalarHeight = 88.0;
-        const double previewHeight = 139.0;
-        var width = Math.Max(1.0, hostWidth - margin * 2.0);
-        var selectorWidth = Math.Min(330.0, width);
-        var selector = new Rect(margin + (width - selectorWidth) / 2.0,
-            54.0, selectorWidth, scalarHeight);
-        var nextTop = selector.Bottom + gap;
-        var ammo = Rect.Empty;
-        var samples = Rect.Empty;
+        const double middleHeight = 139.0;
+        var available = Math.Max(1.0, hostWidth - margin * 2.0);
+        var contentWidth = Math.Min(NpcLootMaxContentWidth, available);
+        var left = margin + (available - contentWidth) / 2.0;
+        var top = 54.0;
 
-        if (showBonusAmmo)
-        {
-            // Never reserve an invisible ammo row for WATER or NONE.
-            if (hostWidth < 680.0)
-            {
-                var ammoWidth = Math.Min(width, 280.0);
-                ammo = new Rect(margin + (width - ammoWidth) / 2.0,
-                    nextTop, ammoWidth, scalarHeight);
-                samples = new Rect(margin, ammo.Bottom + gap, width, previewHeight);
-                nextTop = samples.Bottom + gap;
-            }
-            else
-            {
-                var pairWidth = Math.Min(width, 760.0);
-                var pairLeft = margin + (width - pairWidth) / 2.0;
-                var ammoWidth = Math.Min(210.0, Math.Max(150.0, pairWidth * 0.27));
-                ammo = new Rect(pairLeft,
-                    nextTop + (previewHeight - scalarHeight) / 2.0,
-                    ammoWidth, scalarHeight);
-                samples = new Rect(ammo.Right + gap, nextTop,
-                    pairWidth - ammoWidth - gap, previewHeight);
-                nextTop = samples.Bottom + gap;
-            }
-        }
-
+        Rect selector;
         Rect supply;
         Rect medical;
         Rect mod;
-        Rect condition;
-        if (hostWidth >= 900.0)
+        if (contentWidth >= 600.0)
         {
-            var usable = width - 3.0 * gap;
-            var conditionWidth = usable * 0.42;
-            var scalarWidth = (usable - conditionWidth) / 3.0;
-            var scalarTop = nextTop + (previewHeight - scalarHeight) / 2.0;
-            supply = new Rect(margin, scalarTop, scalarWidth, scalarHeight);
-            medical = new Rect(supply.Right + gap, scalarTop, scalarWidth, scalarHeight);
-            mod = new Rect(medical.Right + gap, scalarTop, scalarWidth, scalarHeight);
-            condition = new Rect(mod.Right + gap, nextTop,
-                conditionWidth, previewHeight);
-            nextTop = condition.Bottom;
+            // Package selector gets 1.5 knob widths; all four share one row.
+            var unit = (contentWidth - 3.0 * gap) / 4.5;
+            selector = new Rect(left, top, unit * 1.5, scalarHeight);
+            supply = new Rect(selector.Right + gap, top, unit, scalarHeight);
+            medical = new Rect(supply.Right + gap, top, unit, scalarHeight);
+            mod = new Rect(medical.Right + gap, top, unit, scalarHeight);
+            top = selector.Bottom + gap;
         }
         else
         {
-            var scalarWidth = (width - 2.0 * gap) / 3.0;
-            supply = new Rect(margin, nextTop, scalarWidth, scalarHeight);
-            medical = new Rect(supply.Right + gap, nextTop, scalarWidth, scalarHeight);
-            mod = new Rect(medical.Right + gap, nextTop, scalarWidth, scalarHeight);
-            var conditionWidth = Math.Min(548.0, width);
-            condition = new Rect(margin + (width - conditionWidth) / 2.0,
-                nextTop + scalarHeight + gap, conditionWidth, previewHeight);
-            nextTop = condition.Bottom;
+            var selectorWidth = Math.Min(330.0, contentWidth);
+            selector = new Rect(left + (contentWidth - selectorWidth) / 2.0,
+                top, selectorWidth, scalarHeight);
+            top = selector.Bottom + gap;
+            var knobWidth = (contentWidth - 2.0 * gap) / 3.0;
+            supply = new Rect(left, top, knobWidth, scalarHeight);
+            medical = new Rect(supply.Right + gap, top, knobWidth, scalarHeight);
+            mod = new Rect(medical.Right + gap, top, knobWidth, scalarHeight);
+            top = supply.Bottom + gap;
         }
 
-        var itemsTop = nextTop + 12.0;
-        return new NpcLootGeometry(selector, ammo, samples,
-            supply, medical, mod, condition, itemsTop, itemsTop + 167.0);
+        // Condition always keeps its half-width column; it never stretches
+        // into the space of a hidden (WATER / NONE) Bonus Ammo card.
+        Rect condition;
+        var ammo = Rect.Empty;
+        if (contentWidth >= 520.0)
+        {
+            var half = (contentWidth - gap) / 2.0;
+            condition = new Rect(left, top, half, middleHeight);
+            if (showBonusAmmo)
+                ammo = new Rect(condition.Right + gap, top, half, middleHeight);
+            top = condition.Bottom;
+        }
+        else
+        {
+            condition = new Rect(left, top, contentWidth, middleHeight);
+            top = condition.Bottom;
+            if (showBonusAmmo)
+            {
+                ammo = new Rect(left, top + gap, contentWidth, middleHeight);
+                top = ammo.Bottom;
+            }
+        }
+
+        var itemsTop = top + 12.0;
+        return new NpcLootGeometry(selector, ammo, supply, medical, mod,
+            condition, left, contentWidth, itemsTop, itemsTop + 167.0);
     }
 
     private NpcLootGeometry CurrentNpcLootLayout(double width)
@@ -1563,54 +1563,46 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         // The bonus quantity and its sample preview only exist with MED + AMMO.
         // Switching the package does not reset the saved ammo quantity value.
+        // One Stamina Usage-style card: label left, live multiplier right,
+        // native rail below, then the scaled stack examples underneath.
         if (NpcBonusPackageSelected())
         {
-            DrawNpcCompactMultiplierKnob(dc, ammo, "AMMO QTY", layout.Ammo,
-                text, muted, border, accent, panel);
-            var examples = new (string Label, string Rank, int Min, int Max)[]
+            var ammoCard = layout.Ammo;
+            DrawHorizontalTrackCard(dc, ammo, "BONUS AMMO", ammoCard,
+                text, muted, border, accent, panel, pairedValueFormatting: true);
+            var examples = new (string Label, int Min, int Max)[]
             {
-                ("12 GA", "NEWBIE", 2, 6),
-                ("5.45", "NEWBIE", 15, 20),
-                ("9×19", "NEWBIE", 15, 20),
-                (".45 ACP", "NEWBIE", 8, 12),
-                ("5.56", "EXPERIENCED", 15, 20),
-                ("9×18", "VETERAN", 15, 20),
-                ("7.62 SNIPER", "VETERAN", 25, 30),
-                ("7.62", "VETERAN", 25, 30),
-                ("9×39", "MASTER", 15, 20)
+                ("12 GA", 2, 6),
+                ("5.45", 15, 20),
+                ("9×19", 15, 20),
+                (".45 ACP", 8, 12),
+                ("5.56", 15, 20),
+                ("9×18", 15, 20),
+                ("7.62 SN", 25, 30),
+                ("7.62", 25, 30),
+                ("9×39", 15, 20)
             };
-            var sampleCard = layout.Samples;
-            dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
-                sampleCard, 4.0, 4.0);
-            DrawText(dc, "BONUS AMMO STACKS",
-                new Point(sampleCard.Left + 11.0, sampleCard.Top + 7.0),
-                10.3, text, FontWeights.Bold);
-            const double previewGap = 6.0;
-            var previewTotalWidth = Math.Min(516.0, sampleCard.Width - 22.0);
-            var previewLeft = sampleCard.Left
-                + (sampleCard.Width - previewTotalWidth) / 2.0;
-            var tileWidth = (previewTotalWidth - 2.0 * previewGap) / 3.0;
             var countsModified = ammo.IsValueModifiedFromReference();
+            dc.DrawLine(new Pen(CloneWithOpacity(border, 0.55), 0.8),
+                new Point(ammoCard.Left + 12.0, ammoCard.Top + 70.0),
+                new Point(ammoCard.Right - 12.0, ammoCard.Top + 70.0));
+            const double sampleColumnGap = 14.0;
+            var sampleWidth = (ammoCard.Width - 24.0 - 2.0 * sampleColumnGap) / 3.0;
             for (var i = 0; i < examples.Length; i++)
             {
                 var sample = examples[i];
-                var tile = new Rect(previewLeft
-                        + (i % 3) * (tileWidth + previewGap),
-                    sampleCard.Top + 27.0 + (i / 3) * 34.0, tileWidth, 31.0);
-                dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.95),
-                    new Pen(CloneWithOpacity(border, 0.85), 0.9),
-                    tile, 4.0, 4.0);
+                var cellLeft = ammoCard.Left + 12.0
+                    + (i % 3) * (sampleWidth + sampleColumnGap);
+                var rowTop = ammoCard.Top + 77.0 + (i / 3) * 19.0;
                 var low = Math.Max(0, (int)Math.Floor(
                     sample.Min * ammo.CurrentNumber + 0.5));
                 var high = Math.Max(0, (int)Math.Floor(
                     sample.Max * ammo.CurrentNumber + 0.5));
-                DrawCenteredText(dc, sample.Label + " · " + sample.Rank,
-                    new Point(tile.Left + tile.Width / 2.0, tile.Top + 2.0),
-                    8.4, muted, FontWeights.SemiBold);
-                DrawCenteredText(dc, $"{low}–{high}",
-                    new Point(tile.Left + tile.Width / 2.0, tile.Top + 16.0),
-                    countsModified ? 12.9 : 12.2,
-                    countsModified ? accent : text, FontWeights.SemiBold);
+                DrawText(dc, sample.Label, new Point(cellLeft, rowTop),
+                    8.8, muted, FontWeights.SemiBold);
+                DrawRightAlignedText(dc, $"{low}–{high}",
+                    new Point(cellLeft + sampleWidth, rowTop - 0.5),
+                    9.8, countsModified ? accent : text, FontWeights.SemiBold);
             }
         }
 
@@ -6782,7 +6774,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var target = FindTarget(e.GetPosition(this));
         if (target is null
             || target.Kind != HitKind.Knob
-               && !(stashGraph && target.Kind == HitKind.Horizontal)
+               && !((stashGraph || Family == "NpcLootLoadout")
+                   && target.Kind == HitKind.Horizontal)
             || !target.Parameter.IsControlEnabled
             || IsNpcBonusSliderLocked(target.Parameter))
             return;

@@ -83,7 +83,10 @@ public sealed class NpcConsumableItemViewModel : ObservableObject
     // 0..2x presets still produce their former source-relative probabilities.
     public double? LegacyMultiplier => _legacyMultiplier;
 
-    public string PercentText => !Enabled ? "DEFAULT"
+    // Unchecked rows show a muted dash: no override, source Chance untouched.
+    public const string UntouchedText = "—";
+
+    public string PercentText => !Enabled ? UntouchedText
         : _legacyMultiplier is double legacy
             ? legacy.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) + "×"
         : $"{ChancePercent}%";
