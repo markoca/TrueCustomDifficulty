@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.1",
-  "supportedParameterCount": 376,
+  "supportedParameterCount": 380,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -41993,6 +41993,566 @@
       "operation": "scale",
       "role": "",
       "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactRespawnRate",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "UniversalArtifactSpawner",
+      "nodePath": [
+        "Newbie"
+      ],
+      "key": "MinCooldown",
+      "sourceRaw": "5400.f",
+      "operation": "inverseScale",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactRespawnRate",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "UniversalArtifactSpawner",
+      "nodePath": [
+        "Newbie"
+      ],
+      "key": "MaxCooldown",
+      "sourceRaw": "5400.f",
+      "operation": "inverseScale",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactRespawnRate",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "UniversalArtifactSpawner",
+      "nodePath": [
+        "Experienced"
+      ],
+      "key": "MinCooldown",
+      "sourceRaw": "5400.f",
+      "operation": "inverseScale",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactRespawnRate",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "UniversalArtifactSpawner",
+      "nodePath": [
+        "Experienced"
+      ],
+      "key": "MaxCooldown",
+      "sourceRaw": "5400.f",
+      "operation": "inverseScale",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactRespawnRate",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "UniversalArtifactSpawner",
+      "nodePath": [
+        "Veteran"
+      ],
+      "key": "MinCooldown",
+      "sourceRaw": "5400.f",
+      "operation": "inverseScale",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactRespawnRate",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "UniversalArtifactSpawner",
+      "nodePath": [
+        "Veteran"
+      ],
+      "key": "MaxCooldown",
+      "sourceRaw": "5400.f",
+      "operation": "inverseScale",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactRespawnRate",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "UniversalArtifactSpawner",
+      "nodePath": [
+        "Master"
+      ],
+      "key": "MinCooldown",
+      "sourceRaw": "5400.f",
+      "operation": "inverseScale",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactRespawnRate",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "UniversalArtifactSpawner",
+      "nodePath": [
+        "Master"
+      ],
+      "key": "MaxCooldown",
+      "sourceRaw": "5400.f",
+      "operation": "inverseScale",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactRespawnRate",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "LesserZoneMagneticShortDistance",
+      "nodePath": [
+        "Newbie"
+      ],
+      "key": "MinCooldown",
+      "sourceRaw": "5400.f",
+      "operation": "inverseScale",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactRespawnRate",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "LesserZoneMagneticShortDistance",
+      "nodePath": [
+        "Newbie"
+      ],
+      "key": "MaxCooldown",
+      "sourceRaw": "5400.f",
+      "operation": "inverseScale",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactRespawnRate",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "LesserZoneMagneticShortDistance",
+      "nodePath": [
+        "Experienced"
+      ],
+      "key": "MinCooldown",
+      "sourceRaw": "5400.f",
+      "operation": "inverseScale",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactRespawnRate",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "LesserZoneMagneticShortDistance",
+      "nodePath": [
+        "Experienced"
+      ],
+      "key": "MaxCooldown",
+      "sourceRaw": "5400.f",
+      "operation": "inverseScale",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactRespawnRate",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "LesserZoneMagneticShortDistance",
+      "nodePath": [
+        "Veteran"
+      ],
+      "key": "MinCooldown",
+      "sourceRaw": "5400.f",
+      "operation": "inverseScale",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactRespawnRate",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "LesserZoneMagneticShortDistance",
+      "nodePath": [
+        "Veteran"
+      ],
+      "key": "MaxCooldown",
+      "sourceRaw": "5400.f",
+      "operation": "inverseScale",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactRespawnRate",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "LesserZoneMagneticShortDistance",
+      "nodePath": [
+        "Master"
+      ],
+      "key": "MinCooldown",
+      "sourceRaw": "5400.f",
+      "operation": "inverseScale",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactRespawnRate",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "LesserZoneMagneticShortDistance",
+      "nodePath": [
+        "Master"
+      ],
+      "key": "MaxCooldown",
+      "sourceRaw": "5400.f",
+      "operation": "inverseScale",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactSpawnChance",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "UniversalArtifactSpawner",
+      "nodePath": [
+        "Newbie"
+      ],
+      "key": "SpawnChanceBase",
+      "sourceRaw": "25.f",
+      "operation": "scaleClamp100",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactSpawnChance",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "UniversalArtifactSpawner",
+      "nodePath": [
+        "Newbie"
+      ],
+      "key": "SpawnChanceBonus",
+      "sourceRaw": "15.f",
+      "operation": "scaleClamp100",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactSpawnChance",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "UniversalArtifactSpawner",
+      "nodePath": [
+        "Experienced"
+      ],
+      "key": "SpawnChanceBase",
+      "sourceRaw": "25.f",
+      "operation": "scaleClamp100",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactSpawnChance",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "UniversalArtifactSpawner",
+      "nodePath": [
+        "Experienced"
+      ],
+      "key": "SpawnChanceBonus",
+      "sourceRaw": "15.f",
+      "operation": "scaleClamp100",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactSpawnChance",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "UniversalArtifactSpawner",
+      "nodePath": [
+        "Veteran"
+      ],
+      "key": "SpawnChanceBase",
+      "sourceRaw": "25.f",
+      "operation": "scaleClamp100",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactSpawnChance",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "UniversalArtifactSpawner",
+      "nodePath": [
+        "Veteran"
+      ],
+      "key": "SpawnChanceBonus",
+      "sourceRaw": "15.f",
+      "operation": "scaleClamp100",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactSpawnChance",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "UniversalArtifactSpawner",
+      "nodePath": [
+        "Master"
+      ],
+      "key": "SpawnChanceBase",
+      "sourceRaw": "25.f",
+      "operation": "scaleClamp100",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactSpawnChance",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "UniversalArtifactSpawner",
+      "nodePath": [
+        "Master"
+      ],
+      "key": "SpawnChanceBonus",
+      "sourceRaw": "15.f",
+      "operation": "scaleClamp100",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactSpawnChance",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "LesserZoneMagneticShortDistance",
+      "nodePath": [
+        "Newbie"
+      ],
+      "key": "SpawnChanceBase",
+      "sourceRaw": "25.f",
+      "operation": "scaleClamp100",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactSpawnChance",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "LesserZoneMagneticShortDistance",
+      "nodePath": [
+        "Newbie"
+      ],
+      "key": "SpawnChanceBonus",
+      "sourceRaw": "15.f",
+      "operation": "scaleClamp100",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactSpawnChance",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "LesserZoneMagneticShortDistance",
+      "nodePath": [
+        "Experienced"
+      ],
+      "key": "SpawnChanceBase",
+      "sourceRaw": "25.f",
+      "operation": "scaleClamp100",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactSpawnChance",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "LesserZoneMagneticShortDistance",
+      "nodePath": [
+        "Experienced"
+      ],
+      "key": "SpawnChanceBonus",
+      "sourceRaw": "15.f",
+      "operation": "scaleClamp100",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactSpawnChance",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "LesserZoneMagneticShortDistance",
+      "nodePath": [
+        "Veteran"
+      ],
+      "key": "SpawnChanceBase",
+      "sourceRaw": "25.f",
+      "operation": "scaleClamp100",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactSpawnChance",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "LesserZoneMagneticShortDistance",
+      "nodePath": [
+        "Veteran"
+      ],
+      "key": "SpawnChanceBonus",
+      "sourceRaw": "15.f",
+      "operation": "scaleClamp100",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactSpawnChance",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "LesserZoneMagneticShortDistance",
+      "nodePath": [
+        "Master"
+      ],
+      "key": "SpawnChanceBase",
+      "sourceRaw": "25.f",
+      "operation": "scaleClamp100",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactSpawnChance",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "LesserZoneMagneticShortDistance",
+      "nodePath": [
+        "Master"
+      ],
+      "key": "SpawnChanceBonus",
+      "sourceRaw": "15.f",
+      "operation": "scaleClamp100",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactCount",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "UniversalArtifactSpawner",
+      "nodePath": [
+        "Newbie"
+      ],
+      "key": "Count",
+      "sourceRaw": "1",
+      "operation": "set",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactCount",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "UniversalArtifactSpawner",
+      "nodePath": [
+        "Experienced"
+      ],
+      "key": "Count",
+      "sourceRaw": "1",
+      "operation": "set",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactCount",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "UniversalArtifactSpawner",
+      "nodePath": [
+        "Veteran"
+      ],
+      "key": "Count",
+      "sourceRaw": "1",
+      "operation": "set",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactCount",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "UniversalArtifactSpawner",
+      "nodePath": [
+        "Master"
+      ],
+      "key": "Count",
+      "sourceRaw": "1",
+      "operation": "set",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactCount",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "LesserZoneMagneticShortDistance",
+      "nodePath": [
+        "Newbie"
+      ],
+      "key": "Count",
+      "sourceRaw": "1",
+      "operation": "set",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactCount",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "LesserZoneMagneticShortDistance",
+      "nodePath": [
+        "Experienced"
+      ],
+      "key": "Count",
+      "sourceRaw": "1",
+      "operation": "set",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactCount",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "LesserZoneMagneticShortDistance",
+      "nodePath": [
+        "Veteran"
+      ],
+      "key": "Count",
+      "sourceRaw": "1",
+      "operation": "set",
+      "role": "artifact-spawner",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.artifactCount",
+      "scope": "baseGame",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "prototype": "LesserZoneMagneticShortDistance",
+      "nodePath": [
+        "Master"
+      ],
+      "key": "Count",
+      "sourceRaw": "1",
+      "operation": "set",
+      "role": "artifact-spawner",
+      "difficultySid": ""
     }
   ],
   "special": {
@@ -46428,6 +46988,15 @@
       "difficultyFile": "GameData/DifficultyPrototypes.cfg",
       "synchronizationFile": "GameData/CombatSynchronizationPrototypes.cfg",
       "synchronizationResource": "TrueCustomDifficulty.Data.combat-synchronization-2.1.json"
+    },
+    "artifactHunting": {
+      "note": "RARE LUCK multiplies Rare/Epic RarityChance by k and renormalises the four shares to 100 per zone rank (Newbie has no rare artifacts and is unchanged). Respawn rate, spawn chance and artifacts per spawn are direct edit points (role artifact-spawner).",
+      "parameterId": "environment.artifactRareLuck",
+      "file": "GameData/ArtifactSpawnerPrototypes.cfg",
+      "spawners": [
+        "UniversalArtifactSpawner",
+        "LesserZoneMagneticShortDistance"
+      ]
     }
   }
 }

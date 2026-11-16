@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "src/TrueCustomDifficulty/Data"
 EXPECTED = {
     "combat": 56, "survival": 153, "health": 47, "stamina": 26,
-    "economy": 409, "equipment": 331, "environment": 42,
+    "economy": 409, "equipment": 331, "environment": 82,
     "loot": 1554, "alife": 64,
 }
 SELL_RESOURCE = "TrueCustomDifficulty.Data.trader-sells-2.1-runtime.csv"
@@ -44,12 +44,12 @@ def main() -> int:
     ids = {p["id"] for p in catalog["parameters"]}
     actual = Counter(p["parameterId"].split(".", 1)[0] for p in points)
     assert dict(actual) == EXPECTED, f"Direct domain census drift: {actual}"
-    assert len(points) == 2682 and len(ids) == 376
+    assert len(points) == 2722 and len(ids) == 380
     assert baseline["supportedParameterCount"] == len(ids)
     assert baseline["gameVersion"] == catalog["source"]["gameVersion"] == "2.1", (
         "2.1 source-target metadata mismatch; legacy 2.0.5 fallback is not supported."
     )
-    assert len(baseline["special"]) == 26
+    assert len(baseline["special"]) == 27
     sell = baseline["special"]["traderSells"]
     assert len(sell["parameterIds"]) == 31 and sell["expectedSourceRows"] == 2939
     assert sell["expectedProfiles"] == 86

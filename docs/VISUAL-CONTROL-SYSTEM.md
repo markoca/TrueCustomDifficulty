@@ -1,3 +1,8 @@
+## 2026-11-16 — CURRENT: ARTIFACT HUNTING board (Anomalies tab)
+
+* New full-width board **ARTIFACT HUNTING** after Special Anomaly Effects: four compact economy-style cards (two columns, one below 672 DIP) — RESPAWN RATE (`2x`), SPAWN CHANCE (readout is the resulting chance, `25% +15%`), RARE LUCK (`1x`), PER SPAWN (`1`–`3`) — and a read-only **RARITY BY ZONE** strip: NEWBIE / EXPERIENCED / VETERAN / MASTER rows, one stacked bar Common · Uncommon · Rare · Epic (grey to gold) and `x% RARE+` on the right (only the digits turn gold when RARE LUCK changes them).
+* Same card grammar as ITEM WEIGHT: drag a track, right-click resets it, R resets the board. No tooltips, no vanilla emphasis beyond the usual reference tick. Details: `docs/environment/ARTIFACT-HUNTING.md`.
+
 ## 2026-11-16 — CURRENT: Bloodsucker card title, trader 0% exceptions
 
 * The Bloodsucker health parameter (board anchor) is labelled **Bloodsucker Health** like the other 13 species, so its panel title matches its text.

@@ -62,7 +62,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private void RaiseParameterSelected(ParameterViewModel parameter)
     {
         if (Family is "AnomalyGlobalDamage" or "FlycatcherSlowdown" or "AnomalySpecialEffects" or "ServiceCostsBoard"
-            or "CouponFlow" or "TraderStockBoard" or "ItemWeightBoard" or "EquipmentWearBalance"
+            or "CouponFlow" or "TraderStockBoard" or "ItemWeightBoard" or "ArtifactHunting" or "EquipmentWearBalance"
             or "StashContentMix" or "StashMedicalComposition"
             or "StashGear" or "NpcLootLoadout" or "HumanCombatProfile" or "PlayerWeaponProfile"
             or "StarvationTimeline" or "SevereFatiguePenaltyBoard"
@@ -368,6 +368,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             case "ItemWeightBoard":
                 DrawEquipmentWeightBoard(dc, text, muted, border, accent, panel);
                 break;
+            case "ArtifactHunting":
+                DrawArtifactHunting(dc, text, muted, border, accent, panel);
+                break;
             case "AnomalyGlobalDamage":
                 DrawAnomalyGlobalDamage(dc, text, muted, border, accent, panel);
                 break;
@@ -607,6 +610,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "economy.startingMoney" => value.ToString("N0", CultureInfo.InvariantCulture),
             "economy.repairCostBase" or "economy.traderMinBuyCondition" or "economy.itemValueFloor"
                 or "environment.flycatcherMovementSpeed" or "environment.flycatcherTurnSpeed" => $"{value * 100.0:0.#}%",
+            ArtifactSpawnPolicy.SpawnChanceId => ParameterViewModel.ArtifactSpawnChanceDisplay(value),
+            ArtifactSpawnPolicy.CountId => $"{value:0}",
             _ => $"{value:0.##}x"
         };
 
@@ -871,6 +876,92 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 48.0 + (i / columns) * 94.0, cardWidth, 80.0);
             DrawEconomyCard(dc, P(controls[i].Id), controls[i].Label,
                 rect, text, muted, border, accent, panel);
+        }
+    }
+
+    // ARTIFACT HUNTING: four independent spawner cards (respawn rate, spawn
+    // chance, rare luck, artifacts per spawn) and a read-only rarity split per
+    // zone rank that follows RARE LUCK (ArtifactSpawnPolicy, same as the writer).
+    private const double ArtifactRarityRowPitch = 22.0;
+
+    private static double ArtifactHuntingHeight(double width)
+        => EconomyBoardHeight(width, 4) + 36.0 + 4 * ArtifactRarityRowPitch + 14.0;
+
+    private void DrawArtifactHunting(
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush accent, Brush panel)
+    {
+        DrawCenteredText(dc, "ARTIFACT HUNTING",
+            new Point(ActualWidth / 2.0, 21.0), VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
+
+        var controls = new (string Id, string Label)[]
+        {
+            (ArtifactSpawnPolicy.RespawnRateId, "RESPAWN RATE"),
+            (ArtifactSpawnPolicy.SpawnChanceId, "SPAWN CHANCE"),
+            (ArtifactSpawnPolicy.RareLuckId, "RARE LUCK"),
+            (ArtifactSpawnPolicy.CountId, "PER SPAWN")
+        };
+        var columns = EconomyColumns(ActualWidth);
+        var cardWidth = EconomyCardWidth(ActualWidth, columns);
+        const double gap = 12.0;
+        var bankWidth = columns * cardWidth + (columns - 1) * gap;
+        var left = (ActualWidth - bankWidth) / 2.0;
+
+        for (var i = 0; i < controls.Length; i++)
+        {
+            var rect = new Rect(left + (i % columns) * (cardWidth + gap),
+                48.0 + (i / columns) * 94.0, cardWidth, 80.0);
+            DrawEconomyCard(dc, P(controls[i].Id), controls[i].Label,
+                rect, text, muted, border, accent, panel);
+        }
+
+        // Rarity split per zone rank (Common / Uncommon / Rare / Epic).
+        var luck = P(ArtifactSpawnPolicy.RareLuckId)?.CurrentNumber ?? 1.0;
+        var rows = (controls.Length + columns - 1) / columns;
+        var card = new Rect(left, 48.0 + rows * 94.0,
+            bankWidth, 30.0 + 4 * ArtifactRarityRowPitch);
+        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0);
+        DrawText(dc, "RARITY BY ZONE", new Point(card.Left + 12.0, card.Top + 8.0),
+            10.0, text, FontWeights.Bold);
+        DrawRightAlignedText(dc, "COMMON · UNCOMMON · RARE · EPIC",
+            new Point(card.Right - 12.0, card.Top + 9.0), 9.0, muted, FontWeights.Normal);
+
+        var tones = new[]
+        {
+            CloneWithOpacity(muted, .35), CloneWithOpacity(muted, .75),
+            CloneWithOpacity(accent, .6), accent
+        };
+        const double labelWidth = 92.0;
+        const double readoutWidth = 74.0;
+        var changed = Math.Abs(luck - 1.0) > 0.0000001;
+        for (var rank = 0; rank < ArtifactSpawnPolicy.Ranks.Count; rank++)
+        {
+            var y = card.Top + 30.0 + rank * ArtifactRarityRowPitch;
+            DrawText(dc, ArtifactSpawnPolicy.Ranks[rank].ToUpperInvariant(),
+                new Point(card.Left + 12.0, y), 9.4, muted, FontWeights.Bold);
+            var bar = new Rect(card.Left + 12.0 + labelWidth, y + 3.0,
+                Math.Max(1.0, card.Width - 24.0 - labelWidth - readoutWidth), 9.0);
+            var shares = ArtifactSpawnPolicy.Rarity(rank, luck);
+            var x = bar.Left;
+            for (var r = 0; r < shares.Length; r++)
+            {
+                var w = bar.Width * shares[r] / 100.0;
+                if (w <= 0.0) continue;
+                dc.DrawRectangle(tones[r], null, new Rect(x, bar.Top, w, bar.Height));
+                x += w;
+            }
+            dc.DrawRectangle(null, new Pen(CloneWithOpacity(border, .9), 0.8), bar);
+            var rare = shares[2] + shares[3];
+            var rankChanged = changed && ArtifactSpawnPolicy.RarePlusShare(rank, 1.0) > 0.0;
+            // Only the changed digits turn gold (Hunger rule).
+            var readout = CreateText($"{rare:0.#}% RARE+", 9.4, text, FontWeights.Bold);
+            if (rankChanged)
+            {
+                var digits = $"{rare:0.#}".Length;
+                readout.SetForegroundBrush(accent, 0, digits);
+            }
+            dc.DrawText(readout, new Point(
+                card.Right - 12.0 - readout.WidthIncludingTrailingWhitespace, y));
         }
     }
 
@@ -7821,6 +7912,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "ServiceCostsBoard" => ServicePriceBoardHeight(width),
             "TraderStockBoard" => StockAmountBoardHeight(width),
             "ItemWeightBoard" => EconomyBoardHeight(width, 4),
+            "ArtifactHunting" => ArtifactHuntingHeight(width),
             "AnomalyGlobalDamage" => 242.0,
             "FlycatcherSlowdown" => FlycatcherBoardHeight(width),
             "AnomalySpecialEffects" => 270.0,
@@ -7908,6 +8000,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 "economy.upgradeCost",
                 "economy.repairCostBase"
             },
+            "ArtifactHunting" => ArtifactSpawnPolicy.ParameterIds,
             "ItemWeightBoard" => new[]
             {
                 "equipment.ammoWeight",

@@ -2084,6 +2084,9 @@ _factory_legacy_catalog = {pid: p for pid, p in _factory_catalog.items()
                            # presets, loads at the difficulty's vanilla value.
                            and not pid.startswith("combat.mutantAttackRate.")
                            and pid != "combat.mutantSpecialAbilityRate"
+                           # ARTIFACT HUNTING (2026-11-16): omitted by factory
+                           # presets until they are tuned; loads at vanilla 1x.
+                           and not pid.startswith("environment.artifact")
                            and not pid.startswith(("loot.stashMix", "loot.stashGear",
                                "loot.stashMedical", "loot.stashMedkit", "loot.stashArmyMedkit"))}
 _factory_tuning = json.loads((ROOT / "tools/factory_preset_expansion.json").read_text(encoding="utf-8"))
@@ -5837,7 +5840,7 @@ _visual_boards = {
     "MutantDropRadar.cs": 1,
     "WorldLootRemovalRadar.cs": 1,
     "AnomalyDamageRadar.cs": 1,
-    "AggregateVisualControl.cs": 6,
+    "AggregateVisualControl.cs": 7,
 }
 for _file, _expected in _visual_boards.items():
     _source = (_visual_dir / _file).read_text(encoding="utf-8")

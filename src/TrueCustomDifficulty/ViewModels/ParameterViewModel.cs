@@ -149,6 +149,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "TraderStockBoard" => "AMMO SUPPLY and MEDICAL SUPPLY change how much every trader carries, not which items they can offer.",
                     "ServiceCostsBoard" => "Adjust guide travel, upgrades and repairs separately. Discounts and reputation may still affect final prices.",
                     "ItemWeightBoard" => "Adjust ammunition, food and medicine, weapons or armor weight independently.",
+                    "ArtifactHunting" => "Drag a card's track: RESPAWN RATE (how often fields roll), SPAWN CHANCE (each roll), RARE LUCK (rarity split, shown per zone below) and PER SPAWN (artifacts per success). Quest and unique artifacts are not changed. Right-click a track to reset it; R resets the board.",
                     "AnomalyGlobalDamage" => "GLOBAL MULTIPLIER affects all supported anomaly damage. Each anomaly also has its own damage setting; EFFECTIVE includes both before protection.",
                     "AnomalySpecialEffects" => "Adjust Glass Shards bleeding and Psy drain independently. Their other damage effects remain separate.",
                     "NpcLootLoadout" => "SCARCITY scales eligible ordinary NPC consumable Chance and optional corpse SmartLoot activation, not weapons. Other controls select packages, bonus stacks, medical Chance and condition. R also resets NEED BOOST and the item rows; MOD LOOT SCARCITY resets on its own (R with it focused).",
@@ -612,6 +613,10 @@ public sealed class ParameterViewModel : ObservableObject
         ["environment.razorBleeding"] = "FlycatcherSlowdown",
         ["environment.diamondBleeding"] = "FlycatcherSlowdown",
         ["environment.psyAnomalyIntensity"] = "FlycatcherSlowdown",
+        ["environment.artifactRespawnRate"] = "ArtifactHunting",
+        ["environment.artifactSpawnChance"] = "ArtifactHunting",
+        ["environment.artifactRareLuck"] = "ArtifactHunting",
+        ["environment.artifactCount"] = "ArtifactHunting",
 
         ["loot.genericCorpseReduction"] = "NpcLootLoadout",
         ["loot.npcCorpseBonus"] = "NpcLootLoadout",
@@ -703,6 +708,7 @@ public sealed class ParameterViewModel : ObservableObject
         ["TraderStockBoard"] = "economy.traderAmmoStock",
         ["ServiceCostsBoard"] = "economy.fastTravelCost",
         ["ItemWeightBoard"] = "equipment.ammoWeight",
+        ["ArtifactHunting"] = "environment.artifactRespawnRate",
         ["AnomalyGlobalDamage"] = "environment.anomalyDamage",
         ["FlycatcherSlowdown"] = "environment.flycatcherMovementSpeed",
         ["AnomalySpecialEffects"] = "environment.razorBleeding",
@@ -1270,6 +1276,12 @@ public sealed class ParameterViewModel : ObservableObject
             "environment.razorBleeding" => Times(CurrentNumber, "bleeding"),
             "environment.diamondBleeding" => $"{CurrentNumber:0.#} bleed pts",
             "environment.psyAnomalyIntensity" => Times(CurrentNumber, "intensity"),
+            ArtifactSpawnPolicy.RespawnRateId => Times(CurrentNumber, "respawn"),
+            ArtifactSpawnPolicy.SpawnChanceId => ArtifactSpawnChanceDisplay(CurrentNumber),
+            ArtifactSpawnPolicy.RareLuckId => $"{CurrentNumber:0.##}x · Master zones "
+                + $"{ArtifactSpawnPolicy.RarePlusShare(3, CurrentNumber):0.#}% rare+",
+            ArtifactSpawnPolicy.CountId => CurrentNumber >= 1.5
+                ? $"{CurrentNumber:0} artifacts" : "1 artifact",
 
             // Medicine strengths are concrete bonuses shown in the game,
             // not x-vanilla multipliers and not speculative rates per second.
@@ -1296,6 +1308,13 @@ public sealed class ParameterViewModel : ObservableObject
 
     private static string Times(double value, string meaning)
         => $"{value:0.##}x {meaning}";
+
+    // Board and panel: the resulting base + bonus spawn chance.
+    public static string ArtifactSpawnChanceDisplay(double factor)
+    {
+        var (chance, bonus) = ArtifactSpawnPolicy.SpawnChance(factor);
+        return $"{chance:0.#}% +{bonus:0.#}%";
+    }
 
     private static string SignedPercent(double value, string meaning)
     {

@@ -295,6 +295,9 @@ public sealed partial class CfgPatchWriterService
             documents,
             writtenParameters);
 
+        // ARTIFACT HUNTING: rarity split of the world artifact spawners.
+        editCount += WriteArtifactRareLuck(modifiedById, documents, writtenParameters);
+
         var worldWeaponDistribution = WriteWorldWeaponDistribution(
             modifiedById,
             allById,
@@ -530,6 +533,7 @@ public sealed partial class CfgPatchWriterService
         supported.UnionWith(baseline.Special.SetList.Select(p => p.ParameterId));
         supported.UnionWith(baseline.Special.PsyParameterKeys.Keys);
         supported.UnionWith(MutantAggressionPolicy.ParameterIds);
+        supported.Add(ArtifactSpawnPolicy.RareLuckId);
         if (!string.IsNullOrWhiteSpace(baseline.Special.CheapStashProduction.AmmoQuantityParameterId))
             supported.Add(baseline.Special.CheapStashProduction.AmmoQuantityParameterId);
         if (!string.IsNullOrWhiteSpace(baseline.Special.CheapStashProduction.GrenadeChanceParameterId))
@@ -598,6 +602,9 @@ public sealed partial class CfgPatchWriterService
             "scale" => FormatLikeSource(ParseNumber(point.SourceRaw) * parameter.CurrentNumber, point.SourceRaw),
             "scaleNonZero" => ScaleNonZero(parameter, point.SourceRaw),
             "scaleClamp01" => ScaleClamp01(parameter, point.SourceRaw),
+            // Percent chances (0–100) such as artifact SpawnChanceBase.
+            "scaleClamp100" => FormatLikeSource(
+                Math.Clamp(ParseNumber(point.SourceRaw) * parameter.CurrentNumber, 0.0, 100.0), point.SourceRaw),
             "setRangeBound" => SetRangeBound(parameter, point),
             "scaleIntegerHalfUp" => ScaleIntegerHalfUp(parameter, point.SourceRaw, preserveZero: false),
             "scaleIntegerHalfUpPreserveZero" => ScaleIntegerHalfUp(parameter, point.SourceRaw, preserveZero: true),

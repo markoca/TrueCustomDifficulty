@@ -10,7 +10,7 @@ def required(source, needle, msg):
     assert needle in source, msg + ": " + needle
 
 catalog = json.loads(read("src/TrueCustomDifficulty/Data/parameters.json"))
-assert len(catalog["parameters"]) == 376, "Mod-only sidecars must not become native source IDs"
+assert len(catalog["parameters"]) == 380, "Mod-only sidecars must not become native source IDs"
 native_ids = {p["id"] for p in catalog["parameters"]}
 assert not any("ModItemsRemoval" in x or "ModItemsBlocked" in x for x in native_ids)
 writer = read("src/TrueCustomDifficulty/Services/CfgPatchWriterService.ModItems.cs")
@@ -122,4 +122,4 @@ for original in (1.0, 0.10, 0.05, 0.04):
         chance = round(original * (1.0 - reduction), 6)
         assert abs(chance - original * ratio) < 1e-10
 print("[OK] 0-100% world and corpse mod Chance reduction, 0% neutral, 100% branch removal;")
-print("     exact PAKs, isolated pools, 48/55 NPC roots, UI, old preset migration, native 376-lock.")
+print("     exact PAKs, isolated pools, 48/55 NPC roots, UI, old preset migration, native 380-lock.")

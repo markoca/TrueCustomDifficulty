@@ -9,8 +9,8 @@ catalog = json.loads((src / "Data/parameters.json").read_text(encoding="utf-8"))
 baseline = json.loads((src / "Data/cfg-writer-baseline.json").read_text(encoding="utf-8"))
 rows = catalog["parameters"]
 by = {p["id"]: p for p in rows}
-assert len(by) == len(rows) == baseline["supportedParameterCount"] == 376
-assert sum(p.get("exposeInUi", True) for p in rows) == 186
+assert len(by) == len(rows) == baseline["supportedParameterCount"] == 380
+assert sum(p.get("exposeInUi", True) for p in rows) == 190
 assert sum(p.get("exposeInUi") is False for p in rows) == 190
 buys = {p["id"] for p in rows if p["id"].startswith("economy.traderBuys.")}
 sells = {p["id"] for p in rows if p["id"].startswith("economy.traderSells.")}
@@ -92,4 +92,4 @@ assert 'roleItemKeys.Contains(TraderOffersPolicy.Key(role.Id, r.ItemSid))' in wr
 assert 'roleChanges.Select(c => c.Category.Label)' in writer
 assert 'Dlc1OnlyParameterIds' in policy
 assert 'trader-sells-2.1-runtime.csv' in (src / "TrueCustomDifficulty.csproj").read_text(encoding="utf-8")
-print("PASS: 376 source IDs, 40 legacy BUY flags, 31 source-backed SELL category toggles; category-only trader UI")
+print("PASS: 380 source IDs, 40 legacy BUY flags, 31 source-backed SELL category toggles; category-only trader UI")

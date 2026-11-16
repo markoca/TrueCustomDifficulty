@@ -27,6 +27,7 @@ OPERATIONS = {
     "set", "toggleSourceOrZero", "negateSet", "inverseScale", "scale",
     "scaleNonZero", "scaleClamp01", "setRangeBound", "scaleIntegerHalfUp",
     "scaleIntegerHalfUpPreserveZero", "setDeltaFromRetainedFraction",
+    "scaleClamp100",
 }
 NON_UI = {
     "economy.repairDifficultyCost", "alife.mutantSpawn.generic",
@@ -88,6 +89,8 @@ def emitted_value(point, stored):
         return source if abs(source) < 1e-7 else source * value
     if op == "scaleClamp01":
         return min(1, max(0, source * value))
+    if op == "scaleClamp100":
+        return min(100, max(0, source * value))
     if op == "setRangeBound":
         return stored["minNumber"] if point["key"] == "MinDurability" else stored["maxNumber"]
     if op in ("scaleIntegerHalfUp", "scaleIntegerHalfUpPreserveZero"):

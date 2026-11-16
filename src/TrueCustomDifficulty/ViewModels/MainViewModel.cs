@@ -674,6 +674,9 @@ public sealed class MainViewModel : ObservableObject
             "equipment.consumableWeight",
             "equipment.weaponWeight",
             "equipment.armorWeight");
+        WireVisualAggregate(
+            ArtifactSpawnPolicy.RespawnRateId,
+            ArtifactSpawnPolicy.ParameterIds.ToArray());
 
         // Global damage is edited inside the Individual Anomaly Damage radar
         // alongside ten confirmed, player-facing source controls. Keep this legacy
@@ -2198,7 +2201,8 @@ public sealed class MainViewModel : ObservableObject
                 "Damage by Anomaly" => 100,
                 "Flycatcher Slowdown" => 200,
                 "Special Anomaly Effects" => 300,
-                _ => 400
+                "Artifacts" => 400,
+                _ => 500
             };
         }
 

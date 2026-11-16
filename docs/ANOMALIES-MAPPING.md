@@ -93,3 +93,7 @@ The standalone `DiamondAnomaly` prototype is present in `AnomalyPrototypes.cfg` 
 Additional anomaly systems still contain behavior that is not appropriate for a clean difficulty slider, including Gravity-family behavior, Lava Lamp, Expulsion, Iron Wind/Bulb-related behavior, Razor corrosion and the non-damage parts of Soap Bubble/Fireball behavior.
 
 Weather and emission scheduling/frequency remain out of scope.
+
+## Artifacts (2026-11-16)
+
+World anomaly-field artifacts (`UniversalArtifactSpawner`, `LesserZoneMagneticShortDistance` in `ArtifactSpawnerPrototypes.cfg`) are edited by the ARTIFACT HUNTING board: respawn rate, spawn chance, rare luck and artifacts per spawn. See [environment/ARTIFACT-HUNTING.md](environment/ARTIFACT-HUNTING.md).

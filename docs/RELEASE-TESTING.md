@@ -1,3 +1,12 @@
+## 2026-11-16 — ARTIFACT HUNTING in-game checks (runtime_test_required)
+
+* **SPAWN CHANCE 0x**: build, take or wait out artifacts in two ordinary anomaly fields: no new artifact should appear (quest / unique artifacts still do). Then **4x** (`100% +60%`): fields refill noticeably more reliably.
+* **RESPAWN RATE 4x** vs **0.25x**: compare how soon an emptied field holds a new artifact (detector). Note the real wait; the CFG unit (5400) is undocumented.
+* **RARE LUCK 4x** in a Veteran/Master area (e.g. Red Forest, Pripyat outskirts): rare/epic finds clearly more frequent; a Newbie area (Lesser Zone start) still gives only common/uncommon.
+* **PER SPAWN 3**: check whether one spawn places several artifacts in the field; if not, report it (Count may mean something else to the engine).
+* Inspect the built pak: `ArtifactSpawnerPrototypes` patches only `UniversalArtifactSpawner` and `LesserZoneMagneticShortDistance` (Newbie RarityChance never written).
+* `python3 tools/audit_artifact_hunting.py`.
+
 ## 2026-11-16 — MUTANT AGGRESSION in-game checks (runtime_test_required)
 
 * **ATTACK RATE**: on Veteran set Bloodsucker 3× and Snork 3×, build, fight each: attacks/leaps clearly more frequent than at 1×. Then 0.25×: long pauses between attacks. Repeat Snork (a family vanilla never lists) — if it does not change, report it; the exact-SID entry is not honoured for that family.
