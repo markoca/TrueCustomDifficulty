@@ -5271,14 +5271,15 @@ if any(_tok not in _npc_preview_source for _tok in (
     '=> LayoutNpcLoot(width, NpcBonusPackageSelected());',
     'private const double NpcLootMaxContentWidth = 780.0;',
     'var unit = (contentWidth - 3.0 * gap) / 4.5;',
-    'if (showBonusAmmo)',
+    '_ = showBonusAmmo;',
     'if (contentWidth >= 600.0)',
     'if (contentWidth >= 520.0)',
-    'if (NpcBonusPackageSelected())',
+    'var ammoActive = NpcBonusPackageSelected();',
+    'ammo = new Rect(condition.Right + gap, top, half, middleHeight);',
     'DrawHorizontalTrackCard(dc, ammo, "BONUS AMMO", ammoCard,',
     'var ammoCard = layout.Ammo;',
-    'DrawNpcCompactMultiplierKnob(dc, scarcity, "SUPPLY REDUCTION", layout.Supply,',
-    'DrawNpcCompactMultiplierKnob(dc, medical, "STANDARD MED", layout.Medical,',
+    'DrawNpcCompactMultiplierKnob(dc, scarcity, "FEWER SUPPLIES", layout.Supply,',
+    'DrawNpcCompactMultiplierKnob(dc, medical, "MED DROPS", layout.Medical,',
     'DrawNpcModItemsCard(dc, layout.Mod,',
     'var rangeCard = layout.Condition;',
     'private void DrawNpcCompactMultiplierKnob(',
@@ -5310,9 +5311,9 @@ if any(_tok not in _npc_preview_source for _tok in (
 )):
     fail("NPC SmartLoot context or original source control drifted")
 _npc_paint = _npc_preview_source.split("private void DrawNpcLootLoadout(", 1)[-1].split("private void DrawWorldLootLayout(", 1)[0]
-_parts = _npc_paint.split("if (NpcBonusPackageSelected())", 1)
-if len(_parts) != 2 or 'DrawHorizontalTrackCard(dc, ammo,' in _parts[0]:
-    fail("NPC bonus control is not guarded by MED + AMMO selection")
+if ('var countsModified = ammoActive && ammo.IsValueModifiedFromReference();' not in _npc_paint
+        or 'var enabled = parameter?.IsControlEnabled == true && !IsNpcBonusSliderLocked(parameter);' not in _npc_preview_source):
+    fail("NPC bonus ammo card must stay in place but muted/locked outside MED + AMMO")
 if '"Bonus ammo off · weapon ammo unaffected"' in _npc_preview_source or 'Inactive until Medicine + Ammo is selected' in _npc_preview_source:
     fail("NPC bonus preview must not display an inactive explanatory sentence")
 if 'var caption = CreateText(corpse.ChoiceOptions[i].Label,' in _npc_preview_source:
@@ -5347,7 +5348,7 @@ if any(token not in _knob_native for token in (
     'IsNpcBonusSliderLocked(parameter)')):
     fail("NPC native knobs lost source ranges, steps, reset or hover semantics")
 if any(token not in _knob_mod for token in (
-    'DrawNpcCompactDial(dc, card, "MOD ITEMS"',
+    'DrawNpcCompactDial(dc, card, "FEWER MOD ITEMS"',
     'BooleanCheckboxChrome.Draw', '_npcModKnobHit = NpcCompactDialHit(card);',
     'Math.Round(ratio, 2', 'ModItemsEnabled && ModItemsEditorAvailable')):
     fail("NPC MOD ITEMS must be a 0–100% opt-in knob with original 1% sidecar semantics")

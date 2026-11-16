@@ -76,6 +76,12 @@ public sealed partial class AggregateVisualControl
         var top = NpcLootConsumablesTop(ActualWidth);
         const double rowHeight = 31.0;
         const double headerHeight = 27.0;
+        // All three cards share the tallest card's height; shorter groups
+        // (3 items vs 4 medical) spread their rows evenly inside it.
+        var maxRows = Math.Max(1, _npcConsumableItems
+            .GroupBy(item => item.Group).Select(g => g.Count())
+            .DefaultIfEmpty(1).Max());
+        var cardHeight = headerHeight + maxRows * rowHeight + 7.0;
         var colWidth = Math.Max(1.0, (layout.ContentWidth - gap * 2.0) / 3.0);
         var editorAvailable = IsEnabled && ModItemsEditorAvailable;
 
@@ -90,7 +96,9 @@ public sealed partial class AggregateVisualControl
             var items = _npcConsumableItems
                 .Where(item => item.Group == group).ToArray();
             var card = new Rect(layout.ContentLeft + col * (colWidth + gap), top,
-                colWidth, headerHeight + items.Length * rowHeight + 7.0);
+                colWidth, cardHeight);
+            var pitch = items.Length == 0 ? rowHeight
+                : maxRows * rowHeight / items.Length;
             IndustrialChrome.DrawRecessedCard(dc, card, panel, border);
             dc.DrawEllipse(tint, null,
                 new Point(card.Left + 14.0, card.Top + 13.5), 3.6, 3.6);
@@ -104,7 +112,8 @@ public sealed partial class AggregateVisualControl
             {
                 var item = items[i];
                 var enabled = item.Enabled && editorAvailable;
-                var rowTop = top + headerHeight + i * rowHeight;
+                var rowTop = top + headerHeight + i * pitch
+                    + (pitch - rowHeight) / 2.0;
                 var box = new Rect(card.Left + 9.0, rowTop + 3.0, 15.0, 15.0);
                 var rail = new Rect(card.Left + 14.0, rowTop + 23.0,
                     Math.Max(1.0, card.Width - 28.0), 2.5);

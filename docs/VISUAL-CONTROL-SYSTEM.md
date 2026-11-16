@@ -4,13 +4,15 @@
 
 **One centered column, capped at 780 DIP** (`NpcLootMaxContentWidth`), never full host width. `LayoutNpcLoot(hostWidth, showBonusAmmo)` returns `ContentLeft` / `ContentWidth` and drives paint, hit targets and measurement. Three tiers:
 
-1. **Top row (88 DIP):** CORPSE SMART LOOT selector (1.5 units) + SUPPLY REDUCTION, STANDARD MED, MOD ITEMS knobs (1 unit each), 10-DIP gaps, when content width ≥ 600 DIP. Below that the selector (max 330 DIP) sits centered on its own row and the three knobs share the next row. Knob grammar, MOD ITEMS checkbox and 270° interaction are unchanged.
-2. **Middle row (139 DIP):** DROPPED WEAPON CONDITION in the left half, **BONUS AMMO** in the right half (content ≥ 520 DIP; otherwise stacked). With WATER/NONE the ammo card is not drawn and the condition card keeps its half width — it never stretches.
-3. **Item Chance columns:** FOOD / DRINKS / MEDICAL inside the same capped column, each header with a small category dot using the STASH LOOT MIX tints (`StashMixPalette` food / drinks / medical).
+1. **Top row (88 DIP):** CORPSE SMART LOOT selector (1.5 units) + **FEWER SUPPLIES** (`loot.genericCorpseReduction`), **MED DROPS** (`loot.npcMedicalChance`), **FEWER MOD ITEMS** (corpse mod sidecar) knobs (1 unit each), 10-DIP gaps, when content width ≥ 600 DIP. Below that the selector (max 330 DIP) sits centered on its own row and the three knobs share the next row. Knob grammar, MOD ITEMS checkbox and 270° interaction are unchanged.
+2. **Middle row (139 DIP):** DROPPED WEAPON CONDITION in the left half, **BONUS AMMO** in the right half (content ≥ 520 DIP; otherwise stacked). The ammo slot is **always reserved**: with WATER/NONE the same card is drawn muted and locked (no hit target, saved value kept), so the row never leaves an empty half.
+3. **Item Chance columns:** FOOD / DRINKS / MEDICAL inside the same capped column, each header with a small category dot using the STASH LOOT MIX tints (`StashMixPalette` food / drinks / medical). All three cards share the tallest card's height (4 rows); the 3-item groups spread their rows evenly inside it, leaving no empty card bottoms.
 
 **BONUS AMMO card** is the shared Stamina Usage `DrawHorizontalTrackCard`: label left, single live `N×` value right (only modified digits yellow), native rail with reference tick and muted 0/3 endpoints; drag, wheel, keyboard and right-click reset. The AMMO QTY knob is retired. Beneath a hairline, nine compact `calibre … min–max` rows (3 columns) show the scaled stacks; calibre muted, counts yellow only when the multiplier is modified. No rank captions, no tiles.
 
 **Per-item rows** keep checkbox, Stamina Usage label-left / value-right, 3.5-DIP rail and 5.5-DIP handle. Unchecked rows show a muted **—** (`NpcConsumableItemViewModel.UntouchedText`) and a faded rail with no handle — the word DEFAULT is retired as redundant text.
+
+**Knob captions** are player-facing: FEWER SUPPLIES (0% = untouched, 100% = none), MED DROPS (native 0–2× multiplier), FEWER MOD ITEMS (opt-in 0–100% mod item removal). Catalog labels, IDs and presets are unchanged.
 
 **Measured heights:** 470 DIP at host ≥ 634 (content ≥ 600) for every package; 568 DIP at 600-DIP host. Contract tests (`GenericSupplyReduction`, `NpcConsumableChanceFirstPass`) and `tools/audit_project_consistency.py` assert this geometry. Wine visual acceptance remains a local step.
 

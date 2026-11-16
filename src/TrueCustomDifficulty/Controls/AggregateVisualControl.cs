@@ -1248,7 +1248,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     {
         var enabled = ModItemsEnabled && ModItemsEditorAvailable && IsEnabled;
         var amount = Math.Clamp(ModItemsRemoval, 0.0, 1.0);
-        DrawNpcCompactDial(dc, card, "MOD ITEMS", $"{amount * 100.0:0}%",
+        DrawNpcCompactDial(dc, card, "FEWER MOD ITEMS", $"{amount * 100.0:0}%",
             "0%", "100%", 0.0, 1.0, amount, 0.0, 0.01,
             enabled, enabled && amount > Epsilon,
             enabled && _npcModHoverKnob,
@@ -1340,27 +1340,24 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             top = supply.Bottom + gap;
         }
 
-        // Condition always keeps its half-width column; it never stretches
-        // into the space of a hidden (WATER / NONE) Bonus Ammo card.
+        // The Bonus Ammo slot is ALWAYS reserved beside the condition card:
+        // under WATER / NONE it is drawn muted and locked instead of leaving
+        // an empty half row. showBonusAmmo therefore never changes geometry.
+        _ = showBonusAmmo;
         Rect condition;
-        var ammo = Rect.Empty;
+        Rect ammo;
         if (contentWidth >= 520.0)
         {
             var half = (contentWidth - gap) / 2.0;
             condition = new Rect(left, top, half, middleHeight);
-            if (showBonusAmmo)
-                ammo = new Rect(condition.Right + gap, top, half, middleHeight);
+            ammo = new Rect(condition.Right + gap, top, half, middleHeight);
             top = condition.Bottom;
         }
         else
         {
             condition = new Rect(left, top, contentWidth, middleHeight);
-            top = condition.Bottom;
-            if (showBonusAmmo)
-            {
-                ammo = new Rect(left, top + gap, contentWidth, middleHeight);
-                top = ammo.Bottom;
-            }
+            ammo = new Rect(left, condition.Bottom + gap, contentWidth, middleHeight);
+            top = ammo.Bottom;
         }
 
         var itemsTop = top + 12.0;
@@ -1555,17 +1552,18 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
 
         // The four normal NPC loot controls are independent of SmartLoot.
-        DrawNpcCompactMultiplierKnob(dc, scarcity, "SUPPLY REDUCTION", layout.Supply,
+        DrawNpcCompactMultiplierKnob(dc, scarcity, "FEWER SUPPLIES", layout.Supply,
             text, muted, border, accent, panel, percentage: true);
-        DrawNpcCompactMultiplierKnob(dc, medical, "STANDARD MED", layout.Medical,
+        DrawNpcCompactMultiplierKnob(dc, medical, "MED DROPS", layout.Medical,
             text, muted, border, accent, panel);
         DrawNpcModItemsCard(dc, layout.Mod, text, muted, border, accent, panel);
 
-        // The bonus quantity and its sample preview only exist with MED + AMMO.
-        // Switching the package does not reset the saved ammo quantity value.
+        // Bonus ammo only applies with MED + AMMO. Under WATER / NONE the
+        // same card stays in place, muted and locked (no hit target), so the
+        // row never collapses into empty space. The saved value is kept.
         // One Stamina Usage-style card: label left, live multiplier right,
         // native rail below, then the scaled stack examples underneath.
-        if (NpcBonusPackageSelected())
+        var ammoActive = NpcBonusPackageSelected();
         {
             var ammoCard = layout.Ammo;
             DrawHorizontalTrackCard(dc, ammo, "BONUS AMMO", ammoCard,
@@ -1582,7 +1580,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 ("7.62", 25, 30),
                 ("9×39", 15, 20)
             };
-            var countsModified = ammo.IsValueModifiedFromReference();
+            var countsModified = ammoActive && ammo.IsValueModifiedFromReference();
+            var sampleLabelInk = ammoActive ? muted : CloneWithOpacity(muted, 0.55);
+            var sampleValueInk = countsModified ? accent
+                : ammoActive ? text : CloneWithOpacity(muted, 0.7);
             dc.DrawLine(new Pen(CloneWithOpacity(border, 0.55), 0.8),
                 new Point(ammoCard.Left + 12.0, ammoCard.Top + 70.0),
                 new Point(ammoCard.Right - 12.0, ammoCard.Top + 70.0));
@@ -1599,10 +1600,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 var high = Math.Max(0, (int)Math.Floor(
                     sample.Max * ammo.CurrentNumber + 0.5));
                 DrawText(dc, sample.Label, new Point(cellLeft, rowTop),
-                    8.8, muted, FontWeights.SemiBold);
+                    8.8, sampleLabelInk, FontWeights.SemiBold);
                 DrawRightAlignedText(dc, $"{low}–{high}",
                     new Point(cellLeft + sampleWidth, rowTop - 0.5),
-                    9.8, countsModified ? accent : text, FontWeights.SemiBold);
+                    9.8, sampleValueInk, FontWeights.SemiBold);
             }
         }
 
