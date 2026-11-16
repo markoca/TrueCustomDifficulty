@@ -51,7 +51,7 @@ public static class NpcLootCards
                 + "1× is vanilla, 0× means no meds on bodies, 2× doubles the odds (never above 100%).\n\n"
                 + "A MEDICAL item you tick below takes over from this dial for that item.",
                 "Drag the dial or use the mouse wheel. Right-click resets to the base difficulty."),
-            new(ModCut, Anchor, "MOD LOOT CUT", "Mod Loot Cut",
+            new(ModCut, Anchor, "MOD LOOT SCARCITY", "Mod Loot Scarcity",
                 "Only for supported loot mods: Point of No Return Backpacks Pack and Repair System. "
                 + "Cuts how often their extra items show up on bodies.\n\n"
                 + "0% keeps them as the mod intended, 100% removes them completely. Vanilla loot is never touched.",

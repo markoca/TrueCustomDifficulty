@@ -1,3 +1,7 @@
+## 2026-11-16 — CURRENT: NPC LOOT mod card renamed MOD LOOT SCARCITY
+
+The NPC LOOT corpse mod-sidecar dial is captioned **MOD LOOT SCARCITY** (card title *Mod Loot Scarcity*), pairing with SCARCITY. `DrawNpcCompactDial(..., captionInset)` centers a caption in the space right of a caption-row checkbox and shrinks it (9.4 → min 7.4 DIP) only when it would not fit, so the card never widens. Behavior, preset fields and writer output are unchanged.
+
 ## 2026-11-16 — CURRENT: gamer-facing WHAT IT DOES text, tab by tab (all tabs done)
 
 Every catalog `rationale` is being rewritten tab by tab (Combat → Survival → Health → Stamina → Loot → Stashes → Economy → Equipment → Environment → A-Life → Master) into plain gamer language: what you feel in play, the vanilla value per difficulty taken from the catalog's own `vanilla` field, and one practical tip — no CFG keys or file names. Technical detail stays in the separate value / logic / interaction sections. Custom radar controls of each tab get per-card selection as the tab is done: the card's owning parameter is passed to `dc.DrawTrackedRoundedRectangle(..., owner)` and a click anywhere in the card raises `ParameterSelected`.
@@ -26,7 +30,7 @@ Every catalog `rationale` is being rewritten tab by tab (Combat → Survival →
 
 ## 2026-11-16 — CURRENT: NPC LOOT card names, white card hover and per-card panel text
 
-**Card captions** (on-card): **BONUS PACKS** (package chips), **NEED BOOST**, **SCARCITY** (`loot.genericCorpseReduction`), **MED DROPS** (`loot.npcMedicalChance`), **MOD LOOT CUT** (corpse mod sidecar), **WEAPON CONDITION** (`loot.droppedWeaponCondition`), **AMMO PACK SIZE** (`loot.npcWeaponAmmoSupply`), **FOOD**, **DRINKS**, **MEDICAL**. Catalog IDs, catalog labels and presets are unchanged.
+**Card captions** (on-card): **BONUS PACKS** (package chips), **NEED BOOST**, **SCARCITY** (`loot.genericCorpseReduction`), **MED DROPS** (`loot.npcMedicalChance`), **MOD LOOT SCARCITY** (corpse mod sidecar; formerly MOD LOOT CUT — caption is centered right of its checkbox and steps down from 9.4 to ≥7.4 DIP only if it would not fit), **WEAPON CONDITION** (`loot.droppedWeaponCondition`), **AMMO PACK SIZE** (`loot.npcWeaponAmmoSupply`), **FOOD**, **DRINKS**, **MEDICAL**. Catalog IDs, catalog labels and presets are unchanged.
 
 **White card hover:** every NPC card registers its rectangle while painting (`RegisterNpcCard`). With the pointer anywhere inside a card, a 1.2-DIP **white** outline is drawn along that card's own border (same 4-DIP corners), on top of everything else on the board. This supersedes the older "cards never glow" rule **for the NPC LOOT board only**; control-level hover (white dial pointer, chip icon, handle ring) is unchanged.
 

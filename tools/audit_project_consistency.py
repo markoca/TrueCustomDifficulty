@@ -5361,7 +5361,7 @@ if any(token not in _knob_native for token in (
     'IsNpcBonusSliderLocked(parameter)')):
     fail("NPC native knobs lost source ranges, steps, reset or hover semantics")
 if any(token not in _knob_mod for token in (
-    'DrawNpcCompactDial(dc, card, "MOD LOOT CUT"',
+    'DrawNpcCompactDial(dc, card, "MOD LOOT SCARCITY"',
     'BooleanCheckboxChrome.Draw', '_npcModKnobHit = NpcCompactDialHit(card);',
     'Math.Round(ratio, 2', 'ModItemsEnabled && ModItemsEditorAvailable')):
     fail("NPC MOD ITEMS must be a 0–100% opt-in knob with original 1% sidecar semantics")

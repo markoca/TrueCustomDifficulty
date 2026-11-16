@@ -1250,11 +1250,12 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     {
         var enabled = ModItemsEnabled && ModItemsEditorAvailable && IsEnabled;
         var amount = Math.Clamp(ModItemsRemoval, 0.0, 1.0);
-        DrawNpcCompactDial(dc, card, "MOD LOOT CUT", $"{amount * 100.0:0}%",
+        DrawNpcCompactDial(dc, card, "MOD LOOT SCARCITY", $"{amount * 100.0:0}%",
             "0%", "100%", 0.0, 1.0, amount, 0.0, 0.01,
             enabled, enabled && amount > Epsilon,
             enabled && _npcModHoverKnob,
-            text, muted, border, accent, panel);
+            text, muted, border, accent, panel,
+            captionInset: 29.0);
         _npcModCheckbox = new Rect(card.Left + 9.0, card.Top + 10.0, 16.0, 16.0);
         BooleanCheckboxChrome.Draw(dc, _npcModCheckbox, ModItemsEnabled,
             IsEnabled && ModItemsEditorAvailable, _npcModHoverCheckbox,
@@ -1401,13 +1402,32 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         string minimumLabel, string maximumLabel,
         double minimum, double maximum, double current, double baseline,
         double nativeStep, bool enabled, bool modified, bool hovered,
-        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel,
+        double captionInset = 0.0)
     {
         IndustrialChrome.DrawRecessedCard(dc, card, panel,
             enabled ? border : CloneWithOpacity(border, 0.55));
-        DrawCenteredText(dc, caption,
-            new Point(card.Left + card.Width / 2.0, card.Top + 8.0),
-            9.4, enabled ? text : muted, FontWeights.Bold);
+        if (captionInset <= 0.0)
+            DrawCenteredText(dc, caption,
+                new Point(card.Left + card.Width / 2.0, card.Top + 8.0),
+                9.4, enabled ? text : muted, FontWeights.Bold);
+        else
+        {
+            // A checkbox owns the left of the caption row: center the caption
+            // in the remaining space and step the size down until it fits.
+            var region = new Rect(card.Left + captionInset, card.Top,
+                Math.Max(1.0, card.Width - captionInset - 6.0), 1.0);
+            var size = 9.4;
+            var formatted = CreateText(caption, size, enabled ? text : muted, FontWeights.Bold);
+            while (formatted.WidthIncludingTrailingWhitespace > region.Width && size > 7.4)
+            {
+                size -= 0.2;
+                formatted = CreateText(caption, size, enabled ? text : muted, FontWeights.Bold);
+            }
+            dc.DrawText(formatted, new Point(
+                region.Left + (region.Width - formatted.WidthIncludingTrailingWhitespace) / 2.0,
+                card.Top + 8.0 + (9.4 - size) / 2.0));
+        }
 
         var center = new Point(card.Left + card.Width / 2.0, card.Top + 54.0);
         const double radius = NpcCompactDialRadius;
