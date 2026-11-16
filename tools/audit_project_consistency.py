@@ -5368,7 +5368,10 @@ if any(_tok not in _npc_items_ui for _tok in (
     "var layout = CurrentNpcLootLayout(ActualWidth);",
     "layout.ContentLeft + col * (colWidth + gap)",
     'StashMixPalette[2]', 'StashMixPalette[3]', 'StashMixPalette[1]',
-)) or '"DEFAULT"' in _npc_items_ui:
+    'NpcConsumableRankProfile.Shared', 'DrawNpcRankBars(dc, rankLaneLeft',
+    'item.ScaleSourceChance(chance, inherited) * supplyRemaining',
+    'item.Multiplier = ratio * NpcConsumableItemViewModel.MaximumMultiplier;',
+)) or '"DEFAULT"' in _npc_items_ui or 'ChancePercent =' in _npc_items_ui:
     fail("NPC item Chance columns must share the capped board column and stash category tints")
 _npc_item_vm = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" /
                 "NpcConsumableItemViewModel.cs").read_text(encoding="utf-8")

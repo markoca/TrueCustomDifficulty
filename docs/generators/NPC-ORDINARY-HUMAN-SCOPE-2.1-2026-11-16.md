@@ -58,7 +58,7 @@ Use a **fresh save or a new zone visit** — already rolled corpses keep their l
 1. **MED DROPS 0×**, CORPSE SMART LOOT = NONE → roaming bandits/stalkers should carry **no** Bandage/Medkit/Army Medkit/Anti-Rad (food and drinks still appear).
 2. **MED DROPS 2×**, NONE → noticeably more medical items than vanilla on the same NPC types.
 3. **FEWER SUPPLIES 100%**, NONE → no food, drinks or medicine on roaming NPC corpses; weapons/armor unchanged.
-4. **Per-item row:** check *Bread* at 100% → roaming Recon-type NPCs almost always carry Bread at low player rank.
+4. **Per-item row:** check *Bandage* at 3× on Veteran → early ranks rise from ~25% toward ~75%, late ranks stay capped at 100%; the N/E/V/M bars in the row show the same shape.
 5. **DROPPED WEAPON CONDITION 90–100%** → primary weapons and pistols dropped by roaming NPCs show 90–100% condition.
 6. **DLC1 (if owned):** repeat 1 and 5 on NORD mercenaries.
 7. **Zombies:** with the settings from 1 and 5, zombie corpses keep vanilla consumables and weapon condition.

@@ -87,8 +87,11 @@ public sealed class ParameterViewModel : ObservableObject
             : Id == "loot.npcCorpseBonus"
                 ? Environment.NewLine + Environment.NewLine
                   + "STANDARD NPC CONSUMABLE CHANCE — FOOD / DRINKS / MEDICAL\n"
-                  + "Each checked item slider writes an absolute CFG Chance "
-                  + "(0% = 0, 100% = 1). The 104 source "
+                  + "Each checked item slider multiplies every native Chance of "
+                  + "that item (0–3x, 1x = vanilla, clamped at 100%), so the "
+                  + "growth by player rank is kept. The N/E/V/M bars show the "
+                  + "average Chance per player rank: dim = vanilla, colour = "
+                  + "after this board. The 104 source "
                   + "rows remain gated by native difficulty, rank and role, "
                   + "with original counts unchanged. Food/Drinks have no global "
                   + "slider; enabled Medical items replace only their own part "

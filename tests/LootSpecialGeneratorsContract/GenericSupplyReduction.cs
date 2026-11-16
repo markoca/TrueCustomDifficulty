@@ -182,7 +182,7 @@ internal static partial class Program
         mixed.AllParameters.Single(p => p.Id == corpseId).SnapCurrentNumberToMarker(.5);
         var bandage = mixed.NpcConsumableItems.Single(p => p.Sid == "Bandage");
         bandage.Enabled = true;
-        bandage.ChancePercent = 100;
+        bandage.Multiplier = 2.0;
         var mixedDir = Path.Combine(Path.GetTempPath(), "TCD_GenericSupplyReduction", "mixed");
         try
         {
@@ -197,10 +197,11 @@ internal static partial class Program
                 .First(z => z.i.Fields["ItemPrototypeSID"] == "Bandage");
             var key = pool.CustomSid + "/ItemGenerator/"
                 + candidate.c.Node + "/PossibleItems/" + candidate.i.Node + "/Chance";
+            var expectedChance = Math.Clamp(Num(candidate.i.Fields["Chance"]) * 2.0, 0.0, 1.0) * .5;
             Check(output.TryGetValue(key, out var chance)
-                && Math.Abs(Num(chance!) - .5) < 0.000001
-                && bandage.ChancePercent == 100,
-                "Corpse master did not apply AFTER absolute SID Chance");
+                && Math.Abs(Num(chance!) - expectedChance) < 0.000001
+                && Math.Abs(bandage.Multiplier - 2.0) < 0.000001,
+                "Corpse master did not apply AFTER the per-SID Chance multiplier");
         }
         finally
         {

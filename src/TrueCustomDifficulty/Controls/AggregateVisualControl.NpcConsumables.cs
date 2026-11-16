@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using TrueCustomDifficulty.Models;
 using TrueCustomDifficulty.ViewModels;
 
 namespace TrueCustomDifficulty.Controls;
@@ -56,8 +57,8 @@ public sealed partial class AggregateVisualControl
     private void NpcConsumable_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName is nameof(NpcConsumableItemViewModel.Enabled)
-            or nameof(NpcConsumableItemViewModel.ChancePercent)
-            or nameof(NpcConsumableItemViewModel.LegacyMultiplier))
+            or nameof(NpcConsumableItemViewModel.Multiplier)
+            or nameof(NpcConsumableItemViewModel.LegacyChancePercent))
             InvalidateVisual();
     }
 
@@ -85,6 +86,14 @@ public sealed partial class AggregateVisualControl
         var colWidth = Math.Max(1.0, (layout.ContentWidth - gap * 2.0) / 3.0);
         var editorAvailable = IsEnabled && ModItemsEditorAvailable;
 
+        // Rank-growth preview inputs: the same transforms the CFG writer
+        // applies (row multiplier or MED DROPS, then FEWER SUPPLIES).
+        var rankProfile = NpcConsumableRankProfile.Shared;
+        var difficultySid = NpcConsumableRankProfile.DifficultySid(SelectedReferenceDifficulty);
+        var globalMedical = P("loot.npcMedicalChance")?.CurrentNumber ?? 1.0;
+        var supplyRemaining = 1.0 - Math.Clamp(
+            P("loot.genericCorpseReduction")?.CurrentNumber ?? 0.0, 0.0, 1.0);
+
         // Same category tints as STASH LOOT MIX (food / drinks / medical).
         foreach (var (group, col, tint) in new[]
         {
@@ -108,6 +117,16 @@ public sealed partial class AggregateVisualControl
                 new Point(card.Left + 9.0, card.Top + headerHeight - 3.0),
                 new Point(card.Right - 9.0, card.Top + headerHeight - 3.0));
 
+            // Player-rank columns (Newbie / Experienced / Veteran / Master)
+            // share one fixed lane just left of the value readout.
+            var rankLaneRight = card.Right - 12.0 - NpcRankValueReserve - 6.0;
+            var rankLaneLeft = rankLaneRight - NpcRankLaneWidth;
+            if (rankProfile is not null)
+                for (var rank = 0; rank < NpcConsumableRankProfile.RankInitials.Length; rank++)
+                    DrawCenteredText(dc, NpcConsumableRankProfile.RankInitials[rank],
+                        new Point(NpcRankBarCenter(rankLaneLeft, rank), card.Top + 8.5),
+                        7.6, muted, FontWeights.SemiBold);
+
             for (var i = 0; i < items.Length; i++)
             {
                 var item = items[i];
@@ -123,8 +142,20 @@ public sealed partial class AggregateVisualControl
                 BooleanCheckboxChrome.Draw(dc, box, item.Enabled, editorAvailable,
                     hovered && _npcConsumableHoverCheckbox, panel, border, accent);
                 // Stamina Usage grammar: label left, single value right.
-                DrawText(dc, item.Label, new Point(card.Left + 30.0, rowTop + 2.0),
-                    9.6, enabled ? text : muted, FontWeights.SemiBold);
+                dc.DrawText(CreateText(item.Label, 9.6, enabled ? text : muted,
+                        FontWeights.SemiBold,
+                        Math.Max(1.0, rankLaneLeft - (card.Left + 30.0) - 6.0)),
+                    new Point(card.Left + 30.0, rowTop + 2.0));
+                if (rankProfile is not null)
+                {
+                    var inherited = item.IsMedical ? globalMedical : 1.0;
+                    var vanilla = rankProfile.Average(item.Sid, difficultySid, chance => chance);
+                    var effective = rankProfile.Average(item.Sid, difficultySid,
+                        chance => item.ScaleSourceChance(chance, inherited) * supplyRemaining);
+                    if (vanilla is not null && effective is not null)
+                        DrawNpcRankBars(dc, rankLaneLeft, rowTop + 15.5,
+                            vanilla, effective, tint, muted);
+                }
                 DrawRightAlignedText(dc, item.PercentText,
                     new Point(card.Right - 12.0, rowTop + 2.0),
                     enabled && item.IsEffectiveChange ? 10.8 : 10.1,
@@ -137,10 +168,16 @@ public sealed partial class AggregateVisualControl
                         StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round
                     },
                     new Point(rail.Left, railY), new Point(rail.Right, railY));
+                // Neutral 1x reference tick (vanilla Chance), no caption.
+                var referenceX = rail.Left + rail.Width
+                    / NpcConsumableItemViewModel.MaximumMultiplier;
+                dc.DrawLine(new Pen(CloneWithOpacity(muted, enabled ? .75 : .4), 1.0),
+                    new Point(referenceX, railY - 4.5), new Point(referenceX, railY + 4.5));
                 if (enabled)
                 {
-                    var handleRatio = item.LegacyMultiplier is double legacy
-                        ? legacy / 2.0 : item.ChancePercent / 100.0;
+                    var handleRatio = item.LegacyChancePercent is int legacy
+                        ? legacy / 100.0
+                        : item.Multiplier / NpcConsumableItemViewModel.MaximumMultiplier;
                     var handleX = rail.Left + rail.Width * handleRatio;
                     dc.DrawLine(new Pen(CloneWithOpacity(accent, .65), 3.5),
                         new Point(rail.Left, railY), new Point(handleX, railY));
@@ -179,8 +216,8 @@ public sealed partial class AggregateVisualControl
         if (target is null) return;
         var ratio = Math.Clamp((point.X - target.Rail.Left) /
             Math.Max(1.0, target.Rail.Width), 0.0, 1.0);
-        item.ChancePercent = (int)Math.Round(ratio * 100.0,
-            MidpointRounding.AwayFromZero);
+        // Setter snaps to the 0.05x grid and clears any legacy absolute %.
+        item.Multiplier = ratio * NpcConsumableItemViewModel.MaximumMultiplier;
     }
 
     private bool NpcConsumableMouseDown(Point point)
@@ -286,9 +323,46 @@ public sealed partial class AggregateVisualControl
         };
         if (step == 0 && key is not (Key.Home or Key.End))
             return false;
-        item.ChancePercent = key == Key.Home ? 0
-            : key == Key.End ? 100
-            : Math.Clamp(item.ChancePercent + step, 0, 100);
+        item.Multiplier = key == Key.Home ? NpcConsumableItemViewModel.MinimumMultiplier
+            : key == Key.End ? NpcConsumableItemViewModel.MaximumMultiplier
+            : item.Multiplier + step * NpcConsumableItemViewModel.MultiplierStep;
         return true;
+    }
+
+    private const double NpcRankBarWidth = 4.5;
+    private const double NpcRankBarGap = 2.5;
+    private const double NpcRankBarHeight = 12.0;
+    private const double NpcRankValueReserve = 34.0;
+    private static double NpcRankLaneWidth =>
+        4 * NpcRankBarWidth + 3 * NpcRankBarGap;
+
+    private static double NpcRankBarCenter(double laneLeft, int rank)
+        => laneLeft + rank * (NpcRankBarWidth + NpcRankBarGap) + NpcRankBarWidth / 2.0;
+
+    // Four tiny columns: dim ghost = vanilla Chance, category tint = Chance
+    // after this board's settings. A raised value shows a muted tick at the
+    // vanilla height; an absent rank keeps a 1-DIP baseline stub.
+    private void DrawNpcRankBars(
+        DrawingContext dc, double laneLeft, double bottom,
+        IReadOnlyList<double> vanilla, IReadOnlyList<double> effective,
+        Brush tint, Brush muted)
+    {
+        var ghost = CloneWithOpacity(muted, 0.30);
+        var fill = CloneWithOpacity(tint, 0.88);
+        var tick = new Pen(CloneWithOpacity(muted, 0.85), 1.0);
+        for (var rank = 0; rank < 4; rank++)
+        {
+            var left = laneLeft + rank * (NpcRankBarWidth + NpcRankBarGap);
+            var vanillaHeight = Math.Clamp(vanilla[rank], 0.0, 1.0) * NpcRankBarHeight;
+            var effectiveHeight = Math.Clamp(effective[rank], 0.0, 1.0) * NpcRankBarHeight;
+            dc.DrawRectangle(ghost, null, new Rect(left, bottom - Math.Max(1.0, vanillaHeight),
+                NpcRankBarWidth, Math.Max(1.0, vanillaHeight)));
+            if (effectiveHeight > 0.05)
+                dc.DrawRectangle(fill, null, new Rect(left, bottom - effectiveHeight,
+                    NpcRankBarWidth, effectiveHeight));
+            if (effectiveHeight > vanillaHeight + 0.6 && vanillaHeight > 0.05)
+                dc.DrawLine(tick, new Point(left - 0.5, bottom - vanillaHeight),
+                    new Point(left + NpcRankBarWidth + 0.5, bottom - vanillaHeight));
+        }
     }
 }

@@ -82,8 +82,8 @@ public sealed class PresetService
                 throw new InvalidDataException($"{label} must be between 0% and 100%.");
         }
 
-        // Optional per-SID Chance sidecars: new absolute 0–100% (1% steps)
-        // or old 0–2x (0.05x steps), never both in the same item.
+        // Optional per-SID Chance sidecars: current 0–3x multiplier (0.05x
+        // steps) or legacy absolute 0–100% (1% steps), never both.
         preset.NpcConsumableChances ??=
             new Dictionary<string, NpcConsumableChancePreset>(StringComparer.Ordinal);
         var npcSids = NpcConsumableItemViewModel.SourceItems
@@ -103,10 +103,11 @@ public sealed class PresetService
             }
             else if (settings.Multiplier is double factor)
             {
-                if (!double.IsFinite(factor) || factor < 0.0 || factor > 2.0
+                if (!double.IsFinite(factor) || factor < 0.0
+                    || factor > NpcConsumableItemViewModel.MaximumMultiplier
                     || Math.Abs(factor * 20.0 - Math.Round(factor * 20.0)) > 0.0000001)
                     throw new InvalidDataException(
-                        $"Legacy NPC consumable multiplier for {sid} must use 0–2x in 0.05x steps.");
+                        $"NPC consumable Chance multiplier for {sid} must use 0–3x in 0.05x steps.");
             }
             else if (settings.Enabled)
             {

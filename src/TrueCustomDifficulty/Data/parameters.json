@@ -5798,7 +5798,7 @@
         ]
       },
       "rationale": "Changes the original standard-NPC medical Chance entries. Does not affect optional SmartLoot medicine or item stack sizes.",
-      "logic": "A relative 0–200% scaler of source Chance. Item-specific checked absolute Chance overrides take precedence over this global standard-medical scaler.",
+      "logic": "A relative 0–200% scaler of source Chance. A checked item-specific multiplier (0–3x of native Chance) replaces this global standard-medical scaler for that item.",
       "interaction": "Always editable, including when Corpse Smart Loot is Water or None; does not affect zombies, quests, traders or stashes."
     },
     {

@@ -4,14 +4,22 @@ using TrueCustomDifficulty.Models;
 namespace TrueCustomDifficulty.ViewModels;
 
 /// <summary>
-/// Optional, absolute per-SID NPC consumable generator Chance. A checked
-/// percentage is the literal 0..1 CFG Chance across all matching source rows.
-/// Unchecked leaves source Chance untouched. Old multiplier presets are
-/// preserved exactly until the user edits that legacy control.
+/// Optional per-SID NPC consumable generator Chance. A checked row multiplies
+/// every native source Chance of that SID (0–3x, 0.05x steps, clamped to 1),
+/// so the vanilla difficulty / player-rank progression is preserved.
+/// Unchecked leaves source Chance untouched (medical still follows MED DROPS).
+/// Old absolute-percent presets are kept exactly until the user edits them.
 /// </summary>
 public sealed class NpcConsumableItemViewModel : ObservableObject
 {
     public sealed record SourceItem(string Sid, string Label, string Group);
+
+    public const double MinimumMultiplier = 0.0;
+    public const double MaximumMultiplier = 3.0;
+    public const double MultiplierStep = 0.05;
+
+    // Unchecked rows show a muted dash: no override, source Chance untouched.
+    public const string UntouchedText = "—";
 
     // Closed allowlist: ten SIDs in the six source-backed 2.1
     // GeneralNPC_Consumables_* clones (26 food, 20 drinks, 58 medical rows).
@@ -30,8 +38,8 @@ public sealed class NpcConsumableItemViewModel : ObservableObject
     };
 
     private bool _enabled;
-    private int _chancePercent = 100;
-    private double? _legacyMultiplier;
+    private double _multiplier = 1.0;
+    private int? _legacyChancePercent;
 
     public NpcConsumableItemViewModel(SourceItem source)
     {
@@ -43,6 +51,7 @@ public sealed class NpcConsumableItemViewModel : ObservableObject
     public string Sid { get; }
     public string Label { get; }
     public string Group { get; }
+    public bool IsMedical => Group == "MEDICAL";
 
     public bool Enabled
     {
@@ -50,61 +59,69 @@ public sealed class NpcConsumableItemViewModel : ObservableObject
         set
         {
             if (SetProperty(ref _enabled, value))
-            {
-                OnPropertyChanged(nameof(PercentText));
-                OnPropertyChanged(nameof(IsEffectiveChange));
-            }
+                NotifyDisplay();
         }
     }
 
-    // Absolute source CFG Chance, 0% -> Chance=0; 100% -> Chance=1.
-    // A source SID has different vanilla Chances in different NPC templates:
-    // there is no truthful single vanilla percentage for its unchecked row.
-    public int ChancePercent
+    /// <summary>Source-relative Chance multiplier, 0–3x in 0.05x steps.</summary>
+    public double Multiplier
     {
-        get => _chancePercent;
+        get => _multiplier;
         set
         {
-            if (value is < 0 or > 100)
+            if (!double.IsFinite(value))
                 throw new ArgumentOutOfRangeException(nameof(value),
-                    "NPC consumable generator Chance must be from 0% to 100%.");
-            if (_chancePercent == value && _legacyMultiplier is null)
+                    "NPC consumable Chance multiplier must be finite.");
+            var snapped = Snap(value);
+            if (Math.Abs(_multiplier - snapped) < 0.0000001 && _legacyChancePercent is null)
                 return;
-            _chancePercent = value;
-            _legacyMultiplier = null;
-            OnPropertyChanged(nameof(ChancePercent));
-            OnPropertyChanged(nameof(LegacyMultiplier));
-            OnPropertyChanged(nameof(PercentText));
-            OnPropertyChanged(nameof(IsEffectiveChange));
+            _multiplier = snapped;
+            _legacyChancePercent = null;
+            OnPropertyChanged(nameof(Multiplier));
+            OnPropertyChanged(nameof(LegacyChancePercent));
+            NotifyDisplay();
         }
     }
 
-    // Read-only compatibility mode, never authored by a new slider. Legacy
-    // 0..2x presets still produce their former source-relative probabilities.
-    public double? LegacyMultiplier => _legacyMultiplier;
-
-    // Unchecked rows show a muted dash: no override, source Chance untouched.
-    public const string UntouchedText = "—";
+    /// <summary>
+    /// Read-only compatibility mode for presets saved by the short-lived
+    /// absolute-percent editor: literal Chance on every matching row. Never
+    /// authored by the current slider; cleared on the first edit.
+    /// </summary>
+    public int? LegacyChancePercent => _legacyChancePercent;
 
     public string PercentText => !Enabled ? UntouchedText
-        : _legacyMultiplier is double legacy
-            ? legacy.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) + "×"
-        : $"{ChancePercent}%";
+        : _legacyChancePercent is int legacy ? legacy + "%"
+        : Multiplier.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) + "×";
 
     public bool IsEffectiveChange => Enabled
-        && (_legacyMultiplier is null || Math.Abs(_legacyMultiplier.Value - 1.0) > 0.000001);
+        && (_legacyChancePercent is not null || Math.Abs(Multiplier - 1.0) > 0.000001);
+
+    /// <summary>
+    /// Shared numeric Chance transform used by the UI rank preview and the
+    /// CFG writer: <paramref name="inheritedMultiplier"/> is MED DROPS for
+    /// medical rows and 1 otherwise; the result is clamped to 0..1. The
+    /// FEWER SUPPLIES master is applied afterwards by the caller.
+    /// </summary>
+    public double ScaleSourceChance(double sourceChance, double inheritedMultiplier)
+    {
+        if (Enabled && _legacyChancePercent is int legacy)
+            return legacy / 100.0;
+        var factor = Enabled ? Multiplier : inheritedMultiplier;
+        return Math.Clamp(sourceChance * factor, 0.0, 1.0);
+    }
 
     public void Reset()
     {
         Enabled = false;
-        ChancePercent = 100;
+        Multiplier = 1.0;
     }
 
     public NpcConsumableChancePreset ToPreset() => new()
     {
         Enabled = Enabled,
-        ChancePercent = _legacyMultiplier is null ? ChancePercent : null,
-        Multiplier = _legacyMultiplier
+        Multiplier = _legacyChancePercent is null ? Multiplier : null,
+        ChancePercent = _legacyChancePercent
     };
 
     public void ApplyPreset(NpcConsumableChancePreset? stored)
@@ -114,18 +131,22 @@ public sealed class NpcConsumableItemViewModel : ObservableObject
             Reset();
             return;
         }
-        if (stored.ChancePercent is double chance)
+        if (stored.Multiplier is double factor)
         {
-            ChancePercent = checked((int)Math.Round(chance, MidpointRounding.AwayFromZero));
-        }
-        else if (stored.Multiplier is double factor)
-        {
-            if (!double.IsFinite(factor) || factor < 0.0 || factor > 2.0)
+            if (!double.IsFinite(factor) || factor < MinimumMultiplier
+                || factor > MaximumMultiplier)
                 throw new ArgumentOutOfRangeException(nameof(stored));
-            _legacyMultiplier = factor;
-            OnPropertyChanged(nameof(LegacyMultiplier));
-            OnPropertyChanged(nameof(PercentText));
-            OnPropertyChanged(nameof(IsEffectiveChange));
+            Multiplier = factor;
+        }
+        else if (stored.ChancePercent is double percent)
+        {
+            if (!double.IsFinite(percent) || percent < 0.0 || percent > 100.0)
+                throw new ArgumentOutOfRangeException(nameof(stored));
+            _multiplier = 1.0;
+            _legacyChancePercent = checked((int)Math.Round(percent, MidpointRounding.AwayFromZero));
+            OnPropertyChanged(nameof(Multiplier));
+            OnPropertyChanged(nameof(LegacyChancePercent));
+            NotifyDisplay();
         }
         else
         {
@@ -133,5 +154,15 @@ public sealed class NpcConsumableItemViewModel : ObservableObject
             return;
         }
         Enabled = stored.Enabled;
+    }
+
+    private static double Snap(double value)
+        => Math.Round(Math.Clamp(value, MinimumMultiplier, MaximumMultiplier) / MultiplierStep,
+            MidpointRounding.AwayFromZero) * MultiplierStep;
+
+    private void NotifyDisplay()
+    {
+        OnPropertyChanged(nameof(PercentText));
+        OnPropertyChanged(nameof(IsEffectiveChange));
     }
 }

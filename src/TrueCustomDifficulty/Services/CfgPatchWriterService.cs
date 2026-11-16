@@ -960,25 +960,30 @@ public sealed partial class CfgPatchWriterService
         {
             if (!known.ContainsKey(item.Sid) || !overrides.TryAdd(item.Sid, item))
                 throw new InvalidDataException($"Unexpected or duplicated NPC consumable override SID '{item.Sid}'.");
-            if (item.ChancePercent is < 0 or > 100
-                || (item.LegacyMultiplier is double legacy
-                    && (!double.IsFinite(legacy) || legacy < 0.0 || legacy > 2.0)))
+            if (!double.IsFinite(item.Multiplier)
+                || item.Multiplier < NpcConsumableItemViewModel.MinimumMultiplier
+                || item.Multiplier > NpcConsumableItemViewModel.MaximumMultiplier
+                || item.LegacyChancePercent is < 0 or > 100)
                 throw new InvalidDataException($"Out-of-range NPC consumable Chance: {item.Sid}");
         }
 
         var corpseScarcityChanged = modifiedById.ContainsKey(NpcSupplyReductionId);
         var corpseRemaining = GenericSupplyRemaining(allById, NpcSupplyReductionId);
         var globalMedicalChanged = modifiedById.ContainsKey(config.ParameterId);
-        var sidChanged = overrides.Values.Any(item =>
-            item.Enabled
-            && (item.LegacyMultiplier is null
-                || (item.IsEffectiveChange
-                    && (known[item.Sid] != "MEDICAL"
-                        || !globalMedicalChanged
-                        || Math.Abs(item.LegacyMultiplier.Value - parameter.CurrentNumber) > 0.000001))));
-        // An old medical override of exactly 1x on an edited global
-        // multiplier still restores its raw Chance; the global edit triggers
-        // the writer. New checked percentages always author absolute Chance.
+        // A checked row writes when it differs from what the row would get
+        // unchecked: 1x for food/drinks, the MED DROPS multiplier for medical.
+        // A checked medical 1x on an edited MED DROPS restores raw Chance;
+        // the global edit itself triggers the writer.
+        bool ItemWrites(NpcConsumableItemViewModel item)
+        {
+            if (!item.Enabled)
+                return false;
+            if (item.LegacyChancePercent is not null)
+                return true;
+            var inherited = known[item.Sid] == "MEDICAL" ? parameter.CurrentNumber : 1.0;
+            return Math.Abs(item.Multiplier - inherited) > 0.000001;
+        }
+        var sidChanged = overrides.Values.Any(ItemWrites);
         if (!globalMedicalChanged && !sidChanged && !corpseScarcityChanged)
             return 0;
 
@@ -1039,17 +1044,11 @@ public sealed partial class CfgPatchWriterService
         if (corpseScarcityChanged)
             writtenParameters.Add(NpcSupplyReductionId);
         // Sidecars remain logical editors, never catalog parameter IDs.
-        // Absolute Chance on a checked row replaces the heterogeneous source
-        // chances. Legacy multipliers retain the former source-relative rules.
+        // A checked multiplier scales each heterogeneous source Chance, so
+        // the native difficulty / player-rank curve keeps its shape.
         foreach (var item in overrides.Values)
-        {
-            var inherited = known[item.Sid] == "MEDICAL"
-                ? parameter.CurrentNumber : 1.0;
-            if (item.Enabled
-                && (item.LegacyMultiplier is null
-                    || Math.Abs(item.LegacyMultiplier.Value - inherited) > 0.000001))
+            if (ItemWrites(item))
                 writtenParameters.Add("npcConsumableChance:" + item.Sid);
-        }
         return edits;
     }
 
@@ -1095,30 +1094,23 @@ public sealed partial class CfgPatchWriterService
                         $"NPC medical Chance source mismatch for {sid} at {pool.VanillaSid}:{categoryDefinition.Node}/{itemDefinition.Node}.");
 
                 var overrideItem = overrides[sid];
-                // Checked new controls author literal CFG Chance, not a
-                // multiplier: 100%=1 on every matching source entry. They
-                // override the global medical scaler; unchecked medical
-                // keeps its original global behavior. Old presets retain
-                // source-relative multipliers without silent migration.
-                var multiplier = overrideItem.Enabled
-                    ? overrideItem.LegacyMultiplier ?? 1.0
-                    : isMedical ? globalMedicalMultiplier : 1.0;
+                // Checked rows multiply each source Chance (0–3x, clamped to
+                // 1) and replace the MED DROPS scaler for that SID; unchecked
+                // medical keeps MED DROPS. Legacy absolute-percent presets
+                // still write their literal Chance until edited.
+                var inherited = isMedical ? globalMedicalMultiplier : 1.0;
+                var effectiveFactor = overrideItem.Enabled ? overrideItem.Multiplier : inherited;
+                var rewrites = (overrideItem.Enabled && overrideItem.LegacyChancePercent is not null)
+                    || Math.Abs(effectiveFactor - 1.0) > 0.000001;
                 foreach (var field in itemDefinition.Fields)
                 {
                     var value = field.Value;
                     if (field.Key == "Chance")
                     {
-                        if (overrideItem.Enabled && overrideItem.LegacyMultiplier is null)
-                        {
-                            value = FormatLikeSource(overrideItem.ChancePercent / 100.0,
+                        if (rewrites)
+                            value = FormatLikeSource(
+                                overrideItem.ScaleSourceChance(ParseNumber(sourceChanceRaw), inherited),
                                 sourceChanceRaw);
-                        }
-                        else if (Math.Abs(multiplier - 1.0) > 0.000001)
-                        {
-                            var scaledChance = Math.Clamp(
-                                ParseNumber(sourceChanceRaw) * multiplier, 0.0, 1.0);
-                            value = FormatLikeSource(scaledChance, sourceChanceRaw);
-                        }
                         // The master is the LAST native Chance transform. Even
                         // checked absolute 100% item Chance is reduced here.
                         value = ReduceNativeChance(value, corpseRemaining);
