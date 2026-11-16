@@ -44,11 +44,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
     private HitTarget? _dragTarget;
     private Rect _npcModCheckbox = Rect.Empty;
-    private Rect _npcModRailHit = Rect.Empty;
-    private Rect _npcModRail = Rect.Empty;
+    private Rect _npcModKnobHit = Rect.Empty;
     private bool _npcModDragging;
     private bool _npcModFocused;
     private bool _npcModHoverCheckbox;
+    private bool _npcModHoverKnob;
     private HitTarget? _hoverTarget;
     private int _hoverCouponMarker = -1;
     private readonly List<(Rect Hit, double Value, ParameterViewModel Parameter, int Index)> _couponMarkers = new();
@@ -272,8 +272,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         _npcModDragging = false;
         _npcModFocused = false;
         _npcModCheckbox = Rect.Empty;
-        _npcModRailHit = Rect.Empty;
-        _npcModRail = Rect.Empty;
+        _npcModKnobHit = Rect.Empty;
+        _npcModHoverKnob = false;
         _radRingDragging = false;
         _radRingFocus = false;
         _radRingHadScrub = false;
@@ -1237,51 +1237,48 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             && parameter.Id == "loot.npcWeaponAmmoSupply"
             && !NpcBonusPackageSelected();
 
-    // The mod generator reduction is a peer of the three ordinary Corpse
-    // SmartLoot editors. Keep it opt-in, with a native compact checkbox and
-    // its own rail rather than a separate full-width band.
+
+    // The native mod sidecar is not a ParameterViewModel: the checkbox and
+    // percentage stay separate optional preset fields with no fake CFG source.
+    // Its dial shares the exact compact 270-degree chrome of the two native
+    // NPC scalar knobs, including disabled and hover treatments.
     private void DrawNpcModItemsCard(
         DrawingContext dc, Rect card, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
         var enabled = ModItemsEnabled && ModItemsEditorAvailable && IsEnabled;
         var amount = Math.Clamp(ModItemsRemoval, 0.0, 1.0);
-        IndustrialChrome.DrawRecessedCard(dc, card, panel, border);
-        _npcModCheckbox = new Rect(card.Left + 10.0, card.Top + 12.0, 16.0, 16.0);
+        DrawNpcCompactDial(dc, card, "MOD ITEMS", $"{amount * 100.0:0}%",
+            "0%", "100%", 0.0, 1.0, amount, 0.0, 0.01,
+            enabled, enabled && amount > Epsilon,
+            enabled && _npcModHoverKnob,
+            text, muted, border, accent, panel);
+        _npcModCheckbox = new Rect(card.Left + 9.0, card.Top + 10.0, 16.0, 16.0);
         BooleanCheckboxChrome.Draw(dc, _npcModCheckbox, ModItemsEnabled,
-            IsEnabled && ModItemsEditorAvailable, _npcModHoverCheckbox, panel, border, accent);
-        DrawText(dc, "MOD ITEMS", new Point(card.Left + 32.0, card.Top + 13.0),
-            9.0, enabled ? text : muted, FontWeights.Bold);
-        DrawRightAlignedText(dc, $"{amount * 100:0}%",
-            new Point(card.Right - 10.0, card.Top + 11.0),
-            10.8, enabled && amount > Epsilon ? accent : enabled ? text : muted,
-            FontWeights.SemiBold);
-
-        _npcModRail = new Rect(card.Left + 13.0, card.Top + 54.0,
-            Math.Max(1.0, card.Width - 26.0), 12.0);
-        var y = _npcModRail.Top + _npcModRail.Height / 2.0;
-        var x = _npcModRail.Left + _npcModRail.Width * amount;
-        dc.DrawLine(new Pen(CloneWithOpacity(border, enabled ? .85 : .43), 3.5),
-            new Point(_npcModRail.Left, y), new Point(_npcModRail.Right, y));
-        if (enabled)
-            dc.DrawLine(new Pen(CloneWithOpacity(accent, .72), 3.5),
-                new Point(_npcModRail.Left, y), new Point(x, y));
-        IndustrialRulerChrome.DrawNativeTicks(dc, _npcModRail, 0.0, 1.0, 0.1, muted);
-        dc.DrawEllipse(panel, new Pen(enabled ? accent : muted, enabled ? 1.8 : 1.0),
-            new Point(x, y), 6.0, 6.0);
-        if (enabled)
-            dc.DrawEllipse(accent, null, new Point(x, y), 2.2, 2.2);
-        _npcModRailHit = new Rect(_npcModRail.Left - 7.0, _npcModRail.Top - 4.0,
-            _npcModRail.Width + 14.0, _npcModRail.Height + 8.0);
+            IsEnabled && ModItemsEditorAvailable, _npcModHoverCheckbox,
+            panel, border, accent);
+        _npcModKnobHit = NpcCompactDialHit(card);
     }
 
     private void UpdateNpcModItems(Point point)
     {
-        if (Family != "NpcLootLoadout" || !ModItemsEnabled || !IsEnabled || !ModItemsEditorAvailable)
+        if (Family != "NpcLootLoadout" || !ModItemsEnabled
+            || !IsEnabled || !ModItemsEditorAvailable)
             return;
-        var ratio = Math.Clamp(
-            (point.X - _npcModRail.Left) / Math.Max(1.0, _npcModRail.Width),
-            0.0, 1.0);
+        // Match the native 270-degree knob mapping, including the lower
+        // 90-degree gap. A center click selects without changing the value.
+        var center = _npcModKnobHit.Location
+            + new Vector(_npcModKnobHit.Width / 2.0,
+                _npcModKnobHit.Height / 2.0);
+        var dx = point.X - center.X;
+        var dy = point.Y - center.Y;
+        if (dx * dx + dy * dy < 20.0 * 20.0)
+            return;
+        var angle = Math.Atan2(dy, dx) * 180.0 / Math.PI;
+        var clockwise = (angle - WeaponKnobStartAngle + 360.0) % 360.0;
+        var ratio = Math.Clamp(clockwise > WeaponKnobSweepAngle
+            ? clockwise < 315.0 ? 1.0 : 0.0
+            : clockwise / WeaponKnobSweepAngle, 0.0, 1.0);
         ModItemsRemoval = Math.Round(ratio, 2, MidpointRounding.AwayFromZero);
     }
 
@@ -1380,94 +1377,56 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private double NpcLootBoardHeight(double width)
         => CurrentNpcLootLayout(width).Height;
 
-    // Stamina Usage grammar in a narrow card: caption on the left, changed
-    // number on the right, one native marker and one editable rail below.
-    // Do not use the general 126-DIP value-reserve track on 140-DIP cards.
-    private void DrawNpcCompactScalar(
-        DrawingContext dc, ParameterViewModel parameter, string label, Rect card,
-        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
-    {
-        var enabled = parameter.IsControlEnabled && !IsNpcBonusSliderLocked(parameter);
-        var hovered = enabled && ReferenceEquals(_hoverTarget?.Parameter, parameter);
-        IndustrialChrome.DrawRecessedCard(dc, card, panel,
-            enabled ? border : CloneWithOpacity(border, 0.55));
-        var value = ComparablePairedValue(parameter, parameter.CurrentNumber);
-        var valueText = CreateText(value, 10.8, enabled && parameter.IsValueModifiedFromReference()
-            ? accent : enabled ? text : muted, FontWeights.SemiBold);
-        var valueLeft = card.Right - 10.0 - valueText.WidthIncludingTrailingWhitespace;
-        dc.DrawText(CreateText(label, 9.1, enabled ? text : muted, FontWeights.Bold,
-                Math.Max(1.0, valueLeft - card.Left - 19.0)),
-            new Point(card.Left + 9.0, card.Top + 12.0));
-        dc.DrawText(valueText, new Point(valueLeft, card.Top + 10.0));
 
-        var rail = new Rect(card.Left + 13.0, card.Top + 54.0,
-            Math.Max(1.0, card.Width - 26.0), 12.0);
-        var y = rail.Top + rail.Height / 2.0;
-        var x = ValueToX(parameter.CurrentNumber, parameter.Minimum,
-            parameter.Maximum, rail, false);
-        dc.DrawLine(new Pen(CloneWithOpacity(border, enabled ? .9 : .45), 3.5),
-            new Point(rail.Left, y), new Point(rail.Right, y));
-        if (enabled)
-            dc.DrawLine(new Pen(CloneWithOpacity(accent, .65), 3.5),
-                new Point(rail.Left, y), new Point(x, y));
-        IndustrialRulerChrome.DrawNativeTicks(dc, rail, parameter.Minimum,
-            parameter.Maximum, parameter.TickFrequency, muted);
-        DrawReferenceTick(dc, parameter, rail, y, muted);
-        dc.DrawEllipse(panel, new Pen(enabled ? accent : muted,
-            hovered || IsSelected(parameter) ? 2.4 : 1.5),
-            new Point(x, y), 5.8, 5.8);
-        if (enabled)
-        {
-            dc.DrawEllipse(accent, null, new Point(x, y), 2.2, 2.2);
-            AddHorizontalTarget(parameter, new Rect(rail.Left - 7.0, rail.Top - 4.0,
-                rail.Width + 14.0, rail.Height + 8.0),
-                rail, parameter.Minimum, parameter.Maximum);
-        }
+    private const double NpcCompactDialRadius = 25.0;
+
+    private static Rect NpcCompactDialHit(Rect card)
+    {
+        var centerX = card.Left + card.Width / 2.0;
+        var centerY = card.Top + 54.0;
+        return new Rect(centerX - NpcCompactDialRadius - 7.0,
+            centerY - NpcCompactDialRadius - 7.0,
+            2.0 * (NpcCompactDialRadius + 7.0),
+            2.0 * (NpcCompactDialRadius + 7.0));
     }
 
-    // The quantity multipliers are game-style 270-degree mini-knobs.
-    // Keep their native parameter IDs/range/steps, hover, keyboard, wheel
-    // and right-click reset through the existing HitKind.Knob pathway.
-    // Only actual numeric changes highlight; the multiplier suffix stays neutral.
-    private void DrawNpcCompactMultiplierKnob(
-        DrawingContext dc, ParameterViewModel parameter, string label, Rect card,
+    // One shared compact dial: both source-backed scalar parameters and
+    // the optional mod percentage use the same paint grammar and geometry.
+    // Min/max and label are muted, only truly changed digits are yellow.
+    private void DrawNpcCompactDial(
+        DrawingContext dc, Rect card, string caption, string value,
+        string minimumLabel, string maximumLabel,
+        double minimum, double maximum, double current, double baseline,
+        double nativeStep, bool enabled, bool modified, bool hovered,
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
-        var enabled = parameter.IsControlEnabled && !IsNpcBonusSliderLocked(parameter);
-        var hovered = enabled && _hoverTarget?.Kind == HitKind.Knob
-            && ReferenceEquals(_hoverTarget.Parameter, parameter);
         IndustrialChrome.DrawRecessedCard(dc, card, panel,
             enabled ? border : CloneWithOpacity(border, 0.55));
-        DrawCenteredText(dc, label,
+        DrawCenteredText(dc, caption,
             new Point(card.Left + card.Width / 2.0, card.Top + 8.0),
             9.4, enabled ? text : muted, FontWeights.Bold);
 
         var center = new Point(card.Left + card.Width / 2.0, card.Top + 54.0);
-        const double radius = 25.0;
-        var span = Math.Max(Epsilon, parameter.Maximum - parameter.Minimum);
-        var amount = Math.Clamp(
-            (parameter.CurrentNumber - parameter.Minimum) / span, 0.0, 1.0);
-        var reference = Math.Clamp(
-            (parameter.ReferenceNumber - parameter.Minimum) / span, 0.0, 1.0);
+        const double radius = NpcCompactDialRadius;
+        var span = Math.Max(Epsilon, maximum - minimum);
+        var amount = Math.Clamp((current - minimum) / span, 0.0, 1.0);
+        var reference = Math.Clamp((baseline - minimum) / span, 0.0, 1.0);
         var dialInk = enabled ? accent : muted;
-
         dc.DrawEllipse(CloneWithOpacity(panel, 0.96), null,
             center, radius - 6.0, radius - 6.0);
         DrawKnobArc(dc, center, radius, WeaponKnobStartAngle,
             WeaponKnobSweepAngle,
             new Pen(CloneWithOpacity(border, enabled ? .9 : .5), 4.0));
 
-        // Display a legible subset of the exact catalog step ticks rather
-        // than inventing coarse precision for the small dial.
-        var nativeStep = Math.Max(Epsilon, parameter.TickFrequency);
-        var stepCount = (int)Math.Floor(span / nativeStep + .000001);
-        var pxPerStep = radius * WeaponKnobSweepAngle * Math.PI / 180.0 /
-            Math.Max(1.0, span / nativeStep);
+        var step = Math.Max(Epsilon, nativeStep);
+        var stepCount = (int)Math.Floor(span / step + .000001);
+        var pxPerStep = radius * WeaponKnobSweepAngle * Math.PI / 180.0
+            / Math.Max(1.0, span / step);
         var stride = KnobVisibleStepStride(pxPerStep);
-        for (var stepIndex = 0; stepIndex <= stepCount; stepIndex += stride)
+        for (var tick = 0; tick <= stepCount; tick += stride)
         {
             var angle = WeaponKnobStartAngle
-                + (stepIndex * nativeStep / span) * WeaponKnobSweepAngle;
+                + (tick * step / span) * WeaponKnobSweepAngle;
             dc.DrawLine(new Pen(CloneWithOpacity(muted, .56), 1.0),
                 KnobPoint(center, radius + 2.0, angle),
                 KnobPoint(center, radius + 6.0, angle));
@@ -1492,10 +1451,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             KnobPoint(center, radius - 5.0, pointerAngle),
             KnobPoint(center, radius + 3.0, pointerAngle));
 
-        var value = ComparablePairedValue(parameter, parameter.CurrentNumber);
         var formatted = CreateText(value, 11.2, enabled ? text : muted,
             FontWeights.Bold, Math.Max(1.0, card.Width - 18.0));
-        if (enabled && parameter.IsValueModifiedFromReference())
+        if (enabled && modified)
             foreach (System.Text.RegularExpressions.Match number in
                 System.Text.RegularExpressions.Regex.Matches(
                     value, @"\d+(?:\.\d+)?"))
@@ -1503,19 +1461,36 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         dc.DrawText(formatted, new Point(
             center.X - formatted.WidthIncludingTrailingWhitespace / 2.0,
             center.Y - 7.0));
-
-        DrawText(dc, $"{parameter.Minimum:0.##}×",
+        DrawText(dc, minimumLabel,
             new Point(card.Left + 9.0, card.Top + 54.0),
             8.6, muted, FontWeights.SemiBold);
-        DrawRightAlignedText(dc, $"{parameter.Maximum:0.##}×",
+        DrawRightAlignedText(dc, maximumLabel,
             new Point(card.Right - 9.0, card.Top + 54.0),
             8.6, muted, FontWeights.SemiBold);
+    }
 
-        if (!enabled)
-            return;
-        var hit = new Rect(center.X - radius - 7.0,
-            center.Y - radius - 7.0, 2.0 * (radius + 7.0),
-            2.0 * (radius + 7.0));
+    private void DrawNpcCompactMultiplierKnob(
+        DrawingContext dc, ParameterViewModel parameter, string label, Rect card,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel,
+        bool percentage = false)
+    {
+        var enabled = parameter.IsControlEnabled && !IsNpcBonusSliderLocked(parameter);
+        var hovered = enabled && _hoverTarget?.Kind == HitKind.Knob
+            && ReferenceEquals(_hoverTarget.Parameter, parameter);
+        var value = percentage
+            ? $"{parameter.CurrentNumber * 100.0:0}%"
+            : ComparablePairedValue(parameter, parameter.CurrentNumber);
+        var low = percentage ? $"{parameter.Minimum * 100.0:0}%"
+            : $"{parameter.Minimum:0.##}×";
+        var high = percentage ? $"{parameter.Maximum * 100.0:0}%"
+            : $"{parameter.Maximum:0.##}×";
+        DrawNpcCompactDial(dc, card, label, value, low, high,
+            parameter.Minimum, parameter.Maximum, parameter.CurrentNumber,
+            parameter.ReferenceNumber, parameter.TickFrequency,
+            enabled, parameter.IsValueModifiedFromReference(), hovered,
+            text, muted, border, accent, panel);
+        if (!enabled) return;
+        var hit = NpcCompactDialHit(card);
         _hitTargets.Add(new HitTarget(parameter, hit, hit, HitKind.Knob,
             parameter.Minimum, parameter.Maximum, false));
     }
@@ -1580,8 +1555,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
 
         // The four normal NPC loot controls are independent of SmartLoot.
-        DrawNpcCompactScalar(dc, scarcity, "SUPPLY REDUCTION", layout.Supply,
-            text, muted, border, accent, panel);
+        DrawNpcCompactMultiplierKnob(dc, scarcity, "SUPPLY REDUCTION", layout.Supply,
+            text, muted, border, accent, panel, percentage: true);
         DrawNpcCompactMultiplierKnob(dc, medical, "STANDARD MED", layout.Medical,
             text, muted, border, accent, panel);
         DrawNpcModItemsCard(dc, layout.Mod, text, muted, border, accent, panel);
@@ -6576,7 +6551,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 e.Handled = true;
                 return;
             }
-            if (_npcModRailHit.Contains(point))
+            if (_npcModKnobHit.Contains(point))
             {
                 SelectNpcModItems();
                 if (!ModItemsEnabled) return;
@@ -6687,16 +6662,21 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 e.Handled = true;
                 return;
             }
-            var hoverCheckbox = ModItemsEditorAvailable && IsEnabled && _npcModCheckbox.Contains(point);
-            if (_npcModHoverCheckbox != hoverCheckbox)
+            var hoverCheckbox = ModItemsEditorAvailable && IsEnabled
+                && _npcModCheckbox.Contains(point);
+            var hoverKnob = ModItemsEnabled && ModItemsEditorAvailable
+                && IsEnabled && _npcModKnobHit.Contains(point);
+            if (_npcModHoverCheckbox != hoverCheckbox
+                || _npcModHoverKnob != hoverKnob)
             {
                 _npcModHoverCheckbox = hoverCheckbox;
+                _npcModHoverKnob = hoverKnob;
                 InvalidateVisual();
             }
-            if (hoverCheckbox || (ModItemsEnabled && ModItemsEditorAvailable && IsEnabled && _npcModRailHit.Contains(point)))
+            if (hoverCheckbox || hoverKnob)
             {
                 SetHoverTarget(null);
-                Cursor = hoverCheckbox ? Cursors.Hand : Cursors.SizeWE;
+                Cursor = Cursors.Hand;
                 return;
             }
         }
@@ -6771,6 +6751,19 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     {
         base.OnMouseWheel(e);
         var pointer = e.GetPosition(this);
+        if (Family == "NpcLootLoadout" && IsEnabled
+            && ModItemsEditorAvailable && ModItemsEnabled
+            && _npcModKnobHit.Contains(pointer))
+        {
+            var direction = Math.Sign(e.Delta);
+            if (direction == 0) return;
+            SelectNpcModItems();
+            Focus();
+            ModItemsRemoval = Math.Clamp(ModItemsRemoval + direction * 0.01,
+                0.0, 1.0);
+            e.Handled = true;
+            return;
+        }
         if (RadiationRingHit(pointer))
         {
             var radWheelDirection = Math.Sign(e.Delta);
@@ -6783,14 +6776,15 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
         var stashGraph = Family is "StashContentMix"
             or "StashMedicalComposition" or "StashGear";
-        if (!stashGraph && Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer" or "TraderStockBoard" or "EquipmentWearBalance" or "ServiceCostsBoard" or "RadiationBalance" or "HumanCombatProfile" or "StarvationTimeline" or "FlycatcherSlowdown" or "AnomalySpecialEffects"))
+        if (!stashGraph && Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer" or "TraderStockBoard" or "EquipmentWearBalance" or "ServiceCostsBoard" or "RadiationBalance" or "HumanCombatProfile" or "StarvationTimeline" or "FlycatcherSlowdown" or "AnomalySpecialEffects" or "NpcLootLoadout"))
             return;
 
         var target = FindTarget(e.GetPosition(this));
         if (target is null
             || target.Kind != HitKind.Knob
                && !(stashGraph && target.Kind == HitKind.Horizontal)
-            || !target.Parameter.IsControlEnabled)
+            || !target.Parameter.IsControlEnabled
+            || IsNpcBonusSliderLocked(target.Parameter))
             return;
 
         Focus();
@@ -6945,7 +6939,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             return;
         }
         if (Family == "NpcLootLoadout" && IsEnabled && ModItemsEditorAvailable && ModItemsEnabled
-            && _npcModRailHit.Contains(e.GetPosition(this)))
+            && _npcModKnobHit.Contains(e.GetPosition(this)))
         {
             SelectNpcModItems();
             ModItemsRemoval = 0.0;

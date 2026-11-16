@@ -5276,11 +5276,20 @@ if any(_tok not in _npc_preview_source for _tok in (
     'if (NpcBonusPackageSelected())',
     'DrawNpcCompactMultiplierKnob(dc, ammo, "AMMO QTY", layout.Ammo,',
     'DrawText(dc, "BONUS AMMO STACKS",',
-    'DrawNpcCompactScalar(dc, scarcity, "SUPPLY REDUCTION", layout.Supply,',
+    'DrawNpcCompactMultiplierKnob(dc, scarcity, "SUPPLY REDUCTION", layout.Supply,',
     'DrawNpcCompactMultiplierKnob(dc, medical, "STANDARD MED", layout.Medical,',
     'DrawNpcModItemsCard(dc, layout.Mod,',
     'var rangeCard = layout.Condition;',
     'private void DrawNpcCompactMultiplierKnob(',
+    'private void DrawNpcCompactDial(',
+    'DrawNpcCompactDial(dc, card, label, value, low, high,',
+    'percentage: true);',
+    'NpcCompactDialHit(card)',
+    '_npcModKnobHit.Contains(point)',
+    '_npcModKnobHit.Contains(pointer)',
+    'var clockwise = (angle - WeaponKnobStartAngle + 360.0) % 360.0;',
+    'ModItemsRemoval = Math.Round(ratio, 2, MidpointRounding.AwayFromZero);',
+    'ModItemsRemoval = Math.Clamp(ModItemsRemoval + direction * 0.01,',
     'KnobVisibleStepStride(pxPerStep)',
     'var enabled = parameter.IsControlEnabled && !IsNpcBonusSliderLocked(parameter);',
     '_hitTargets.Add(new HitTarget(parameter, hit, hit, HitKind.Knob,',
@@ -5313,17 +5322,27 @@ if '"NpcLootLoadout" => NpcLootBoardHeight(width),' not in _npc_preview_source:
     fail("NPC board must measure from its responsive geometry")
 if '"NpcLootLoadout" => NpcLootBoardHeight(width),' not in _npc_preview_source:
     fail("NPC board must measure the current selected package geometry")
-if ('DrawNpcCompactScalar(dc, ammo,' in _npc_paint
-        or 'DrawNpcCompactScalar(dc, medical,' in _npc_paint):
-    fail("NPC quantity multipliers regressed to cramped horizontal rails")
-_knob_body = _npc_preview_source.split("private void DrawNpcCompactMultiplierKnob(", 1)[-1].split("private void DrawNpcLootLoadout(", 1)[0]
-if any(token not in _knob_body for token in (
+if 'DrawNpcCompactScalar(' in _npc_paint:
+    fail("NPC native knobs regressed to cramped horizontal rails")
+_knob_shared = _npc_preview_source.split("private void DrawNpcCompactDial(", 1)[-1].split("private void DrawNpcCompactMultiplierKnob(", 1)[0]
+_knob_native = _npc_preview_source.split("private void DrawNpcCompactMultiplierKnob(", 1)[-1].split("private void DrawNpcLootLoadout(", 1)[0]
+_knob_mod = _npc_preview_source.split("private void DrawNpcModItemsCard(", 1)[-1].split("private void SelectNpcModItems(", 1)[0]
+if any(token not in _knob_shared for token in (
     'WeaponKnobStartAngle', 'WeaponKnobSweepAngle',
+    'KnobVisibleStepStride', 'SetForegroundBrush(accent',
+    'DrawKnobArc(dc, center, radius', 'DrawCenteredText(dc, caption,')):
+    fail("NPC 270-degree knobs must use the same catalog-native dial renderer")
+if any(token not in _knob_native for token in (
     'parameter.TickFrequency', 'parameter.ReferenceNumber',
-    'KnobVisibleStepStride', 'HitKind.Knob',
-    'parameter.IsValueModifiedFromReference()', 'SetForegroundBrush(accent',
+    'HitKind.Knob', 'parameter.IsValueModifiedFromReference()',
+    'percentage = false', 'NpcCompactDialHit(card)',
     'IsNpcBonusSliderLocked(parameter)')):
-    fail("NPC mini-knob is not following the catalog-native dial and reset grammar")
+    fail("NPC native knobs lost source ranges, steps, reset or hover semantics")
+if any(token not in _knob_mod for token in (
+    'DrawNpcCompactDial(dc, card, "MOD ITEMS"',
+    'BooleanCheckboxChrome.Draw', '_npcModKnobHit = NpcCompactDialHit(card);',
+    'Math.Round(ratio, 2', 'ModItemsEnabled && ModItemsEditorAvailable')):
+    fail("NPC MOD ITEMS must be a 0–100% opt-in knob with original 1% sidecar semantics")
 _npc_items_ui = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" /
                  "AggregateVisualControl.NpcConsumables.cs").read_text(encoding="utf-8")
 if "var top = NpcLootConsumablesTop(ActualWidth);" not in _npc_items_ui:

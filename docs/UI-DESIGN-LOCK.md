@@ -1,3 +1,13 @@
+## 2026-11-16 — CURRENT: three matched NPC supply knobs
+
+The always-relevant middle tier of **NPC LOOT & EQUIPMENT** is three equal-height **88-DIP native 270-degree knob cards**: **SUPPLY REDUCTION**, **STANDARD MED**, and **MOD ITEMS**. All share one precise dial renderer (same arc, native tick sampling, neutral reference pointer, center value, small muted min/max labels and white hover pointer). The actual range matters, not the graphic: corpse supply reduction is **0–100% in 5% increments**, Standard Med remains its native **0–2×** multiplier, and Mod Items remains an optional **0–100% in 1% increments** source-mod reduction. Only modified numeric digits become yellow. Keep the fourth, wider **DROPPED WEAPON CONDITION** two-ended range rail unchanged. The centered three-mode SmartLoot selector and optional MED + AMMO amount knob/preview remain unchanged.
+
+**MOD ITEMS** stays a true independent preset sidecar, not a fabricated catalog parameter: its existing small opt-in checkbox sits in the left of the knob header. Unchecked means muted non-interactive dial and no CFG effect, but retains the saved percent. Checked allows circular click/drag (same 270° angular mapping as the source knobs), 1% mouse wheel or keyboard increments, Home/End, and right-click/R reset of percentage only. Checkbox toggling does not reset its percent. No clickable phantom bar or stale rectangle remains; pointer targets follow dial geometry. The NPC family now admits wheel editing for the native source knob values too, matching other knob boards.
+
+Existing shared responsive layout, heights, source category chance editors, percent DEFAULT labels, preset schema, supply reduction CFG writer, original mod allowlist, and source 361-parameter catalog remain unchanged. Source audits assert both native knobs and opt-in sidecar knob, their percentage/step contracts, and removal of the old horizontal rails. Local Windows/Wine compilation and visual testing remain separate acceptance gates.
+
+---
+
 ## 2026-11-16 — CURRENT: gamer-friendly NPC loot control grammar
 
 **Two native multipliers use compact 270-degree knobs, not crowded sliders:** `AMMO QTY` (`loot.npcWeaponAmmoSupply`, only visible in MED + AMMO) and `STANDARD MED` (`loot.npcMedicalChance`, visible in all packages). Each knob lives in its existing **88-DIP card**, keeps the exact native multiplier scale, tick step, original reference marker and numeric readout, and inherits the shared 270° `HitKind.Knob` click/drag, wheel, keyboard and right-click-to-reference behavior. Hovered pointer turns white; only modified digits turn yellow, not the units. Min/max multipliers are small and muted at the outside edges. No additional title bar or redundant BASE/Vanilla labels.
