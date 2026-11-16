@@ -1752,37 +1752,188 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 10.0, muted, FontWeights.Bold);
             return;
         }
+        // Three compact list cards (WEAPONS / SHUFFLE / REMOVE) inside one
+        // centered column capped at 620 DIP. Each row is the universal
+        // checkbox immediately LEFT of its short label - no stretched pills.
+        var layout = LayoutWorldLoot(ActualWidth);
+        var weaponCard = layout.Weapons;
+        DrawWorldListCard(dc, weaponCard, "WEAPONS", text, muted, border, panel);
+        var weaponRows = WorldListRowTops(weaponCard, 3);
+        DrawWorldCheckRow(dc, weapons, "Shuffle Weapons", weaponCard, weaponRows[0],
+            text, muted, border, accent, panel);
+        DrawWorldDensityRow(dc, density, weaponCard, weaponRows[1],
+            text, muted, border, accent, panel);
+        DrawWorldCheckRow(dc, uniqueWeapons, "Shuffle Unique", weaponCard,
+            weaponRows[2] + WorldDensityExtra, text, muted, border, accent, panel);
+
+        var shuffleRows = new (ParameterViewModel Parameter, string Label)[]
+        {
+            (attachments, "Attachments"), (blueprints, "Blueprints")
+        };
+        var removeRows = new (ParameterViewModel Parameter, string Label)[]
+        {
+            (detectors, "Detectors"), (armor, "Armor")
+        };
+        DrawWorldToggleListCard(dc, layout.Shuffle, "SHUFFLE", shuffleRows,
+            text, muted, border, accent, panel);
+        DrawWorldToggleListCard(dc, layout.Remove, "REMOVE", removeRows,
+            text, muted, border, accent, panel);
+    }
+
+    // Shorter cards share the WEAPONS card height; their two rows are
+    // spread evenly instead of leaving an empty card bottom.
+    private void DrawWorldToggleListCard(
+        DrawingContext dc, Rect card, string title,
+        (ParameterViewModel Parameter, string Label)[] rows,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        DrawWorldListCard(dc, card, title, text, muted, border, panel);
+        var tops = WorldListRowTops(card, rows.Length);
+        for (var i = 0; i < rows.Length; i++)
+            DrawWorldCheckRow(dc, rows[i].Parameter, rows[i].Label, card, tops[i],
+                text, muted, border, accent, panel);
+    }
+
+    private readonly record struct WorldLootGeometry(
+        Rect Weapons, Rect Shuffle, Rect Remove, double Height);
+
+    private const double WorldListHeader = 27.0;
+    private const double WorldListRow = 30.0;
+    private const double WorldDensityExtra = 14.0;
+    private const double WorldListCardHeight =
+        WorldListHeader + 3.0 * WorldListRow + WorldDensityExtra + 8.0;
+
+    private static WorldLootGeometry LayoutWorldLoot(double hostWidth)
+    {
         const double margin = 17.0;
         const double gap = 10.0;
-        var width = Math.Max(1.0, ActualWidth - 2.0 * margin);
-        var cell = (width - gap) / 2.0;
-        var left = new Rect(margin, 55.0, cell, 207.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
-            left, 4.0, 4.0);
-        DrawTogglePill(dc, weapons, "SHUFFLE WEAPONS",
-            new Rect(left.Left + 8.0, left.Top + 10.0,
-                left.Width - 16.0, 44.0),
-            text, muted, border, accent, panel);
-        DrawHorizontalTrackCard(dc, density, "WEAPON DENSITY",
-            new Rect(left.Left + 8.0, left.Top + 67.0,
-                left.Width - 16.0, 72.0),
-            text, muted, border, accent, panel);
-        DrawTogglePill(dc, uniqueWeapons, "SHUFFLE UNIQUE WEAPONS",
-            new Rect(left.Left + 8.0, left.Top + 153.0,
-                left.Width - 16.0, 44.0),
-            text, muted, border, accent, panel);
-
-        var otherToggles = new (ParameterViewModel Parameter, string Label)[]
+        const double top = 55.0;
+        var available = Math.Max(1.0, hostWidth - 2.0 * margin);
+        var content = Math.Min(620.0, available);
+        var left = margin + (available - content) / 2.0;
+        if (content >= 440.0)
         {
-            (attachments, "SHUFFLE ATTACHMENTS"),
-            (detectors, "REMOVE DETECTORS"),
-            (armor, "REMOVE WORLD ARMOR"),
-            (blueprints, "SHUFFLE BLUEPRINTS")
-        };
-        for (var i = 0; i < otherToggles.Length; i++)
-            DrawTogglePill(dc, otherToggles[i].Parameter, otherToggles[i].Label,
-                new Rect(margin + cell + gap, 55.0 + i * 49.0, cell, 44.0),
-                text, muted, border, accent, panel);
+            var unit = (content - 2.0 * gap) / 3.3;
+            var weapons = new Rect(left, top, unit * 1.3, WorldListCardHeight);
+            var shuffle = new Rect(weapons.Right + gap, top, unit, WorldListCardHeight);
+            var remove = new Rect(shuffle.Right + gap, top, unit, WorldListCardHeight);
+            return new WorldLootGeometry(weapons, shuffle, remove,
+                weapons.Bottom + 14.0);
+        }
+
+        // Very narrow hosts: WEAPONS on top, SHUFFLE + REMOVE side by side.
+        var stacked = new Rect(left, top, content, WorldListCardHeight);
+        var half = (content - gap) / 2.0;
+        var lower = stacked.Bottom + gap;
+        return new WorldLootGeometry(stacked,
+            new Rect(left, lower, half, WorldListCardHeight),
+            new Rect(left + half + gap, lower, half, WorldListCardHeight),
+            lower + WorldListCardHeight + 14.0);
+    }
+
+    private double WorldLootHeight(double width) => LayoutWorldLoot(width).Height;
+
+    private static double[] WorldListRowTops(Rect card, int rows)
+    {
+        // WEAPONS (3 rows incl. density) uses the natural pitch; 2-row cards
+        // spread across the same body height.
+        var body = card.Height - WorldListHeader - 8.0;
+        var pitch = rows == 3 ? WorldListRow : body / Math.Max(1, rows);
+        var offset = rows == 3 ? 0.0 : (pitch - WorldListRow) / 2.0;
+        var tops = new double[rows];
+        for (var i = 0; i < rows; i++)
+            tops[i] = card.Top + WorldListHeader + offset + i * pitch;
+        return tops;
+    }
+
+    private void DrawWorldListCard(
+        DrawingContext dc, Rect card, string title,
+        Brush text, Brush muted, Brush border, Brush panel)
+    {
+        IndustrialChrome.DrawRecessedCard(dc, card, panel, border);
+        DrawText(dc, title, new Point(card.Left + 11.0, card.Top + 8.0),
+            VisualControlTypography.CardTitle, muted, FontWeights.Bold);
+        dc.DrawLine(new Pen(CloneWithOpacity(border, 0.55), 0.8),
+            new Point(card.Left + 9.0, card.Top + WorldListHeader - 3.0),
+            new Point(card.Right - 9.0, card.Top + WorldListHeader - 3.0));
+    }
+
+    private void DrawWorldCheckRow(
+        DrawingContext dc, ParameterViewModel parameter, string label, Rect card,
+        double rowTop, Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        var enabled = parameter.IsControlEnabled;
+        var hovered = enabled && _hoverTarget?.Kind == HitKind.Toggle
+            && ReferenceEquals(_hoverTarget.Parameter, parameter);
+        var box = new Rect(card.Left + 11.0,
+            rowTop + (WorldListRow - BooleanCheckboxChrome.Size) / 2.0,
+            BooleanCheckboxChrome.Size, BooleanCheckboxChrome.Size);
+        BooleanCheckboxChrome.Draw(dc, box, parameter.CurrentBoolean,
+            enabled, hovered, panel, border, accent);
+        var on = parameter.CurrentBoolean && enabled;
+        var caption = CreateText(label, 10.2, on ? text : enabled
+                ? CloneWithOpacity(text, 0.82) : muted,
+            FontWeights.SemiBold, Math.Max(1.0, card.Right - box.Right - 18.0));
+        dc.DrawText(caption, new Point(box.Right + 8.0,
+            rowTop + (WorldListRow - caption.Height) / 2.0));
+        // Whole row (box + caption) toggles, never the full card width.
+        AddToggleTarget(parameter, new Rect(box.Left - 3.0, rowTop,
+            Math.Min(card.Right - box.Left - 6.0,
+                box.Width + 14.0 + caption.WidthIncludingTrailingWhitespace),
+            WorldListRow));
+    }
+
+    // Dependent density: indented under Shuffle Weapons, label left, single
+    // value right, one native rail with reference tick. Muted (but saved)
+    // whenever the shuffle source disables it.
+    private void DrawWorldDensityRow(
+        DrawingContext dc, ParameterViewModel parameter, Rect card, double rowTop,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        var enabled = parameter.IsControlEnabled;
+        var hovered = enabled && ReferenceEquals(_hoverTarget?.Parameter, parameter);
+        var left = card.Left + 11.0 + BooleanCheckboxChrome.Size + 8.0;
+        var right = card.Right - 12.0;
+        DrawText(dc, "Density", new Point(left, rowTop + 2.0),
+            9.6, muted, FontWeights.SemiBold);
+        var value = FriendlyValue(parameter);
+        var valueText = CreateText(value, 10.6, enabled ? text : muted,
+            FontWeights.SemiBold, Math.Max(1.0, right - left));
+        if (enabled && parameter.IsValueModifiedFromReference())
+            foreach (System.Text.RegularExpressions.Match token in
+                System.Text.RegularExpressions.Regex.Matches(value, @"\d+(?:\.\d+)?"))
+            {
+                valueText.SetForegroundBrush(accent, token.Index, token.Length);
+                valueText.SetFontSize(11.6, token.Index, token.Length);
+            }
+        dc.DrawText(valueText, new Point(
+            right - valueText.WidthIncludingTrailingWhitespace, rowTop + 1.0));
+
+        var track = new Rect(left + 2.0, rowTop + 22.0,
+            Math.Max(1.0, right - left - 4.0), 12.0);
+        var y = track.Top + track.Height / 2.0;
+        dc.DrawLine(new Pen(CloneWithOpacity(border, enabled ? 1.0 : .5), 3.5)
+            {
+                StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round
+            },
+            new Point(track.Left, y), new Point(track.Right, y));
+        var x = ValueToX(parameter.CurrentNumber,
+            parameter.Minimum, parameter.Maximum, track, reverse: false);
+        if (enabled)
+            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.65), 3.5),
+                new Point(track.Left, y), new Point(x, y));
+        DrawReferenceTick(dc, parameter, track, y, muted);
+        dc.DrawEllipse(panel, new Pen(enabled ? accent : muted,
+                hovered || IsSelected(parameter) ? 2.4 : 1.5),
+            new Point(x, y), 5.5, 5.5);
+        if (enabled)
+        {
+            dc.DrawEllipse(accent, null, new Point(x, y), 2.2, 2.2);
+            AddHorizontalTarget(parameter,
+                new Rect(track.Left - 7.0, track.Top - 4.0,
+                    track.Width + 14.0, track.Height + 8.0),
+                track, parameter.Minimum, parameter.Maximum);
+        }
     }
 
     // Matched twin native multipliers: exact Core Health/Core Stamina
@@ -7816,7 +7967,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "FlycatcherSlowdown" => FlycatcherBoardHeight(width),
             "AnomalySpecialEffects" => 270.0,
             "NpcLootLoadout" => NpcLootBoardHeight(width),
-            "WorldLootLayout" => 275.0,
+            "WorldLootLayout" => WorldLootHeight(width),
             "StashContentMix" => StashContentMixHeight(width),
             "StashMedicalComposition" => StashMedicalCompositionHeight(width),
             "StashGear" => StashGearHeight(width),

@@ -1,3 +1,15 @@
+## 2026-11-16 — CURRENT: World Item Spawns compact list cards
+
+**Supersedes the two-column stretched-pill layout** (left Weapon Shuffle / Density / Unique block, right column of four 44-DIP full-half-width toggle pills with the checkbox at the far right, fixed 275-DIP height). Parameters, the Weapon Shuffle ⇄ Extra Stash Gear exclusivity, density dependency, writers and presets are unchanged; layout and paint only.
+
+**Geometry:** `LayoutWorldLoot(hostWidth)` — one centered column capped at **620 DIP**, starting at Y=55. Three equal-height cards (**139 DIP**) in a 1.3 : 1 : 1 row with 10-DIP gaps: **WEAPONS**, **SHUFFLE**, **REMOVE**. Below 440 DIP of content WEAPONS spans the row and SHUFFLE + REMOVE sit side by side beneath it. Measured height comes from the same geometry (`WorldLootHeight`): **208 DIP** wide.
+
+**Cards:** muted bold card title + hairline (same as NPC item columns). Each toggle row is the universal 20-DIP `BooleanCheckboxChrome` **immediately left** of a short Title-case label; the hit target covers only checkbox + caption, never the card width. Checked captions are full text color, unchecked slightly dimmed, disabled muted.
+- **WEAPONS:** `Shuffle Weapons`, indented dependent **Density** row (label left, single value right, native rail + reference tick, yellow digits only when modified, muted while the shuffle disables it, value kept), `Shuffle Unique`.
+- **SHUFFLE:** `Attachments`, `Blueprints`. **REMOVE:** `Detectors`, `Armor`. Two-row cards spread their rows evenly over the shared card height — no empty card bottoms.
+
+No ON/OFF text, no stretched pills, no Vanilla/Base captions. `tools/audit_project_consistency.py` guards the list grammar and forbids `DrawTogglePill` in this renderer. Wine visual acceptance remains a local step.
+
 ## 2026-11-16 — CURRENT: NPC Loot three-tier redesign
 
 **Supersedes every earlier NPC LOOT & EQUIPMENT layout entry** (centered lone selector, AMMO QTY knob + 3×3 BONUS AMMO STACKS tiles, condition beside three knobs, DEFAULT item labels). Behaviour, sources, CFG writers, presets and hit/reset semantics are unchanged; only layout and paint change.

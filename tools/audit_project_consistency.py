@@ -5399,6 +5399,22 @@ _anomaly_dial_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "An
 if "null, card, 4.0, 4.0);" not in _anomaly_dial_source or "new Pen(CloneWithOpacity(border, .7), 1.0), card" in _anomaly_dial_source:
     fail("Global anomaly multiplier card outline returned")
 
+# World Item Spawns: three compact list cards, checkbox left of label.
+_world_paint = _npc_preview_source.split("private void DrawWorldLootLayout(", 1)[-1].split(
+    "// Matched twin native multipliers", 1)[0]
+if any(_tok not in _world_paint for _tok in (
+    "var layout = LayoutWorldLoot(ActualWidth);",
+    'DrawWorldListCard(dc, weaponCard, "WEAPONS",',
+    'DrawWorldToggleListCard(dc, layout.Shuffle, "SHUFFLE",',
+    'DrawWorldToggleListCard(dc, layout.Remove, "REMOVE",',
+    "var content = Math.Min(620.0, available);",
+    "BooleanCheckboxChrome.Draw(dc, box, parameter.CurrentBoolean,",
+    "AddToggleTarget(parameter, new Rect(box.Left - 3.0, rowTop,",
+)) or "DrawTogglePill(" in _world_paint:
+    fail("World Item Spawns must use compact checkbox-left list cards, not stretched toggle pills")
+if '"WorldLootLayout" => WorldLootHeight(width),' not in _npc_preview_source:
+    fail("World Item Spawns must measure from its responsive list geometry")
+
 # Shared slider reference labels and coupon tick selection.
 _marker_bar_src = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "VanillaMarkerBar.cs").read_text(encoding="utf-8")
 _coupon_marker_src = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs").read_text(encoding="utf-8")
