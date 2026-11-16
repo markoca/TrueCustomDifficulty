@@ -1,8 +1,18 @@
+## 2026-11-16 — CURRENT: STASH consistency pass (Basic Chance rows, CHANCE cells, 5% grid, texts)
+
+* **Basic MEDS / FOOD / DRINKS cells now own the Basic Chance rows too** (`StashEffectiveState.TierChanceParameterId("Cheap", …)` → `loot.stashMix*`). Before, Bandage / Medkit / Vodka Chance rows on Easy/Medium/Hard ignored the cell, so on Novice a 0% MEDS or DRINKS cell left them at 100%. Medical rows also multiply by MEDICAL COMPOSITION (same as Standard / Rare).
+* **ADJUST ODDS**: header `100% = GAME ODDS · CHANCE = REAL %`; Basic GRENADES and Rare COUPONS (real per-stash chance) carry a quiet `CHANCE` tag before their rail. Every cell moves in **5% steps** (Standard/Rare Chance cells and Rare coupon chance were 1%; Basic COUPONS was 10%). Older presets snap to the 5% grid on load.
+* **MEDICAL COMPOSITION**: the mirrored `…Bias` values are 0–100% like their cells (older presets above 100% clamp on load).
+* **Texts**: labels / descriptions / logic / notes of the stashMix cells (*Basic Medical / Food / Drinks / Coupons Odds*, percent display), the medical pairs (*{Item} Odds* and *{Item} Odds (weighted picks)*), Rare Ammo Chance (now says it thins the Rare Weight ammo picks too), AMMO AMOUNT (*Stash Ammo Amount*, drives all three tiers) and the eight Standard/Rare Chance cells (no more "colored tier card") match the keep-odds rule. Smart world stashes are described as keep-share, not relative.
+* **TRADER STOCK** header text in the same style: `100% = GAME ODDS · 0% = REMOVED`.
+* **Code**: removed the unreachable stash helpers left from earlier layouts (weight mixer, tier chance cards, Basic pool preview and pool bar, medical pair shares, Anti-Rad switch, source preview, global status texts); ODDS PER STASH uses the shared `DrawStashOddsBar`. No layout or height change (571 / 699, 433 / 619 DIP).
+* Superseded entries below are marked **SUPERSEDED** / **PARTLY SUPERSEDED**.
+
 ## 2026-11-16 — CURRENT: STASH LOOT MIX / MEDICAL COMPOSITION without SMART column and Basic mix preview
 
 **Supersedes the SMART column entry and the BASIC MIX card.** Both ODDS tables and the ADJUST ODDS grid are back to three columns (BASIC / STANDARD / RARE, shared `StashOddsColumns`). The BASIC MIX card (MIX PREVIEW) is gone; its RGD-5 AMOUNT joins row 1, which now holds three amount controls: **SUPPLY REDUCTION · AMMO AMOUNT · RGD-5 AMOUNT · BASIC** (three columns wide, stacked narrow). STASH LOOT MIX height: 571 DIP wide / 699 DIP narrow. Writer, presets and the SmartLoot kept-share rule are unchanged.
 
-## 2026-11-16 — CURRENT: SMART column in both ODDS tables
+## 2026-11-16 — SUPERSEDED: SMART column in both ODDS tables
 
 ODDS PER STASH and ODDS PER STASH · MEDS gain a fourth column **SMART** (typical world smart stash, `docs/STASH-WEIGHT-VS-CHANCE.md`): `low–high%` from the need-based SmartLoot spawn range and `ItemSetCount`, solid fill to the low value, light fill to the high value, grey tick at the untouched high value, hover text per player rank. All three tables share `StashOddsColumns` (4 columns). The ADJUST ODDS grid keeps its 4-column alignment; its SMART column shows `= BASIC` for MEDS (the Basic MEDS factor also drives the smart medicine groups) and `—` elsewhere (no separate smart control).
 
@@ -23,7 +33,7 @@ ODDS PER STASH and ODDS PER STASH · MEDS gain a fourth column **SMART** (typica
 * **SmartLoot writer** (also fixes the "still relative" note for smart stashes): for every SmartLoot **Weight** group each item's Weight is scaled by its own factor k and the group's native `MinSpawnChance` / `MaxSpawnChance` by the kept share Σw·k/Σw (`StashEffectiveState.SmartKeptShare`). Every item then keeps exactly k of its game odds with native fields only (no `Empty`). Single-item groups (bandage, medkit, anti-rad) now respond across the whole range instead of only at 0%. Chance groups keep the existing uniform-factor rule.
 * Heights 433 / 619 DIP. C# harness `LootSpecialGeneratorsContract` expects the mirrored pair for medical Bias cases.
 
-## 2026-11-16 — CURRENT: STASH LOOT MIX — one Weight/Chance rule, every ADJUST ODDS cell = "keep X% of game odds"
+## 2026-11-16 — PARTLY SUPERSEDED (BASIC MIX card removed): STASH LOOT MIX — one Weight/Chance rule, every ADJUST ODDS cell = "keep X% of game odds"
 
 **Authoritative definition: `docs/STASH-WEIGHT-VS-CHANCE.md`** (Weight list = exactly one pick, Chance list = independent rolls, never mixed; evidence from the 2.1 dump scan and the Desolation generator tutorial). Supersedes the "IN MIX / priority" reading of the Basic cells below.
 
@@ -32,7 +42,7 @@ ODDS PER STASH and ODDS PER STASH · MEDS gain a fourth column **SMART** (typica
 * **BASIC MIX** card: MIX PREVIEW (now shows a grey **NOTHING** share when items were removed) + RGD-5 AMOUNT. Heights 695 / 823 DIP.
 * Still relative Weight scaling (documented, not in ODDS PER STASH): SmartLoot world groups, DLC1 regular stash rows, Cabin/direct rows.
 
-## 2026-11-16 — CURRENT: STASH LOOT MIX built around ODDS PER STASH (ADJUST ODDS grid + presence sidecars)
+## 2026-11-16 — PARTLY SUPERSEDED (BASIC MIX card removed): STASH LOOT MIX built around ODDS PER STASH (ADJUST ODDS grid + presence sidecars)
 
 **Supersedes the BASIC STASH card, the STANDARD STASH / RARE STASH chance cards and the IN MIX knobs.** Board order: SUPPLY REDUCTION + AMMO QUANTITY · ALL TIERS → **ODDS PER STASH** (unchanged) → **ADJUST ODDS** → **BASIC MIX**.
 
@@ -47,7 +57,7 @@ ODDS PER STASH and ODDS PER STASH · MEDS gain a fourth column **SMART** (typica
 * **BASIC MIX** (162 wide / 180 narrow): MIX PREVIEW for the selected difficulty, **MILK IN MIX** (`stashMixDrinks`: the only drink in the Basic shared food/milk/bandage pick; also smart world stashes) and RGD-5 AMOUNT.
 * Heights: 741 DIP wide / 823 DIP narrow. Audit: `tools/audit_stash_presence.py`.
 
-## 2026-11-16 — CURRENT: STASH LOOT MIX in player terms (odds view, real chances, IN MIX knobs, difficulty preview)
+## 2026-11-16 — SUPERSEDED: STASH LOOT MIX in player terms (odds view, real chances, IN MIX knobs, difficulty preview)
 
 Builds on the tier-grouped layout below. Parameters, presets and writer output are unchanged; only what the board shows changed.
 
@@ -57,7 +67,7 @@ Builds on the tier-grouped layout below. Parameters, presets and writer output a
 * **MIX PREVIEW** follows the selected base difficulty (`MIX PREVIEW · NOVICE` …): Novice/Stalker show the Newbie Weight branch (higher ranks add a coupon entry), Veteran the Hard branch, Master the game's "Stalker" branch.
 * Heights: 977 DIP wide / 1355 DIP narrow.
 
-## 2026-11-16 — CURRENT: STASH LOOT MIX grouped by tier (BASIC / STANDARD / RARE cards)
+## 2026-11-16 — SUPERSEDED: STASH LOOT MIX grouped by tier (BASIC / STANDARD / RARE cards)
 
 **Supersedes the free-floating LOOT PRIORITY · ALL TIERS knob row, BASIC · LOOT PREVIEW and the unlabeled RGD-5 pair.** Row 1 keeps the two global sliders (SUPPLY REDUCTION, AMMO QUANTITY · ALL TIERS). Below it everything Basic lives in one **BASIC STASH** card, matching the STANDARD STASH and RARE STASH cards:
 

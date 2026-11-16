@@ -64,7 +64,7 @@ assert 'empty.SetAssignment("ItemPrototypeSID", "Empty");' in tuning
 assert '$"[{category.Items.Count}]"' in tuning
 assert "s_stashPresence = vm.StashPresence.Values;" in writer
 
-# Odds and Basic mix preview read the SAME rule.
+# ODDS PER STASH reads the SAME rule.
 assert "state.WeightListEdit(baseline, tier, category) is { } edit" in odds
 
 # ---- 3. Sidecars, presets, UI ----------------------------------------------
@@ -121,7 +121,39 @@ assert 'DrawStashMedicalCell(dc, P(StashMedicalItems[k].Id)' in aggregate
 assert '"SMART"' not in odds and "StashSmartOdds" not in aggregate
 assert 'DrawStashBasicNativePools(dc,' not in aggregate.split("private void DrawStashContentMix(", 1)[1].split("private void DrawStashMedicalComposition(", 1)[0]
 
-for token in ("ONE entry", "Empty", "Desolation", "13564", "never mix", "SmartKeptShare"):
+# ---- 8. Basic Chance rows follow the Basic MEDS / FOOD / DRINKS cells -----
+assert '"Cheap" when suffix is "Medical" or "Food" or "Drinks"' in state
+assert '=> "loot.stashMix" + suffix,' in state
+basic_chance = [c for c in baseline["cheapStashProduction"]["templateCategories"]
+                if all("Chance" in i["fields"] for i in c["items"])]
+chance_sids = {i["fields"]["ItemPrototypeSID"] for c in basic_chance for i in c["items"]
+               if float(i["fields"]["Chance"].rstrip("f")) > 0}
+# Real authored Basic Chance rows: meds and vodka (and the RGD-5, its own CHANCE cell).
+assert chance_sids == {"Bandage", "Medkit", "Vodka", "GrenadeRGD5"}, chance_sids
+# Novice (Easy) before the fix: list [4] rolls Bandage/Medkit/Vodka at 100%, so
+# a 0% MEDS cell could not lower Basic meds. With the cell owning these rows,
+# 0% means no meds from any Basic list.
+easy = [c for c in basic_chance if "Easy" in c["fields"].get("Diff", "")]
+vanilla_none = 1.0
+for c in easy:
+    for i in c["items"]:
+        if i["fields"]["ItemPrototypeSID"] in ("Bandage", "Medkit"):
+            vanilla_none *= 1 - float(i["fields"]["Chance"].rstrip("f"))
+assert vanilla_none == 0.0  # Novice: Basic meds are certain from Chance rows alone
+
+# ---- 9. ADJUST ODDS: absolute CHANCE cells are tagged, one 5% grid --------
+assert 'id is "loot.cheapStashGrenadeChance" or "loot.expensiveStashMoneyChance"' in grid
+assert '"100% = GAME ODDS · CHANCE = REAL %"' in grid
+assert 'CreateText("CHANCE", 8.4, muted, FontWeights.Bold)' in grid
+catalog = {p["id"]: p for p in json.loads(read("Data/parameters.json"))["parameters"]}
+import re as _re
+grid_ids = set(_re.findall(r'"(loot\.[A-Za-z]+)"', grid.split("StashControlGrid =", 1)[1].split("};", 1)[0]))
+assert len(grid_ids) == 14, grid_ids  # + 2 presence sidecars, 2 empty cells
+for pid in grid_ids:
+    assert catalog[pid]["slider"]["step"] == 0.05, pid
+
+for token in ("ONE entry", "Empty", "Desolation", "13564", "never mix", "SmartKeptShare",
+              "Basic Chance rows", "CHANCE"):
     assert token in docs, token
 
-print("PASS: one Weight/Chance rule — Weight lists keep their source total via Empty; writer, odds, preview, presets share it")
+print("PASS: one Weight/Chance rule — Weight lists keep their source total via Empty; writer, odds and presets share it; Basic Chance rows follow the cells")

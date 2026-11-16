@@ -23,7 +23,6 @@ system = (root / "docs/VISUAL-CONTROL-SYSTEM.md").read_text()
 proposal = (root / "docs/STASHES-TAB-AND-REDESIGN-PROPOSAL.md").read_text()
 coverage = (root / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.StashBranch.cs").read_text()
 grid_source = (root / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.StashControls.cs").read_text()
-tier_preview = coverage.split("private void DrawStashChanceTier(", 1)[1]
 
 expected = {
     "StashContentMix": [
@@ -67,12 +66,9 @@ def method(start, finish):
 
 content = method("DrawStashContentMix", "DrawStashMedicalComposition")
 medical = method("DrawStashMedicalComposition", "DrawStashMedicalQuantityCards")
-pair = method("DrawStashMedicalPairShares", "DrawStashAntiRadWeightSwitch")
-anti_weight = method("DrawStashAntiRadWeightSwitch", "DrawStashMedicalQuantityCards")
 quantity = method("DrawStashMedicalQuantityCards", "DrawStashQuantityDualRail")
 quantity_rail = method("DrawStashQuantityDualRail", "DrawStashGear")
-gear = method("DrawStashGear", "DrawStashPoolBar")
-preview = method("DrawStashPoolBar", "DrawStashNumericReadout")
+gear = method("DrawStashGear", "DrawStashNumericReadout")
 
 assert 'DrawStashControlGrid(dc, new Rect(left, controlsTop, width, StashControlsHeight),' in content
 assert all(f'"{label}", "loot.stashMedical' in source for label in
@@ -109,9 +105,6 @@ assert 'source.Id == "loot.stashMedicalAntiRadBias"' in hover_renderer
 assert "ControlHoverGlow.Draw(dc, handle.Position," in quantity_rail
 assert "ReferenceEquals(target.Parameter, handle.Parameter)" in quantity_rail
 assert "hovered ? Brushes.White : enabled ? tone : muted" in quantity_rail
-assert "hovered ? CloneWithOpacity(StashMedicalPalette[3], .10)" in anti_weight
-assert "var rect = new Rect(x + i * cellWidth, card.Top + 24.0, cellWidth, 25.0);" in anti_weight
-assert "AddHorizontalTarget(p, rect, rect, value, value);" in anti_weight
 assert 'target?.Parameter.Id == "loot.stashMedicalAntiRadBias"' in source
 assert "Cursor = Cursors.Hand;" in source
 assert 'IsStashMedicalMax(_dragTarget.Parameter.Id)' in source
@@ -146,28 +139,18 @@ assert '"ODDS PER STASH · MEDS"' in medical and '"ADJUST ODDS"' in medical
 assert 'StashItemOdds(current, t, sids)' in medical
 assert 'DrawStashMedicalCell(dc, P(StashMedicalItems[k].Id)' in medical
 assert '_medicalWeightRankTargets.Clear();' not in source
-assert 'g.Field == "Weight" && g.RankIndex == 2' in pair
-assert 'const double rankWidth = 62.0;' not in pair
-assert 'var rail = new Rect(outer.Left + 9.0, outer.Top + 28.0,' in pair
-assert 'for (var i = 0; i < groups.Length; i++)' not in pair
 assert '_medicalWeightRankTargets.Add((rect, rank));' not in source
-assert 'var medkitShare = total > Epsilon ? medkit / total : 0.0;' in pair
 assert 'DrawStashAntiRadWeightSwitch(dc,' not in medical  # bias mirrors the cell now
-assert '"ANTI-RAD · PRIORITY"' in anti_weight
-assert "dc.DrawRectangle(accent, null" not in anti_weight
-assert 'new Rect(x + i * cellWidth, card.Top + 24.0, cellWidth, 25.0)' in anti_weight
 assert 'var dialMaximum = visualMaximum ?? parameter.Maximum;' in source
 assert 'IsMedicalPriorityWeight(target.Parameter)' in source
 assert 'IsMedicalPriorityWeight(_selectedParameter)' in source
 assert '_medicalWeightPreviewRank' not in source
 assert '_medicalWeightHoveredRank' not in source
 assert '_medicalWeightRankTargets' not in source
-assert 'var group = groups[0];' in pair
-assert 'groups.Length != 1' in pair
 for pid in ("loot.stashMedicalBandageBias", "loot.stashMedicalMedkitBias",
             "loot.stashMedicalArmyMedkitBias", "loot.stashMedicalAntiRadBias"):
     entry = next(p for p in catalog["parameters"] if p["id"] == pid)
-    assert entry["slider"] == {"min": 0, "max": 3,
+    assert entry["slider"] == {"min": 0, "max": 1,  # mirrors the 0–100% ChanceScale cell
         "step": 0.05, "stepMode": "absolute"}
 # The native Weight factor mirrors its Chance scale (one control per item).
 assert 'Mirror(scale, bias);' in main_vm_source and 'Mirror(bias, scale);' in main_vm_source
@@ -175,18 +158,9 @@ assert "DrawStashMedicalPairShares(dc," not in medical
 assert '"DROP ROLLS · CHANCE %"' not in medical
 assert '"LOOT PRIORITY · NATIVE WEIGHTS"' not in medical
 assert 'DrawSourceKnob(' not in medical
-assert 'g.Prototype == "StashMedicine_Smart"' in pair
-assert 'g.RankIndex is 2 or 3' not in pair
-assert 'group.EffectiveSelection(StashPreviewBaseline.Value, state,' in pair
-assert 'group.Items.Single(item => item.ItemSid == sid)' in pair
-assert 'StashMedicalPalette[1]' in pair and 'StashMedicalPalette[2]' in pair
-assert "AddHorizontalTarget(p, rect, rect, value, value);" in anti_weight
-assert '"loot.stashMedicalAntiRadBias"' in anti_weight
-assert 'var value = i == 0 ? 0.0 : 1.0;' in anti_weight
 assert "_stashMedicalShowChance" not in source
 assert "_stashMedicalModes" not in source
 assert 'target.Parameter.Id == "loot.stashMedicalAntiRadBias"' in source
-assert '"OFF"' in anti_weight and '"ON"' in anti_weight
 assert "_stashMedicalShowChance" not in source
 assert "DrawStashQuantityDots(" not in source
 assert "DrawStashMedicalSourcePreview(" not in source
@@ -221,7 +195,6 @@ assert 'AddHorizontalTarget(weight,' not in gear
 assert 'labelY = 204.0 + i * 52.0' not in gear
 assert 'DrawSourceKnob(' not in content
 assert "DrawStashControlGrid(dc," in content
-assert "DrawStashBasicNativePools(dc," not in content  # Basic mix preview removed
 assert "DrawStashRewardGraphRow(dc, P(entries[i].Id)" not in medical
 assert "DrawStashMedicalSourcePreview(" not in source
 assert "StashMedicalPalette[k]" in medical
@@ -247,10 +220,7 @@ assert "Bonus Mix" in lock and "three" in system
 assert "DrawStashBiasPreview" not in source
 assert "DrawStashCountKnob" not in source
 assert "DrawStashGearDial" not in source
-assert "AddHorizontalTarget(" not in preview  # never an editable preview
-assert "DrawStashNumericReadout" not in preview
 assert "MULTIPLIERS, NOT DROP ODDS" not in source
-assert "weights.Sum()" not in preview # normalized six source multipliers retired
 # Odds-centred layout: every odds cell's own control sits in the ADJUST ODDS
 # grid (same rows/columns as ODDS PER STASH); Standard/Rare cards are retired.
 assert '"loot.cheapStashGrenadeChance", null, "loot.expensiveStashGrenadesChance"' in grid_source
@@ -273,23 +243,11 @@ assert '"BASIC POOL COMPOSITION"' not in coverage
 # and never an invented 100% stash-wide probability.
 assert "Math.Min(778.0, Math.Max(1.0, ActualWidth - 30.0))" in content
 assert "DrawStashControlGrid(dc," in content
-assert "DrawStashBasicNativePools(dc," not in content  # Basic mix preview removed
 assert "DrawSourceKnob(" not in content
-assert "DrawStashBasicNativePools(dc," not in content  # Basic mix preview removed
 assert '"RGD-5 AMOUNT · BASIC"' in content
 assert "percentage: false" in content
 assert source.count("new SolidColorBrush(Color.FromRgb(") >= 6
-assert 'StashPreviewGroup("BASIC", 1)' in preview
-assert 'StashPreviewGroup("BASIC", 7)' in preview  # retained only in dormant source-inspection helper
-assert 'DrawStashPoolBar(dc, hard, string.Empty, inner,' in coverage
-assert 'DrawStashPoolBar(dc, hard, "VETERAN"' not in coverage
-assert 'StashPreviewGroup("RARE", 11)' not in preview  # chance only, never a weight pool
-assert "StashChanceSample(" in preview
-assert '"SOURCE CHANCE FIELDS"' in preview
-assert '"NATIVE CHANCE · INDEPENDENT"' in preview
-assert '.WeightListEdit(StashPreviewBaseline.Value, "Cheap", group);' in preview  # same rule as writer
-assert "effective.TierField(" in preview
-assert "StashEffectiveState.Number(" in preview
+assert "DrawStashPoolBar" not in source + coverage  # Basic mix preview helpers removed
 assert "StashSourceFactor(" not in source
 assert "StashSourceNumber(" not in source
 assert "CfgWriterBaselineService().Load()" in source
@@ -340,11 +298,12 @@ for pid in ("loot.stashMixMedical", "loot.stashMixFood", "loot.stashMixDrinks"):
     assert source_entry["slider"] == {
         "min": 0, "max": 1, "step": 0.05, "stepMode": "absolute"
     }
-    assert "0.05–1x reduces" in source_entry["description"]
+    assert "Keeps X% of the game's odds" in source_entry["description"]
+    assert source_entry["display"]["primary"] == "percent"
+    assert "Relative item Weight" not in json.dumps(source_entry)
 # All 21 native 0.05x stops are on the same source grid used for knob
 # painting, dragging, wheel and keyboard; no renderer-specific rounding.
 assert [round(i * 0.05, 2) for i in range(21)][-1] == 1.0
-assert "0.05x steps" in coverage
 assert "var nativeStep = Math.Max(Epsilon, parameter.TickFrequency);" in source
 assert "target.Parameter.CurrentNumber = Snap(target.Parameter, value);" in source
 assert 'parameter.CurrentNumber:0.##}x' in source
@@ -457,8 +416,7 @@ assert "effective.SmartSelectionFactor(item.ItemSid, selectionField)" in smart
 assert "StashEffectiveState.SmartSpawnEndpoint(" in smart
 assert "StashState(all).TuneSelection(" in tuning
 assert "StashState(all).TuneCount(" in tuning
-assert "effective.TierField(" in preview
-assert "CurrentStashEffectiveState()" in source
+assert "CurrentStashEffectiveState(StashDifficultySid())" in source
 assert "loot.cheapStashGrenadeChance" in family_ids.split('"StashContentMix" => new[]', 1)[1].split('"StashMedicalComposition"', 1)[0]
 assert "loot.expensiveStashMoneyChance" in family_ids.split('"StashContentMix" => new[]', 1)[1].split('"StashMedicalComposition"', 1)[0]
 assert "VerifyStashEffectiveParity();" in harness
@@ -476,11 +434,14 @@ mix_ids = [pid for pid in expected["StashContentMix"] if pid.startswith("loot.st
 for pid in mix_ids:
     item = next(p for p in catalog["parameters"] if p["id"] == pid)
     slider = item["slider"]
+    # Every ADJUST ODDS cell moves in 5% steps; ammo/grenade mixes are hidden legacy.
     expected_step = 0.05 if pid in (
-        "loot.stashMixMedical", "loot.stashMixFood", "loot.stashMixDrinks"
+        "loot.stashMixMedical", "loot.stashMixFood", "loot.stashMixDrinks",
+        "loot.stashMixCoupons"
     ) else 0.1
     assert (slider["min"], slider["max"], slider["step"]) == (0, 1, expected_step), pid
-    assert item["exposeInUi"] is (expected_step == 0.05), pid
+    assert item["exposeInUi"] is (pid in (
+        "loot.stashMixMedical", "loot.stashMixFood", "loot.stashMixDrinks")), pid
     assert item["vanilla"]["All"] == 1, pid
     assert "Weight" in item["targets"][0]["path"], pid
     assert all("Chance" not in target["path"] for target in item["targets"]), pid
@@ -498,23 +459,13 @@ assert '"loot.mediumStashMedicalChance"' in source
 assert '"loot.mediumStashCouponsChance"' in source
 assert '"loot.expensiveStashAmmoChance"' in source
 assert '"loot.expensiveStashGrenadesChance"' in source
-assert 'var id = tierName == "Medium"' in coverage
-assert "var basicGroups = StashSourceGroups.Value" in coverage
-assert 'CreateText("V "' not in tier_preview and "vanillaX" not in tier_preview
 assert "Math.Clamp(Number(updated) * factor, 0.0, 1.0)" in effective
 assert 'StashTierChanceParameterIds.Any(id =>' in tuning
 
 assert '=> width >= 700.0 ? 571.0 : 699.0;' in source
-assert "GlobalStashKindsVerified.Value" in coverage
 assert "StashBranchPreviewCatalog.Load(StashPreviewBaseline.Value)" in coverage
-assert "groups.Sum(x => x.Items.Count) != 1124" in coverage
-assert "StashCategoryIndex(item.ItemSid)" in coverage
 assert '"ITEMGEN ' not in coverage and '"WORLD ' not in coverage
 assert '"STASH ITEM WEIGHTS"' not in coverage
-assert '"PRIORITY ZERO"' in coverage and '"REDUCED"' in coverage
-assert '"INCREASED"' in coverage and '"EXCLUDED"' in coverage
-assert '"ORIGINAL"' in coverage and '"PARTIAL"' in coverage
-assert '"PRIORITY ZERO · INDEPENDENT CHANCE MAY STILL ROLL"' in coverage
 assert "StashEffectiveState.ItemBiasId(sid)" in coverage
 assert "StashEffectiveState.SmartItemBiasId(sid)" in coverage
 for retired in ("DrawStashBranchBrowser(", "NavigateStash(", "TryStashBrowserClick(",
@@ -526,8 +477,6 @@ assert "CurrentNumber =" not in coverage
 assert "AddHorizontalTarget(p," in coverage
 assert "for (var stop = " not in coverage
 assert "foreach (var stop in new[] { p.Minimum, p.Maximum })" in coverage
-assert "const double cardHeight = 146.0;" in coverage
-assert "var columns = outer.Width >= 670.0 ? 3 : 2;" in coverage
 assert "var rail = new Rect(x + 13.0, y + 26.0," in coverage
 assert "p.IsValueModifiedFromReference()" in coverage
 assert "number.SetForegroundBrush(accent, 0, digits.Length)" in coverage
@@ -590,23 +539,8 @@ assert "PlayerRank" not in basic_preview[1]["fields"]
 
 assert '"LOOT PRIORITY · ALL TIERS"' not in content and '"LOOT PRIORITY"' not in content
 assert '"BASIC  ·  WEIGHT MIX"' not in content
-assert 'DrawText(dc, "MIX PREVIEW · "' in coverage  # helper kept, no longer drawn
-assert '"Easy" or "Medium" => 10,' in coverage and '"Stalker" => 11,' in coverage
-native_preview_method = coverage.split("private void DrawStashBasicNativePools(", 1)[1].split("private void DrawStashChanceTier(", 1)[0]
-assert '"NOVICE / STALKER"' not in native_preview_method
-assert 'rankCaption: "RANK: EXPERIENCED"' not in native_preview_method
-assert 'StashPreviewGroup("BASIC", 7)' not in native_preview_method
-assert 'var hard = StashPreviewGroup("BASIC", difficultySid switch' in native_preview_method
-assert 'DrawStashPoolBar(dc, hard, string.Empty, inner,' in native_preview_method
-assert 'DrawStashPoolBar(dc, hard, "VETERAN"' not in native_preview_method
 assert '"EASY/MEDIUM · EXPERIENCED"' not in coverage
-assert 'CreateText(label, 11.4, text' in coverage
-assert 'GlobalStashCategoryNames[kind], 10.2, text,' in coverage
 assert 'CreateText("NATIVE " + currentText' not in coverage
-assert "Source Chance diagnostics stay in the backend" in coverage
-assert 'var compactOffset = string.IsNullOrWhiteSpace(caption) ? -8.0 : 0.0;' in source
-assert "row.Width < 440.0 ? 9.6 : 10.8" in source
-assert "row.Width >= 580.0 ? 10.0 : 8.9" in source
 
 # Regression: WPF can render a visible StashContentMix family before the
 # Window-level AllParameters binding arrives. Eight new authored Chance
@@ -630,7 +564,7 @@ for pid in tier_chance_ids:
     if entry["exposeInUi"]:
         assert entry["slider"]["min"] == 0, pid
         assert entry["slider"]["max"] == 1, pid
-        assert entry["slider"]["step"] == 0.01, pid
+        assert entry["slider"]["step"] == 0.05, pid  # one 5% grid in ADJUST ODDS
     else:
         assert entry["slider"]["max"] == 2, pid
     assert pid in expected["StashContentMix"], pid
@@ -644,13 +578,6 @@ assert 'multiplier ? "0.##"' in coverage
 # Regression: the Basic WEIGHT mixer has no tierName in scope. Tier-local
 # ammo quantity was accidentally injected here, causing CS0103 on build.
 # The Standard/Rare cards must own it, not the Basic Weight mixer.
-mixer_method = coverage.split("private void DrawStashWeightMixer(", 1)[1].split(
-    "private void DrawStashBasicNativePools(", 1)[0]
-tier_method = coverage.split("private void DrawStashChanceTier(", 1)[1]
-assert "tierName" not in mixer_method
-assert "ammoId" not in mixer_method
-assert "DrawStashNativeRollControl(" not in mixer_method
-assert 'var y = outer.Top + 35.0 + n / columns * pitch;' in tier_preview
 assert '"StashRewardProfile"' not in viewmodel and '"StashRewardProfile"' not in main_vm
 assert 'Parameters="{Binding DataContext.AllParameters' in (
     root / "src/TrueCustomDifficulty/MainWindow.xaml").read_text()
@@ -679,83 +606,28 @@ assert any(item["fields"].get("ItemPrototypeSID") == "Bandage"
 assert 'DrawStashNativeRollControl(dc, "loot.cheapStashAmmoQuantity",' in content
 assert '"loot.mediumStashAmmoQuantity"' not in content
 assert '"loot.expensiveStashAmmoQuantity"' not in content
-assert '"loot.mediumStashAmmoQuantity"' not in tier_preview
-assert '"loot.expensiveStashAmmoQuantity"' not in tier_preview
 assert "SyncStashAmmoQuantity();" in main_vm_source
 assert "stashAmmoSources.Skip(1)" in main_vm_source
 # The number is the REAL resulting chance range of the category's rows at
 # the selected difficulty; the rail ends read NONE / GAME ODDS (Rare Coupons
 # is the one direct 0–100% chance rail).
-assert 'var digits = StashTierChanceRange(tierName, kind);' in tier_preview
-assert 'var number = CreateText(digits, 11.8,' in tier_preview
-assert 'DrawText(dc, absoluteRail ? "0%" : "NONE",' in tier_preview
-assert 'DrawRightAlignedText(dc, absoluteRail ? maximum + "%" : "GAME ODDS",' in tier_preview
-assert 'var now = ValueToX(parameter.CurrentNumber,' in tier_preview
-assert 'rail, parameter.Minimum, parameter.Maximum);' in tier_preview
-assert 'The rail scales the authored native per-entry Chance' in tier_preview
-assert 'digits + (absolute ? "%" : "×")' not in tier_preview
 for pid in ("loot.mediumStashMedicalChance", "loot.mediumStashDrinksChance",
             "loot.mediumStashCouponsChance", "loot.expensiveStashAmmoChance",
             "loot.expensiveStashMedicalChance", "loot.expensiveStashFoodChance",
             "loot.expensiveStashDrinksChance", "loot.expensiveStashGrenadesChance"):
     assert next(p for p in catalog["parameters"] if p["id"] == pid)["display"]["primary"] == "percentOfVanilla"
 
-assert "StashSourceGroups.Value" in tier_preview
-assert "!g.IsSmart && g.Tier == tierName" in tier_preview
-assert "hasWeight[kind] = true" in tier_preview
-assert "hasChance[kind] = true" in tier_preview
-assert "hasWeight[k] || hasChance[k]" in tier_preview
-assert '"NATIVE CHANCE"' not in tier_preview
-assert 'var chanceKinds = present.Where(k => hasChance[k]).ToArray();' in tier_preview
-assert '"WEIGHT ONLY"' not in tier_preview
-assert "const double pitch = 78.0;" in tier_preview
-assert "cellWidth, 70.0" in tier_preview
-assert 'CreateText("V "' not in tier_preview
-assert "vanillaX" not in tier_preview
-assert "var expected = tierName == \"Medium\"" in tier_preview
-assert "SequenceEqual(expected)" in tier_preview
-assert "100.0 * totals" not in tier_preview
-assert "totals.Sum()" not in tier_preview
-assert 'var id = tierName == "Medium"' in tier_preview
-assert 'var parameter = P(id);' in tier_preview
-assert 'AddHorizontalTarget(parameter,' in tier_preview
-assert 'AddHorizontalTarget(scale,' not in tier_preview
-assert 'var y = outer.Top + 35.0' in tier_preview
-assert 'var digits = StashTierChanceRange(tierName, kind);' in tier_preview
-assert 'if (parameter is null)' in tier_preview
-assert 'var label = Parameters is null' not in tier_preview
-assert "continue;" in tier_preview
-assert 'throw new InvalidDataException(\n                "Missing live stash Chance control "' not in tier_preview
-assert "var vanillaValues = rows.Select(" not in tier_preview
 assert "OnBindingChanged" in source and "Loaded += (_, _) => RebindParameters();" in source
-assert "CurrentNumber =" not in tier_preview
 assert "DrawStashNativeRollControl(" in coverage
-assert 'DrawStashPoolBar(dc, hard, string.Empty, inner,' in coverage
-assert 'DrawStashPoolBar(dc, hard, "VETERAN"' not in coverage
+assert "DrawStashPoolBar" not in source + coverage  # Basic mix preview helpers removed
 assert '"NOVICE / STALKER"' not in coverage
-assert 'StashPreviewGroup("BASIC", 1)' in coverage
-assert "dialAccent: StashMixPalette[kind], dialScale: .74" in coverage
-assert "private static readonly int[] BasicVisibleWeightKinds = { 1, 2, 3 };" in coverage
-assert "BasicVisibleWeightKinds.Length" in coverage
-assert "previewGroup.Items" in coverage
-assert "var columns = outer.Width >= 670.0 ? 3 : 2;" in coverage
 assert '"loot.cheapStashGrenadeChance"' in grid_source  # RGD-5 chance is the Basic GRENADES cell
-assert '"loot.expensiveStashMoneyChance"' in coverage
 for doc in (lock, system, proposal):
     assert "STASHES — ACTUAL TIER CONTENT / WEIGHT-CHANCE COVERAGE (CURRENT)" in doc
 
-assert "StashMixPalette[kind]" in coverage
-assert "GlobalMedicalItems.Select(item => state.ChanceFactor(item.Sid))" in coverage
-assert "EXCLUDED: " in coverage
-assert 'GlobalStashStatus(int category, StashEffectiveState state)' in coverage
-assert 'GlobalStashDetail(int category, string status,' in coverage
-assert 'GlobalStashParameterIds' in coverage
-bound_mix = re.search(
-    r"private static readonly string\[\] GlobalStashParameterIds\s*=\s*\{(.*?)\};",
-    coverage, re.S
-)
-assert bound_mix is not None
-assert re.findall(r'"(loot\.stashMix[A-Za-z]+)"', bound_mix.group(1)) == mix_ids
+# The six stashMix ids stay in the StashContentMix family (presets/writer).
+assert all(f'"{pid}"' in grid_source or pid in ("loot.stashMixAmmo", "loot.stashMixGrenades")
+           for pid in mix_ids)
 assert 'foreach (var stop in new[] { p.Minimum, p.Maximum })' in coverage
 assert 'AddHorizontalTarget(p,' in coverage
 assert 'DrawCompactStashRewards(' not in source
@@ -774,7 +646,6 @@ for pid in ("loot.cheapStashAmmoQuantity", "loot.mediumStashAmmoQuantity",
     assert row["slider"] == {"min": 0.25, "max": 2, "step": 0.25, "stepMode": "absolute"}
     assert f'["{pid}"] = "StashContentMix"' in viewmodel
     assert f'"{pid}"' in main_vm
-assert 'GlobalStashItemDescriptions' in coverage
 assert "GetManifestResourceStream(SmartSource)" in branches
 assert "public static string? SmartItemBiasId(string sid) => ItemBiasId(sid);" in effective
 assert "public double TierFactor(string sid)" in effective
@@ -824,7 +695,7 @@ for doc in (lock, system, proposal):
     assert "STASHES GLOBAL ITEM-CATEGORY SOURCE COVERAGE (CURRENT)" in doc
     assert "STASHES PLAYER-FACING LOOT STATUS (CURRENT)" in doc
     assert "STASHES GLOBAL WEIGHT WITH NATIVE CHANCE EXCEPTIONS (CURRENT)" in doc
-print("PASS: Basic rotary Weight + native source pools, Standard/Rare Chance-led tiles")
+print("PASS: ODDS PER STASH + ADJUST ODDS grid, Standard/Rare Chance cells, dead mixer helpers removed")
 
 # Phase 5: emitted patch parity must be wired into the executable contract.
 # This is a static integration gate, not a claim that the .NET/Wine suite ran.

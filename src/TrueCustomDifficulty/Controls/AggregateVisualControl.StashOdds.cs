@@ -142,53 +142,9 @@ public sealed partial class AggregateVisualControl
             DrawText(dc, StashOddsCategoryLabels[k],
                 new Point(outer.Left + 20.0, y), 10.0, text, FontWeights.SemiBold);
             for (var t = 0; t < 3; t++)
-            {
-                var x = gridLeft + t * (columnWidth + columnGap);
-                var value = Math.Clamp(now[t][k], 0.0, 1.0);
-                var vanilla = Math.Clamp(was[t][k], 0.0, 1.0);
-                var changed = Math.Abs(value - vanilla) > 0.005;
-                var number = CreateText($"{value * 100.0:0}%", 10.0,
-                    changed ? accent : value <= Epsilon ? muted : text, FontWeights.Bold);
-                const double numberWidth = 38.0;
-                var bar = new Rect(x, y + 5.0,
-                    Math.Max(1.0, columnWidth - numberWidth - 6.0), 7.0);
-                dc.DrawRectangle(CloneWithOpacity(border, .30), null, bar);
-                if (value > Epsilon)
-                    dc.DrawRectangle(CloneWithOpacity(StashMixPalette[k], .9), null,
-                        new Rect(bar.Left, bar.Top, bar.Width * value, bar.Height));
-                // Subtle reference tick, same grammar as other boards.
-                var tick = bar.Left + bar.Width * vanilla;
-                dc.DrawLine(new Pen(CloneWithOpacity(muted, .75), 1.2),
-                    new Point(tick, bar.Top - 2.0), new Point(tick, bar.Bottom + 2.0));
-                dc.DrawText(number, new Point(
-                    bar.Right + 6.0 + numberWidth - number.WidthIncludingTrailingWhitespace,
-                    y));
-            }
+                DrawStashOddsBar(dc, gridLeft + t * (columnWidth + columnGap), y,
+                    columnWidth, now[t][k], was[t][k], StashMixPalette[k],
+                    text, muted, border, accent);
         }
-    }
-
-    /// <summary>
-    /// Real per-row chance range (e.g. "40–100%") of one category in one
-    /// Standard/Rare tier for the selected difficulty, after every control.
-    /// </summary>
-    private string StashTierChanceRange(string tierName, int kind)
-    {
-        var baseline = StashPreviewBaseline.Value;
-        var state = CurrentStashEffectiveState(StashDifficultySid());
-        var difficulty = state.DifficultySid;
-        var chances = StashSourceGroups.Value
-            .Where(g => !g.IsSmart && g.Tier == tierName && g.Field == "Chance"
-                && Enumerable.Range(0, 4).Any(rank => g.AppliesTo(rank, difficulty)))
-            .SelectMany(g => g.Items
-                .Where(item => StashCategoryIndex(item.ItemSid) == kind
-                    && StashEffectiveState.Number(item.SourceRaw) > Epsilon)
-                .Select(item => Math.Clamp(StashEffectiveState.Number(
-                    g.EffectiveSelection(baseline, state, item)), 0.0, 1.0)))
-            .ToArray();
-        if (chances.Length == 0)
-            return "—";
-        var low = chances.Min() * 100.0;
-        var high = chances.Max() * 100.0;
-        return Math.Abs(high - low) < 0.5 ? $"{high:0.#}%" : $"{low:0.#}–{high:0.#}%";
     }
 }

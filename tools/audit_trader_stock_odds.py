@@ -74,6 +74,6 @@ assert '[JsonPropertyName("traderSellOdds")]' in preset_file
 assert "Unknown trader stock category" in preset_service
 assert "public static IReadOnlyCollection<string> Ids" in sidecar
 assert 'SellOdds="{Binding DataContext.TraderSellOdds' in xaml
-assert '"100% = game odds  ·  0% removes the category"' in ui
+assert '"100% = GAME ODDS  ·  0% = REMOVED"' in ui
 
 print("PASS: trader stock — 608 hash-locked entry values; category odds via Chance/Empty; ammo supply 39/39, medical supply 55/55 trader profiles")

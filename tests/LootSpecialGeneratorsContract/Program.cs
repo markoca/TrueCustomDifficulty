@@ -307,7 +307,8 @@ internal static partial class Program
                 Changes: new Dictionary<string,double>
                 {
                     ["loot.stashMixMedical"] = .5,
-                    ["loot.stashMedicalBandageBias"] = 2,
+                    // One MEDICAL COMPOSITION cell: ChanceScale, mirrored to Bias.
+                    ["loot.stashMedicalBandageChanceScale"] = .5,
                     ["loot.cheapStashGrenadeChance"] = .65,
                     ["loot.stashMixGrenades"] = .5,
                     ["loot.expensiveStashMoneyChance"] = .35,
@@ -350,8 +351,13 @@ internal static partial class Program
                 var modified = vm.AllParameters
                     .Where(p => p.IsValueModifiedFromReference())
                     .Select(p => p.Id).ToArray();
+                // Medical ChanceScale cells mirror into their Bias value.
+                var expectedModified = scenario.Changes.Keys.Concat(scenario.Changes.Keys
+                    .Where(id => id.StartsWith("loot.stashMedical", StringComparison.Ordinal)
+                        && id.EndsWith("ChanceScale", StringComparison.Ordinal))
+                    .Select(id => id[..^"ChanceScale".Length] + "Bias"));
                 Check(modified.ToHashSet(StringComparer.Ordinal)
-                      .SetEquals(scenario.Changes.Keys),
+                      .SetEquals(expectedModified),
                     scenario.Name + ": unrelated source edits in parity fixture");
                 var difficultySid = Catalog.DifficultyProfiles[
                     scenario.Difficulty].Sid;

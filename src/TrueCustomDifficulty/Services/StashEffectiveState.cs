@@ -240,10 +240,14 @@ public sealed class StashEffectiveState
             _ => throw new InvalidDataException("Unknown stash selection field: " + field)
         };
 
-    // Only standard/rare regular ItemGenerator Chance entries; no SmartLoot,
+    // Only regular Basic/Standard/Rare ItemGenerator Chance entries; no SmartLoot,
     // non-matching rank gate, shared clue stash or quest/direct rewards.
     // Each source row keeps its own authored native probability: one compact
     // per-category slider scales those probabilities, never averaging them.
+    // Basic MEDS / FOOD / DRINKS cells (loot.stashMix*) also own the Basic
+    // Chance rows (Bandage/Medkit/Vodka on Easy/Medium/Hard), so one cell
+    // keeps X% of the game's odds in BOTH Basic list types. Basic RGD-5 is an
+    // absolute chance with its own control and is not scaled here.
     public static string? TierChanceParameterId(string tier, string sid)
     {
         var suffix = ItemBiasId(sid) switch
@@ -259,6 +263,8 @@ public sealed class StashEffectiveState
         if (suffix is null) return null;
         return tier switch
         {
+            "Cheap" when suffix is "Medical" or "Food" or "Drinks"
+                => "loot.stashMix" + suffix,
             "Medium" when suffix is "Medical" or "Drinks" or "Coupons"
                 => "loot.mediumStash" + suffix + "Chance",
             "Expensive" when suffix is "Ammo" or "Medical" or "Food"

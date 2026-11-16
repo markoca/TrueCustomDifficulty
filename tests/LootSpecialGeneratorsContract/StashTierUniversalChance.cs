@@ -73,6 +73,31 @@ internal static partial class Program
             Check(Math.Abs(oldResult - source) < 0.000001,
                 tier + ": old category factor is not composed with the new scale");
         }
-        Console.WriteLine("PASS Standard/Rare common native Chance scale, Weight protection and legacy factor preservation");
+        // Basic MEDS / DRINKS cells own the Basic Chance rows too (2026-11-16):
+        // Bandage / Medkit / Vodka Chance halves at 50%; the RGD-5 absolute
+        // chance and food rows (authored 0) are untouched.
+        var basicHalf = new StashEffectiveState(new Dictionary<string, double>
+            {
+                ["loot.stashMixMedical"] = .5, ["loot.stashMixDrinks"] = .5,
+                ["loot.stashMixFood"] = .5
+            }, new[] { "loot.stashMixMedical", "loot.stashMixDrinks", "loot.stashMixFood" }, "Easy");
+        var basicChanceRows = Baseline.Special.CheapStashProduction.TemplateCategories
+            .SelectMany(group => group.Items.Where(item => item.Fields.ContainsKey("Chance"))
+                .Select(item => (Group: group, Item: item))).ToArray();
+        var scaledRows = 0;
+        foreach (var (group, item) in basicChanceRows)
+        {
+            var sid = item.Fields["ItemPrototypeSID"];
+            var authored = StashEffectiveState.Number(item.Fields["Chance"]);
+            var result = StashEffectiveState.Number(basicHalf.TierField(
+                Baseline, "Cheap", group, item, "Chance"));
+            var expected = sid is "Bandage" or "Medkit" or "Vodka" ? authored * .5 : authored;
+            if (sid == "GrenadeRGD5") expected = authored;
+            Check(Math.Abs(result - expected) < 0.000001,
+                "Basic Chance row " + sid + " must follow its Basic cell");
+            if (sid is "Bandage" or "Medkit" or "Vodka" && authored > 0) scaledRows++;
+        }
+        Check(scaledRows == 9, "Basic Chance rows Bandage/Medkit/Vodka coverage drifted: " + scaledRows);
+        Console.WriteLine("PASS Standard/Rare common native Chance scale, Weight protection and legacy factor preservation; Basic Chance rows follow Basic cells");
     }
 }

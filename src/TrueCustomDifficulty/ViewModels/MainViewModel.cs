@@ -173,8 +173,8 @@ public sealed class MainViewModel : ObservableObject
             }
         }
     }
-    // STASH LOOT MIX presence sidecars (Basic ammo / Basic drinks /
-    // Standard ammo). Not catalog parameters; saved in presets when changed.
+    // STASH LOOT MIX presence sidecars (Basic ammo / Standard ammo).
+    // Not catalog parameters; saved in presets when changed.
     public StashPresenceViewModel StashPresence { get; } = new();
 
     // TRADER STOCK partial odds per role x category (0 = SELL toggle off).
@@ -1522,7 +1522,7 @@ public sealed class MainViewModel : ObservableObject
             if (SelectedTab.Id == "economy")
             {
                 TraderItemOverrides = string.Empty;
-            TraderSellOdds.Reset();
+                TraderSellOdds.Reset();
                 GenericNpcRareGearEnabled = false;
                 GenericNpcRareGearChance = 0.02;
             }

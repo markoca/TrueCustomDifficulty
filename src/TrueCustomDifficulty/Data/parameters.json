@@ -6009,14 +6009,14 @@
       "id": "loot.stashMixMedical",
       "tab": "stashes",
       "group": "Stash Content",
-      "label": "Medical Stash Priority",
-      "description": "Global relative medical Weight multiplier across all eligible stash groups and ranks. 1x keeps native Weight, 0x zeros supported Weight entries, 0.05–1x reduces the source Weight compared with unchanged categories. Native Chance entries are not changed by this knob; native bonus Chance has separate controls where exposed.",
+      "label": "Basic Medical Odds",
+      "description": "Keeps X% of the game's odds for meds (Bandage, Medkit, Army Medkit, Anti-Rad) in Basic stashes and in the game's smart world stashes. In Basic Weight lists the removed Weight goes to an appended native Empty pick and scales its native Chance rows there (e.g. Bandage/Medkit/Vodka on Novice–Veteran); in smart world Weight groups each item's Weight and the group's spawn chance are scaled so the item keeps exactly X% of its odds. Other kinds keep their own odds. 100% = vanilla, 0% = never from these lists.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Relative item Weight — not drop chance"
+        "primary": "percent",
+        "rawFormat": "0.00",
+        "valueLabel": "Kept share of game odds"
       },
       "vanilla": {
         "All": 1
@@ -6049,28 +6049,28 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "1x keeps native Weight; independently-authored Chance is untouched.",
-          "0x zeros only eligible Weight entries, not Chance-only entries; full exclusion is not guaranteed.",
-          "Does not independently increase total stash occurrences or turn absent items into available loot."
+          "1x (100%) writes nothing; below 100% the removed share becomes a native Empty pick (Weight lists) or a lower Chance (Chance rows).",
+          "Empty next to real items is not used by vanilla lists: runtime test required (RELEASE-TESTING.md, Stash presence).",
+          "Quest, unique, DLC1 regular and Cabin/direct rows are outside this rule."
         ]
       },
-      "rationale": "How much of the game's odds for meds you keep in Basic stashes (the Basic MEDS cell). Vanilla: 100%. The share you remove becomes an empty pick, so food and drinks keep their own odds. In the game's smart world stashes it still lowers meds relative to the other items there.",
-      "logic": "Higher priority favors medical loot against other eligible stash categories. Zero removes its relative weight where supported.",
-      "interaction": "Priority does not raise original chance checks or bypass a stash's rank and loot restrictions.",
+      "rationale": "How much of the game's odds for meds you keep in Basic stashes (the Basic MEDS cell) and in smart world stashes. Vanilla: 100%. 50% = half as often, 0% = never. Food and drinks keep their own odds.",
+      "logic": "100% keeps the game's meds odds; 50% halves them; 0% removes meds from these Basic and smart stash lists. Other items are not affected.",
+      "interaction": "Standard and Rare stashes have their own cells in ADJUST ODDS. MEDICAL COMPOSITION multiplies per item on top of this.",
       "exposeInUi": true
     },
     {
       "id": "loot.stashMixFood",
       "tab": "stashes",
       "group": "Stash Content",
-      "label": "Food Stash Priority",
-      "description": "Global relative food Weight multiplier across all eligible stash groups and ranks. 1x keeps native Weight, 0x zeros supported Weight entries, 0.05–1x reduces the source Weight compared with unchanged categories. Native Chance entries are not changed by this knob; native bonus Chance has separate controls where exposed.",
+      "label": "Basic Food Odds",
+      "description": "Keeps X% of the game's odds for food (Bread, Sausage, Canned Food) in Basic stashes and in the game's smart world stashes. In Basic Weight lists the removed Weight goes to an appended native Empty pick and scales its native Chance rows there (e.g. Bandage/Medkit/Vodka on Novice–Veteran); in smart world Weight groups each item's Weight and the group's spawn chance are scaled so the item keeps exactly X% of its odds. Other kinds keep their own odds. 100% = vanilla, 0% = never from these lists.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Relative item Weight — not drop chance"
+        "primary": "percent",
+        "rawFormat": "0.00",
+        "valueLabel": "Kept share of game odds"
       },
       "vanilla": {
         "All": 1
@@ -6103,28 +6103,28 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "1x keeps native Weight; independently-authored Chance is untouched.",
-          "0x zeros only eligible Weight entries, not Chance-only entries; full exclusion is not guaranteed.",
-          "Does not independently increase total stash occurrences or turn absent items into available loot."
+          "1x (100%) writes nothing; below 100% the removed share becomes a native Empty pick (Weight lists) or a lower Chance (Chance rows).",
+          "Empty next to real items is not used by vanilla lists: runtime test required (RELEASE-TESTING.md, Stash presence).",
+          "Quest, unique, DLC1 regular and Cabin/direct rows are outside this rule."
         ]
       },
-      "rationale": "How much of the game's odds for food you keep in Basic stashes (the Basic FOOD cell). Vanilla: 100%. The removed share becomes an empty pick, so meds and drinks are not affected. In smart world stashes it still lowers food relative to the other items there.",
-      "logic": "Higher priority favors food against other eligible stash categories. Zero removes its relative weight where supported.",
-      "interaction": "Priority does not raise original chance checks or bypass a stash's rank and loot restrictions.",
+      "rationale": "How much of the game's odds for food you keep in Basic stashes (the Basic FOOD cell) and in smart world stashes. Vanilla: 100%. 50% = half as often, 0% = never. Meds and drinks keep their own odds.",
+      "logic": "100% keeps the game's food odds; 50% halves them; 0% removes food from these Basic and smart stash lists. Other items are not affected.",
+      "interaction": "Standard and Rare stashes have their own cells in ADJUST ODDS. Stack sizes stay separate.",
       "exposeInUi": true
     },
     {
       "id": "loot.stashMixDrinks",
       "tab": "stashes",
       "group": "Stash Content",
-      "label": "Drinks Stash Priority",
-      "description": "Global relative drinks Weight multiplier across all eligible stash groups and ranks. 1x keeps native Weight, 0x zeros supported Weight entries, 0.05–1x reduces the source Weight compared with unchanged categories. Native Chance entries are not changed by this knob; native bonus Chance has separate controls where exposed.",
+      "label": "Basic Drinks Odds",
+      "description": "Keeps X% of the game's odds for drinks (Water, Energy drink, Milk, Vodka, Beer) in Basic stashes and in the game's smart world stashes. In Basic Weight lists the removed Weight goes to an appended native Empty pick and scales its native Chance rows there (e.g. Bandage/Medkit/Vodka on Novice–Veteran); in smart world Weight groups each item's Weight and the group's spawn chance are scaled so the item keeps exactly X% of its odds. Other kinds keep their own odds. 100% = vanilla, 0% = never from these lists.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Relative item Weight — not drop chance"
+        "primary": "percent",
+        "rawFormat": "0.00",
+        "valueLabel": "Kept share of game odds"
       },
       "vanilla": {
         "All": 1
@@ -6157,14 +6157,14 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "1x keeps native Weight; independently-authored Chance is untouched.",
-          "0x zeros only eligible Weight entries, not Chance-only entries; full exclusion is not guaranteed.",
-          "Does not independently increase total stash occurrences or turn absent items into available loot."
+          "1x (100%) writes nothing; below 100% the removed share becomes a native Empty pick (Weight lists) or a lower Chance (Chance rows).",
+          "Empty next to real items is not used by vanilla lists: runtime test required (RELEASE-TESTING.md, Stash presence).",
+          "Quest, unique, DLC1 regular and Cabin/direct rows are outside this rule."
         ]
       },
-      "rationale": "How much of the game's odds for drinks you keep in Basic stashes — water, energy drinks and milk (the Basic DRINKS cell). Vanilla: 100%. The removed share becomes an empty pick, so other items are not affected. In smart world stashes it still lowers drinks relative to the other items there.",
-      "logic": "Higher priority favors drinks against other eligible stash categories. Zero removes its relative weight where supported.",
-      "interaction": "Priority does not raise original chance checks or bypass a stash's rank and loot restrictions.",
+      "rationale": "How much of the game's odds for drinks — water, energy drinks, milk and vodka — you keep in Basic stashes (the Basic DRINKS cell) and in smart world stashes. Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
+      "logic": "100% keeps the game's drinks odds; 50% halves them; 0% removes drinks from these Basic and smart stash lists. Other items are not affected.",
+      "interaction": "Standard and Rare stashes have their own cells in ADJUST ODDS. Stack sizes stay separate.",
       "exposeInUi": true
     },
     {
@@ -6225,14 +6225,14 @@
       "id": "loot.stashMixCoupons",
       "tab": "stashes",
       "group": "Stash Content",
-      "label": "Coupons Stash Weight",
-      "description": "Global relative coupons Weight multiplier across all eligible stash groups and ranks. 1x keeps native Weight, 0x zeros supported Weight entries, 0.1–1x reduces the source Weight compared with unchanged categories. Native Chance entries are not changed by this knob; native bonus Chance has separate controls where exposed.",
+      "label": "Basic Coupons Odds",
+      "description": "Keeps X% of the game's odds for coupons (Common/Rare/Epic coupons) in Basic stashes and in the game's smart world stashes. In Basic Weight lists the removed Weight goes to an appended native Empty pick; in smart world Weight groups each item's Weight and the group's spawn chance are scaled so the item keeps exactly X% of its odds. Other kinds keep their own odds. 100% = vanilla, 0% = never from these lists.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Relative item Weight — not drop chance"
+        "primary": "percent",
+        "rawFormat": "0.00",
+        "valueLabel": "Kept share of game odds"
       },
       "vanilla": {
         "All": 1
@@ -6243,7 +6243,7 @@
       "slider": {
         "min": 0,
         "max": 1,
-        "step": 0.1,
+        "step": 0.05,
         "stepMode": "absolute"
       },
       "targets": [
@@ -6265,28 +6265,28 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "1x keeps native Weight; independently-authored Chance is untouched.",
-          "0x zeros only eligible Weight entries, not Chance-only entries; full exclusion is not guaranteed.",
-          "Does not independently increase total stash occurrences or turn absent items into available loot."
+          "1x (100%) writes nothing; below 100% the removed share becomes a native Empty pick (Weight lists) or a lower Chance (Chance rows).",
+          "Empty next to real items is not used by vanilla lists: runtime test required (RELEASE-TESTING.md, Stash presence).",
+          "Quest, unique, DLC1 regular and Cabin/direct rows are outside this rule."
         ]
       },
-      "rationale": "How much of the game's odds for coupons you keep in Basic stashes (the Basic COUPONS cell). Vanilla: 100%. Only Novice and Stalker Basic stashes have coupons in vanilla. The removed share becomes an empty pick, so other items are not affected.",
-      "logic": "Native Weight is relative within its own generator group. Multiplying all members of a single-category pool may leave its normalized ratios unchanged; independent Chance is never modified by this global control.",
-      "interaction": "Legacy preset compatibility only. Not an editable Stash Content mixer knob; the retained Veteran Basic source pool has no coupon Weight member.",
+      "rationale": "How much of the game's odds for coupons (money) you keep in Basic stashes (the Basic COUPONS cell) and in smart world stashes. Vanilla: 100%. 0% = no coupons from those picks. Other items keep their own odds.",
+      "logic": "100% keeps the game's coupons odds; 50% halves them; 0% removes coupons from these Basic and smart stash lists. Other items are not affected.",
+      "interaction": "Standard and Rare stashes have their own cells in ADJUST ODDS. Stack sizes stay separate.",
       "exposeInUi": false
     },
     {
       "id": "loot.stashMedicalBandageBias",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Bandages Stash Priority",
-      "description": "Scales only authored Weight for this medical item in eligible TCD stash/SmartLoot branches. Weight is relative selection, not a drop probability; independent Chance Scale has its own control. Visible LOOT PRIORITY dial is intentionally capped at 1×; original numeric backend up to 3× remains for saved presets.",
+      "label": "Bandage Odds (weighted picks)",
+      "description": "Weighted-pick half of the BANDAGES cell: keeps X% of the game's odds for Bandage in the shared Basic pick and smart world stashes. Always mirrors Bandage Odds (one visible control per item); the removed share never goes to other items.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Individual source selection bias"
+        "primary": "percent",
+        "rawFormat": "0.00",
+        "valueLabel": "Kept share of game odds (mirrors the cell)"
       },
       "vanilla": {
         "All": 1
@@ -6296,7 +6296,7 @@
       },
       "slider": {
         "min": 0,
-        "max": 3,
+        "max": 1,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -6313,27 +6313,27 @@
         "status": "runtime_test_required",
         "notes": [
           "Weight applies only where the source actually contains Weight.",
-          "Existing Chance rows are unaffected by this control.",
-          "0× disables the matching Weight entries, not separate Chance rolls. Source eligibility and excluded quest/unique stashes remain unchanged."
+          "Smart world Weight groups: the item's Weight and the group's spawn endpoints are scaled so it keeps exactly X% of its odds.",
+          "Older presets above 100% are clamped to 100% on load."
         ]
       },
-      "rationale": "Follows the BANDAGES cell automatically: the same \"keep X% of the game's odds\" for bandages in the game's weighted stash picks (the shared Basic pick and smart world stashes). Vanilla: 100%.",
-      "logic": "Higher priority favors Bandages relative to other supported medical loot. Zero excludes this type from the weighted selection.",
-      "interaction": "The separate Bandage Chance Modifier still controls original chance rolls.",
+      "rationale": "Follows the BANDAGES cell automatically: the same \"keep X% of the game's odds\" for bandage in the shared Basic pick and smart world stashes. Vanilla: 100%.",
+      "logic": "Follows the BANDAGES cell: 100% keeps the game's odds, 0% removes Bandage from the weighted picks.",
+      "interaction": "Mirrored both ways with Bandage Odds; the last change (cell, preset or reset) wins.",
       "exposeInUi": true
     },
     {
       "id": "loot.stashMedicalBandageChanceScale",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Bandage Chance Modifier",
-      "description": "Scales the actual authored per-entry Chance for Bandages in eligible production stash and SmartLoot branches. 100% preserves each original CFG Chance, 50% halves it, 0% disables only the matching Chance entries. This does not represent physical-stash drop odds.",
+      "label": "Bandage Odds",
+      "description": "Keeps X% of the game's odds for Bandage in regular Basic, Standard and Rare stashes and smart world stashes (the BANDAGES cell). Scales each authored Chance row and, through the mirrored weighted-pick value, every Weight pick. Other items keep their own odds.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "percent",
         "rawFormat": "0.00",
-        "valueLabel": "Percent of source-native Chance"
+        "valueLabel": "Kept share of game odds"
       },
       "vanilla": {
         "All": 1
@@ -6365,22 +6365,22 @@
         ]
       },
       "rationale": "How much of the game's odds for bandages you keep in stashes (the BANDAGES cell in MEDICAL COMPOSITION). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
-      "logic": "100% keeps the original Bandage chance; 50% halves it and 0% disables that chance roll. This is not a whole-stash drop rate.",
-      "interaction": "Bandage priority or availability is separate; the stash's existing eligibility rules still apply.",
+      "logic": "100% keeps the game's Bandage odds; 50% halves them; 0% = never from these stashes.",
+      "interaction": "Multiplies with the tier's MEDS cell in STASH LOOT MIX. Stack size (QUANTITY) stays separate.",
       "exposeInUi": true
     },
     {
       "id": "loot.stashMedicalMedkitBias",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Medkits Stash Priority",
-      "description": "Scales only authored Weight for this medical item in eligible TCD stash/SmartLoot branches. Weight is relative selection, not a drop probability; independent Chance Scale has its own control. Visible LOOT PRIORITY dial is intentionally capped at 1×; original numeric backend up to 3× remains for saved presets.",
+      "label": "Medkit Odds (weighted picks)",
+      "description": "Weighted-pick half of the MEDKITS cell: keeps X% of the game's odds for Medkit in smart world stashes. Always mirrors Medkit Odds (one visible control per item); the removed share never goes to other items.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Individual source selection bias"
+        "primary": "percent",
+        "rawFormat": "0.00",
+        "valueLabel": "Kept share of game odds (mirrors the cell)"
       },
       "vanilla": {
         "All": 1
@@ -6390,7 +6390,7 @@
       },
       "slider": {
         "min": 0,
-        "max": 3,
+        "max": 1,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -6407,27 +6407,27 @@
         "status": "runtime_test_required",
         "notes": [
           "Weight applies only where the source actually contains Weight.",
-          "Existing Chance rows are unaffected by this control.",
-          "0× disables the matching Weight entries, not separate Chance rolls. Source eligibility and excluded quest/unique stashes remain unchanged."
+          "Smart world Weight groups: the item's Weight and the group's spawn endpoints are scaled so it keeps exactly X% of its odds.",
+          "Older presets above 100% are clamped to 100% on load."
         ]
       },
-      "rationale": "Follows the MEDKITS cell automatically: the same \"keep X% of the game's odds\" for medkits in the game's weighted stash picks (the shared Basic pick and smart world stashes). Vanilla: 100%.",
-      "logic": "Higher priority favors Medkits relative to other supported medical loot. Zero excludes this type from the weighted selection.",
-      "interaction": "The separate Medkit Chance Modifier still controls original chance rolls.",
+      "rationale": "Follows the MEDKITS cell automatically: the same \"keep X% of the game's odds\" for medkit in smart world stashes. Vanilla: 100%.",
+      "logic": "Follows the MEDKITS cell: 100% keeps the game's odds, 0% removes Medkit from the weighted picks.",
+      "interaction": "Mirrored both ways with Medkit Odds; the last change (cell, preset or reset) wins.",
       "exposeInUi": true
     },
     {
       "id": "loot.stashMedicalMedkitChanceScale",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Medkit Chance Modifier",
-      "description": "Scales the actual authored per-entry Chance for Medkits in eligible production stash and SmartLoot branches. 100% preserves each original CFG Chance, 50% halves it, 0% disables only the matching Chance entries. This does not represent physical-stash drop odds.",
+      "label": "Medkit Odds",
+      "description": "Keeps X% of the game's odds for Medkit in regular Basic, Standard and Rare stashes and smart world stashes (the MEDKITS cell). Scales each authored Chance row and, through the mirrored weighted-pick value, every Weight pick. Other items keep their own odds.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "percent",
         "rawFormat": "0.00",
-        "valueLabel": "Percent of source-native Chance"
+        "valueLabel": "Kept share of game odds"
       },
       "vanilla": {
         "All": 1
@@ -6459,22 +6459,22 @@
         ]
       },
       "rationale": "How much of the game's odds for medkits you keep in stashes (the MEDKITS cell in MEDICAL COMPOSITION). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
-      "logic": "100% keeps the original Medkit chance; 50% halves it and 0% disables that chance roll. This is not a whole-stash drop rate.",
-      "interaction": "Medkit priority or availability is separate; the stash's existing eligibility rules still apply.",
+      "logic": "100% keeps the game's Medkit odds; 50% halves them; 0% = never from these stashes.",
+      "interaction": "Multiplies with the tier's MEDS cell in STASH LOOT MIX. Stack size (QUANTITY) stays separate.",
       "exposeInUi": true
     },
     {
       "id": "loot.stashMedicalArmyMedkitBias",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Army Medkits Stash Priority",
-      "description": "Scales only authored Weight for this medical item in eligible TCD stash/SmartLoot branches. Weight is relative selection, not a drop probability; independent Chance Scale has its own control. Visible LOOT PRIORITY dial is intentionally capped at 1×; original numeric backend up to 3× remains for saved presets.",
+      "label": "Army Medkit Odds (weighted picks)",
+      "description": "Weighted-pick half of the ARMY MEDKITS cell: keeps X% of the game's odds for Army Medkit in smart world stashes. Always mirrors Army Medkit Odds (one visible control per item); the removed share never goes to other items.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Individual source selection bias"
+        "primary": "percent",
+        "rawFormat": "0.00",
+        "valueLabel": "Kept share of game odds (mirrors the cell)"
       },
       "vanilla": {
         "All": 1
@@ -6484,7 +6484,7 @@
       },
       "slider": {
         "min": 0,
-        "max": 3,
+        "max": 1,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -6501,27 +6501,27 @@
         "status": "runtime_test_required",
         "notes": [
           "Weight applies only where the source actually contains Weight.",
-          "Existing Chance rows are unaffected by this control.",
-          "0× disables the matching Weight entries, not separate Chance rolls. Source eligibility and excluded quest/unique stashes remain unchanged."
+          "Smart world Weight groups: the item's Weight and the group's spawn endpoints are scaled so it keeps exactly X% of its odds.",
+          "Older presets above 100% are clamped to 100% on load."
         ]
       },
-      "rationale": "Follows the ARMY MEDKITS cell automatically: the same \"keep X% of the game's odds\" for army medkits in the game's weighted stash picks (the shared Basic pick and smart world stashes). Vanilla: 100%.",
-      "logic": "Higher priority favors Army Medkits relative to other supported medical loot. Zero excludes this type from the weighted selection.",
-      "interaction": "The separate Army Medkit Chance Modifier still controls original chance rolls.",
+      "rationale": "Follows the ARMY MEDKITS cell automatically: the same \"keep X% of the game's odds\" for army medkit in smart world stashes. Vanilla: 100%.",
+      "logic": "Follows the ARMY MEDKITS cell: 100% keeps the game's odds, 0% removes Army Medkit from the weighted picks.",
+      "interaction": "Mirrored both ways with Army Medkit Odds; the last change (cell, preset or reset) wins.",
       "exposeInUi": true
     },
     {
       "id": "loot.stashMedicalArmyMedkitChanceScale",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Army Medkit Chance Modifier",
-      "description": "Scales the actual authored per-entry Chance for Army Medkits in eligible production stash and SmartLoot branches. 100% preserves each original CFG Chance, 50% halves it, 0% disables only the matching Chance entries. This does not represent physical-stash drop odds.",
+      "label": "Army Medkit Odds",
+      "description": "Keeps X% of the game's odds for Army Medkit in regular Basic, Standard and Rare stashes and smart world stashes (the ARMY MEDKITS cell). Scales each authored Chance row and, through the mirrored weighted-pick value, every Weight pick. Other items keep their own odds.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "percent",
         "rawFormat": "0.00",
-        "valueLabel": "Percent of source-native Chance"
+        "valueLabel": "Kept share of game odds"
       },
       "vanilla": {
         "All": 1
@@ -6553,22 +6553,22 @@
         ]
       },
       "rationale": "How much of the game's odds for army medkits you keep in stashes (the ARMY MEDKITS cell in MEDICAL COMPOSITION). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
-      "logic": "100% keeps the original Army Medkit chance; 50% halves it and 0% disables that chance roll. This is not a whole-stash drop rate.",
-      "interaction": "Army Medkit priority or availability is separate; the stash's existing eligibility rules still apply.",
+      "logic": "100% keeps the game's Army Medkit odds; 50% halves them; 0% = never from these stashes.",
+      "interaction": "Multiplies with the tier's MEDS cell in STASH LOOT MIX. Stack size (QUANTITY) stays separate.",
       "exposeInUi": true
     },
     {
       "id": "loot.stashMedicalAntiRadBias",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Anti-Rad Availability",
-      "description": "Two-state visual editor for authored singleton Anti-Rad SmartLoot Weight pools: OFF writes Weight 0; ON writes source multiplier 1. The Anti-Rad Chance control is independent. Legacy numeric preset values above 1 stay intact until this two-state control is operated.",
+      "label": "Anti-Rad Odds (weighted picks)",
+      "description": "Weighted-pick half of the ANTI-RAD cell: keeps X% of the game's odds for Anti-Rad in smart world stashes. Always mirrors Anti-Rad Odds (one visible control per item); the removed share never goes to other items.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Individual source selection bias"
+        "primary": "percent",
+        "rawFormat": "0.00",
+        "valueLabel": "Kept share of game odds (mirrors the cell)"
       },
       "vanilla": {
         "All": 1
@@ -6578,7 +6578,7 @@
       },
       "slider": {
         "min": 0,
-        "max": 3,
+        "max": 1,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -6594,28 +6594,28 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "Audited Anti-Rad Weight SmartLoot groups contain one candidate each: 0 disables the Weight branch; positive values do not rebalance a competitor. Chance-only Anti-Rad is independent. Numeric backend remains 0–3× for older presets; UI intentionally offers only 0 or 1.",
-          "Existing Chance rows are unaffected by this control.",
-          "0× disables the matching Weight entries, not separate Chance rolls. Source eligibility and excluded quest/unique stashes remain unchanged."
+          "Weight applies only where the source actually contains Weight.",
+          "Smart world Weight groups: the item's Weight and the group's spawn endpoints are scaled so it keeps exactly X% of its odds.",
+          "Older presets above 100% are clamped to 100% on load."
         ]
       },
-      "rationale": "Follows the ANTI-RADS cell automatically: the same \"keep X% of the game's odds\" for anti-rads in the game's weighted stash picks (the shared Basic pick and smart world stashes). Vanilla: 100%.",
-      "logic": "ON allows Anti-Rad in its eligible stash pool; OFF excludes it from that pool. The original chance check still applies.",
-      "interaction": "Anti-Rad Chance Modifier scales the separate chance check while Anti-Rad is allowed.",
+      "rationale": "Follows the ANTI-RAD cell automatically: the same \"keep X% of the game's odds\" for anti-rads in smart world stashes. Vanilla: 100%.",
+      "logic": "Follows the ANTI-RAD cell: 100% keeps the game's odds, 0% removes Anti-Rad from the weighted picks.",
+      "interaction": "Mirrored both ways with Anti-Rad Odds; the last change (cell, preset or reset) wins.",
       "exposeInUi": true
     },
     {
       "id": "loot.stashMedicalAntiRadChanceScale",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Anti-Rad Chance Modifier",
-      "description": "Scales the actual authored per-entry Chance for Anti-Rad in eligible production stash and SmartLoot branches. 100% preserves each original CFG Chance, 50% halves it, 0% disables only the matching Chance entries. This does not represent physical-stash drop odds.",
+      "label": "Anti-Rad Odds",
+      "description": "Keeps X% of the game's odds for Anti-Rad in regular Basic, Standard and Rare stashes and smart world stashes (the ANTI-RAD cell). Scales each authored Chance row and, through the mirrored weighted-pick value, every Weight pick. Other items keep their own odds.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "percent",
         "rawFormat": "0.00",
-        "valueLabel": "Percent of source-native Chance"
+        "valueLabel": "Kept share of game odds"
       },
       "vanilla": {
         "All": 1
@@ -6646,9 +6646,9 @@
           "Native chance rows can differ by tier/difficulty; this is a percentage-of-native control, not a single absolute drop chance."
         ]
       },
-      "rationale": "How much of the game's odds for anti-rads you keep in stashes (the ANTI-RADS cell in MEDICAL COMPOSITION). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
-      "logic": "100% keeps the original Anti-Rad chance; 50% halves it and 0% disables that chance roll. This is not a whole-stash drop rate.",
-      "interaction": "Anti-Rad priority or availability is separate; the stash's existing eligibility rules still apply.",
+      "rationale": "How much of the game's odds for anti-rads you keep in stashes (the ANTI-RAD cell in MEDICAL COMPOSITION). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
+      "logic": "100% keeps the game's Anti-Rad odds; 50% halves them; 0% = never from these stashes.",
+      "interaction": "Multiplies with the tier's MEDS cell in STASH LOOT MIX. Stack size (QUANTITY) stays separate.",
       "exposeInUi": true
     },
     {
@@ -7242,8 +7242,8 @@
       "id": "loot.cheapStashAmmoQuantity",
       "tab": "stashes",
       "group": "Stash Content",
-      "label": "Basic Stash Ammo",
-      "description": "Scales only eligible Basic stash ammo stack counts. Standard and Rare have separate quantity controls.",
+      "label": "Stash Ammo Amount",
+      "description": "Scales ammo stack counts in Basic, Standard and Rare stashes (the AMMO AMOUNT slider). It drives the Standard and Rare amount values too, so all three tiers always match.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -7275,15 +7275,15 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "Three independent tier-local ammo amount editors.",
-          "Each axis scales only the existing vanilla ammo MinCount/MaxCount values for that stash tier.",
+          "One visible control; the Standard and Rare amount values are mirrored from it (presets and reset included).",
+          "Each tier scales only its existing vanilla ammo MinCount/MaxCount values.",
           "1x preserves vanilla stack counts.",
           "Chance, Weight, rank gates and PossibleItems membership remain unchanged.",
           "The existing production-only stash fan-out and exclusions remain unchanged."
         ]
       },
       "rationale": "How many rounds you get from ammo in stashes — Basic, Standard and Rare together (the AMMO AMOUNT slider drives all three). Vanilla: 1×. Which calibers turn up still follows the game's progression.",
-      "logic": "",
+      "logic": "1x keeps vanilla stack sizes; 0.5x halves them, 2x doubles them (rounded, never below 1).",
       "interaction": "One Ammo Quantity control changes eligible ammo stack sizes in Basic, Standard and Rare stashes together.",
       "lootHint": {
         "kind": "scaledCountEntries",
@@ -7421,7 +7421,7 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Standard Stash Ammo",
-      "description": "Changes how much ammo Standard stashes give you. Which calibers can appear still follows vanilla progression.",
+      "description": "Changes how much ammo Standard stashes give you. Which calibers can appear still follows vanilla progression. Mirrored from the single AMMO AMOUNT slider (loot.cheapStashAmmoQuantity).",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -7861,7 +7861,7 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Rare Stash Ammo",
-      "description": "Changes how much ammo Rare stashes give you. Vanilla rarity, progression and ammo-type selection remain unchanged; only the amount found changes.",
+      "description": "Changes how much ammo Rare stashes give you. Vanilla rarity, progression and ammo-type selection remain unchanged; only the amount found changes. Mirrored from the single AMMO AMOUNT slider (loot.cheapStashAmmoQuantity).",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -8084,11 +8084,11 @@
       },
       "exposeInUi": true,
       "label": "Standard Medical Chance",
-      "description": "Source-native Bandage and Medkit source Chance entries, originally 40%/100% across branches. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
+      "description": "Source-native Bandage and Medkit source Chance entries, originally 40%/100% across branches. Its ADJUST ODDS cell keeps X% of these authored chances; ODDS PER STASH shows the result. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
         "max": 1,
-        "step": 0.01,
+        "step": 0.05,
         "stepMode": "absolute"
       },
       "targets": [
@@ -8130,11 +8130,11 @@
       },
       "exposeInUi": true,
       "label": "Standard Drinks Chance",
-      "description": "Source-native Vodka and Energetic source Chance entries, originally 50%/100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
+      "description": "Source-native Vodka and Energetic source Chance entries, originally 50%/100%. Its ADJUST ODDS cell keeps X% of these authored chances; ODDS PER STASH shows the result. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
         "max": 1,
-        "step": 0.01,
+        "step": 0.05,
         "stepMode": "absolute"
       },
       "targets": [
@@ -8176,11 +8176,11 @@
       },
       "exposeInUi": true,
       "label": "Standard Coupon Chance",
-      "description": "Source-native Rank-gated coupon reward source Chance, originally 10%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
+      "description": "Source-native Rank-gated coupon reward source Chance, originally 10%. Its ADJUST ODDS cell keeps X% of these authored chances; ODDS PER STASH shows the result. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
         "max": 1,
-        "step": 0.01,
+        "step": 0.05,
         "stepMode": "absolute"
       },
       "targets": [
@@ -8216,17 +8216,17 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "Scales only authored per-item Chance rows in this regular stash tier; original entry-specific Chance fields and rank/difficulty eligibility remain distinct.",
-          "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
+          "Chance rows are scaled; Weight lists keep their own mix and get a native Empty pick with the removed share.",
+          "Vanilla 100% writes nothing. Empty next to real items needs the in-game check (RELEASE-TESTING.md, Stash presence)."
         ]
       },
       "exposeInUi": true,
       "label": "Rare Ammo Chance",
-      "description": "Source-native Newbie ammo Chance entries, originally 50%/100%; other ranks use Weight and remain unaffected. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
+      "description": "Rare AMMO cell: keeps X% of the game's odds for ammo in Rare stashes. Scales the early-game (Newbie) ammo Chance rows, originally 50%/100%, and thins the Weight-picked ammo lists of the other ranks with an appended native Empty pick. ODDS PER STASH shows the result.",
       "slider": {
         "min": 0,
         "max": 1,
-        "step": 0.01,
+        "step": 0.05,
         "stepMode": "absolute"
       },
       "targets": [
@@ -8239,7 +8239,7 @@
         }
       ],
       "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
-      "interaction": "Affects eligible Rare stash ammo only. Availability, selection priority and stack size remain separate.",
+      "interaction": "Affects Rare stash ammo only. Ammo amount (AMMO AMOUNT) stays separate.",
       "rationale": "How often Rare stashes have ammo. Vanilla: 100% = the game's odds. Lower it and both the early-game ammo rolls and the regular Rare ammo picks come up empty more often (a native Empty pick is added). 0% = no ammo from Rare stashes."
     },
     {
@@ -8268,11 +8268,11 @@
       },
       "exposeInUi": true,
       "label": "Rare Medical Chance",
-      "description": "Source-native Bandage, Medkit, AntiRad and ArmyMedkit source Chance entries, originally 100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
+      "description": "Source-native Bandage, Medkit, AntiRad and ArmyMedkit source Chance entries, originally 100%. Its ADJUST ODDS cell keeps X% of these authored chances; ODDS PER STASH shows the result. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
         "max": 1,
-        "step": 0.01,
+        "step": 0.05,
         "stepMode": "absolute"
       },
       "targets": [
@@ -8314,11 +8314,11 @@
       },
       "exposeInUi": true,
       "label": "Rare Food Chance",
-      "description": "Source-native CannedFood source Chance, originally 100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
+      "description": "Source-native CannedFood source Chance, originally 100%. Its ADJUST ODDS cell keeps X% of these authored chances; ODDS PER STASH shows the result. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
         "max": 1,
-        "step": 0.01,
+        "step": 0.05,
         "stepMode": "absolute"
       },
       "targets": [
@@ -8360,11 +8360,11 @@
       },
       "exposeInUi": true,
       "label": "Rare Drinks Chance",
-      "description": "Source-native Energetic source Chance, originally 100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
+      "description": "Source-native Energetic source Chance, originally 100%. Its ADJUST ODDS cell keeps X% of these authored chances; ODDS PER STASH shows the result. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
         "max": 1,
-        "step": 0.01,
+        "step": 0.05,
         "stepMode": "absolute"
       },
       "targets": [
@@ -8406,11 +8406,11 @@
       },
       "exposeInUi": true,
       "label": "Rare Grenade Chance",
-      "description": "Source-native RGD-5 source Chance, originally 100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
+      "description": "Source-native RGD-5 source Chance, originally 100%. Its ADJUST ODDS cell keeps X% of these authored chances; ODDS PER STASH shows the result. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
         "max": 1,
-        "step": 0.01,
+        "step": 0.05,
         "stepMode": "absolute"
       },
       "targets": [
@@ -8451,7 +8451,7 @@
       "slider": {
         "min": 0,
         "max": 1,
-        "step": 0.01
+        "step": 0.05
       },
       "targets": [
         {

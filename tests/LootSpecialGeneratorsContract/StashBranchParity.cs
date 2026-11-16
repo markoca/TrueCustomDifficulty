@@ -226,8 +226,9 @@ internal static partial class Program
                 Changes: new Dictionary<string, double>
                 {
                     ["loot.stashMixMedical"] = .5,
-                    ["loot.stashMedicalMedkitBias"] = 0,
-                    ["loot.stashMedicalArmyMedkitBias"] = 2,
+                    // MEDICAL COMPOSITION cells (ChanceScale, mirrored to Bias).
+                    ["loot.stashMedicalMedkitChanceScale"] = 0,
+                    ["loot.stashMedicalArmyMedkitChanceScale"] = .5,
                     ["loot.cheapStashGrenadeChance"] = .8,
                     ["loot.stashMixGrenades"] = .5,
                     ["loot.expensiveStashMoneyChance"] = .6,
@@ -276,7 +277,12 @@ internal static partial class Program
             var modified = vm.AllParameters
                 .Where(p => p.IsValueModifiedFromReference())
                 .Select(p => p.Id).ToArray();
-            Check(modified.ToHashSet(StringComparer.Ordinal).SetEquals(changes.Keys),
+            // Medical ChanceScale cells mirror into their Bias value.
+            var expectedModified = changes.Keys.Concat(changes.Keys
+                .Where(id => id.StartsWith("loot.stashMedical", StringComparison.Ordinal)
+                    && id.EndsWith("ChanceScale", StringComparison.Ordinal))
+                .Select(id => id[..^"ChanceScale".Length] + "Bias"));
+            Check(modified.ToHashSet(StringComparer.Ordinal).SetEquals(expectedModified),
                 name + ": collateral source changes in parity fixture");
             var snapshot = new StashEffectiveState(vm.AllParameters, modified,
                 Catalog.DifficultyProfiles[difficulty].Sid);

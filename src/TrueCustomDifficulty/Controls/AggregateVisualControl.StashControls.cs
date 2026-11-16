@@ -11,7 +11,9 @@ namespace TrueCustomDifficulty.Controls;
 // STASH LOOT MIX controls laid out exactly like ODDS PER STASH: one row per
 // category, one column per tier. Each cell holds the single control that moves
 // that odds cell (catalog parameter or presence sidecar); "—" where the game
-// has no such loot in that tier.
+// has no such loot in that tier. Every cell keeps X% of the game's odds except
+// the two tagged CHANCE cells (Basic RGD-5, Rare coupons), which are the real
+// per-stash chance. All cells move in 5% steps.
 public sealed partial class AggregateVisualControl
 {
     public static readonly DependencyProperty StashPresenceProperty =
@@ -52,15 +54,19 @@ public sealed partial class AggregateVisualControl
         { "loot.stashMixCoupons", "loot.mediumStashCouponsChance", "loot.expensiveStashMoneyChance" }
     };
 
+    // Two cells are a real per-stash chance, not a share of game odds.
+    private static bool IsStashAbsoluteChanceId(string id)
+        => id is "loot.cheapStashGrenadeChance" or "loot.expensiveStashMoneyChance";
+
     private static bool IsStashPresenceId(string id)
         => id.StartsWith("stashPresence.", StringComparison.Ordinal);
 
     private static string StashControlHint(string id) => id switch
     {
-        "loot.cheapStashGrenadeChance" or "loot.expensiveStashMoneyChance"
-            => "Real chance per stash. Drag to set it.",
+        _ when IsStashAbsoluteChanceId(id)
+            => "CHANCE: the real chance per stash (not a share of game odds). The grey tick is the game's value.",
         "loot.stashMixMedical" or "loot.stashMixFood" or "loot.stashMixDrinks" or "loot.stashMixCoupons"
-            => "How much of the game's odds you keep in Basic stashes; the rest becomes an empty pick, so other items are not affected. 100% = game odds, 0% = never.",
+            => "How much of the game's odds you keep in Basic stashes and smart world stashes. Other items are not affected. 100% = game odds, 0% = never.",
         _ when IsStashPresenceId(id)
             => "How often this stash pick gives anything. 100% = game odds, 0% = never.",
         _ => "How much of the game's own odds you keep. 100% = game odds, 0% = never."
@@ -78,7 +84,7 @@ public sealed partial class AggregateVisualControl
             new Pen(CloneWithOpacity(border, .61), .9), outer, 4.0, 4.0);
         dc.DrawText(CreateText("ADJUST ODDS", 11.4, text, FontWeights.Bold),
             new Point(outer.Left + 12.0, outer.Top + 8.0));
-        DrawRightAlignedText(dc, "100% = GAME ODDS",
+        DrawRightAlignedText(dc, "100% = GAME ODDS · CHANCE = REAL %",
             new Point(outer.Right - 12.0, outer.Top + 9.0),
             9.4, muted, FontWeights.SemiBold);
 
@@ -135,8 +141,16 @@ public sealed partial class AggregateVisualControl
         _stashChanceTooltipAreas.Add((cell, StashControlHint(id)));
 
         const double numberWidth = 40.0;
-        var rail = new Rect(cell.Left + 9.0, cell.Top + cell.Height / 2.0 - 1.5,
-            Math.Max(1.0, cell.Width - numberWidth - 16.0), 3.0);
+        // Absolute chance cells carry a quiet CHANCE tag before the rail.
+        var tagWidth = 0.0;
+        if (!sidecar && IsStashAbsoluteChanceId(id))
+        {
+            var tag = CreateText("CHANCE", 8.4, muted, FontWeights.Bold);
+            dc.DrawText(tag, new Point(cell.Left + 8.0, cell.Top + (cell.Height - tag.Height) / 2.0));
+            tagWidth = tag.WidthIncludingTrailingWhitespace + 6.0;
+        }
+        var rail = new Rect(cell.Left + 9.0 + tagWidth, cell.Top + cell.Height / 2.0 - 1.5,
+            Math.Max(1.0, cell.Width - numberWidth - 16.0 - tagWidth), 3.0);
         var tone = StashMixPalette[kind];
         double X(double v) => rail.Left + rail.Width
             * Math.Clamp((v - minimum) / Math.Max(Epsilon, maximum - minimum), 0.0, 1.0);

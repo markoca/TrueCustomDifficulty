@@ -469,10 +469,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             _cardHover.DrawHover(dc);
     }
 
-
-
-
-
     private void DrawHoveredHandle(DrawingContext dc, Brush accent)
     {
         var target = _hoverTarget;
@@ -1239,7 +1235,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             && parameter.Id == "loot.npcWeaponAmmoSupply"
             && !NpcBonusPackageSelected();
 
-
     // The native mod sidecar is not a ParameterViewModel: the checkbox and
     // percentage stay separate optional preset fields with no fake CFG source.
     // Its dial shares the exact compact 270-degree chrome of the two native
@@ -1291,7 +1286,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         if (P("loot.npcCorpseBonus") is { } anchor)
             RaiseParameterSelected(anchor);
     }
-
 
     // Identical geometry is used by OnRender and MeasureOverride.
     // Three tiers inside one centered, width-capped column:
@@ -1380,7 +1374,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
     private double NpcLootBoardHeight(double width)
         => CurrentNpcLootLayout(width).Height;
-
 
     private const double NpcCompactDialRadius = 25.0;
 
@@ -2494,8 +2487,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     // their staged values and remain non-interactive until enabled.
     private static Brush MasterDisabledInk(Brush text) => CloneWithOpacity(text, 0.70);
 
-
-
     private static double MasterConditionalHeight(double width) => 298.0;
     // The three healing modifiers share one aligned 0–200% bank at every width.
     private const double MasterMedicalBankTop = 103.0;
@@ -2614,7 +2605,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             new Point(track.Right, card.Top + 59.0),
             9.1, muted, FontWeights.Normal);
     }
-
 
     private static string MasterPercent(double value) => $"{value * 100:0.#}%";
     private static string MasterPositivePercent(double value) => $"+{value * 100:0.#}%";
@@ -3482,8 +3472,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         dc.DrawText(formatted, new Point(
             centerX - formatted.WidthIncludingTrailingWhitespace / 2.0, 83.0));
     }
-
-
 
     private void DrawEquipmentWearBalance(
         DrawingContext dc, Brush text, Brush muted, Brush border, Brush soft,
@@ -5219,8 +5207,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             text, muted, border, accent, panel);
     }
 
-    private const double StashBasicTitleHeight = 30.0;
-
     // Native selectors are separate sources: Chance is never a normalized
     // four-medical-item share; Weight only competes within each actual group.
     private static bool IsMedicalPriorityWeight(ParameterViewModel parameter)
@@ -5384,107 +5370,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             hovered ? 1.8 : 1.4), new Point(X(parameter.CurrentNumber), cy), 4.5, 4.5);
         AddHorizontalTarget(parameter, new Rect(rail.Left - 6.0, cell.Top + 20.0,
             rail.Width + 12.0, cell.Height - 20.0), rail, parameter.Minimum, parameter.Maximum);
-    }
-
-    // Show the original Veteran source pair only; no rank selector or blended rank odds.
-    private void DrawStashMedicalPairShares(
-        DrawingContext dc, Rect outer, Brush text,
-        Brush border, Brush panel)
-    {
-        var state = CurrentStashEffectiveState();
-        var groups = StashSourceGroups.Value
-            .Where(g => g.IsSmart && g.Prototype == "StashMedicine_Smart"
-                && g.Field == "Weight" && g.RankIndex == 2
-                && g.Items.Count == 2
-                && g.Items.Any(i => i.ItemSid == "Medkit")
-                && g.Items.Any(i => i.ItemSid == "ArmyMedkit"))
-            .ToArray();
-        if (groups.Length != 1)
-            throw new InvalidDataException("Native Veteran Medkit/ArmyMedkit pair drifted.");
-
-        var group = groups[0];
-        double Weight(string sid) => StashEffectiveState.Number(
-            group.EffectiveSelection(StashPreviewBaseline.Value, state,
-                group.Items.Single(item => item.ItemSid == sid)));
-        var medkit = Math.Max(0.0, Weight("Medkit"));
-        var army = Math.Max(0.0, Weight("ArmyMedkit"));
-        var total = medkit + army;
-        var medkitShare = total > Epsilon ? medkit / total : 0.0;
-
-        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .52),
-            new Pen(CloneWithOpacity(border, .60), .8), outer, 3.0, 3.0);
-        DrawText(dc, "EFFECTIVE PICK",
-            new Point(outer.Left + 9.0, outer.Top + 6.0),
-            9.4, text, FontWeights.Bold);
-        var rail = new Rect(outer.Left + 9.0, outer.Top + 28.0,
-            Math.Max(1.0, outer.Width - 18.0), 11.0);
-        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(border, .50), null,
-            rail, 2.0, 2.0);
-        if (total > Epsilon)
-        {
-            var split = rail.Width * medkitShare;
-            if (split > Epsilon)
-                dc.DrawRectangle(StashMedicalPalette[1], null,
-                    new Rect(rail.Left, rail.Top, split, rail.Height));
-            if (rail.Width - split > Epsilon)
-                dc.DrawRectangle(StashMedicalPalette[2], null,
-                    new Rect(rail.Left + split, rail.Top,
-                        rail.Width - split, rail.Height));
-        }
-        DrawText(dc, total <= Epsilon ? "MEDKITS  OFF" :
-                $"MEDKITS  {medkitShare * 100.0:0.#}%",
-            new Point(outer.Left + 9.0, outer.Top + 42.0),
-            9.1, StashMedicalPalette[1], FontWeights.SemiBold);
-        DrawRightAlignedText(dc, total <= Epsilon ? "ARMY  OFF" :
-                $"ARMY  {(1.0 - medkitShare) * 100.0:0.#}%",
-            new Point(outer.Right - 9.0, outer.Top + 42.0),
-            9.1, StashMedicalPalette[2], FontWeights.SemiBold);
-    }
-
-    // All audited native Anti-Rad Weight rows are solo SmartLoot groups.
-    // The two-state UI intentionally writes ONLY 0 or 1, preserving the
-    // existing numeric backend ID and any untouched legacy preset values.
-    // Its separate native Chance source remains wholly independent.
-    private void DrawStashAntiRadWeightSwitch(
-        DrawingContext dc, Rect card, Brush text, Brush muted,
-        Brush border, Brush accent, Brush panel)
-    {
-        var p = P("loot.stashMedicalAntiRadBias");
-        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .58),
-            new Pen(CloneWithOpacity(border, .68), .9), card, 3.0, 3.0);
-        var enabled = p?.IsControlEnabled == true;
-        DrawText(dc, "ANTI-RAD · PRIORITY",
-            new Point(card.Left + 10.0, card.Top + 5.0), 9.4,
-            enabled ? text : muted, FontWeights.SemiBold);
-        if (p is null) return;
-        var on = p.CurrentNumber > Epsilon;
-        var cellWidth = Math.Min(65.0, (card.Width - 20.0) / 2.0);
-        var x = card.Left + (card.Width - 2.0 * cellWidth) / 2.0;
-        for (var i = 0; i < 2; i++)
-        {
-            var value = i == 0 ? 0.0 : 1.0;
-            var selected = i == (on ? 1 : 0);
-            var rect = new Rect(x + i * cellWidth, card.Top + 24.0, cellWidth, 25.0);
-            var hovered = enabled && _hoverTarget?.Kind == HitKind.Horizontal
-                && ReferenceEquals(_hoverTarget.Parameter, p)
-                && Math.Abs(_hoverTarget.VisualMinimum - value) < Epsilon;
-            // Highlight only the hovered button rectangle, not a circular
-            // halo projected from this source's 0/1 numeric value.
-            dc.DrawTrackedRoundedRectangle(
-                selected ? CloneWithOpacity(StashMedicalPalette[3], .2) :
-                    hovered ? CloneWithOpacity(StashMedicalPalette[3], .10) :
-                    CloneWithOpacity(panel, .38),
-                new Pen(hovered ? Brushes.White : selected ? StashMedicalPalette[3] :
-                    CloneWithOpacity(border, .7), hovered ? 1.6 : .9),
-                rect, 3.0, 3.0);
-            DrawCenteredText(dc, i == 0 ? "OFF" : "ON",
-                new Point(rect.Left + rect.Width / 2.0, rect.Top + 4.0),
-                10.1, enabled ? text : muted, FontWeights.SemiBold);
-            AddHorizontalTarget(p, rect, rect, value, value);
-        }
-        // A hidden 2× value from a legacy preset is treated as ON,
-        // without altering it until the user actually operates this switch.
-        // Two-state selection and hover borders are sufficient; no gold dot.
     }
 
     // Two native source values on one shared range rail like dropped weapon
@@ -5832,19 +5717,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private static readonly Lazy<CfgWriterBaseline> StashPreviewBaseline =
         new(() => new CfgWriterBaselineService().Load());
 
-    private static CfgWriterCheapStashCategory? StashPreviewGroup(string tier, int index)
-    {
-        var sources = StashPreviewBaseline.Value.Special;
-        var groups = tier switch
-        {
-            "BASIC" => sources.CheapStashProduction.TemplateCategories,
-            "STANDARD" => sources.MediumStashAmmoProduction.TemplateCategories,
-            "RARE" => sources.ExpensiveStashProduction.TemplateCategories,
-            _ => null
-        };
-        return groups?.FirstOrDefault(g => g.Node == $"[{index}]");
-    }
-
     // Same immutable numeric snapshot as the actual CFG patch writer.
     // Preview sample is explicitly Easy for difficulty-gated Rare Coupons;
     // the branch selector for all difficulty/rank variants comes in Phase 4.
@@ -5856,201 +5728,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         return new StashEffectiveState(sources,
             sources.Where(p => p.IsValueModifiedFromReference()).Select(p => p.Id),
             difficultySid).WithValues(StashPresence?.Values);
-    }
-
-    private void DrawStashPoolBar(
-        DrawingContext dc, CfgWriterCheapStashCategory? group,
-        string caption, Rect row, Brush text, Brush muted, Brush border,
-        string? rankCaption = null)
-    {
-        if (group is null) return;
-        // Same rule as writer and ODDS: kept Weight per kind plus the
-        // appended Empty ("nothing") pick, against the unchanged list total.
-        var totals = new double[6];
-        var emptyShare = 0.0;
-        var edit = CurrentStashEffectiveState(StashDifficultySid())
-            .WeightListEdit(StashPreviewBaseline.Value, "Cheap", group);
-        for (var i = 0; i < group.Items.Count; i++)
-        {
-            var item = group.Items[i];
-            if (!item.Fields.TryGetValue("Weight", out var raw)
-                || !item.Fields.TryGetValue("ItemPrototypeSID", out var sid))
-                continue;
-            var category = StashCategoryIndex(sid);
-            if (category >= 0)
-                totals[category] += edit is { } e ? e.Values[i] : StashEffectiveState.Number(raw);
-        }
-        if (edit is { } withEmpty)
-            emptyShare = withEmpty.EmptyValue;
-        var total = totals.Sum() + emptyShare;
-        // Difficulty and player rank are independent authored CFG gates.
-        var captionSize = row.Width < 440.0 ? 9.6 : 10.8;
-        if (string.IsNullOrWhiteSpace(caption))
-        {
-            // The sole Basic preview has no rank caption; leave no blank label row.
-        }
-        else if (rankCaption is null)
-            DrawText(dc, caption, new Point(row.Left, row.Top), captionSize,
-                text, FontWeights.SemiBold);
-        else
-        {
-            var secondary = CreateText(rankCaption, row.Width < 440.0 ? 9.0 : 9.8,
-                muted, FontWeights.SemiBold, Math.Max(1.0, row.Width * .46));
-            var rightX = row.Right - secondary.WidthIncludingTrailingWhitespace;
-            dc.DrawText(CreateText(caption, captionSize, text,
-                    FontWeights.SemiBold, Math.Max(1.0, rightX - row.Left - 8.0)),
-                new Point(row.Left, row.Top));
-            dc.DrawText(secondary, new Point(rightX, row.Top));
-        }
-        var compactOffset = string.IsNullOrWhiteSpace(caption) ? -8.0 : 0.0;
-        var bar = new Rect(row.Left, row.Top + 15.0 + compactOffset, row.Width, 11.0);
-        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(border, .28), null,
-            bar, 2.0, 2.0);
-        var labels = new[] { "AMMO", "MEDICAL", "FOOD", "DRINKS", "GRENADES", "COUPONS" };
-        var cursor = bar.Left;
-        for (var i = 0; i < totals.Length; i++)
-        {
-            var fraction = total > Epsilon ? totals[i] / total : 0.0;
-            var span = bar.Width * fraction;
-            if (span > Epsilon)
-                dc.DrawRectangle(StashMixPalette[i], null,
-                    new Rect(cursor, bar.Top, span, bar.Height));
-            cursor += span;
-        }
-        // The Empty pick stays as the unfilled (track-coloured) remainder.
-        // Only categories with a native member in THIS exact source pool
-        // belong in the legend. Disabled members retain their 0% label.
-        var present = group.Items
-            .Select(x => x.Fields.TryGetValue("ItemPrototypeSID", out var sid)
-                ? StashCategoryIndex(sid) : -1)
-            .Where(x => x >= 0).Distinct().OrderBy(x => x).ToArray();
-        var slots = present.Length + (emptyShare > Epsilon ? 1 : 0);
-        if (emptyShare > Epsilon)
-        {
-            var x = row.Left + present.Length * row.Width / slots;
-            var slot = row.Width / slots;
-            dc.DrawRectangle(CloneWithOpacity(border, .55), null,
-                new Rect(x, row.Top + 31.0 + compactOffset, 7.0, 7.0));
-            DrawText(dc, "NOTHING", new Point(x + 10.0, row.Top + 28.0 + compactOffset),
-                row.Width >= 580.0 ? 10.0 : 8.9, muted, FontWeights.SemiBold);
-            DrawRightAlignedText(dc, $"{emptyShare * 100.0 / total:0.#}%",
-                new Point(x + slot - 3.0, row.Top + 28.0 + compactOffset),
-                row.Width >= 580.0 ? 10.1 : 9.1, muted, FontWeights.SemiBold);
-        }
-        for (var col = 0; col < present.Length; col++)
-        {
-            var kind = present[col];
-            var x = row.Left + col * row.Width / slots;
-            var slot = row.Width / slots;
-            dc.DrawRectangle(StashMixPalette[kind], null,
-                new Rect(x, row.Top + 31.0 + compactOffset, 7.0, 7.0));
-            // Larger captions on a wide editor, compact labels on narrow screens.
-            var legendSize = row.Width >= 580.0 ? 10.0 : 8.9;
-            DrawText(dc, labels[kind], new Point(x + 10.0, row.Top + 28.0 + compactOffset),
-                legendSize, text, FontWeights.SemiBold);
-            var share = total > Epsilon ? totals[kind] * 100.0 / total : 0.0;
-            DrawRightAlignedText(dc, $"{share:0.#}%",
-                new Point(x + slot - 3.0, row.Top + 28.0 + compactOffset),
-                row.Width >= 580.0 ? 10.1 : 9.1,
-                muted, FontWeights.SemiBold);
-        }
-    }
-
-    private static CfgWriterCheapStashItem? StashChanceSample(
-        string tier, int groupIndex, string expectedSid)
-    {
-        var group = StashPreviewGroup(tier, groupIndex);
-        return group?.Items.FirstOrDefault(x =>
-            x.Fields.TryGetValue("ItemPrototypeSID", out var sid)
-            && sid == expectedSid && x.Fields.ContainsKey("Chance"));
-    }
-
-    private void DrawStashChanceSample(
-        DrawingContext dc, string tier, int groupIndex, string sid,
-        string label, Rect cell, Brush text, Brush muted, Brush border)
-    {
-        var source = StashChanceSample(tier, groupIndex, sid);
-        if (source is null) return;
-        var kind = StashCategoryIndex(sid);
-        if (kind < 0) return;
-        var category = StashPreviewGroup(tier, groupIndex)!;
-        var effective = CurrentStashEffectiveState();
-        var tierName = tier switch
-        {
-            "BASIC" => "Cheap", "STANDARD" => "Medium",
-            "RARE" => "Expensive",
-            _ => throw new InvalidDataException("Invalid preview tier " + tier)
-        };
-        // Production tier writer calls TierField for this very category/item.
-        // Includes special RGD-5 and difficulty-gated Rare Coupons bonuses.
-        var chance = StashEffectiveState.Number(effective.TierField(
-            StashPreviewBaseline.Value, tierName, category, source, "Chance"));
-        DrawText(dc, label, new Point(cell.Left + 1.0, cell.Top),
-            9.4, text, FontWeights.SemiBold);
-        DrawRightAlignedText(dc, $"{chance * 100.0:0.#}%",
-            new Point(cell.Right - 1.0, cell.Top), 9.6,
-            muted, FontWeights.SemiBold);
-        var line = new Rect(cell.Left + 1.0, cell.Top + 17.0,
-            Math.Max(1.0, cell.Width - 2.0), 6.0);
-        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(border, .25),
-            null, line, 2.0, 2.0);
-        if (chance > Epsilon)
-            dc.DrawTrackedRoundedRectangle(StashMixPalette[kind], null,
-                new Rect(line.Left, line.Top, chance * line.Width, line.Height),
-                2.0, 2.0);
-    }
-
-    private void DrawStashSourcePreview(
-        DrawingContext dc, Rect card, Brush text, Brush muted,
-        Brush border, Brush accent, Brush panel)
-    {
-        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .60),
-            new Pen(CloneWithOpacity(border, .66), .9), card, 4.0, 4.0);
-        DrawText(dc, "LOOT POOLS",
-            new Point(card.Left + 11.0, card.Top + 7.0),
-            10.4, text, FontWeights.Bold);
-        DrawRightAlignedText(dc, "WEIGHT ONLY WITHIN EACH POOL",
-            new Point(card.Right - 11.0, card.Top + 7.0),
-            8.9, muted, FontWeights.SemiBold);
-        var inner = new Rect(card.Left + 12.0, card.Top + 27.0,
-            Math.Max(1.0, card.Width - 24.0), 48.0);
-        DrawStashPoolBar(dc, StashPreviewGroup("BASIC", 7),
-            "BASIC / EASY+MEDIUM / EXPERIENCED / CONSUMABLE",
-            inner, text, muted, border);
-        DrawStashPoolBar(dc, StashPreviewGroup("BASIC", 1),
-            "BASIC / HARD / CONSUMABLE",
-            new Rect(inner.Left, inner.Top + 57.0, inner.Width, inner.Height),
-            text, muted, border);
-        DrawText(dc, "SOURCE CHANCE FIELDS",
-            new Point(inner.Left, card.Top + 146.0),
-            10.0, text, FontWeights.Bold);
-        DrawRightAlignedText(dc, "NATIVE CHANCE · INDEPENDENT",
-            new Point(inner.Right, card.Top + 146.0),
-            8.6, muted, FontWeights.SemiBold);
-        var samples = new (string Tier, int Group, string Sid, string Label)[]
-        {
-            ("RARE", 1, "A918A", "AMMO · RARE"),
-            ("BASIC", 0, "Bandage", "MEDICAL · BASIC"),
-            ("RARE", 0, "CannedFood", "FOOD · RARE"),
-            ("BASIC", 0, "Vodka", "DRINKS · BASIC"),
-            ("BASIC", 5, "GrenadeRGD5", "GRENADES · BASIC"),
-            ("RARE", 11, "MoneyCommon", "COUPONS · RARE EASY")
-        };
-        var columns = ActualWidth >= 700.0 ? 3 : 2;
-        var gap = 13.0;
-        var cellWidth = (inner.Width - (columns - 1) * gap) / columns;
-        for (var i = 0; i < samples.Length; i++)
-        {
-            var sample = samples[i];
-            DrawStashChanceSample(dc, sample.Tier, sample.Group,
-                sample.Sid, sample.Label,
-                new Rect(inner.Left + (i % columns) * (cellWidth + gap),
-                    card.Top + 165.0 + (i / columns) * 32.0,
-                    cellWidth, 27.0), text, muted, border);
-        }
-        DrawText(dc, "Easy-tier examples; not whole-stash drop probability.",
-            new Point(inner.Left, card.Bottom - 19.0),
-            9.0, muted, FontWeights.Normal);
     }
 
     // Same value alignment and changed-digit-only gold rule on ALL Stashes
@@ -6371,10 +6048,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private const double HungerFoodMaxGridWidth = 740.0;
     private const double CompactRowGap = 8.0;
     private const double CompactColumnGap = 10.0;
-
-
-
-
 
     // Compact form of the shared native 270-degree knob: same editable
     // ParameterViewModel and HitKind.Knob angle mapping, with a smaller ring.
@@ -6808,7 +6481,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         _hitTargets.Add(new HitTarget(parameter, hitRect, hitRect, HitKind.Toggle, 0.0, 1.0, false));
     }
-
 
     private void AddRangeTarget(ParameterViewModel parameter, Rect hitRect, Rect mapRect, HitKind kind)
     {
@@ -8207,7 +7879,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         return SurvivalPrimaryPreviewTop + FatigueCombatInset +
             FatigueCombatGraphHeight + 12.0;
     }
-
 
     private static double ConsumableMedicineKnobTop(double width)
         => ConsumableDurationTop + ConsumableTimelineHeight(width) + 14.0;

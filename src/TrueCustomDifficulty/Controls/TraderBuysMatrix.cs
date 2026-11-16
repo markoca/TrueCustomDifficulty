@@ -138,7 +138,7 @@ public sealed class TraderBuysMatrix : UserControl
         root.Children.Add(Text("TRADER STOCK", 13, accent));
         root.Children.Add(new TextBlock
         {
-            Text = "100% = game odds  ·  0% removes the category",
+            Text = "100% = GAME ODDS  ·  0% = REMOVED",
             Foreground = muted, FontSize = 10, Margin = new Thickness(0, 4, 0, 10)
         });
         _roles = new StackPanel { Orientation = Orientation.Horizontal };

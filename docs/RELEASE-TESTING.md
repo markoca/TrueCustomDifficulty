@@ -717,6 +717,8 @@ After building with Basic AMMO, Basic MEDS, Basic DRINKS or Standard AMMO in ADJ
 
 With Basic MEDS at 0% on Veteran, Basic stashes must still give food/milk exactly as often as before (the bandage share becomes nothing, not extra food).
 
+With Basic MEDS and Basic DRINKS at 0% on **Novice** (Basic Chance rows Bandage/Medkit/Vodka at 100% in vanilla), Basic stashes must give no bandages, medkits or vodka. In the patch those rows carry `Chance = 0` in the TCD Basic template clones. Basic GRENADES and Rare COUPONS are CHANCE cells: 30% on Basic GRENADES means roughly 3 of 10 Basic stashes hold the RGD-5.
+
 
 ## Trader stock odds and supply — in-game check
 
