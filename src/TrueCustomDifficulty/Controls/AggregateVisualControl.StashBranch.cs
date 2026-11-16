@@ -135,7 +135,7 @@ public sealed partial class AggregateVisualControl
         var tone = StashMixPalette[category];
         var x = card.Left;
         var y = card.Top;
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .54),
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .54),
             new Pen(CloneWithOpacity(border, .52), .8), card, 3.0, 3.0);
         dc.DrawRectangle(tone, null, new Rect(x + 6.0, y + 7.0, 3.0, 13.0));
         dc.DrawText(CreateText(label, 10.0,
@@ -243,7 +243,7 @@ public sealed partial class AggregateVisualControl
         const double cardHeight = 146.0;
         var cardWidth = Math.Max(1.0,
             (outer.Width - 2.0 * inset - (columns - 1) * gap) / columns);
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .72),
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .72),
             new Pen(CloneWithOpacity(border, .68), 1.0), outer, 4.0, 4.0);
 
         for (var i = 0; i < BasicVisibleWeightKinds.Length; i++)
@@ -278,7 +278,7 @@ public sealed partial class AggregateVisualControl
                 item.Fields["ItemPrototypeSID"]) is not (1 or 2 or 3)))
             throw new InvalidDataException(
                 "Veteran Basic source Weight categories changed.");
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .66),
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .66),
             new Pen(CloneWithOpacity(border, .66), .9), outer, 4.0, 4.0);
         DrawText(dc, "BASIC · LOOT PREVIEW",
             new Point(outer.Left + 12.0, outer.Top + 3.0),
@@ -336,7 +336,7 @@ public sealed partial class AggregateVisualControl
             : new[] { 0, 1, 2, 3, 4, 5 };
         if (!chanceKinds.SequenceEqual(required))
             throw new InvalidDataException("Tier Chance category mapping drift");
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .65),
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .65),
             new Pen(CloneWithOpacity(border, .61), .9), outer, 4.0, 4.0);
         dc.DrawText(CreateText(label, 11.4, text, FontWeights.Bold),
             new Point(outer.Left + 12.0, outer.Top + 8.0));
@@ -378,7 +378,7 @@ public sealed partial class AggregateVisualControl
             // The card itself owns a brief contextual tooltip on hover.
             _stashChanceTooltipAreas.Add((cell, id == "loot.expensiveStashMoneyChance"));
             var tone = StashMixPalette[kind];
-            dc.DrawRoundedRectangle(CloneWithOpacity(panel, .5),
+            dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .5),
                 new Pen(CloneWithOpacity(tone, .75), .9), cell, 3.0, 3.0);
             dc.DrawRectangle(tone, null, new Rect(x + 6.0, y + 6.0, 3.0, 12.0));
             dc.DrawText(CreateText(GlobalStashCategoryNames[kind], 10.2, text,

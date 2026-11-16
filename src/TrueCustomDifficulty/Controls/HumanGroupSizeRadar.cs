@@ -18,6 +18,18 @@ namespace TrueCustomDifficulty.Controls;
 /// </summary>
 public sealed class HumanGroupSizeRadar : FrameworkElement
 {
+    // Shared white card hover (CardHoverTracker): cards drawn by the
+    // renderer are recorded and the hovered one is outlined on top.
+    private readonly CardHoverTracker _cardHover = new();
+
+    protected override void OnRender(DrawingContext dc)
+    {
+        using (_cardHover.BeginRender())
+            RenderCardContent(dc);
+        _cardHover.Finish(Array.Empty<Rect>(), RenderSize);
+        _cardHover.DrawHover(dc);
+    }
+
     private const double Epsilon = 0.000001;
     private const double MinimumMultiplier = 0.25;
     private const double MaximumMultiplier = 3.0;
@@ -117,7 +129,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
         }
     }
 
-    protected override void OnRender(DrawingContext dc)
+    private void RenderCardContent(DrawingContext dc)
     {
         base.OnRender(dc);
 
@@ -161,7 +173,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
             if (_parameters[i] is not { } parameter) continue;
             var center = left + (i + .5) * lane;
             var card = new Rect(left + i * lane + 4.0, 65.0, lane - 8.0, 268.0);
-            dc.DrawRoundedRectangle(CloneWithOpacity(panel, .35),
+            dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .35),
                 new Pen(CloneWithOpacity(border, .60), .8), card, 4, 4);
             var value = parameter.CurrentNumber;
             var currentY = bottom - (bottom - top) * Math.Clamp(value / maxAxis, 0, 1);
@@ -212,6 +224,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
 
     protected override void OnMouseMove(MouseEventArgs e)
     {
+        if (_cardHover.UpdateHover(e.GetPosition(this))) InvalidateVisual();
         base.OnMouseMove(e);
 
         var point = e.GetPosition(this);
@@ -234,6 +247,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
 
     protected override void OnMouseLeave(MouseEventArgs e)
     {
+        if (_cardHover.ClearHover()) InvalidateVisual();
         base.OnMouseLeave(e);
         if (_hoverRow < 0)
             return;

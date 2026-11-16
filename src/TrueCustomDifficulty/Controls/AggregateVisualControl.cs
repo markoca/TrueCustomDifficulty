@@ -336,6 +336,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     protected override void OnRender(DrawingContext dc)
     {
         base.OnRender(dc);
+        // Every card drawn below reports itself to the shared white-hover layer.
+        using var cardScope = _cardHover.BeginRender();
         _hitTargets.Clear();
         _stashChanceTooltipAreas.Clear();
 
@@ -459,6 +461,12 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // horizontal / vertical / range / choice handles and switch indicators.
         // Graph joint handles call the same helper at their derived coordinates.
         DrawHoveredHandle(dc, accent);
+
+        // NPC LOOT owns an explicit card layer (NpcLootCards); every other
+        // family uses the generic recorded cards.
+        _cardHover.Finish(_hitTargets.Select(target => target.HitRect), RenderSize);
+        if (Family != "NpcLootLoadout")
+            _cardHover.DrawHover(dc);
     }
 
 
@@ -644,7 +652,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawingContext dc, ParameterViewModel? coupons, Rect card,
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .62),
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .62),
             new Pen(border, .9), card, 4.0, 4.0);
         DrawText(dc, "STARTING COUPONS", new Point(card.Left + 12.0, card.Top + 8.0),
             10.2, text, FontWeights.Bold);
@@ -667,7 +675,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             coupons.Maximum, track, reverse: false);
         var referenceX = ValueToX(coupons.ReferenceNumber, coupons.Minimum,
             coupons.Maximum, track, reverse: false);
-        dc.DrawRoundedRectangle(CloneWithOpacity(border, .32), null, track, 3, 3);
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(border, .32), null, track, 3, 3);
         dc.DrawLine(new Pen(CloneWithOpacity(coupons.IsControlEnabled ? accent : muted, .8), 4.0),
             new Point(track.Left, y), new Point(x, y));
         for (var index = 0; index <= 4; index++)
@@ -768,7 +776,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawingContext dc, ParameterViewModel? parameter, string label, Rect card,
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
-        dc.DrawRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0);
+        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0);
         if (parameter is null)
         {
             dc.DrawText(CreateText(label, 10.0, text, FontWeights.Bold,
@@ -958,7 +966,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             yCenter - 9.0));
         dc.Pop();
 
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), plot, 4.0, 4.0);
+        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 1.0), plot, 4.0, 4.0);
         for (var i = 0; i <= 4; i++)
         {
             var xTick = movement.Minimum + (movement.Maximum - movement.Minimum) * i / 4.0;
@@ -1541,7 +1549,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             var selected = NpcCorpsePackages.Contains(corpse.CurrentText, optionValue);
             var hover = _hoverTarget?.Kind == HitKind.Choice
                 && Math.Abs(_hoverTarget.VisualMinimum - i) < Epsilon;
-            dc.DrawRoundedRectangle(
+            dc.DrawTrackedRoundedRectangle(
                 selected ? CloneWithOpacity(accent, 0.10) : panel,
                 new Pen(selected ? accent : hover ? CloneWithOpacity(accent, 0.7) : border,
                     selected ? 1.6 : 0.9), rect, 4.0, 4.0);
@@ -1617,7 +1625,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // This is a dual-ended native RANGE, not two normal slider
         // headers. Show the two editable figures together in the middle
         // of the card, immediately above their shared physical rail.
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
+        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 1.0),
             rangeCard, 4.0, 4.0);
         DrawText(dc, "WEAPON CONDITION",
             new Point(rangeCard.Left + 11.0, rangeCard.Top + 8.0),
@@ -1979,7 +1987,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         Rect card, Brush text, Brush muted, Brush border, Brush accent, Brush panel,
         bool vaultHeight)
     {
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.70),
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, 0.70),
             new Pen(border, 0.9), card, 4.0, 4.0);
         if (parameter is null)
             return;
@@ -2229,7 +2237,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // exactly the same native 0-100 fatigue-point domain.
         var profile = new Rect(17.0, previewTop, width,
             FatigueCombatInset + FatigueCombatGraphHeight);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), profile, 4.0, 4.0);
+        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 1.0), profile, 4.0, 4.0);
         DrawCenteredText(dc, "FATIGUE COMBAT PROFILE",
             new Point(profile.Left + profile.Width / 2.0, profile.Top + 18.0),
             11.5, accent, FontWeights.Bold);
@@ -2508,7 +2516,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         Brush text, Brush muted, Brush border, Brush soft,
         Brush accent, Brush panel)
     {
-        dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
+        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9),
             card, 4.0, 4.0);
         if (parameter is null)
         {
@@ -2726,7 +2734,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var bankWidth = Math.Min(680.0, Math.Max(1.0, ActualWidth - 34.0));
         var bank = new Rect((ActualWidth - bankWidth) / 2.0,
             MasterMedicalBankTop, bankWidth, MasterMedicalBankHeight);
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .78),
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .78),
             new Pen(border, .9), bank, 4.0, 4.0);
 
         var channels = new (string Id, string Label)[]
@@ -2767,7 +2775,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         Func<double, string> format, Rect card, Brush text, Brush muted,
         Brush border, Brush accent, Brush panel)
     {
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.60),
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, 0.60),
             new Pen(CloneWithOpacity(border, 0.85), 0.9), card, 4, 4);
         if (parameter is null)
             return;
@@ -2793,9 +2801,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             parameter.Minimum, parameter.Maximum, plot);
         var yBase = ValueToY(parameter.ReferenceNumber,
             parameter.Minimum, parameter.Maximum, plot);
-        dc.DrawRoundedRectangle(CloneWithOpacity(border, 0.26),
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(border, 0.26),
             new Pen(border, 0.8), plot, 3, 3);
-        dc.DrawRoundedRectangle(CloneWithOpacity(enabled ? accent : muted, 0.70),
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(enabled ? accent : muted, 0.70),
             null, new Rect(plot.Left + 2, yNow, plot.Width - 4,
                 Math.Max(0.0, plot.Bottom - yNow)), 2, 2);
         dc.DrawLine(new Pen(muted, 2.1),
@@ -3346,7 +3354,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawCenteredText(dc, "BALANCE EDITOR",
             new Point(profileLeft + profileWidth / 2.0, 102.0),
             9.7, muted, FontWeights.SemiBold);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), plot, 4.0, 4.0);
+        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 1.0), plot, 4.0, 4.0);
 
         // Keep axis names and real source ticks. The profile readouts explain
         // the current values, not another editable setting.
@@ -3491,7 +3499,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var bank = new Rect((ActualWidth - Math.Min(720.0, ActualWidth - 34.0)) / 2.0,
             Math.Max(52.0, (ActualHeight - 259.0) / 2.0),
             Math.Min(720.0, ActualWidth - 34.0), 259.0);
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.65),
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, 0.65),
             new Pen(border, 0.9), bank, 4, 4);
         var plot = new Rect(bank.Left + 56, bank.Top + 20,
             bank.Width - 84, 157.0);
@@ -3697,14 +3705,14 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // One seconds-space editor: five drink multipliers and three direct
         // medicine durations, each with its correct native seconds mapping.
         var preview = new Rect(17.0, previewTop, width, ConsumableTimelineHeight(ActualWidth));
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), preview, 4.0, 4.0);
+        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 1.0), preview, 4.0, 4.0);
         DrawText(dc, "EFFECT DURATION  /  SECONDS",
             new Point(preview.Left + 12.0, previewTop + 8.0),
             11.0, text, FontWeights.Bold);
         // This is a single UI range override, not a gameplay CFG toggle.
         // Keep the existing universal 20-DIP checkbox in a compact header cell.
         var overrideRect = new Rect(preview.Right - 190.0, previewTop + 6.0, 178.0, 28.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), overrideRect, 4.0, 4.0);
+        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 1.0), overrideRect, 4.0, 4.0);
         var checkboxRect = new Rect(
             overrideRect.Right - BooleanCheckboxChrome.Size - 8.0,
             overrideRect.Top + (overrideRect.Height - BooleanCheckboxChrome.Size) / 2.0,
@@ -3907,9 +3915,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 left + (effectsWidth - energyWidth) / 2.0,
             sideBySide ? top : waterGroup.Bottom + ConsumableEffectsGroupGap,
             energyWidth, ConsumableEffectsGroupHeight);
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .76),
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .76),
             new Pen(border, .9), waterGroup, 4.0, 4.0);
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .76),
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .76),
             new Pen(border, .9), energyGroup, 4.0, 4.0);
         DrawText(dc, "WATER", new Point(waterGroup.Left + 10.0, waterGroup.Top + 7.0),
             10.2, text, FontWeights.Bold);
@@ -4051,7 +4059,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         IndustrialChrome.DrawEngravedSeparator(dc, left + 8.0, left + width - 8.0,
             141.0, muted);
         var selector = new Rect(left, 146.0, width, 84.0);
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .72),
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .72),
             new Pen(border, .9), selector, 4, 4);
         DrawText(dc, "MINIMUM HOURS ASLEEP",
             new Point(left + 11, 154.0), 10.6, text, FontWeights.Bold);
@@ -4080,7 +4088,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             var hot = _hoverTarget?.Kind == HitKind.Horizontal
                 && ReferenceEquals(_hoverTarget.Parameter, minimumHours)
                 && _hoverTarget.HitRect.Equals(cell);
-            dc.DrawRoundedRectangle(
+            dc.DrawTrackedRoundedRectangle(
                 selected ? CloneWithOpacity(accent, .16) : panel,
                 new Pen(selected ? accent : hot ? CloneWithOpacity(accent, .72) : border,
                     selected ? 1.9 : 1.0), cell, 3, 3);
@@ -4126,7 +4134,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         Rect card, bool reverse, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.66),
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, 0.66),
             new Pen(border, 0.9), card, 4.0, 4.0);
         if (parameter is null)
             return;
@@ -4143,7 +4151,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var reference = ValueToX(parameter.ReferenceNumber,
             parameter.Minimum, parameter.Maximum, track, reverse);
         var center = reverse ? track.Right : track.Left;
-        dc.DrawRoundedRectangle(CloneWithOpacity(border, .32),
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(border, .32),
             null, track, 3, 3);
         dc.DrawLine(new Pen(CloneWithOpacity(accent, .78), 5.0),
             new Point(center, track.Top + 6.0),
@@ -4250,7 +4258,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // editable stamina recovery graph: no second border/title and no gap.
         var profile = new Rect(17.0, previewTop, width,
             HungerSurvivalInset + HungerProfileHeight);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), profile, 4.0, 4.0);
+        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 1.0), profile, 4.0, 4.0);
         DrawCenteredText(dc, "HUNGER SURVIVAL PROFILE",
             new Point(profile.Left + profile.Width / 2.0, profile.Top + 18.0),
             11.5, accent, FontWeights.Bold);
@@ -4590,7 +4598,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var bankWidth = Math.Min(760.0, Math.Max(1.0, ActualWidth - 32.0));
         var preview = new Rect((ActualWidth - bankWidth) / 2.0,
             previewTop, bankWidth, StarvationPreviewHeight);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
+        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9),
             preview, 4.0, 4.0);
         DrawText(dc, "DAMAGE TICK TIMELINE",
             new Point(preview.Left + 12.0, preview.Top + 9.0),
@@ -4637,7 +4645,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 new Point(axis.Left, y), new Point(axis.Right, y));
             if (axis.Right > startX + Epsilon)
             {
-                dc.DrawRoundedRectangle(
+                dc.DrawTrackedRoundedRectangle(
                     CloneWithOpacity(active ? accent : muted, active ? 0.10 : 0.07),
                     null,
                     new Rect(startX, y - 7.0, axis.Right - startX, 14.0),
@@ -5009,7 +5017,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         var profile = RadiationRingRect();
         // Borderless grouping fill: keep the current card geometry.
-        dc.DrawRoundedRectangle(panel, null, profile, 4.0, 4.0);
+        dc.DrawTrackedRoundedRectangle(panel, null, profile, 4.0, 4.0);
         var damage = P("survival.radiationDamage");
         if (damage is null)
             return;
@@ -5069,7 +5077,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     {
         var area = RadiationControlsRect();
         var wide = RadiationWide(ActualWidth);
-        dc.DrawRoundedRectangle(panel, null, area, 4.0, 4.0);
+        dc.DrawTrackedRoundedRectangle(panel, null, area, 4.0, 4.0);
         var index = RadiationStageIndex(_radLevel);
         // 0 RAD = level 0; 1–9 = level 1; ... 90–98 = level 10;
         // DEADLY at 99–100 RAD = level 11. Read-only preview stage.
@@ -5264,7 +5272,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var army = new Rect(medkit.Right + gap, medkit.Top, weightWidth, cardHeight);
         var competition = new Rect(medkit.Left - 4.0, medkit.Top - 4.0,
             army.Right - medkit.Left + 8.0, cardHeight + 8.0);
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .46),
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .46),
             new Pen(CloneWithOpacity(border, .76), .9), competition, 4.0, 4.0);
         DrawSourceKnob(dc, P("loot.stashMedicalBandageBias"), "BANDAGES · BASIC",
             bandage, text, muted, border, accent, panel,
@@ -5323,14 +5331,14 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var total = medkit + army;
         var medkitShare = total > Epsilon ? medkit / total : 0.0;
 
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .52),
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .52),
             new Pen(CloneWithOpacity(border, .60), .8), outer, 3.0, 3.0);
         DrawText(dc, "EFFECTIVE PICK",
             new Point(outer.Left + 9.0, outer.Top + 6.0),
             9.4, text, FontWeights.Bold);
         var rail = new Rect(outer.Left + 9.0, outer.Top + 28.0,
             Math.Max(1.0, outer.Width - 18.0), 11.0);
-        dc.DrawRoundedRectangle(CloneWithOpacity(border, .50), null,
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(border, .50), null,
             rail, 2.0, 2.0);
         if (total > Epsilon)
         {
@@ -5362,7 +5370,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         Brush border, Brush accent, Brush panel)
     {
         var p = P("loot.stashMedicalAntiRadBias");
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .58),
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .58),
             new Pen(CloneWithOpacity(border, .68), .9), card, 3.0, 3.0);
         var enabled = p?.IsControlEnabled == true;
         DrawText(dc, "ANTI-RAD · PRIORITY",
@@ -5382,7 +5390,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 && Math.Abs(_hoverTarget.VisualMinimum - value) < Epsilon;
             // Highlight only the hovered button rectangle, not a circular
             // halo projected from this source's 0/1 numeric value.
-            dc.DrawRoundedRectangle(
+            dc.DrawTrackedRoundedRectangle(
                 selected ? CloneWithOpacity(StashMedicalPalette[3], .2) :
                     hovered ? CloneWithOpacity(StashMedicalPalette[3], .10) :
                     CloneWithOpacity(panel, .38),
@@ -5447,7 +5455,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         Brush panel, Brush tone)
     {
         var focused = IsSelected(min) || IsSelected(max);
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, focused ? .72 : .58),
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, focused ? .72 : .58),
             new Pen(CloneWithOpacity(focused ? tone : border,
                 focused ? .84 : .54), focused ? 1.2 : .9),
             card, 4.0, 4.0);
@@ -5628,7 +5636,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var mixColumns = narrowMix ? 2 : 4;
         var mixStrip = new Rect(left + 2.0, 194.0,
             Math.Max(1.0, width - 4.0), narrowMix ? 390.0 : 224.0);
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .56),
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .56),
             new Pen(CloneWithOpacity(border, .65), .9),
             mixStrip, 4.0, 4.0);
 
@@ -5668,7 +5676,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             FontWeights.SemiBold);
         var shareTrack = new Rect(mixStrip.Left + 10.0, shareTop + 20.0,
             Math.Max(1.0, mixStrip.Width - 20.0), 8.0);
-        dc.DrawRoundedRectangle(CloneWithOpacity(border, .32), null,
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(border, .32), null,
             shareTrack, 2.0, 2.0);
         var shareX = shareTrack.Left;
         for (var i = 0; i < shares.Length; i++)
@@ -5809,7 +5817,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
         var compactOffset = string.IsNullOrWhiteSpace(caption) ? -8.0 : 0.0;
         var bar = new Rect(row.Left, row.Top + 15.0 + compactOffset, row.Width, 11.0);
-        dc.DrawRoundedRectangle(CloneWithOpacity(border, .28), null,
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(border, .28), null,
             bar, 2.0, 2.0);
         var labels = new[] { "AMMO", "MEDICAL", "FOOD", "DRINKS", "GRENADES", "COUPONS" };
         var cursor = bar.Left;
@@ -5883,10 +5891,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             muted, FontWeights.SemiBold);
         var line = new Rect(cell.Left + 1.0, cell.Top + 17.0,
             Math.Max(1.0, cell.Width - 2.0), 6.0);
-        dc.DrawRoundedRectangle(CloneWithOpacity(border, .25),
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(border, .25),
             null, line, 2.0, 2.0);
         if (chance > Epsilon)
-            dc.DrawRoundedRectangle(StashMixPalette[kind], null,
+            dc.DrawTrackedRoundedRectangle(StashMixPalette[kind], null,
                 new Rect(line.Left, line.Top, chance * line.Width, line.Height),
                 2.0, 2.0);
     }
@@ -5895,7 +5903,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawingContext dc, Rect card, Brush text, Brush muted,
         Brush border, Brush accent, Brush panel)
     {
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .60),
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .60),
             new Pen(CloneWithOpacity(border, .66), .9), card, 4.0, 4.0);
         DrawText(dc, "LOOT POOLS",
             new Point(card.Left + 11.0, card.Top + 7.0),
@@ -6024,7 +6032,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var countsModified = ammoYield.IsValueModifiedFromReference();
         var preview = new Rect(margin, 147.0,
             Math.Max(1.0, ActualWidth - 2.0 * margin), 121.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
+        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9),
             preview, 4.0, 4.0);
         DrawText(dc, "AMMO YIELD PREVIEW",
             new Point(preview.Left + 11.0, preview.Top + 6.0),
@@ -6063,7 +6071,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 // An individually zero-weighted ammo family cannot be
                 // rolled, though its authored quantity values are retained.
                 var eligible = item.Weight.CurrentNumber > Epsilon;
-                dc.DrawRoundedRectangle(
+                dc.DrawTrackedRoundedRectangle(
                     CloneWithOpacity(panel, eligible ? 0.93 : 0.55),
                     new Pen(CloneWithOpacity(border, eligible ? 0.80 : 0.45), 0.9),
                     tile, 3.0, 3.0);
@@ -6150,13 +6158,13 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         {
             var card = new Rect(margin, top,
                 Math.Max(1.0, ActualWidth - margin * 2.0), 89.0);
-            dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
+            dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9),
                 card, 4.0, 4.0);
             DrawText(dc, name, new Point(card.Left + 10.0, top + 5.0),
                 10.5, text, FontWeights.Bold);
             var bar = new Rect(card.Left + 10.0, top + 26.0,
                 Math.Max(1.0, card.Width - 20.0), 13.0);
-            dc.DrawRoundedRectangle(CloneWithOpacity(border, 0.22),
+            dc.DrawTrackedRoundedRectangle(CloneWithOpacity(border, 0.22),
                 new Pen(border, 0.7), bar, 2.0, 2.0);
             var cursor = bar.Left;
             for (var i = 0; i < percentages.Count; i++)
@@ -6346,7 +6354,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         Brush panel,
         bool highlightDerivedLastNumber = false)
     {
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
+        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
         var contentWidth = Math.Max(1.0, card.Width - 24.0);
 
         // Determine the actual value width before reserving space for the title.
@@ -6591,7 +6599,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         // Same 20-DIP square, 3-DIP corners and gold check mark as
         // the WPF CheckBox template. The card and caption never glow.
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
+        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 1.0),
             rect, 4.0, 4.0);
         var box = new Rect(rect.Right - BooleanCheckboxChrome.Size - 11.0,
             rect.Top + (rect.Height - BooleanCheckboxChrome.Size) / 2.0,
@@ -6689,6 +6697,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         var point = e.GetPosition(this);
         NpcCardSelectAt(point);
+        GenericCardSelectAt(point);
         if (NpcNeedBoostMouseDown(point))
         {
             e.Handled = true;
@@ -6808,6 +6817,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var point = e.GetPosition(this);
         if (Family == "NpcLootLoadout")
             NpcCardHover(point);
+        else if (_cardHover.UpdateHover(point))
+            InvalidateVisual();
         if (NpcNeedBoostMouseMove(point, e.LeftButton))
         {
             e.Handled = true;
@@ -7048,6 +7059,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         _npcConsumableHoverCheckbox = false;
         NpcNeedBoostMouseLeave();
         NpcCardMouseLeave();
+        if (_cardHover.ClearHover())
+            InvalidateVisual();
         if (Family == "NpcLootLoadout") InvalidateVisual();
         if (_npcModHoverCheckbox)
         {

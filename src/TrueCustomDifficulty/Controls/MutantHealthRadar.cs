@@ -10,6 +10,18 @@ namespace TrueCustomDifficulty.Controls;
 
 public sealed class MutantHealthRadar : FrameworkElement
 {
+    // Shared white card hover (CardHoverTracker): cards drawn by the
+    // renderer are recorded and the hovered one is outlined on top.
+    private readonly CardHoverTracker _cardHover = new();
+
+    protected override void OnRender(DrawingContext dc)
+    {
+        using (_cardHover.BeginRender())
+            RenderCardContent(dc);
+        _cardHover.Finish(Array.Empty<Rect>(), RenderSize);
+        _cardHover.DrawHover(dc);
+    }
+
     private const double Epsilon = 0.000001;
     private const double DesiredHeight = 605.0;
     private const int DamageRow = 14;
@@ -119,7 +131,7 @@ public sealed class MutantHealthRadar : FrameworkElement
         }
     }
 
-    protected override void OnRender(DrawingContext dc)
+    private void RenderCardContent(DrawingContext dc)
     {
         base.OnRender(dc);
 
@@ -164,7 +176,7 @@ public sealed class MutantHealthRadar : FrameworkElement
         if (_damage is not { } damage)
             return;
         var card = new Rect(content.Left, 43.0, content.Width, 71.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0);
+        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0);
         DrawText(dc, "MUTANT HIT DAMAGE", new Point(card.Left + 11.0, card.Top + 7.0), VisualControlTypography.CardTitle, text, FontWeights.Bold);
         var value = CreateText($"{damage.CurrentNumber:0.##}x hit dmg", 11.0,
             damage.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
@@ -219,7 +231,7 @@ public sealed class MutantHealthRadar : FrameworkElement
         var selected = row == _selectedRow;
 
         // Static captions and card fill never turn gold on slider hover.
-        dc.DrawRoundedRectangle(panel,
+        dc.DrawTrackedRoundedRectangle(panel,
             new Pen(border, 0.9), card, 4.0, 4.0);
         DrawText(dc, mutant.Label.ToUpperInvariant(),
             new Point(card.Left + 11.0, card.Top + 6.0),
@@ -312,6 +324,7 @@ public sealed class MutantHealthRadar : FrameworkElement
 
     protected override void OnMouseMove(MouseEventArgs e)
     {
+        if (_cardHover.UpdateHover(e.GetPosition(this))) InvalidateVisual();
         base.OnMouseMove(e);
         var point = e.GetPosition(this);
         var markerHover = _dragRow < 0 ? FindDamageMarker(point) : -1;
@@ -335,6 +348,7 @@ public sealed class MutantHealthRadar : FrameworkElement
 
     protected override void OnMouseLeave(MouseEventArgs e)
     {
+        if (_cardHover.ClearHover()) InvalidateVisual();
         base.OnMouseLeave(e);
         _hoverRow = -1;
         _hoverDamageMarker = -1;

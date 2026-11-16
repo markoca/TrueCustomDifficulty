@@ -14,6 +14,18 @@ namespace TrueCustomDifficulty.Controls;
 /// </summary>
 public sealed class MutantGroupSizeRadar : FrameworkElement
 {
+    // Shared white card hover (CardHoverTracker): cards drawn by the
+    // renderer are recorded and the hovered one is outlined on top.
+    private readonly CardHoverTracker _cardHover = new();
+
+    protected override void OnRender(DrawingContext dc)
+    {
+        using (_cardHover.BeginRender())
+            RenderCardContent(dc);
+        _cardHover.Finish(Array.Empty<Rect>(), RenderSize);
+        _cardHover.DrawHover(dc);
+    }
+
     private const double Epsilon = 0.000001;
     private const double DesiredHeight = 546.0;
     private const double MaxContentWidth = 784.0;
@@ -120,7 +132,7 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
         }
     }
 
-    protected override void OnRender(DrawingContext dc)
+    private void RenderCardContent(DrawingContext dc)
     {
         base.OnRender(dc);
 
@@ -175,7 +187,7 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
         var currentCaps = ALifeIntegerCapSteps.EffectiveCaps(info.ParameterId, parameter.CurrentNumber);
         var referenceCaps = ALifeIntegerCapSteps.EffectiveCaps(info.ParameterId, parameter.ReferenceNumber);
 
-        dc.DrawRoundedRectangle(panel,
+        dc.DrawTrackedRoundedRectangle(panel,
             new Pen(CloneWithOpacity(border, 0.65), 0.9),
             card, 4.0, 4.0);
 
@@ -264,6 +276,7 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
 
     protected override void OnMouseMove(MouseEventArgs e)
     {
+        if (_cardHover.UpdateHover(e.GetPosition(this))) InvalidateVisual();
         base.OnMouseMove(e);
 
         var point = e.GetPosition(this);
@@ -285,6 +298,7 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
 
     protected override void OnMouseLeave(MouseEventArgs e)
     {
+        if (_cardHover.ClearHover()) InvalidateVisual();
         base.OnMouseLeave(e);
         if (_hoverRow < 0)
             return;

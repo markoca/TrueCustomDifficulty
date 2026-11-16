@@ -10,6 +10,18 @@ namespace TrueCustomDifficulty.Controls;
 
 public sealed class AnomalyDamageRadar : FrameworkElement
 {
+    // Shared white card hover (CardHoverTracker): cards drawn by the
+    // renderer are recorded and the hovered one is outlined on top.
+    private readonly CardHoverTracker _cardHover = new();
+
+    protected override void OnRender(DrawingContext dc)
+    {
+        using (_cardHover.BeginRender())
+            RenderCardContent(dc);
+        _cardHover.Finish(Array.Empty<Rect>(), RenderSize);
+        _cardHover.DrawHover(dc);
+    }
+
     private const double Epsilon = 0.000001;
     private const double DesiredHeight = 548.0;
     private const double KnobStartAngle = 135.0;
@@ -126,7 +138,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         }
     }
 
-    protected override void OnRender(DrawingContext dc)
+    private void RenderCardContent(DrawingContext dc)
     {
         base.OnRender(dc);
 
@@ -189,7 +201,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             var referenceY = bottom - (bottom - top) * .5;
             var width = Math.Min(23.0, lane * .42);
             var barLeft = center - width / 2.0;
-            dc.DrawRoundedRectangle(CloneWithOpacity(panel, .32),
+            dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .32),
                 new Pen(CloneWithOpacity(border, .55), .8),
                 new Rect(left + i * lane + 2, 248, lane - 4, 279), 4, 4);
             dc.DrawRectangle(CloneWithOpacity(border, .12), null,
@@ -275,7 +287,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         const double top = 47.0;
         var card = new Rect((ActualWidth - 194.0) / 2.0, top, 194.0, 181.0);
         // Keep the global multiplier dial, but remove its enclosing card outline.
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .40),
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .40),
             null, card, 4.0, 4.0);
         DrawCenteredText(dc, "GLOBAL MULTIPLIER", new Point(card.Left + 97.0, 65.0),
             KnobTypography.CaptionSize, text, FontWeights.Bold);
@@ -419,6 +431,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
 
     protected override void OnMouseMove(MouseEventArgs e)
     {
+        if (_cardHover.UpdateHover(e.GetPosition(this))) InvalidateVisual();
         base.OnMouseMove(e);
         var point = e.GetPosition(this);
         var globalHover = _globalKnobHit.Contains(point);
@@ -454,6 +467,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
 
     protected override void OnMouseLeave(MouseEventArgs e)
     {
+        if (_cardHover.ClearHover()) InvalidateVisual();
         base.OnMouseLeave(e);
         _hoverRow = -1;
         _hoverGlobalKnob = false;

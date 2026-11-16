@@ -15,6 +15,18 @@ namespace TrueCustomDifficulty.Controls;
 /// </summary>
 public sealed class ItemPriceScalersRadar : FrameworkElement
 {
+    // Shared white card hover (CardHoverTracker): cards drawn by the
+    // renderer are recorded and the hovered one is outlined on top.
+    private readonly CardHoverTracker _cardHover = new();
+
+    protected override void OnRender(DrawingContext dc)
+    {
+        using (_cardHover.BeginRender())
+            RenderCardContent(dc);
+        _cardHover.Finish(Array.Empty<Rect>(), RenderSize);
+        _cardHover.DrawHover(dc);
+    }
+
     private const double Epsilon = 0.000001;
     private const double BoardHeight = 330.0;
     private const double PlotTop = 105.0;
@@ -89,7 +101,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
             InvalidateVisual();
     }
 
-    protected override void OnRender(DrawingContext dc)
+    private void RenderCardContent(DrawingContext dc)
     {
         base.OnRender(dc);
         var text = FindBrush("TextBrush", Brushes.White);
@@ -130,7 +142,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
         {
             var left = plotLeft + i * lane;
             var center = left + lane / 2;
-            dc.DrawRoundedRectangle(Clone(panel, .32),
+            dc.DrawTrackedRoundedRectangle(Clone(panel, .32),
                 new Pen(Clone(border, .60), .8),
                 new Rect(left + 3, 66, lane - 6, 252), 4, 4);
             var p = _items[i];
@@ -183,6 +195,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
 
     protected override void OnMouseMove(MouseEventArgs e)
     {
+        if (_cardHover.UpdateHover(e.GetPosition(this))) InvalidateVisual();
         base.OnMouseMove(e);
         var pos = e.GetPosition(this);
         var hit = Find(pos);
@@ -212,6 +225,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
 
     protected override void OnMouseLeave(MouseEventArgs e)
     {
+        if (_cardHover.ClearHover()) InvalidateVisual();
         base.OnMouseLeave(e);
         _hoverIndex = -1;
         Cursor = Cursors.Arrow;

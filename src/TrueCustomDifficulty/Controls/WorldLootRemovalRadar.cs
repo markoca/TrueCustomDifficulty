@@ -17,6 +17,18 @@ namespace TrueCustomDifficulty.Controls;
 /// </summary>
 public sealed class WorldLootRemovalRadar : FrameworkElement
 {
+    // Shared white card hover (CardHoverTracker): cards drawn by the
+    // renderer are recorded and the hovered one is outlined on top.
+    private readonly CardHoverTracker _cardHover = new();
+
+    protected override void OnRender(DrawingContext dc)
+    {
+        using (_cardHover.BeginRender())
+            RenderCardContent(dc);
+        _cardHover.Finish(Array.Empty<Rect>(), RenderSize);
+        _cardHover.DrawHover(dc);
+    }
+
     private const double Epsilon = 0.000001;
     private const int ModLane = 5;
     // Shared vertical 0–100% physical ruler.
@@ -140,7 +152,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
         }
     }
 
-    protected override void OnRender(DrawingContext dc)
+    private void RenderCardContent(DrawingContext dc)
     {
         base.OnRender(dc);
 
@@ -192,7 +204,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
             var parameter = _parameters[i];
             if (parameter is null) continue;
             var center = left + (i + .5) * lane;
-            dc.DrawRoundedRectangle(CloneWithOpacity(panel, .33),
+            dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .33),
                 new Pen(CloneWithOpacity(border, .64), .8),
                 new Rect(left + i * lane + 3, 69, lane - 6, 251), 4, 4);
             var current = Math.Clamp(parameter.CurrentNumber, 0, 1);
@@ -234,7 +246,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
 
         // Sixth full-size vertical lane, with the same chrome as native controls.
         var modCenter = left + (ModLane + .5) * lane;
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .33),
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .33),
             new Pen(CloneWithOpacity(border, .64), .8),
             new Rect(left + ModLane * lane + 3, 69, lane - 6, 251), 4, 4);
         var enabled = ModItemsEnabled && ModItemsEditorAvailable && IsEnabled;
@@ -289,6 +301,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
 
     protected override void OnMouseMove(MouseEventArgs e)
     {
+        if (_cardHover.UpdateHover(e.GetPosition(this))) InvalidateVisual();
         base.OnMouseMove(e);
 
         var point = e.GetPosition(this);
@@ -313,6 +326,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
 
     protected override void OnMouseLeave(MouseEventArgs e)
     {
+        if (_cardHover.ClearHover()) InvalidateVisual();
         base.OnMouseLeave(e);
 
         if (_hoverRow < 0)

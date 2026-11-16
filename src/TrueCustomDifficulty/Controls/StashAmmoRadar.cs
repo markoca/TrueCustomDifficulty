@@ -18,6 +18,18 @@ namespace TrueCustomDifficulty.Controls;
 /// </summary>
 public sealed class StashAmmoRadar : FrameworkElement
 {
+    // Shared white card hover (CardHoverTracker): cards drawn by the
+    // renderer are recorded and the hovered one is outlined on top.
+    private readonly CardHoverTracker _cardHover = new();
+
+    protected override void OnRender(DrawingContext dc)
+    {
+        using (_cardHover.BeginRender())
+            RenderCardContent(dc);
+        _cardHover.Finish(Array.Empty<Rect>(), RenderSize);
+        _cardHover.DrawHover(dc);
+    }
+
     private const double Epsilon = 0.000001;
     private const double MinimumValue = 0.25;
     private const double MaximumValue = 2.0;
@@ -109,7 +121,7 @@ public sealed class StashAmmoRadar : FrameworkElement
         }
     }
 
-    protected override void OnRender(DrawingContext dc)
+    private void RenderCardContent(DrawingContext dc)
     {
         base.OnRender(dc);
 
@@ -163,7 +175,7 @@ public sealed class StashAmmoRadar : FrameworkElement
         var modified = Math.Abs(parameter.CurrentNumber - parameter.ReferenceNumber) > Epsilon;
 
         var card = new Rect(16.0, top, Math.Max(1.0, ActualWidth - 32.0), TierHeight - 10.0);
-        dc.DrawRoundedRectangle(
+        dc.DrawTrackedRoundedRectangle(
             selected
                 ? CloneWithOpacity(accent, 0.08)
                 : CloneWithOpacity(panel, 0.04),
@@ -302,6 +314,7 @@ public sealed class StashAmmoRadar : FrameworkElement
 
     protected override void OnMouseMove(MouseEventArgs e)
     {
+        if (_cardHover.UpdateHover(e.GetPosition(this))) InvalidateVisual();
         base.OnMouseMove(e);
 
         var point = e.GetPosition(this);
@@ -324,6 +337,7 @@ public sealed class StashAmmoRadar : FrameworkElement
 
     protected override void OnMouseLeave(MouseEventArgs e)
     {
+        if (_cardHover.ClearHover()) InvalidateVisual();
         base.OnMouseLeave(e);
         if (_hoverTier < 0)
             return;

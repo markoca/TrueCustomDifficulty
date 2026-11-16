@@ -16,6 +16,34 @@ public sealed partial class AggregateVisualControl
     private string? _npcHoverCardKey;
     private NpcLootCard? _npcActiveCard;
 
+    private readonly CardHoverTracker _cardHover = new();
+
+    // Generic cards (all families except NPC LOOT): a click anywhere in a
+    // card explains the control in it nearest to the click. Never consumes
+    // the click; the control's own handler still runs afterwards.
+    private void GenericCardSelectAt(Point point)
+    {
+        if (Family == "NpcLootLoadout" || _cardHover.CardAt(point) is not Rect card)
+            return;
+        HitTarget? nearest = null;
+        var best = double.MaxValue;
+        foreach (var target in _hitTargets)
+        {
+            var center = new Point(target.HitRect.Left + target.HitRect.Width / 2.0,
+                target.HitRect.Top + target.HitRect.Height / 2.0);
+            if (!card.Contains(center))
+                continue;
+            var distance = (center - point).LengthSquared;
+            if (distance < best)
+            {
+                best = distance;
+                nearest = target;
+            }
+        }
+        if (nearest is not null)
+            ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(nearest.Parameter));
+    }
+
     private void RegisterNpcCard(string key, Rect rect)
     {
         if (!rect.IsEmpty && rect.Width > 1.0

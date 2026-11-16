@@ -18,6 +18,18 @@ namespace TrueCustomDifficulty.Controls;
 /// </summary>
 public sealed class MutantDropRadar : FrameworkElement
 {
+    // Shared white card hover (CardHoverTracker): cards drawn by the
+    // renderer are recorded and the hovered one is outlined on top.
+    private readonly CardHoverTracker _cardHover = new();
+
+    protected override void OnRender(DrawingContext dc)
+    {
+        using (_cardHover.BeginRender())
+            RenderCardContent(dc);
+        _cardHover.Finish(Array.Empty<Rect>(), RenderSize);
+        _cardHover.DrawHover(dc);
+    }
+
     private const double Epsilon = 0.000001;
     private const double RowHeight = 58.0;
 
@@ -117,7 +129,7 @@ public sealed class MutantDropRadar : FrameworkElement
         }
     }
 
-    protected override void OnRender(DrawingContext dc)
+    private void RenderCardContent(DrawingContext dc)
     {
         base.OnRender(dc);
 
@@ -207,7 +219,7 @@ public sealed class MutantDropRadar : FrameworkElement
         var vanilla = Math.Clamp(parameter.ReferenceNumber, 0.0, 1.0);
         var modified = Math.Abs(chance - vanilla) > Epsilon;
 
-        dc.DrawRoundedRectangle(
+        dc.DrawTrackedRoundedRectangle(
             CloneWithOpacity(panel, 0.55),
             new Pen(CloneWithOpacity(border, 0.45), 0.8),
             card,
@@ -273,6 +285,7 @@ public sealed class MutantDropRadar : FrameworkElement
 
     protected override void OnMouseMove(MouseEventArgs e)
     {
+        if (_cardHover.UpdateHover(e.GetPosition(this))) InvalidateVisual();
         base.OnMouseMove(e);
 
         var point = e.GetPosition(this);
@@ -295,6 +308,7 @@ public sealed class MutantDropRadar : FrameworkElement
 
     protected override void OnMouseLeave(MouseEventArgs e)
     {
+        if (_cardHover.ClearHover()) InvalidateVisual();
         base.OnMouseLeave(e);
 
         if (_hoverRow < 0)

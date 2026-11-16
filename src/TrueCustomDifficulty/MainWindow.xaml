@@ -738,6 +738,15 @@
                                                             </MultiDataTrigger.Conditions>
                                                             <Setter TargetName="ParameterCard" Property="Opacity" Value="0.48" />
                                                         </MultiDataTrigger>
+                                                        <!-- Plain rows: white card outline on hover (visual-control rows draw
+                                                             their own per-card hover inside the control). -->
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Binding="{Binding IsMouseOver, ElementName=ParameterCard}" Value="True" />
+                                                                <Condition Binding="{Binding IsVisualControlAnchor}" Value="False" />
+                                                            </MultiDataTrigger.Conditions>
+                                                            <Setter TargetName="ParameterCard" Property="BorderBrush" Value="White" />
+                                                        </MultiDataTrigger>
                                                     </DataTemplate.Triggers>
                                                 </DataTemplate>
     </Window.Resources>

@@ -14,6 +14,18 @@ namespace TrueCustomDifficulty.Controls;
 /// </summary>
 public sealed class BleedingCurveControl : FrameworkElement
 {
+    // Shared white card hover (CardHoverTracker): cards drawn by the
+    // renderer are recorded and the hovered one is outlined on top.
+    private readonly CardHoverTracker _cardHover = new();
+
+    protected override void OnRender(DrawingContext dc)
+    {
+        using (_cardHover.BeginRender())
+            RenderCardContent(dc);
+        _cardHover.Finish(Array.Empty<Rect>(), RenderSize);
+        _cardHover.DrawHover(dc);
+    }
+
     private const string SeverityId = "survival.bleedingSeverity";
     private const string RecoveryId = "survival.bleedingRecovery";
     private const string LowDamageId = "survival.bleedingLowDamage";
@@ -145,7 +157,7 @@ public sealed class BleedingCurveControl : FrameworkElement
         }
     }
 
-    protected override void OnRender(DrawingContext dc)
+    private void RenderCardContent(DrawingContext dc)
     {
         base.OnRender(dc);
 
@@ -229,7 +241,7 @@ public sealed class BleedingCurveControl : FrameworkElement
         Brush panel,
         out Rect trackHitRect)
     {
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), rect, 3.0, 3.0);
+        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 1.0), rect, 3.0, 3.0);
 
         DrawText(dc, label, new Point(rect.Left + 10, rect.Top + 8),
             VisualControlTypography.CardTitle, text, FontWeights.Bold);
@@ -303,7 +315,7 @@ public sealed class BleedingCurveControl : FrameworkElement
         Brush accent,
         Brush panel)
     {
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), _plotRect, 4.0, 4.0);
+        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 1.0), _plotRect, 4.0, 4.0);
 
         // Graduated risk bands distinguish mild, moderate and heavy bleeding.
         // These colors are purely visual; authored CFG thresholds stay intact.
@@ -478,7 +490,7 @@ public sealed class BleedingCurveControl : FrameworkElement
             // HP/tick or Medium/Severe thresholds; cards have no hit targets.
             var card = new Rect(stageBankLeft + i * (stageCardWidth + stageGap),
                 405.0, stageCardWidth, 44.0);
-            dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
+            dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 1.0),
                 card, 3.0, 3.0);
             DrawSourceNumber(dc,
                 $"{labels[i]} AT {currentThresholds[i]:0.#} PTS",
@@ -570,6 +582,7 @@ public sealed class BleedingCurveControl : FrameworkElement
 
     protected override void OnMouseMove(MouseEventArgs e)
     {
+        if (_cardHover.UpdateHover(e.GetPosition(this))) InvalidateVisual();
         base.OnMouseMove(e);
 
         var point = e.GetPosition(this);
@@ -635,6 +648,7 @@ public sealed class BleedingCurveControl : FrameworkElement
 
     protected override void OnMouseLeave(MouseEventArgs e)
     {
+        if (_cardHover.ClearHover()) InvalidateVisual();
         base.OnMouseLeave(e);
         _hoverTarget = DragTarget.None;
         _hoverDifficultyValue = null;

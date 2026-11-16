@@ -16,6 +16,18 @@ namespace TrueCustomDifficulty.Controls;
 /// </summary>
 public sealed class MedicalHealingRadar : FrameworkElement
 {
+    // Shared white card hover (CardHoverTracker): cards drawn by the
+    // renderer are recorded and the hovered one is outlined on top.
+    private readonly CardHoverTracker _cardHover = new();
+
+    protected override void OnRender(DrawingContext dc)
+    {
+        using (_cardHover.BeginRender())
+            RenderCardContent(dc);
+        _cardHover.Finish(Array.Empty<Rect>(), RenderSize);
+        _cardHover.DrawHover(dc);
+    }
+
     private const double Epsilon = 0.000001;
     private const double BoardHeight = 370.0;
     private const double PlotTop = 140.0;
@@ -144,7 +156,7 @@ public sealed class MedicalHealingRadar : FrameworkElement
     // Four tightly grouped HEAL / BLEED vertical pairs on one row.
     // Each pair shares an item card but keeps independent physical scales
     // and distinct production CFG parameters.
-    protected override void OnRender(DrawingContext dc)
+    private void RenderCardContent(DrawingContext dc)
     {
         base.OnRender(dc);
         var text = FindBrush("TextBrush", Brushes.WhiteSmoke);
@@ -240,7 +252,7 @@ public sealed class MedicalHealingRadar : FrameworkElement
         {
             var left = chart.Left + row * laneWidth;
             var center = left + laneWidth / 2.0;
-            dc.DrawRoundedRectangle(CloneWithOpacity(panel, .32),
+            dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .32),
                 new Pen(CloneWithOpacity(border, .60), .8),
                 new Rect(left + 3.0, 88.0, laneWidth - 6.0, 265.0), 4.0, 4.0);
 
@@ -275,7 +287,7 @@ public sealed class MedicalHealingRadar : FrameworkElement
         DrawingContext dc, Rect area, Rect chart, Brush text,
         Brush muted, Brush border, Brush panel)
     {
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .32),
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .32),
             new Pen(CloneWithOpacity(border, .65), .8),
             area, 4.0, 4.0);
         DrawCenteredText(dc, "RADIATION REMOVAL",
@@ -429,6 +441,7 @@ public sealed class MedicalHealingRadar : FrameworkElement
 
     protected override void OnMouseMove(MouseEventArgs e)
     {
+        if (_cardHover.UpdateHover(e.GetPosition(this))) InvalidateVisual();
         base.OnMouseMove(e);
         var point = e.GetPosition(this);
         // Keep the active source highlighted while dragging across adjacent
@@ -476,6 +489,7 @@ public sealed class MedicalHealingRadar : FrameworkElement
 
     protected override void OnMouseLeave(MouseEventArgs e)
     {
+        if (_cardHover.ClearHover()) InvalidateVisual();
         base.OnMouseLeave(e);
         _hoverRow = -2;
         _hoverAction = HitAction.Select;

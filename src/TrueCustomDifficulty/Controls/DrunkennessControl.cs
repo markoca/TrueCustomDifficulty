@@ -16,6 +16,18 @@ namespace TrueCustomDifficulty.Controls;
 /// </summary>
 public sealed class DrunkennessControl : FrameworkElement
 {
+    // Shared white card hover (CardHoverTracker): cards drawn by the
+    // renderer are recorded and the hovered one is outlined on top.
+    private readonly CardHoverTracker _cardHover = new();
+
+    protected override void OnRender(DrawingContext dc)
+    {
+        using (_cardHover.BeginRender())
+            RenderCardContent(dc);
+        _cardHover.Finish(Array.Empty<Rect>(), RenderSize);
+        _cardHover.DrawHover(dc);
+    }
+
     private const double HeaderOffset = 42.0;
     private const double BoardHeight = 360.0 + HeaderOffset;
 
@@ -107,7 +119,7 @@ public sealed class DrunkennessControl : FrameworkElement
         }
     }
 
-    protected override void OnRender(DrawingContext dc)
+    private void RenderCardContent(DrawingContext dc)
     {
         base.OnRender(dc);
 
@@ -336,7 +348,7 @@ public sealed class DrunkennessControl : FrameworkElement
         var segmentWidth = totalWidth / count;
         var stripRect = new Rect(left, top, totalWidth, stripHeight);
 
-        dc.DrawRoundedRectangle(panelAlt, new Pen(border, 1.0), stripRect, 4.0, 4.0);
+        dc.DrawTrackedRoundedRectangle(panelAlt, new Pen(border, 1.0), stripRect, 4.0, 4.0);
 
         for (var drink = 1; drink <= count; drink++)
         {
@@ -377,7 +389,7 @@ public sealed class DrunkennessControl : FrameworkElement
             if (hovering)
             {
                 // Outline only the already-selectable DRUNK/WASTED hit cell.
-                dc.DrawRoundedRectangle(null, new Pen(accent, 1.0),
+                dc.DrawTrackedRoundedRectangle(null, new Pen(accent, 1.0),
                     new Rect(segmentLeft + 2.0, top + 2.0,
                         segmentWidth - 4.0, stripHeight - 4.0), 3.0, 3.0);
             }
@@ -438,7 +450,7 @@ public sealed class DrunkennessControl : FrameworkElement
             var stage = stages[i];
             var rect = new Rect(left + i * (cardWidth + gap),
                 top, cardWidth, 70.0);
-            dc.DrawRoundedRectangle(panelAlt, new Pen(border, 1.0),
+            dc.DrawTrackedRoundedRectangle(panelAlt, new Pen(border, 1.0),
                 rect, 3.0, 3.0);
             DrawText(dc, stage.Item1,
                 new Point(rect.Left + 10.0, rect.Top + 9.0),
@@ -519,6 +531,7 @@ public sealed class DrunkennessControl : FrameworkElement
 
     protected override void OnMouseMove(MouseEventArgs e)
     {
+        if (_cardHover.UpdateHover(e.GetPosition(this))) InvalidateVisual();
         base.OnMouseMove(e);
         var point = e.GetPosition(this);
 
@@ -568,6 +581,7 @@ public sealed class DrunkennessControl : FrameworkElement
 
     protected override void OnMouseLeave(MouseEventArgs e)
     {
+        if (_cardHover.ClearHover()) InvalidateVisual();
         base.OnMouseLeave(e);
         _hoverSlider = null;
         _hoverProgressMarker = null;

@@ -3243,14 +3243,14 @@ _hunger_frame = (_hunger_source[_hunger_frame_begin:_hunger_frame_end]
 if (not all(token in _hunger_frame for token in (
         'var profile = new Rect(17.0, previewTop, width,',
         'HungerSurvivalInset + HungerProfileHeight);',
-        'dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), profile, 4.0, 4.0);',
+        'dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 1.0), profile, 4.0, 4.0);',
         'DrawCenteredText(dc, "HUNGER SURVIVAL PROFILE",',
         'var axis = new Rect(profile.Left + 81.0, profile.Top + 55.0,',
         'profile.Width - 111.0, 12.0);',
         'var previewLabels = new[] { "LOW", "MEDIUM", "SEVERE" };',
         'var frame = new Rect(17.0, profile.Top + HungerSurvivalInset,',
         'width, HungerProfileHeight);'))
-    or _hunger_frame.count('dc.DrawRoundedRectangle(') != 1
+    or _hunger_frame.count('dc.DrawTrackedRoundedRectangle(') != 1
     or 'HUNGER POINTS  /  STAGE PREVIEW' in _hunger_frame
     or 'frame.Top - 36.0' in _hunger_frame
     or 'var plot = new Rect(axis.Left - 2.0,' not in _hunger_source
@@ -3390,15 +3390,15 @@ _fatigue_curve = _fatigue_source[
 if (not all(token in _fatigue_curve for token in (
         'var profile = new Rect(17.0, previewTop, width,',
         'FatigueCombatInset + FatigueCombatGraphHeight);',
-        'dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), profile, 4.0, 4.0);',
+        'dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 1.0), profile, 4.0, 4.0);',
         'DrawCenteredText(dc, "FATIGUE COMBAT PROFILE",',
         'Linked("survival.sleepEligibilityThreshold")',
         'var axis = new Rect(profile.Left + 81.0, profile.Top + 55.0,',
         'profile.Width - 111.0, 12.0);',
         'DrawFatigueCombined(dc, profile.Top + FatigueCombatInset, width,'))
-    or _fatigue_curve.count('dc.DrawRoundedRectangle(') != 1
+    or _fatigue_curve.count('dc.DrawTrackedRoundedRectangle(') != 1
     or 'FATIGUE POINTS / STAGE PREVIEW' in _fatigue_curve
-    or 'dc.DrawRoundedRectangle(' in _fatigue_block
+    or 'dc.DrawTrackedRoundedRectangle(' in _fatigue_block
     or 'FATIGUE COMBAT PROFILE' in _fatigue_block):
     fail("Fatigue stage preview / combat plot unified-frame contract drifted")
 else:
@@ -3537,10 +3537,10 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or 'if (litEnd > first + Epsilon)' not in _radiation_source
     or '"1–100 RAD"' in _radiation_renderer
     or '"FIXED RAD"' in _radiation_source
-    or 'dc.DrawRoundedRectangle(panel, null, profile, 4.0, 4.0);' not in _radiation_renderer
-    or 'dc.DrawRoundedRectangle(panel, null, area, 4.0, 4.0);' not in _radiation_source
-    or 'DrawRoundedRectangle(panel, new Pen(border, 0.9)' in _radiation_renderer
-    or 'DrawRoundedRectangle(panel, new Pen(border, .9)' in _radiation_source
+    or 'dc.DrawTrackedRoundedRectangle(panel, null, profile, 4.0, 4.0);' not in _radiation_renderer
+    or 'dc.DrawTrackedRoundedRectangle(panel, null, area, 4.0, 4.0);' not in _radiation_source
+    or 'DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9)' in _radiation_renderer
+    or 'DrawTrackedRoundedRectangle(panel, new Pen(border, .9)' in _radiation_source
     or '"DAMAGE PER TICK"' not in _radiation_source
     or '"DEAD AFTER"' not in _radiation_source
     or 'DrawStat("~" + RadiationTime(eta),' not in _radiation_source
@@ -5396,7 +5396,7 @@ for _icon_marker in (
 ):
     if _icon_marker not in _npc_preview_source:
         fail("NPC choice glyph must use licensed library vector paths: " + _icon_marker)
-if "dc.DrawRoundedRectangle(null, pen," in _npc_preview_source.split("private static void DrawNpcCorpsePackageIcon(", 1)[-1].split("private void DrawNpcLootLoadout(", 1)[0]:
+if "dc.DrawTrackedRoundedRectangle(null, pen," in _npc_preview_source.split("private static void DrawNpcCorpsePackageIcon(", 1)[-1].split("private void DrawNpcLootLoadout(", 1)[0]:
     fail("Bespoke NPC icon outlines have returned")
 if not (ROOT / "docs" / "ICON-ASSET-CREDITS.md").exists():
     fail("Missing source icon credits and licenses")
@@ -5429,6 +5429,26 @@ if any(_tok not in _npc_paint for _tok in (
             "SelectedParameter.PanelTitle}", "SelectedParameter.PanelRationale}",
             "SelectedParameter.PanelControlHelp}", "SelectedParameter.PanelHasLogic}")):
     fail("NPC LOOT cards lost their white hover outline, registration or own panel text")
+
+# Global white card hover: shared tracker in every custom-drawn control.
+_ctrl_dir = ROOT / "src" / "TrueCustomDifficulty" / "Controls"
+_hover_controls = ("ActionCostsRadar", "AnomalyDamageRadar", "HumanGroupSizeRadar",
+    "ItemPriceScalersRadar", "MedicalHealingRadar", "MutantDropRadar", "MutantGroupSizeRadar",
+    "MutantHealthRadar", "StashAmmoRadar", "WorldLootRemovalRadar", "BleedingCurveControl",
+    "DrunkennessControl")
+_missing_hover = [n for n in _hover_controls if any(t not in (_ctrl_dir / (n + ".cs")).read_text(encoding="utf-8") for t in (
+    "private readonly CardHoverTracker _cardHover = new();", "using (_cardHover.BeginRender())",
+    "_cardHover.DrawHover(dc);", "if (_cardHover.UpdateHover(e.GetPosition(this))) InvalidateVisual();",
+    "if (_cardHover.ClearHover()) InvalidateVisual();"))]
+_raw_cards = [p.name for p in _ctrl_dir.glob("*.cs") if p.name not in (
+    "IndustrialFrame.cs", "BooleanCheckboxChrome.cs", "AggregateVisualControl.NpcCards.cs", "CardHoverTracker.cs")
+    and "dc.DrawRoundedRectangle(" in p.read_text(encoding="utf-8")]
+if (_missing_hover or _raw_cards
+        or "GenericCardSelectAt(point);" not in _npc_preview_source
+        or "_cardHover.DrawHover(dc);" not in _npc_preview_source
+        or "CardHoverTracker.Record(rect, radius);" not in (_ctrl_dir / "IndustrialFrame.cs").read_text(encoding="utf-8")
+        or "<Condition Binding=\"{Binding IsVisualControlAnchor}\" Value=\"False\" />" not in _xaml_panel):
+    fail(f"Global white card hover drifted: missing={_missing_hover}, untracked card draws={_raw_cards}")
 
 # World Item Spawns: three compact list cards, checkbox left of label.
 _world_paint = _npc_preview_source.split("private void DrawWorldLootLayout(", 1)[-1].split(
@@ -5479,7 +5499,7 @@ _bleed_required = (
     '"LOW", "MEDIUM", "SEVERE"',
     "var stageBankWidth = Math.Min(618.0",
     "405.0, stageCardWidth, 44.0)",
-    "dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),",
+    "dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 1.0),",
     '"{currentValues[i]:0.##} HP/TICK · {100.0 * currentValues[i] / pool:0.#}% MAX HP"',
     '"{labels[i]} AT {currentThresholds[i]:0.#} PTS"',
     "_damageHitRects[i] = new Rect(",

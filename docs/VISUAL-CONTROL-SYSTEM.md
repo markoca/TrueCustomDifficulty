@@ -1,3 +1,11 @@
+## 2026-11-16 — CURRENT: white card hover on every control, all tabs
+
+**Extends the NPC LOOT white card hover to the whole app** and supersedes every older "cards never glow" rule. Control-level hover (white dial pointer, handle rings, chip icons, checkbox edge) is unchanged and still drawn by each control.
+
+* **Shared layer:** `Controls/CardHoverTracker.cs`. While a control renders inside `BeginRender()`, every filled + outlined rounded rectangle drawn with `dc.DrawTrackedRoundedRectangle(...)` (drop-in for `DrawRoundedRectangle`) and every `IndustrialChrome.DrawRecessedCard` is recorded as a card. Shapes smaller than 46 × 30 DIP, shapes equal to a clickable element (chips, pills, buttons) and shapes covering > 80% of the control (board frames) are not cards. The **smallest card under the pointer** gets a 1.2-DIP **white** outline along its own border and corner radius, drawn on top.
+* **Coverage:** `AggregateVisualControl` (every family; NPC LOOT keeps its explicit `NpcLootCards` layer) and all twelve custom controls — ActionCosts, AnomalyDamage, HumanGroupSize, ItemPriceScalers, MedicalHealing, MutantDrop, MutantGroupSize, MutantHealth, StashAmmo, WorldLootRemoval radars, BleedingCurve and Drunkenness (their former `OnRender` is now `RenderCardContent`, wrapped by the tracker). Plain parameter rows in the list get the same white border on hover via a `MultiDataTrigger` (not on rows that host a visual control).
+* **Click → rationale:** in every `AggregateVisualControl` family a click anywhere in a card selects the control in that card nearest to the click and shows its WHAT IT DOES text (even for families that previously kept the anchor text). NPC LOOT cards show their own gamer-facing card text. Plain rows already select on click. The twelve custom controls still select their row anchor; per-card selection there is the next step.
+
 ## 2026-11-16 — CURRENT: NPC LOOT card names, white card hover and per-card panel text
 
 **Card captions** (on-card): **BONUS PACKS** (package chips), **NEED BOOST**, **SCARCITY** (`loot.genericCorpseReduction`), **MED DROPS** (`loot.npcMedicalChance`), **MOD LOOT CUT** (corpse mod sidecar), **WEAPON CONDITION** (`loot.droppedWeaponCondition`), **AMMO PACK SIZE** (`loot.npcWeaponAmmoSupply`), **FOOD**, **DRINKS**, **MEDICAL**. Catalog IDs, catalog labels and presets are unchanged.

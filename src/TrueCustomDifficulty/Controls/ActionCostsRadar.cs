@@ -17,6 +17,18 @@ namespace TrueCustomDifficulty.Controls;
 /// </summary>
 public sealed class ActionCostsRadar : FrameworkElement
 {
+    // Shared white card hover (CardHoverTracker): cards drawn by the
+    // renderer are recorded and the hovered one is outlined on top.
+    private readonly CardHoverTracker _cardHover = new();
+
+    protected override void OnRender(DrawingContext dc)
+    {
+        using (_cardHover.BeginRender())
+            RenderCardContent(dc);
+        _cardHover.Finish(Array.Empty<Rect>(), RenderSize);
+        _cardHover.DrawHover(dc);
+    }
+
     private const double Epsilon = 0.000001;
     private const double UsageHeight = 187.0;
     private const double ExhaustionWideHeight = 330.0;
@@ -217,7 +229,7 @@ public sealed class ActionCostsRadar : FrameworkElement
         }
     }
 
-    protected override void OnRender(DrawingContext dc)
+    private void RenderCardContent(DrawingContext dc)
     {
         base.OnRender(dc);
 
@@ -278,7 +290,7 @@ public sealed class ActionCostsRadar : FrameworkElement
         Brush accent,
         Brush panel)
     {
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.95), new Pen(border, 0.9), card, 4.0, 4.0);
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, 0.95), new Pen(border, 0.9), card, 4.0, 4.0);
         DrawText(dc, title, new Point(card.Left + 9.0, card.Top + 7.0), 9.3, muted, FontWeights.Bold);
         // Read-only capacity relation; no edits or R-reset ownership over Max Stamina.
         var staminaPool = Math.Max(1.0, _maximumStamina?.CurrentNumber ?? 100.0);
@@ -486,7 +498,7 @@ public sealed class ActionCostsRadar : FrameworkElement
 
     private static void DrawRecoveryFrame(
         DrawingContext dc, Rect card, Brush panel, Brush border)
-        => dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
+        => dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9),
             card, 4.0, 4.0);
 
     private void DrawRecoveryStateCard(
@@ -656,6 +668,7 @@ public sealed class ActionCostsRadar : FrameworkElement
 
     protected override void OnMouseMove(MouseEventArgs e)
     {
+        if (_cardHover.UpdateHover(e.GetPosition(this))) InvalidateVisual();
         base.OnMouseMove(e);
 
         var point = e.GetPosition(this);
@@ -678,6 +691,7 @@ public sealed class ActionCostsRadar : FrameworkElement
 
     protected override void OnMouseLeave(MouseEventArgs e)
     {
+        if (_cardHover.ClearHover()) InvalidateVisual();
         base.OnMouseLeave(e);
         Cursor = Cursors.Arrow;
         if (_hoverParameter is null)

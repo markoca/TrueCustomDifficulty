@@ -235,10 +235,10 @@ assert "29.0, accent, FontWeights.Bold);" in ring_renderer
 assert "if (currentRad > 0.0)" in ring_renderer
 assert 'DrawCenteredText(dc, "RAD",' not in ring_renderer, "RAD label returned to glyph"
 assert "DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.82));" in ring_renderer
-assert "dc.DrawRoundedRectangle(panel, null, profile, 4.0, 4.0);" in ring_renderer
-assert "dc.DrawRoundedRectangle(panel, null, area, 4.0, 4.0);" in control_renderer
-assert "dc.DrawRoundedRectangle(panel, new Pen(border" not in ring_renderer
-assert "dc.DrawRoundedRectangle(panel, new Pen(border" not in control_renderer
+assert "dc.DrawTrackedRoundedRectangle(panel, null, profile, 4.0, 4.0);" in ring_renderer
+assert "dc.DrawTrackedRoundedRectangle(panel, null, area, 4.0, 4.0);" in control_renderer
+assert "dc.DrawTrackedRoundedRectangle(panel, new Pen(border" not in ring_renderer
+assert "dc.DrawTrackedRoundedRectangle(panel, new Pen(border" not in control_renderer
 assert '"1–100 RAD"' not in ring_renderer
 assert '"FIXED RAD"' not in control_renderer
 assert '"DAMAGE PER TICK"' in control_renderer

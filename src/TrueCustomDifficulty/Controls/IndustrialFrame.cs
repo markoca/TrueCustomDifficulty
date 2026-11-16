@@ -157,6 +157,7 @@ internal static class IndustrialChrome
         DrawingContext dc, Rect rect, Brush fill, Brush border, double radius = 4.0)
     {
         dc.DrawRoundedRectangle(fill, new Pen(border, 1.0), rect, radius, radius);
+        CardHoverTracker.Record(rect, radius);
         if (rect.Width < 40.0 || rect.Height < 30.0)
             return;
 
