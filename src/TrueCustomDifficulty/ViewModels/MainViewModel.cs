@@ -1401,14 +1401,28 @@ public sealed class MainViewModel : ObservableObject
             if (SetProperty(ref _selectedReferenceDifficulty, value))
             {
                 OnPropertyChanged(nameof(BasePresetIndex));
+                OnPropertyChanged(nameof(BasePresetSelection));
                 if (!_isApplyingReference)
                     ApplyReferenceDifficulty(resetAll: true);
             }
         }
     }
 
-    // UI-only numeric position for the four-step Base Preset slider.
-    // Presets continue to store the stable difficulty name, not this index.
+    // BASE PRESET segmented selector (header, top right).
+    public IReadOnlyList<string> BasePresetLabels { get; } = new[] { "NOVICE", "STALKER", "VETERAN", "MASTER" };
+
+    public int BasePresetSelection
+    {
+        get => (int)BasePresetIndex;
+        set
+        {
+            if (value >= 0)
+                BasePresetIndex = value;
+        }
+    }
+
+    // UI-only numeric position of the Base Preset (also used by older code
+    // paths). Presets continue to store the stable difficulty name, not this index.
     public double BasePresetIndex
     {
         get
@@ -1833,6 +1847,7 @@ public sealed class MainViewModel : ObservableObject
                     item.ApplyPreset(npcChances.GetValueOrDefault(item.Sid));
                 OnPropertyChanged(nameof(SelectedReferenceDifficulty));
                 OnPropertyChanged(nameof(BasePresetIndex));
+                OnPropertyChanged(nameof(BasePresetSelection));
 
                 foreach (var parameter in AllParameters)
                     parameter.ChangeReferenceDifficulty(_selectedReferenceDifficulty, true);

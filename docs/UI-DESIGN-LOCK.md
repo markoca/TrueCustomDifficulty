@@ -1,3 +1,8 @@
+## 2026-11-16 — CURRENT: BASE PRESET selector (header, top right)
+
+* The Base Preset is a framed card (accent 1-DIP border, PanelAlt fill) with an accent **BASE PRESET** caption and four equal segments **NOVICE · STALKER · VETERAN · MASTER** (88×30 DIP, bold 11.5). The selected difficulty is a solid accent segment with dark text; hover = white border. Replaces the thin 4-step slider with a muted name above and muted labels below.
+* Same behaviour: picking a segment sets the vanilla difficulty and resets every control to it; keyboard arrows move the selection. Binds `BasePresetSelection` (int) over the existing `BasePresetIndex`.
+
 ## 2026-11-16 — CURRENT: HUMAN TACTICS and ENEMY AWARENESS boards (Combat)
 
 * Two new compact card boards after HUMAN ENEMIES, same grammar as ITEM WEIGHT / ARTIFACT HUNTING (two columns when wide): **HUMAN TACTICS** — GRENADES, SUPPRESSION, FLANKING, PUSH, CAMPING PENALTY, ENEMY ACCURACY; **ENEMY AWARENESS** — SIGHT, HEARING, MEMORY.

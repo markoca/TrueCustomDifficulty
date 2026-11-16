@@ -851,43 +851,68 @@
                                Margin="0,3,0,0" />
                 </StackPanel>
 
-                <StackPanel Grid.Column="1" Width="350" VerticalAlignment="Center">
-                    <Grid Margin="0,0,0,2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="Base Preset"
-                                   Foreground="{StaticResource MutedTextBrush}"
-                                   VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1"
-                                   Text="{Binding SelectedReferenceDifficulty}"
+                <!-- BASE PRESET: framed, four-segment selector. The selected
+                     vanilla difficulty is a solid accent segment; picking one
+                     still resets every control to that difficulty. -->
+                <Border Grid.Column="1" VerticalAlignment="Center"
+                        Background="{StaticResource PanelAltBrush}"
+                        BorderBrush="{StaticResource AccentBrush}" BorderThickness="1"
+                        CornerRadius="4" Padding="10,7,10,8">
+                    <StackPanel>
+                        <TextBlock Text="BASE PRESET"
+                                   FontSize="10.5" FontWeight="Bold"
                                    Foreground="{StaticResource AccentBrush}"
-                                   FontWeight="SemiBold"
-                                   VerticalAlignment="Center" />
-                    </Grid>
-
-                    <Slider Minimum="0"
-                            Maximum="3"
-                            TickFrequency="1"
-                            IsSnapToTickEnabled="True"
-                            SmallChange="1"
-                            LargeChange="1"
-                            Value="{Binding BasePresetIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                    <Grid Margin="0,1,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="Novice" FontSize="10" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Left" />
-                        <TextBlock Grid.Column="1" Text="Stalker" FontSize="10" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Center" />
-                        <TextBlock Grid.Column="2" Text="Veteran" FontSize="10" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Center" />
-                        <TextBlock Grid.Column="3" Text="Master" FontSize="10" Foreground="{StaticResource MutedTextBrush}" HorizontalAlignment="Right" />
-                    </Grid>
-                </StackPanel>
+                                   Margin="1,0,0,5" />
+                        <ListBox x:Name="BasePresetSelector"
+                                 ItemsSource="{Binding BasePresetLabels}"
+                                 SelectedIndex="{Binding BasePresetSelection, Mode=TwoWay}"
+                                 Background="Transparent" BorderThickness="0" Padding="0"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Rows="1" />
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListBoxItem}">
+                                    <Setter Property="Cursor" Value="Hand" />
+                                    <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                                <Border x:Name="Segment"
+                                                        Width="88" Height="30" Margin="0,0,4,0"
+                                                        CornerRadius="3"
+                                                        Background="{StaticResource PanelBrush}"
+                                                        BorderBrush="{StaticResource BorderSoftBrush}"
+                                                        BorderThickness="1">
+                                                    <TextBlock x:Name="SegmentText"
+                                                               Text="{Binding}"
+                                                               FontSize="11.5" FontWeight="Bold"
+                                                               Foreground="{StaticResource MutedTextBrush}"
+                                                               HorizontalAlignment="Center"
+                                                               VerticalAlignment="Center" />
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="Segment" Property="BorderBrush" Value="White" />
+                                                        <Setter TargetName="SegmentText" Property="Foreground" Value="{StaticResource TextBrush}" />
+                                                    </Trigger>
+                                                    <Trigger Property="IsSelected" Value="True">
+                                                        <Setter TargetName="Segment" Property="Background" Value="{StaticResource AccentBrush}" />
+                                                        <Setter TargetName="Segment" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                                        <Setter TargetName="SegmentText" Property="Foreground" Value="{StaticResource WindowBackgroundBrush}" />
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                        </ListBox>
+                    </StackPanel>
+                </Border>
             </Grid>
 
             <TabControl Grid.Row="2" Margin="12,0,12,0"
