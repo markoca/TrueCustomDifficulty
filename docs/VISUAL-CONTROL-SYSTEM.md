@@ -1,3 +1,8 @@
+## 2026-11-16 — CURRENT: Bloodsucker card title, trader 0% exceptions
+
+* The Bloodsucker health parameter (board anchor) is labelled **Bloodsucker Health** like the other 13 species, so its panel title matches its text.
+* Minimum Sellable Condition leaves Selma and Ragman at the game's 0% (they buy anything); the slider moves the 40% rule of every other trader. Texts say so.
+
 ## 2026-11-16 — CURRENT: consistency pass (no hover tooltips, mutant texts, dead StashAmmoRadar)
 
 * **Hover tooltips removed again** (2026-10-15 rule: no on-hover WPF tooltips): ADJUST ODDS / MEDICAL COMPOSITION cell hints, the TRADER STOCK rails and the GEAR checkbox / CHANCE rail. The same information is in the panel: each cell's own text (presence cells: their *Basic / Standard Ammo Odds* cards) and the TRADER STOCK CONTROLS help, which now also explains GEAR (Generic traders only, one rare item, 8% second roll, corpse loot unchanged). Entries above that mention hover hints are superseded.

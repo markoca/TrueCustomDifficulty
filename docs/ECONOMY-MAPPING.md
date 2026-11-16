@@ -45,7 +45,7 @@ The CFG confirms the field and vanilla progression. This is the trader-buying-fr
 
 - File: `GameData/TradePrototypes.cfg` and DLC1 `DLCGameData/DLC1/TradePrototypes.cfg`
 - Fields: `TradeGenerators/[0]/WeaponSellMinDurability` and `ArmorSellMinDurability`
-- Reference slider threshold: `0.40`; source exceptions `SelmaTrader_TradePrototype` and `Trader_Soviet_Rostok_TradePrototype` explicitly author `0.0f`; 22 profiles omit both local fields. See `generators/TRADER-BUY-BPATCH-CONTRACT-2026-11-13.md`
+- Reference slider threshold: `0.40`; source exceptions `SelmaTrader_TradePrototype` and `Trader_Soviet_Rostok_TradePrototype` explicitly author `0.0f` and are never written (they keep buying any condition); 22 profiles omit both local fields. See `generators/TRADER-BUY-BPATCH-CONTRACT-2026-11-13.md`
 - UI: **Trader Minimum Buy Condition**, 0-100% in 1% steps
 
 This field is the condition-acceptance gate, not a price multiplier. Setting it to 0% removes this durability gate for mapped traders; an untouched 40% slider leaves source-authored 0% exceptions unchanged. The price of that damaged gear is still determined separately by durability-based item value, difficulty `BuyCondition`, trader-specific modifiers and other vanilla economy rules.

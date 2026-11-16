@@ -650,7 +650,7 @@
       "id": "combat.mutantHealth.bloodsucker",
       "tab": "combat",
       "group": "Mutant Health",
-      "label": "Mutant Health",
+      "label": "Bloodsucker Health",
       "description": "Scales Bloodsucker-family HP with one multiplier. The radar shows the standard Bloodsucker HP; Mist Bloodsucker follows the same multiplier.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -9378,12 +9378,13 @@
         "status": "runtime_test_required",
         "notes": [
           "TradePrototypes uses WeaponSellMinDurability and ArmorSellMinDurability as the minimum accepted condition thresholds; vanilla is 0.4 for both.",
+          "Selma and Ragman (SelmaTrader / Trader_Soviet_Rostok) buy any condition in vanilla (0.0); they keep that exception and are never written.",
           "The current extracted consumer graph resolves 86 production trade profiles: 68 base-game and 18 DLC1. Four template/test profiles are excluded.",
           "The control writes the same selected threshold to both weapon and armor fields without changing price modifiers, accepted item categories, stock, money, refresh, repair or reputation rules.",
           "DLC1 profiles are patched only when DLC1 is installed."
         ]
       },
-      "rationale": "The most worn weapon or armor a trader will still take off your hands. Vanilla: 40% condition. Raise it and beat-up loot stops being sellable.",
+      "rationale": "The most worn weapon or armor a trader will still take off your hands. Vanilla: 40% condition. Raise it and beat-up loot stops being sellable.\n\nSelma and Ragman buy anything in the game and keep doing so.",
       "logic": "0% lets traders buy completely broken weapons and armor. 40% keeps vanilla. Higher settings make traders refuse more damaged gear.",
       "interaction": "Only decides whether a trader accepts damaged gear. The price they pay still depends on its condition and other trader rules."
     },

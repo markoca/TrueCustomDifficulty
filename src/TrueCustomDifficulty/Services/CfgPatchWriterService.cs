@@ -3074,6 +3074,11 @@ public sealed partial class CfgPatchWriterService
         var edits = 0;
         foreach (var row in rows)
         {
+            // Selma and Ragman (Soviet Rostok) buy gear in any condition in
+            // the game (0.0f). They keep that exception; the slider moves the
+            // game's 40% rule of every other trader.
+            if (ParseNumber(row.VanillaRaw) <= 0.0)
+                continue;
             var document = GetDocument(documents, row.File);
             var path = row.NodePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
             var value = FormatLikeSource(threshold, row.VanillaRaw);

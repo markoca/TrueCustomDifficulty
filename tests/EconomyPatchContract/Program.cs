@@ -248,10 +248,12 @@ internal static class Program
                     .All(row => row[6] == "0.4f"),
                 label + ": original two 0%-condition trader baselines were lost");
             var result = new CfgPatchWriterService().Write(vm,Catalog,null,path);
+            // The two native 0% traders keep their exception: 66 profiles x 2 leaves.
+            baseRows = baseRows.Where(row => !nativeZeroSids.Contains(row[2], StringComparer.Ordinal)).ToArray();
             var files = baseRows.Select(row=>ExpectedFile(path,row[1]))
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
-            Check(result.FileCount==files.Count && result.ParameterCount==1 && result.EditCount==136,
-                label+": expected 136 actual trader leaf writes");
+            Check(result.FileCount==files.Count && result.ParameterCount==1 && result.EditCount==132,
+                label+": expected 132 actual trader leaf writes (Selma / Ragman untouched)");
             Check(Directory.GetFiles(path,"*TrueCustomDifficulty*",SearchOption.AllDirectories)
                 .ToHashSet(StringComparer.OrdinalIgnoreCase).SetEquals(files),
                 label+": unrelated/missing trader output files");
@@ -282,7 +284,7 @@ internal static class Program
                 }
             }
             _passed++;
-            Console.WriteLine("PASS "+label+" (68 base profiles, 136 assignments)");
+            Console.WriteLine("PASS "+label+" (66 base profiles, 132 assignments; Selma / Ragman untouched)");
         }
         finally
         {

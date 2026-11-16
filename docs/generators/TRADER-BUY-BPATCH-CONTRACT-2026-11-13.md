@@ -86,6 +86,8 @@ The old production `trader-min-buy-condition-manifest.csv` incorrectly recorded 
 
 The existing `economy.traderMinBuyCondition` slider has an absolute 40% UI reference value. While unchanged it emits **no patch**, so the two original 0% profiles remain untouched. When deliberately changed, its absolute threshold is written to all 86 mapped production targets (with DLC1 detection), including those two. In current production `WriteTraderMinBuyCondition`, the manifest raw vanilla value controls **numeric formatting**, not the assigned threshold, so the correction preserves edited outputs. A new regression assertion in `tests/EconomyPatchContract/Program.cs` checks both 0% entries and unchanged reference behavior.
 
+> **2026-11-16 (CURRENT):** the two 0% traders keep their exception. A changed slider writes the 84 other mapped profiles (base: 66, i.e. 132 leaves); Selma and Ragman are skipped, following the CFG's own per-trader structure.
+
 ## Remaining test gates (not claimed as PASS)
 
 1. Run the Economy production C# contract with .NET/Wine: the new serializer shape scenario and existing 39 scenarios (expected total **40**) must pass, including no other TradeGenerator fields in the emitted patch.

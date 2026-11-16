@@ -799,7 +799,7 @@ if any(p.get("scope") != "baseGame" or p.get("file") != "GameData/ObjPrototypes.
        or p.get("nodePath") != ["VitalParams"] or p.get("key") != "MaxHP" or p.get("operation") != "scale"
        for p in _mhp_points):
     fail("mutant health writer route must remain direct base-game ObjPrototypes MaxHP scale")
-if _mhp_rows_by_id["combat.mutantHealth.bloodsucker"].get("label") != "Mutant Health":
+if _mhp_rows_by_id["combat.mutantHealth.bloodsucker"].get("label") != "Bloodsucker Health":
     fail("mutant health aggregate anchor label drifted")
 note("deep CFG mutant HP route gate: 14 health multipliers / 16 MaxHP edit points")
 
