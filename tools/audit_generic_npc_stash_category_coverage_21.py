@@ -30,7 +30,12 @@ def fail_if(condition, message):
 
 npc = csv_rows(NPC_PATH)
 stash = csv_rows(STASH_PATH)
-manifest = csv_rows("src/TrueCustomDifficulty/Data/npc-medical-production-redirect-manifest.csv")
+manifest_all = csv_rows("src/TrueCustomDifficulty/Data/npc-medical-production-redirect-manifest.csv")
+fail_if(len(manifest_all) != 92, "Ordinary-human manifest is not the 92-root 2.1 scope")
+# This category-coverage study covers the first 33 (original guard/custom)
+# roots; the 59 roaming GeneralNPC_* roots appended for 2.1 are checked by
+# tools/audit_npc_generalnpc_scope_21.py against the original ZIPs.
+manifest = manifest_all[:33]
 chance = csv_rows("docs/generators/npc-standard-consumable-original-chances-2.1.csv")
 branches = csv_rows("docs/generators/stash-generator-branches.csv")
 weapon_audit = source("docs/generators/NPC-WEAPONS-AMMO-AUDIT.md")

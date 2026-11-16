@@ -1,5 +1,7 @@
 # NPC Loot — S.T.A.L.K.E.R. 2.1 baseline / UI / CFG writer audit
 
+> **Scope superseded (2026-11-16):** the "33 approved roots" below were 31 settlement `GuardNPC_*` + 2 custom loadouts, not the roaming `GeneralNPC_*` NPCs ALife spawns. Production scope is now **92 roots / 92 consumable redirects / 738 weapon rows** — see [NPC-ORDINARY-HUMAN-SCOPE-2.1-2026-11-16.md](NPC-ORDINARY-HUMAN-SCOPE-2.1-2026-11-16.md).
+
 **Date:** 2026-11-15  
 **Scope:** ordinary repeatable human NPC loot; current GitHub `main` source and embedded `gameVersion: 2.1` CFG writer baseline.
 

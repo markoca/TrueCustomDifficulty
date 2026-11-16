@@ -31,7 +31,7 @@ LATER_DIRECT = {
     "economy.medicStock": ("trader-local-source-entries.csv", "trader"),
 }
 EXPECTED_LATER_DIRECT_COUNTS = {
-    "loot.droppedWeaponCondition": 242,
+    "loot.droppedWeaponCondition": 1476,
     "loot.npcWeaponAmmoSupply": 242,
     "economy.medicStock": 96,
 }

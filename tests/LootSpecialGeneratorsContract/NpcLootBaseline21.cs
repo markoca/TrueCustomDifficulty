@@ -38,12 +38,18 @@ internal static partial class Program
 
         var condition = Baseline.EditPoints.Where(p =>
             p.ParameterId == "loot.droppedWeaponCondition").ToArray();
-        Check(condition.Length == 242
-              && condition.Select(p => p.Prototype).Distinct().Count() == 33
+        // 2.1 ordinary-human scope: 33 original guard/custom roots plus
+        // 59 roaming GeneralNPC_* / remaining GuardNPC_* roots (4 DLC1 NORD).
+        Check(condition.Length == 1476
+              && condition.Select(p => p.Prototype).Distinct().Count() == 92
               && condition.GroupBy(p => (p.Prototype,
-                    Path: string.Join("/", p.NodePath))).Count() == 121
-              && condition.All(p => p.File == "GameData/ItemGeneratorPrototypes.cfg"
-                    && p.Operation == "setRangeBound"),
+                    Path: string.Join("/", p.NodePath))).Count() == 738
+              && condition.All(p => p.Operation == "setRangeBound"
+                    && (p.Scope == "baseGame"
+                        ? p.File == "GameData/ItemGeneratorPrototypes.cfg"
+                        : p.Scope == "dlc1"
+                          && p.File == "DLCGameData/DLC1/ItemGeneratorPrototypes.cfg"))
+              && condition.Count(p => p.Scope == "dlc1") == 80,
             "Native NPC weapon-condition rows drifted");
 
         // The original UI disabled BOTH Medical and Ammo on Water/None.
@@ -98,6 +104,6 @@ internal static partial class Program
 
         Console.WriteLine(
             "PASS NPC 2.1 baseline: corpse choice, 6/58/104 medical, 43 bonus ammo, "
-            + "121 weapon rows; UI medical independent in all four difficulties");
+            + "738 weapon rows / 92 roots; UI medical independent in all four difficulties");
     }
 }

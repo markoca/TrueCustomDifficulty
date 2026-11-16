@@ -15,7 +15,8 @@ class Game21BaselineContract(unittest.TestCase):
         self.assertEqual("2.1", catalog["source"]["gameVersion"])
         self.assertEqual("2.1", baseline["gameVersion"])
         self.assertEqual(361, len(catalog["parameters"]))
-        self.assertEqual(1448, len(baseline["editPoints"]))
+        # 1448 + 1234 roaming-NPC weapon-condition leaves (2026-11-16 scope).
+        self.assertEqual(2682, len(baseline["editPoints"]))
         self.assertEqual(25, len(baseline["special"]))
 
     def test_factory_presets_target_21_and_protect_user_edits(self):

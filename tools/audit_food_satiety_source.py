@@ -41,7 +41,7 @@ def main() -> int:
     require(len(catalog["parameters"]) == len(params) == 361, "source count / duplicate IDs")
     require(sum(p.get("exposeInUi", True) for p in params.values()) == 186,
             "current visible-source census")
-    require(baseline["supportedParameterCount"] == 361 and len(edit_points) == 1448,
+    require(baseline["supportedParameterCount"] == 361 and len(edit_points) == 2682,
             "current full direct CFG-writer census")
     require("MaxHungerPoints = 100" in read(DOCS / "SURVIVAL-MAPPING.md"),
             "source documented hunger ceiling must remain 100")

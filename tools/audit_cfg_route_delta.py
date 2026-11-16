@@ -61,7 +61,7 @@ def main() -> int:
             "Frozen 248 -> 35 Stashes + 4 Food + 1 Armor removal + 2 Equipment Weight source boundary drift")
     require(added & direct == food | weight,
             "Only new food and weight controls may add direct source routes")
-    require(len(direct) == 217 and len(baseline["editPoints"]) == 1448,
+    require(len(direct) == 217 and len(baseline["editPoints"]) == 2682,
             "Old direct and new food leaf count drift")
     # Reuse earlier source audit, but prove that the previously verified leaf
     # identities have not drifted. Counts alone can hide silent reassignment.

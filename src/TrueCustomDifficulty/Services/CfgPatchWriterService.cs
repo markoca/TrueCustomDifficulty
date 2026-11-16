@@ -930,7 +930,7 @@ public sealed partial class CfgPatchWriterService
     }
 
     // Standard human Food / Drinks / Medical all share ONE set of six cloned
-    // vanilla consumable pools and ONE 33-link standard-human-only redirect.
+    // vanilla consumable pools and ONE 92-link ordinary-human-only redirect.
     // Write each exact source Chance at most once to avoid competing BPatch
     // clones from independent optional per-SID controls.
     private static int WriteNpcMedicalLootProduction(
@@ -1175,14 +1175,27 @@ public sealed partial class CfgPatchWriterService
                 columns[6].Trim()));
         }
 
-        if (redirects.Count != 33)
+        // 2.1 ordinary-human scope: the original 33 audited guard/custom
+        // links plus the 59 roaming GeneralNPC_* / remaining GuardNPC_*
+        // loadout roots (55 base + 4 DLC1 NORD). Named MIK, disabled
+        // Prologue and spawner-less *_No_Armor roots stay excluded.
+        var baseCount = redirects.Count(r => !r.Scope.Equals("dlc1", StringComparison.OrdinalIgnoreCase));
+        if (redirects.Count != NpcConsumableRedirectCount
+            || baseCount != NpcConsumableRedirectCount - NpcConsumableRedirectDlc1Count)
         {
             throw new InvalidDataException(
-                $"NPC medical-loot redirect manifest contains {redirects.Count} assignments; expected audited standard-human scope of 33.");
+                $"NPC medical-loot redirect manifest contains {redirects.Count} assignments ({baseCount} base); expected audited ordinary-human scope of {NpcConsumableRedirectCount} ({NpcConsumableRedirectDlc1Count} DLC1).");
         }
+        if (redirects.Any(r => r.Prototype.StartsWith("GeneralNPC_MIK_", StringComparison.Ordinal)
+                || r.Prototype.Contains("Prolog", StringComparison.Ordinal)
+                || r.Prototype.EndsWith("_No_Armor_ItemGenerator", StringComparison.Ordinal)))
+            throw new InvalidDataException("NPC consumable redirect manifest contains an excluded named/Prologue/unspawned root.");
 
         return redirects;
     }
+
+    internal const int NpcConsumableRedirectCount = 92;
+    internal const int NpcConsumableRedirectDlc1Count = 4;
 
     private sealed record NpcMedicalRedirect(
         string Scope,

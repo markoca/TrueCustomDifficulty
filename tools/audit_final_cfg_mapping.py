@@ -229,7 +229,7 @@ def main():
         if point["operation"] not in ("set", "toggleSourceOrZero"):
             parse_source(point["sourceRaw"])
         direct[pid].append(point)
-    require(len(baseline["editPoints"]) == 1448 and len(direct) == 217,
+    require(len(baseline["editPoints"]) == 2682 and len(direct) == 217,
             "direct writer point count drift")
     special = method_routes(baseline["special"])
     require(len(special) == 144, "special writer route count drift")

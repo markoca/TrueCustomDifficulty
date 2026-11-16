@@ -12,7 +12,12 @@ def read(path):
 def rows(path):
     return list(csv.DictReader(io.StringIO(read(path))))
 
-manifest = rows("src/TrueCustomDifficulty/Data/npc-medical-production-redirect-manifest.csv")
+manifest_all = rows("src/TrueCustomDifficulty/Data/npc-medical-production-redirect-manifest.csv")
+assert len(manifest_all) == 92, "Ordinary-human manifest is not the 92-root 2.1 scope"
+# The ownership catalog classifies the first 33 (original guard/custom)
+# roots; the 59 roaming GeneralNPC_* roots appended for 2.1 are checked by
+# tools/audit_npc_generalnpc_scope_21.py against the original ZIPs.
+manifest = manifest_all[:33]
 catalog = rows("docs/generators/generic-corpse-stash-generator-ownership-2.1.csv")
 branches = rows("docs/generators/stash-generator-branches.csv")
 corpse = read("docs/generators/CORPSE-OVERRIDE-AUDIT.md")

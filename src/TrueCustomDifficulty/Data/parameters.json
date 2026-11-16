@@ -5673,7 +5673,7 @@
       "tab": "loot",
       "group": "NPC Loot & Equipment",
       "label": "Corpse Supply Reduction",
-      "description": "Reduces optional Food, Drinks and Medical source Chance on the 33 approved ordinary-human generators, plus native bonus Corpse SmartLoot group spawn endpoints. This is not a percentage of corpses that will be empty.",
+      "description": "Reduces optional Food, Drinks and Medical source Chance on the 92 ordinary-human loadout generators (roaming GeneralNPC_* and settlement GuardNPC_*), plus native bonus Corpse SmartLoot group spawn endpoints. This is not a percentage of corpses that will be empty.",
       "control": "slider",
       "valueKind": "probability",
       "display": {
@@ -5794,7 +5794,7 @@
           "The audited control surface contains 58 medical Chance rows across six shared role-oriented consumable pools.",
           "100% preserves every vanilla Chance; 0% disables those medical rolls; values above 100% multiply each source Chance and clamp at 100%.",
           "Seven source medical rows are already Chance = 1.0 and therefore remain capped at 100% when increasing frequency.",
-          "Only 37 audited standard-human SubItemGenerator links are redirected to TCD-owned pool clones; Prologue, zombie, named/scripted and other shared consumers remain vanilla."
+          "92 ordinary-human SubItemGenerator links (88 base + 4 DLC1 NORD; roaming GeneralNPC_* and settlement GuardNPC_*) are redirected to TCD-owned pool clones; disabled Prologue edges, named MIK, unspawned No_Armor roots, zombies (which re-declare their own link) and the shared vanilla pools themselves remain vanilla."
         ]
       },
       "rationale": "Changes the original standard-NPC medical Chance entries. Does not affect optional SmartLoot medicine or item stack sizes.",
@@ -5879,18 +5879,18 @@
         {
           "scope": "baseGame",
           "file": "GameData/ItemGeneratorPrototypes.cfg",
-          "prototype": "33 audited repeatable-human loadout generators",
-          "path": "121 direct weapon rows MinDurability/MaxDurability",
+          "prototype": "92 audited ordinary-human loadout generators (88 base + 4 DLC1)",
+          "path": "738 direct weapon rows MinDurability/MaxDurability",
           "operation": "setRangeBound"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "Production-only audit locks this control to 121 direct weapon rows across 33 repeatable standard-human loadout roots.",
-          "120 rows use vanilla 25%-50% durability ranges; one row uses 35%-45%. OFF/default behavior emits no patch, so that authored outlier remains untouched.",
-          "Once either bound is changed, the selected MIN and MAX become direct MinDurability/MaxDurability values on all 121 audited weapon rows.",
-          "Two Prologue roots and four named MIK/Mykluha roots are excluded."
+          "Production-only audit locks this control to 738 direct weapon rows (WeaponPrimary/Secondary/Pistol) across 92 ordinary-human loadout roots: roaming GeneralNPC_* and settlement GuardNPC_*, including 40 DLC1 NORD rows.",
+          "736 rows use vanilla 25%-50% durability ranges; two authored outliers use 35%-45% (Corpus guard) and 45%-45% (Freedom guard). OFF/default behavior emits no patch, so those outliers remain untouched. Grenade (Artifact enum) and armor durability rows are never edited.",
+          "Once either bound is changed, the selected MIN and MAX become direct MinDurability/MaxDurability values on all 738 audited weapon rows.",
+          "Two Prologue roots, four named MIK/Mykluha roots and three spawner-less No_Armor roots are excluded."
         ]
       },
       "rationale": "Sets the minimum and maximum condition of weapons found on ordinary human enemies.",

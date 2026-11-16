@@ -16,7 +16,7 @@ DATA = ROOT / "src/TrueCustomDifficulty/Data"
 EXPECTED = {
     "combat": 56, "survival": 153, "health": 47, "stamina": 26,
     "economy": 409, "equipment": 331, "environment": 42,
-    "loot": 320, "alife": 64,
+    "loot": 1554, "alife": 64,
 }
 SELL_RESOURCE = "TrueCustomDifficulty.Data.trader-sells-2.1-runtime.csv"
 CHANGED_DIRECT_FILES = {
@@ -44,7 +44,7 @@ def main() -> int:
     ids = {p["id"] for p in catalog["parameters"]}
     actual = Counter(p["parameterId"].split(".", 1)[0] for p in points)
     assert dict(actual) == EXPECTED, f"Direct domain census drift: {actual}"
-    assert len(points) == 1448 and len(ids) == 361
+    assert len(points) == 2682 and len(ids) == 361
     assert baseline["supportedParameterCount"] == len(ids)
     assert baseline["gameVersion"] == catalog["source"]["gameVersion"] == "2.1", (
         "2.1 source-target metadata mismatch; legacy 2.0.5 fallback is not supported."
@@ -81,7 +81,7 @@ def main() -> int:
         assert (result["old_cfg_files"], result["new_cfg_files"],
                 result["changed_file_count"], result["direct_points"],
                 result["direct_points_checked_in_changed_files"]) == (
-                603, 605, 22, 1448, 35), "2.1 archive or mapping census changed"
+                603, 605, 22, 2682, 35), "2.1 archive or mapping census changed"
         assert set(result["added"]) == NEW_21_FILES and not result["removed"]
         report["sourceComparison"] = "PASS" if result["passed"] else "FAIL"
         report["sourceFindings"] = result["issues"]

@@ -207,7 +207,7 @@ internal static partial class Program
             if (Keep is null && Directory.Exists(mixedDir))
                 Directory.Delete(mixedDir, true);
         }
-        Console.WriteLine("PASS two generic supply masters: 33 human sources, "
+        Console.WriteLine("PASS two generic supply masters: 92 human sources, "
             + "three guarded tiers, world SmartLoot endpoints, zero output and UI heights");
     }
 }

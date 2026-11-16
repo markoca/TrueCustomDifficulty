@@ -168,7 +168,7 @@ internal static partial class Program
         Check(config.Pools.Count == 6 && medRows == 58 && otherRows == 46,
             name + ": six human consumable pools / 104 rows drifted");
 
-        // Check exactly the 33 audited production-only sub-generator edges,
+        // Check exactly the 92 audited ordinary-human sub-generator edges,
         // not a broad edit of vanilla shared pool roots.
         var dataDir = new DirectoryInfo(Directory.GetCurrentDirectory());
         while (dataDir is not null && !File.Exists(Path.Combine(dataDir.FullName,
@@ -180,14 +180,21 @@ internal static partial class Program
             "src", "TrueCustomDifficulty", "Data",
             "npc-medical-production-redirect-manifest.csv"))
             .Skip(1).Where(l => !string.IsNullOrWhiteSpace(l)).ToArray();
-        Check(manifest.Length == 33,
+        Check(manifest.Length == 92,
             name + ": named NPC or missing standard-human source redirect");
         foreach (var raw in manifest)
         {
             var fields = raw.Split(',');
-            Check(fields.Length == 9 && fields[1] == "GameData/ItemGeneratorPrototypes.cfg"
+            Check(fields.Length == 9
+                && (fields[0] == "baseGame"
+                    ? fields[1] == "GameData/ItemGeneratorPrototypes.cfg"
+                    : fields[0] == "dlc1"
+                      && fields[1] == "DLCGameData/DLC1/ItemGeneratorPrototypes.cfg")
                 && fields[4] == "ItemGeneratorPrototypeSID",
                 name + ": invalid original NPC redirect schema");
+            // DLC1 NORD rows live in the DLC document; this fixture checks base.
+            if (fields[0] == "dlc1")
+                continue;
             var leaf = fields[2] + "/" + fields[3].Replace(".", "/") + "/" + fields[4];
             Check(emitted!.TryGetValue(leaf, out var value) && value == fields[6]
                 && fields[6] == "TCD_" + fields[5],

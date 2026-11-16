@@ -937,7 +937,7 @@ internal static partial class Program
             g.GetProperty("pools").GetArrayLength()==2 &&
             Special.GetProperty("npcCorpseAmmoProduction").GetProperty("entries").GetArrayLength()==43,
             "Audited Loot production template source inventories drift");
-        foreach(var (config,count) in new[]{(c,0),(m,450),(e,305),(med,33),(a,1235),(g,182)})
+        foreach(var (config,count) in new[]{(c,0),(m,450),(e,305),(med,92),(a,1235),(g,182)})
         {
             var rows=Redirects(config,includeDlc:true).ToArray();
             if(count!=0)Check(rows.Length==count,"Embedded production redirect manifest drift "+count+" / "+rows.Length);

@@ -154,8 +154,12 @@ npc_items = [item["fields"] for pool in npc
              for item in category["items"]]
 assert len(npc_items) == 104
 assert all("Chance" in item and "Weight" not in item for item in npc_items)
-links = csv_rows("src/TrueCustomDifficulty/Data/npc-medical-production-redirect-manifest.csv")
-assert len(links) == 33 and len({r["prototype"] for r in links}) == 33
+all_links = csv_rows("src/TrueCustomDifficulty/Data/npc-medical-production-redirect-manifest.csv")
+assert len(all_links) == 92 and len({r["prototype"] for r in all_links}) == 92
+# NPC-CONSUMABLES-AUDIT.md documents the first 33 (original guard/custom)
+# links; the 59 roaming GeneralNPC_* links appended for 2.1 are verified
+# against the original ZIPs by tools/audit_npc_generalnpc_scope_21.py.
+links = all_links[:33]
 
 # The original SubItemGenerator link for each of these 33 source roots
 # uses Weight=1, not a direct Chance-to-run bundle gate.
@@ -196,5 +200,5 @@ assert norm((bandage, food / 2, drink)) == (
 print("PASS: 41 tier groups (19 Weight / 22 Chance), no native group-roll gates;")
 print("      422 world SmartLoot groups (410 Weight / 12 Chance),")
 print("      310 positive MaxSpawnChance and 112 native zero-Max groups;")
-print("      33 generic-NPC Weight=1 pool links; 104 consumables use item Chance;")
+print("      92 generic-NPC pool links (33 doc-audited here); 104 consumables use item Chance;")
 print("      native Weight ratio is unchanged under uniform scaling.")

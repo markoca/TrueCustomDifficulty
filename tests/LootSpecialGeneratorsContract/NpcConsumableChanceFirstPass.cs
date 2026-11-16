@@ -262,7 +262,7 @@ internal static partial class Program
             "Unchecked NPC Chance must display source mode and remain inert");
 
         Console.WriteLine("PASS 50 absolute per-item Chance boundaries + 104 field parity + "
-            + "33 scope-limited redirects + medical precedence + legacy preset migration");
+            + "92 scope-limited redirects + medical precedence + legacy preset migration");
     }
 
     private static void CheckNpcConsumableClones(
@@ -352,17 +352,22 @@ internal static partial class Program
         var rows = File.ReadAllLines(Path.Combine(repo!.FullName, "src",
             "TrueCustomDifficulty", "Data", "npc-medical-production-redirect-manifest.csv"))
             .Skip(1).Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
-        Check(rows.Length == 33, name + ": normal NPC redirect count changed");
-        var generated = output["GameData/ItemGeneratorPrototypes.cfg"];
+        Check(rows.Length == 92, name + ": normal NPC redirect count changed");
         foreach (var raw in rows)
         {
             var fields = raw.Split(',');
+            // DLC1 NORD rows are only emitted on DLC1 builds.
+            if (!output.TryGetValue(fields[1], out var generated))
+            {
+                Check(fields[0] == "dlc1", name + ": missing base NPC redirect document");
+                continue;
+            }
             var path = fields[2] + "/" + fields[3].Replace(".", "/") + "/" + fields[4];
             Check(generated.TryGetValue(path, out var actual)
                 && actual == fields[6] && fields[6] == "TCD_" + fields[5],
                 name + ": unexpected human redirect or shared pool change: " + path);
         }
-        Check(!generated.Keys.Any(k => k.StartsWith("GeneralNPC_Consumables_",
+        Check(!output["GameData/ItemGeneratorPrototypes.cfg"].Keys.Any(k => k.StartsWith("GeneralNPC_Consumables_",
                 StringComparison.Ordinal)),
             name + ": patched a vanilla shared consumable pool");
     }

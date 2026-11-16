@@ -204,10 +204,15 @@ if medical_manifest.exists():
     import csv
     with medical_manifest.open(encoding="utf-8-sig", newline="") as fh:
         medical_rows = list(csv.DictReader(fh))
-    if len(medical_rows) != 33:
-        fail(f"human NPC medical manifest has {len(medical_rows)} rows; expected 33 repeatable redirects")
+    _med_dlc = [row for row in medical_rows if row.get("scope") == "dlc1"]
+    _med_bad_file = [row for row in medical_rows if row.get("file") != (
+        "DLCGameData/DLC1/ItemGeneratorPrototypes.cfg" if row.get("scope") == "dlc1"
+        else "GameData/ItemGeneratorPrototypes.cfg")]
+    _med_no_armor = [row for row in medical_rows if (row.get("prototype") or "").endswith("_No_Armor_ItemGenerator")]
+    if len(medical_rows) != 92 or len(_med_dlc) != 4 or _med_bad_file or _med_no_armor:
+        fail(f"human NPC medical manifest has {len(medical_rows)} rows ({len(_med_dlc)} DLC1, {len(_med_bad_file)} bad file, {len(_med_no_armor)} unspawned); expected 92 ordinary-human redirects (4 DLC1)")
     bad_named = [row for row in medical_rows if (row.get("prototype") or "").startswith("GeneralNPC_MIK_")]
-    bad_prologue = [row for row in medical_rows if "Prologue" in (row.get("prototype") or "")]
+    bad_prologue = [row for row in medical_rows if "Prolog" in (row.get("prototype") or "")]
     pools = {row.get("target_value") for row in medical_rows}
     if bad_named:
         fail(f"human NPC medical manifest contains {len(bad_named)} named MIK/Mykluha redirect(s)")
@@ -215,8 +220,8 @@ if medical_manifest.exists():
         fail(f"human NPC medical manifest contains {len(bad_prologue)} Prologue redirect(s)")
     if len(pools) != 6:
         fail(f"human NPC medical manifest targets {len(pools)} TCD pools; expected 6")
-    if not bad_named and not bad_prologue and len(medical_rows) == 33 and len(pools) == 6:
-        note("human NPC medical surface: 33 repeatable redirects / 6 TCD pools; named MIK and Prologue excluded")
+    if not bad_named and not bad_prologue and len(medical_rows) == 92 and len(pools) == 6:
+        note("human NPC medical surface: 92 ordinary-human redirects (88 base + 4 DLC1) / 6 TCD pools; named MIK, Prologue and unspawned No_Armor excluded")
 
 
 # Generator base-topology invariants. These counts come from the raw/local source
@@ -453,7 +458,7 @@ else:
 # away from 242 weapon-attached AmmoMin/Max direct edits into the dedicated
 # NPC_Ammo_Smart clone route. The ordinary weapon attached ammo is untouched.
 _prod_expected_direct = {
-    "loot.droppedWeaponCondition": (242, {"MinDurability", "MaxDurability"}),
+    "loot.droppedWeaponCondition": (1476, {"MinDurability", "MaxDurability"}),
     "economy.medicStock": (96, {"MinCount", "MaxCount"}),
 }
 for _pid, (_count, _keys) in _prod_expected_direct.items():
@@ -468,7 +473,7 @@ if _npc_ammo_direct:
 elif "loot.npcWeaponAmmoSupply" not in json.dumps(_npc_ammo_special) or "NPC_Ammo_Smart" not in _npc_ammo_writer:
     fail("NPC_Ammo_Smart corpse-bonus special writer route not found")
 else:
-    note("current NPC Ammo route: zero weapon-attached direct edits, source-cloned SmartLoot ammo; condition 242 and medic 96 direct edits preserved")
+    note("current NPC Ammo route: zero weapon-attached direct edits, source-cloned SmartLoot ammo; condition 1476 and medic 96 direct edits preserved")
 
 # Visible stamina terminology contract: the UI writes out the full resource name.
 # Internal CFG keys such as stamina.maxSP and RegenSP must remain unchanged.
@@ -2059,6 +2064,9 @@ _factory_legacy_catalog = {pid: p for pid, p in _factory_catalog.items()
                            if pid not in {"survival.breadSatiety", "survival.sausageSatiety",
                                "survival.cannedFoodSatiety", "survival.milkSatiety"}
                            and pid not in _factory_new_tier_chance_ids
+                           # Post-legacy supply masters: factory presets omit
+                           # them and load at the 0% (no edit) default.
+                           and pid not in {"loot.genericCorpseReduction", "loot.genericStashReduction"}
                            and not pid.startswith(("loot.stashMix", "loot.stashGear",
                                "loot.stashMedical", "loot.stashMedkit", "loot.stashArmyMedkit"))}
 _factory_tuning = json.loads((ROOT / "tools/factory_preset_expansion.json").read_text(encoding="utf-8"))

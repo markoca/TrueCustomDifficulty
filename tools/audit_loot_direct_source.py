@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Strict original Loot direct structure/value/source-ancestry verifier.
 
-This covers only the 320 direct loot edit points; custom Loot production
+This covers only the 1554 direct loot edit points (1476 of them NPC weapon
+durability bounds, 80 in the DLC1 NORD generators); custom Loot production
 generators, actor removals and shuffle writers are separate contracts.
 """
 from __future__ import annotations
@@ -18,6 +19,13 @@ from audit_cfg_source_values import check_point, read_tree, resolve_refkey_inher
 ROOT = Path(__file__).resolve().parents[1]
 BASELINE = ROOT / "src" / "TrueCustomDifficulty" / "Data" / "cfg-writer-baseline.json"
 SOURCE = "GameData/ItemGeneratorPrototypes.cfg"
+DLC_SOURCE = "DLCGameData/DLC1/ItemGeneratorPrototypes.cfg"
+EXPECTED_TOTAL = 1554
+EXPECTED_KINDS = {"mutant": 14, "npcCondition": 1476, "coupons": 64}
+EXPECTED_STATUS = {"exact": 1490, "inherited_exact": 64}
+EXPECTED_NPC_PAIRS = 738
+EXPECTED_NPC_ROOTS = 92
+EXPECTED_DLC_POINTS = 80
 TEMPLATE = "GamePass_Stash_ItemGenerator_Rare"
 WRAPPER_HEADER = (
     "refurl=ItemGeneratorPrototypes/Gamepass_ItemGenerators.cfg;"
@@ -57,8 +65,14 @@ def main() -> int:
               if p["parameterId"].startswith("loot.")]
     findings = []
     rows = []
-    if len(points) != 320 or not all(p["scope"] == "baseGame"
-                                      and p["file"] == SOURCE for p in points):
+    def scope_ok(p):
+        if p["scope"] == "baseGame":
+            return p["file"] == SOURCE
+        return (p["scope"] == "dlc1" and p["file"] == DLC_SOURCE
+                and p["parameterId"] == "loot.droppedWeaponCondition")
+    dlc_points = [p for p in points if p["scope"] == "dlc1"]
+    if (len(points) != EXPECTED_TOTAL or not all(scope_ok(p) for p in points)
+            or len(dlc_points) != EXPECTED_DLC_POINTS):
         findings.append({"reason": "Unexpected Loot manifest count, scope or path",
                          "actual": len(points)})
     with zipfile.ZipFile(opts.base_zip) as base, zipfile.ZipFile(opts.dlc1_zip) as dlc:
@@ -70,6 +84,16 @@ def main() -> int:
         raw_lines = data.decode("utf-8-sig").splitlines()
         roots = read_tree("\n".join(raw_lines))
         indexed = {r.name: r for r in roots}
+        if DLC_SOURCE not in dlc.namelist():
+            raise ValueError("DLC1 ZIP has no ItemGeneratorPrototypes.cfg")
+        dlc_data = dlc.read(DLC_SOURCE)
+        dlc_lines = dlc_data.decode("utf-8-sig").splitlines()
+        dlc_roots = read_tree("\n".join(dlc_lines))
+        dlc_indexed = {r.name: r for r in dlc_roots}
+        def tree_for(point):
+            if point["scope"] == "dlc1":
+                return dlc_indexed, dlc_roots, dlc_lines
+            return indexed, roots, raw_lines
         wrapper_roots = [
             indexed.get("Stash_Expensive_" + rank) for rank in RANKS
         ]
@@ -123,7 +147,7 @@ def main() -> int:
                     or len(path) != 4):
                     findings.append({"reason": "Non-production NPC weapon target", "id": pid})
                 try:
-                    root = indexed[point["prototype"]]
+                    root = tree_for(point)[0][point["prototype"]]
                     group = descend(root, path[:2])
                     item = descend(root, path)
                     if group.values.get("Category") not in VALID_WEAPON_CATEGORIES:
@@ -161,8 +185,9 @@ def main() -> int:
                 findings.append({"reason": "Unhandled direct Loot owner", "id": pid})
                 kind = "unmapped"
 
-            direct = check_point(point, roots)
-            resolved = resolve_refkey_inheritance(point, roots, raw_lines, direct)
+            _, point_roots, point_lines = tree_for(point)
+            direct = check_point(point, point_roots)
+            resolved = resolve_refkey_inheritance(point, point_roots, point_lines, direct)
             expected_status = "inherited_exact" if kind == "coupons" else "exact"
             if resolved["status"] != expected_status:
                 findings.append({"reason": "Original source value/path/refkey mismatch",
@@ -179,19 +204,19 @@ def main() -> int:
 
     total = len(rows)
     status_counts = Counter(r["status"] for r in rows)
-    if kinds != {"mutant": 14, "npcCondition": 242, "coupons": 64}:
+    if kinds != EXPECTED_KINDS:
         findings.append({"reason": "Domain inventory changed", "actual": dict(kinds)})
-    if status_counts != {"exact": 256, "inherited_exact": 64}:
+    if status_counts != EXPECTED_STATUS:
         findings.append({"reason": "Source raw-value or refkey identity drift", "status": dict(status_counts)})
     pairs = {
         (r["prototype"], r["path"].removesuffix("/MinDurability").removesuffix("/MaxDurability"))
         for r in rows if r["kind"] == "npcCondition"
     }
     roots = {r["prototype"] for r in rows if r["kind"] == "npcCondition"}
-    if len(pairs) != 121 or len(roots) != 33:
-        findings.append({"reason": "NPC 121 weapons / 33 production generators count drift",
+    if len(pairs) != EXPECTED_NPC_PAIRS or len(roots) != EXPECTED_NPC_ROOTS:
+        findings.append({"reason": "NPC 738 weapons / 92 production generators count drift",
                          "weapons": len(pairs), "roots": len(roots)})
-    if total != 320:
+    if total != EXPECTED_TOTAL:
         findings.append({"reason": "Incomplete direct inventory", "total": total})
     report = {
         "phase": "14A Loot direct source",
@@ -211,8 +236,8 @@ def main() -> int:
         opts.out.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n",
                             encoding="utf-8")
     print("Loot DIRECT original source:", report["status"],
-          f"{total}/320 fields;", dict(status_counts),
-          "33 NPC roots / 121 weapon rows")
+          f"{total}/{EXPECTED_TOTAL} fields;", dict(status_counts),
+          f"{len(roots)} NPC roots / {len(pairs)} weapon rows")
     for finding in findings[:25]:
         print("  INVESTIGATE", json.dumps(finding, ensure_ascii=False))
     return int(bool(findings))

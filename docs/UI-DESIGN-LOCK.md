@@ -1,3 +1,7 @@
+## 2026-11-16 — CURRENT: NPC loot controls now reach roaming NPCs (no UI change)
+
+The NPC LOOT & EQUIPMENT controls MED DROPS, the ten FOOD / DRINKS / MEDICAL item rows, the consumable half of FEWER SUPPLIES and DROPPED WEAPON CONDITION previously reached only 31 settlement `GuardNPC_*` + 2 custom loadouts. Their writer scope is now the **92 ordinary-human loadouts** (roaming `GeneralNPC_*` + guards; 4 DLC1 NORD), 738 weapon rows. Layout, captions, values, presets and interaction are unchanged. Details and in-game checklist: `docs/generators/NPC-ORDINARY-HUMAN-SCOPE-2.1-2026-11-16.md`.
+
 ## 2026-11-16 — CURRENT: World Item Spawns compact list cards
 
 **Supersedes the two-column stretched-pill layout** (left Weapon Shuffle / Density / Unique block, right column of four 44-DIP full-half-width toggle pills with the checkbox at the far right, fixed 275-DIP height). Parameters, the Weapon Shuffle ⇄ Extra Stash Gear exclusivity, density dependency, writers and presets are unchanged; layout and paint only.

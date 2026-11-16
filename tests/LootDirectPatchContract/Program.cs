@@ -140,21 +140,25 @@ internal static class Program
             .All(g => g.Count() == 16),
             "Expected 16 vanilla coupons per difficulty SID");
         Check(source.Count(x => x.ParameterId == Condition && x.Operation == "setRangeBound"
-            && x.Key is "MinDurability" or "MaxDurability") == 242,
-            "Expected 242 audited NPC weapon durability bounds");
+            && x.Key is "MinDurability" or "MaxDurability") == 1476,
+            "Expected 1476 audited NPC weapon durability bounds");
         var weaponFields = source.Where(x => x.ParameterId == Condition).ToArray();
-        Check(weaponFields.Select(x => x.Prototype).Distinct(StringComparer.Ordinal).Count() == 33,
-            "Expected 33 audited repeatable-human generator roots");
-        Check(weaponFields.GroupBy(x => (x.Prototype, string.Join("/", x.NodePath))).Count() == 121
+        Check(weaponFields.Select(x => x.Prototype).Distinct(StringComparer.Ordinal).Count() == 92,
+            "Expected 92 audited ordinary-human generator roots");
+        Check(weaponFields.GroupBy(x => (x.Prototype, string.Join("/", x.NodePath))).Count() == 738
             && weaponFields.GroupBy(x => (x.Prototype, string.Join("/", x.NodePath))).All(g =>
                 g.Count() == 2 && g.Select(p => p.Key).ToHashSet(StringComparer.Ordinal)
                     .SetEquals(new[] { "MinDurability", "MaxDurability" })),
-            "Expected 121 independent Min/Max weapon rows");
+            "Expected 738 independent Min/Max weapon rows");
         Check(weaponFields.All(x => x.Role == "production-repeatable-human"),
             "NPC weapon condition restriction drifted outside repeatable humans");
+        // Two authored outliers: GuardNPC_Corpus_Stormtrooper 35-45% and
+        // GuardNPC_Freedom_Stormtrooper 45-45%; all other 736 rows 25-50%.
         Check(weaponFields.Count(x => x.Key == "MinDurability" && x.SourceRaw == "0.35") == 1
-            && weaponFields.Count(x => x.Key == "MaxDurability" && x.SourceRaw == "0.45") == 1,
-            "Original special NPC weapon-condition 35-45% outlier changed");
+            && weaponFields.Count(x => x.Key == "MinDurability" && x.SourceRaw == "0.45") == 1
+            && weaponFields.Count(x => x.Key == "MaxDurability" && x.SourceRaw == "0.45") == 2
+            && weaponFields.Count(x => x.Key == "MinDurability" && x.SourceRaw == "0.25") == 736,
+            "Original special NPC weapon-condition outliers (35-45%, 45-45%) changed");
     }
 
     private static ParameterViewModel GetParameter(string difficulty, string id) =>
@@ -220,8 +224,11 @@ internal static class Program
 
             var sid = Catalog.DifficultyProfiles[difficulty].Sid;
             var live = vm.AllParameters.ToDictionary(x => x.Id, StringComparer.Ordinal);
+            // Write(..., gameInstall: null) is a base-game-only build: the
+            // 80 DLC1 NORD weapon-condition leaves are correctly skipped.
             var points = Baseline.EditPoints
                 .Where(p => selected.ContainsKey(p.ParameterId)
+                    && p.Scope != "dlc1"
                     && (string.IsNullOrWhiteSpace(p.DifficultySid) || p.DifficultySid == sid))
                 .Where(p => Math.Abs(Expected(live[p.ParameterId], p)
                     - ParseNumber(p.SourceRaw)) >= 0.0000001)

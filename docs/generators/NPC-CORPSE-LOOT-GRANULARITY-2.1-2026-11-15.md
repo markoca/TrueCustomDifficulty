@@ -1,5 +1,7 @@
 # NPC corpse loot — supported granularity and safe next controls (S.T.A.L.K.E.R. 2.1)
 
+> **Scope superseded (2026-11-16):** the "33 approved roots" below were 31 settlement `GuardNPC_*` + 2 custom loadouts, not the roaming `GeneralNPC_*` NPCs ALife spawns. Production scope is now **92 roots / 92 consumable redirects / 738 weapon rows** — see [NPC-ORDINARY-HUMAN-SCOPE-2.1-2026-11-16.md](NPC-ORDINARY-HUMAN-SCOPE-2.1-2026-11-16.md).
+
 > **Current design decision (2026-11-15):** Weapon-attached NPC ammo is explicitly excluded from future TCD tuning, as is Echo detector Chance. Earlier “strongest next candidate” text below is historical research, **not an approved feature**. The requested ordinary-loot simplification is exactly **two proposed high-level source-scoped reduction controls**, not new per-weapon or detector controls; see [two-control scarcity design](GENERIC-LOOT-TWO-CONTROL-SCARCITY-DESIGN-2026-11-15.md). This decision record changes documentation only, not the shipped UI or CFG writer.
 
 

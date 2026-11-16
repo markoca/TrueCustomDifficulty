@@ -49,7 +49,8 @@ def main():
                        "Veteran": [], "Master": []}, (
         "Difficulty-to-human-corpse bonus packages changed")
     producers = read_csv(DATA / "npc-medical-production-redirect-manifest.csv")
-    assert len(producers) == 33
+    # 33 original guard/custom roots + 59 roaming GeneralNPC_* (2.1 scope).
+    assert len(producers) == 92
     allowed = {"CloseCombat", "Heavy", "Noon", "Recon", "Sniper", "Stormtrooper"}
     source_for_role = {}
     role_cases = defaultdict(list)
