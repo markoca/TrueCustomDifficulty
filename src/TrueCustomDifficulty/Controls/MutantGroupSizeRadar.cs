@@ -189,7 +189,7 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
 
         dc.DrawTrackedRoundedRectangle(panel,
             new Pen(CloneWithOpacity(border, 0.65), 0.9),
-            card, 4.0, 4.0);
+            card, 4.0, 4.0, parameter);
 
         DrawText(dc, info.Label.ToUpperInvariant(),
             new Point(card.Left + 10.0, card.Top + 6.0),
@@ -260,7 +260,10 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
         base.OnMouseLeftButtonDown(e);
         Focus();
 
-        var row = FindTarget(e.GetPosition(this));
+        var point = e.GetPosition(this);
+        if (_cardHover.OwnerAt(point) is { } cardOwner)
+            ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(cardOwner));
+        var row = FindTarget(point);
         if (row < 0)
             return;
 
@@ -322,7 +325,10 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
     {
         base.OnMouseRightButtonDown(e);
 
-        var row = FindTarget(e.GetPosition(this));
+        var point = e.GetPosition(this);
+        if (_cardHover.OwnerAt(point) is { } cardOwner)
+            ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(cardOwner));
+        var row = FindTarget(point);
         if (row < 0 || _parameters[row] is not { } parameter)
             return;
 

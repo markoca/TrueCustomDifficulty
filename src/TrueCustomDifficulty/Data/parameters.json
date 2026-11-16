@@ -13182,7 +13182,7 @@
           "Does not modify LairPrototypes.cfg, respawn timers, faction population, or scenario frequency."
         ]
       },
-      "rationale": "Controls the maximum size of human squads for each player rank. Respawn frequency is separate.",
+      "rationale": "How big human squads can get while you're a Newbie. Vanilla cap: 3 stalkers. 2× = up to twice as many per squad. How often squads show up doesn't change. Each rank has its own bar.",
       "logic": "",
       "interaction": "",
       "exposeInUi": true
@@ -13229,7 +13229,7 @@
           "Does not modify LairPrototypes.cfg, respawn timers, faction population, or scenario frequency."
         ]
       },
-      "rationale": "Use the radar to tune human squad size separately for each player rank.",
+      "rationale": "How big human squads can get while you're Experienced. Vanilla cap: 4 stalkers. How often squads show up doesn't change.",
       "logic": "Vanilla Experienced squads cap at 4 NPCs. Lower settings make squads smaller; higher settings allow larger squads.",
       "interaction": "Each radar point represents one player rank. 1x keeps vanilla squad size; right-click that point or legend name to reset only that rank.",
       "exposeInUi": false
@@ -13276,7 +13276,7 @@
           "Does not modify LairPrototypes.cfg, respawn timers, faction population, or scenario frequency."
         ]
       },
-      "rationale": "Use the radar to tune human squad size separately for each player rank.",
+      "rationale": "How big human squads can get while you're a Veteran. Vanilla cap: 5 stalkers.",
       "logic": "Vanilla Veteran squads cap at 5 NPCs. Lower settings make squads smaller; higher settings allow larger squads.",
       "interaction": "Each radar point represents one player rank. 1x keeps vanilla squad size; right-click that point or legend name to reset only that rank.",
       "exposeInUi": false
@@ -13323,7 +13323,7 @@
           "Does not modify LairPrototypes.cfg, respawn timers, faction population, or scenario frequency."
         ]
       },
-      "rationale": "Use the radar to tune human squad size separately for each player rank.",
+      "rationale": "How big human squads can get while you're a Master. Vanilla cap: 6 stalkers — late-game firefights get crowded.",
       "logic": "Vanilla Master squads cap at 6 NPCs. Lower settings make squads smaller; higher settings allow larger squads.",
       "interaction": "Each radar point represents one player rank. 1x keeps vanilla squad size; right-click that point or legend name to reset only that rank.",
       "exposeInUi": false
@@ -13391,7 +13391,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Kept hidden so the tool does not pretend there is one proven master slider for every mutant group.",
+      "rationale": "Not used: the game limits each mutant species separately, so there is no single mutant slider that's proven to work. Use the per-species bars instead.",
       "logic": "The game has separate per-species group limits, so this hidden setting is not used to scale them.",
       "interaction": "Not shown in the normal UI. Use the species-specific Mutant Group Size radar instead.",
       "exposeInUi": false
@@ -13459,7 +13459,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Controls group sizes of supported mutant species. It does not increase respawn frequency.",
+      "rationale": "How many bloodsuckers can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 0 / 1 / 1 / 1. 2× = up to twice as many per group; how often they spawn doesn't change. Each species has its own bar. A Newbie cap of 0 stays 0.",
       "logic": "",
       "interaction": "",
       "exposeInUi": true
@@ -13527,7 +13527,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Change how large Blind Dog groups can become while keeping the vanilla rank progression.",
+      "rationale": "How many blind dogs can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 4 / 6 / 8 / 12. 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 4 / 6 / 8 / 12. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Blind Dog group size. 1x keeps vanilla; right-click the point or legend name to reset Blind Dog.",
       "exposeInUi": false
@@ -13595,7 +13595,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Change how large Flesh groups can become while keeping the vanilla rank progression.",
+      "rationale": "How many fleshs can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 2 / 3 / 5 / 6. 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 2 / 3 / 5 / 6. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Flesh group size. 1x keeps vanilla; right-click the point or legend name to reset Flesh.",
       "exposeInUi": false
@@ -13663,7 +13663,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Change how large Controller groups can become while keeping the vanilla rank progression.",
+      "rationale": "How many controllers can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 0 / 1 / 1 / 1. 2× = up to twice as many per group; how often they spawn doesn't change. A Newbie cap of 0 stays 0.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 0 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Controller group size. 1x keeps vanilla; right-click the point or legend name to reset Controller.",
       "exposeInUi": false
@@ -13731,7 +13731,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Change how large Poltergeist groups can become while keeping the vanilla rank progression.",
+      "rationale": "How many poltergeists can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 1 / 1 / 2 / 2. 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 2 / 2. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Poltergeist group size. 1x keeps vanilla; right-click the point or legend name to reset Poltergeist.",
       "exposeInUi": false
@@ -13799,7 +13799,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Change how large Snork groups can become while keeping the vanilla rank progression.",
+      "rationale": "How many snorks can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 1 / 3 / 4 / 6. 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 3 / 4 / 6. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Snork group size. 1x keeps vanilla; right-click the point or legend name to reset Snork.",
       "exposeInUi": false
@@ -13867,7 +13867,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Change how large Boar groups can become while keeping the vanilla rank progression.",
+      "rationale": "How many boars can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 2 / 3 / 5 / 6. 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 2 / 3 / 5 / 6. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Boar group size. 1x keeps vanilla; right-click the point or legend name to reset Boar.",
       "exposeInUi": false
@@ -13935,7 +13935,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Change how large Chimera groups can become while keeping the vanilla rank progression.",
+      "rationale": "How many chimeras can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 1 / 1 / 1 / 1. 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Chimera group size. 1x keeps vanilla; right-click the point or legend name to reset Chimera.",
       "exposeInUi": false
@@ -14003,7 +14003,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Change how large Bayun groups can become while keeping the vanilla rank progression.",
+      "rationale": "How many bayuns can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 1 / 1 / 1 / 2. 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 2. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Bayun group size. 1x keeps vanilla; right-click the point or legend name to reset Bayun.",
       "exposeInUi": false
@@ -14071,7 +14071,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Change how large Tushkan groups can become while keeping the vanilla rank progression.",
+      "rationale": "How many tushkans can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 6 / 8 / 12 / 16. 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 6 / 8 / 12 / 16. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Tushkan group size. 1x keeps vanilla; right-click the point or legend name to reset Tushkan.",
       "exposeInUi": false
@@ -14139,7 +14139,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Change how large Rat Swarm groups can become while keeping the vanilla rank progression.",
+      "rationale": "How many rat swarms can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 1 / 1 / 1 / 1. 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Rat Swarm group size. 1x keeps vanilla; right-click the point or legend name to reset Rat Swarm.",
       "exposeInUi": false
@@ -14207,7 +14207,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Change how large Burer groups can become while keeping the vanilla rank progression.",
+      "rationale": "How many burers can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 1 / 1 / 1 / 2. 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 2. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Burer group size. 1x keeps vanilla; right-click the point or legend name to reset Burer.",
       "exposeInUi": false
@@ -14275,7 +14275,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Change how large Pseudodog groups can become while keeping the vanilla rank progression.",
+      "rationale": "How many pseudodogs can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 1 / 1 / 1 / 1. 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Pseudodog group size. 1x keeps vanilla; right-click the point or legend name to reset Pseudodog.",
       "exposeInUi": false
@@ -14343,7 +14343,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Change how large Deer groups can become while keeping the vanilla rank progression.",
+      "rationale": "How many deers can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 1 / 1 / 1 / 1. 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Deer group size. 1x keeps vanilla; right-click the point or legend name to reset Deer.",
       "exposeInUi": false

@@ -174,7 +174,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
             var center = left + (i + .5) * lane;
             var card = new Rect(left + i * lane + 4.0, 65.0, lane - 8.0, 268.0);
             dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .35),
-                new Pen(CloneWithOpacity(border, .60), .8), card, 4, 4);
+                new Pen(CloneWithOpacity(border, .60), .8), card, 4, 4, parameter);
             var value = parameter.CurrentNumber;
             var currentY = bottom - (bottom - top) * Math.Clamp(value / maxAxis, 0, 1);
             var referenceY = bottom - (bottom - top) *
@@ -208,7 +208,10 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
         base.OnMouseLeftButtonDown(e);
         Focus();
 
-        var row = FindTarget(e.GetPosition(this));
+        var point = e.GetPosition(this);
+        if (_cardHover.OwnerAt(point) is { } cardOwner)
+            ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(cardOwner));
+        var row = FindTarget(point);
         if (row < 0)
             return;
 
@@ -271,7 +274,10 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
     {
         base.OnMouseRightButtonDown(e);
 
-        var row = FindTarget(e.GetPosition(this));
+        var point = e.GetPosition(this);
+        if (_cardHover.OwnerAt(point) is { } cardOwner)
+            ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(cardOwner));
+        var row = FindTarget(point);
         if (row < 0 || _parameters[row] is not { } parameter)
             return;
 
