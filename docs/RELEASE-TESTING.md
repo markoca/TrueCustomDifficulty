@@ -10,6 +10,7 @@
 ## 2026-11-16 — MUTANT AGGRESSION in-game checks (runtime_test_required)
 
 * **ATTACK RATE**: on Veteran set Bloodsucker 3× and Snork 3×, build, fight each: attacks/leaps clearly more frequent than at 1×. Then 0.25×: long pauses between attacks. Repeat Snork (a family vanilla never lists) — if it does not change, report it; the exact-SID entry is not honoured for that family.
+* **Mutant Health variants**: set Poltergeist and Boar health 2×, build, and check an elemental Poltergeist and a Helmed/Porcupine Boar take about twice the hits.
 * **ABILITIES**: on Veteran set Controller ABILITIES 3× (card `psy 4 s`) with ATTACKS at 1×: psy attacks clearly more often, claw swipes unchanged. Burer ABILITIES 0.25×: shield / telekinesis rare. Check one variant too (e.g. Ashy Bloodsucker or a Poltergeist variant).
 * On Master leave every family at its vanilla (2× / 1×) and change only Tushkan: the eight vanilla families must still behave as vanilla Master (written list keeps their 0.5 entries).
 * **SPECIAL ABILITY RATE**: on Stalker set 3× (`pause 2.67–4 s`): in a fight with several mutants (e.g. dog pack + pseudodog, or two bloodsuckers) special / knockdown moves follow each other faster; 0.5× (`pause 16–24 s`) clearly slower. Check that ordinary human combat pacing is unchanged (only [3]/[4] filter groups are edited).

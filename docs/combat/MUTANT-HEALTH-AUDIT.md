@@ -1,3 +1,5 @@
+> **2026-11-16 (CURRENT): variants follow their family.** Mutant Health now writes **27** MaxHP edit points (was 16): besides the base prototypes, every base-game variant with its own `VitalParams.MaxHP` uses the family multiplier — MoldyBlinddog (63), AshyBloodsucker (500), PrologueBloodsucker (200), HelmedBoar and PorcupineBoar (300), BoggyFlesh (280) and the five Poltergeist variants Electro / Toxic / Fire / YanivToxicRozliv / Explosives (400). Collar variants inherit from their base prototype. Illusion clones (Bayun_Collar_Clone 5 HP, PseudoDog phantom summons 1 HP) are deliberately not scaled. All 27 source values are exact against the 2.1 dump (`audit_cfg_source_values.py --parameter-prefix combat.mutantHealth`).
+
 # Mutant Health Audit
 
 ## Phase 2 deep structural CFG repair (2026-10-09)

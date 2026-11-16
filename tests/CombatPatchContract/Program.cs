@@ -305,8 +305,17 @@ internal static class Program
             Check(parameter.IsValueModifiedFromReference(), name + ": UI state did not change");
 
             var records = Source.EditPoints.Where(p => p.ParameterId == parameterId).ToArray();
-            var expectedVariantCount = parameterId is "combat.mutantHealth.bloodsucker"
-                or "combat.mutantHealth.burer" ? 2 : 1;
+            // Variants with their own MaxHP follow the family multiplier.
+            var expectedVariantCount = parameterId switch
+            {
+                "combat.mutantHealth.bloodsucker" => 4, // + Mist, Ashy, Prologue
+                "combat.mutantHealth.burer" => 2,
+                "combat.mutantHealth.blinddog" => 2,    // + Moldy
+                "combat.mutantHealth.boar" => 3,        // + Helmed, Porcupine
+                "combat.mutantHealth.flesh" => 2,       // + Boggy
+                "combat.mutantHealth.poltergeist" => 6, // + 5 elemental variants
+                _ => 1
+            };
             Check(records.Length == expectedVariantCount
                 && records.All(p =>
                     p.File == "GameData/ObjPrototypes.cfg"

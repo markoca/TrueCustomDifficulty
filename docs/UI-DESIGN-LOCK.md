@@ -1,3 +1,7 @@
+## 2026-11-16 — CURRENT: Mutant Health covers variants
+
+* No layout change. The species health tracks now also scale the variants with their own HP (Moldy Blind Dog, Ashy and prologue Bloodsucker, Helmed and Porcupine Boar, Boggy Flesh, five Poltergeist variants), matching ATTACKS / ABILITIES. The HP number on each card stays the base species value; the panel text names the variants. Illusion clones are not scaled.
+
 ## 2026-11-16 — CURRENT: mutant ATTACKS / ABILITIES with real cooldowns
 
 * Each species card now has, under the health track, two half-width tracks side by side: **ATTACKS** (claws, bites, leaps, charges) and **ABILITIES** (psy, shields, throws, roars, teleports, shockwaves). Each value reads rate plus one real cooldown, e.g. `2x · psy 6 s`; only the numbers turn gold. Boar, Deer, Flesh and Tushkan have no abilities, so that half stays empty. Card size and board height (905) are unchanged.

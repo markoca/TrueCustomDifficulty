@@ -37371,6 +37371,34 @@
       "difficultySid": ""
     },
     {
+      "parameterId": "combat.mutantHealth.bloodsucker",
+      "scope": "baseGame",
+      "file": "GameData/ObjPrototypes.cfg",
+      "prototype": "AshyBloodsucker",
+      "nodePath": [
+        "VitalParams"
+      ],
+      "key": "MaxHP",
+      "sourceRaw": "500",
+      "operation": "scale",
+      "role": "mutant-health",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "combat.mutantHealth.bloodsucker",
+      "scope": "baseGame",
+      "file": "GameData/ObjPrototypes.cfg",
+      "prototype": "PrologueBloodsucker",
+      "nodePath": [
+        "VitalParams"
+      ],
+      "key": "MaxHP",
+      "sourceRaw": "200",
+      "operation": "scale",
+      "role": "mutant-health",
+      "difficultySid": ""
+    },
+    {
       "parameterId": "combat.mutantHealth.chimera",
       "scope": "baseGame",
       "file": "GameData/ObjPrototypes.cfg",
@@ -39309,10 +39337,52 @@
       "difficultySid": ""
     },
     {
+      "parameterId": "combat.mutantHealth.blinddog",
+      "scope": "baseGame",
+      "file": "GameData/ObjPrototypes.cfg",
+      "prototype": "MoldyBlinddog",
+      "nodePath": [
+        "VitalParams"
+      ],
+      "key": "MaxHP",
+      "sourceRaw": "63",
+      "operation": "scale",
+      "role": "mutant-health",
+      "difficultySid": ""
+    },
+    {
       "parameterId": "combat.mutantHealth.boar",
       "scope": "baseGame",
       "file": "GameData/ObjPrototypes.cfg",
       "prototype": "Boar",
+      "nodePath": [
+        "VitalParams"
+      ],
+      "key": "MaxHP",
+      "sourceRaw": "300",
+      "operation": "scale",
+      "role": "mutant-health",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "combat.mutantHealth.boar",
+      "scope": "baseGame",
+      "file": "GameData/ObjPrototypes.cfg",
+      "prototype": "HelmedBoar",
+      "nodePath": [
+        "VitalParams"
+      ],
+      "key": "MaxHP",
+      "sourceRaw": "300",
+      "operation": "scale",
+      "role": "mutant-health",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "combat.mutantHealth.boar",
+      "scope": "baseGame",
+      "file": "GameData/ObjPrototypes.cfg",
+      "prototype": "PorcupineBoar",
       "nodePath": [
         "VitalParams"
       ],
@@ -39337,10 +39407,94 @@
       "difficultySid": ""
     },
     {
+      "parameterId": "combat.mutantHealth.flesh",
+      "scope": "baseGame",
+      "file": "GameData/ObjPrototypes.cfg",
+      "prototype": "BoggyFlesh",
+      "nodePath": [
+        "VitalParams"
+      ],
+      "key": "MaxHP",
+      "sourceRaw": "280",
+      "operation": "scale",
+      "role": "mutant-health",
+      "difficultySid": ""
+    },
+    {
       "parameterId": "combat.mutantHealth.poltergeist",
       "scope": "baseGame",
       "file": "GameData/ObjPrototypes.cfg",
       "prototype": "Poltergeist",
+      "nodePath": [
+        "VitalParams"
+      ],
+      "key": "MaxHP",
+      "sourceRaw": "400",
+      "operation": "scale",
+      "role": "mutant-health",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "combat.mutantHealth.poltergeist",
+      "scope": "baseGame",
+      "file": "GameData/ObjPrototypes.cfg",
+      "prototype": "Poltergeist_Electro",
+      "nodePath": [
+        "VitalParams"
+      ],
+      "key": "MaxHP",
+      "sourceRaw": "400",
+      "operation": "scale",
+      "role": "mutant-health",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "combat.mutantHealth.poltergeist",
+      "scope": "baseGame",
+      "file": "GameData/ObjPrototypes.cfg",
+      "prototype": "Poltergeist_Toxic",
+      "nodePath": [
+        "VitalParams"
+      ],
+      "key": "MaxHP",
+      "sourceRaw": "400",
+      "operation": "scale",
+      "role": "mutant-health",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "combat.mutantHealth.poltergeist",
+      "scope": "baseGame",
+      "file": "GameData/ObjPrototypes.cfg",
+      "prototype": "Poltergeist_Fire",
+      "nodePath": [
+        "VitalParams"
+      ],
+      "key": "MaxHP",
+      "sourceRaw": "400",
+      "operation": "scale",
+      "role": "mutant-health",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "combat.mutantHealth.poltergeist",
+      "scope": "baseGame",
+      "file": "GameData/ObjPrototypes.cfg",
+      "prototype": "Poltergeist_YanivToxicRozliv",
+      "nodePath": [
+        "VitalParams"
+      ],
+      "key": "MaxHP",
+      "sourceRaw": "400",
+      "operation": "scale",
+      "role": "mutant-health",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "combat.mutantHealth.poltergeist",
+      "scope": "baseGame",
+      "file": "GameData/ObjPrototypes.cfg",
+      "prototype": "Poltergeist_Explosives",
       "nodePath": [
         "VitalParams"
       ],

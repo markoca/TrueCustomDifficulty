@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "src" / "TrueCustomDifficulty" / "Data"
 HP_PREFIX = "combat.mutantHealth."
 EXPECTED_HEALTH = {
-    "combat.mutantHealth.bloodsucker": {"Bloodsucker": "500", "MistBloodsucker": "1000"},
+    "combat.mutantHealth.bloodsucker": {"Bloodsucker": "500", "MistBloodsucker": "1000", "AshyBloodsucker": "500", "PrologueBloodsucker": "200"},
     "combat.mutantHealth.chimera": {"Chimera": "1400"},
     "combat.mutantHealth.deer": {"Deer": "600"},
     "combat.mutantHealth.pseudogiant": {"Pseudogiant": "2500"},
@@ -27,10 +27,10 @@ EXPECTED_HEALTH = {
     "combat.mutantHealth.burer": {"Burer": "400", "Burer_ShootingSpecial": "400"},
     "combat.mutantHealth.bayun": {"Bayun": "400"},
     "combat.mutantHealth.controller": {"Controller": "500"},
-    "combat.mutantHealth.blinddog": {"Blinddog": "63"},
-    "combat.mutantHealth.boar": {"Boar": "300"},
-    "combat.mutantHealth.flesh": {"Flesh": "280"},
-    "combat.mutantHealth.poltergeist": {"Poltergeist": "400"},
+    "combat.mutantHealth.blinddog": {"Blinddog": "63", "MoldyBlinddog": "63"},
+    "combat.mutantHealth.boar": {"Boar": "300", "HelmedBoar": "300", "PorcupineBoar": "300"},
+    "combat.mutantHealth.flesh": {"Flesh": "280", "BoggyFlesh": "280"},
+    "combat.mutantHealth.poltergeist": {"Poltergeist": "400", "Poltergeist_Electro": "400", "Poltergeist_Toxic": "400", "Poltergeist_Fire": "400", "Poltergeist_YanivToxicRozliv": "400", "Poltergeist_Explosives": "400"},
     "combat.mutantHealth.snork": {"Snork": "150"},
     "combat.mutantHealth.tushkan": {"Tushkan": "19"},
 }
@@ -78,8 +78,8 @@ def main() -> int:
 
     points = baseline["editPoints"]
     hp_points = [p for p in points if p["parameterId"].startswith(HP_PREFIX)]
-    if len(hp_points) != 16:
-        die(f"expected sixteen real mutant MaxHP edit points; found {len(hp_points)}")
+    if len(hp_points) != 27:
+        die(f"expected 27 real mutant MaxHP edit points; found {len(hp_points)}")
 
     with zipfile.ZipFile(args.base_zip) as base_zip, zipfile.ZipFile(args.dlc1_zip) as dlc1_zip:
         source_archives = {"baseGame": base_zip, "dlc1": dlc1_zip}

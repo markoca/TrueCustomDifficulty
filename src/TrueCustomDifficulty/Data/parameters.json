@@ -651,7 +651,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Bloodsucker Health",
-      "description": "Scales Bloodsucker-family HP with one multiplier. The radar shows the standard Bloodsucker HP; Mist Bloodsucker follows the same multiplier.",
+      "description": "Scales Bloodsucker-family HP with one multiplier. The radar shows the standard Bloodsucker HP; Mist Bloodsucker follows the same multiplier; the Ashy and prologue variants follow the same multiplier.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -685,6 +685,20 @@
           "prototype": "MistBloodsucker",
           "path": "VitalParams.MaxHP",
           "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ObjPrototypes.cfg",
+          "prototype": "AshyBloodsucker",
+          "path": "VitalParams.MaxHP",
+          "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ObjPrototypes.cfg",
+          "prototype": "PrologueBloodsucker",
+          "path": "VitalParams.MaxHP",
+          "operation": "scale"
         }
       ],
       "support": {
@@ -693,10 +707,11 @@
           "Directly scales the authored MaxHP field in GameData/ObjPrototypes.cfg.",
           "1x is vanilla.",
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty.",
-          "The Bloodsucker family control applies the same multiplier to Bloodsucker (500 MaxHP) and MistBloodsucker (1000 MaxHP); the radar displays the standard Bloodsucker value only."
+          "The Bloodsucker family control applies the same multiplier to Bloodsucker (500 MaxHP) and MistBloodsucker (1000 MaxHP); the radar displays the standard Bloodsucker value only.",
+          "Variants with their own MaxHP follow the same multiplier: AshyBloodsucker, PrologueBloodsucker. Collar variants inherit from the base prototype; illusion clones (Bayun clone, Pseudodog phantoms) are not scaled."
         ]
       },
-      "rationale": "How tough Bloodsuckers are — the invisible stalkers of the Zone. Includes the Mist variant. Vanilla HP: 500.\n\nHigher values mean longer, scarier close-range fights; every other mutant has its own card.",
+      "rationale": "How tough Bloodsuckers are — the invisible stalkers of the Zone. Includes the Mist, Ashy and prologue variants. Vanilla HP: 500.\n\nHigher values mean longer, scarier close-range fights; every other mutant has its own card.",
       "logic": "",
       "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": true
@@ -995,7 +1010,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Blind Dog Health",
-      "description": "Scales Blind Dog maximum HP. Vanilla: 63 HP.",
+      "description": "Scales Blind Dog maximum HP. Vanilla: 63 HP; the Moldy variant follow the same multiplier.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -1022,23 +1037,31 @@
           "prototype": "Blinddog",
           "path": "VitalParams.MaxHP",
           "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ObjPrototypes.cfg",
+          "prototype": "MoldyBlinddog",
+          "path": "VitalParams.MaxHP",
+          "operation": "scale"
         }
       ],
       "support": {
         "status": "confirmed",
         "notes": [
-          "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty."
+          "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty.",
+          "Variants with their own MaxHP follow the same multiplier: MoldyBlinddog. Collar variants inherit from the base prototype; illusion clones (Bayun clone, Pseudodog phantoms) are not scaled."
         ]
       },
       "exposeInUi": false,
-      "rationale": "How tough Blind Dogs are — the pack hunters you meet from the first hour. Vanilla HP: 63, so even a pistol handles them.\n\nRaising it makes early packs a real threat."
+      "rationale": "How tough Blind Dogs are — the pack hunters you meet from the first hour. Includes the Moldy variant. Vanilla HP: 63, so even a pistol handles them.\n\nRaising it makes early packs a real threat."
     },
     {
       "id": "combat.mutantHealth.boar",
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Boar Health",
-      "description": "Scales Boar maximum HP. Vanilla: 300 HP.",
+      "description": "Scales Boar maximum HP. Vanilla: 300 HP; the Helmed and Porcupine variants follow the same multiplier.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -1065,23 +1088,38 @@
           "prototype": "Boar",
           "path": "VitalParams.MaxHP",
           "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ObjPrototypes.cfg",
+          "prototype": "HelmedBoar",
+          "path": "VitalParams.MaxHP",
+          "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ObjPrototypes.cfg",
+          "prototype": "PorcupineBoar",
+          "path": "VitalParams.MaxHP",
+          "operation": "scale"
         }
       ],
       "support": {
         "status": "confirmed",
         "notes": [
-          "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty."
+          "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty.",
+          "Variants with their own MaxHP follow the same multiplier: HelmedBoar, PorcupineBoar. Collar variants inherit from the base prototype; illusion clones (Bayun clone, Pseudodog phantoms) are not scaled."
         ]
       },
       "exposeInUi": false,
-      "rationale": "How tough Boars are — charging bullet sponges. Vanilla HP: 300."
+      "rationale": "How tough Boars are — charging bullet sponges. Includes the Helmed and Porcupine variants. Vanilla HP: 300."
     },
     {
       "id": "combat.mutantHealth.flesh",
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Flesh Health",
-      "description": "Scales Flesh maximum HP. Vanilla: 280 HP.",
+      "description": "Scales Flesh maximum HP. Vanilla: 280 HP; the Boggy variant follow the same multiplier.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -1108,23 +1146,31 @@
           "prototype": "Flesh",
           "path": "VitalParams.MaxHP",
           "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ObjPrototypes.cfg",
+          "prototype": "BoggyFlesh",
+          "path": "VitalParams.MaxHP",
+          "operation": "scale"
         }
       ],
       "support": {
         "status": "confirmed",
         "notes": [
-          "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty."
+          "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty.",
+          "Variants with their own MaxHP follow the same multiplier: BoggyFlesh. Collar variants inherit from the base prototype; illusion clones (Bayun clone, Pseudodog phantoms) are not scaled."
         ]
       },
       "exposeInUi": false,
-      "rationale": "How tough Flesh are — the clumsy mutated pigs. Vanilla HP: 280."
+      "rationale": "How tough Flesh are — the clumsy mutated pigs. Includes the Boggy variant. Vanilla HP: 280."
     },
     {
       "id": "combat.mutantHealth.poltergeist",
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Poltergeist Health",
-      "description": "Scales Poltergeist maximum HP. Vanilla: 400 HP.",
+      "description": "Scales Poltergeist maximum HP. Vanilla: 400 HP; its electro, toxic, fire and explosive variants follow the same multiplier.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -1151,16 +1197,52 @@
           "prototype": "Poltergeist",
           "path": "VitalParams.MaxHP",
           "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ObjPrototypes.cfg",
+          "prototype": "Poltergeist_Electro",
+          "path": "VitalParams.MaxHP",
+          "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ObjPrototypes.cfg",
+          "prototype": "Poltergeist_Toxic",
+          "path": "VitalParams.MaxHP",
+          "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ObjPrototypes.cfg",
+          "prototype": "Poltergeist_Fire",
+          "path": "VitalParams.MaxHP",
+          "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ObjPrototypes.cfg",
+          "prototype": "Poltergeist_YanivToxicRozliv",
+          "path": "VitalParams.MaxHP",
+          "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ObjPrototypes.cfg",
+          "prototype": "Poltergeist_Explosives",
+          "path": "VitalParams.MaxHP",
+          "operation": "scale"
         }
       ],
       "support": {
         "status": "confirmed",
         "notes": [
-          "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty."
+          "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty.",
+          "Variants with their own MaxHP follow the same multiplier: Poltergeist_Electro, Poltergeist_Toxic, Poltergeist_Fire, Poltergeist_YanivToxicRozliv, Poltergeist_Explosives. Collar variants inherit from the base prototype; illusion clones (Bayun clone, Pseudodog phantoms) are not scaled."
         ]
       },
       "exposeInUi": false,
-      "rationale": "How tough Poltergeists are — invisible spirits that throw objects at you. Vanilla HP: 400."
+      "rationale": "How tough Poltergeists are — invisible spirits that throw objects at you. Includes the electro, toxic, fire and explosive variants. Vanilla HP: 400."
     },
     {
       "id": "combat.mutantHealth.snork",

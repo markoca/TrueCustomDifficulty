@@ -753,15 +753,15 @@ else:
 # decoded CFG. The fourteen health routes are independent.
 _mhp_expected = {
     "combat.mutantHealth.bayun": {"Bayun":"400"},
-    "combat.mutantHealth.blinddog": {"Blinddog":"63"},
-    "combat.mutantHealth.bloodsucker": {"Bloodsucker":"500","MistBloodsucker":"1000"},
-    "combat.mutantHealth.boar": {"Boar":"300"},
+    "combat.mutantHealth.blinddog": {"Blinddog":"63", "MoldyBlinddog":"63"},
+    "combat.mutantHealth.bloodsucker": {"Bloodsucker":"500","MistBloodsucker":"1000", "AshyBloodsucker":"500", "PrologueBloodsucker":"200"},
+    "combat.mutantHealth.boar": {"Boar":"300", "HelmedBoar":"300", "PorcupineBoar":"300"},
     "combat.mutantHealth.burer": {"Burer":"400","Burer_ShootingSpecial":"400"},
     "combat.mutantHealth.chimera": {"Chimera":"1400"},
     "combat.mutantHealth.controller": {"Controller":"500"},
     "combat.mutantHealth.deer": {"Deer":"600"},
-    "combat.mutantHealth.flesh": {"Flesh":"280"},
-    "combat.mutantHealth.poltergeist": {"Poltergeist":"400"},
+    "combat.mutantHealth.flesh": {"Flesh":"280", "BoggyFlesh":"280"},
+    "combat.mutantHealth.poltergeist": {"Poltergeist":"400", "Poltergeist_Electro":"400", "Poltergeist_Toxic":"400", "Poltergeist_Fire":"400", "Poltergeist_YanivToxicRozliv":"400", "Poltergeist_Explosives":"400"},
     "combat.mutantHealth.pseudodog": {"PseudoDog":"300"},
     "combat.mutantHealth.pseudogiant": {"Pseudogiant":"2500"},
     "combat.mutantHealth.snork": {"Snork":"150"},
@@ -776,7 +776,7 @@ _mhp_actual = {}
 for _point in _mhp_points:
     _mhp_actual.setdefault(_point["parameterId"], {})[_point["prototype"]] = _point["sourceRaw"]
 
-if _mhp_actual != _mhp_expected or len(_mhp_points) != 16:
+if _mhp_actual != _mhp_expected or len(_mhp_points) != 27:
     fail(f"mutant health concrete CFG mappings drifted: entries={len(_mhp_points)} actual={_mhp_actual}")
 for _pid, _expected_protos in _mhp_expected.items():
     _row = _mhp_rows_by_id.get(_pid)
@@ -801,7 +801,7 @@ if any(p.get("scope") != "baseGame" or p.get("file") != "GameData/ObjPrototypes.
     fail("mutant health writer route must remain direct base-game ObjPrototypes MaxHP scale")
 if _mhp_rows_by_id["combat.mutantHealth.bloodsucker"].get("label") != "Bloodsucker Health":
     fail("mutant health aggregate anchor label drifted")
-note("deep CFG mutant HP route gate: 14 health multipliers / 16 MaxHP edit points")
+note("deep CFG mutant HP route gate: 14 health multipliers / 27 MaxHP edit points")
 
 # The MutantHealthRadar is a TWO-COLUMN, 14-species current-health editor,
 # not the historical eight-axis polar control. All 14 source ID + HP pairs
