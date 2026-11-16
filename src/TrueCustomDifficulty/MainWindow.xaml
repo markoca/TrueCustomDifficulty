@@ -287,6 +287,7 @@
                                                                                         Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
                                                                 <controls:ItemPriceScalersRadar x:Name="ItemPriceScalersRadarControl"
+                                                                                                ParameterSelected="AggregateVisualControl_ParameterSelected"
                                                                                                 MaxWidth="920"
                                                                                                 HorizontalAlignment="Center"
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"

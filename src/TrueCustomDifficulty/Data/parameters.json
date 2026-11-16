@@ -8519,7 +8519,7 @@
           "UI increments are 10 coupons per step."
         ]
       },
-      "rationale": "Sets how many coupons you begin a new game with. It does not add money to existing saves.",
+      "rationale": "Coupons in your pocket when you start a new game. Vanilla: 0. Only affects new games, not existing saves.",
       "logic": "",
       "interaction": "This only changes the starting wallet for a new game. It does not add coupons to an existing save."
     },
@@ -8563,7 +8563,7 @@
         "status": "runtime_test_required",
         "notes": []
       },
-      "rationale": "Changes the prices traders offer when you sell items. Their other pricing rules still apply.",
+      "rationale": "How much traders pay you when you sell. Vanilla: 100% on Novice and Stalker, 65% on Veteran, 55% on Master. Lower = selling loot earns less.",
       "logic": "Higher raises what traders offer when you sell; lower reduces it. This is a price modifier, not an exact payout.",
       "interaction": "Broken Gear Value and item condition also affect what you can sell and for how much."
     },
@@ -8607,7 +8607,7 @@
         "status": "runtime_test_required",
         "notes": []
       },
-      "rationale": "Changes the prices traders charge when you buy items. Their other pricing rules still apply.",
+      "rationale": "How much traders charge you when you buy. Vanilla: 100% on Novice and Stalker, 125% on Veteran, 165% on Master. Higher = everything in the shop costs more.",
       "logic": "Higher makes buying more expensive; lower makes it cheaper. Each trader still applies their own pricing rules.",
       "interaction": "Item Values changes underlying prices; Prices Traders Pay applies when you sell instead."
     },
@@ -8654,7 +8654,7 @@
           "DLC1 profiles are patched only when DLC1 is installed."
         ]
       },
-      "rationale": "Sets the lowest weapon or armor condition that traders will accept from you.",
+      "rationale": "The most worn weapon or armor a trader will still take off your hands. Vanilla: 40% condition. Raise it and beat-up loot stops being sellable.",
       "logic": "0% lets traders buy completely broken weapons and armor. 40% keeps vanilla. Higher settings make traders refuse more damaged gear.",
       "interaction": "Only decides whether a trader accepts damaged gear. The price they pay still depends on its condition and other trader rules."
     },
@@ -8695,7 +8695,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Sets how much value a fully broken item keeps. Higher means damaged gear is worth more.",
+      "rationale": "What a completely broken item is still worth. Vanilla: 10% of its price. Higher = wrecked gear still sells for something.",
       "logic": "At the normal 10% setting, completely broken gear keeps 10% of its base value. Raising this makes badly damaged gear worth more.",
       "interaction": "Traders still apply their buy and sell prices. This only changes how durability affects an item's underlying value."
     },
@@ -8742,7 +8742,7 @@
           "DLC1 has no direct rows in this audited T1-T4 ammo surface; DLC trader behavior is not claimed by this control."
         ]
       },
-      "rationale": "Changes how much ammo traders carry. It does not unlock new ammo types.",
+      "rationale": "How much ammo traders have on the shelf. Vanilla: 1×. Lower = ammo runs out at the counter too. Doesn't add new calibers.",
       "logic": "1x keeps vanilla trader ammo stock. Lower settings reduce how much ammo traders carry; higher settings increase it.",
       "interaction": "Changes amount only. It does not add ammo types, alter availability chance, bypass player-rank progression, or change refresh timing."
     },
@@ -8788,7 +8788,7 @@
           "42 rows use Chance=1; the six progression/rarity Chance rows remain untouched. Runtime verification requires a genuine trader stock refresh."
         ]
       },
-      "rationale": "Changes how many medical supplies medics sell. Item availability is separate.",
+      "rationale": "How many meds medics have for sale. Vanilla: 1×. Lower = you can't just restock everything in one visit.",
       "logic": "100% keeps vanilla medic stock. Lower settings reduce stock; higher settings increase it.",
       "interaction": "Affects medic supplies only. Other traders, progression requirements, availability, and restock timing stay vanilla."
     },
@@ -8832,7 +8832,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Adjusts base values for food, medicine, ammo, armor, weapons, artifacts and mutant parts. Trader pricing still applies.",
+      "rationale": "Base price of food, meds and other consumables. Vanilla: 1× on every difficulty. Affects both what you pay and what you get.",
       "logic": "",
       "interaction": "",
       "exposeInUi": true
@@ -8877,7 +8877,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "The in-game difficulty presets expose Ammo_Cost directly and keep it at 1.00 on all four vanilla difficulties.",
+      "rationale": "Base price of ammo. Vanilla: 1× on every difficulty. Higher = every magazine costs more to buy and sells for more.",
       "logic": "100% preserves the vanilla category-cost setting. Higher values increase this category cost layer; lower values decrease it.",
       "interaction": "This value is shared across all vanilla difficulties. Trader Buy Price and Trader Sell Price still apply separately.",
       "exposeInUi": false
@@ -8922,7 +8922,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "The in-game difficulty presets expose Armor_Cost directly and keep it at 1.00 on all four vanilla difficulties.",
+      "rationale": "Base price of armor. Vanilla: 1× on every difficulty.",
       "logic": "100% preserves the vanilla category-cost setting. Higher values increase this category cost layer; lower values decrease it.",
       "interaction": "This value is shared across all vanilla difficulties. Trader Buy Price and Trader Sell Price still apply separately.",
       "exposeInUi": false
@@ -8967,7 +8967,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "The in-game difficulty presets expose Weapon_Cost directly and keep it at 1.00 on all four vanilla difficulties.",
+      "rationale": "Base price of weapons. Vanilla: 1× on every difficulty. Lower = looted guns sell for less.",
       "logic": "100% preserves the vanilla category-cost setting. Higher values increase this category cost layer; lower values decrease it.",
       "interaction": "This value is shared across all vanilla difficulties. Trader Buy Price and Trader Sell Price still apply separately.",
       "exposeInUi": false
@@ -9012,7 +9012,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "The in-game difficulty presets expose Artifact_Cost directly and keep it at 1.00 on all four vanilla difficulties.",
+      "rationale": "Base price of artifacts. Vanilla: 1× on every difficulty. Higher = artifact hunting pays better.",
       "logic": "100% preserves the vanilla category-cost setting. Higher values increase this category cost layer; lower values decrease it.",
       "interaction": "This value is shared across all vanilla difficulties. Trader Buy Price and Trader Sell Price still apply separately.",
       "exposeInUi": false
@@ -9156,7 +9156,7 @@
           "The DLC1 Object68 target is independently verified in the extracted DLC1 ItemPrototypes.cfg."
         ]
       },
-      "rationale": "Controls how profitable mutant-part hunting is before normal trader pricing is applied.",
+      "rationale": "Base price of mutant parts. Vanilla: 1×. Higher = hunting mutants pays better.",
       "logic": "100% keeps every mutant part at its vanilla base value. 50% halves every part's base value; 200% doubles it. A Chimera part still stays much more valuable than a Blind Dog part because all prices are scaled together.",
       "interaction": "Trader pricing is applied separately. For example, at 100% the base game uses 1,000 coupons for Blind Dog loot and 18,000 for Chimera loot before trader-specific buy/sell rules.",
       "exposeInUi": false
@@ -9201,7 +9201,7 @@
           "scaleNonZero preserves the zero-valued template/free entry while scaling all explicit paid-route prices together."
         ]
       },
-      "rationale": "Adjusts hub-guide fees and, on STALKER 2.1+, roaming-guide fees with the same slider.",
+      "rationale": "What guides charge to take you to another area. Vanilla: 1×. Higher = fast travel hurts the wallet; 0 makes it free. Covers roaming guides on 2.1+ too.",
       "logic": "100% keeps vanilla guide prices. 50% halves paid routes, 200% doubles them, and 0% makes paid routes free.",
       "interaction": "Roaming-guide base fees and minimum price scale with this slider on STALKER 2.1+. Native difficulty, reputation, region and rounding rules still apply."
     },
@@ -9245,7 +9245,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Makes gear upgrades cheaper or more expensive without changing which upgrades are available.",
+      "rationale": "Price of weapon and armor upgrades. Vanilla: 100% on Novice and Stalker, 125% on Veteran, 150% on Master. Which upgrades exist doesn't change.",
       "logic": "",
       "interaction": "Each upgrade still has its own base price. This setting makes upgrades generally cheaper or more expensive without changing their relative costs."
     },
@@ -9289,7 +9289,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Kept fixed to avoid giving you two different global sliders that both do the same job as Base Repair Price.",
+      "rationale": "Locked at 1×. Base Repair Cost already does this job, so you don't get two sliders for the same thing.",
       "logic": "Kept at vanilla in normal use. Base Repair Price is the one global repair-price setting shown to the player.",
       "interaction": "Hidden from normal use so you do not get two different global settings that both change repair prices.",
       "exposeInUi": false
@@ -9331,7 +9331,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes basic repair costs. Your reputation with the technician's faction can change the final price.",
+      "rationale": "Base price of repairs at a technician. Vanilla: 0.7. Your standing with the technician's faction still raises or lowers the final bill.",
       "logic": "",
       "interaction": "Reputation-based repair prices still apply and can further raise or lower the final repair bill."
     },
@@ -9372,7 +9372,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes repair costs when a technician's faction is hostile to you.",
+      "rationale": "Repair price when the technician's faction is hostile to you. Vanilla: 2× — double the bill.",
       "logic": "Higher means more expensive repairs from hostile technicians; lower means cheaper repairs at this reputation level.",
       "interaction": "Base Repair Cost and the faction's current attitude both affect the final price."
     },
@@ -9413,7 +9413,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes repair costs when a technician's faction dislikes you.",
+      "rationale": "Repair price when the technician's faction dislikes you. Vanilla: 1.5×.",
       "logic": "Higher means more expensive repairs from disliked technicians; lower means cheaper repairs at this reputation level.",
       "interaction": "Base Repair Cost and the faction's current attitude both affect the final price."
     },
@@ -9454,7 +9454,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes repair costs when your reputation with a technician's faction is neutral.",
+      "rationale": "Repair price when you're neutral with the technician's faction. Vanilla: 1×.",
       "logic": "Higher means more expensive repairs from neutral technicians; lower means cheaper repairs at this reputation level.",
       "interaction": "Base Repair Cost and the faction's current attitude both affect the final price."
     },
@@ -9495,7 +9495,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes repair costs when a technician's faction is friendly to you.",
+      "rationale": "Repair price when the technician's faction likes you. Vanilla: 0.75× — a friend's discount.",
       "logic": "Higher means more expensive repairs from friendly technicians; lower means cheaper repairs at this reputation level.",
       "interaction": "Base Repair Cost and the faction's current attitude both affect the final price."
     },
@@ -9539,7 +9539,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes coupon payouts from main quests. Side quests and stash rewards are separate.",
+      "rationale": "Coupons you get for main story quests. Vanilla: 135% on Novice, 100% on Stalker, 75% on Veteran, 55% on Master.",
       "logic": "",
       "interaction": "Side Quest Coupons are adjusted independently. This does not change stash rewards or starting money."
     },
@@ -9583,7 +9583,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes coupon payouts from side quests. Main quests and stash rewards are separate.",
+      "rationale": "Coupons you get for side quests. Vanilla: 135% on Novice, 100% on Stalker, 75% on Veteran, 55% on Master.",
       "logic": "",
       "interaction": "Main Quest Coupons are adjusted independently. This does not change stash rewards or starting money."
     },
@@ -14380,7 +14380,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Choose which kinds of items each merchant type buys. Untouched cells keep each trader's original rules.",
+      "rationale": "Which kinds of loot each type of trader will buy from you. Each switch is one trader type and one item kind; untouched switches keep the game's own rules. This one: whether general traders buy weapons from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys weapons when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -14417,7 +14417,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether general traders buy armor from you.",
+      "rationale": "Whether general traders buy armor from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys armor when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -14454,7 +14454,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether general traders buy attachments from you.",
+      "rationale": "Whether general traders buy attachments from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys attachments when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -14491,7 +14491,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether general traders buy ammo from you.",
+      "rationale": "Whether general traders buy ammo from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys ammo when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -14528,7 +14528,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether general traders buy grenades from you.",
+      "rationale": "Whether general traders buy grenades from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys grenades when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -14565,7 +14565,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether general traders buy artifacts from you.",
+      "rationale": "Whether general traders buy artifacts from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys artifacts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -14602,7 +14602,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether general traders buy consumables from you.",
+      "rationale": "Whether general traders buy food, drinks and meds from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys consumables when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Food, drinks and medical supplies are one native item type.",
       "exposeInUi": false
@@ -14639,7 +14639,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether general traders buy mutant parts from you.",
+      "rationale": "Whether general traders buy mutant parts from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys mutant parts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -14676,7 +14676,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether medic traders buy weapons from you.",
+      "rationale": "Whether medics buy weapons from you. Vanilla: OFF. Turn it ON to sell them more places.",
       "logic": "CHECKED buys weapons when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -14713,7 +14713,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether medic traders buy armor from you.",
+      "rationale": "Whether medics buy armor from you. Vanilla: OFF. Turn it ON to sell them more places.",
       "logic": "CHECKED buys armor when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -14750,7 +14750,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether medic traders buy attachments from you.",
+      "rationale": "Whether medics buy attachments from you. Vanilla: OFF. Turn it ON to sell them more places.",
       "logic": "CHECKED buys attachments when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -14787,7 +14787,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether medic traders buy ammo from you.",
+      "rationale": "Whether medics buy ammo from you. Vanilla: OFF. Turn it ON to sell them more places.",
       "logic": "CHECKED buys ammo when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -14824,7 +14824,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether medic traders buy grenades from you.",
+      "rationale": "Whether medics buy grenades from you. Vanilla: OFF. Turn it ON to sell them more places.",
       "logic": "CHECKED buys grenades when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -14861,7 +14861,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether medic traders buy artifacts from you.",
+      "rationale": "Whether medics buy artifacts from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys artifacts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -14898,7 +14898,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether medic traders buy consumables from you.",
+      "rationale": "Whether medics buy food, drinks and meds from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys consumables when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Food, drinks and medical supplies are one native item type.",
       "exposeInUi": false
@@ -14935,7 +14935,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether medic traders buy mutant parts from you.",
+      "rationale": "Whether medics buy mutant parts from you. Vanilla: OFF. Turn it ON to sell them more places.",
       "logic": "CHECKED buys mutant parts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -14972,7 +14972,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether technician traders buy weapons from you.",
+      "rationale": "Whether technicians buy weapons from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys weapons when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -15009,7 +15009,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether technician traders buy armor from you.",
+      "rationale": "Whether technicians buy armor from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys armor when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -15046,7 +15046,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether technician traders buy attachments from you.",
+      "rationale": "Whether technicians buy attachments from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys attachments when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -15083,7 +15083,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether technician traders buy ammo from you.",
+      "rationale": "Whether technicians buy ammo from you. Vanilla: OFF. Turn it ON to sell them more places.",
       "logic": "CHECKED buys ammo when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -15120,7 +15120,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether technician traders buy grenades from you.",
+      "rationale": "Whether technicians buy grenades from you. Vanilla: OFF. Turn it ON to sell them more places.",
       "logic": "CHECKED buys grenades when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -15157,7 +15157,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether technician traders buy artifacts from you.",
+      "rationale": "Whether technicians buy artifacts from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys artifacts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -15194,7 +15194,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether technician traders buy consumables from you.",
+      "rationale": "Whether technicians buy food, drinks and meds from you. Vanilla: OFF. Turn it ON to sell them more places.",
       "logic": "CHECKED buys consumables when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Food, drinks and medical supplies are one native item type.",
       "exposeInUi": false
@@ -15231,7 +15231,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether technician traders buy mutant parts from you.",
+      "rationale": "Whether technicians buy mutant parts from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys mutant parts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -15268,7 +15268,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether bartender traders buy weapons from you.",
+      "rationale": "Whether bartenders buy weapons from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys weapons when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -15305,7 +15305,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether bartender traders buy armor from you.",
+      "rationale": "Whether bartenders buy armor from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys armor when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -15342,7 +15342,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether bartender traders buy attachments from you.",
+      "rationale": "Whether bartenders buy attachments from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys attachments when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -15379,7 +15379,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether bartender traders buy ammo from you.",
+      "rationale": "Whether bartenders buy ammo from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys ammo when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -15416,7 +15416,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether bartender traders buy grenades from you.",
+      "rationale": "Whether bartenders buy grenades from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys grenades when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -15453,7 +15453,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether bartender traders buy artifacts from you.",
+      "rationale": "Whether bartenders buy artifacts from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys artifacts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -15490,7 +15490,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether bartender traders buy consumables from you.",
+      "rationale": "Whether bartenders buy food, drinks and meds from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys consumables when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Food, drinks and medical supplies are one native item type.",
       "exposeInUi": false
@@ -15527,7 +15527,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether bartender traders buy mutant parts from you.",
+      "rationale": "Whether bartenders buy mutant parts from you. Vanilla: OFF. Turn it ON to sell them more places.",
       "logic": "CHECKED buys mutant parts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -15564,7 +15564,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether generic npc traders buy weapons from you.",
+      "rationale": "Whether ordinary stalkers you can trade with buy weapons from you. Vanilla: OFF. Turn it ON to sell them more places.",
       "logic": "CHECKED buys weapons when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -15601,7 +15601,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether generic npc traders buy armor from you.",
+      "rationale": "Whether ordinary stalkers you can trade with buy armor from you. Vanilla: OFF. Turn it ON to sell them more places.",
       "logic": "CHECKED buys armor when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -15638,7 +15638,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether generic npc traders buy attachments from you.",
+      "rationale": "Whether ordinary stalkers you can trade with buy attachments from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys attachments when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -15675,7 +15675,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether generic npc traders buy ammo from you.",
+      "rationale": "Whether ordinary stalkers you can trade with buy ammo from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys ammo when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -15712,7 +15712,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether generic npc traders buy grenades from you.",
+      "rationale": "Whether ordinary stalkers you can trade with buy grenades from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys grenades when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -15749,7 +15749,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether generic npc traders buy artifacts from you.",
+      "rationale": "Whether ordinary stalkers you can trade with buy artifacts from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys artifacts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -15786,7 +15786,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether generic npc traders buy consumables from you.",
+      "rationale": "Whether ordinary stalkers you can trade with buy food, drinks and meds from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys consumables when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Food, drinks and medical supplies are one native item type.",
       "exposeInUi": false
@@ -15823,7 +15823,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Controls whether generic npc traders buy mutant parts from you.",
+      "rationale": "Whether ordinary stalkers you can trade with buy mutant parts from you. Vanilla: OFF. Turn it ON to sell them more places.",
       "logic": "CHECKED buys mutant parts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -15862,7 +15862,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Switch categories on or off for all traders of the selected role. OFF removes offers from that category after stock refresh; prices and other inventories stay separate.",
+      "rationale": "Which kinds of items each type of trader keeps in stock. Switching one OFF takes that kind of item off their shelves; untouched switches keep the game's own stock. This one: whether general traders have weapons for sale. Vanilla: ON. Turn it OFF to stop buying weapons from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original category stock. UNCHECKED removes that category for the selected trader role; original chance, rank and refresh rules still apply.",
       "interaction": "Search or filter original item SIDs and uncheck unwanted stock. Rank gating, stock probabilities, condition, and refresh remain original.",
       "exposeInUi": true
@@ -15901,7 +15901,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether general traders stock armor. Uncheck to remove these items from their offers.",
+      "rationale": "Whether general traders have armor for sale. Vanilla: ON. Turn it OFF to stop buying armor from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -15940,7 +15940,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether general traders stock attachments. Uncheck to remove these items from their offers.",
+      "rationale": "Whether general traders have attachments for sale. Vanilla: ON. Turn it OFF to stop buying attachments from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -15979,7 +15979,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether general traders stock ammo. Uncheck to remove these items from their offers.",
+      "rationale": "Whether general traders have ammo for sale. Vanilla: ON. Turn it OFF to stop buying ammo from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -16018,7 +16018,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether general traders stock medical. Uncheck to remove these items from their offers.",
+      "rationale": "Whether general traders have meds for sale. Vanilla: ON. Turn it OFF to stop buying meds from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -16057,7 +16057,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether general traders stock food. Uncheck to remove these items from their offers.",
+      "rationale": "Whether general traders have food for sale. Vanilla: ON. Turn it OFF to stop buying food from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -16096,7 +16096,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether general traders stock drinks. Uncheck to remove these items from their offers.",
+      "rationale": "Whether general traders have drinks for sale. Vanilla: ON. Turn it OFF to stop buying drinks from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -16135,7 +16135,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether general traders stock artifacts. Uncheck to remove these items from their offers.",
+      "rationale": "Whether general traders have artifacts for sale. Vanilla: ON. Turn it OFF to stop buying artifacts from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -16174,7 +16174,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether general traders stock detectors. Uncheck to remove these items from their offers.",
+      "rationale": "Whether general traders have detectors for sale. Vanilla: ON. Turn it OFF to stop buying detectors from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -16213,7 +16213,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether general traders stock grenades. Uncheck to remove these items from their offers.",
+      "rationale": "Whether general traders have grenades for sale. Vanilla: ON. Turn it OFF to stop buying grenades from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -16252,7 +16252,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether medic traders stock medical. Uncheck to remove these items from their offers.",
+      "rationale": "Whether medics have meds for sale. Vanilla: ON. Turn it OFF to stop buying meds from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -16291,7 +16291,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether medic traders stock drinks. Uncheck to remove these items from their offers.",
+      "rationale": "Whether medics have drinks for sale. Vanilla: ON. Turn it OFF to stop buying drinks from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -16330,7 +16330,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether medic traders stock artifacts. Uncheck to remove these items from their offers.",
+      "rationale": "Whether medics have artifacts for sale. Vanilla: ON. Turn it OFF to stop buying artifacts from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -16369,7 +16369,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether medic traders stock detectors. Uncheck to remove these items from their offers.",
+      "rationale": "Whether medics have detectors for sale. Vanilla: ON. Turn it OFF to stop buying detectors from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -16408,7 +16408,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether technician traders stock weapons. Uncheck to remove these items from their offers.",
+      "rationale": "Whether technicians have weapons for sale. Vanilla: ON. Turn it OFF to stop buying weapons from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -16447,7 +16447,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether technician traders stock attachments. Uncheck to remove these items from their offers.",
+      "rationale": "Whether technicians have attachments for sale. Vanilla: ON. Turn it OFF to stop buying attachments from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -16486,7 +16486,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether technician traders stock ammo. Uncheck to remove these items from their offers.",
+      "rationale": "Whether technicians have ammo for sale. Vanilla: ON. Turn it OFF to stop buying ammo from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -16525,7 +16525,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether technician traders stock medical. Uncheck to remove these items from their offers.",
+      "rationale": "Whether technicians have meds for sale. Vanilla: ON. Turn it OFF to stop buying meds from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -16564,7 +16564,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether technician traders stock food. Uncheck to remove these items from their offers.",
+      "rationale": "Whether technicians have food for sale. Vanilla: ON. Turn it OFF to stop buying food from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -16603,7 +16603,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether technician traders stock drinks. Uncheck to remove these items from their offers.",
+      "rationale": "Whether technicians have drinks for sale. Vanilla: ON. Turn it OFF to stop buying drinks from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -16642,7 +16642,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether bartender traders stock weapons. Uncheck to remove these items from their offers.",
+      "rationale": "Whether bartenders have weapons for sale. Vanilla: ON. Turn it OFF to stop buying weapons from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -16681,7 +16681,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether bartender traders stock ammo. Uncheck to remove these items from their offers.",
+      "rationale": "Whether bartenders have ammo for sale. Vanilla: ON. Turn it OFF to stop buying ammo from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -16720,7 +16720,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether bartender traders stock food. Uncheck to remove these items from their offers.",
+      "rationale": "Whether bartenders have food for sale. Vanilla: ON. Turn it OFF to stop buying food from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -16759,7 +16759,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether bartender traders stock drinks. Uncheck to remove these items from their offers.",
+      "rationale": "Whether bartenders have drinks for sale. Vanilla: ON. Turn it OFF to stop buying drinks from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -16798,7 +16798,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether bartender traders stock artifacts. Uncheck to remove these items from their offers.",
+      "rationale": "Whether bartenders have artifacts for sale. Vanilla: ON. Turn it OFF to stop buying artifacts from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -16837,7 +16837,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether bartender traders stock detectors. Uncheck to remove these items from their offers.",
+      "rationale": "Whether bartenders have detectors for sale. Vanilla: ON. Turn it OFF to stop buying detectors from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -16876,7 +16876,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether generic npc traders stock ammo. Uncheck to remove these items from their offers.",
+      "rationale": "Whether ordinary stalkers you can trade with have ammo for sale. Vanilla: ON. Turn it OFF to stop buying ammo from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -16915,7 +16915,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether generic npc traders stock medical. Uncheck to remove these items from their offers.",
+      "rationale": "Whether ordinary stalkers you can trade with have meds for sale. Vanilla: ON. Turn it OFF to stop buying meds from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -16954,7 +16954,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether generic npc traders stock food. Uncheck to remove these items from their offers.",
+      "rationale": "Whether ordinary stalkers you can trade with have food for sale. Vanilla: ON. Turn it OFF to stop buying food from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -16993,7 +16993,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether generic npc traders stock drinks. Uncheck to remove these items from their offers.",
+      "rationale": "Whether ordinary stalkers you can trade with have drinks for sale. Vanilla: ON. Turn it OFF to stop buying drinks from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false
@@ -17032,7 +17032,7 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Controls whether generic npc traders stock grenades. Uncheck to remove these items from their offers.",
+      "rationale": "Whether ordinary stalkers you can trade with have grenades for sale. Vanilla: ON. Turn it OFF to stop buying grenades from them, so you have to find them out in the Zone.",
       "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
       "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
       "exposeInUi": false

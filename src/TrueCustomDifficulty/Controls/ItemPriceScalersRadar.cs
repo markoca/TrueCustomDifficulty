@@ -144,7 +144,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
             var center = left + lane / 2;
             dc.DrawTrackedRoundedRectangle(Clone(panel, .32),
                 new Pen(Clone(border, .60), .8),
-                new Rect(left + 3, 66, lane - 6, 252), 4, 4);
+                new Rect(left + 3, 66, lane - 6, 252), 4, 4, _items[i]);
             var p = _items[i];
             if (p is null) continue;
             var enabled = p.IsControlEnabled;
@@ -181,9 +181,18 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
         }
     }
 
+    public event EventHandler<AggregateParameterSelectedEventArgs>? ParameterSelected;
+
+    private void SelectCardAt(Point point)
+    {
+        if (_cardHover.OwnerAt(point) is { } owner)
+            ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(owner));
+    }
+
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonDown(e);
+        SelectCardAt(e.GetPosition(this));
         var hit = Find(e.GetPosition(this));
         if (hit is null || _items[hit.Index]?.IsControlEnabled != true) return;
         Focus();
@@ -235,6 +244,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
     protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseRightButtonDown(e);
+        SelectCardAt(e.GetPosition(this));
         var hit = Find(e.GetPosition(this));
         if (hit is null) return;
         _selectedIndex = hit.Index;
