@@ -5302,11 +5302,13 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var now = StashOddsTiers.Select(t => StashItemOdds(current, t, sids)).ToArray();
         var was = StashOddsTiers.Select(t => StashItemOdds(reference, t, sids)).ToArray();
         const double labelWidth = 104.0;
-        const double columnGap = 12.0;
-        var gridLeft = left + 12.0 + labelWidth;
-        var columnWidth = Math.Max(1.0, (odds.Right - 12.0 - gridLeft - 2.0 * columnGap) / 3.0);
+        var (gridLeft, columnWidth, columnGap) = StashOddsColumns(odds, labelWidth);
+        int MedicalIndex(string sid) => Array.FindIndex(sids,
+            x => x.Equals(sid, StringComparison.OrdinalIgnoreCase));
+        var smartNow = StashSmartOdds(current, MedicalIndex, sids.Length);
+        var smartWas = StashSmartOdds(reference, MedicalIndex, sids.Length);
         var headerY = odds.Top + 30.0;
-        for (var t = 0; t < 3; t++)
+        for (var t = 0; t < 4; t++)
             DrawText(dc, StashOddsTierLabels[t],
                 new Point(gridLeft + t * (columnWidth + columnGap), headerY),
                 9.4, muted, FontWeights.Bold);
@@ -5329,6 +5331,17 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 DrawStashOddsBar(dc, x, y, columnWidth, now[t][k], was[t][k],
                     StashMedicalPalette[k], text, muted, border, accent);
             }
+            var smartX = gridLeft + 3 * (columnWidth + columnGap);
+            if (StashSmartAuthored(MedicalIndex, k))
+            {
+                DrawStashSmartRange(dc, smartX, y, columnWidth, smartNow.Low[k], smartNow.High[k],
+                    smartWas.High[k], StashMedicalPalette[k], text, muted, border, accent);
+                _stashChanceTooltipAreas.Add((new Rect(smartX, y - 2.0, columnWidth, 20.0),
+                    StashSmartRankHint(smartNow.RankLow, smartNow.RankHigh, k)));
+            }
+            else
+                DrawText(dc, "—", new Point(smartX, y), 10.0,
+                    CloneWithOpacity(muted, .7), FontWeights.SemiBold);
         }
 
         // ---- ADJUST ODDS ----------------------------------------------------

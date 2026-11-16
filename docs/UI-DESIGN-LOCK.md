@@ -1,3 +1,7 @@
+## 2026-11-16 — CURRENT: SMART column in both ODDS tables
+
+ODDS PER STASH and ODDS PER STASH · MEDS gain a fourth column **SMART** (typical world smart stash, `docs/STASH-WEIGHT-VS-CHANCE.md`): `low–high%` from the need-based SmartLoot spawn range and `ItemSetCount`, solid fill to the low value, light fill to the high value, grey tick at the untouched high value, hover text per player rank. All three tables share `StashOddsColumns` (4 columns). The ADJUST ODDS grid keeps its 4-column alignment; its SMART column shows `= BASIC` for MEDS (the Basic MEDS factor also drives the smart medicine groups) and `—` elsewhere (no separate smart control).
+
 ## 2026-11-16 — CURRENT: TRADER STOCK — odds per category, supply for every trader
 
 * **Category rails replace the SELL checkboxes** in `TraderBuysMatrix`: one compact "keep X% of the game's odds" rail per role × category (5% steps, value right, gold when changed, right-click resets). **0%** = the existing catalog SELL toggle off (offer entries removed), **5–95%** = `TraderSellOddsViewModel` sidecar (preset block `traderSellOdds`), **100%** = vanilla. Header: `100% = game odds · 0% removes the category`.

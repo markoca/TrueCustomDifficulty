@@ -119,7 +119,21 @@ for weights, factors in (([5, 1], [0.5, 1.0]), ([4, 1], [1.0, 0.0]), ([1], [0.3]
 assert "Mirror(scale, bias);" in vm and "Mirror(bias, scale);" in vm
 assert 'DrawStashMedicalCell(dc, P(StashMedicalItems[k].Id)' in aggregate
 
-for token in ("ONE entry", "Empty", "Desolation", "13564", "never mix", "SmartKeptShare"):
+# ---- 7. SMART column (typical world smart stash) -------------------------
+assert '{ "StashMedicine_Smart", "Stash_Ammo_Smart_CommonRare" };' in odds
+assert '"BASIC", "STANDARD", "RARE", "SMART"' in odds
+assert "StashSmartOdds(current, MedicalIndex, sids.Length)" in aggregate
+actors = list(csv.DictReader(open(src / "Data/smartloot-regular-world-actor-manifest.csv", encoding="utf-8")))
+typical = sum(1 for a in actors
+              if set(x.strip() for x in a["OriginalStashPrototypeSIDs"].split(",")) in (
+                  {"StashMedicine_Smart", "Stash_Ammo_Smart_CommonRare"},
+                  {"StashMedicine_Smart", "Stash_Ammo_Smart_Cheap"}))
+assert len(actors) == 831 and typical == 812, (len(actors), typical)
+army_ranks = sorted({int(r["RankIndex"]) for r in smart if r["Prototype"] == "StashMedicine_Smart"
+                     and r["ItemSID"] == "ArmyMedkit"})
+assert army_ranks == [2, 3], army_ranks  # smart army medkits: Veteran and Master only
+
+for token in ("ONE entry", "Empty", "Desolation", "13564", "never mix", "SmartKeptShare", "SMART column"):
     assert token in docs, token
 
 print("PASS: one Weight/Chance rule — Weight lists keep their source total via Empty; writer, odds, preview, presets share it")

@@ -82,14 +82,11 @@ public sealed partial class AggregateVisualControl
             new Point(outer.Right - 12.0, outer.Top + 9.0),
             9.4, muted, FontWeights.SemiBold);
 
-        // Same column geometry as ODDS PER STASH, so cells line up.
+        // Same 4-column geometry as ODDS PER STASH, so cells line up.
         const double labelWidth = 92.0;
-        var gridLeft = outer.Left + 12.0 + labelWidth;
-        const double columnGap = 12.0;
-        var columnWidth = Math.Max(1.0,
-            (outer.Right - 12.0 - gridLeft - 2.0 * columnGap) / 3.0);
+        var (gridLeft, columnWidth, columnGap) = StashOddsColumns(outer, labelWidth);
         var headerY = outer.Top + 30.0;
-        for (var t = 0; t < 3; t++)
+        for (var t = 0; t < 4; t++)
             DrawText(dc, StashOddsTierLabels[t],
                 new Point(gridLeft + t * (columnWidth + columnGap), headerY),
                 9.4, muted, FontWeights.Bold);
@@ -114,6 +111,12 @@ public sealed partial class AggregateVisualControl
                 }
                 DrawStashControlCell(dc, id, k, cell, text, muted, border, accent, panel);
             }
+            // SMART: the Basic MEDS factor also drives the smart medicine
+            // groups (same parameter); the smart ammo groups have no visible
+            // control of their own. No duplicate rail is drawn here.
+            var smartCell = new Point(gridLeft + 3 * (columnWidth + columnGap) + 6.0, y + 6.0);
+            DrawText(dc, k == 1 ? "= BASIC" : "—", smartCell, 10.0,
+                CloneWithOpacity(muted, .7), FontWeights.SemiBold);
         }
     }
 
