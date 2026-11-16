@@ -1,3 +1,8 @@
+## 2026-11-16 — CURRENT: mutant ATTACKS / ABILITIES with real cooldowns
+
+* Each species card now has, under the health track, two half-width tracks side by side: **ATTACKS** (claws, bites, leaps, charges) and **ABILITIES** (psy, shields, throws, roars, teleports, shockwaves). Each value reads rate plus one real cooldown, e.g. `2x · psy 6 s`; only the numbers turn gold. Boar, Deer, Flesh and Tushkan have no abilities, so that half stays empty. Card size and board height (905) are unchanged.
+* ATTACK RATE now covers every cooldown tag the family actually uses (was only the vanilla Master list, so e.g. Pseudogiant throw/roar, Burer grenade, Poltergeist burst stayed vanilla) and every base-game variant (Ashy/Prologue Bloodsucker, Helmed/Porcupine Boar, Moldy Blind Dog, Boggy Flesh, Poltergeist variants, Pseudodog phantoms). Click / right-click / R work per track. Details: `docs/combat/MUTANT-AGGRESSION.md`.
+
 ## 2026-11-16 — CURRENT: ARTIFACT HUNTING board (Anomalies tab)
 
 * New full-width board **ARTIFACT HUNTING** after Special Anomaly Effects: four compact economy-style cards (two columns, one below 672 DIP) — RESPAWN RATE (`2x`), SPAWN CHANCE (readout is the resulting chance, `25% +15%`), RARE LUCK (`1x`), PER SPAWN (`1`–`3`) — and a read-only **RARITY BY ZONE** strip: NEWBIE / EXPERIENCED / VETERAN / MASTER rows, one stacked bar Common · Uncommon · Rare · Epic (grey to gold) and `x% RARE+` on the right (only the digits turn gold when RARE LUCK changes them).

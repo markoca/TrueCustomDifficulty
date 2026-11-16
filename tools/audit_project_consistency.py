@@ -2082,7 +2082,7 @@ _factory_legacy_catalog = {pid: p for pid, p in _factory_catalog.items()
                            and pid not in {"loot.genericCorpseReduction", "loot.genericStashReduction"}
                            # MUTANT AGGRESSION (2026-11-16): omitted by factory
                            # presets, loads at the difficulty's vanilla value.
-                           and not pid.startswith("combat.mutantAttackRate.")
+                           and not pid.startswith(("combat.mutantAttackRate.", "combat.mutantAbilityRate."))
                            and pid != "combat.mutantSpecialAbilityRate"
                            # ARTIFACT HUNTING (2026-11-16): omitted by factory
                            # presets until they are tuned; loads at vanilla 1x.

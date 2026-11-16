@@ -34,15 +34,17 @@ public sealed class MutantHealthRadar : FrameworkElement
 
     private const double Epsilon = 0.000001;
     // Two global cards (hit damage, special ability pacing) and 14 species
-    // cards, each with HEALTH and ATTACK RATE tracks.
+    // cards: a health track, then ATTACKS and ABILITIES side by side.
     private const double DesiredHeight = 905.0;
     private const int DamageRow = 14;
     private const int SpecialRow = 15;
     private const int RateRowBase = 16;
+    private const int AbilityRowBase = 30;
     private const double GlobalCardHeight = 71.0;
     private const double SpeciesTop = 205.0;
     private const double SpeciesCardHeight = 92.0;
     private const double SpeciesRowPitch = 99.0;
+    private const double HalfTrackGap = 18.0;
     private const double MaxContentWidth = 1080.0;
     private const double ColumnGap = 12.0;
 
@@ -66,6 +68,7 @@ public sealed class MutantHealthRadar : FrameworkElement
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Mutants.Length];
     private readonly ParameterViewModel?[] _rates = new ParameterViewModel?[Mutants.Length];
+    private readonly ParameterViewModel?[] _abilities = new ParameterViewModel?[Mutants.Length];
     private ParameterViewModel? _special;
     private readonly Dictionary<int, HitTarget> _targets = new();
     // Marker labels are separate clickable hit regions, not part of the fader.
@@ -115,7 +118,7 @@ public sealed class MutantHealthRadar : FrameworkElement
                 parameter.PropertyChanged -= Parameter_PropertyChanged;
         }
 
-        foreach (var rate in _rates)
+        foreach (var rate in _rates.Concat(_abilities))
         {
             if (rate is not null)
                 rate.PropertyChanged -= Parameter_PropertyChanged;
@@ -127,6 +130,7 @@ public sealed class MutantHealthRadar : FrameworkElement
         _damage = null;
         _special = null;
         Array.Clear(_rates, 0, _rates.Length);
+        Array.Clear(_abilities, 0, _abilities.Length);
         _hoverDamageMarker = -1;
         _damageMarkerTargets.Clear();
         Array.Clear(_parameters, 0, _parameters.Length);
@@ -149,6 +153,11 @@ public sealed class MutantHealthRadar : FrameworkElement
                 {
                     _rates[i] = rate;
                     rate.PropertyChanged += Parameter_PropertyChanged;
+                }
+                if (byId.TryGetValue(Mutants[i].AbilityId, out var ability))
+                {
+                    _abilities[i] = ability;
+                    ability.PropertyChanged += Parameter_PropertyChanged;
                 }
             }
         }
@@ -263,6 +272,7 @@ public sealed class MutantHealthRadar : FrameworkElement
         => row == DamageRow ? _damage
             : row == SpecialRow ? _special
             : row >= RateRowBase && row < RateRowBase + _rates.Length ? _rates[row - RateRowBase]
+            : row >= AbilityRowBase && row < AbilityRowBase + _abilities.Length ? _abilities[row - AbilityRowBase]
             : row >= 0 && row < _parameters.Length ? _parameters[row] : null;
 
     private void DrawRow(
@@ -307,23 +317,37 @@ public sealed class MutantHealthRadar : FrameworkElement
         DrawSpeciesTrack(dc, parameter, row, new Rect(card.Left + 12.0, card.Top + 30.0,
             Math.Max(1.0, card.Width - 24.0), 10.0), muted, border, accent, panel);
 
-        // ATTACK RATE: how often this species may repeat its attacks.
-        if (_rates[row] is not { } rate)
+        // ATTACKS and ABILITIES: how often this species may repeat them,
+        // with the resulting cooldown of one representative move.
+        var family = MutantAggressionPolicy.Families[row];
+        var halfWidth = Math.Max(1.0, (card.Width - 24.0 - HalfTrackGap) / 2.0);
+        DrawRateHalf(dc, family, MutantAggressionPolicy.Group.Attacks, _rates[row], RateRowBase + row,
+            "ATTACKS", new Rect(card.Left + 12.0, card.Top + 46.0, halfWidth, 40.0),
+            text, muted, border, accent, panel);
+        DrawRateHalf(dc, family, MutantAggressionPolicy.Group.Abilities, _abilities[row], AbilityRowBase + row,
+            "ABILITIES", new Rect(card.Left + 12.0 + halfWidth + HalfTrackGap, card.Top + 46.0, halfWidth, 40.0),
+            text, muted, border, accent, panel);
+    }
+
+    private void DrawRateHalf(DrawingContext dc, MutantAggressionPolicy.Family family,
+        MutantAggressionPolicy.Group group, ParameterViewModel? rate, int row, string caption, Rect area,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        if (rate is null)
             return;
-        var rateModified = rate.IsValueModifiedFromReference();
-        DrawText(dc, "ATTACK RATE", new Point(card.Left + 11.0, card.Top + 49.0),
-            9.4, muted, FontWeights.Bold);
-        var rateLabel = $"{rate.CurrentNumber:0.##}x";
-        var rateText = CreateText(rateLabel, 12.5, text, FontWeights.Bold);
-        if (rateModified)
+        DrawText(dc, caption, new Point(area.Left - 1.0, area.Top + 3.0), 9.4, muted, FontWeights.Bold);
+        var label = MutantAggressionPolicy.RateDisplay(family, group, rate.CurrentNumber, rate.ReferenceNumber);
+        var value = CreateText(label, 11.0, text, FontWeights.Bold);
+        if (rate.IsValueModifiedFromReference())
         {
-            rateText.SetForegroundBrush(accent, 0, rateLabel.Length);
-            rateText.SetFontSize(13.7, 0, rateLabel.Length);
+            // Only the numbers turn gold; words and units stay neutral.
+            foreach (System.Text.RegularExpressions.Match number in
+                System.Text.RegularExpressions.Regex.Matches(label, @"\d+(?:\.\d+)?"))
+                value.SetForegroundBrush(accent, number.Index, number.Length);
         }
-        dc.DrawText(rateText, new Point(
-            card.Right - 11.0 - rateText.WidthIncludingTrailingWhitespace, card.Top + 46.0));
-        DrawSpeciesTrack(dc, rate, RateRowBase + row, new Rect(card.Left + 12.0, card.Top + 70.0,
-            Math.Max(1.0, card.Width - 24.0), 10.0), muted, border, accent, panel);
+        dc.DrawText(value, new Point(area.Right - value.WidthIncludingTrailingWhitespace, area.Top + 1.0));
+        DrawSpeciesTrack(dc, rate, row, new Rect(area.Left, area.Top + 24.0, area.Width, 10.0),
+            muted, border, accent, panel);
     }
 
     private void DrawSpeciesTrack(DrawingContext dc, ParameterViewModel parameter, int row,
@@ -464,6 +488,7 @@ public sealed class MutantHealthRadar : FrameworkElement
         {
             DamageRow => "Mutant hit damage reset.",
             SpecialRow => "Special ability rate reset.",
+            >= AbilityRowBase => $"{Mutants[row - AbilityRowBase].Label} ability rate reset to Base Preset.",
             >= RateRowBase => $"{Mutants[row - RateRowBase].Label} attack rate reset to Base Preset.",
             _ => $"{Mutants[row].Label} health reset to Base Preset."
         });
@@ -479,7 +504,7 @@ public sealed class MutantHealthRadar : FrameworkElement
         {
             foreach (var parameter in _parameters)
                 parameter?.ResetToReference();
-            foreach (var rate in _rates)
+            foreach (var rate in _rates.Concat(_abilities))
                 rate?.ResetToReference();
             _damage?.ResetToReference();
             _special?.ResetToReference();
@@ -615,6 +640,7 @@ public sealed class MutantHealthRadar : FrameworkElement
     private sealed record MutantDefinition(string ParameterId, string Label, double VanillaHp)
     {
         public string RateId => MutantAggressionPolicy.Prefix + ParameterId["combat.mutantHealth.".Length..];
+        public string AbilityId => MutantAggressionPolicy.AbilityPrefix + ParameterId["combat.mutantHealth.".Length..];
     }
     private sealed record HitTarget(Rect HitRect, Rect MapRect);
     private sealed record DamageMarkerHitTarget(ParameterViewModel Parameter, int Row, double Value, Rect HitRect);

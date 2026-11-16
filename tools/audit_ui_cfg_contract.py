@@ -146,8 +146,8 @@ def main():
     # These are the CURRENT catalog invariants, not v0.9.26.51's 199/188
     # obsolete snapshot. The core must route every parameter, even hidden
     # aggregate backings; 13 independent source IDs are audit-only.
-    if len(parameters) != 380:
-        fail(f"catalog count drifted: {len(parameters)} != 380")
+    if len(parameters) != 390:
+        fail(f"catalog count drifted: {len(parameters)} != 390")
     if len(all_ids) != len(parameters):
         fail("duplicate catalog parameter IDs")
 
@@ -158,11 +158,11 @@ def main():
     hidden_non_ui = all_ids - effective_ui_ids
     backing_ids = hidden_ids - EXPECTED_HIDDEN_NON_UI
 
-    if len(visible_ids) != 190 or len(hidden_ids) != 190:
-        fail(f"live visible/hidden catalog drift: {len(visible_ids)}/{len(hidden_ids)} != 190/190")
+    if len(visible_ids) != 190 or len(hidden_ids) != 200:
+        fail(f"live visible/hidden catalog drift: {len(visible_ids)}/{len(hidden_ids)} != 190/200")
     if not EXPECTED_HIDDEN_NON_UI.issubset(hidden_ids):
         fail(f"declared non-UI controls became visible or vanished: {sorted(EXPECTED_HIDDEN_NON_UI-hidden_ids)}")
-    if len(effective_ui_ids) != 363 or len(backing_ids) != 173:
+    if len(effective_ui_ids) != 373 or len(backing_ids) != 183:
         fail(f"active source dimension count drifted: {len(effective_ui_ids)} / {len(backing_ids)} backing")
 
     # Named legacy aggregate cohorts are evidence, not the complete editor
@@ -185,8 +185,13 @@ def main():
         *sorted((ROOT / "src" / "TrueCustomDifficulty" / "Controls").glob("*.cs")),
     ]
     rendered_text = "\n".join(path.read_text(encoding="utf-8") for path in live_sources)
+    # MUTANT AGGRESSION ids are built by MutantAggressionPolicy (family keys).
+    mutant_dynamic = ("MutantAggressionPolicy.ParameterIds" in rendered_text
+                      and "MutantAggressionPolicy.Families" in rendered_text)
     unreferenced = sorted(pid for pid in backing_ids
-                          if f'"{pid}"' not in rendered_text and pid not in TRADER_BUY_IDS and pid not in TRADER_SELL_IDS)
+                          if f'"{pid}"' not in rendered_text and pid not in TRADER_BUY_IDS and pid not in TRADER_SELL_IDS
+                          and not (mutant_dynamic and pid.startswith(
+                              ("combat.mutantAttackRate.", "combat.mutantAbilityRate.", "combat.mutantSpecialAbilityRate"))))
     # The matrix keys are constructed from canonical role/category names in C#;
     # enforce those exact source dimensions and active control linkage.
     if (not set(TRADER_BUY_IDS).issubset(all_ids)

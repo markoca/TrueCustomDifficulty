@@ -25,7 +25,7 @@ def verify() -> None:
     for point in points:
         grouped[point["parameterId"]].append(point)
 
-    assert len(combat) == 43, f"Combat catalog changed: {len(combat)}"  # +15 MUTANT AGGRESSION (2026-11-16)
+    assert len(combat) == 53, f"Combat catalog changed: {len(combat)}"  # +25 MUTANT AGGRESSION (2026-11-16)
     assert len(grouped) == 24, f"Direct Combat parameter count changed: {len(grouped)}"
     assert len(points) == 56, f"Concrete direct Combat route count changed: {len(points)}"
     assert sum(e["file"] == "GameData/DifficultyPrototypes.cfg" for e in points) == 40
@@ -50,9 +50,9 @@ def verify() -> None:
     direct_ids = set(grouped)
     special_ids = set(combat) - direct_ids
     aggression_ids = {pid for pid in special_ids
-                      if pid.startswith("combat.mutantAttackRate.")
+                      if pid.startswith(("combat.mutantAttackRate.", "combat.mutantAbilityRate."))
                       or pid == "combat.mutantSpecialAbilityRate"}
-    assert len(aggression_ids) == 15, aggression_ids
+    assert len(aggression_ids) == 25, aggression_ids
     special_ids -= aggression_ids
     assert len(special_ids) == 4
     assert special_ids == {"combat.psySpawnCycleDelay", "combat.psyPhantomCount",

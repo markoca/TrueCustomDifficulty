@@ -197,7 +197,7 @@ public sealed class ParameterViewModel : ObservableObject
                 return "Drag a category's price track to tune its multiplier."
                     + Environment.NewLine + "Right-click one category to reset it; R resets the price group.";
             if (IsMutantHealthMember)
-                return "Each species card has a health track (multiplier and resulting HP on its top line) and an ATTACK RATE track (2x = attacks twice as often). SPECIAL ABILITY RATE paces special and knockdown moves for all mutants."
+                return "Each species card has a health track (multiplier and resulting HP on its top line), then ATTACKS (claws, bites, leaps) and ABILITIES (psy, shields, throws, roars): 2x = twice as often, the seconds show one of its cooldowns. SPECIAL ABILITY RATE paces special and knockdown moves for all mutants."
                     + Environment.NewLine + "Right-click one track to reset it; R resets the whole board.";
             if (IsHumanGroupSizeMember)
                 return "Drag NEWBIE, EXPERIENCED, VETERAN or MASTER to set that rank's maximum human squad size."
@@ -405,7 +405,7 @@ public sealed class ParameterViewModel : ObservableObject
     public bool IsItemPriceScalerMember => ItemPriceScalerParameterIds.Contains(Id);
     public bool IsItemPriceScalerAnchor => Id == "economy.consumableCost";
 
-    private static readonly HashSet<string> MutantHealthParameterIds = new(StringComparer.Ordinal)
+    private static readonly HashSet<string> MutantHealthParameterIds = new HashSet<string>(StringComparer.Ordinal)
     {
         "combat.mutantHealth.bloodsucker",
         "combat.mutantHealth.chimera",
@@ -421,16 +421,8 @@ public sealed class ParameterViewModel : ObservableObject
         "combat.mutantHealth.poltergeist",
         "combat.mutantHealth.snork",
         "combat.mutantHealth.tushkan",
-        // MUTANT AGGRESSION lives on the same board (one card per species).
-        "combat.mutantAttackRate.bayun", "combat.mutantAttackRate.blinddog",
-        "combat.mutantAttackRate.bloodsucker", "combat.mutantAttackRate.boar",
-        "combat.mutantAttackRate.burer", "combat.mutantAttackRate.chimera",
-        "combat.mutantAttackRate.controller", "combat.mutantAttackRate.deer",
-        "combat.mutantAttackRate.flesh", "combat.mutantAttackRate.poltergeist",
-        "combat.mutantAttackRate.pseudodog", "combat.mutantAttackRate.pseudogiant",
-        "combat.mutantAttackRate.snork", "combat.mutantAttackRate.tushkan",
-        "combat.mutantSpecialAbilityRate"
-    };
+    }.Concat(MutantAggressionPolicy.ParameterIds) // same board, one card per species
+        .ToHashSet(StringComparer.Ordinal);
 
     public bool IsMutantHealthMember => MutantHealthParameterIds.Contains(Id);
     public bool IsMutantHealthAnchor => Id == "combat.mutantHealth.bloodsucker";
@@ -1161,8 +1153,7 @@ public sealed class ParameterViewModel : ObservableObject
             "combat.npcWeaponDamage" => Times(CurrentNumber, "gun dmg"),
             "combat.mutantDamage" => Times(CurrentNumber, "hit dmg"),
             MutantAggressionPolicy.SpecialAbilityRateId => MutantAggressionPolicy.SpecialAbilityDisplay(CurrentNumber),
-            _ when Id.StartsWith(MutantAggressionPolicy.Prefix, StringComparison.Ordinal)
-                => Times(CurrentNumber, "attack rate"),
+            _ when MutantRateDisplay() is { } mutantRate => mutantRate,
             "combat.playerWeaponDamage" => Times(CurrentNumber, "weapon dmg"),
             "combat.playerHeadshotMultiplier" => Times(CurrentNumber, "headshot dmg"),
             "combat.weaponJamming" => Times(CurrentNumber, "jam rate"),
@@ -1308,6 +1299,21 @@ public sealed class ParameterViewModel : ObservableObject
 
     private static string Times(double value, string meaning)
         => $"{value:0.##}x {meaning}";
+
+    // Mutant ATTACKS / ABILITIES: rate plus the resulting headline cooldown.
+    private string? MutantRateDisplay()
+    {
+        foreach (var family in MutantAggressionPolicy.Families)
+        {
+            if (Id == family.ParameterId)
+                return MutantAggressionPolicy.RateDisplay(family, MutantAggressionPolicy.Group.Attacks,
+                    CurrentNumber, ReferenceNumber) + " attacks";
+            if (Id == family.AbilityParameterId)
+                return MutantAggressionPolicy.RateDisplay(family, MutantAggressionPolicy.Group.Abilities,
+                    CurrentNumber, ReferenceNumber) + " abilities";
+        }
+        return null;
+    }
 
     // Board and panel: the resulting base + bonus spawn chance.
     public static string ArtifactSpawnChanceDisplay(double factor)

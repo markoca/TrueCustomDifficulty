@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.1",
-  "supportedParameterCount": 380,
+  "supportedParameterCount": 390,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -46967,7 +46967,7 @@
       "expectedProfiles": 86
     },
     "mutantAggression": {
-      "note": "Special writer route CfgPatchWriterService.WriteMutantAggression (MutantAggressionPolicy): AgentCooldownMultipliers of the selected difficulty and CombatSynchronizer ability token cooldowns.",
+      "note": "Per family two rates over its own cooldown tags (ATTACKS / ABILITIES, all variants): rate r writes 1/r into [difficulty].MutantCombatDifficulty.AgentCooldownMultipliers (full list); a group at its difficulty vanilla keeps the game's Master entries (0.5). SPECIAL ABILITY RATE scales CombatSynchronizer FilterGroups [3]/[4].",
       "parameterIds": [
         "combat.mutantAttackRate.bayun",
         "combat.mutantAttackRate.blinddog",
@@ -46982,7 +46982,17 @@
         "combat.mutantAttackRate.pseudodog",
         "combat.mutantAttackRate.pseudogiant",
         "combat.mutantAttackRate.snork",
-        "combat.mutantAttackRate.tushkan"
+        "combat.mutantAttackRate.tushkan",
+        "combat.mutantAbilityRate.bayun",
+        "combat.mutantAbilityRate.blinddog",
+        "combat.mutantAbilityRate.bloodsucker",
+        "combat.mutantAbilityRate.burer",
+        "combat.mutantAbilityRate.chimera",
+        "combat.mutantAbilityRate.controller",
+        "combat.mutantAbilityRate.poltergeist",
+        "combat.mutantAbilityRate.pseudodog",
+        "combat.mutantAbilityRate.pseudogiant",
+        "combat.mutantAbilityRate.snork"
       ],
       "parameterId": "combat.mutantSpecialAbilityRate",
       "difficultyFile": "GameData/DifficultyPrototypes.cfg",

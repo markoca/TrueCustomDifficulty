@@ -1,31 +1,46 @@
-# MUTANT AGGRESSION — ATTACK RATE and SPECIAL ABILITY RATE (2026-11-16)
+# MUTANT AGGRESSION — ATTACKS, ABILITIES and SPECIAL ABILITY RATE (2026-11-16)
 
 Two control groups on the Mutant board (*MUTANT DAMAGE, HEALTH AND AGGRESSION*):
 
 | Control | Ids | Range | Vanilla |
 |---|---|---|---|
-| ATTACK RATE per family (14) | `combat.mutantAttackRate.{family}` | 0.25×–3×, step 0.25 | 1× everywhere; **2× on Master** for Bayun, Bloodsucker, Burer, Chimera, Controller, Deer, Pseudodog, Pseudogiant |
+| ATTACKS per family (14) | `combat.mutantAttackRate.{family}` | 0.25×–3×, step 0.25 | 1×; **2× on Master** for Bayun, Bloodsucker, Burer, Chimera, Controller, Deer, Pseudodog, Pseudogiant |
+| ABILITIES per family (10) | `combat.mutantAbilityRate.{family}` | 0.25×–3×, step 0.25 | 1×; **2× on Master** for Bayun, Bloodsucker, Burer, Chimera, Controller, Pseudodog, Pseudogiant |
 | SPECIAL ABILITY RATE (global) | `combat.mutantSpecialAbilityRate` | 0.5×–3×, step 0.25 | 1× Novice / Stalker / Veteran, 2× Master |
 
-Both are `runtime_test_required`. Source: S.T.A.L.K.E.R. 2 2.1 base dump.
+All are `runtime_test_required`. Source: S.T.A.L.K.E.R. 2 2.1 base dump.
 
-## ATTACK RATE → `AgentCooldownMultipliers`
+## Where the cooldowns are
 
-`GameData/DifficultyPrototypes.cfg → [difficulty].MutantCombatDifficulty.AgentCooldownMultipliers`
-is a list of `{ AgentPrototypeSID, CooldownMultipliers[{ CooldownTag, CooldownMultiplier }] }`.
+* Real cooldowns: `AbilityPrototypes.cfg` → each ability's `TriggeredCooldowns` (`CooldownTag`, `Duration` in seconds),
+  e.g. Controller psy attack 12 s, Burer shield 17 s, Pseudogiant shockwave 8 s, Bloodsucker claw 6 s.
+* The difficulty multiplies them per agent and per tag:
+  `DifficultyPrototypes.cfg → [difficulty].MutantCombatDifficulty.AgentCooldownMultipliers`
+  (`{ AgentPrototypeSID, CooldownMultipliers[{ CooldownTag, CooldownMultiplier }] }`).
+* Vanilla: only Master (SID `Stalker`) has entries — 14 agents at **0.5**, but each lists only part of its tags
+  (e.g. Pseudogiant: shockwave, run, charge; not claw, roar or throw).
 
-* Vanilla: only Master (SID `Stalker`) has entries — 14 agent SIDs at **0.5** (Bayun, Bayun_Collar,
-  Bayun_Collar_Clone, Bayun_E10_MQ01, Bloodsucker, MistBloodsucker, Burer, Burer_ShootingSpecial,
-  Chimera, Controller, Controller_Collar, Deer, PseudoDog, Pseudogiant). Novice / Stalker / Veteran
-  have none.
-* Matching is by **exact agent SID**, so `MutantAggressionPolicy` lists every variant of a family
-  (25 SIDs; e.g. `Bloodsucker_Collar`, `Controller_Deer`, `Pseudogiant_Collar`, `Snork_Collar`,
-  `Blinddog_Collar`). Tags are the family's `Ability.Cooldown.*` / `Abilities.*` tags from
-  `AbilityPrototypes.cfg` (vanilla Burer lists `WeaponDrag` twice; kept as authored).
-* Rate *r* writes multiplier **1/r** on every tag of every variant (2× = half the cooldown).
-* The writer replaces the whole list (non-bpatch) as soon as any family differs from its vanilla:
-  families still at vanilla keep their exact vanilla entries (Master 0.5, otherwise nothing);
-  a family at 1× writes nothing.
+## ATTACKS / ABILITIES
+
+* Each family's tags are collected from its abilities in `AbilityPrototypes.cfg` (own and triggered cooldowns, all
+  variant prefixes such as `Cat_` for Bayun, `AshyBloodsucker_`, `HelmedBoar_`, `BoggyFlesh_`), plus the vanilla
+  Master tags. Navigation/passive tags (`Jump`, `EscapeIsolatedNavmesh`, `Abilities.Passive.Aura`) and the boar
+  `Grunt` sound are left out.
+* **ATTACKS**: ClawAttack, BiteAttack, BiteAttackAnyAngle, RunAttack, JumpAttack, Short/LongJumpAttack, KickAttack,
+  TurnAttack, Charge, JumpToEnemy, FlyThrough, Evasion, AOEAttack (Poltergeist burst).
+* **ABILITIES**: Abilities.PSYAttack / RaiseDeadBody / ZombifyNPC, Roar, Growl, BlinkTeleport, Shield, Throw,
+  ThrowGrenade, WeaponDrag, WeaponRiseAndShoot, ActivateAnomaly, ShockwaveAttack. Boar, Deer, Flesh and Tushkan
+  have none, so they have no ABILITIES track.
+* Agents (exact SIDs, 38): every base-game variant of the family — e.g. Bloodsucker, MistBloodsucker,
+  Bloodsucker_Collar, AshyBloodsucker, PrologueBloodsucker; Poltergeist + Electro/Toxic/Fire/YanivToxicRozliv/
+  Explosives; PseudoDog + its two phantom summons; HelmedBoar, PorcupineBoar, MoldyBlinddog, BoggyFlesh.
+  DLC1 quest/boss agents (`Pseudogiant_NoCooldowns`, `DLC01_*_Poltergeist`, `JadedChimera`) are not listed.
+* Rate *r* writes multiplier **1/r** on every tag of the group for every agent. The writer replaces the whole list
+  (non-bpatch) as soon as any rate differs from its vanilla: a group at its vanilla keeps the game's own Master
+  entries (0.5, same order); a group at 1× writes nothing.
+* The card shows one real cooldown per group (`2x · psy 6 s`): claw/bite/kick/leap/stomp/burst for ATTACKS,
+  psy/shield/teleport/anomaly/growl/shockwave for ABILITIES (Pseudodog's psi wave has no own duration in the CFG,
+  so only the rate is shown). At the vanilla value it shows the game's effective time (e.g. Master Controller psy 6 s).
 * `Mutant_AttackCooldown` (1.0 on all difficulties) is not touched.
 
 ## SPECIAL ABILITY RATE → `CombatSynchronizationPrototypes`
@@ -47,11 +62,10 @@ Default **8–12 s**, Master **4–6 s** (= 2×).
 
 * PACK PRESSURE (how many mutants attack at once — other FilterGroups / token counts) is not
   exposed; optional follow-up.
-* Six families (Blind Dog, Boar, Flesh, Poltergeist, Snork, Tushkan) are never listed by vanilla;
-  that the engine honours their entries needs the in-game check in `RELEASE-TESTING.md`.
+* Families, agents and tags vanilla never lists on Master need the in-game check in `RELEASE-TESTING.md`.
 
 ## Checks
 
 * `tools/audit_mutant_aggression.py` — policy ↔ catalog ↔ writer ↔ embedded tables ↔ baseline ↔ UI.
-  `TCD_BASE_DUMP=<dump>/base` also compares the vanilla agent list with the dump.
+  `TCD_BASE_DUMP=<dump>/base` also checks the vanilla Master lists (order), every agent SID and every tag against the dump.
 * Factory presets do not store these ids; they load at the difficulty's vanilla.
