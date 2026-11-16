@@ -58,7 +58,7 @@ for token in (
     'var medicalFactor = Factor("economy.medicStock");',
     'var keep = Removed(leaf) ? 0.0 : OddsFor(leaf);',
     'document.AddAssignment(targetClone, emptyPath, "ItemPrototypeSID", "Empty");',
-    'ScalePositiveInteger(count, amount)',
+    'ScalePositiveInteger(sourceCount, amount)',
     'result.Count != 608',
 ):
     assert token in writer, token
