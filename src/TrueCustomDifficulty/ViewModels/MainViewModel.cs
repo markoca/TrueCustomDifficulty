@@ -633,6 +633,9 @@ public sealed class MainViewModel : ObservableObject
         foreach (var sellId in TraderSellsPolicy.ParameterIds)
         {
             if (!parametersById.TryGetValue(sellId, out var sell)) continue;
+            // The panel shows the rail value (0–100%), not ON/OFF.
+            sell.SellOddsProvider = () => TraderSellOdds.Get(sell.Id);
+            TraderSellOdds.Changed += (_, _) => sell.RefreshCurrentDisplay();
             sell.PropertyChanged += (_, args) =>
             {
                 if (args.PropertyName == nameof(ParameterViewModel.CurrentBoolean)

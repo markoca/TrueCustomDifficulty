@@ -149,12 +149,12 @@ public sealed class ParameterViewModel : ObservableObject
                     "TraderStockBoard" => "AMMO SUPPLY and MEDICAL SUPPLY change how much every trader carries, not which items they can offer.",
                     "ServiceCostsBoard" => "Adjust guide travel, upgrades and repairs separately. Discounts and reputation may still affect final prices.",
                     "ItemWeightBoard" => "Adjust ammunition, food and medicine, weapons or armor weight independently.",
-                    "AnomalyGlobalDamage" => "GLOBAL affects all supported anomaly damage. Each anomaly also has its own damage setting; FINAL includes both before protection.",
+                    "AnomalyGlobalDamage" => "GLOBAL MULTIPLIER affects all supported anomaly damage. Each anomaly also has its own damage setting; EFFECTIVE includes both before protection.",
                     "AnomalySpecialEffects" => "Adjust Glass Shards bleeding and Psy drain independently. Their other damage effects remain separate.",
                     "NpcLootLoadout" => "SCARCITY scales eligible ordinary NPC consumable Chance and optional corpse SmartLoot activation, not weapons. Other controls select packages, bonus stacks, medical Chance and condition. Right-click a rail to reset.",
                     "WorldLootLayout" => "Shuffle weapons, attachments and blueprints separately. Remove ordinary armor or detectors independently; quest rewards stay. Weapon density only affects weapon shuffle.",
-                    "StashContentMix" => "SUPPLY REDUCTION scales native Chance, weighted stack counts and ordinary SmartLoot activation without changing relative Weight priority. Ammo Quantity controls all tiers; existing Chance rolls remain independent. Right-click a rail to reset.",
-                    "StashMedicalComposition" => "DROP ROLLS changes medical-item chances, not whole-stash odds. LOOT PRIORITY favors items inside their actual pools. EFFECTIVE PICK previews the Medkit/Army Medkit mix; MIN/MAX sets stack sizes.",
+                    "StashContentMix" => "ADJUST ODDS: each cell keeps X% of the game's odds for that kind of loot in that stash tier (100% = game odds, 0% = never); cells tagged CHANCE set the real chance. ODDS PER STASH shows the result. SUPPLY REDUCTION lowers the odds of all supplies; AMMO AMOUNT and RGD-5 AMOUNT change how much you get.",
+                    "StashMedicalComposition" => "ADJUST ODDS: each item keeps X% of the game's odds in every stash (100% = game odds, 0% = never); ODDS PER STASH · MEDS shows the result per tier. QUANTITY sets Medkit and Army Medkit MIN/MAX stack sizes.",
                     "StashGear" => "BONUS GEAR COVERAGE chooses eligible stash locations. PRIORITY favors item categories; BONUS CHANCE checks each candidate. Quest and unique loot are protected.",
                     "AmmoDistribution" => "AMMO PER BOX and GRENADES PER BOX change amounts. Ammo type settings favor calibers; SNG/NATO bars only preview the mix.",
                     "BreakableBoxYields" => "Drag the ammo or grenade yield track to change only that box's contents.",
@@ -190,7 +190,7 @@ public sealed class ParameterViewModel : ObservableObject
                 return "Drag a mutant's track to change its part-drop chance."
                     + Environment.NewLine + "Right-click one species to reset it; R resets all fourteen.";
             if (IsIndividualAnomalyDamageMember)
-                return "Each bar compares editable BASE damage with vanilla (100% unchanged). FINAL includes the global multiplier before protection."
+                return "Each bar compares editable BASE damage with vanilla (100% unchanged). EFFECTIVE includes the global multiplier before protection."
                     + Environment.NewLine + "Turn GLOBAL in the same card. Right-click a control to reset it; R resets the whole damage group.";
             if (IsItemPriceScalerMember)
                 return "Drag a category's price track to tune its multiplier."
@@ -207,6 +207,9 @@ public sealed class ParameterViewModel : ObservableObject
                 return "Drag the track for a mutant species; its four player-rank squad caps update together."
                     + Environment.NewLine + "Right-click one species to reset it; R resets all fourteen.";
 
+            if (IsTraderSellsMember)
+                return "Drag a category's rail: 100% keeps the game's odds for those offers, lower makes them rarer, 0% removes the category. AMMO SUPPLY and MEDICAL SUPPLY change how much traders carry."
+                    + Environment.NewLine + "Right-click a rail to reset that category.";
             if (IsRange)
                 return "Drag MIN or MAX to choose the range. Use Arrow keys for small changes and Home/End for the limits."
                     + Environment.NewLine + "Right-click the range to reset it.";
@@ -337,6 +340,11 @@ public sealed class ParameterViewModel : ObservableObject
     public bool IsWorldLootRemovalAnchor => Id == "loot.worldAmmoCratesRemoved";
     public bool IsTraderBuysMember => Id.StartsWith(TraderBuysPolicy.Prefix, StringComparison.Ordinal);
     public bool IsTraderBuysAnchor => Id == TraderBuysPolicy.AnchorId;
+    /// <summary>TRADER STOCK partial odds of this category (set by MainViewModel).</summary>
+    public Func<double>? SellOddsProvider { get; set; }
+
+    public void RefreshCurrentDisplay() => OnPropertyChanged(nameof(CurrentDisplay));
+
     public bool IsTraderSellsMember => Id.StartsWith(TraderSellsPolicy.Prefix, StringComparison.Ordinal);
     public bool IsTraderSellsAnchor => Id == TraderSellsPolicy.AnchorId;
 
@@ -1081,6 +1089,11 @@ public sealed class ParameterViewModel : ObservableObject
     {
         get
         {
+            // TRADER STOCK rails: 0% = category removed, else kept odds.
+            if (IsTraderSellsMember && IsToggle)
+                return CurrentBoolean
+                    ? $"{(SellOddsProvider?.Invoke() ?? 1.0) * 100.0:0}%"
+                    : "0%";
             if (IsToggle)
                 return CurrentBoolean ? "ON" : "OFF";
 

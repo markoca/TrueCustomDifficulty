@@ -7605,8 +7605,8 @@
       "id": "loot.ammoBoxWeight918",
       "tab": "loot",
       "group": "Breakable Containers",
-      "label": "Ammo Type Mix",
-      "description": "Changes which ammo families are favored in breakable ammo boxes.",
+      "label": "9×18 / 9×19 Ammo Mix",
+      "description": "Changes how often 9×18 and 9×19 rounds come out of breakable ammo boxes compared with the other calibers.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -7650,7 +7650,7 @@
           "Ammo from Breakable Boxes remains independent and changes only MinCount/MaxCount."
         ]
       },
-      "rationale": "How often breakable ammo boxes give 9×18 mm pistol rounds. Vanilla: 1×. Together with the other calibers this sets the ammo mix, not the number of rounds.",
+      "rationale": "How often breakable ammo boxes give 9 mm pistol rounds (9×18 in SNG boxes, 9×19 in both box types). Vanilla: 1×. Together with the other calibers this sets the ammo mix, not the number of rounds.",
       "logic": "Higher priority makes an ammo family more likely within supported box pools. 1× preserves the original mix.",
       "interaction": "Ammo per Box changes how many rounds appear, not which caliber families are favored.",
       "exposeInUi": true
@@ -7659,7 +7659,7 @@
       "id": "loot.ammoBoxWeight045",
       "tab": "loot",
       "group": "Breakable Containers",
-      "label": ".45 ACP Ammo Box Weight",
+      "label": ".45 ACP Ammo Mix",
       "description": "Changes how common .45 ACP ammo is in breakable ammo boxes.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -7704,7 +7704,7 @@
       "id": "loot.ammoBoxWeight545",
       "tab": "loot",
       "group": "Breakable Containers",
-      "label": "5.45 / 5.56 mm Ammo Box Weight",
+      "label": "5.45 / 5.56 Ammo Mix",
       "description": "Changes how common 5.45 / 5.56 mm ammo is in breakable ammo boxes.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -7749,7 +7749,7 @@
       "id": "loot.ammoBoxWeight012",
       "tab": "loot",
       "group": "Breakable Containers",
-      "label": "12 Gauge Ammo Box Weight",
+      "label": "12 Gauge Ammo Mix",
       "description": "Changes how common 12 Gauge ammo is in breakable ammo boxes.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -15828,7 +15828,7 @@
       "tab": "economy",
       "group": "Traders",
       "label": "Trader Stock",
-      "description": "Choose which original stock categories traders offer; controls apply by trader role, not by individual NPC.",
+      "description": "One rail per trader role and category: keep X% of the game's odds for those offers; 0% removes the category. Controls apply by trader role, not by individual NPC.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -15857,9 +15857,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Which kinds of items each type of trader keeps in stock. Switching one OFF takes that kind of item off their shelves; untouched switches keep the game's own stock. This one: whether general traders have weapons for sale. Vanilla: ON. Turn it OFF to stop buying weapons from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original category stock. UNCHECKED removes that category for the selected trader role; original chance, rank and refresh rules still apply.",
-      "interaction": "Search or filter original item SIDs and uncheck unwanted stock. Rank gating, stock probabilities, condition, and refresh remain original.",
+      "rationale": "How often each type of trader offers each kind of item. 100% keeps the game's odds, lower makes those offers rarer, 0% takes them off the shelves. This one: how often general traders offer weapons. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = general traders never sell weapons, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for weapons offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": true
     },
     {
@@ -15867,7 +15867,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "General Sells Armor",
-      "description": "Remove armor from the inventory of general traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for armor offered by general traders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -15896,9 +15896,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether general traders have armor for sale. Vanilla: ON. Turn it OFF to stop buying armor from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often general traders offer armor. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = general traders never sell armor, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for armor offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -15906,7 +15906,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "General Sells Attachments",
-      "description": "Remove attachments from the inventory of general traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for attachments offered by general traders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -15935,9 +15935,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether general traders have attachments for sale. Vanilla: ON. Turn it OFF to stop buying attachments from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often general traders offer attachments. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = general traders never sell attachments, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for attachments offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -15945,7 +15945,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "General Sells Ammo",
-      "description": "Remove ammo from the inventory of general traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for ammo offered by general traders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -15974,9 +15974,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether general traders have ammo for sale. Vanilla: ON. Turn it OFF to stop buying ammo from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often general traders offer ammo. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = general traders never sell ammo, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for ammo offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -15984,7 +15984,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "General Sells Medical",
-      "description": "Remove medical from the inventory of general traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for meds offered by general traders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -16013,9 +16013,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether general traders have meds for sale. Vanilla: ON. Turn it OFF to stop buying meds from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often general traders offer meds. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = general traders never sell meds, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for meds offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -16023,7 +16023,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "General Sells Food",
-      "description": "Remove food from the inventory of general traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for food offered by general traders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -16052,9 +16052,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether general traders have food for sale. Vanilla: ON. Turn it OFF to stop buying food from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often general traders offer food. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = general traders never sell food, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for food offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -16062,7 +16062,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "General Sells Drinks",
-      "description": "Remove drinks from the inventory of general traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for drinks offered by general traders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -16091,9 +16091,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether general traders have drinks for sale. Vanilla: ON. Turn it OFF to stop buying drinks from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often general traders offer drinks. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = general traders never sell drinks, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for drinks offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -16101,7 +16101,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "General Sells Artifacts",
-      "description": "Remove artifacts from the inventory of general traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for artifacts offered by general traders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -16130,9 +16130,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether general traders have artifacts for sale. Vanilla: ON. Turn it OFF to stop buying artifacts from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often general traders offer artifacts. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = general traders never sell artifacts, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for artifacts offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -16140,7 +16140,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "General Sells Detectors",
-      "description": "Remove detectors from the inventory of general traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for detectors offered by general traders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -16169,9 +16169,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether general traders have detectors for sale. Vanilla: ON. Turn it OFF to stop buying detectors from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often general traders offer detectors. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = general traders never sell detectors, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for detectors offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -16179,7 +16179,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "General Sells Grenades",
-      "description": "Remove grenades from the inventory of general traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for grenades offered by general traders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -16208,9 +16208,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether general traders have grenades for sale. Vanilla: ON. Turn it OFF to stop buying grenades from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often general traders offer grenades. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = general traders never sell grenades, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for grenades offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -16218,7 +16218,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Medic Sells Medical",
-      "description": "Remove medical from the inventory of medic traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for meds offered by medics; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -16247,9 +16247,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether medics have meds for sale. Vanilla: ON. Turn it OFF to stop buying meds from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often medics offer meds. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = medics never sell meds, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for meds offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -16257,7 +16257,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Medic Sells Drinks",
-      "description": "Remove drinks from the inventory of medic traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for drinks offered by medics; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -16286,9 +16286,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether medics have drinks for sale. Vanilla: ON. Turn it OFF to stop buying drinks from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often medics offer drinks. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = medics never sell drinks, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for drinks offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -16296,7 +16296,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Medic Sells Artifacts",
-      "description": "Remove artifacts from the inventory of medic traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for artifacts offered by medics; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -16325,9 +16325,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether medics have artifacts for sale. Vanilla: ON. Turn it OFF to stop buying artifacts from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often medics offer artifacts. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = medics never sell artifacts, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for artifacts offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -16335,7 +16335,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Medic Sells Detectors",
-      "description": "Remove detectors from the inventory of medic traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for detectors offered by medics; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -16364,9 +16364,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether medics have detectors for sale. Vanilla: ON. Turn it OFF to stop buying detectors from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often medics offer detectors. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = medics never sell detectors, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for detectors offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -16374,7 +16374,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Technician Sells Weapons",
-      "description": "Remove weapons from the inventory of technician traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for weapons offered by technicians; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -16403,9 +16403,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether technicians have weapons for sale. Vanilla: ON. Turn it OFF to stop buying weapons from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often technicians offer weapons. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = technicians never sell weapons, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for weapons offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -16413,7 +16413,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Technician Sells Attachments",
-      "description": "Remove attachments from the inventory of technician traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for attachments offered by technicians; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -16442,9 +16442,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether technicians have attachments for sale. Vanilla: ON. Turn it OFF to stop buying attachments from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often technicians offer attachments. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = technicians never sell attachments, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for attachments offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -16452,7 +16452,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Technician Sells Ammo",
-      "description": "Remove ammo from the inventory of technician traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for ammo offered by technicians; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -16481,9 +16481,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether technicians have ammo for sale. Vanilla: ON. Turn it OFF to stop buying ammo from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often technicians offer ammo. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = technicians never sell ammo, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for ammo offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -16491,7 +16491,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Technician Sells Medical",
-      "description": "Remove medical from the inventory of technician traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for meds offered by technicians; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -16520,9 +16520,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether technicians have meds for sale. Vanilla: ON. Turn it OFF to stop buying meds from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often technicians offer meds. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = technicians never sell meds, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for meds offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -16530,7 +16530,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Technician Sells Food",
-      "description": "Remove food from the inventory of technician traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for food offered by technicians; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -16559,9 +16559,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether technicians have food for sale. Vanilla: ON. Turn it OFF to stop buying food from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often technicians offer food. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = technicians never sell food, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for food offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -16569,7 +16569,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Technician Sells Drinks",
-      "description": "Remove drinks from the inventory of technician traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for drinks offered by technicians; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -16598,9 +16598,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether technicians have drinks for sale. Vanilla: ON. Turn it OFF to stop buying drinks from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often technicians offer drinks. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = technicians never sell drinks, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for drinks offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -16608,7 +16608,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Bartender Sells Weapons",
-      "description": "Remove weapons from the inventory of bartender traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for weapons offered by bartenders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -16637,9 +16637,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether bartenders have weapons for sale. Vanilla: ON. Turn it OFF to stop buying weapons from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often bartenders offer weapons. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = bartenders never sell weapons, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for weapons offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -16647,7 +16647,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Bartender Sells Ammo",
-      "description": "Remove ammo from the inventory of bartender traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for ammo offered by bartenders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -16676,9 +16676,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether bartenders have ammo for sale. Vanilla: ON. Turn it OFF to stop buying ammo from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often bartenders offer ammo. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = bartenders never sell ammo, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for ammo offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -16686,7 +16686,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Bartender Sells Food",
-      "description": "Remove food from the inventory of bartender traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for food offered by bartenders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -16715,9 +16715,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether bartenders have food for sale. Vanilla: ON. Turn it OFF to stop buying food from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often bartenders offer food. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = bartenders never sell food, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for food offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -16725,7 +16725,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Bartender Sells Drinks",
-      "description": "Remove drinks from the inventory of bartender traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for drinks offered by bartenders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -16754,9 +16754,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether bartenders have drinks for sale. Vanilla: ON. Turn it OFF to stop buying drinks from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often bartenders offer drinks. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = bartenders never sell drinks, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for drinks offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -16764,7 +16764,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Bartender Sells Artifacts",
-      "description": "Remove artifacts from the inventory of bartender traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for artifacts offered by bartenders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -16793,9 +16793,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether bartenders have artifacts for sale. Vanilla: ON. Turn it OFF to stop buying artifacts from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often bartenders offer artifacts. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = bartenders never sell artifacts, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for artifacts offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -16803,7 +16803,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Bartender Sells Detectors",
-      "description": "Remove detectors from the inventory of bartender traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for detectors offered by bartenders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -16832,9 +16832,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether bartenders have detectors for sale. Vanilla: ON. Turn it OFF to stop buying detectors from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often bartenders offer detectors. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = bartenders never sell detectors, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for detectors offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -16842,7 +16842,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Generic NPC Sells Ammo",
-      "description": "Remove ammo from the inventory of generic npc traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for ammo offered by generic NPC traders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -16871,9 +16871,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether ordinary stalkers you can trade with have ammo for sale. Vanilla: ON. Turn it OFF to stop buying ammo from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often ordinary stalkers you can trade with offer ammo. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = ordinary stalkers you can trade with never sell ammo, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for ammo offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -16881,7 +16881,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Generic NPC Sells Medical",
-      "description": "Remove medical from the inventory of generic npc traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for meds offered by generic NPC traders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -16910,9 +16910,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether ordinary stalkers you can trade with have meds for sale. Vanilla: ON. Turn it OFF to stop buying meds from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often ordinary stalkers you can trade with offer meds. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = ordinary stalkers you can trade with never sell meds, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for meds offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -16920,7 +16920,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Generic NPC Sells Food",
-      "description": "Remove food from the inventory of generic npc traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for food offered by generic NPC traders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -16949,9 +16949,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether ordinary stalkers you can trade with have food for sale. Vanilla: ON. Turn it OFF to stop buying food from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often ordinary stalkers you can trade with offer food. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = ordinary stalkers you can trade with never sell food, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for food offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -16959,7 +16959,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Generic NPC Sells Drinks",
-      "description": "Remove drinks from the inventory of generic npc traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for drinks offered by generic NPC traders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -16988,9 +16988,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether ordinary stalkers you can trade with have drinks for sale. Vanilla: ON. Turn it OFF to stop buying drinks from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often ordinary stalkers you can trade with offer drinks. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = ordinary stalkers you can trade with never sell drinks, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for drinks offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
     {
@@ -16998,7 +16998,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Generic NPC Sells Grenades",
-      "description": "Remove grenades from the inventory of generic npc traders while leaving what they buy from you unchanged.",
+      "description": "Keeps X% of the game's odds for grenades offered by generic NPC traders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17027,9 +17027,9 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "Whether ordinary stalkers you can trade with have grenades for sale. Vanilla: ON. Turn it OFF to stop buying grenades from them, so you have to find them out in the Zone.",
-      "logic": "CHECKED keeps original offers and their random availability. UNCHECKED removes this category after stock regenerates.",
-      "interaction": "Changes trader offers only, not what merchants buy from you, their prices, item condition, or refresh intervals.",
+      "rationale": "How often ordinary stalkers you can trade with offer grenades. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = ordinary stalkers you can trade with never sell grenades, so you have to find them out in the Zone.",
+      "logic": "100% keeps the game's odds for grenades offers; 5–95% scales each offer's native chance (single weighted offers get a native Empty pick); 0% removes the offers. Rank gates and refresh rules stay vanilla.",
+      "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     }
   ],

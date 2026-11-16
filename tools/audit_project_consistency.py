@@ -1142,7 +1142,7 @@ for _pid in _abd_all_ids:
 _abd_anchor = _abd_rows_by_id.get("loot.ammoBoxWeight918")
 if _abd_anchor and (
     not _abd_anchor.get("exposeInUi", True)
-    or _abd_anchor.get("label") != "Ammo Type Mix"
+    or _abd_anchor.get("label") != "9×18 / 9×19 Ammo Mix"
     or any(_abd_rows_by_id[pid].get("exposeInUi", True)
            for pid in _abd_weight_ids[1:] if pid in _abd_rows_by_id)
 ):

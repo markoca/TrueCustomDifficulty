@@ -76,4 +76,20 @@ assert "public static IReadOnlyCollection<string> Ids" in sidecar
 assert 'SellOdds="{Binding DataContext.TraderSellOdds' in xaml
 assert '"100% = GAME ODDS  ·  0% = REMOVED"' in ui
 
+# Texts and panel match the rails (no ON/OFF checkbox wording left).
+import json as _json
+_cat = _json.loads(read("Data/parameters.json"))["parameters"]
+_sells = [x for x in _cat if x["id"].startswith("economy.traderSells.")]
+assert len(_sells) == 31
+for _x in _sells:
+    _t = " ".join(_x.get(k, "") for k in ("rationale", "description", "logic", "interaction"))
+    for _bad in ("CHECKED", "UNCHECKED", "Turn it OFF", "Vanilla: ON"):
+        assert _bad not in _t, (_x["id"], _bad)
+    assert "Vanilla: 100%" in _x["rationale"], _x["id"]
+_pvm = read("ViewModels/ParameterViewModel.cs")
+assert "if (IsTraderSellsMember && IsToggle)" in _pvm and "SellOddsProvider?.Invoke()" in _pvm
+assert "if (IsTraderSellsMember)\n                return \"Drag a category's rail" in _pvm.replace("\r", "")
+_mvm = read("ViewModels/MainViewModel.cs")
+assert "sell.SellOddsProvider = () => TraderSellOdds.Get(sell.Id);" in _mvm
+
 print("PASS: trader stock — 608 hash-locked entry values; category odds via Chance/Empty; ammo supply 39/39, medical supply 55/55 trader profiles")

@@ -170,6 +170,12 @@ assert '"loot.stashMixMedical" or "loot.stashMixFood"' in state.split("public do
 # ---- 13. Basic AMMO = the Basic stash ammo pick only (CFG: smart stashes are a separate system)
 assert "Basic stash ammo pick only" in grid
 
+# ---- 14. CONTROLS help matches the boards --------------------------------
+pvm = read("ViewModels/ParameterViewModel.cs")
+for stale in ("DROP ROLLS", "LOOT PRIORITY favors", "EFFECTIVE PICK", "weighted stack counts", "FINAL includes"):
+    assert stale not in pvm, stale
+assert '"StashContentMix" => "ADJUST ODDS:' in pvm and '"StashMedicalComposition" => "ADJUST ODDS:' in pvm
+
 for token in ("ONE entry", "Empty", "Desolation", "13564", "never mix", "SmartKeptShare",
               "Basic Chance rows", "CHANCE", "CheapNoFresh", "SUPPLY REDUCTION",
               "Smart Chance groups"):

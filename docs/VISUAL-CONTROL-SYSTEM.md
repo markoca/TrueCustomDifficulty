@@ -1,3 +1,9 @@
+## 2026-11-16 — CURRENT: texts match the boards (TRADER STOCK, CONTROLS help, anomaly EFFECTIVE, ammo mix names)
+
+* **TRADER STOCK**: all 31 `economy.traderSells.*` texts describe the 0–100% rails ("keep X% of the game's odds", 0% removes) instead of CHECKED/UNCHECKED/ON/OFF. The panel value of a category shows the rail value (`50%`, `0%`) via `SellOddsProvider`, not ON/OFF; its CONTROLS help explains the rail.
+* **CONTROLS help**: STASH LOOT MIX (ADJUST ODDS, CHANCE cells, supply reduction = odds) and MEDICAL COMPOSITION (ADJUST ODDS, ODDS PER STASH · MEDS, QUANTITY) replace the texts that named removed elements (DROP ROLLS, LOOT PRIORITY, EFFECTIVE PICK, weighted stack counts). Anomaly help says **EFFECTIVE** like the board (was FINAL).
+* **Breakable Boxes**: ammo mix labels *9×18 / 9×19 Ammo Mix*, *.45 ACP Ammo Mix*, *5.45 / 5.56 Ammo Mix*, *12 Gauge Ammo Mix* (was *Ammo Type Mix* for the 9 mm family only); the 9 mm text names both calibers.
+
 ## 2026-11-16 — CURRENT: STASH rule reaches every list (supply reduction, DLC1 CheapNoFresh, smart Chance groups)
 
 * **STASH SUPPLY REDUCTION** keeps (1 − r) of the odds in every list type: Weight lists now get the removed share as a native `Empty` pick (`WeightListEdit`), stack sizes stay vanilla. Before, one-item Basic food / drink / bandage / coupon picks did not change below 100%.
