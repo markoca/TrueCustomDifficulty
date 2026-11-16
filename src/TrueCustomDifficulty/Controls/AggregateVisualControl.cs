@@ -1759,7 +1759,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var weaponCard = layout.Weapons;
         DrawWorldListCard(dc, weaponCard, "WEAPONS", text, muted, border, panel);
         var weaponRows = WorldListRowTops(weaponCard, 3);
-        DrawWorldCheckRow(dc, weapons, "Shuffle Weapons", weaponCard, weaponRows[0],
+        DrawWorldCheckRow(dc, weapons, "Shuffle Loose Weapons", weaponCard, weaponRows[0],
             text, muted, border, accent, panel);
         DrawWorldDensityRow(dc, density, weaponCard, weaponRows[1],
             text, muted, border, accent, panel);
