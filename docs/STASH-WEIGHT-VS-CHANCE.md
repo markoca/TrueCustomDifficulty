@@ -46,7 +46,3 @@ Each medical item exists in Chance rows (Basic / Standard / Rare) and in Weight 
 
 DLC1 regular stash rows (`StashDlc1`), Cabin and direct medical rows still scale Weight relatively (no `Empty`); they are outside ODDS PER STASH.
 
-
-## SMART column (ODDS PER STASH and ODDS PER STASH · MEDS)
-
-The fourth column is the **typical world smart stash**: 812 of the 831 regular SmartLoot actors carry exactly `StashMedicine_Smart` + an ammo SmartLoot prototype; the column models `StashMedicine_Smart` + `Stash_Ammo_Smart_CommonRare`. Each group spawns with a chance between `MinSpawnChance` (no need) and `MaxSpawnChance` (high need) and then rolls `ItemSetCount` sets (assumed: a Weight set picks one entry, a Chance set rolls each entry), so the cell is a **range** `low–high%`, averaged over the four player ranks; hovering shows each rank (e.g. army medkits exist in smart stashes only at Veteran 4–34% and Master 5–34%). The supply reduction and the SmartLoot kept-share endpoints are included. Army medkits outside the modelled tiers: the Rare tier on Novice, six hand-placed map stashes with fixed contents and quest/story stashes (not tuned); `Stash_Medkit_*` generators are unused in 2.1.

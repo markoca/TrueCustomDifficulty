@@ -936,7 +936,7 @@ verify_current_editor("Damage by Anomaly", "AnomalyDamageRadar", ("environment.e
 # The retired StashAmmoRadar flags must not be required by the current audit.
 _stash_native_ui = (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
 if ('private void DrawStashContentMix(' not in _stash_native_ui
-    or '"AMMO QUANTITY · ALL TIERS"' not in _stash_native_ui):
+    or '"AMMO AMOUNT"' not in _stash_native_ui):
     fail("Stash Ammo native StashContentMix editor missing")
 
 # Anomaly identity release gate (2026-10-14):

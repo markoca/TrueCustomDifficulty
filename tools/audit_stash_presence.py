@@ -66,8 +66,6 @@ assert "s_stashPresence = vm.StashPresence.Values;" in writer
 
 # Odds and Basic mix preview read the SAME rule.
 assert "state.WeightListEdit(baseline, tier, category) is { } edit" in odds
-assert ".WeightListEdit(StashPreviewBaseline.Value, \"Cheap\", group);" in aggregate
-assert 'DrawText(dc, "NOTHING"' in aggregate
 
 # ---- 3. Sidecars, presets, UI ----------------------------------------------
 assert "new[] { CheapAmmoId, MediumAmmoId };" in sidecar
@@ -119,21 +117,11 @@ for weights, factors in (([5, 1], [0.5, 1.0]), ([4, 1], [1.0, 0.0]), ([1], [0.3]
 assert "Mirror(scale, bias);" in vm and "Mirror(bias, scale);" in vm
 assert 'DrawStashMedicalCell(dc, P(StashMedicalItems[k].Id)' in aggregate
 
-# ---- 7. SMART column (typical world smart stash) -------------------------
-assert '{ "StashMedicine_Smart", "Stash_Ammo_Smart_CommonRare" };' in odds
-assert '"BASIC", "STANDARD", "RARE", "SMART"' in odds
-assert "StashSmartOdds(current, MedicalIndex, sids.Length)" in aggregate
-actors = list(csv.DictReader(open(src / "Data/smartloot-regular-world-actor-manifest.csv", encoding="utf-8")))
-typical = sum(1 for a in actors
-              if set(x.strip() for x in a["OriginalStashPrototypeSIDs"].split(",")) in (
-                  {"StashMedicine_Smart", "Stash_Ammo_Smart_CommonRare"},
-                  {"StashMedicine_Smart", "Stash_Ammo_Smart_Cheap"}))
-assert len(actors) == 831 and typical == 812, (len(actors), typical)
-army_ranks = sorted({int(r["RankIndex"]) for r in smart if r["Prototype"] == "StashMedicine_Smart"
-                     and r["ItemSID"] == "ArmyMedkit"})
-assert army_ranks == [2, 3], army_ranks  # smart army medkits: Veteran and Master only
+# ---- 7. No SMART column / no Basic mix preview (removed 2026-11-16) --------
+assert '"SMART"' not in odds and "StashSmartOdds" not in aggregate
+assert 'DrawStashBasicNativePools(dc,' not in aggregate.split("private void DrawStashContentMix(", 1)[1].split("private void DrawStashMedicalComposition(", 1)[0]
 
-for token in ("ONE entry", "Empty", "Desolation", "13564", "never mix", "SmartKeptShare", "SMART column"):
+for token in ("ONE entry", "Empty", "Desolation", "13564", "never mix", "SmartKeptShare"):
     assert token in docs, token
 
 print("PASS: one Weight/Chance rule — Weight lists keep their source total via Empty; writer, odds, preview, presets share it")

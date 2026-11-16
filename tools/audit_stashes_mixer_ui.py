@@ -221,7 +221,7 @@ assert 'AddHorizontalTarget(weight,' not in gear
 assert 'labelY = 204.0 + i * 52.0' not in gear
 assert 'DrawSourceKnob(' not in content
 assert "DrawStashControlGrid(dc," in content
-assert "DrawStashBasicNativePools(dc," in content
+assert "DrawStashBasicNativePools(dc," not in content  # Basic mix preview removed
 assert "DrawStashRewardGraphRow(dc, P(entries[i].Id)" not in medical
 assert "DrawStashMedicalSourcePreview(" not in source
 assert "StashMedicalPalette[k]" in medical
@@ -262,8 +262,8 @@ assert 'DrawStashChanceTier(dc, "RARE", "Expensive", 19,' not in content
 assert "var oddsTop = 121.0 + narrowShift;" in content
 assert "DrawStashOdds(dc, new Rect(left, oddsTop, width, StashOddsHeight)," in content
 assert "var controlsTop = oddsTop + StashOddsHeight + 8.0;" in content
-assert "var mixTop = controlsTop + StashControlsHeight + 8.0;" in content
-assert 'dc.DrawText(CreateText("BASIC MIX", 11.4, text, FontWeights.Bold),' in content
+assert "var mixTop" not in content and '"BASIC MIX"' not in content
+assert 'var narrowShift = wide ? 0.0 : 128.0;' in content
 assert '"MILK IN MIX"' not in content  # Basic DRINKS cell is stashMixDrinks now
 assert '"WEIGHT APPLIES TO ALL TIERS"' not in content
 assert '"RELATIVE SELECTION"' not in source
@@ -273,10 +273,10 @@ assert '"BASIC POOL COMPOSITION"' not in coverage
 # and never an invented 100% stash-wide probability.
 assert "Math.Min(778.0, Math.Max(1.0, ActualWidth - 30.0))" in content
 assert "DrawStashControlGrid(dc," in content
-assert "DrawStashBasicNativePools(dc," in content
+assert "DrawStashBasicNativePools(dc," not in content  # Basic mix preview removed
 assert "DrawSourceKnob(" not in content
-assert "DrawStashBasicNativePools(dc," in content
-assert '"RGD-5 AMOUNT"' in content
+assert "DrawStashBasicNativePools(dc," not in content  # Basic mix preview removed
+assert '"RGD-5 AMOUNT · BASIC"' in content
 assert "percentage: false" in content
 assert source.count("new SolidColorBrush(Color.FromRgb(") >= 6
 assert 'StashPreviewGroup("BASIC", 1)' in preview
@@ -398,7 +398,7 @@ height_match = re.search(
 assert height_match is not None, "missing StashContentMix measured height"
 # 121 + 30 title + knobs + 8 + 74 preview + 8 + 56 pair + 12 + 8 + Standard
 # + 8 + Rare + bottom padding (wide 797, narrow 1175 incl. 64 narrow shift).
-assert tuple(map(float, height_match.groups())) == (700.0, 695.0, 823.0)
+assert tuple(map(float, height_match.groups())) == (700.0, 571.0, 699.0)
 assert '"WEIGHT APPLIES TO ALL TIERS"' not in content
 assert '"RELATIVE SELECTION"' not in source
 assert '"BASIC POOL COMPOSITION"' not in coverage
@@ -406,7 +406,7 @@ assert "var wide = width >= 670.0;" in content
 # Old fixed 373/409, 220/383 and 839/1185 lane calculations
 # were retired with the current compact Stashes rendering. Guard the
 # actual measured heights rather than asserting removed helper formulas.
-assert '=> width >= 700.0 ? 695.0 : 823.0;' in source
+assert '=> width >= 700.0 ? 571.0 : 699.0;' in source
 assert '=> width >= 700.0 ? 433.0 : 619.0;' in source
 assert '=> width < 570.0 ? 670.0 : 502.0;' in source
 for name, document in [("UI-DESIGN-LOCK", lock),
@@ -504,7 +504,7 @@ assert 'CreateText("V "' not in tier_preview and "vanillaX" not in tier_preview
 assert "Math.Clamp(Number(updated) * factor, 0.0, 1.0)" in effective
 assert 'StashTierChanceParameterIds.Any(id =>' in tuning
 
-assert '=> width >= 700.0 ? 695.0 : 823.0;' in source
+assert '=> width >= 700.0 ? 571.0 : 699.0;' in source
 assert "GlobalStashKindsVerified.Value" in coverage
 assert "StashBranchPreviewCatalog.Load(StashPreviewBaseline.Value)" in coverage
 assert "groups.Sum(x => x.Items.Count) != 1124" in coverage
@@ -590,7 +590,7 @@ assert "PlayerRank" not in basic_preview[1]["fields"]
 
 assert '"LOOT PRIORITY · ALL TIERS"' not in content and '"LOOT PRIORITY"' not in content
 assert '"BASIC  ·  WEIGHT MIX"' not in content
-assert 'DrawText(dc, "MIX PREVIEW · "' in coverage
+assert 'DrawText(dc, "MIX PREVIEW · "' in coverage  # helper kept, no longer drawn
 assert '"Easy" or "Medium" => 10,' in coverage and '"Stalker" => 11,' in coverage
 native_preview_method = coverage.split("private void DrawStashBasicNativePools(", 1)[1].split("private void DrawStashChanceTier(", 1)[0]
 assert '"NOVICE / STALKER"' not in native_preview_method
@@ -764,7 +764,7 @@ assert '"StashRewardProfile" => new[]' not in source
 assert 'case "StashRewardProfile":' not in source
 assert '"loot.cheapStashGrenadeQuantity"' in content
 assert '"loot.cheapStashAmmoQuantity"' in content
-assert '"AMMO QUANTITY · ALL TIERS"' in content
+assert '"AMMO AMOUNT"' in content
 assert 'percentage: false, multiplier: true' in content
 assert 'ToString(multiplier ? "0.##"' in coverage
 for pid in ("loot.cheapStashAmmoQuantity", "loot.mediumStashAmmoQuantity",

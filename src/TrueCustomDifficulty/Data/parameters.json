@@ -7282,7 +7282,7 @@
           "The existing production-only stash fan-out and exclusions remain unchanged."
         ]
       },
-      "rationale": "How many rounds you get from ammo in stashes — Basic, Standard and Rare together (one slider drives all three). Vanilla: 1×. Which calibers turn up still follows the game's progression.",
+      "rationale": "How many rounds you get from ammo in stashes — Basic, Standard and Rare together (the AMMO AMOUNT slider drives all three). Vanilla: 1×. Which calibers turn up still follows the game's progression.",
       "logic": "",
       "interaction": "One Ammo Quantity control changes eligible ammo stack sizes in Basic, Standard and Rare stashes together.",
       "lootHint": {
@@ -7459,7 +7459,7 @@
           "The vanilla Newbie block intentionally contains A919D twice; the TCD template preserves that duplicate source row."
         ]
       },
-      "rationale": "Standard-stash ammo amount. It always follows the single AMMO QUANTITY · ALL TIERS slider. Vanilla: 1×.",
+      "rationale": "Standard-stash ammo amount. It always follows the single AMMO AMOUNT slider. Vanilla: 1×.",
       "logic": "25-200% scales the amount of ammo found in Standard stashes. For example, a vanilla 18-24 round stack becomes about 9-12 at 50% and 36-48 at 200%.",
       "interaction": "One global AMMO QUANTITY slider adjusts native MinCount/MaxCount in Basic, Standard and Rare with the same multiplier; tier-specific IDs remain CFG/preset backings.",
       "lootHint": {
@@ -7899,7 +7899,7 @@
           "The existing Expensive Stash Coupon Chance remains independent and is materialized into TCD-owned Expensive roots whenever this ammo control causes production redirects."
         ]
       },
-      "rationale": "Rare-stash ammo amount. It always follows the single AMMO QUANTITY · ALL TIERS slider. Vanilla: 1×.",
+      "rationale": "Rare-stash ammo amount. It always follows the single AMMO AMOUNT slider. Vanilla: 1×.",
       "logic": "25-200% changes the amount of ammo found in Rare stashes. 100% keeps vanilla amounts.",
       "interaction": "One global AMMO QUANTITY slider adjusts native MinCount/MaxCount in Basic, Standard and Rare with the same multiplier; tier-specific IDs remain CFG/preset backings.",
       "lootHint": {

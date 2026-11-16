@@ -5188,26 +5188,26 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var left = (ActualWidth - width) / 2.0;
         var wide = width >= 670.0;
 
-        // Single global source-facing quantity control; the VM propagates
-        // this real source multiplier to all three eligible stash tiers.
-        // Two source-backed compact peers: one abundance control and the
-        // existing amount slider.  No duplicate category mixer is created.
-        var firstRowWidth = wide ? (width - 38.0) / 2.0 : width - 28.0;
-        var narrowShift = wide ? 0.0 : 64.0;
+        // Row 1: the three amount / abundance controls that change how much
+        // you get, not the odds below: supply reduction, ammo amount (one
+        // value mirrored to all tiers by the VM) and the Basic RGD-5 amount.
+        var rowGap = 10.0;
+        var firstRowWidth = wide ? (width - 28.0 - 2.0 * rowGap) / 3.0 : width - 28.0;
+        var narrowShift = wide ? 0.0 : 128.0;
+        Rect RowCell(int i) => wide
+            ? new Rect(left + 14.0 + i * (firstRowWidth + rowGap), 53.0, firstRowWidth, 56.0)
+            : new Rect(left + 14.0, 53.0 + i * 64.0, firstRowWidth, 56.0);
         DrawStashNativeRollControl(dc, "loot.genericStashReduction",
-            "SUPPLY REDUCTION", 1,
-            new Rect(left + 14.0, 53.0, firstRowWidth, 56.0),
+            "SUPPLY REDUCTION", 1, RowCell(0),
             text, muted, border, accent, panel);
         DrawStashNativeRollControl(dc, "loot.cheapStashAmmoQuantity",
-            "AMMO QUANTITY · ALL TIERS", 0,
-            new Rect(wide ? left + 24.0 + firstRowWidth : left + 14.0,
-                53.0 + narrowShift, firstRowWidth, 56.0),
+            "AMMO AMOUNT", 0, RowCell(1),
             text, muted, border, accent, panel,
             percentage: false, multiplier: true);
+        DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeQuantity",
+            "RGD-5 AMOUNT · BASIC", 4, RowCell(2),
+            text, muted, border, accent, panel, percentage: false);
 
-        // BASIC STASH card: everything that belongs to the Basic tier in one
-        // frame — priority knobs, the mix preview directly under them, and
-        // the Basic-only RGD-5 pair. Standard and Rare keep their own cards.
         // What a stash holds, per tier, after every control below.
         var oddsTop = 121.0 + narrowShift;
         DrawStashOdds(dc, new Rect(left, oddsTop, width, StashOddsHeight),
@@ -5217,44 +5217,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var controlsTop = oddsTop + StashOddsHeight + 8.0;
         DrawStashControlGrid(dc, new Rect(left, controlsTop, width, StashControlsHeight),
             text, muted, border, accent, panel);
-
-        // BASIC MIX: what the shared Basic food / milk / bandage pick gives
-        // (incl. the NOTHING share), plus RGD-5 AMOUNT (amount, not odds).
-        var mixTop = controlsTop + StashControlsHeight + 8.0;
-        var mixCard = new Rect(left, mixTop, width, wide ? StashMixCardWide : StashMixCardNarrow);
-        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .65),
-            new Pen(CloneWithOpacity(border, .61), .9), mixCard, 4.0, 4.0);
-        dc.DrawText(CreateText("BASIC MIX", 11.4, text, FontWeights.Bold),
-            new Point(left + 12.0, mixTop + 8.0));
-        const double pairGap = 10.0;
-        if (wide)
-        {
-            var previewWidth = Math.Max(1.0, (width - 24.0) * .64);
-            DrawStashBasicNativePools(dc,
-                new Rect(left + 12.0, mixTop + StashBasicTitleHeight, previewWidth, 74.0),
-                text, muted, border, panel);
-            var sideLeft = left + 12.0 + previewWidth + pairGap;
-            DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeQuantity",
-                "RGD-5 AMOUNT", 4,
-                new Rect(sideLeft, mixTop + StashBasicTitleHeight + 9.0,
-                    Math.Max(1.0, left + width - 12.0 - sideLeft), 56.0),
-                text, muted, border, accent, panel, percentage: false);
-        }
-        else
-        {
-            DrawStashBasicNativePools(dc,
-                new Rect(left + 12.0, mixTop + StashBasicTitleHeight, width - 24.0, 74.0),
-                text, muted, border, panel);
-            DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeQuantity",
-                "RGD-5 AMOUNT", 4,
-                new Rect(left + 12.0, mixTop + StashBasicTitleHeight + 82.0,
-                    Math.Max(1.0, (width - 24.0 - pairGap) / 2.0), 56.0),
-                text, muted, border, accent, panel, percentage: false);
-        }
     }
 
-    private const double StashMixCardWide = 30.0 + 74.0 + 12.0;
-    private const double StashMixCardNarrow = 30.0 + 82.0 + 56.0 + 12.0;
     private const double StashBasicTitleHeight = 30.0;
 
     // Native selectors are separate sources: Chance is never a normalized
@@ -5303,12 +5267,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var was = StashOddsTiers.Select(t => StashItemOdds(reference, t, sids)).ToArray();
         const double labelWidth = 104.0;
         var (gridLeft, columnWidth, columnGap) = StashOddsColumns(odds, labelWidth);
-        int MedicalIndex(string sid) => Array.FindIndex(sids,
-            x => x.Equals(sid, StringComparison.OrdinalIgnoreCase));
-        var smartNow = StashSmartOdds(current, MedicalIndex, sids.Length);
-        var smartWas = StashSmartOdds(reference, MedicalIndex, sids.Length);
         var headerY = odds.Top + 30.0;
-        for (var t = 0; t < 4; t++)
+        for (var t = 0; t < 3; t++)
             DrawText(dc, StashOddsTierLabels[t],
                 new Point(gridLeft + t * (columnWidth + columnGap), headerY),
                 9.4, muted, FontWeights.Bold);
@@ -5331,17 +5291,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 DrawStashOddsBar(dc, x, y, columnWidth, now[t][k], was[t][k],
                     StashMedicalPalette[k], text, muted, border, accent);
             }
-            var smartX = gridLeft + 3 * (columnWidth + columnGap);
-            if (StashSmartAuthored(MedicalIndex, k))
-            {
-                DrawStashSmartRange(dc, smartX, y, columnWidth, smartNow.Low[k], smartNow.High[k],
-                    smartWas.High[k], StashMedicalPalette[k], text, muted, border, accent);
-                _stashChanceTooltipAreas.Add((new Rect(smartX, y - 2.0, columnWidth, 20.0),
-                    StashSmartRankHint(smartNow.RankLow, smartNow.RankHigh, k)));
-            }
-            else
-                DrawText(dc, "—", new Point(smartX, y), 10.0,
-                    CloneWithOpacity(muted, .7), FontWeights.SemiBold);
         }
 
         // ---- ADJUST ODDS ----------------------------------------------------
@@ -8239,10 +8188,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
     // Measured heights follow the painted responsive editors, so the
     // last mixer lane and every remaining gear/medical dial stay visible.
-    // Mirrors DrawStashContentMix: 121 (+64 narrow) + ODDS 172 + 8 + ADJUST
-    // ODDS 258 + 8 + BASIC MIX (116 wide / 180 narrow) + 12 padding.
+    // Mirrors DrawStashContentMix: 121 (+128 narrow: three stacked row-1
+    // controls) + ODDS 172 + 8 + ADJUST ODDS 258 + 12 padding.
     private double StashContentMixHeight(double width)
-        => width >= 700.0 ? 695.0 : 823.0;
+        => width >= 700.0 ? 571.0 : 699.0;
     // 40 + ODDS 134 + 8 + ADJUST (88 wide / 142 narrow) + 27 + QUANTITY
     // (122 wide / 254 narrow) + 14 padding.
     private static double StashMedicalCompositionHeight(double width)
