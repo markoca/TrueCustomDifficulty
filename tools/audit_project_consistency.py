@@ -5266,30 +5266,38 @@ _npc_ammo_def = next((p for p in parameters if p.get("id") == "loot.npcWeaponAmm
 if _npc_ammo_def is None or _npc_ammo_def.get("label") != "Bonus Ammo Amount":
     fail("NPC ammo drops source label changed")
 if any(_tok not in _npc_preview_source for _tok in (
-    'DrawHorizontalTrackCard(dc, ammo, "BONUS AMMO QTY",',
+    'private static NpcLootGeometry LayoutNpcLoot(double hostWidth, bool showBonusAmmo)',
+    'private NpcLootGeometry CurrentNpcLootLayout(double width)',
+    '=> LayoutNpcLoot(width, NpcBonusPackageSelected());',
+    'new Rect(margin + (width - selectorWidth) / 2.0,',
+    'if (showBonusAmmo)',
+    'if (hostWidth < 680.0)',
+    'if (hostWidth >= 900.0)',
+    'if (NpcBonusPackageSelected())',
+    'DrawNpcCompactScalar(dc, ammo, "AMMO QTY", layout.Ammo,',
     'DrawText(dc, "BONUS AMMO STACKS",',
-    "Math.Min(516.0, sampleCard.Width - 22.0)",
-    "var cell = Math.Min(112.0, (width - 22.0 - (count - 1) * gap) / count);",
-    "var previewLeft = sampleCard.Left +",
-    "(i / 3) * 31.0, previewWidth, 29.0",
-    "DrawNpcCorpsePackageIcon(dc, optionValue,",
+    'DrawNpcCompactScalar(dc, scarcity, "SUPPLY REDUCTION", layout.Supply,',
+    'DrawNpcCompactScalar(dc, medical, "STANDARD MED", layout.Medical,',
+    'DrawNpcModItemsCard(dc, layout.Mod,',
+    'var rangeCard = layout.Condition;',
+    'DrawNpcCorpsePackageIcon(dc, optionValue,',
     'optionValue.Contains("NPC_Ammo_Smart", StringComparison.Ordinal)',
     'optionValue.Contains("NPC_Water_Smart", StringComparison.Ordinal)',
     'DrawCenteredText(dc, optionLabel,',
-    'var countsModified = ammoPackageActive && ammo.IsValueModifiedFromReference();',
-    'var ammoPackageActive = NpcBonusPackageSelected();',
     'private bool NpcBonusPackageSelected()',
     'private bool IsNpcBonusSliderLocked(ParameterViewModel? parameter)',
     'parameter.Id == "loot.npcWeaponAmmoSupply"',
-    'var enabled = parameter?.IsControlEnabled == true && !IsNpcBonusSliderLocked(parameter);',
+    'var enabled = parameter.IsControlEnabled && !IsNpcBonusSliderLocked(parameter);',
     'IndustrialChrome.DrawRecessedCard(dc, card, panel,',
-    'enabled ? border : CloneWithOpacity(border, 0.55)',
-    'if (enabled && parameter.IsValueModifiedFromReference())',
-    'if (enabled)\n            AddHorizontalTarget(parameter,',
     'IsNpcBonusSliderLocked(_selectedParameter)',
     'IsNpcBonusSliderLocked(target.Parameter)',
+    'InvalidateMeasure();',
 )):
-    fail("NPC SmartLoot package captions, compact ammo samples or active-package UI drifted")
+    fail("NPC SmartLoot context or original source control drifted")
+_npc_paint = _npc_preview_source.split("private void DrawNpcLootLoadout(", 1)[-1].split("private void DrawWorldLootLayout(", 1)[0]
+_parts = _npc_paint.split("if (NpcBonusPackageSelected())", 1)
+if len(_parts) != 2 or 'DrawNpcCompactScalar(dc, ammo,' in _parts[0]:
+    fail("NPC bonus control is not guarded by MED + AMMO selection")
 if '"Bonus ammo off · weapon ammo unaffected"' in _npc_preview_source or 'Inactive until Medicine + Ammo is selected' in _npc_preview_source:
     fail("NPC bonus preview must not display an inactive explanatory sentence")
 if 'var caption = CreateText(corpse.ChoiceOptions[i].Label,' in _npc_preview_source:
@@ -5298,14 +5306,8 @@ if 'var optionLabel = optionValue.Contains("NPC_Ammo_Smart", StringComparison.Or
     fail("NPC source package chips must show MED + AMMO / WATER / NONE instead of icons only")
 if '"NpcLootLoadout" => NpcLootBoardHeight(width),' not in _npc_preview_source:
     fail("NPC board must measure from its responsive geometry")
-if ('NpcLootThreeMiddle(double hostWidth) => hostWidth >= 900.0;' not in _npc_preview_source
-        or 'NpcLootConditionTop(ActualWidth)' not in _npc_preview_source
-        or 'new Rect(sampleCard.Right + NpcLootMiddleGap,' not in _npc_preview_source):
-    fail("NPC middle three panels no longer align horizontally at full width")
-if ('var middlePreviewWidth = usable * 0.39;' not in _npc_preview_source
-        or 'middleTop, middlePreviewWidth, NpcLootMiddleHeight);' not in _npc_preview_source
-        or 'usable - supplyWidth - middlePreviewWidth, NpcLootMiddleHeight);' not in _npc_preview_source):
-    fail("NPC wide preview card must use an independent scoped width name (CS0136)")
+if '"NpcLootLoadout" => NpcLootBoardHeight(width),' not in _npc_preview_source:
+    fail("NPC board must measure the current selected package geometry")
 _npc_items_ui = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" /
                  "AggregateVisualControl.NpcConsumables.cs").read_text(encoding="utf-8")
 if "var top = NpcLootConsumablesTop(ActualWidth);" not in _npc_items_ui:

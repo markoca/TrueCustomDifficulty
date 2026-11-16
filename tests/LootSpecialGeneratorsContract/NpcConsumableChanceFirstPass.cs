@@ -70,20 +70,34 @@ internal static partial class Program
             Parameters = uiVm.AllParameters,
             NpcConsumables = uiVm.NpcConsumableItems
         };
-        npcBoard.Measure(new System.Windows.Size(920.0, 1000.0));
-        Check(Math.Abs(npcBoard.DesiredSize.Height - 472.0) < 0.000001
-            && ReferenceEquals(npcBoard.NpcConsumables, uiVm.NpcConsumableItems),
-            "Wide NPC board did not keep all three middle panels side-by-side");
-        npcBoard.Measure(new System.Windows.Size(860.0, 1000.0));
-        Check(Math.Abs(npcBoard.DesiredSize.Height - 623.0) < 0.000001,
-            "Intermediate NPC layout failed to wrap the range without squashing the strip");
-        npcBoard.Measure(new System.Windows.Size(760.0, 1000.0));
-        Check(Math.Abs(npcBoard.DesiredSize.Height - 721.0) < 0.000001,
-            "NPC top peers did not wrap into two rows at narrow width");
-        npcBoard.Measure(new System.Windows.Size(600.0, 1000.0));
-        Check(Math.Abs(npcBoard.DesiredSize.Height - 721.0) < 0.000001,
-            "NPC narrow board height drifted");
-        npcBoard.Measure(new System.Windows.Size(920.0, 1000.0));
+        // All three native options must remeasure without hidden ammo space.
+        var smart = uiVm.AllParameters.Single(p => p.Id == "loot.npcCorpseBonus");
+        var ammoPackage = smart.ChoiceOptions.Single(x =>
+            x.Value.Contains("NPC_Ammo_Smart", StringComparison.Ordinal)).Value;
+        var waterPackage = smart.ChoiceOptions.Single(x =>
+            x.Value.Contains("NPC_Water_Smart", StringComparison.Ordinal)).Value;
+        var nonePackage = smart.ChoiceOptions.Single(x =>
+            x.Value != ammoPackage && x.Value != waterPackage).Value;
+        foreach (var (option, wide, middle, narrow) in new[]
+        {
+            (ammoPackage, 619.0, 717.0, 815.0),
+            (waterPackage, 470.0, 568.0, 568.0),
+            (nonePackage, 470.0, 568.0, 568.0)
+        })
+        {
+            smart.CurrentText = option;
+            npcBoard.Measure(new System.Windows.Size(920.0, 1000.0));
+            Check(Math.Abs(npcBoard.DesiredSize.Height - wide) < 0.000001
+                && ReferenceEquals(npcBoard.NpcConsumables, uiVm.NpcConsumableItems),
+                "Wide NPC SmartLoot mode height drifted for " + option);
+            npcBoard.Measure(new System.Windows.Size(860.0, 1000.0));
+            Check(Math.Abs(npcBoard.DesiredSize.Height - middle) < 0.000001,
+                "Medium NPC SmartLoot mode height drifted for " + option);
+            npcBoard.Measure(new System.Windows.Size(600.0, 1000.0));
+            Check(Math.Abs(npcBoard.DesiredSize.Height - narrow) < 0.000001,
+                "Narrow NPC SmartLoot mode height drifted for " + option);
+        }
+        smart.ResetToReference();
 
         var npcRationale = uiVm.AllParameters.Single(p => p.Id == "loot.npcCorpseBonus")
             .RationaleDisplay;

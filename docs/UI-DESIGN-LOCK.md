@@ -1,3 +1,15 @@
+## 2026-11-16 — CURRENT: centered NPC SmartLoot selector with contextual controls
+
+The three native CORPSE SMART LOOT options, MED + AMMO / WATER / NONE, sit alone in one centered top selector (330-DIP max width, 88-DIP height, Y=54); no unrelated editor shares their row. The source options remain mutually exclusive and their original source values are unchanged.
+
+MED + AMMO alone reveals its AMMO QTY slider and nine-cell BONUS AMMO STACKS sample preview below the selector. Both disappear entirely under WATER or NONE, including hit targets and layout space. Those options have no other package-specific child editors. Switching away does not erase the bonus ammo multiplier saved in the preset; the existing inactive-package editing guard still applies.
+
+SUPPLY REDUCTION, STANDARD MED, MOD ITEMS, DROPPED WEAPON CONDITION, and FOOD/DRINKS/MEDICAL per-item controls remain independently relevant in all three modes and are always displayed. At host width 900 DIP or more, supply, standard med and mod cards share a tier with the wider two-handle condition panel (42% of usable space). Below 900 DIP those three scalars sit alongside each other and the condition card moves to a centered following row. Optional ammo cards stand side by side at 680 DIP or wider; below 680 DIP they stack without crushing the nine sample cells.
+
+A single LayoutNpcLoot(hostWidth, showBonusAmmo) method determines paint rectangles, target locations, consumable placement and measured height; changing the choice CurrentText invalidates WPF measurement. At widths 920 / 860 / 600 DIP, total heights are 619 / 717 / 815 for MED + AMMO and 470 / 568 / 568 for WATER or NONE. The unchecked per-item label remains DEFAULT. Game CFG writers, presets, source parameters, third-party mod allowlists and the Echo/attached-ammunition exclusions are unchanged. Contract checks updated; real Wine visual acceptance remains required.
+
+---
+
 ### 2026-11-16 — NPC wide preview CS0136 build correction
 
 In `DrawNpcLootLoadout`, the wide middle-tier layout uses `middlePreviewWidth` for the panel width and keeps `previewWidth` for the later per-sample tile width. This eliminates a C# nested/local variable name collision (CS0136). Layout geometry, hit targets, gameplay CFG, and preset values are unchanged. The consistency audit guards the distinct names; Wine build and visual verification remain local acceptance steps.

@@ -32,15 +32,29 @@ internal static partial class Program
             Family = "NpcLootLoadout", Parameters = pristine.AllParameters,
             NpcConsumables = pristine.NpcConsumableItems
         };
+        var smart = pristine.AllParameters.Single(p => p.Id == "loot.npcCorpseBonus");
+        var initialChoice = smart.CurrentText;
+        smart.CurrentText = smart.ChoiceOptions.Single(x =>
+            x.Value.Contains("NPC_Ammo_Smart", StringComparison.Ordinal)).Value;
         npcBoard.Measure(new System.Windows.Size(920.0, 1200.0));
-        Check(Math.Abs(npcBoard.DesiredSize.Height - 472.0) < 0.000001,
-            "Wide NPC middle cards must occupy one row");
+        Check(Math.Abs(npcBoard.DesiredSize.Height - 619.0) < 0.000001,
+            "NPC bonus mode must reveal its optional cards");
         npcBoard.Measure(new System.Windows.Size(860.0, 1200.0));
-        Check(Math.Abs(npcBoard.DesiredSize.Height - 623.0) < 0.000001,
-            "Medium NPC middle cards must reflow");
+        Check(Math.Abs(npcBoard.DesiredSize.Height - 717.0) < 0.000001,
+            "NPC bonus layout must reflow at medium width");
         npcBoard.Measure(new System.Windows.Size(600.0, 1200.0));
-        Check(Math.Abs(npcBoard.DesiredSize.Height - 721.0) < 0.000001,
-            "Narrow NPC scarcity strip must retain legible card widths");
+        Check(Math.Abs(npcBoard.DesiredSize.Height - 815.0) < 0.000001,
+            "Narrow NPC ammo mode must stack bonus controls");
+        smart.CurrentText = smart.ChoiceOptions.Single(x =>
+            !x.Value.Contains("NPC_Ammo_Smart", StringComparison.Ordinal)
+            && !x.Value.Contains("NPC_Water_Smart", StringComparison.Ordinal)).Value;
+        npcBoard.Measure(new System.Windows.Size(920.0, 1200.0));
+        Check(Math.Abs(npcBoard.DesiredSize.Height - 470.0) < 0.000001,
+            "NPC NONE mode must collapse optional ammo controls");
+        npcBoard.Measure(new System.Windows.Size(600.0, 1200.0));
+        Check(Math.Abs(npcBoard.DesiredSize.Height - 568.0) < 0.000001,
+            "Narrow NPC NONE mode must collapse optional ammo controls");
+        smart.CurrentText = initialChoice;
 
         // The third native field is not a fictitious group chance.
         var weighted = Baseline.Special.CheapStashProduction.TemplateCategories
