@@ -177,6 +177,11 @@ public sealed class MainViewModel : ObservableObject
     // Not catalog parameters; saved in presets when changed.
     public StashPresenceViewModel StashPresence { get; } = new();
 
+    // Mirrored pairs (AMMO AMOUNT -> Standard/Rare backings, MEDICAL
+    // COMPOSITION Chance scale -> Weight factor) re-sync after a preset load,
+    // so a legacy preset with diverging values cannot keep a hidden value.
+    private readonly List<Action> _afterPresetLoadSyncs = new();
+
     // TRADER STOCK partial odds per role x category (0 = SELL toggle off).
     public TraderSellOddsViewModel TraderSellOdds { get; } = new();
 
@@ -790,6 +795,7 @@ public sealed class MainViewModel : ObservableObject
                 SyncStashAmmoQuantity();
         };
         SyncStashAmmoQuantity();
+        _afterPresetLoadSyncs.Add(SyncStashAmmoQuantity);
 
         // Medical Composition: ONE visible control per item. The native Chance
         // scale and the native Weight factor both mean "keep X% of the game's
@@ -820,6 +826,7 @@ public sealed class MainViewModel : ObservableObject
                     Mirror(bias, scale);
             };
             Mirror(scale, bias);
+            _afterPresetLoadSyncs.Add(() => Mirror(scale, bias));
         }
 
         // One native relative-bias chart for actual medical ItemPrototypeSIDs
@@ -1979,6 +1986,8 @@ public sealed class MainViewModel : ObservableObject
                         parameter.ApplyPresetValue(pair.Value);
                     }
                 }
+                foreach (var sync in _afterPresetLoadSyncs)
+                    sync();
 
                 // Migrate the retired shared instant-stamina scalar (1x)
                 // into exact Water (38%) and regular Energy Drink (50%) values.

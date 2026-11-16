@@ -77,6 +77,9 @@ public sealed partial class AggregateVisualControl
     private readonly List<(string Id, Rect Hit, Rect Rail)> _stashPresenceHits = new();
     private string? _stashPresenceDragging;
     private string? _stashPresenceHover;
+    // Last clicked presence cell: arrow keys / Home / End edit it like any
+    // other rail (catalog cells use the selected-parameter keyboard path).
+    private string? _stashPresenceFocused;
 
     private void DrawStashControlGrid(DrawingContext dc, Rect outer,
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
@@ -204,6 +207,10 @@ public sealed partial class AggregateVisualControl
         {
             if (!hit.Contains(point)) continue;
             _stashPresenceDragging = id;
+            _stashPresenceFocused = id;
+            _selectedParameter = null;
+            _selectedHitKind = null;
+            Focus();
             CaptureMouse();
             SetStashPresenceFromPoint(id, rail, point);
             return true;
@@ -242,6 +249,24 @@ public sealed partial class AggregateVisualControl
     }
 
     private void StashPresenceLostCapture() => _stashPresenceDragging = null;
+
+    private bool StashPresenceKeyDown(Key key)
+    {
+        if (Family != "StashContentMix" || StashPresence is null || !IsEnabled
+            || _stashPresenceFocused is not { } id || _selectedParameter is not null)
+            return false;
+        var step = key switch
+        {
+            Key.Right or Key.Up or Key.Add or Key.OemPlus => 1,
+            Key.Left or Key.Down or Key.Subtract or Key.OemMinus => -1,
+            _ => 0
+        };
+        if (step == 0 && key is not (Key.Home or Key.End))
+            return false;
+        StashPresence.Set(id, key == Key.Home ? 0.0 : key == Key.End ? 1.0
+            : StashPresence.Get(id) + step * StashPresenceViewModel.Step);
+        return true;
+    }
 
     private bool StashPresenceRightClick(Point point)
     {

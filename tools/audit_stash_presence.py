@@ -176,6 +176,19 @@ for stale in ("DROP ROLLS", "LOOT PRIORITY favors", "EFFECTIVE PICK", "weighted 
     assert stale not in pvm, stale
 assert '"StashContentMix" => "ADJUST ODDS:' in pvm and '"StashMedicalComposition" => "ADJUST ODDS:' in pvm
 
+# ---- 15. Board R reset includes sidecars; presence cells take keys ------
+agg = read("Controls/AggregateVisualControl.cs")
+assert 'if (Family == "StashContentMix")\n                StashPresence?.Reset();' in agg
+assert "item.Reset();" in agg.split('if (Family == "NpcLootLoadout")\n            {\n                NeedBoost = 1.0;', 1)[1][:300]
+assert "if (StashPresenceKeyDown(e.Key))" in agg and "private bool StashPresenceKeyDown(Key key)" in grid
+# ---- 16. Off-grid vanilla reachable; mirrored pairs re-sync after preset load
+pvm2 = read("ViewModels/ParameterViewModel.cs")
+assert "return IsSlider ? ReferenceMagnet(clamped, NormalizeSliderGrid(value)) : clamped;" in pvm2
+assert "return parameter.ReferenceMagnet(raw," in agg
+assert "_afterPresetLoadSyncs.Add(SyncStashAmmoQuantity);" in vm
+assert "_afterPresetLoadSyncs.Add(() => Mirror(scale, bias));" in vm
+assert "foreach (var sync in _afterPresetLoadSyncs)" in vm
+
 for token in ("ONE entry", "Empty", "Desolation", "13564", "never mix", "SmartKeptShare",
               "Basic Chance rows", "CHANCE", "CheapNoFresh", "SUPPLY REDUCTION",
               "Smart Chance groups"):

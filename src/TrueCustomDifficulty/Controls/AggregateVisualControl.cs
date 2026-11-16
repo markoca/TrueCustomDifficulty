@@ -7021,6 +7021,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             e.Handled = true;
             return;
         }
+        if (StashPresenceKeyDown(e.Key))
+        {
+            e.Handled = true;
+            return;
+        }
         if (Family == "NpcLootLoadout" && _npcModFocused && IsEnabled && ModItemsEditorAvailable)
         {
             if (e.Key == Key.Space)
@@ -7064,6 +7069,18 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             }
             foreach (var resetParameter in GetFamilyParameters())
                 resetParameter.ResetToReference();
+            // Sidecar controls drawn on the same board reset with it, so the
+            // board (and its modified marker) really returns to the Base
+            // Preset. MOD ITEMS stays independent, like WORLD LOOT REMOVAL.
+            if (Family == "StashContentMix")
+                StashPresence?.Reset();
+            if (Family == "NpcLootLoadout")
+            {
+                NeedBoost = 1.0;
+                if (NpcConsumables is not null)
+                    foreach (var item in NpcConsumables.OfType<NpcConsumableItemViewModel>())
+                        item.Reset();
+            }
 
             _status.ShowTransient("Visual group reset to Base Preset.");
             InvalidateVisual();
@@ -7643,7 +7660,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var snapped = origin +
                       Math.Round((raw - origin) / step, MidpointRounding.AwayFromZero) * step;
 
-        return Math.Clamp(snapped, parameter.Minimum, parameter.Maximum);
+        // Off-grid vanilla stays reachable (same rule as the catalog snap).
+        return parameter.ReferenceMagnet(raw,
+            Math.Clamp(snapped, parameter.Minimum, parameter.Maximum));
     }
 
     private static double ValueToX(

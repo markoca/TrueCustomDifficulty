@@ -151,7 +151,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "ItemWeightBoard" => "Adjust ammunition, food and medicine, weapons or armor weight independently.",
                     "AnomalyGlobalDamage" => "GLOBAL MULTIPLIER affects all supported anomaly damage. Each anomaly also has its own damage setting; EFFECTIVE includes both before protection.",
                     "AnomalySpecialEffects" => "Adjust Glass Shards bleeding and Psy drain independently. Their other damage effects remain separate.",
-                    "NpcLootLoadout" => "SCARCITY scales eligible ordinary NPC consumable Chance and optional corpse SmartLoot activation, not weapons. Other controls select packages, bonus stacks, medical Chance and condition. Right-click a rail to reset.",
+                    "NpcLootLoadout" => "SCARCITY scales eligible ordinary NPC consumable Chance and optional corpse SmartLoot activation, not weapons. Other controls select packages, bonus stacks, medical Chance and condition. R also resets NEED BOOST and the item rows; MOD LOOT SCARCITY resets on its own (R with it focused).",
                     "WorldLootLayout" => "Shuffle weapons, attachments and blueprints separately. Remove ordinary armor or detectors independently; quest rewards stay. Weapon density only affects weapon shuffle.",
                     "StashContentMix" => "ADJUST ODDS: each cell keeps X% of the game's odds for that kind of loot in that stash tier (100% = game odds, 0% = never); cells tagged CHANCE set the real chance. ODDS PER STASH shows the result. SUPPLY REDUCTION lowers the odds of all supplies; AMMO AMOUNT and RGD-5 AMOUNT change how much you get.",
                     "StashMedicalComposition" => "ADJUST ODDS: each item keeps X% of the game's odds in every stash (100% = game odds, 0% = never); ODDS PER STASH · MEDS shows the result per tier. QUANTITY sets Medkit and Army Medkit MIN/MAX stack sizes.",
@@ -1878,7 +1878,14 @@ public sealed class ParameterViewModel : ObservableObject
             CurrentText = value.Text;
     }
 
+    // Every slider snap keeps the difficulty's vanilla value reachable.
     private double NormalizeSliderValue(double value)
+    {
+        var clamped = Math.Clamp(value, Minimum, Maximum);
+        return IsSlider ? ReferenceMagnet(clamped, NormalizeSliderGrid(value)) : clamped;
+    }
+
+    private double NormalizeSliderGrid(double value)
     {
         var clamped = Math.Clamp(value, Minimum, Maximum);
         if (!IsSlider)
@@ -1922,6 +1929,21 @@ public sealed class ParameterViewModel : ObservableObject
         // advertised TickFrequency/SmallChange but raw values were accepted continuously,
         // so controls such as Starting Coupons (step 10) could land on 3-decimal values.
         return SnapToCatalogStep(clamped);
+    }
+
+    /// <summary>
+    /// The difficulty's vanilla value stays reachable by dragging even when
+    /// it is not on the step grid (e.g. NPC gun damage 0.17x on Novice): a
+    /// raw value closer to the reference than to the nearest grid stop lands
+    /// on the reference. Grid stops themselves are unaffected.
+    /// </summary>
+    public double ReferenceMagnet(double raw, double snapped)
+    {
+        var reference = GetReferenceNumber();
+        if (!double.IsFinite(reference) || reference < Minimum - Epsilon
+            || reference > Maximum + Epsilon)
+            return snapped;
+        return Math.Abs(raw - reference) < Math.Abs(raw - snapped) ? reference : snapped;
     }
 
     private bool UsesAbsoluteCatalogStep() =>

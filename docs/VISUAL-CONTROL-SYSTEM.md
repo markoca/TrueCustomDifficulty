@@ -1,3 +1,10 @@
+## 2026-11-16 — CURRENT: control behaviour consistency (R reset, keyboard, vanilla reachable, preset mirrors)
+
+* **R (group reset)** on STASH LOOT MIX also resets the BASIC / STANDARD AMMO presence cells; on NPC LOOT it also resets NEED BOOST and the per-item rows (MOD LOOT SCARCITY stays independent, like WORLD LOOT REMOVAL). Before, the board kept those values and its modified marker after "Visual group reset".
+* **Keyboard on presence cells**: after clicking a BASIC / STANDARD AMMO cell, ←/→/↑/↓ move it by 5%, Home/End = 0% / 100%, like every catalog rail.
+* **Vanilla always reachable by dragging**: `ParameterViewModel.ReferenceMagnet` (used by every slider snap and by the board snap) lands on the difficulty's vanilla value when the pointer is closer to it than to the nearest grid stop. Fixes off-grid vanillas such as NPC gun damage 0.17× / 0.85× / 1.02× / 1.35×, explosion 0.25×, mutant 0.35× / 1.35×, repeated-hit protection, player weapon damage 1.3× on Novice and Strong Reload Penalty 18.75%. Grid stops are unchanged.
+* **Preset load re-syncs mirrored pairs**: AMMO AMOUNT → Standard/Rare backings and each MEDICAL COMPOSITION Chance scale → Weight factor, so an older preset with diverging values cannot keep a hidden value the board does not show.
+
 ## 2026-11-16 — CURRENT: texts match the boards (TRADER STOCK, CONTROLS help, anomaly EFFECTIVE, ammo mix names)
 
 * **TRADER STOCK**: all 31 `economy.traderSells.*` texts describe the 0–100% rails ("keep X% of the game's odds", 0% removes) instead of CHECKED/UNCHECKED/ON/OFF. The panel value of a category shows the rail value (`50%`, `0%`) via `SellOddsProvider`, not ON/OFF; its CONTROLS help explains the rail.
