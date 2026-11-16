@@ -147,6 +147,7 @@ public sealed class DrunkennessControl : FrameworkElement
         DrawCenteredText(dc, "ALCOHOL TOLERANCE",
             new Point(ActualWidth / 2.0, 21.0), VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
         dc.PushTransform(new TranslateTransform(0.0, HeaderOffset));
+        var trackerOffset = CardHoverTracker.PushOffset(new Vector(0.0, HeaderOffset));
 
         var gap = 8.0;
         var totalWidth = Math.Max(480.0, ActualWidth - 24.0);
@@ -219,6 +220,7 @@ public sealed class DrunkennessControl : FrameworkElement
         DrawText(dc, "DRUNKNESS STAGES", new Point(16, 234),
             11.2, text, FontWeights.Bold);
         DrawTierCards(dc, panelAlt, border, radarMuted);
+        trackerOffset.Dispose();
         dc.Pop();
     }
 
@@ -238,6 +240,7 @@ public sealed class DrunkennessControl : FrameworkElement
         Brush accent)
     {
         IndustrialChrome.DrawRecessedCard(dc, rect, background, border, 3.0);
+        CardHoverTracker.Record(rect, 3.0, parameter);
 
         var strength = parameter?.CurrentNumber ?? vanillaStrength;
         // Fallback readouts align with the source catalog's editable bounds.
@@ -348,7 +351,7 @@ public sealed class DrunkennessControl : FrameworkElement
         var segmentWidth = totalWidth / count;
         var stripRect = new Rect(left, top, totalWidth, stripHeight);
 
-        dc.DrawTrackedRoundedRectangle(panelAlt, new Pen(border, 1.0), stripRect, 4.0, 4.0);
+        dc.DrawTrackedRoundedRectangle(panelAlt, new Pen(border, 1.0), stripRect, 4.0, 4.0, parameter);
 
         for (var drink = 1; drink <= count; drink++)
         {
@@ -462,12 +465,21 @@ public sealed class DrunkennessControl : FrameworkElement
         }
     }
 
+    public event EventHandler<AggregateParameterSelectedEventArgs>? ParameterSelected;
+
+    private void SelectCardAt(Point point)
+    {
+        if (_cardHover.OwnerAt(point) is { } owner)
+            ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(owner));
+    }
+
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonDown(e);
         Focus();
 
         var point = e.GetPosition(this);
+        SelectCardAt(point);
         var progress = _progressMarkers.FirstOrDefault(m => m.HitRect.Contains(point));
         if (progress is not null)
         {
@@ -512,6 +524,7 @@ public sealed class DrunkennessControl : FrameworkElement
         base.OnMouseRightButtonDown(e);
 
         var point = e.GetPosition(this);
+        SelectCardAt(point);
 
         if (_beerSliderRect.Contains(point))
         {

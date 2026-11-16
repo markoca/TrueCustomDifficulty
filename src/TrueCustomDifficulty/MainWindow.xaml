@@ -381,6 +381,7 @@
                                                                                                  NeedBoost="{Binding DataContext.CorpseSmartLootNeedBoost, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Window}}" />
 
                                                                 <controls:BleedingCurveControl x:Name="BleedingCurveControl"
+                                                                                                ParameterSelected="AggregateVisualControl_ParameterSelected"
                                                                                                 MaxWidth="920"
                                                                                                 HorizontalAlignment="Center"
                                                                                                PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
@@ -391,6 +392,7 @@
                                                                                                Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
 
                                                                 <controls:DrunkennessControl x:Name="DrunkennessControl"
+                                                                                                ParameterSelected="AggregateVisualControl_ParameterSelected"
                                                                                                 MaxWidth="920"
                                                                                                 HorizontalAlignment="Center"
                                                                                              PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"

@@ -1539,7 +1539,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Controls how quickly hunger builds up. Higher means you'll need food sooner.",
+      "rationale": "How fast your stomach empties while you roam. Higher = you need to eat more often and carry more food; lower = food lasts much longer.\n\nVanilla: 0.015 on every difficulty.",
       "logic": "",
       "interaction": "Food Hunger Relief changes how much hunger each item removes. Hunger-state thresholds still decide when penalties apply."
     },
@@ -1585,7 +1585,7 @@
           "Normal food effect only; no edits to healing, alternate effect lists or other consumables."
         ]
       },
-      "rationale": "Eating bread removes this many hunger points.",
+      "rationale": "How filling one piece of bread is. Vanilla: 20 hunger points out of 100 — a quick snack, not a meal.",
       "logic": "Higher means more hunger removed by that item. At zero it gives no normal hunger relief.",
       "interaction": "Hunger Rate controls how quickly hunger returns; food healing and special effects stay separate.",
       "exposeInUi": true
@@ -1632,7 +1632,7 @@
           "Normal food effect only; no edits to healing, alternate effect lists or other consumables."
         ]
       },
-      "rationale": "Eating sausage removes this many hunger points.",
+      "rationale": "How filling one sausage is. Vanilla: 30 hunger points out of 100.",
       "logic": "Higher means more hunger removed by that item. At zero it gives no normal hunger relief.",
       "interaction": "Hunger Rate controls how quickly hunger returns; food healing and special effects stay separate.",
       "exposeInUi": true
@@ -1679,7 +1679,7 @@
           "Normal food effect only; no edits to healing, alternate effect lists or other consumables."
         ]
       },
-      "rationale": "Eating canned food removes this many hunger points.",
+      "rationale": "How filling one can of food is. Vanilla: 50 hunger points — half the meter in one go.",
       "logic": "Higher means more hunger removed by that item. At zero it gives no normal hunger relief.",
       "interaction": "Hunger Rate controls how quickly hunger returns; food healing and special effects stay separate.",
       "exposeInUi": true
@@ -1727,7 +1727,7 @@
           "Player.MaxHungerPoints = 100 in the 2.0.5 project baseline. Limit editable relief to 0–100 rather than exposing an inert 100–200 range."
         ]
       },
-      "rationale": "Condensed milk normally removes all 100 hunger points. Lowering this value makes each tin less filling.",
+      "rationale": "How filling a tin of condensed milk is. Vanilla: 100, it clears the whole hunger meter. Lower it to stop milk being the only food worth carrying.",
       "logic": "At zero, condensed milk stops relieving hunger. Higher settings remove more hunger until the 100-point meter is cleared.",
       "interaction": "Normal HP healing and Weird Kettle alternative effects stay separate.",
       "exposeInUi": true
@@ -1773,7 +1773,7 @@
           "Runtime CFG threshold is 17 HungerPoints."
         ]
       },
-      "rationale": "Controls when the Low hunger state begins on the 0-100 HungerPoints scale.",
+      "rationale": "Where on the 0–100 hunger meter the first, mild hunger stage kicks in. Vanilla: 17.",
       "logic": "Keep LOW at or below MEDIUM and STRONG. Moving one threshold in the Hunger Ladder minimally pushes adjacent thresholds when needed.",
       "interaction": "This changes state timing only. Medium/Severe stamina-recovery penalties are tuned separately.",
       "exposeInUi": false
@@ -1820,7 +1820,7 @@
           "Medium hunger also applies HungerNoSleep."
         ]
       },
-      "rationale": "Controls when the standard Medium hunger state begins.",
+      "rationale": "Where real hunger starts: stamina recovers slower and you can't sleep. Vanilla: 33 on the 0–100 meter.",
       "logic": "Keep LOW <= MEDIUM <= STRONG.",
       "interaction": "This moves the stage boundary; the Medium stamina-recovery penalty magnitude remains a separate axis.",
       "exposeInUi": false
@@ -1868,7 +1868,7 @@
           "This is the standard HungerMechanics boundary; the separate Master HungerNegativeMechanics bundle retains its own authored activation semantics."
         ]
       },
-      "rationale": "Controls when the standard Severe hunger state begins.",
+      "rationale": "Where severe hunger starts and the heavy penalties hit. Vanilla: 83 on the 0–100 meter.",
       "logic": "Keep LOW <= MEDIUM <= STRONG.",
       "interaction": "This changes the standard hunger stage boundary; it does not silently rewrite the separate Master starvation mechanics.",
       "exposeInUi": false
@@ -1911,7 +1911,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes how much moderate hunger slows stamina recovery. It does not make actions cost more stamina.",
+      "rationale": "How much moderate hunger slows your stamina coming back. Vanilla: −33% recovery. Actions don't cost more — you just catch your breath slower.",
       "logic": "",
       "interaction": "This modifies regeneration, not the direct stamina cost of sprinting, jumping or melee."
     },
@@ -1952,7 +1952,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes how much severe hunger slows stamina recovery. Master starvation can add extra penalties.",
+      "rationale": "How much severe hunger slows your stamina coming back. Vanilla: −70% recovery, so a starving stalker barely recovers between sprints. Master starvation can add more on top.",
       "logic": "",
       "interaction": "Master Starvation Mechanics can add further stamina drain on top of this standard severe-hunger penalty."
     },
@@ -1994,7 +1994,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Controls how quickly you get tired. Higher means fatigue penalties and the need for sleep arrive sooner.",
+      "rationale": "How fast you get tired while awake. Higher = fatigue penalties (slower aim and reloads) and the need to sleep arrive sooner.\n\nVanilla: 0.01 on every difficulty.",
       "logic": "",
       "interaction": "Vanilla fatigue states still decide when their penalties become active. Energy drinks can reduce accumulated fatigue separately."
     },
@@ -2039,7 +2039,7 @@
           "Runtime CFG threshold is 50 SleepinessPoints."
         ]
       },
-      "rationale": "Controls where the Low fatigue stage begins on the real 0-100 SleepinessPoints axis.",
+      "rationale": "Where on the 0–100 fatigue meter you start feeling tired (slightly slower aiming). Vanilla: 50.",
       "logic": "Keep LOW <= MEDIUM <= SEVERE.",
       "interaction": "Horizontal movement changes stage timing; vertical AIM/RELOAD handles control penalty magnitude.",
       "exposeInUi": false
@@ -2085,7 +2085,7 @@
           "Runtime CFG threshold is 60 SleepinessPoints."
         ]
       },
-      "rationale": "Controls where Medium fatigue begins.",
+      "rationale": "Where moderate fatigue starts: slower aiming and reloads. Vanilla: 60.",
       "logic": "Keep LOW <= MEDIUM <= SEVERE.",
       "interaction": "The Medium reload penalty begins at this stage.",
       "exposeInUi": false
@@ -2131,7 +2131,7 @@
           "Runtime CFG threshold is 80 SleepinessPoints."
         ]
       },
-      "rationale": "Controls where Severe fatigue begins.",
+      "rationale": "Where severe fatigue starts and the biggest aim and reload penalties kick in. Vanilla: 80.",
       "logic": "Keep LOW <= MEDIUM <= SEVERE.",
       "interaction": "This moves the Severe stage boundary without changing its AIM/RELOAD penalty magnitudes.",
       "exposeInUi": false
@@ -2197,7 +2197,7 @@
           "The slider scales only those energy-drink fatigue-relief values; passive player RegenSleepinessPoints remains controlled separately by Fatigue Build-up Rate."
         ]
       },
-      "rationale": "Changes how much fatigue energy drinks remove. It does not slow the normal buildup of fatigue.",
+      "rationale": "How much tiredness an energy drink washes away. 1× is vanilla, 0× makes energy drinks useless against fatigue, 2× doubles their wake-up kick.\n\nIt doesn't slow how fast you get tired again.",
       "logic": "100% keeps vanilla fatigue relief. 50% halves it, 200% doubles it, and 0% makes energy drinks provide no fatigue relief.",
       "interaction": "Fatigue Rate controls how quickly tiredness comes back. This changes the amount removed by ordinary and special Energy Drinks."
     },
@@ -2242,7 +2242,7 @@
           "The Limited Energy Drink's separate 100% refill is unchanged."
         ]
       },
-      "rationale": "Sets how much stamina drinking Water restores immediately. Longer-lasting buffs are separate.",
+      "rationale": "How much stamina a bottle of water gives back the moment you drink it. Vanilla: 38% of your stamina bar.",
       "logic": "38% is the vanilla refill; set 0–100% of maximum stamina directly, subject to the game stamina cap.",
       "interaction": "This changes only the immediate refill. Water's regeneration and stamina-cost buffs use separate settings.",
       "exposeInUi": true
@@ -2288,7 +2288,7 @@
           "The Limited Energy Drink's separate 100% refill is unchanged."
         ]
       },
-      "rationale": "Sets the exact instant stamina refill from regular Energy Drink independently; sustained buffs and durations remain separate.",
+      "rationale": "How much stamina an energy drink gives back instantly. Vanilla: 50% of your stamina bar. Its longer regeneration boost is separate.",
       "logic": "50% is the vanilla refill; set 0–100% of maximum stamina directly, subject to the game stamina cap.",
       "interaction": "Independent 1-percentage-point control; no changes to stamina regeneration, cost buffs or Limited Energy Drink.",
       "exposeInUi": false
@@ -2333,7 +2333,7 @@
           "The active green bar displays its source magnitude from 0–50%, independently of the native -10% WaterStaminaPerAction1 effect."
         ]
       },
-      "rationale": "Scales only WaterStamina2's +25% timed Stamina effect.",
+      "rationale": "Strength of water's short +25% stamina bonus. 0× removes it, 2× makes it +50%. The instant refill is a separate setting.",
       "logic": "0x removes this Stamina bonus; 1x keeps +25%, 2x gives +50%. This source is not the instant 38% refill.",
       "interaction": "Water cost cut and instant refill are separate independent controls.",
       "exposeInUi": false
@@ -2378,7 +2378,7 @@
           "The yellow STAMINA COST mini-knob shows the native negative drain modifier as 0% to -20%, without changing its underlying 0–2x scale."
         ]
       },
-      "rationale": "Controls Water's native stamina drain reduction independently of its +25% Stamina effect and 38% instant stamina restoration.",
+      "rationale": "Water also makes running and other actions cost less stamina for a while. Vanilla: −10%. 0× removes it, 2× doubles it to −20%.",
       "logic": "0x = 0% cost reduction; 1x = vanilla 10%; 2x = 20%. A scale operation preserves the original negative SPDrain source sign.",
       "interaction": "Separate independent WaterStamina2 and WaterStaminaInstant sources remain unchanged.",
       "exposeInUi": false
@@ -2517,7 +2517,7 @@
           "Minimum main Water multiplier is exactly 5/30 so its optional regeneration cannot exceed the main duration."
         ]
       },
-      "rationale": "Changes how long Water's stamina-saving effect lasts. Its shorter regeneration buff cannot outlast it.",
+      "rationale": "How long water's stamina-saving effect lasts after drinking. Vanilla: 30 seconds. Its shorter bonus can never outlast this.",
       "logic": "1x restores the original 30-second stamina-cost effect; the separate regeneration control starts at its original 5 seconds and cannot outlast the main effect.",
       "interaction": "Water Instant Stamina Restore controls the immediate refill separately."
     },
@@ -2562,7 +2562,7 @@
           "Per-action stamina-cost effects are intentionally excluded here until their raw magnitude is locked source-exact."
         ]
       },
-      "rationale": "Scales sustained stamina regeneration from normal Energy Drink, not its instant refill or duration.",
+      "rationale": "How strongly an energy drink keeps refilling your stamina after the first gulp. 0× removes that boost, 2× doubles it.",
       "logic": "1x keeps the authored Energy Drink stamina-regeneration effect; 0 removes that sustained regeneration bonus; 2x doubles it.",
       "interaction": "Instant Stamina Restore, Energy Drink Fatigue Relief and Energy Drink Effect Duration remain separate controls.",
       "exposeInUi": false
@@ -2616,7 +2616,7 @@
           "Source-confirmed Energy Drink variants: EnergeticStaminaPerAction1 gives -30% stamina action cost for 15 s; EnergeticStaminaPerAction2 gives -100% stamina action cost for 5 s. Energetic_Limited is a separate variant, and MeleeButstock participates in the source effect coverage. Engine stacking is handled by the original game effect system; duration controls retain separate prototype ownership."
         ]
       },
-      "rationale": "Changes how long an Energy Drink's stamina regeneration lasts. Other drink effects are separate.",
+      "rationale": "How long an energy drink keeps boosting your stamina regeneration. Vanilla: 45 seconds, for both the normal and the Limited drink.",
       "logic": "1x preserves 45 seconds of normal/Limited stamina regeneration. Separate 5s/-100% and 15s/-30% action-cost effect durations cannot exceed the main regeneration period.",
       "interaction": "Instant Stamina Restore and Energy Drink Fatigue Relief remain separate controls."
     },
@@ -2662,7 +2662,7 @@
           "Uses EEffectType::Stamina; Water's 30s stamina-cost effect is a distinct source."
         ]
       },
-      "rationale": "Controls how long Water's +25% Max Stamina buff lasts.",
+      "rationale": "How long water's +25% max-stamina bonus lasts. Vanilla: 5 seconds — a short burst for a sprint.",
       "logic": "Adjust between the original 5s and the current main drink-effect duration; no effect magnitude or action type is changed.",
       "interaction": "The main drink timeline controls the upper limit. These are independent native CFG durations.",
       "exposeInUi": false
@@ -2709,7 +2709,7 @@
           "Inherited eight stamina-action types; the effect is shared by regular and Limited Energy Drink."
         ]
       },
-      "rationale": "Controls how long Energy Drink removes stamina costs for affected actions.",
+      "rationale": "How long an energy drink makes actions cost no stamina at all. Vanilla: 5 seconds.",
       "logic": "Adjust between the original 5s and the current main drink-effect duration; no effect magnitude or action type is changed.",
       "interaction": "The main drink timeline controls the upper limit. These are independent native CFG durations.",
       "exposeInUi": false
@@ -2756,7 +2756,7 @@
           "Ordinary Energy Drink has both -30% and -100% effects; stacking is not runtime-proven."
         ]
       },
-      "rationale": "Controls how long Energy Drink reduces stamina costs for affected actions by 30%.",
+      "rationale": "How long an energy drink makes actions cost 30% less stamina. Vanilla: 15 seconds.",
       "logic": "Adjust between the original 15s and the current main drink-effect duration; no effect magnitude or action type is changed.",
       "interaction": "The main drink timeline controls the upper limit. These are independent native CFG durations.",
       "exposeInUi": false
@@ -2801,7 +2801,7 @@
           "Drunkenness duration is intentionally excluded until Drunkness/OverDrunkness mechanics are fully audited."
         ]
       },
-      "rationale": "Controls how long Vodka's temporary stamina penalty lasts. Radiation removal is separate.",
+      "rationale": "How long vodka's stamina drain lasts after you drink it. Vanilla: 20 seconds. Its radiation removal is set separately.",
       "logic": "1x keeps the 20 s vanilla stamina-drain penalty.",
       "interaction": "Radiation removal strength is controlled separately by Alcohol Radiation Removal."
     },
@@ -2845,7 +2845,7 @@
           "Drunkenness duration is intentionally excluded until Drunkness/OverDrunkness mechanics are fully audited."
         ]
       },
-      "rationale": "Controls how long Beer's temporary stamina penalty lasts. Radiation removal is separate.",
+      "rationale": "How long beer's stamina drain lasts after you drink it. Vanilla: 20 seconds. Its radiation removal is set separately.",
       "logic": "1x keeps the 20 s vanilla stamina-drain penalty.",
       "interaction": "Radiation removal strength is controlled separately by Alcohol Radiation Removal."
     },
@@ -2889,7 +2889,7 @@
           "Magic Vodka drunkenness is intentionally excluded from this duration control."
         ]
       },
-      "rationale": "Changes how long Magic Vodka protects you against Psy effects.",
+      "rationale": "How long Magic Vodka (Dvupalov) shields you from psy attacks. Vanilla: 90 seconds — longer means more time to deal with Controllers and psy zones.",
       "logic": "1x keeps the 90 s vanilla psi-protection duration.",
       "interaction": "This is a quest/special consumable and does not participate in ordinary Alcohol Radiation Removal."
     },
@@ -2934,7 +2934,7 @@
           "Verified authored CFG default 10; gameplay scaling still requires runtime validation."
         ]
       },
-      "rationale": "Vinca's game-facing bleeding regeneration bonus, +10 bleed points by default. The exact effect tick/rate is not inferred from this source field.",
+      "rationale": "How much faster you stop bleeding while Vinca is active. Vanilla: +10 bleed recovery — handy when you're out of bandages.",
       "logic": "Edits CinnamonDegenBleeding ValueMin and ValueMax directly in bleed-recovery points; the original +10 is not a multiplier.",
       "interaction": "Independent from the drinks, the other medicine sources and original KeepNew stacking.",
       "exposeInUi": false
@@ -2981,7 +2981,7 @@
           "Existing UI-only duration override expands this source's editor cap to 1800 seconds; CFG field remains unchanged."
         ]
       },
-      "rationale": "Duration of Vinca's ongoing bleeding recovery",
+      "rationale": "How long Vinca's bleeding recovery lasts. Vanilla: 180 seconds.",
       "logic": "Original effect duration 180s; edits real seconds.",
       "interaction": "OVERRIDE LIMITS OFF preserves this medicine's native maximum; ON expands it to 1800s (30 minutes). Effect strength and other medicine durations remain independent.",
       "exposeInUi": false
@@ -3035,7 +3035,7 @@
           "Two separate effect prototypes share the same direct value; they are not additive."
         ]
       },
-      "rationale": "Hercules grants +20 kg of carry capacity by default. Its two linked game effects share one +kg setting; they are not added to make +40 kg.",
+      "rationale": "Extra carry weight from a Hercules pill. Vanilla: +20 kg — the classic way to haul home one more rifle.",
       "logic": "Edits HerculesWeight and HerculesWeight_Penalty ValueMin and ValueMax directly as the same extra kilogram amount.",
       "interaction": "Independent from the drinks, the other medicine sources and original KeepNew stacking.",
       "exposeInUi": false
@@ -3090,7 +3090,7 @@
           "Existing UI-only duration override expands this source's editor cap to 1800 seconds; CFG field remains unchanged."
         ]
       },
-      "rationale": "Duration of both linked Hercules effects",
+      "rationale": "How long a Hercules pill keeps you stronger. Vanilla: 300 seconds (5 minutes).",
       "logic": "Original effect duration 300s; edits real seconds.",
       "interaction": "OVERRIDE LIMITS OFF preserves this medicine's native maximum; ON expands it to 1800s (30 minutes). Effect strength and other medicine durations remain independent.",
       "exposeInUi": false
@@ -3136,7 +3136,7 @@
           "Verified authored CFG default 10; gameplay scaling still requires runtime validation."
         ]
       },
-      "rationale": "Psi Block has a +10 psi-protection point game-facing bonus by default (CFG DegenPsyPoints). This is not a percentage or an inferred per-second rate.",
+      "rationale": "How much psy protection a Psi Block pill gives while it works. Vanilla: +10 psy points.",
       "logic": "Edits PSYBlockerIncreaseRegen ValueMin and ValueMax directly in the game's displayed psi-protection points, not a multiplier.",
       "interaction": "Independent from the drinks, the other medicine sources and original KeepNew stacking.",
       "exposeInUi": false
@@ -3183,7 +3183,7 @@
           "Existing UI-only duration override expands this source's editor cap to 1800 seconds; CFG field remains unchanged."
         ]
       },
-      "rationale": "Duration of Psi Block psi-point recovery",
+      "rationale": "How long a Psi Block pill lasts. Vanilla: 60 seconds.",
       "logic": "Original effect duration 60s; edits real seconds.",
       "interaction": "OVERRIDE LIMITS OFF preserves this medicine's native maximum; ON expands it to 1800s (30 minutes). Effect strength and other medicine durations remain independent.",
       "exposeInUi": false
@@ -3237,7 +3237,7 @@
           "The obsolete VeryStrongDrunkness target was removed because that node is not present in the audited current CFG."
         ]
       },
-      "rationale": "Retained as a source-correct internal mapping while OverDrunkness remains separately audited.",
+      "rationale": "Internal scale for when drinking makes you tipsy and then drunk. At 1×: tipsy at 30, drunk at 80. Hidden while the full over-drinking chain is still being mapped.",
       "logic": "At 1x, Medium = 30 and Strong = 80. Low remains at its authored near-zero boundary.",
       "interaction": "Not player-facing yet; Beer and Vodka direct strength remain the editable alcohol axes.",
       "exposeInUi": false
@@ -3285,7 +3285,7 @@
           "The direct effect fields are source-structured and writer-safe, but the exact 2.0.5 raw row was not part of the original project baseline and should be runtime-tested."
         ]
       },
-      "rationale": "Controls how much a single Beer raises intoxication. Stronger drinks reach drunkenness stages sooner.",
+      "rationale": "How much one beer gets you drunk. Vanilla: 15 — tipsy on the 2nd beer, properly drunk by the 6th in a row. The chart shows exactly when each stage hits.",
       "logic": "Vanilla is 15 Drunkness per Beer. Against the current Medium 30 / Strong 80 stage boundaries, back-to-back vanilla Beer reaches Medium on the 2nd drink and Strong on the 6th.",
       "interaction": "Always visible beside Vodka Strength. Moving it updates Beer strength, the Beer Strong-stage drink count, and the back-to-back progression immediately."
     },
@@ -3332,7 +3332,7 @@
           "The direct effect fields are source-structured and writer-safe, but the exact 2.0.5 raw row was not part of the original project baseline and should be runtime-tested."
         ]
       },
-      "rationale": "Controls how much a single Vodka raises intoxication. Stronger drinks reach drunkenness stages sooner.",
+      "rationale": "How much one vodka gets you drunk. Vanilla: 30 — tipsy after the 1st bottle, drunk by the 3rd in a row.",
       "logic": "Vanilla is 30 Drunkness per Vodka. Against the current Medium 30 / Strong 80 stage boundaries, the 1st vodka reaches Medium and the 3rd reaches Strong in the back-to-back preview.",
       "interaction": "Always visible beside Beer Strength. Moving it updates Vodka strength, the Vodka Strong-stage drink count, and the back-to-back progression immediately."
     },
@@ -3375,7 +3375,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Sets how tired you must be before you can sleep. Other conditions may still block sleep.",
+      "rationale": "How tired you must be before the game lets you sleep. Vanilla: 50 on the 0–100 fatigue meter. Lower = nap whenever you like; higher = sleep only when exhausted.",
       "logic": "Higher values require more accumulated sleepiness before sleep becomes available; lower values allow sleeping earlier.",
       "interaction": "Separate no-sleep effects from hunger, bleeding, radiation or Psy can still block sleep regardless of this threshold."
     },
@@ -3418,7 +3418,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Sets the shortest allowed sleep. It does not directly change how much HP or stamina sleep restores.",
+      "rationale": "The shortest sleep you can pick. Vanilla: 7 hours. It doesn't change how much sleep heals you.",
       "logic": "",
       "interaction": "This is a time requirement, not a direct setting for how much each restorative effect heals."
     },
@@ -3462,7 +3462,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Controls how quickly radiation builds up during exposure. Radiation damage and recovery are separate.",
+      "rationale": "How fast radiation builds up while you stand in contaminated areas. Higher = hotspots become deadly quickly.\n\nVanilla: Novice 0.6×, Stalker 1×, Veteran 1.5×, Master 1.85×.",
       "logic": "",
       "interaction": "Radiation Recovery controls passive reduction separately. Master Radiation Mechanics can also add a stamina penalty at high radiation."
     },
@@ -3505,7 +3505,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Controls how quickly accumulated radiation fades on its own. It does not reduce incoming exposure.",
+      "rationale": "How fast radiation drains away on its own without anti-rad or vodka. Vanilla: 0.05 points per second — slow, so meds still matter.",
       "logic": "",
       "interaction": "This acts on recovery, not exposure strength. Radiation Accumulation determines how quickly new radiation is gained."
     },
@@ -3619,7 +3619,7 @@
           "The runtime values are not replaced by one universal damage number; each stage keeps its original relative value."
         ]
       },
-      "rationale": "Changes HP damage once radiation becomes harmful. The danger thresholds do not move.",
+      "rationale": "How much health radiation eats once it becomes dangerous. 1× is vanilla, 2× doubles the damage; the warning levels stay where they are.",
       "logic": "100% keeps vanilla radiation damage. 50% halves it, 200% doubles it, 600% multiplies it by six, and 1000% multiplies it by ten. Original stage thresholds stay vanilla.",
       "interaction": "Exposure determines how fast radiation builds up; recovery and Anti-Rad remove it. This setting only changes HP loss once radiation hurts."
     },
@@ -3663,7 +3663,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes how strong bleeding effects are when inflicted. The HP damage of each bleeding stage is separate.",
+      "rationale": "How bad bleeding wounds are overall. Higher = you bleed out faster and need bandages sooner.\n\nVanilla: Novice 0.25×, Stalker and Veteran 1×, Master 1.5×.",
       "logic": "Higher values make bleeding effects stronger overall; lower values soften them. Novice uses 25%, Stalker/Veteran 100%, and Master 150%.",
       "interaction": "Low / Medium / Severe Bleeding Damage decide how much HP you lose once each bleeding state is active. Natural Bleeding Recovery and medical treatment decide how quickly bleeding goes away."
     },
@@ -3706,7 +3706,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Controls how quickly bleeding fades without treatment. Bandages and medkits work separately.",
+      "rationale": "How fast bleeding stops on its own without bandages. Vanilla: 0.3. Raise it to shrug off scratches; lower it to make every wound need treatment.",
       "logic": "",
       "interaction": "Bandages and medkits apply direct bleeding removal independently of this passive rate."
     },
@@ -10018,7 +10018,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes the stamina recovery bonus you get while well fed. It does not change when hunger starts.",
+      "rationale": "Bonus stamina recovery while your stomach is full. Vanilla: +20% — a reward for eating before a fight. 0 removes it.",
       "logic": "Higher values reward staying well fed with stronger stamina recovery; zero removes the bonus. The supported UI range does not turn this lowest-hunger state into a penalty.",
       "interaction": "The game keeps the vanilla boundary for leaving the well-fed state. Stamina Regen in the Stamina tab sets the underlying regeneration rate."
     },
@@ -10288,7 +10288,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes how much light fatigue slows aiming. Higher makes it take longer to aim.",
+      "rationale": "How much light tiredness slows your aiming. Vanilla: +15% time to aim.",
       "logic": "Higher values make aiming settle more slowly once the low-fatigue threshold is crossed; zero removes this standard low-fatigue aiming penalty.",
       "interaction": "Applies whenever the game is in its vanilla low-fatigue state."
     },
@@ -10329,7 +10329,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes how much moderate fatigue slows aiming. Higher makes it take longer to aim.",
+      "rationale": "How much moderate tiredness slows your aiming. Vanilla: +25% time to aim.",
       "logic": "Higher values further slow aiming during medium fatigue; zero removes this component.",
       "interaction": "Applies whenever the game is in its vanilla medium-fatigue state, replacing the low-state aiming penalty."
     },
@@ -10370,7 +10370,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes how much severe fatigue slows aiming. Higher makes it take longer to aim.",
+      "rationale": "How much severe tiredness slows your aiming. Vanilla: +40% time to aim — sleep before a big fight.",
       "logic": "Higher values make severe fatigue more disruptive to aiming; zero removes this standard aiming-time component.",
       "interaction": "Applies whenever the game is in its vanilla severe-fatigue state."
     },
@@ -10411,7 +10411,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes how much moderate fatigue slows reloading. Aiming penalties are separate.",
+      "rationale": "How much moderate tiredness slows your reloads. Vanilla: +15% reload time.",
       "logic": "Higher values lengthen reloads more while medium fatigue is active; zero removes this penalty.",
       "interaction": "Applies whenever the game is in its vanilla medium-fatigue state. It is separate from the aiming-time penalty."
     },
@@ -10452,7 +10452,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes how much severe fatigue slows reloading. Master fatigue can add extra penalties.",
+      "rationale": "How much severe tiredness slows your reloads. Vanilla: +18.75% reload time. Master fatigue can add more.",
       "logic": "Higher values make reloads slower while severely fatigued. Zero removes this reload penalty.",
       "interaction": "Applies whenever the game is in its vanilla severe-fatigue state. Master Severe-Fatigue Penalties can add another layer on top."
     },
@@ -10495,7 +10495,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Normal sleep restores 300 HP by default. Lower or raise the amount to change how much health you recover.",
+      "rationale": "How much health a full night's sleep gives back. Vanilla: 300 HP. 0 makes sleep stop healing you; up to 600 HP turns a night in a safe bed into a full patch-up.",
       "logic": "The original effect restores 300 HP on waking. Set 0 HP to disable this recovery or up to 600 HP to increase it; reset returns to 300 HP.",
       "interaction": "Medkits and passive HP regeneration remain separate."
     },
@@ -10536,7 +10536,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes how much stamina normal sleep restores when you wake up. Passive stamina recovery is separate.",
+      "rationale": "How much stamina you wake up with after sleeping. Vanilla: a full bar (+100%).",
       "logic": "",
       "interaction": "This affects the post-sleep restore, not passive stamina regeneration or action costs."
     },
@@ -10848,7 +10848,7 @@
           "Medium bleeding also carries movement/no-sleep consequences."
         ]
       },
-      "rationale": "Controls when Medium bleeding begins.",
+      "rationale": "Where on the bleeding meter a wound becomes a moderate bleed. Vanilla: 50.",
       "logic": "Keep MEDIUM below SEVERE. The Low threshold remains at the authored 0.1 boundary.",
       "interaction": "Horizontal threshold handles change stage timing; vertical curve handles change HP damage per tick.",
       "exposeInUi": false
@@ -10895,7 +10895,7 @@
           "Strong bleeding also carries movement/no-sleep consequences."
         ]
       },
-      "rationale": "Controls when Severe bleeding begins.",
+      "rationale": "Where on the bleeding meter a wound becomes a severe bleed. Vanilla: 75.",
       "logic": "Keep SEVERE above MEDIUM. The Low threshold remains fixed at 0.1.",
       "interaction": "This changes the stage boundary, not the damage-per-tick value.",
       "exposeInUi": false
@@ -10939,7 +10939,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes HP lost with each damage tick during light bleeding. The time spent bleeding is separate.",
+      "rationale": "Health lost per tick from a light bleed. Vanilla: 1 HP.",
       "logic": "",
       "interaction": "Applies while the game is in its vanilla low-bleeding state. Natural Bleeding Recovery determines how long bleeding lasts."
     },
@@ -10982,7 +10982,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes HP lost with each damage tick during moderate bleeding. The time spent bleeding is separate.",
+      "rationale": "Health lost per tick from a moderate bleed. Vanilla: 1.5 HP.",
       "logic": "",
       "interaction": "Applies while the game is in its vanilla medium-bleeding state. Movement and sleep penalties remain separate."
     },
@@ -11025,7 +11025,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes HP lost with each damage tick during severe bleeding. The time spent bleeding is separate.",
+      "rationale": "Health lost per tick from a severe bleed. Vanilla: 2 HP — that adds up fast without a bandage.",
       "logic": "",
       "interaction": "Applies while the game is in its vanilla severe-bleeding state. Bleeding Effect Strength can further change how dangerous bleeding feels overall."
     },

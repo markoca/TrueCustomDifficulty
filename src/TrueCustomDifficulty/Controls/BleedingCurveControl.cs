@@ -241,7 +241,7 @@ public sealed class BleedingCurveControl : FrameworkElement
         Brush panel,
         out Rect trackHitRect)
     {
-        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 1.0), rect, 3.0, 3.0);
+        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 1.0), rect, 3.0, 3.0, parameter);
 
         DrawText(dc, label, new Point(rect.Left + 10, rect.Top + 8),
             VisualControlTypography.CardTitle, text, FontWeights.Bold);
@@ -491,7 +491,7 @@ public sealed class BleedingCurveControl : FrameworkElement
             var card = new Rect(stageBankLeft + i * (stageCardWidth + stageGap),
                 405.0, stageCardWidth, 44.0);
             dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 1.0),
-                card, 3.0, 3.0);
+                card, 3.0, 3.0, i == 1 ? _mediumThreshold : i == 2 ? _severeThreshold : null);
             DrawSourceNumber(dc,
                 $"{labels[i]} AT {currentThresholds[i]:0.#} PTS",
                 new Point(card.Left + card.Width / 2, card.Top + 5),
@@ -513,12 +513,21 @@ public sealed class BleedingCurveControl : FrameworkElement
     }
 
 
+    public event EventHandler<AggregateParameterSelectedEventArgs>? ParameterSelected;
+
+    private void SelectCardAt(Point point)
+    {
+        if (_cardHover.OwnerAt(point) is { } owner)
+            ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(owner));
+    }
+
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonDown(e);
         Focus();
 
         var point = e.GetPosition(this);
+        SelectCardAt(point);
         var marker = _difficultyMarkerHits.FirstOrDefault(m => m.Hit.Contains(point));
         if (marker.Parameter?.IsControlEnabled == true)
         {
@@ -673,6 +682,7 @@ public sealed class BleedingCurveControl : FrameworkElement
         base.OnMouseRightButtonDown(e);
 
         var point = e.GetPosition(this);
+        SelectCardAt(point);
         if (_severityTrackRect.Contains(point))
         {
             _severity?.ResetToReference();

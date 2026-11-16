@@ -20,6 +20,7 @@ internal sealed class CardHoverTracker
     private readonly List<(Rect Rect, double Radius, ParameterViewModel? Owner)> _recorded = new();
     private readonly List<(Rect Rect, double Radius, ParameterViewModel? Owner)> _cards = new();
     private Rect? _hover;
+    private Vector _offset;
 
     public const double MinimumWidth = 46.0;
     public const double MinimumHeight = 30.0;
@@ -27,6 +28,7 @@ internal sealed class CardHoverTracker
     public IDisposable BeginRender()
     {
         _recorded.Clear();
+        _offset = default;
         var previous = s_current;
         s_current = this;
         return new Scope(() => s_current = previous);
@@ -37,7 +39,22 @@ internal sealed class CardHoverTracker
         if (s_current is null || rect.IsEmpty
             || rect.Width < MinimumWidth || rect.Height < MinimumHeight)
             return;
+        rect.Offset(s_current._offset);
         s_current._recorded.Add((rect, radius, owner));
+    }
+
+    /// <summary>
+    /// Mirror a <c>TranslateTransform</c> pushed on the drawing context so
+    /// recorded cards stay in control coordinates (hover + hit-testing).
+    /// Dispose together with the matching <c>dc.Pop()</c>.
+    /// </summary>
+    internal static IDisposable PushOffset(Vector offset)
+    {
+        var tracker = s_current;
+        if (tracker is null)
+            return new Scope(() => { });
+        tracker._offset += offset;
+        return new Scope(() => tracker._offset -= offset);
     }
 
     /// <summary>
@@ -57,8 +74,14 @@ internal sealed class CardHoverTracker
                 continue;
             if (hits.Any(hit => Near(hit, rect)))
                 continue;
-            if (_cards.Any(card => Near(card.Rect, rect)))
+            var duplicate = _cards.FindIndex(card => Near(card.Rect, rect));
+            if (duplicate >= 0)
+            {
+                // Same card drawn twice (chrome + owner tag): keep the owner.
+                if (_cards[duplicate].Owner is null && owner is not null)
+                    _cards[duplicate] = (_cards[duplicate].Rect, _cards[duplicate].Radius, owner);
                 continue;
+            }
             _cards.Add((rect, radius, owner));
         }
         if (_hover is Rect hover && !_cards.Any(card => Near(card.Rect, hover)))
