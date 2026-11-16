@@ -181,11 +181,19 @@ internal static partial class Program
             && smartGrenades.EffectiveSpawn(smartOff).Sets == "0",
             "SmartLoot zero-factor count and ItemSetCount must be disabled together.");
 
-        // Global Weight must never scale native Chance-only rows.
+        // Chance rows: a Basic cell (stashMix*) owns the Basic tier Chance
+        // rows of MEDS / FOOD / DRINKS and the smart Chance rows of MEDS /
+        // FOOD / DRINKS / COUPONS (keep X% of game odds); every other Chance
+        // row (Standard / Rare tiers, legacy ammo / grenade factors) ignores it.
         foreach (var chanceBranch in branches.Where(g => g.Field == "Chance"))
         {
             var sid = chanceBranch.Items[0].ItemSid;
             var id = StashEffectiveState.ItemBiasId(sid)!;
+            var owned = chanceBranch.IsSmart
+                ? id is "loot.stashMixMedical" or "loot.stashMixFood"
+                    or "loot.stashMixDrinks" or "loot.stashMixCoupons"
+                : chanceBranch.Tier == "Cheap"
+                    && id is "loot.stashMixMedical" or "loot.stashMixFood" or "loot.stashMixDrinks";
             var weightedOff = NativeState("Easy", (id, 0));
             var weightedHalf = NativeState("Easy", (id, .5));
             var item = chanceBranch.Items[0];
@@ -193,11 +201,11 @@ internal static partial class Program
                 chanceBranch.EffectiveSelection(Baseline, neutral, item));
             Check(Math.Abs(StashEffectiveState.Number(
                       chanceBranch.EffectiveSelection(Baseline, weightedOff, item))
-                      - source) < 1e-9
+                      - (owned ? 0.0 : source)) < 1e-9
                 && Math.Abs(StashEffectiveState.Number(
                       chanceBranch.EffectiveSelection(Baseline, weightedHalf, item))
-                      - source) < 1e-9,
-                "Global Weight knob leaked into native Chance row: " + sid);
+                      - (owned ? source * .5 : source)) < 1e-6,
+                "Basic cell ownership of native Chance row drifted: " + sid);
         }
 
         Console.WriteLine("PASS Phase 5: six global Weight categories across "
@@ -364,29 +372,24 @@ internal static partial class Program
                     }
                 }
 
-                if (StashEffectiveState.UniformSmartFactor(
-                    group.Items.Select(x => snapshot.SmartSelectionFactor(x.ItemSid, group.Field)),
-                    out var uniform)
-                    && (group.Field == "Chance" || uniform <= 1e-7))
+                // Group spawn endpoints: same rule as the writer
+                // (SmartGroupEndpointFactor x supply), emitted only when changed.
+                var spawn = group.EffectiveSpawn(snapshot);
+                foreach (var (field, original, predicted) in new[]
                 {
-                    var spawn = group.EffectiveSpawn(snapshot);
-                    foreach (var (field, original, predicted) in new[]
-                    {
-                        ("MinSpawnChance", group.MinSpawnChance, spawn.Min),
-                        ("MaxSpawnChance", group.MaxSpawnChance, spawn.Max),
-                        ("ItemSetCount", group.ItemSetCount, spawn.Sets)
-                    })
-                    {
-                        if (original.Length == 0
-                            || field == "ItemSetCount" && uniform > 0) continue;
-                        var key = prefix + "/" + field;
-                        Check(smart!.TryGetValue(key, out var actual)
-                            && actual == predicted,
-                            name + ": group spawn " + key
-                            + " expected " + predicted
-                            + " emitted " + (actual ?? "<missing>"));
-                        checkedSmartFields++;
-                    }
+                    ("MinSpawnChance", group.MinSpawnChance, spawn.Min),
+                    ("MaxSpawnChance", group.MaxSpawnChance, spawn.Max),
+                    ("ItemSetCount", group.ItemSetCount, spawn.Sets)
+                })
+                {
+                    if (original.Length == 0 || predicted == original) continue;
+                    var key = prefix + "/" + field;
+                    Check(smart!.TryGetValue(key, out var actual)
+                        && actual == predicted,
+                        name + ": group spawn " + key
+                        + " expected " + predicted
+                        + " emitted " + (actual ?? "<missing>"));
+                    checkedSmartFields++;
                 }
             }
             Check(checkedTierFields >= 300 && checkedSmartFields > 0

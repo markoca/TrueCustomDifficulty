@@ -5908,7 +5908,7 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Stash Supply Reduction",
-      "description": "Reduces optional supplies in approved ordinary Basic, Standard and Rare stash generators, using native Chance, integer quantities for Weight-only groups, and world SmartLoot group spawn endpoints. This is not a chance that a physical stash is empty.",
+      "description": "Keeps (100% − X) of the game's supply odds in ordinary Basic (including the six DLC1 CheapNoFresh stashes), Standard and Rare stashes and in smart world stashes: Chance rows roll less often, Weight lists get an appended native Empty pick with the removed share, and smart world groups get lower spawn chances. Stack sizes stay vanilla. Quest, unique and protected stashes are never touched.",
       "control": "slider",
       "valueKind": "probability",
       "display": {
@@ -5940,16 +5940,13 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "Exactly 22 Chance-only ItemGenerator groups receive source-relative reduction.",
-          "19 Weight-only groups preserve their selection ratios and reduce native MinCount/MaxCount. One-item entries remain one for positive reduction factors.",
-          "422 world SmartLoot group spawn endpoints are scaled after existing category-specific overrides; authored 0/0 remains 0/0.",
-          "0% preserves source output; at 100% targeted source counts and endpoints are zeroed, but actual in-game fallback must be checked.",
-          "Protected actors, Extra Stash Gear, mod-added items and direct scripted rewards are excluded."
+          "Weight lists use the native Empty pick (runtime test: RELEASE-TESTING.md, Stash presence).",
+          "Until 2026-11-16 Weight lists only lost stack size, so one-item Basic food/drink/bandage/coupon picks did not change below 100%."
         ]
       },
-      "rationale": "Makes ordinary stashes hold fewer spare supplies. Vanilla: 0 — no change. Higher = leaner stashes. It doesn't empty stashes outright, and special and quest stashes are never touched.",
-      "logic": "Chance items are less likely, weighted item bundles are smaller and world SmartLoot groups get lower native spawn bounds. A 1-item weighted bundle cannot be halved.",
-      "interaction": "Does not change relative stash Weight distribution or independent Extra Stash Gear; test with unopened ordinary containers."
+      "rationale": "Makes ordinary stashes come up empty more often. Vanilla: 0% — no change. 50% = every supply item turns up half as often (food, meds, drinks, ammo, coupons alike); the amount you get when it does stays the same. Quest and special stashes are never touched.",
+      "logic": "0% keeps the game's odds; 50% halves the odds of every supply item; 100% leaves these stashes without optional supplies. Same rule for every list type.",
+      "interaction": "Multiplies with every ADJUST ODDS cell and MEDICAL COMPOSITION; AMMO AMOUNT (stack sizes) and Extra Stash Gear stay separate. Test with unopened ordinary containers."
     },
     {
       "id": "loot.stashMixAmmo",
@@ -6010,7 +6007,7 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Basic Medical Odds",
-      "description": "Keeps X% of the game's odds for meds (Bandage, Medkit, Army Medkit, Anti-Rad) in Basic stashes and in the game's smart world stashes. In Basic Weight lists the removed Weight goes to an appended native Empty pick and scales its native Chance rows there (e.g. Bandage/Medkit/Vodka on Novice–Veteran); in smart world Weight groups each item's Weight and the group's spawn chance are scaled so the item keeps exactly X% of its odds. Other kinds keep their own odds. 100% = vanilla, 0% = never from these lists.",
+      "description": "Keeps X% of the game's odds for meds (Bandage, Medkit, Army Medkit, Anti-Rad) in Basic stashes and in the game's smart world stashes. In Basic Weight lists the removed Weight goes to an appended native Empty pick and scales its native Chance rows there (e.g. Bandage/Medkit/Vodka on Novice–Veteran); in smart world stashes Weight groups scale each item's Weight and the group's spawn chance, Chance groups scale each item's Chance, so the item keeps exactly X% of its odds. The six DLC1 CheapNoFresh Basic stashes follow the same rule. Other kinds keep their own odds. 100% = vanilla, 0% = never from these lists.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -6064,7 +6061,7 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Basic Food Odds",
-      "description": "Keeps X% of the game's odds for food (Bread, Sausage, Canned Food) in Basic stashes and in the game's smart world stashes. In Basic Weight lists the removed Weight goes to an appended native Empty pick and scales its native Chance rows there (e.g. Bandage/Medkit/Vodka on Novice–Veteran); in smart world Weight groups each item's Weight and the group's spawn chance are scaled so the item keeps exactly X% of its odds. Other kinds keep their own odds. 100% = vanilla, 0% = never from these lists.",
+      "description": "Keeps X% of the game's odds for food (Bread, Sausage, Canned Food) in Basic stashes and in the game's smart world stashes. In Basic Weight lists the removed Weight goes to an appended native Empty pick and scales its native Chance rows there (e.g. Bandage/Medkit/Vodka on Novice–Veteran); in smart world stashes Weight groups scale each item's Weight and the group's spawn chance, Chance groups scale each item's Chance, so the item keeps exactly X% of its odds. The six DLC1 CheapNoFresh Basic stashes follow the same rule. Other kinds keep their own odds. 100% = vanilla, 0% = never from these lists.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -6118,7 +6115,7 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Basic Drinks Odds",
-      "description": "Keeps X% of the game's odds for drinks (Water, Energy drink, Milk, Vodka, Beer) in Basic stashes and in the game's smart world stashes. In Basic Weight lists the removed Weight goes to an appended native Empty pick and scales its native Chance rows there (e.g. Bandage/Medkit/Vodka on Novice–Veteran); in smart world Weight groups each item's Weight and the group's spawn chance are scaled so the item keeps exactly X% of its odds. Other kinds keep their own odds. 100% = vanilla, 0% = never from these lists.",
+      "description": "Keeps X% of the game's odds for drinks (Water, Energy drink, Milk, Vodka, Beer) in Basic stashes and in the game's smart world stashes. In Basic Weight lists the removed Weight goes to an appended native Empty pick and scales its native Chance rows there (e.g. Bandage/Medkit/Vodka on Novice–Veteran); in smart world stashes Weight groups scale each item's Weight and the group's spawn chance, Chance groups scale each item's Chance, so the item keeps exactly X% of its odds. The six DLC1 CheapNoFresh Basic stashes follow the same rule. Other kinds keep their own odds. 100% = vanilla, 0% = never from these lists.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -6226,7 +6223,7 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Basic Coupons Odds",
-      "description": "Keeps X% of the game's odds for coupons (Common/Rare/Epic coupons) in Basic stashes and in the game's smart world stashes. In Basic Weight lists the removed Weight goes to an appended native Empty pick; in smart world Weight groups each item's Weight and the group's spawn chance are scaled so the item keeps exactly X% of its odds. Other kinds keep their own odds. 100% = vanilla, 0% = never from these lists.",
+      "description": "Keeps X% of the game's odds for coupons (Common/Rare/Epic coupons) in Basic stashes and in the game's smart world stashes. In Basic Weight lists the removed Weight goes to an appended native Empty pick; in smart world stashes Weight groups scale each item's Weight and the group's spawn chance, Chance groups scale each item's Chance, so the item keeps exactly X% of its odds. The six DLC1 CheapNoFresh Basic stashes follow the same rule. Other kinds keep their own odds. 100% = vanilla, 0% = never from these lists.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -7355,7 +7352,7 @@
       },
       "rationale": "Chance a Basic stash has an RGD-5 grenade in it. Vanilla: 10%.",
       "logic": "0% means Basic stashes never contain the RGD-5 from this setting. 10% is vanilla. 100% sets the native Basic RGD-5 chance when that eligible source branch is evaluated; it does not force every physical stash to contain grenades.",
-      "interaction": "Pair it with Basic Stash RGD-5 Grenade Amount: Chance decides whether the grenade appears; Amount decides how many you get.",
+      "interaction": "Pair it with Basic Stash RGD-5 Grenade Amount: Chance decides whether the grenade appears; Amount decides how many you get. The six DLC1 CheapNoFresh stashes roll their RGD-5 at 100% in vanilla; there the same setting keeps its ratio to the Basic 10% (e.g. 5% = half as often).",
       "lootHint": {
         "kind": "absoluteChancePer100",
         "label": "RGD-5 chance",

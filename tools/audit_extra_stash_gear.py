@@ -40,7 +40,7 @@ assert all("WriteExtraStashGear(" not in f.read_text(encoding="utf-8")
 dlc_code = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashDlc1.cs").read_text(encoding="utf-8")
 assert "loot.stashGearCheapWeapon" not in dlc_code
 assert "loot.stashGearCheapArmor" not in dlc_code
-assert "if (patch.Count == 0)" in dlc_code
+assert "if (!changed)" in dlc_code
 writer = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.cs").read_text(encoding="utf-8")
 assert 'WriteStashGearCoverage(allById, hasDlc1, documents)' in writer
 assert "StashGearStableHash(" in coverage and "SelectStashGearActors(" in coverage

@@ -294,15 +294,12 @@ public sealed partial class CfgPatchWriterService
                 // Weight group (one pick by Weight per spawned set): scale the
                 // native spawn endpoints by the KEPT share of source Weight,
                 // so every item keeps exactly its own factor of the game odds
-                // (docs/STASH-WEIGHT-VS-CHANCE.md). Chance groups keep the
-                // existing uniform-factor endpoint rule.
-                double groupFactor;
-                if (selectionField == "Weight")
-                    groupFactor = StashEffectiveState.SmartKeptShare(items.Select((item, i) =>
-                        (StashEffectiveState.Number(item.Weight), biases[i])));
-                else
-                    groupFactor = StashEffectiveState.UniformSmartFactor(biases, out var factor)
-                        ? factor : 1.0;
+                // (docs/STASH-WEIGHT-VS-CHANCE.md). Chance group: each item
+                // already rolls its own scaled Chance, so the endpoints stay
+                // (scaling both would apply the factor twice); an all-zero
+                // group is switched off as a whole.
+                var groupFactor = StashEffectiveState.SmartGroupEndpointFactor(
+                    selectionField, items.Select(item => item.Weight).ToArray(), biases);
                 // Apply the master once, AFTER the source correction. Never
                 // multiply two separately emitted endpoint assignments.
                 var endpointFactor = groupFactor * remaining;

@@ -106,7 +106,10 @@ public sealed class StashEffectiveState
         if (category.Items.Count == 0
             || category.Items.Any(item => !item.Fields.ContainsKey("Weight")))
             return null;
-        var presence = Presence(tier, category);
+        // STASH SUPPLY REDUCTION keeps (1 - r) of every Weight list's odds the
+        // same way: the reduced share also goes to Empty (one rule for Chance
+        // rows, Weight lists and SmartLoot spawn endpoints).
+        var presence = Presence(tier, category) * SupplyRemaining();
         var source = category.Items.Sum(item => Math.Max(0.0, Number(item.Fields["Weight"])));
         var values = new List<double>(category.Items.Count);
         var weights = new List<string>(category.Items.Count);
@@ -326,16 +329,6 @@ public sealed class StashEffectiveState
     // one-item stack stays one item; zero means an explicit native zero count.
     // Keep this transform last so it composes with the existing AMMO and
     // Medical quantity controls without mutating the original source range.
-    public static string ReduceSourceCount(string raw, double remaining)
-    {
-        if (remaining >= 1.0) return raw;
-        if (!int.TryParse(raw, NumberStyles.Integer, CultureInfo.InvariantCulture,
-                out var source) || source < 0)
-            throw new InvalidDataException("Invalid weighted stash source count: " + raw);
-        if (source == 0 || remaining <= 0.0) return "0";
-        return Math.Max(1, (int)Math.Floor(source * remaining + 0.5))
-            .ToString(CultureInfo.InvariantCulture);
-    }
 
     public string TierField(
         CfgWriterBaseline baseline, string tier,
@@ -420,25 +413,22 @@ public sealed class StashEffectiveState
                     Math.Clamp(Number(updated) * factor, 0.0, 1.0), updated);
         }
         updated = TuneCount(item.Fields, field, updated);
+        // Supply reduction: Chance rows here; Weight lists in WeightListEdit
+        // (Empty share). Stack sizes are never changed by it.
+        var remaining = SupplyRemaining();
+        if (remaining < 1.0 && field == "Chance")
+            updated = FormatLikeSource(
+                Math.Clamp(Number(updated) * remaining, 0, 1), updated);
+        return updated;
+    }
+
+    /// <summary>1 - STASH SUPPLY REDUCTION (validated 0..1).</summary>
+    public double SupplyRemaining()
+    {
         var remaining = 1.0 - Value("loot.genericStashReduction", 0.0);
         if (!double.IsFinite(remaining) || remaining < 0.0 || remaining > 1.0)
             throw new InvalidDataException("Invalid generic stash supply reduction");
-        if (remaining < 1.0)
-        {
-            if (field == "Chance")
-                updated = FormatLikeSource(
-                    Math.Clamp(Number(updated) * remaining, 0, 1), updated);
-            else if (item.Fields.ContainsKey("Weight"))
-            {
-                // Preserve native relative distribution at every positive
-                // reduction value: only stack sizes, never Weight ratios.
-                if (field == "Weight" && remaining <= 0)
-                    updated = FormatLikeSource(0, updated);
-                else if (field is "MinCount" or "MaxCount")
-                    updated = ReduceSourceCount(updated, remaining);
-            }
-        }
-        return updated;
+        return remaining;
     }
 
     // One item-type mapping shared by tier and SmartLoot source families.
@@ -455,7 +445,16 @@ public sealed class StashEffectiveState
     {
         if (SmartItemBiasId(sid) is null)
             throw new InvalidDataException("Unclassified SmartLoot item: " + sid);
-        return SelectionFactor(sid, selectionField);
+        var factor = SelectionFactor(sid, selectionField);
+        // Smart Chance groups (e.g. StashFood_Smart food/drink rolls): the
+        // Basic MEDS / FOOD / DRINKS / COUPONS cells keep X% of these odds
+        // too, exactly like their Weight groups. Hidden legacy ammo/grenade
+        // factors stay Weight-only.
+        if (selectionField == "Chance" && ItemBiasId(sid) is
+                "loot.stashMixMedical" or "loot.stashMixFood"
+                or "loot.stashMixDrinks" or "loot.stashMixCoupons")
+            factor *= Math.Max(0.0, Value(ItemBiasId(sid)!));
+        return factor;
     }
 
     public string SmartSelection(string sid, string field, string raw)
@@ -504,6 +503,17 @@ public sealed class StashEffectiveState
         var kept = list.Sum(item => Math.Max(0.0, item.Weight) * Math.Max(0.0, item.Factor));
         return Math.Min(1.0, kept / source);
     }
+
+    /// <summary>
+    /// Spawn-endpoint factor of one SmartLoot group (writer and preview):
+    /// Weight group = kept share of source Weight; Chance group = 1 (items
+    /// carry their own scaled Chance), or 0 when every item is switched off.
+    /// </summary>
+    public static double SmartGroupEndpointFactor(string field,
+        IReadOnlyList<string> weights, IReadOnlyList<double> factors)
+        => field == "Weight"
+            ? SmartKeptShare(weights.Select((w, i) => (Number(w), factors[i])))
+            : factors.All(f => f <= 0.0000001) ? 0.0 : 1.0;
 
     public static bool UniformSmartFactor(
         IEnumerable<double> values, out double factor)

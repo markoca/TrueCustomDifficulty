@@ -54,10 +54,11 @@ internal static partial class Program
             "Narrow NPC NONE mode must collapse optional ammo controls");
         smart.CurrentText = initialChoice;
 
-        // The third native field is not a fictitious group chance.
+        // Weight lists: supply reduction keeps (1 - r) of the list's odds via
+        // the appended native Empty pick (same rule as every ADJUST ODDS
+        // cell); stack sizes stay vanilla (2026-11-16).
         var weighted = Baseline.Special.CheapStashProduction.TemplateCategories
             .SelectMany(x => x.Items).First(x => x.Fields.ContainsKey("Weight"));
-        var sourceWeight = weighted.Fields["Weight"];
         var sourceMin = weighted.Fields["MinCount"];
         var weightedItemState = new StashEffectiveState(
             new Dictionary<string, double> { [stashId] = .5 },
@@ -65,14 +66,15 @@ internal static partial class Program
         var weightedCategory = Baseline.Special.CheapStashProduction.TemplateCategories
             .Single(x => x.Items.Contains(weighted));
         Check(weightedItemState.TierField(Baseline, "Cheap", weightedCategory,
-                weighted, "Weight") == sourceWeight,
-            "Generic stash master changed native relative Weight distribution");
-        var reducedMin = weightedItemState.TierField(Baseline, "Cheap",
-            weightedCategory, weighted, "MinCount");
-        Check(int.Parse(reducedMin, CultureInfo.InvariantCulture)
-                == Math.Max(1, (int)Math.Floor(
-                    int.Parse(sourceMin, CultureInfo.InvariantCulture) * .5 + .5)),
-            "Generic stash master did not reduce native weighted count");
+                weighted, "MinCount") == sourceMin,
+            "Generic stash master must not change Weight-list stack sizes");
+        var halfEdit = weightedItemState.WeightListEdit(Baseline, "Cheap", weightedCategory);
+        var sourceTotal = weightedCategory.Items.Sum(i =>
+            StashEffectiveState.Number(i.Fields["Weight"]));
+        Check(halfEdit is { } he && he.Empty is not null
+                && Math.Abs(he.EmptyValue - sourceTotal / 2.0) < 0.000001
+                && Math.Abs(he.Values.Sum() - sourceTotal / 2.0) < 0.000001,
+            "Generic stash master must move half of a Weight list's odds to Empty");
         var chanceRow = Baseline.Special.CheapStashProduction.TemplateCategories
             .SelectMany(c => c.Items.Where(i => i.Fields.ContainsKey("Chance"))
                 .Select(i => (Category: c, Item: i))).First();
@@ -245,13 +247,18 @@ internal static partial class Program
                         var prefix = cheap.CustomGeneratorSid + "/ItemGenerator/"
                             + group.Node + "/PossibleItems/" + item.Node + "/";
                         Check(itemgen.TryGetValue(prefix + "Weight", out var weight)
-                            && (reduction < 1.0 ? weight == item.Fields["Weight"]
-                                : Math.Abs(Num(weight!)) < 0.000001),
-                            "Stash master changed original Weight choice ratios");
+                            && Math.Abs(Num(weight!) - Num(item.Fields["Weight"])
+                                * (1.0 - reduction)) < 0.0001,
+                            "Stash master did not keep (1 - r) of the Weight odds");
+                        var emptyKey = cheap.CustomGeneratorSid + "/ItemGenerator/"
+                            + group.Node + "/PossibleItems/["
+                            + group.Items.Count.ToString(CultureInfo.InvariantCulture)
+                            + "]/ItemPrototypeSID";
+                        Check(itemgen.TryGetValue(emptyKey, out var empty) && empty == "Empty",
+                            "Stash master did not append the native Empty pick");
                         Check(itemgen.TryGetValue(prefix + "MinCount", out var minCount)
-                            && (reduction < 1.0 ? int.Parse(minCount!) >= 1 :
-                                minCount == "0"),
-                            "Stash master did not bound native group count");
+                            && minCount == item.Fields["MinCount"],
+                            "Stash master must keep Weight-list stack sizes");
                         var worldFile = output["GameData/StashPrototypes.cfg"];
                         var endpointKey = "TCD_StashMedicine_Cheap"
                             + "/ItemGenerators/[0]/SmartLootParams/"

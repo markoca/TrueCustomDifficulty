@@ -42,11 +42,18 @@ public sealed record StashBranchPreview(
         _ => throw new ArgumentOutOfRangeException(nameof(rank))
     };
 
+    // Exactly what the writer emits: tier Weight lists go through
+    // WeightListEdit (kept Weight + Empty), everything else through TierField.
     public string EffectiveSelection(CfgWriterBaseline baseline,
         StashEffectiveState state, StashBranchPreviewRow item)
-        => IsSmart
-            ? state.SmartSelection(item.ItemSid, Field, item.SourceRaw)
-            : state.TierField(baseline, Tier, TierCategory!, item.TierItem!, Field);
+    {
+        if (IsSmart)
+            return state.SmartSelection(item.ItemSid, Field, item.SourceRaw);
+        if (Field == "Weight"
+            && state.WeightListEdit(baseline, Tier, TierCategory!) is { } edit)
+            return edit.Weights[TierCategory!.Items.IndexOf(item.TierItem!)];
+        return state.TierField(baseline, Tier, TierCategory!, item.TierItem!, Field);
+    }
 
     public string EffectiveCount(CfgWriterBaseline baseline,
         StashEffectiveState state, StashBranchPreviewRow item, string field)
@@ -65,20 +72,13 @@ public sealed record StashBranchPreview(
         var min = MinSpawnChance;
         var max = MaxSpawnChance;
         var sets = ItemSetCount;
-        var keptShare = Field == "Weight"
-            ? StashEffectiveState.SmartKeptShare(Items.Select(i =>
-                (StashEffectiveState.Number(i.SourceRaw),
-                    state.SmartSelectionFactor(i.ItemSid, Field))))
-            : 1.0;
-        if (Field == "Weight" && keptShare < 1.0 - 0.0000001)
-        {
-            if (min.Length > 0) min = StashEffectiveState.SmartSpawnEndpoint(min, keptShare);
-            if (max.Length > 0) max = StashEffectiveState.SmartSpawnEndpoint(max, keptShare);
-            if (keptShare <= 0 && sets.Length > 0) sets = "0";
-        }
-        else if (Field == "Chance" && StashEffectiveState.UniformSmartFactor(
-                Items.Select(i => state.SmartSelectionFactor(i.ItemSid, Field)),
-                out var factor))
+        // Same endpoint rule as the writer (StashEffectiveState.SmartGroupEndpointFactor),
+        // including STASH SUPPLY REDUCTION applied once after it.
+        var factor = StashEffectiveState.SmartGroupEndpointFactor(Field,
+            Items.Select(i => i.SourceRaw).ToArray(),
+            Items.Select(i => state.SmartSelectionFactor(i.ItemSid, Field)).ToArray())
+            * state.SupplyRemaining();
+        if (factor < 1.0 - 0.0000001)
         {
             if (min.Length > 0) min = StashEffectiveState.SmartSpawnEndpoint(min, factor);
             if (max.Length > 0) max = StashEffectiveState.SmartSpawnEndpoint(max, factor);

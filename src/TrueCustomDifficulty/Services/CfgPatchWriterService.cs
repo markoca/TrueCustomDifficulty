@@ -257,6 +257,7 @@ public sealed partial class CfgPatchWriterService
             baseline,
             modifiedById,
             allById,
+            vm.StashPresence.Values,
             hasDlc1,
             documents,
             writtenParameters);

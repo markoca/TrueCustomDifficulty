@@ -118,7 +118,7 @@ check("IsApprovedDlcStashTierRedirect" in smart_code and
       "tier redirects not safety-filtered")
 check("WriteDlcCheapNoFreshStashes(" in writer and
       "GetOrAddReferencedRoot(TcdCheapNoFreshSid" in dlc_code and
-      "if (patch.Count == 0)" in dlc_code and
+      "if (!changed)" in dlc_code and "effective.WeightListEdit(baseline, \"Cheap\", category)" in dlc_code and
       "WriteExtraStashGear(" not in dlc_code and
       "loot.stashGearCheapWeapon" not in dlc_code and
       "loot.stashGearCheapArmor" not in dlc_code and

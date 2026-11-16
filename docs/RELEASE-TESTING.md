@@ -719,6 +719,8 @@ With Basic MEDS at 0% on Veteran, Basic stashes must still give food/milk exactl
 
 With Basic MEDS and Basic DRINKS at 0% on **Novice** (Basic Chance rows Bandage/Medkit/Vodka at 100% in vanilla), Basic stashes must give no bandages, medkits or vodka. In the patch those rows carry `Chance = 0` in the TCD Basic template clones. Basic GRENADES and Rare COUPONS are CHANCE cells: 30% on Basic GRENADES means roughly 3 of 10 Basic stashes hold the RGD-5.
 
+STASH SUPPLY REDUCTION 50% on Veteran: Basic stashes give food / milk / bandages about half as often as before (each find still 1 item); ammo stacks keep their vanilla size but appear about half as often. With DLC1, the six CheapNoFresh Basic stashes behave the same (check `TCD_GamePass_Stash_ItemGenerator_CheapNoFresh` carries `Empty` entries). Basic FOOD and DRINKS at 0% on Master: no food or drinks from `StashFood_Smart` smart stashes either.
+
 
 ## Trader stock odds and supply — in-game check
 

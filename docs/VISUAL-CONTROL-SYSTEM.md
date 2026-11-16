@@ -1,3 +1,11 @@
+## 2026-11-16 — CURRENT: STASH rule reaches every list (supply reduction, DLC1 CheapNoFresh, smart Chance groups)
+
+* **STASH SUPPLY REDUCTION** keeps (1 − r) of the odds in every list type: Weight lists now get the removed share as a native `Empty` pick (`WeightListEdit`), stack sizes stay vanilla. Before, one-item Basic food / drink / bandage / coupon picks did not change below 100%.
+* **DLC1 CheapNoFresh** (six ordinary DLC1 Basic stashes) uses the Basic rule: `WeightListEdit` + `TierField("Cheap")`, Basic AMMO presence, supply reduction, full template with `Empty`. RGD-5 keeps its ratio to the Basic 10% (CheapNoFresh rolls it at 100%).
+* **Smart Chance groups** (`StashFood_Smart`, 19 food/drink rows) follow the Basic FOOD / DRINKS cells; item Chance is scaled and the group endpoints are no longer scaled a second time (`SmartGroupEndpointFactor`, shared by writer and preview).
+* **Ammo follows the CFG split**: BASIC / STANDARD AMMO cells are the regular tier ammo pick only; smart world ammo stashes keep their game odds (hint says so).
+* No UI layout change. Texts: STASH SUPPLY REDUCTION, the four Basic cells, Basic RGD-5 chance. Audits and C# fixtures updated.
+
 ## 2026-11-16 — CURRENT: STASH consistency pass (Basic Chance rows, CHANCE cells, 5% grid, texts)
 
 * **Basic MEDS / FOOD / DRINKS cells now own the Basic Chance rows too** (`StashEffectiveState.TierChanceParameterId("Cheap", …)` → `loot.stashMix*`). Before, Bandage / Medkit / Vodka Chance rows on Easy/Medium/Hard ignored the cell, so on Novice a 0% MEDS or DRINKS cell left them at 100%. Medical rows also multiply by MEDICAL COMPOSITION (same as Standard / Rare).

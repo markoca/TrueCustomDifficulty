@@ -788,10 +788,14 @@ internal static partial class Program
                 var files=ReadOutput(dir);
                 // Basic Ammo Quantity mirrors into Standard/Rare writer backings.
                 // The other DLC fixtures edit exactly one independent source.
+                // Medical ChanceScale cells mirror into their Bias value.
                 var expectedSourceIds = label=="cheap-ammo-half"
                     ? new[] { "loot.cheapStashAmmoQuantity",
                               "loot.mediumStashAmmoQuantity",
                               "loot.expensiveStashAmmoQuantity" }
+                    : label=="bandage-zero"
+                    ? new[] { "loot.stashMedicalBandageChanceScale",
+                              "loot.stashMedicalBandageBias" }
                     : values.Keys.ToArray();
                 var edited = vm.AllParameters.Where(p => p.IsControlEnabled
                         && p.IsValueModifiedFromReference())
@@ -845,16 +849,10 @@ internal static partial class Program
                 }
                 if(label=="bandage-zero")
                 {
-                    // The independently audited SmartLoot Bandage sources
-                    // have native Weight fields and NO Chance field. A 0%
-                    // Bandage Chance edit must alter the genuine CheapNoFresh
-                    // Chance row, without fabricating a SmartLoot clone or
-                    // rewriting any DLC1 StashPrototypeSID.
-                    Check(!files.ContainsKey("GameData/StashPrototypes.cfg"),
-                        label+": Chance-only edit fabricated a Weight-only SmartLoot clone");
-                    Check(!dlc.Keys.Any(x=>x.EndsWith("/StashPrototypeSID",
-                        StringComparison.Ordinal)),
-                        label+": Chance-only edit redirected an unaffected SmartLoot actor");
+                    // One BANDAGES cell (Chance scale mirrored to the Weight
+                    // factor) also removes the Weight-only SmartLoot bandages.
+                    Check(files.ContainsKey("GameData/StashPrototypes.cfg"),
+                        label+": BANDAGES 0% must reach the SmartLoot Weight bandages");
                 }
                 if(label=="medkit-zero")
                 {

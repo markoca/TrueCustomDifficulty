@@ -67,8 +67,10 @@ public sealed partial class AggregateVisualControl
             => "CHANCE: the real chance per stash (not a share of game odds). The grey tick is the game's value.",
         "loot.stashMixMedical" or "loot.stashMixFood" or "loot.stashMixDrinks" or "loot.stashMixCoupons"
             => "How much of the game's odds you keep in Basic stashes and smart world stashes. Other items are not affected. 100% = game odds, 0% = never.",
+        StashPresenceViewModel.CheapAmmoId
+            => "How often a Basic stash's ammo pick gives anything (Basic stash ammo pick only: smart world ammo stashes are a separate game system and keep their own odds). 100% = game odds, 0% = never.",
         _ when IsStashPresenceId(id)
-            => "How often this stash pick gives anything. 100% = game odds, 0% = never.",
+            => "How often a Standard stash's ammo pick gives anything (smart world ammo stashes keep their own odds). 100% = game odds, 0% = never.",
         _ => "How much of the game's own odds you keep. 100% = game odds, 0% = never."
     };
 

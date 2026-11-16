@@ -43,21 +43,28 @@ public sealed partial class CfgPatchWriterService
         CfgWriterBaseline baseline,
         IReadOnlyDictionary<string, ParameterViewModel> modified,
         IReadOnlyDictionary<string, ParameterViewModel> all,
+        IReadOnlyDictionary<string, double> stashPresence,
         bool hasDlc1,
         IDictionary<string, PatchDocument> documents,
         ISet<string> written)
     {
         if (!hasDlc1)
             return 0;
-        var ammoId = baseline.Special.CheapStashProduction.AmmoQuantityParameterId;
-        var grenadeChanceId = baseline.Special.CheapStashProduction.GrenadeChanceParameterId;
-        var grenadeAmountId = baseline.Special.CheapStashProduction.GrenadeQuantityParameterId;
+        var cheapConfig = baseline.Special.CheapStashProduction;
+        var ammoId = cheapConfig.AmmoQuantityParameterId;
+        var grenadeChanceId = cheapConfig.GrenadeChanceParameterId;
+        var grenadeAmountId = cheapConfig.GrenadeQuantityParameterId;
         // Extra Gear is produced per physical actor by WriteStashGearCoverage,
         // not by extending the shared CheapNoFresh pool or its legacy gear IDs.
+        // Same inputs as the Basic tier template: the BASIC column of ADJUST
+        // ODDS (stashMix cells, Basic AMMO presence), MEDICAL COMPOSITION,
+        // AMMO AMOUNT, RGD-5 and STASH SUPPLY REDUCTION.
         var relevant = StashMixParameterIds.Concat(StashMedicalParameterIds)
-            .Concat(new[] { ammoId, grenadeChanceId, grenadeAmountId })
+            .Concat(new[] { ammoId, grenadeChanceId, grenadeAmountId, StashSupplyReductionId })
             .Where(modified.ContainsKey).ToArray();
-        if (relevant.Length == 0)
+        var presenceChanged = stashPresence.TryGetValue(StashPresenceViewModel.CheapAmmoId,
+            out var cheapAmmoPresence) && Math.Abs(cheapAmmoPresence - 1.0) > 0.0000001;
+        if (relevant.Length == 0 && !presenceChanged)
             return 0;
 
         var actors = DlcActors.Value.Where(x =>
@@ -71,93 +78,137 @@ public sealed partial class CfgPatchWriterService
                 && r[2] == CheapNoFreshSid)))
             throw new InvalidDataException("DLC1 CheapNoFresh actor generator scope changed.");
 
-        var ammoChanged = modified.ContainsKey(ammoId);
-        var grenadeChanceChanged = modified.ContainsKey(grenadeChanceId);
-        var grenadeAmountChanged = modified.ContainsKey(grenadeAmountId);
-        var cheapConfig = baseline.Special.CheapStashProduction;
+        // CheapNoFresh has the Basic template's twelve categories (identical
+        // category fields, verified against the 2.1 base dump) with its own
+        // items. Build them as Basic categories so ONE rule applies:
+        // StashEffectiveState.WeightListEdit (kept Weight + Empty) for Weight
+        // lists and TierField("Cheap") for Chance rows and counts.
+        var sourceItems = LoadCheapNoFreshItems();
+        if (cheapConfig.TemplateCategories.Count != 12)
+            throw new InvalidDataException("Basic template category count changed.");
+        var categories = cheapConfig.TemplateCategories.Select((template, index) =>
+            new CfgWriterCheapStashCategory
+            {
+                Node = template.Node,
+                Fields = new Dictionary<string, string>(template.Fields, StringComparer.Ordinal),
+                Items = sourceItems.Where(x => x.Category == index).OrderBy(x => x.Item)
+                    .Select(x =>
+                    {
+                        var fields = new Dictionary<string, string>(StringComparer.Ordinal)
+                        {
+                            ["ItemPrototypeSID"] = x.Sid
+                        };
+                        if (x.Chance.Length > 0) fields["Chance"] = x.Chance;
+                        if (x.Weight.Length > 0) fields["Weight"] = x.Weight;
+                        fields["MinCount"] = x.MinCount;
+                        fields["MaxCount"] = x.MaxCount;
+                        return new CfgWriterCheapStashItem
+                        {
+                            Node = $"[{x.Item}]",
+                            Fields = fields
+                        };
+                    }).ToList()
+            }).ToArray();
+        if (categories.Any(c => c.Node != $"[{Array.IndexOf(categories, c)}]"
+                || c.Items.Count == 0
+                || c.Items.Select((item, i) => item.Node == $"[{i}]").Any(ok => !ok)))
+            throw new InvalidDataException("CheapNoFresh category layout changed.");
+
+        var effective = new StashEffectiveState(all.Values, modified.Keys, "Easy")
+            .WithValues(stashPresence);
+
+        // RGD-5: CheapNoFresh rolls it at 100% (Basic: 10%). The Basic CHANCE
+        // cell keeps its ratio to the Basic vanilla value here, and supply
+        // reduction applies once, like every other Chance row.
         var sourceGrenadeChance = ParseNumber(cheapConfig.GrenadeEntry.SourceChanceRaw);
         if (sourceGrenadeChance <= 0)
             throw new InvalidDataException("Missing Cheap stash original RGD-5 chance.");
-        var grenadeFactor = StashTuningCurrent(all, grenadeChanceId,
-            sourceGrenadeChance) / sourceGrenadeChance;
+        var grenadeChanceChanged = modified.ContainsKey(grenadeChanceId);
+        var grenadeAmountChanged = modified.ContainsKey(grenadeAmountId);
+        var grenadeFactor = grenadeChanceChanged
+            ? StashTuningCurrent(all, grenadeChanceId, sourceGrenadeChance) / sourceGrenadeChance
+            : 1.0;
         var grenadeCount = (int)Math.Round(StashTuningCurrent(all,
             grenadeAmountId, cheapConfig.GrenadeEntry.SourceMinCount),
             MidpointRounding.AwayFromZero);
 
-        // Compare against exact authored rows first, to avoid emitting a DLC
-        // clone for a value that affects only other stash tiers.
-        var patch = new List<(int Category, int Item, string Field, string Value)>();
-        foreach (var entry in LoadCheapNoFreshItems())
+        var output = new List<(CfgWriterCheapStashCategory Category,
+            List<(string Node, List<(string Field, string Value)> Fields)> Items,
+            string? Empty)>();
+        var changed = false;
+        foreach (var category in categories)
         {
-            var original = new Dictionary<string, string>(StringComparer.Ordinal)
+            var weightEdit = effective.WeightListEdit(baseline, "Cheap", category);
+            var items = new List<(string Node, List<(string Field, string Value)> Fields)>();
+            for (var i = 0; i < category.Items.Count; i++)
             {
-                ["ItemPrototypeSID"] = entry.Sid,
-                ["MinCount"] = entry.MinCount,
-                ["MaxCount"] = entry.MaxCount
-            };
-            var categoryId = StashItemBiasId(entry.Sid);
-            var isAmmo = entry.Sid.Length > 1 && entry.Sid[0] == 'A'
-                && char.IsDigit(entry.Sid[1]);
-            var isGrenade = entry.Sid == "GrenadeRGD5";
-            // Global knobs affect only native Weight. A Chance-only DLC
-            // entry must not disappear when its category Weight is zero.
-            var sourceBiasZero = entry.Weight.Length > 0 && entry.Chance.Length == 0
-                && categoryId != null
-                && StashTuningCurrent(all, categoryId, 1.0) <= 0.0000001;
-            var forcedZero = sourceBiasZero
-                || IsStashMedicalSelectionDisabled(entry.Sid, all)
-                || (isGrenade && (grenadeChanceChanged && grenadeFactor <= 0
-                    || grenadeAmountChanged && grenadeCount == 0));
-            foreach (var (field, raw) in new[]
-            {
-                ("Chance", entry.Chance), ("Weight", entry.Weight),
-                ("MinCount", entry.MinCount), ("MaxCount", entry.MaxCount)
-            })
-            {
-                if (raw.Length == 0) continue;
-                var tuned = raw;
-                if (field is "Chance" or "Weight")
+                var item = category.Items[i];
+                var isGrenade = category.Node == cheapConfig.GrenadeEntry.CategoryNode
+                    && item.Fields["ItemPrototypeSID"] == "GrenadeRGD5";
+                var fields = new List<(string Field, string Value)>();
+                foreach (var (field, raw) in item.Fields)
                 {
-                    if (isGrenade && grenadeChanceChanged && field == "Chance")
-                        tuned = FormatLikeSource(Math.Clamp(
-                            ParseNumber(raw) * grenadeFactor, 0.0, 1.0), raw);
-                    tuned = TuneStashSelectionField(entry.Sid, field, tuned, all);
-                    if (forcedZero)
-                        tuned = FormatLikeSource(0, raw);
+                    string value;
+                    if (field == "ItemPrototypeSID")
+                        value = raw;
+                    else if (field == "Weight" && weightEdit is { } edit)
+                        value = edit.Weights[i];
+                    else if (isGrenade)
+                    {
+                        var off = grenadeChanceChanged && grenadeFactor <= 0
+                            || grenadeAmountChanged && grenadeCount == 0;
+                        value = field switch
+                        {
+                            "Chance" => off ? FormatLikeSource(0, raw)
+                                : FormatLikeSource(Math.Clamp(ParseNumber(raw) * grenadeFactor
+                                    * effective.SupplyRemaining(), 0.0, 1.0), raw),
+                            _ => off ? "0" : grenadeAmountChanged
+                                ? grenadeCount.ToString(CultureInfo.InvariantCulture) : raw
+                        };
+                    }
+                    else
+                        value = effective.TierField(baseline, "Cheap", category, item, field);
+                    if (value != raw) changed = true;
+                    fields.Add((field, value));
                 }
-                else if (forcedZero)
-                    tuned = "0";
-                else if (isAmmo && ammoChanged)
-                    tuned = ScalePositiveInteger(int.Parse(raw, CultureInfo.InvariantCulture),
-                        StashTuningCurrent(all, ammoId, 1.0))
-                        .ToString(CultureInfo.InvariantCulture);
-                else if (isGrenade && grenadeAmountChanged)
-                    tuned = grenadeCount.ToString(CultureInfo.InvariantCulture);
-                else
-                    tuned = TuneStashMedicalCountField(original, field, raw, all);
-                if (tuned != raw)
-                    patch.Add((entry.Category, entry.Item, field, tuned));
+                items.Add((item.Node, fields));
             }
+            if (weightEdit?.Empty is not null) changed = true;
+            output.Add((category, items, weightEdit?.Empty));
         }
 
         // A NoFresh clone is needed only when its own authored source fields change.
         // Stash bonus gear independently appends rank-gated actor-local generators.
-        if (patch.Count == 0)
+        if (!changed)
             return 0;
 
+        // Full template (like the Basic tier clones), so an appended Empty
+        // entry is a plain list element, never a partial patch.
         var doc = GetDocument(documents, "GameData/ItemGeneratorPrototypes.cfg");
         var root = doc.GetOrAddReferencedRoot(TcdCheapNoFreshSid,
             "../ItemGeneratorPrototypes.cfg", CheapNoFreshSid);
         root.SetAssignment("SID", TcdCheapNoFreshSid);
-        var items = root.GetOrAddChild("ItemGenerator", useBpatch: true);
+        var generator = root.GetOrAddChild("ItemGenerator", useBpatch: false);
         var edits = 1;
-        foreach (var (category, item, field, value) in patch)
+        foreach (var (category, items, empty) in output)
         {
-            items.GetOrAddChild($"[{category}]", useBpatch: true)
-                .GetOrAddChild("PossibleItems", useBpatch: true)
-                .GetOrAddChild($"[{item}]", useBpatch: true)
-                .SetAssignment(field, value);
-            edits++;
+            var categoryNode = generator.GetOrAddChild(category.Node, useBpatch: false);
+            foreach (var (key, value) in category.Fields)
+            {
+                categoryNode.SetAssignment(key, value);
+                edits++;
+            }
+            var possible = categoryNode.GetOrAddChild("PossibleItems", useBpatch: false);
+            foreach (var (node, fields) in items)
+            {
+                var itemNode = possible.GetOrAddChild(node, useBpatch: false);
+                foreach (var (field, value) in fields)
+                {
+                    itemNode.SetAssignment(field, value);
+                    edits++;
+                }
+            }
+            edits += WriteStashPresenceEmpty(possible, category, empty);
         }
 
         var actorsDoc = GetDocument(documents, DlcSmartLootActorFile);

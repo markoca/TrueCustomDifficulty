@@ -36,9 +36,21 @@ Every cell in **ADJUST ODDS** means: **keep X% of the game's own odds** for that
 
 `Empty` is written as `[n] { ItemPrototypeSID = Empty; Weight = removed }` after the source entries, only in the TCD tier template clones. At 100% nothing is appended. A legacy factor above 1× (old presets) leaves no `Empty` and only boosts that kind relative to the others.
 
+## STASH SUPPLY REDUCTION
+
+`loot.genericStashReduction` = r keeps (1 − r) of the game's odds everywhere: Chance rows × (1 − r); Weight lists get the removed share as `Empty` (`WeightListEdit`: presence × `SupplyRemaining()`); SmartLoot spawn endpoints × (1 − r). Stack sizes are not touched. Before 2026-11-16 Weight lists only lost stack size, so the one-item Basic food / drink / bandage / coupon picks did not change below 100%.
+
+## DLC1 CheapNoFresh (six ordinary DLC1 Basic stashes)
+
+`GamePass_Stash_ItemGenerator_CheapNoFresh` has the Basic template's twelve categories (identical category fields) with its own items. The writer builds them as Basic categories and uses the same `WeightListEdit` + `TierField("Cheap")` rule, the Basic AMMO presence and supply reduction, and emits the full template (so `Empty` is a plain list element). Exception: its RGD-5 rolls at 100% in vanilla; the Basic RGD-5 CHANCE cell keeps its ratio to the Basic 10% there.
+
 ## SmartLoot world stashes
 
 A SmartLoot group spawns with a native chance between `MinSpawnChance` and `MaxSpawnChance` (player need) and then picks by Weight. For every **Weight** group the writer scales each item's Weight by its own factor k and both spawn endpoints by the kept share Σw·k / Σw (`StashEffectiveState.SmartKeptShare`). Item odds = spawn × share, so every item keeps exactly k of its game odds — the same rule, native fields only, no `Empty`.
+
+**Smart Chance groups** (e.g. `StashFood_Smart` food / drink rolls on Experienced+): each item's Chance is scaled by its factor; the group endpoints stay (scaling both would apply the factor twice; an all-zero group is switched off). The Basic MEDS / FOOD / DRINKS / COUPONS cells own these rows too (`SmartSelectionFactor`). Endpoint rule for both group types: `StashEffectiveState.SmartGroupEndpointFactor`, shared by writer and preview.
+
+**Ammo** follows the CFG's own split: the Basic / Standard AMMO cells are the presence of the regular tier ammo pick only. Smart world ammo stashes (`Stash_Ammo*_Smart`) are a separate game system and keep their game odds (the hidden legacy `loot.stashMixAmmo` still reaches them for old presets).
 
 ## Medical items
 
@@ -46,5 +58,5 @@ Each medical item exists in Chance rows (Basic / Standard / Rare) and in Weight 
 
 ## Paths that still use plain relative Weight scaling
 
-DLC1 regular stash rows (`StashDlc1`), Cabin and direct medical rows still scale Weight relatively (no `Empty`); they are outside ODDS PER STASH.
+Cabin and direct medical rows are fixed Chance rows (MEDICAL COMPOSITION only); they and DLC1 CheapNoFresh are outside ODDS PER STASH.
 

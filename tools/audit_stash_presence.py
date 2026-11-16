@@ -104,7 +104,10 @@ assert abs(empty / (sum(kept) + empty) - 0.75) < 1e-12
 # ---- 5. SmartLoot Weight groups: kept-share spawn endpoints --------------
 smart_writer = read("Services/CfgPatchWriterService.StashSmartLoot.cs")
 assert "public static double SmartKeptShare(" in state
-assert "groupFactor = StashEffectiveState.SmartKeptShare(" in smart_writer
+assert "var groupFactor = StashEffectiveState.SmartGroupEndpointFactor(" in smart_writer
+assert "? SmartKeptShare(weights.Select((w, i) => (Number(w), factors[i])))" in state
+# Chance groups: items carry their own scaled Chance; endpoints are not scaled again.
+assert ": factors.All(f => f <= 0.0000001) ? 0.0 : 1.0;" in state
 for weights, factors in (([5, 1], [0.5, 1.0]), ([4, 1], [1.0, 0.0]), ([1], [0.3])):
     source = sum(weights)
     kept = [w * k for w, k in zip(weights, factors)]
@@ -152,8 +155,24 @@ assert len(grid_ids) == 14, grid_ids  # + 2 presence sidecars, 2 empty cells
 for pid in grid_ids:
     assert catalog[pid]["slider"]["step"] == 0.05, pid
 
+# ---- 10. Supply reduction = odds everywhere (Empty in Weight lists) -------
+assert "var presence = Presence(tier, category) * SupplyRemaining();" in state
+assert "ReduceSourceCount" not in state
+# ---- 11. DLC1 CheapNoFresh uses the same Basic rule ------------------------
+dlc = read("Services/CfgPatchWriterService.StashDlc1.cs")
+assert 'effective.WeightListEdit(baseline, "Cheap", category)' in dlc
+assert 'effective.TierField(baseline, "Cheap", category, item, field)' in dlc
+assert "StashSupplyReductionId" in dlc and "StashPresenceViewModel.CheapAmmoId" in dlc
+assert "WriteStashPresenceEmpty(possible, category, empty)" in dlc
+assert "vm.StashPresence.Values," in writer
+# ---- 12. Smart Chance groups follow the Basic cells ------------------------
+assert '"loot.stashMixMedical" or "loot.stashMixFood"' in state.split("public double SmartSelectionFactor(", 1)[1].split("public string SmartSelection(", 1)[0]
+# ---- 13. Basic AMMO = the Basic stash ammo pick only (CFG: smart stashes are a separate system)
+assert "Basic stash ammo pick only" in grid
+
 for token in ("ONE entry", "Empty", "Desolation", "13564", "never mix", "SmartKeptShare",
-              "Basic Chance rows", "CHANCE"):
+              "Basic Chance rows", "CHANCE", "CheapNoFresh", "SUPPLY REDUCTION",
+              "Smart Chance groups"):
     assert token in docs, token
 
 print("PASS: one Weight/Chance rule — Weight lists keep their source total via Empty; writer, odds and presets share it; Basic Chance rows follow the cells")

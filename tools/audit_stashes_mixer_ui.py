@@ -410,8 +410,8 @@ tuning = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashT
 harness = (root / "tests/LootSpecialGeneratorsContract/Program.cs").read_text()
 assert writer.count("effective.TierField(") == 3
 assert "effective.SmartSelection(" in smart
-assert "StashEffectiveState.UniformSmartFactor(" in smart
-assert 'StashEffectiveState.SmartKeptShare(' in smart  # Weight groups keep per-item odds via spawn endpoints
+assert "StashEffectiveState.SmartGroupEndpointFactor(" in smart
+assert 'SmartKeptShare(weights.Select(' in effective  # Weight groups keep per-item odds via spawn endpoints
 assert "effective.SmartSelectionFactor(item.ItemSid, selectionField)" in smart
 assert "StashEffectiveState.SmartSpawnEndpoint(" in smart
 assert "StashState(all).TuneSelection(" in tuning
@@ -664,7 +664,9 @@ smart_selection = effective.split("public double SmartSelectionFactor(", 1)[1].s
     "public string SmartSelection(", 1)[0]
 assert "if (SmartItemBiasId(sid) is null)" in smart_selection
 assert 'throw new InvalidDataException("Unclassified SmartLoot item: " + sid)' in smart_selection
-assert "return SelectionFactor(sid, selectionField);" in smart_selection
+assert "var factor = SelectionFactor(sid, selectionField);" in smart_selection
+# Smart Chance groups follow the visible Basic MEDS / FOOD / DRINKS / COUPONS cells.
+assert 'if (selectionField == "Chance" && ItemBiasId(sid) is' in smart_selection
 smart_factor = effective.split("public double SmartFactor(", 1)[1].split(
     "public double SmartSelectionFactor(", 1)[0]
 assert "if (SmartItemBiasId(sid) is null)" in smart_factor
