@@ -1319,21 +1319,22 @@ public sealed partial class CfgPatchWriterService
             }
 
             var possibleItems = category.GetOrAddChild("PossibleItems", useBpatch: false);
-            var (emptyWeight, presenceZero) = effective.PresenceEdit(baseline, "Cheap", categoryDefinition);
+            var weightEdit = effective.WeightListEdit(baseline, "Cheap", categoryDefinition);
             foreach (var itemDefinition in categoryDefinition.Items)
             {
                 var item = possibleItems.GetOrAddChild(itemDefinition.Node, useBpatch: false);
                 foreach (var field in itemDefinition.Fields)
                 {
-                    var value = presenceZero && field.Key == "Weight"
-                        ? "0"
+                    // Weight lists: removed Weight goes to Empty (WeightListEdit).
+                    var value = field.Key == "Weight" && weightEdit is { } edit
+                        ? edit.Weights[categoryDefinition.Items.IndexOf(itemDefinition)]
                         : effective.TierField(
                             baseline, "Cheap", categoryDefinition, itemDefinition, field.Key);
                     item.SetAssignment(field.Key, value);
                     edits++;
                 }
             }
-            edits += WriteStashPresenceEmpty(possibleItems, categoryDefinition, emptyWeight);
+            edits += WriteStashPresenceEmpty(possibleItems, categoryDefinition, weightEdit?.Empty);
         }
 
         return edits;
@@ -1493,22 +1494,23 @@ public sealed partial class CfgPatchWriterService
             }
 
             var possibleItems = category.GetOrAddChild("PossibleItems", useBpatch: false);
-            var (emptyWeight, presenceZero) = effective.PresenceEdit(baseline, "Medium", categoryDefinition);
+            var weightEdit = effective.WeightListEdit(baseline, "Medium", categoryDefinition);
             foreach (var itemDefinition in categoryDefinition.Items)
             {
                 var item = possibleItems.GetOrAddChild(itemDefinition.Node, useBpatch: false);
 
                 foreach (var field in itemDefinition.Fields)
                 {
-                    var value = presenceZero && field.Key == "Weight"
-                        ? "0"
+                    // Weight lists: removed Weight goes to Empty (WeightListEdit).
+                    var value = field.Key == "Weight" && weightEdit is { } edit
+                        ? edit.Weights[categoryDefinition.Items.IndexOf(itemDefinition)]
                         : effective.TierField(
                             baseline, "Medium", categoryDefinition, itemDefinition, field.Key);
                     item.SetAssignment(field.Key, value);
                     edits++;
                 }
             }
-            edits += WriteStashPresenceEmpty(possibleItems, categoryDefinition, emptyWeight);
+            edits += WriteStashPresenceEmpty(possibleItems, categoryDefinition, weightEdit?.Empty);
         }
 
         return edits;
@@ -1677,22 +1679,23 @@ public sealed partial class CfgPatchWriterService
             }
 
             var possibleItems = category.GetOrAddChild("PossibleItems", useBpatch: false);
-            var (emptyWeight, presenceZero) = effective.PresenceEdit(baseline, "Expensive", categoryDefinition);
+            var weightEdit = effective.WeightListEdit(baseline, "Expensive", categoryDefinition);
             foreach (var itemDefinition in categoryDefinition.Items)
             {
                 var item = possibleItems.GetOrAddChild(itemDefinition.Node, useBpatch: false);
 
                 foreach (var field in itemDefinition.Fields)
                 {
-                    var value = presenceZero && field.Key == "Weight"
-                        ? "0"
+                    // Weight lists: removed Weight goes to Empty (WeightListEdit).
+                    var value = field.Key == "Weight" && weightEdit is { } edit
+                        ? edit.Weights[categoryDefinition.Items.IndexOf(itemDefinition)]
                         : effective.TierField(
                             baseline, "Expensive", categoryDefinition, itemDefinition, field.Key);
                     item.SetAssignment(field.Key, value);
                     edits++;
                 }
             }
-            edits += WriteStashPresenceEmpty(possibleItems, categoryDefinition, emptyWeight);
+            edits += WriteStashPresenceEmpty(possibleItems, categoryDefinition, weightEdit?.Empty);
         }
 
         return edits;

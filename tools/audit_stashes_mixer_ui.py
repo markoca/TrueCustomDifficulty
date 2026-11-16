@@ -273,7 +273,7 @@ assert "DrawStashOdds(dc, new Rect(left, oddsTop, width, StashOddsHeight)," in c
 assert "var controlsTop = oddsTop + StashOddsHeight + 8.0;" in content
 assert "var mixTop = controlsTop + StashControlsHeight + 8.0;" in content
 assert 'dc.DrawText(CreateText("BASIC MIX", 11.4, text, FontWeights.Bold),' in content
-assert '"MILK IN MIX"' in content
+assert '"MILK IN MIX"' not in content  # Basic DRINKS cell is stashMixDrinks now
 assert '"WEIGHT APPLIES TO ALL TIERS"' not in content
 assert '"RELATIVE SELECTION"' not in source
 assert '"BASIC POOL COMPOSITION"' not in coverage
@@ -296,7 +296,7 @@ assert 'StashPreviewGroup("RARE", 11)' not in preview  # chance only, never a we
 assert "StashChanceSample(" in preview
 assert '"SOURCE CHANCE FIELDS"' in preview
 assert '"NATIVE CHANCE · INDEPENDENT"' in preview
-assert 'CurrentStashEffectiveState().TuneSelection(sid, "Weight", raw)' in preview
+assert '.WeightListEdit(StashPreviewBaseline.Value, "Cheap", group);' in preview  # same rule as writer
 assert "effective.TierField(" in preview
 assert "StashEffectiveState.Number(" in preview
 assert "StashSourceFactor(" not in source
@@ -407,7 +407,7 @@ height_match = re.search(
 assert height_match is not None, "missing StashContentMix measured height"
 # 121 + 30 title + knobs + 8 + 74 preview + 8 + 56 pair + 12 + 8 + Standard
 # + 8 + Rare + bottom padding (wide 797, narrow 1175 incl. 64 narrow shift).
-assert tuple(map(float, height_match.groups())) == (700.0, 741.0, 823.0)
+assert tuple(map(float, height_match.groups())) == (700.0, 695.0, 823.0)
 assert '"WEIGHT APPLIES TO ALL TIERS"' not in content
 assert '"RELATIVE SELECTION"' not in source
 assert '"BASIC POOL COMPOSITION"' not in coverage
@@ -415,7 +415,7 @@ assert "var wide = width >= 670.0;" in content
 # Old fixed 373/409, 220/383 and 839/1185 lane calculations
 # were retired with the current compact Stashes rendering. Guard the
 # actual measured heights rather than asserting removed helper formulas.
-assert '=> width >= 700.0 ? 741.0 : 823.0;' in source
+assert '=> width >= 700.0 ? 695.0 : 823.0;' in source
 assert '=> width >= 700.0 ? 609.0 : 1050.0;' in source
 assert '=> width < 570.0 ? 670.0 : 502.0;' in source
 for name, document in [("UI-DESIGN-LOCK", lock),
@@ -513,7 +513,7 @@ assert 'CreateText("V "' not in tier_preview and "vanillaX" not in tier_preview
 assert "Math.Clamp(Number(updated) * factor, 0.0, 1.0)" in effective
 assert 'StashTierChanceParameterIds.Any(id =>' in tuning
 
-assert '=> width >= 700.0 ? 741.0 : 823.0;' in source
+assert '=> width >= 700.0 ? 695.0 : 823.0;' in source
 assert "GlobalStashKindsVerified.Value" in coverage
 assert "StashBranchPreviewCatalog.Load(StashPreviewBaseline.Value)" in coverage
 assert "groups.Sum(x => x.Items.Count) != 1124" in coverage

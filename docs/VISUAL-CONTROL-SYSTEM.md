@@ -1,3 +1,12 @@
+## 2026-11-16 — CURRENT: STASH LOOT MIX — one Weight/Chance rule, every ADJUST ODDS cell = "keep X% of game odds"
+
+**Authoritative definition: `docs/STASH-WEIGHT-VS-CHANCE.md`** (Weight list = exactly one pick, Chance list = independent rolls, never mixed; evidence from the 2.1 dump scan and the Desolation generator tutorial). Supersedes the "IN MIX / priority" reading of the Basic cells below.
+
+* Basic **MEDS / FOOD / DRINKS / COUPONS** cells (`loot.stashMix*`) no longer redistribute: in Basic/Standard/Rare tier templates the removed Weight goes to an appended native `Empty` entry (`StashEffectiveState.WeightListEdit`), so lowering MEDS no longer raises FOOD. Same rule for the ammo presence cells. Writer, ODDS PER STASH and the Basic MIX preview share that one method.
+* Basic **DRINKS** cell is now `loot.stashMixDrinks` (water, energy drinks and milk); the same-day `stashPresence.cheapDrinks` sidecar and the MILK IN MIX control are retired (old key accepted and ignored in presets).
+* **BASIC MIX** card: MIX PREVIEW (now shows a grey **NOTHING** share when items were removed) + RGD-5 AMOUNT. Heights 695 / 823 DIP.
+* Still relative Weight scaling (documented, not in ODDS PER STASH): SmartLoot world groups, DLC1 regular stash rows, Cabin/direct rows.
+
 ## 2026-11-16 — CURRENT: STASH LOOT MIX built around ODDS PER STASH (ADJUST ODDS grid + presence sidecars)
 
 **Supersedes the BASIC STASH card, the STANDARD STASH / RARE STASH chance cards and the IN MIX knobs.** Board order: SUPPLY REDUCTION + AMMO QUANTITY · ALL TIERS → **ODDS PER STASH** (unchanged) → **ADJUST ODDS** → **BASIC MIX**.

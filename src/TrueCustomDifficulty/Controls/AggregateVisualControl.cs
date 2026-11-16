@@ -5218,8 +5218,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawStashControlGrid(dc, new Rect(left, controlsTop, width, StashControlsHeight),
             text, muted, border, accent, panel);
 
-        // BASIC MIX: what the shared Basic food / drink / bandage pick looks
-        // like, plus the two Basic extras that change amounts, not odds.
+        // BASIC MIX: what the shared Basic food / milk / bandage pick gives
+        // (incl. the NOTHING share), plus RGD-5 AMOUNT (amount, not odds).
         var mixTop = controlsTop + StashControlsHeight + 8.0;
         var mixCard = new Rect(left, mixTop, width, wide ? StashMixCardWide : StashMixCardNarrow);
         dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .65),
@@ -5229,19 +5229,15 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         const double pairGap = 10.0;
         if (wide)
         {
-            var previewWidth = Math.Max(1.0, (width - 24.0) * .58);
+            var previewWidth = Math.Max(1.0, (width - 24.0) * .64);
             DrawStashBasicNativePools(dc,
                 new Rect(left + 12.0, mixTop + StashBasicTitleHeight, previewWidth, 74.0),
                 text, muted, border, panel);
             var sideLeft = left + 12.0 + previewWidth + pairGap;
-            var sideWidth = Math.Max(1.0, left + width - 12.0 - sideLeft);
-            DrawStashNativeRollControl(dc, "loot.stashMixDrinks",
-                "MILK IN MIX", 3,
-                new Rect(sideLeft, mixTop + StashBasicTitleHeight, sideWidth, 56.0),
-                text, muted, border, accent, panel);
             DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeQuantity",
                 "RGD-5 AMOUNT", 4,
-                new Rect(sideLeft, mixTop + StashBasicTitleHeight + 64.0, sideWidth, 56.0),
+                new Rect(sideLeft, mixTop + StashBasicTitleHeight + 9.0,
+                    Math.Max(1.0, left + width - 12.0 - sideLeft), 56.0),
                 text, muted, border, accent, panel, percentage: false);
         }
         else
@@ -5249,20 +5245,15 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             DrawStashBasicNativePools(dc,
                 new Rect(left + 12.0, mixTop + StashBasicTitleHeight, width - 24.0, 74.0),
                 text, muted, border, panel);
-            var pairWidth = Math.Max(1.0, (width - 24.0 - pairGap) / 2.0);
-            var pairTop = mixTop + StashBasicTitleHeight + 82.0;
-            DrawStashNativeRollControl(dc, "loot.stashMixDrinks",
-                "MILK IN MIX", 3,
-                new Rect(left + 12.0, pairTop, pairWidth, 56.0),
-                text, muted, border, accent, panel);
             DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeQuantity",
                 "RGD-5 AMOUNT", 4,
-                new Rect(left + 12.0 + pairWidth + pairGap, pairTop, pairWidth, 56.0),
+                new Rect(left + 12.0, mixTop + StashBasicTitleHeight + 82.0,
+                    Math.Max(1.0, (width - 24.0 - pairGap) / 2.0), 56.0),
                 text, muted, border, accent, panel, percentage: false);
         }
     }
 
-    private const double StashMixCardWide = 30.0 + 120.0 + 12.0;
+    private const double StashMixCardWide = 30.0 + 74.0 + 12.0;
     private const double StashMixCardNarrow = 30.0 + 82.0 + 56.0 + 12.0;
     private const double StashBasicTitleHeight = 30.0;
 
@@ -5833,18 +5824,25 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         string? rankCaption = null)
     {
         if (group is null) return;
+        // Same rule as writer and ODDS: kept Weight per kind plus the
+        // appended Empty ("nothing") pick, against the unchanged list total.
         var totals = new double[6];
-        foreach (var item in group.Items)
+        var emptyShare = 0.0;
+        var edit = CurrentStashEffectiveState(StashDifficultySid())
+            .WeightListEdit(StashPreviewBaseline.Value, "Cheap", group);
+        for (var i = 0; i < group.Items.Count; i++)
         {
+            var item = group.Items[i];
             if (!item.Fields.TryGetValue("Weight", out var raw)
                 || !item.Fields.TryGetValue("ItemPrototypeSID", out var sid))
                 continue;
             var category = StashCategoryIndex(sid);
             if (category >= 0)
-                totals[category] += StashEffectiveState.Number(
-                    CurrentStashEffectiveState().TuneSelection(sid, "Weight", raw));
+                totals[category] += edit is { } e ? e.Values[i] : StashEffectiveState.Number(raw);
         }
-        var total = totals.Sum();
+        if (edit is { } withEmpty)
+            emptyShare = withEmpty.EmptyValue;
+        var total = totals.Sum() + emptyShare;
         // Difficulty and player rank are independent authored CFG gates.
         var captionSize = row.Width < 440.0 ? 9.6 : 10.8;
         if (string.IsNullOrWhiteSpace(caption))
@@ -5879,17 +5877,31 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                     new Rect(cursor, bar.Top, span, bar.Height));
             cursor += span;
         }
+        // The Empty pick stays as the unfilled (track-coloured) remainder.
         // Only categories with a native member in THIS exact source pool
         // belong in the legend. Disabled members retain their 0% label.
         var present = group.Items
             .Select(x => x.Fields.TryGetValue("ItemPrototypeSID", out var sid)
                 ? StashCategoryIndex(sid) : -1)
             .Where(x => x >= 0).Distinct().OrderBy(x => x).ToArray();
+        var slots = present.Length + (emptyShare > Epsilon ? 1 : 0);
+        if (emptyShare > Epsilon)
+        {
+            var x = row.Left + present.Length * row.Width / slots;
+            var slot = row.Width / slots;
+            dc.DrawRectangle(CloneWithOpacity(border, .55), null,
+                new Rect(x, row.Top + 31.0 + compactOffset, 7.0, 7.0));
+            DrawText(dc, "NOTHING", new Point(x + 10.0, row.Top + 28.0 + compactOffset),
+                row.Width >= 580.0 ? 10.0 : 8.9, muted, FontWeights.SemiBold);
+            DrawRightAlignedText(dc, $"{emptyShare * 100.0 / total:0.#}%",
+                new Point(x + slot - 3.0, row.Top + 28.0 + compactOffset),
+                row.Width >= 580.0 ? 10.1 : 9.1, muted, FontWeights.SemiBold);
+        }
         for (var col = 0; col < present.Length; col++)
         {
             var kind = present[col];
-            var x = row.Left + col * row.Width / present.Length;
-            var slot = row.Width / present.Length;
+            var x = row.Left + col * row.Width / slots;
+            var slot = row.Width / slots;
             dc.DrawRectangle(StashMixPalette[kind], null,
                 new Rect(x, row.Top + 31.0 + compactOffset, 7.0, 7.0));
             // Larger captions on a wide editor, compact labels on narrow screens.
@@ -8137,9 +8149,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     // Measured heights follow the painted responsive editors, so the
     // last mixer lane and every remaining gear/medical dial stay visible.
     // Mirrors DrawStashContentMix: 121 (+64 narrow) + ODDS 172 + 8 + ADJUST
-    // ODDS 258 + 8 + BASIC MIX (162 wide / 180 narrow) + 12 padding.
+    // ODDS 258 + 8 + BASIC MIX (116 wide / 180 narrow) + 12 padding.
     private double StashContentMixHeight(double width)
-        => width >= 700.0 ? 741.0 : 823.0;
+        => width >= 700.0 ? 695.0 : 823.0;
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 609.0 : 1050.0;
     // Paint width is ActualWidth - 30 DIP. At host widths 540–569 DIP

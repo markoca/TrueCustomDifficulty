@@ -6054,7 +6054,7 @@
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
-      "rationale": "How much Basic stashes (and the game's smart world stashes) lean towards meds compared with food and drinks. Vanilla: 1×. Lower = meds show up less often in the mix. Standard and Rare stashes use their own chance sliders.",
+      "rationale": "How much of the game's odds for meds you keep in Basic stashes (the Basic MEDS cell). Vanilla: 100%. The share you remove becomes an empty pick, so food and drinks keep their own odds. In the game's smart world stashes it still lowers meds relative to the other items there.",
       "logic": "Higher priority favors medical loot against other eligible stash categories. Zero removes its relative weight where supported.",
       "interaction": "Priority does not raise original chance checks or bypass a stash's rank and loot restrictions.",
       "exposeInUi": true
@@ -6108,7 +6108,7 @@
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
-      "rationale": "How much Basic stashes (and the game's smart world stashes) lean towards food compared with meds and drinks. Vanilla: 1×. Lower = less food in the mix.",
+      "rationale": "How much of the game's odds for food you keep in Basic stashes (the Basic FOOD cell). Vanilla: 100%. The removed share becomes an empty pick, so meds and drinks are not affected. In smart world stashes it still lowers food relative to the other items there.",
       "logic": "Higher priority favors food against other eligible stash categories. Zero removes its relative weight where supported.",
       "interaction": "Priority does not raise original chance checks or bypass a stash's rank and loot restrictions.",
       "exposeInUi": true
@@ -6162,7 +6162,7 @@
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
-      "rationale": "How much Basic stashes lean towards milk in their shared food / milk / bandage pick (shown as MILK IN MIX), and towards drinks in the game's smart world stashes. Vanilla: 1×. Basic water and energy drinks have their own control: the Basic DRINKS cell in ADJUST ODDS.",
+      "rationale": "How much of the game's odds for drinks you keep in Basic stashes — water, energy drinks and milk (the Basic DRINKS cell). Vanilla: 100%. The removed share becomes an empty pick, so other items are not affected. In smart world stashes it still lowers drinks relative to the other items there.",
       "logic": "Higher priority favors drinks against other eligible stash categories. Zero removes its relative weight where supported.",
       "interaction": "Priority does not raise original chance checks or bypass a stash's rank and loot restrictions.",
       "exposeInUi": true
@@ -6270,7 +6270,7 @@
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
-      "rationale": "How much Basic stashes (and the game's smart world stashes) lean towards coupons in their mix. Vanilla: 1×. In vanilla only Novice and Stalker Basic stashes have coupons in that mix, so on Veteran and Master this has no Basic effect.",
+      "rationale": "How much of the game's odds for coupons you keep in Basic stashes (the Basic COUPONS cell). Vanilla: 100%. Only Novice and Stalker Basic stashes have coupons in vanilla. The removed share becomes an empty pick, so other items are not affected.",
       "logic": "Native Weight is relative within its own generator group. Multiplying all members of a single-category pool may leave its normalized ratios unchanged; independent Chance is never modified by this global control.",
       "interaction": "Legacy preset compatibility only. Not an editable Stash Content mixer knob; the retained Veteran Basic source pool has no coupon Weight member.",
       "exposeInUi": false

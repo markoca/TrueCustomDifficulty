@@ -35,8 +35,8 @@ public sealed partial class AggregateVisualControl
     /// <summary>
     /// Odds that ONE regular stash of <paramref name="tier"/> holds at least
     /// one item of each category, averaged over the four player ranks.
-    /// A native Weight category picks one entry by weight (its share counts);
-    /// every native Chance entry rolls on its own.
+    /// A native Weight list picks exactly one entry by weight (with the
+    /// appended Empty, if any); every native Chance entry rolls on its own.
     /// </summary>
     private static double[] StashCategoryOdds(StashEffectiveState state, string tier)
     {
@@ -50,29 +50,30 @@ public sealed partial class AggregateVisualControl
             var none = Enumerable.Repeat(1.0, odds.Length).ToArray();
             foreach (var group in groups.Where(g => g.AppliesTo(rank, difficulty)))
             {
-                var values = group.Items
-                    .Select(item => (Kind: StashCategoryIndex(item.ItemSid),
-                        Value: Math.Max(0.0, StashEffectiveState.Number(
-                            group.EffectiveSelection(baseline, state, item)))))
-                    .ToArray();
-                if (group.Field == "Weight")
+                if (group.Field == "Weight" && group.TierCategory is { } category
+                    && state.WeightListEdit(baseline, tier, category) is { } edit)
                 {
-                    var total = values.Sum(v => v.Value);
-                    // Presence < 100% adds a weighted Empty pick (writer
-                    // PresenceEdit): every real share scales by presence.
-                    var presence = group.TierCategory is null ? 1.0
-                        : state.Presence(tier, group.TierCategory);
-                    if (total <= Epsilon || presence <= Epsilon) continue;
-                    foreach (var kind in values.Where(v => v.Kind >= 0)
-                                 .Select(v => v.Kind).Distinct())
-                        none[kind] *= 1.0 - presence * values.Where(v => v.Kind == kind)
-                            .Sum(v => v.Value) / total;
+                    // One pick per list; Empty keeps the source total, so each
+                    // kind's odds = its kept Weight / (kept Weight + Empty).
+                    var total = edit.Values.Sum() + edit.EmptyValue;
+                    if (total <= Epsilon) continue;
+                    var kinds = category.Items
+                        .Select(item => StashCategoryIndex(item.Fields["ItemPrototypeSID"]))
+                        .ToArray();
+                    foreach (var kind in kinds.Where(k => k >= 0).Distinct())
+                        none[kind] *= 1.0 - Enumerable.Range(0, kinds.Length)
+                            .Where(i => kinds[i] == kind).Sum(i => edit.Values[i]) / total;
                 }
                 else
                 {
-                    foreach (var (kind, chance) in values)
-                        if (kind >= 0)
-                            none[kind] *= 1.0 - Math.Clamp(chance, 0.0, 1.0);
+                    foreach (var item in group.Items)
+                    {
+                        var kind = StashCategoryIndex(item.ItemSid);
+                        if (kind < 0) continue;
+                        var chance = StashEffectiveState.Number(
+                            group.EffectiveSelection(baseline, state, item));
+                        none[kind] *= 1.0 - Math.Clamp(chance, 0.0, 1.0);
+                    }
                 }
             }
             for (var k = 0; k < odds.Length; k++)

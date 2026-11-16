@@ -713,4 +713,6 @@ the real decoded ZIP pair; Unreal runtime remains untested.
 
 ## Stash presence (Empty weighted pick) — in-game check
 
-After building with Basic AMMO, Basic DRINKS or Standard AMMO in ADJUST ODDS set to 0%, open several unopened ordinary Basic / Standard stashes: those categories must never appear and the game must not error. At 50%, roughly half of the stashes should miss that category. Repeat with Rare AMMO at 0%. Confirm the generated ItemGeneratorPrototypes patch contains `ItemPrototypeSID = Empty` entries only in the TCD stash template clones.
+After building with Basic AMMO, Basic MEDS, Basic DRINKS or Standard AMMO in ADJUST ODDS set to 0%, open several unopened ordinary Basic / Standard stashes: those categories must never appear and the game must not error. At 50%, roughly half of the stashes should miss that category. Repeat with Rare AMMO at 0%. Confirm the generated ItemGeneratorPrototypes patch contains `ItemPrototypeSID = Empty` entries only in the TCD stash template clones.
+
+With Basic MEDS at 0% on Veteran, Basic stashes must still give food/milk exactly as often as before (the bandage share becomes nothing, not extra food).

@@ -1,92 +1,109 @@
-"""STASH LOOT MIX presence sidecars + odds-centred controls.
+"""STASH LOOT MIX: one Weight / Chance rule, used by writer, odds and preview.
 
-Single-category native Weight picks (Basic ammo, Basic water/energy drinks,
-Standard ammo, Rare ammo) always yield one item; there is no category-level
-Chance in ItemGenerator. Presence < 100% appends a native `Empty` weighted
-entry so Empty / (total + Empty) = 1 - presence. This audit checks the shared
-math, the writer emission, the sidecar plumbing and the UI grid mapping.
+Verified reading of the CFG (see docs/STASH-WEIGHT-VS-CHANCE.md):
+  * Weight list  = ONE entry is picked per list, by Weight; it never yields
+    nothing unless an `Empty` entry is present.
+  * Chance list  = every entry rolls on its own (0..1).
+  * Weight and Chance never mix inside one list (regular stash tiers and
+    SmartLoot: 0 mixed lists; whole 2.1 dump: 3 NPC grenade lists only).
+Controls that reduce items in a Weight list move the removed Weight to an
+appended native `Empty` entry, so the list total stays the source total and
+the OTHER items keep their odds (a control means "keep X% of game odds").
 """
+import csv
 import json
+from collections import defaultdict
 from pathlib import Path
 
 root = Path(__file__).resolve().parents[1]
 src = root / "src" / "TrueCustomDifficulty"
-state = (src / "Services/StashEffectiveState.cs").read_text(encoding="utf-8")
-writer = (src / "Services/CfgPatchWriterService.cs").read_text(encoding="utf-8")
-tuning = (src / "Services/CfgPatchWriterService.StashTuning.cs").read_text(encoding="utf-8")
-vm = (src / "ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
-sidecar = (src / "ViewModels/StashPresenceViewModel.cs").read_text(encoding="utf-8")
-preset_service = (src / "Services/PresetService.cs").read_text(encoding="utf-8")
-preset_file = (src / "Models/PresetFile.cs").read_text(encoding="utf-8")
-grid = (src / "Controls/AggregateVisualControl.StashControls.cs").read_text(encoding="utf-8")
-odds = (src / "Controls/AggregateVisualControl.StashOdds.cs").read_text(encoding="utf-8")
-xaml = (src / "MainWindow.xaml").read_text(encoding="utf-8")
-baseline = json.loads((src / "Data/cfg-writer-baseline.json").read_text(encoding="utf-8"))["special"]
+read = lambda rel: (src / rel).read_text(encoding="utf-8")
+state = read("Services/StashEffectiveState.cs")
+writer = read("Services/CfgPatchWriterService.cs")
+tuning = read("Services/CfgPatchWriterService.StashTuning.cs")
+vm = read("ViewModels/MainViewModel.cs")
+sidecar = read("ViewModels/StashPresenceViewModel.cs")
+preset_service = read("Services/PresetService.cs")
+preset_file = read("Models/PresetFile.cs")
+grid = read("Controls/AggregateVisualControl.StashControls.cs")
+odds = read("Controls/AggregateVisualControl.StashOdds.cs")
+aggregate = read("Controls/AggregateVisualControl.cs")
+xaml = read("MainWindow.xaml")
+baseline = json.loads(read("Data/cfg-writer-baseline.json"))["special"]
+docs = (root / "docs" / "STASH-WEIGHT-VS-CHANCE.md").read_text(encoding="utf-8")
 
-# Shared math lives in StashEffectiveState and is used by writer AND preview.
-assert "public static string? PresenceId(string tier, CfgWriterCheapStashCategory category)" in state
+# ---- 1. Source shape: no list mixes Weight and Chance ----------------------
+tiers = (("cheapStashProduction", "Cheap"), ("mediumStashAmmoProduction", "Medium"),
+         ("expensiveStashProduction", "Expensive"))
+for key, _ in tiers:
+    for category in baseline[key]["templateCategories"]:
+        fields = {("Weight" in i["fields"], "Chance" in i["fields"]) for i in category["items"]}
+        assert fields in ({(True, False)}, {(False, True)}), (key, category["node"], fields)
+smart = list(csv.DictReader(open(src / "Data/smartloot-world-source-entries.csv", encoding="utf-8")))
+groups = defaultdict(set)
+for row in smart:
+    groups[(row["Prototype"], row["RankIndex"], row["Group"], row["GroupIndex"])].add(
+        "W" if row["Weight"] else "C")
+assert len(groups) == 422 and all(len(kinds) == 1 for kinds in groups.values())
+
+# ---- 2. One shared rule in StashEffectiveState -----------------------------
+assert "WeightListEdit(CfgWriterBaseline baseline, string tier, CfgWriterCheapStashCategory category)" in state
+assert "var empty = source - values.Sum();" in state
+assert "PresenceEdit" not in state
 assert '("Cheap", "loot.stashMixAmmo") => StashPresenceViewModel.CheapAmmoId,' in state
-assert '("Cheap", "loot.stashMixDrinks") => StashPresenceViewModel.CheapDrinksId,' in state
 assert '("Medium", "loot.stashMixAmmo") => StashPresenceViewModel.MediumAmmoId,' in state
 assert '("Expensive", "loot.stashMixAmmo") => "loot.expensiveStashAmmoChance",' in state
-assert "var empty = total * (1.0 - presence) / presence;" in state
-assert 'return ("1", true);' in state  # 0% => Empty only, real entries zeroed
+assert "loot.stashMixDrinks\") => StashPresenceViewModel" not in state
 
-# Writer: all three tier templates use the presence-aware state and emit Empty.
+# Writer: all three tier templates use it and append Empty.
 assert writer.count(".WithValues(s_stashPresence);") == 3
-assert writer.count("effective.PresenceEdit(baseline, \"") == 3
-assert writer.count("edits += WriteStashPresenceEmpty(possibleItems, categoryDefinition, emptyWeight);") == 3
-assert writer.count('var value = presenceZero && field.Key == "Weight"') == 3
-assert "s_stashPresence = vm.StashPresence.Values;" in writer and "s_stashPresence = null;" in writer
-assert '!StashPresenceChanged("Cheap")' in writer and '!StashPresenceChanged("Medium")' in writer
+assert writer.count("var weightEdit = effective.WeightListEdit(baseline, \"") == 3
+assert writer.count("edit.Weights[categoryDefinition.Items.IndexOf(itemDefinition)]") == 3
+assert writer.count("edits += WriteStashPresenceEmpty(possibleItems, categoryDefinition, weightEdit?.Empty);") == 3
 assert 'empty.SetAssignment("ItemPrototypeSID", "Empty");' in tuning
 assert '$"[{category.Items.Count}]"' in tuning
+assert "s_stashPresence = vm.StashPresence.Values;" in writer
 
-# Sidecar plumbing: VM, reset, presets, validation, XAML.
-for token in ("CheapAmmoId", "CheapDrinksId", "MediumAmmoId", "public Dictionary<string, double>? ToPreset()"):
-    assert token in sidecar, token
+# Odds and Basic mix preview read the SAME rule.
+assert "state.WeightListEdit(baseline, tier, category) is { } edit" in odds
+assert ".WeightListEdit(StashPreviewBaseline.Value, \"Cheap\", group);" in aggregate
+assert 'DrawText(dc, "NOTHING"' in aggregate
+
+# ---- 3. Sidecars, presets, UI ----------------------------------------------
+assert "new[] { CheapAmmoId, MediumAmmoId };" in sidecar
+assert "LegacyCheapDrinksId" in sidecar and "LegacyCheapDrinksId" in preset_service
 assert "public StashPresenceViewModel StashPresence { get; } = new();" in vm
 assert vm.count("StashPresence.Reset();") == 2
-assert "StashPresence = StashPresence.ToPreset()," in vm
 assert "StashPresence.FromPreset(preset.StashPresence);" in vm
 assert '[JsonPropertyName("stashPresence")]' in preset_file
-assert "Unknown stash presence entry" in preset_service
 assert 'StashPresence="{Binding DataContext.StashPresence' in xaml
+assert '{ "loot.stashMixDrinks", "loot.mediumStashDrinksChance", "loot.expensiveStashDrinksChance" },' in grid
+assert '"MILK IN MIX"' not in aggregate
 
-# UI: grid mirrors ODDS rows/columns; odds include presence.
-assert "private static readonly string?[,] StashControlGrid =" in grid
-assert 'DrawText(CreateText("ADJUST ODDS", 11.4' in grid
-assert "state.Presence(tier, group.TierCategory)" in odds
-assert "presence * values.Where(v => v.Kind == kind)" in odds
+# ---- 4. Rule behaviour on the real source lists (Python twin) -------------
+def edit(items, factors, presence=1.0):
+    source = sum(items)
+    kept = [w * f * presence for w, f in zip(items, factors)]
+    return kept, max(0.0, source - sum(kept))
 
-# Every presence target really is a single-category Weight pick in the source.
-def kind(sid):
-    if sid[0] == "A" and sid[1].isdigit():
-        return "ammo"
-    if sid in ("Vodka", "Water", "Milk", "Energetic", "Beer"):
-        return "drinks"
-    return "other"
+basic_hard = [c for c in baseline["cheapStashProduction"]["templateCategories"] if c["node"] == "[1]"][0]
+sids = [i["fields"]["ItemPrototypeSID"] for i in basic_hard["items"]]
+weights = [float(i["fields"]["Weight"].rstrip("f")) for i in basic_hard["items"]]
+assert sids == ["Milk", "Bread", "Sausage", "CannedFood", "Bandage"]
+# MEDS (bandage) to 50%: bandage odds halve, food/milk odds unchanged.
+kept, empty = edit(weights, [1, 1, 1, 1, 0.5])
+total = sum(kept) + empty
+vanilla = [w / sum(weights) for w in weights]
+now = [k / total for k in kept]
+assert abs(now[4] - vanilla[4] * 0.5) < 1e-12
+assert all(abs(now[i] - vanilla[i]) < 1e-12 for i in range(4))
+# Ammo-only list at 25% presence: 75% nothing.
+ammo = [float(i["fields"]["Weight"]) for i in
+        [c for c in baseline["cheapStashProduction"]["templateCategories"] if c["node"] == "[3]"][0]["items"]]
+kept, empty = edit(ammo, [1, 1, 1], presence=0.25)
+assert abs(empty / (sum(kept) + empty) - 0.75) < 1e-12
 
-hits = {}
-for key, tier in (("cheapStashProduction", "Cheap"), ("mediumStashAmmoProduction", "Medium"),
-                  ("expensiveStashProduction", "Expensive")):
-    for category in baseline[key]["templateCategories"]:
-        items = category["items"]
-        if not items or any("Weight" not in i["fields"] for i in items):
-            continue
-        kinds = {kind(i["fields"]["ItemPrototypeSID"]) for i in items}
-        if len(kinds) == 1 and kinds <= {"ammo", "drinks"}:
-            hits.setdefault((tier, kinds.pop()), []).append(category["node"])
-assert hits[("Cheap", "ammo")] == ["[3]"], hits
-assert hits[("Cheap", "drinks")] == ["[2]"], hits
-assert len(hits[("Medium", "ammo")]) == 4, hits
-assert len(hits[("Expensive", "ammo")]) == 7, hits
-assert ("Medium", "drinks") not in hits and ("Expensive", "drinks") not in hits
+for token in ("ONE entry", "Empty", "Desolation", "13564", "never mix"):
+    assert token in docs, token
 
-# Math: appended Empty weight gives exactly 1 - presence "nothing".
-for total in (1.0, 5.0, 100.0):
-    for presence in (0.05, 0.25, 0.5, 0.95):
-        empty = total * (1.0 - presence) / presence
-        assert abs(empty / (total + empty) - (1.0 - presence)) < 1e-12
-
-print("PASS: stash presence sidecars — Empty weighted pick for Basic ammo/drinks, Standard ammo, Rare ammo; writer, presets, odds grid")
+print("PASS: one Weight/Chance rule — Weight lists keep their source total via Empty; writer, odds, preview, presets share it")

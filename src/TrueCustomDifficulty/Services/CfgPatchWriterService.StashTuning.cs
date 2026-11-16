@@ -81,8 +81,7 @@ public sealed partial class CfgPatchWriterService
             && Math.Abs(value - 1.0) > 0.0000001;
         return tier switch
         {
-            "Cheap" => Changed(StashPresenceViewModel.CheapAmmoId)
-                || Changed(StashPresenceViewModel.CheapDrinksId),
+            "Cheap" => Changed(StashPresenceViewModel.CheapAmmoId),
             "Medium" => Changed(StashPresenceViewModel.MediumAmmoId),
             _ => false
         };
@@ -90,7 +89,7 @@ public sealed partial class CfgPatchWriterService
 
     /// <summary>
     /// Appends the native weighted "nothing" entry after the source entries
-    /// of a single-category Weight pick (see StashEffectiveState.PresenceEdit).
+    /// of a Weight list (see StashEffectiveState.WeightListEdit).
     /// </summary>
     private static int WriteStashPresenceEmpty(
         PatchNode possibleItems, Models.CfgWriterCheapStashCategory category, string? emptyWeight)

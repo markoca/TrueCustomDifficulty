@@ -6,23 +6,24 @@ using TrueCustomDifficulty.Infrastructure;
 namespace TrueCustomDifficulty.ViewModels;
 
 /// <summary>
-/// STASH LOOT MIX presence sidecars (not catalog parameters). Some stash
-/// source categories are a single-category Weight pick (Basic ammo, Basic
-/// water/energy drinks, Standard ammo), so the game always yields one item
-/// and no native Chance exists to tune. A value below 100% adds a native
-/// <c>Empty</c> entry to that Weight list so the pick sometimes yields
-/// nothing: 100% = vanilla (no entry), 0% = never. 5% steps.
+/// STASH LOOT MIX presence sidecars (not catalog parameters). Basic and
+/// Standard ammo are ammo-only native Weight lists: the game always yields
+/// one item and no native Chance exists to tune. A value below 100% moves
+/// that share to an appended native <c>Empty</c> entry so the pick sometimes
+/// yields nothing: 100% = vanilla (no entry), 0% = never. 5% steps.
 /// Rare ammo uses the existing catalog Rare Ammo Chance for the same job.
 /// </summary>
 public sealed class StashPresenceViewModel : ObservableObject
 {
     public const string CheapAmmoId = "stashPresence.cheapAmmo";
-    public const string CheapDrinksId = "stashPresence.cheapDrinks";
+    // Retired same day in favour of the Basic DRINKS stashMix factor (which
+    // now also keeps odds via Empty); accepted and ignored in presets.
+    public const string LegacyCheapDrinksId = "stashPresence.cheapDrinks";
     public const string MediumAmmoId = "stashPresence.mediumAmmo";
     public const double Step = 0.05;
 
     public static IReadOnlyList<string> Ids { get; } =
-        new[] { CheapAmmoId, CheapDrinksId, MediumAmmoId };
+        new[] { CheapAmmoId, MediumAmmoId };
 
     private readonly Dictionary<string, double> _values =
         Ids.ToDictionary(id => id, _ => 1.0, StringComparer.Ordinal);

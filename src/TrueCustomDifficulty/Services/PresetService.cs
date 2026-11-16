@@ -91,7 +91,8 @@ public sealed class PresetService
         {
             foreach (var (id, value) in stashPresence)
             {
-                if (!StashPresenceViewModel.Ids.Contains(id))
+                if (!StashPresenceViewModel.Ids.Contains(id)
+                    && id != StashPresenceViewModel.LegacyCheapDrinksId)
                     throw new InvalidDataException($"Unknown stash presence entry '{id}'.");
                 if (!double.IsFinite(value) || value < 0.0 || value > 1.0
                     || Math.Abs(value * 20.0 - Math.Round(value * 20.0)) > 0.0000001)

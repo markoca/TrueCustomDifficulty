@@ -47,7 +47,7 @@ public sealed partial class AggregateVisualControl
         { StashPresenceViewModel.CheapAmmoId, StashPresenceViewModel.MediumAmmoId, "loot.expensiveStashAmmoChance" },
         { "loot.stashMixMedical", "loot.mediumStashMedicalChance", "loot.expensiveStashMedicalChance" },
         { "loot.stashMixFood", null, "loot.expensiveStashFoodChance" },
-        { StashPresenceViewModel.CheapDrinksId, "loot.mediumStashDrinksChance", "loot.expensiveStashDrinksChance" },
+        { "loot.stashMixDrinks", "loot.mediumStashDrinksChance", "loot.expensiveStashDrinksChance" },
         { "loot.cheapStashGrenadeChance", null, "loot.expensiveStashGrenadesChance" },
         { "loot.stashMixCoupons", "loot.mediumStashCouponsChance", "loot.expensiveStashMoneyChance" }
     };
@@ -59,8 +59,8 @@ public sealed partial class AggregateVisualControl
     {
         "loot.cheapStashGrenadeChance" or "loot.expensiveStashMoneyChance"
             => "Real chance per stash. Drag to set it.",
-        "loot.stashMixMedical" or "loot.stashMixFood" or "loot.stashMixCoupons"
-            => "Share of this kind in the Basic stash mix (also smart world stashes). 100% = full share, 0% = out of the mix.",
+        "loot.stashMixMedical" or "loot.stashMixFood" or "loot.stashMixDrinks" or "loot.stashMixCoupons"
+            => "How much of the game's odds you keep in Basic stashes; the rest becomes an empty pick, so other items are not affected. 100% = game odds, 0% = never.",
         _ when IsStashPresenceId(id)
             => "How often this stash pick gives anything. 100% = game odds, 0% = never.",
         _ => "How much of the game's own odds you keep. 100% = game odds, 0% = never."

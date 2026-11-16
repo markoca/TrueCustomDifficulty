@@ -60,11 +60,9 @@ public sealed class StashEffectiveState
             DifficultySid);
     }
 
-    // ---- Presence of single-category Weight picks ------------------------
-    // A Weight category whose every entry is the same kind always yields one
-    // item; the game has no category-level Chance. Presence < 100% appends a
-    // native `Empty` entry (ItemPrototypeSID = Empty, used natively as a
-    // weighted "nothing" pick) so the pick sometimes yields nothing.
+    // ---- Presence of single-kind ammo Weight picks ------------------------
+    // Ammo lists hold only ammo, so a per-tier presence scales the whole list
+    // (see WeightListEdit). Drinks/food/meds/coupons use their stashMix factor.
 
     /// <summary>The value id that sets this category's presence, or null.</summary>
     public static string? PresenceId(string tier, CfgWriterCheapStashCategory category)
@@ -81,7 +79,6 @@ public sealed class StashEffectiveState
         return (tier, kinds[0]) switch
         {
             ("Cheap", "loot.stashMixAmmo") => StashPresenceViewModel.CheapAmmoId,
-            ("Cheap", "loot.stashMixDrinks") => StashPresenceViewModel.CheapDrinksId,
             ("Medium", "loot.stashMixAmmo") => StashPresenceViewModel.MediumAmmoId,
             // Rare ammo: the existing catalog Rare Ammo Chance also thins
             // the Rare ammo Weight picks, so one control means "Rare ammo".
@@ -94,23 +91,38 @@ public sealed class StashEffectiveState
         => PresenceId(tier, category) is { } id ? Math.Clamp(Value(id), 0.0, 1.0) : 1.0;
 
     /// <summary>
-    /// Weight of the appended Empty entry (null = none) and whether the real
-    /// entries must be zeroed (presence 0%). Empty / (total + Empty) = 1 − p.
+    /// The one rule for a native Weight list (verified: a Weight list always
+    /// yields exactly ONE entry, picked by Weight; Chance and Weight never mix
+    /// in one list). To make a control mean "keep X% of the game's odds" for
+    /// its own items WITHOUT handing that share to the other items, the
+    /// removed Weight goes to an appended native <c>Empty</c> entry, so the
+    /// list total stays the source total. Presence scales the whole list.
+    /// Returns null for a Chance list. Empty is null when nothing was removed;
+    /// a legacy factor above 1x leaves no Empty (relative boost only).
     /// </summary>
-    public (string? EmptyWeight, bool ZeroItems) PresenceEdit(
-        CfgWriterBaseline baseline, string tier, CfgWriterCheapStashCategory category)
+    public (IReadOnlyList<string> Weights, IReadOnlyList<double> Values, string? Empty, double EmptyValue)?
+        WeightListEdit(CfgWriterBaseline baseline, string tier, CfgWriterCheapStashCategory category)
     {
+        if (category.Items.Count == 0
+            || category.Items.Any(item => !item.Fields.ContainsKey("Weight")))
+            return null;
         var presence = Presence(tier, category);
-        if (presence >= 1.0 - 0.0000001)
-            return (null, false);
-        if (presence <= 0.0000001)
-            return ("1", true);
-        var total = category.Items.Sum(item => Math.Max(0.0, Number(
-            TierField(baseline, tier, category, item, "Weight"))));
-        if (total <= 0.0000001)
-            return (null, false);
-        var empty = total * (1.0 - presence) / presence;
-        return (empty.ToString("0.####", CultureInfo.InvariantCulture), false);
+        var source = category.Items.Sum(item => Math.Max(0.0, Number(item.Fields["Weight"])));
+        var values = new List<double>(category.Items.Count);
+        var weights = new List<string>(category.Items.Count);
+        foreach (var item in category.Items)
+        {
+            var tuned = TierField(baseline, tier, category, item, "Weight");
+            var value = Math.Max(0.0, Number(tuned)) * presence;
+            values.Add(value);
+            weights.Add(Math.Abs(presence - 1.0) < 0.0000001
+                ? tuned
+                : FormatLikeSource(value, item.Fields["Weight"]));
+        }
+        var empty = source - values.Sum();
+        return empty > 0.0000001
+            ? (weights, values, empty.ToString("0.####", CultureInfo.InvariantCulture), empty)
+            : (weights, values, null, 0.0);
     }
 
     public bool Changed(string id) => _modified.Contains(id);
