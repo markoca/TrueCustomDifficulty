@@ -61,16 +61,16 @@ def main() -> None:
     assert_that(XAML.count('Text="CONTROLS"') == 1,
                 'Exactly one visible CONTROLS heading must exist')
     heading = XAML.index('Text="CONTROLS"')
-    help_binding = XAML.index('Text="{Binding SelectedParameter.ControlHelp}"')
+    help_binding = XAML.index('Text="{Binding SelectedParameter.PanelControlHelp}"')
     muted_footer = XAML.index('Text="{Binding TabSummary}"')
-    assert_that(XAML.index('Text="{Binding SelectedParameter.RationaleDisplay}"') < heading
+    assert_that(XAML.index('Text="{Binding SelectedParameter.PanelRationale}"') < heading
                 < help_binding < muted_footer,
                 'CONTROLS must follow gameplay meaning and precede muted contextual footer')
     assert_that('Text="{Binding SliderGuide}"' not in XAML
                 and 'public string SliderGuide' not in TABS,
                 'Redundant per-tab mouse/keyboard instruction footer is still visible')
-    for binding in ('SelectedParameter.HasValueMeaning', 'SelectedParameter.HasLogic',
-                    'SelectedParameter.HasInteraction', 'SelectedParameter.HasEffectiveDamage'):
+    for binding in ('SelectedParameter.PanelHasValueMeaning', 'SelectedParameter.PanelHasLogic',
+                    'SelectedParameter.PanelHasInteraction', 'SelectedParameter.PanelHasEffectiveDamage'):
         assert_that(binding in XAML, 'Gameplay rationale panel lost ' + binding)
 
     print(f'PASS: global rationale order, one heading, {len(families)}'

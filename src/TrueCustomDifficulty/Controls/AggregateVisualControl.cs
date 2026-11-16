@@ -70,7 +70,17 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             or "TradingDashboard" or "RepairCurve" or "SleepingDashboard"
             or "RadiationBalance" or "StaminaCore" or "ConsumableMixer"
             or "MasterLowHealth" or "MasterRadiationPenalty" or "MasterMedicalHealing")
+        {
+            // NPC LOOT: every selection inside a card reports that card and
+            // its owning parameter, so the panel shows the card's own text.
+            if (Family == "NpcLootLoadout" && _npcActiveCard is { } card
+                && P(card.OwnerId) is { } owner)
+            {
+                ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(owner, card));
+                return;
+            }
             ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
+        }
     }
 
     // Source-audited mod Chance sidecar, not a native ParameterViewModel.
@@ -1232,7 +1242,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     {
         var enabled = ModItemsEnabled && ModItemsEditorAvailable && IsEnabled;
         var amount = Math.Clamp(ModItemsRemoval, 0.0, 1.0);
-        DrawNpcCompactDial(dc, card, "FEWER MOD ITEMS", $"{amount * 100.0:0}%",
+        DrawNpcCompactDial(dc, card, "MOD LOOT CUT", $"{amount * 100.0:0}%",
             "0%", "100%", 0.0, 1.0, amount, 0.0, 0.01,
             enabled, enabled && amount > Epsilon,
             enabled && _npcModHoverKnob,
@@ -1501,12 +1511,20 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         var layout = CurrentNpcLootLayout(ActualWidth);
         var choiceCard = layout.Selector;
+        _npcCards.Clear();
+        RegisterNpcCard(NpcLootCards.Packs, layout.Selector);
+        RegisterNpcCard(NpcLootCards.NeedBoost, layout.Boost);
+        RegisterNpcCard(NpcLootCards.Scarcity, layout.Supply);
+        RegisterNpcCard(NpcLootCards.MedDrops, layout.Medical);
+        RegisterNpcCard(NpcLootCards.ModCut, layout.Mod);
+        RegisterNpcCard(NpcLootCards.WeaponCondition, layout.Condition);
+        RegisterNpcCard(NpcLootCards.AmmoPack, layout.Ammo);
 
         // Three independent package toggles: the native CorpseSmartLoot
         // field is a list, so any subset (including none) is valid. Each
         // chip adds or removes one authored package, not a drop chance.
         IndustrialChrome.DrawRecessedCard(dc, choiceCard, panel, border);
-        DrawText(dc, "CORPSE SMART LOOT",
+        DrawText(dc, "BONUS PACKS",
             new Point(choiceCard.Left + 9.0, choiceCard.Top + 12.0),
             9.2, text, FontWeights.Bold);
         var count = NpcCorpsePackages.Sids.Count;
@@ -1539,7 +1557,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
 
         // The four normal NPC loot controls are independent of SmartLoot.
-        DrawNpcCompactMultiplierKnob(dc, scarcity, "FEWER SUPPLIES", layout.Supply,
+        DrawNpcCompactMultiplierKnob(dc, scarcity, "SCARCITY", layout.Supply,
             text, muted, border, accent, panel, percentage: true);
         DrawNpcCompactMultiplierKnob(dc, medical, "MED DROPS", layout.Medical,
             text, muted, border, accent, panel);
@@ -1554,7 +1572,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var ammoActive = NpcBonusPackageSelected();
         {
             var ammoCard = layout.Ammo;
-            DrawHorizontalTrackCard(dc, ammo, "BONUS AMMO", ammoCard,
+            DrawHorizontalTrackCard(dc, ammo, "AMMO PACK SIZE", ammoCard,
                 text, muted, border, accent, panel, pairedValueFormatting: true);
             var examples = new (string Label, int Min, int Max)[]
             {
@@ -1601,7 +1619,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // of the card, immediately above their shared physical rail.
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
             rangeCard, 4.0, 4.0);
-        DrawText(dc, "DROPPED WEAPON CONDITION",
+        DrawText(dc, "WEAPON CONDITION",
             new Point(rangeCard.Left + 11.0, rangeCard.Top + 8.0),
             VisualControlTypography.CardTitle, text, FontWeights.Bold);
         var accepted = Linked("economy.traderMinBuyCondition");
@@ -1713,6 +1731,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             9.5, muted, FontWeights.Normal);
 
         DrawNpcConsumables(dc, text, muted, border, accent, panel);
+        DrawNpcCardHover(dc);
     }
 
     // World-loot placement operations are four separate booleans. The source
@@ -5420,7 +5439,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
     }
 
-    // Same shared-rail two-endpoint grammar as DROPPED WEAPON CONDITION,
+    // Same shared-rail two-endpoint grammar as NPC WEAPON CONDITION,
     // but two independent, persisted native MIN/MAX source parameters.
     private void DrawStashQuantityDualRail(
         DrawingContext dc, ParameterViewModel? min, ParameterViewModel? max,
@@ -6669,6 +6688,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         Focus();
 
         var point = e.GetPosition(this);
+        NpcCardSelectAt(point);
         if (NpcNeedBoostMouseDown(point))
         {
             e.Handled = true;
@@ -6786,6 +6806,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         base.OnMouseMove(e);
 
         var point = e.GetPosition(this);
+        if (Family == "NpcLootLoadout")
+            NpcCardHover(point);
         if (NpcNeedBoostMouseMove(point, e.LeftButton))
         {
             e.Handled = true;
@@ -6893,6 +6915,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     {
         base.OnMouseWheel(e);
         var pointer = e.GetPosition(this);
+        if (Family == "NpcLootLoadout")
+            NpcCardFocusAt(pointer);
         if (NpcNeedBoostWheel(pointer, e.Delta))
         {
             e.Handled = true;
@@ -7023,6 +7047,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         _npcConsumableHoverSid = null;
         _npcConsumableHoverCheckbox = false;
         NpcNeedBoostMouseLeave();
+        NpcCardMouseLeave();
         if (Family == "NpcLootLoadout") InvalidateVisual();
         if (_npcModHoverCheckbox)
         {
@@ -7088,6 +7113,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseRightButtonDown(e);
+        NpcCardSelectAt(e.GetPosition(this));
         if (NpcNeedBoostRightClick(e.GetPosition(this)))
         {
             e.Handled = true;
@@ -8322,6 +8348,12 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
 public sealed class AggregateParameterSelectedEventArgs : EventArgs
 {
-    public AggregateParameterSelectedEventArgs(ParameterViewModel parameter) => Parameter = parameter;
+    public AggregateParameterSelectedEventArgs(ParameterViewModel parameter, NpcLootCard? card = null)
+    {
+        Parameter = parameter;
+        Card = card;
+    }
     public ParameterViewModel Parameter { get; }
+    // NPC LOOT board card whose gamer-facing text the panel should show.
+    public NpcLootCard? Card { get; }
 }

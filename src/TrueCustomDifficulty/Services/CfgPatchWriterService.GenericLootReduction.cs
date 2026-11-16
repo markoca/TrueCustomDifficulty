@@ -88,7 +88,7 @@ public sealed partial class CfgPatchWriterService
     {
         // Two composable transforms of the same SmartLoot endpoints:
         // NEED BOOST stretches the need-driven span Min→Max (0 = flat Min,
-        // 1 = vanilla, 2 = doubled span), FEWER SUPPLIES then scales both.
+        // 1 = vanilla, 2 = doubled span), SCARCITY then scales both.
         if (!double.IsFinite(needBoost) || needBoost < 0.0 || needBoost > 2.0)
             throw new InvalidDataException("Corpse SmartLoot NEED BOOST must be 0–2x.");
         var reductionActive = modified.ContainsKey(NpcSupplyReductionId);

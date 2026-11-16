@@ -229,6 +229,7 @@ public partial class MainWindow : Window
         if (DataContext is MainViewModel main && main.SelectedTab is not null
             && main.SelectedTab.Parameters.Contains(e.Parameter))
         {
+            e.Parameter.PanelCard = e.Card;
             main.SelectedTab.SelectedParameter = e.Parameter;
         }
     }
@@ -239,7 +240,10 @@ public partial class MainWindow : Window
             return;
 
         if (DataContext is MainViewModel main && main.SelectedTab is not null)
+        {
+            parameter.PanelCard = null;
             main.SelectedTab.SelectedParameter = parameter;
+        }
     }
 
     private void CurrentValueBox_PreviewMouseWheel(object sender, MouseWheelEventArgs e)

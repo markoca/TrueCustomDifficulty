@@ -1044,7 +1044,7 @@
                                               VerticalScrollBarVisibility="Auto"
                                               HorizontalScrollBarVisibility="Disabled">
                                     <StackPanel>
-                                        <TextBlock Text="{Binding SelectedParameter.Label}"
+                                        <TextBlock Text="{Binding SelectedParameter.PanelTitle}"
                                                    Foreground="{StaticResource AccentBrush}"
                                                    FontSize="15"
                                                    FontWeight="SemiBold"
@@ -1056,7 +1056,7 @@
                                                    FontWeight="Bold"
                                                    Margin="0,2,0,5" />
 
-                                        <TextBlock Text="{Binding SelectedParameter.RationaleDisplay}"
+                                        <TextBlock Text="{Binding SelectedParameter.PanelRationale}"
                                                    Foreground="{StaticResource TextBrush}"
                                                    FontSize="11"
                                                    TextWrapping="Wrap"
@@ -1070,7 +1070,7 @@
                                                 <Style TargetType="Border">
                                                     <Setter Property="Visibility" Value="Collapsed" />
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding SelectedParameter.HasValueMeaning}" Value="True">
+                                                        <DataTrigger Binding="{Binding SelectedParameter.PanelHasValueMeaning}" Value="True">
                                                             <Setter Property="Visibility" Value="Visible" />
                                                         </DataTrigger>
                                                     </Style.Triggers>
@@ -1097,7 +1097,7 @@
                                                 <Style TargetType="Border">
                                                     <Setter Property="Visibility" Value="Collapsed" />
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding SelectedParameter.HasLogic}" Value="True">
+                                                        <DataTrigger Binding="{Binding SelectedParameter.PanelHasLogic}" Value="True">
                                                             <Setter Property="Visibility" Value="Visible" />
                                                         </DataTrigger>
                                                     </Style.Triggers>
@@ -1124,7 +1124,7 @@
                                                 <Style TargetType="Border">
                                                     <Setter Property="Visibility" Value="Collapsed" />
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding SelectedParameter.HasInteraction}" Value="True">
+                                                        <DataTrigger Binding="{Binding SelectedParameter.PanelHasInteraction}" Value="True">
                                                             <Setter Property="Visibility" Value="Visible" />
                                                         </DataTrigger>
                                                     </Style.Triggers>
@@ -1151,7 +1151,7 @@
                                                 <Style TargetType="Border">
                                                     <Setter Property="Visibility" Value="Collapsed" />
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding SelectedParameter.HasEffectiveDamage}" Value="True">
+                                                        <DataTrigger Binding="{Binding SelectedParameter.PanelHasEffectiveDamage}" Value="True">
                                                             <Setter Property="Visibility" Value="Visible" />
                                                         </DataTrigger>
                                                     </Style.Triggers>
@@ -1179,7 +1179,7 @@
                                                        FontSize="10"
                                                        FontWeight="Bold"
                                                        Margin="0,0,0,6" />
-                                            <TextBlock Text="{Binding SelectedParameter.ControlHelp}"
+                                            <TextBlock Text="{Binding SelectedParameter.PanelControlHelp}"
                                                        Foreground="{StaticResource TextBrush}"
                                                        FontSize="11"
                                                        TextWrapping="Wrap"

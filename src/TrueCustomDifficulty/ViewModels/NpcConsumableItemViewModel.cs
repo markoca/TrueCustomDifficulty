@@ -101,7 +101,7 @@ public sealed class NpcConsumableItemViewModel : ObservableObject
     /// Shared numeric Chance transform used by the UI rank preview and the
     /// CFG writer: <paramref name="inheritedMultiplier"/> is MED DROPS for
     /// medical rows and 1 otherwise; the result is clamped to 0..1. The
-    /// FEWER SUPPLIES master is applied afterwards by the caller.
+    /// SCARCITY master is applied afterwards by the caller.
     /// </summary>
     public double ScaleSourceChance(double sourceChance, double inheritedMultiplier)
     {

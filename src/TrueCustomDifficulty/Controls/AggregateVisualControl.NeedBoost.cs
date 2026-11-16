@@ -6,7 +6,7 @@ using TrueCustomDifficulty.Models;
 namespace TrueCustomDifficulty.Controls;
 
 /// <summary>
-/// NEED BOOST: one compact 270-degree knob beside CORPSE SMART LOOT. It
+/// NEED BOOST: one compact 270-degree knob beside BONUS PACKS. It
 /// stretches the need-driven span of the selected corpse SmartLoot packages
 /// (MinSpawnChance 10% → MaxSpawnChance): 0x = off (flat 10%), 1x = vanilla,
 /// 2x = doubled span. A preset sidecar, not a catalog parameter.

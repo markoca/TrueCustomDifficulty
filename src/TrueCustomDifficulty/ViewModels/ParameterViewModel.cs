@@ -91,7 +91,7 @@ public sealed class ParameterViewModel : ObservableObject
                   + "when the player is short of that item: 10% when stocked up, "
                   + "up to 70–90% when lacking. OFF keeps a flat 10%, 1x is "
                   + "vanilla, 2x doubles the extra chance when lacking (max "
-                  + "100%). FEWER SUPPLIES still applies afterwards.\n"
+                  + "100%). SCARCITY still applies afterwards.\n"
                   + "STANDARD NPC CONSUMABLE CHANCE — FOOD / DRINKS / MEDICAL\n"
                   + "Each checked item slider multiplies every native Chance of "
                   + "that item (0–3x, 1x = vanilla, clamped at 100%), so the "
@@ -151,7 +151,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "ItemWeightBoard" => "Adjust ammunition, food and medicine, weapons or armor weight independently.",
                     "AnomalyGlobalDamage" => "GLOBAL affects all supported anomaly damage. Each anomaly also has its own damage setting; FINAL includes both before protection.",
                     "AnomalySpecialEffects" => "Adjust Glass Shards bleeding and Psy drain independently. Their other damage effects remain separate.",
-                    "NpcLootLoadout" => "FEWER SUPPLIES scales eligible ordinary NPC consumable Chance and optional corpse SmartLoot activation, not weapons. Other controls select packages, bonus stacks, medical Chance and condition. Right-click a rail to reset.",
+                    "NpcLootLoadout" => "SCARCITY scales eligible ordinary NPC consumable Chance and optional corpse SmartLoot activation, not weapons. Other controls select packages, bonus stacks, medical Chance and condition. Right-click a rail to reset.",
                     "WorldLootLayout" => "Shuffle weapons, attachments and blueprints separately. Remove ordinary armor or detectors independently; quest rewards stay. Weapon density only affects weapon shuffle.",
                     "StashContentMix" => "SUPPLY REDUCTION scales native Chance, weighted stack counts and ordinary SmartLoot activation without changing relative Weight priority. Ammo Quantity controls all tiers; existing Chance rolls remain independent. Right-click a rail to reset.",
                     "StashMedicalComposition" => "DROP ROLLS changes medical-item chances, not whole-stash odds. LOOT PRIORITY favors items inside their actual pools. EFFECTIVE PICK previews the Medkit/Army Medkit mix; MIN/MAX sets stack sizes.",
@@ -220,6 +220,41 @@ public sealed class ParameterViewModel : ObservableObject
                 + Environment.NewLine + "Right-click the track to reset it.";
         }
     }
+    // Right-hand panel view. A clicked NPC LOOT card shows its own
+    // gamer-facing title, text and control hint and hides the technical
+    // value / logic / interaction sections; null = the parameter itself.
+    private NpcLootCard? _panelCard;
+    public NpcLootCard? PanelCard
+    {
+        get => _panelCard;
+        set
+        {
+            if (ReferenceEquals(_panelCard, value))
+                return;
+            _panelCard = value;
+            OnPropertyChanged(nameof(PanelCard));
+            RaisePanelChanged();
+        }
+    }
+    public string PanelTitle => _panelCard?.Title ?? Label;
+    public string PanelRationale => _panelCard?.Text ?? RationaleDisplay;
+    public string PanelControlHelp => _panelCard?.Controls ?? ControlHelp;
+    public bool PanelHasValueMeaning => _panelCard is null && HasValueMeaning;
+    public bool PanelHasLogic => _panelCard is null && HasLogic;
+    public bool PanelHasInteraction => _panelCard is null && HasInteraction;
+    public bool PanelHasEffectiveDamage => _panelCard is null && HasEffectiveDamage;
+
+    private void RaisePanelChanged()
+    {
+        OnPropertyChanged(nameof(PanelTitle));
+        OnPropertyChanged(nameof(PanelRationale));
+        OnPropertyChanged(nameof(PanelControlHelp));
+        OnPropertyChanged(nameof(PanelHasValueMeaning));
+        OnPropertyChanged(nameof(PanelHasLogic));
+        OnPropertyChanged(nameof(PanelHasInteraction));
+        OnPropertyChanged(nameof(PanelHasEffectiveDamage));
+    }
+
     public string Logic => Definition.Logic;
     public bool HasLogic => !string.IsNullOrWhiteSpace(Logic);
     public string Interaction => Definition.Interaction;
@@ -850,6 +885,12 @@ public sealed class ParameterViewModel : ObservableObject
 
     public ParameterViewModel(ParameterDefinition definition, string referenceDifficulty)
     {
+        PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName is nameof(ValueMeaning) or nameof(HasValueMeaning)
+                or nameof(ControlHelp) or nameof(HasEffectiveDamage) or nameof(Label))
+                RaisePanelChanged();
+        };
         Definition = definition;
         _referenceDifficulty = referenceDifficulty;
         ChoiceOptions = BuildChoiceOptions(definition);

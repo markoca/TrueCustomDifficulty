@@ -87,7 +87,7 @@ public sealed partial class AggregateVisualControl
         var editorAvailable = IsEnabled && ModItemsEditorAvailable;
 
         // Rank-growth preview inputs: the same transforms the CFG writer
-        // applies (row multiplier or MED DROPS, then FEWER SUPPLIES).
+        // applies (row multiplier or MED DROPS, then SCARCITY).
         var rankProfile = NpcConsumableRankProfile.Shared;
         var difficultySid = NpcConsumableRankProfile.DifficultySid(SelectedReferenceDifficulty);
         var globalMedical = P("loot.npcMedicalChance")?.CurrentNumber ?? 1.0;
@@ -109,6 +109,7 @@ public sealed partial class AggregateVisualControl
             var pitch = items.Length == 0 ? rowHeight
                 : maxRows * rowHeight / items.Length;
             IndustrialChrome.DrawRecessedCard(dc, card, panel, border);
+            RegisterNpcCard(group, card);
             dc.DrawEllipse(tint, null,
                 new Point(card.Left + 14.0, card.Top + 13.5), 3.6, 3.6);
             DrawText(dc, group, new Point(card.Left + 23.0, card.Top + 7.0),

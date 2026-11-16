@@ -5285,9 +5285,9 @@ if any(_tok not in _npc_preview_source for _tok in (
     'if (contentWidth >= 520.0)',
     'var ammoActive = NpcBonusPackageSelected();',
     'ammo = new Rect(condition.Right + gap, top, half, middleHeight);',
-    'DrawHorizontalTrackCard(dc, ammo, "BONUS AMMO", ammoCard,',
+    'DrawHorizontalTrackCard(dc, ammo, "AMMO PACK SIZE", ammoCard,',
     'var ammoCard = layout.Ammo;',
-    'DrawNpcCompactMultiplierKnob(dc, scarcity, "FEWER SUPPLIES", layout.Supply,',
+    'DrawNpcCompactMultiplierKnob(dc, scarcity, "SCARCITY", layout.Supply,',
     'DrawNpcCompactMultiplierKnob(dc, medical, "MED DROPS", layout.Medical,',
     'DrawNpcModItemsCard(dc, layout.Mod,',
     'var rangeCard = layout.Condition;',
@@ -5361,7 +5361,7 @@ if any(token not in _knob_native for token in (
     'IsNpcBonusSliderLocked(parameter)')):
     fail("NPC native knobs lost source ranges, steps, reset or hover semantics")
 if any(token not in _knob_mod for token in (
-    'DrawNpcCompactDial(dc, card, "FEWER MOD ITEMS"',
+    'DrawNpcCompactDial(dc, card, "MOD LOOT CUT"',
     'BooleanCheckboxChrome.Draw', '_npcModKnobHit = NpcCompactDialHit(card);',
     'Math.Round(ratio, 2', 'ModItemsEnabled && ModItemsEditorAvailable')):
     fail("NPC MOD ITEMS must be a 0–100% opt-in knob with original 1% sidecar semantics")
@@ -5411,6 +5411,24 @@ if any("2026-10-14 — NPC bonus ammo presentation" not in
 _anomaly_dial_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AnomalyDamageRadar.cs").read_text(encoding="utf-8")
 if "null, card, 4.0, 4.0);" not in _anomaly_dial_source or "new Pen(CloneWithOpacity(border, .7), 1.0), card" in _anomaly_dial_source:
     fail("Global anomaly multiplier card outline returned")
+
+# NPC LOOT cards: every card registers for white hover + its own panel text.
+_cards_src = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.NpcCards.cs").read_text(encoding="utf-8")
+_cards_vm = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "NpcLootCards.cs").read_text(encoding="utf-8")
+_xaml_panel = (ROOT / "src" / "TrueCustomDifficulty" / "MainWindow.xaml").read_text(encoding="utf-8")
+if any(_tok not in _npc_paint for _tok in (
+    "RegisterNpcCard(NpcLootCards.Packs, layout.Selector);",
+    "RegisterNpcCard(NpcLootCards.NeedBoost, layout.Boost);",
+    "RegisterNpcCard(NpcLootCards.WeaponCondition, layout.Condition);",
+    "DrawNpcCardHover(dc);",
+    'DrawText(dc, "BONUS PACKS",', 'DrawText(dc, "WEAPON CONDITION",',
+)) or "RegisterNpcCard(group, card);" not in _npc_items_ui \
+        or "new Pen(Brushes.White, 1.2), rect, 4.0, 4.0" not in _cards_src \
+        or _cards_vm.count("new(") < 10 \
+        or any(_b not in _xaml_panel for _b in (
+            "SelectedParameter.PanelTitle}", "SelectedParameter.PanelRationale}",
+            "SelectedParameter.PanelControlHelp}", "SelectedParameter.PanelHasLogic}")):
+    fail("NPC LOOT cards lost their white hover outline, registration or own panel text")
 
 # World Item Spawns: three compact list cards, checkbox left of label.
 _world_paint = _npc_preview_source.split("private void DrawWorldLootLayout(", 1)[-1].split(

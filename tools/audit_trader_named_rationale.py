@@ -16,7 +16,10 @@ catalog = (SOURCE / "Data/parameters.json").read_text(encoding="utf-8")
 xaml = (SOURCE / "MainWindow.xaml").read_text(encoding="utf-8")
 assert "IsTraderSellsMember" in vm.split("public string RationaleDisplay =>", 1)[1].split("public string ControlHelp", 1)[0]
 assert "TraderStockRationale.NamedCategories" in vm
-assert 'SelectedParameter.RationaleDisplay' in xaml
+# The panel binds PanelRationale, which falls back to RationaleDisplay
+# whenever no NPC LOOT card override is active.
+assert 'SelectedParameter.PanelRationale' in xaml
+assert 'public string PanelRationale => _panelCard?.Text ?? RationaleDisplay;' in vm
 assert '"id": "economy.traderSells.general.weapons"' in catalog
 assert 'NamedProfiles.Select(p => p.Name + " — " + p.Categories)' in rationale
 assert "Binoculars are source-listed but have no category switch" in rationale

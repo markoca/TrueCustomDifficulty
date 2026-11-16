@@ -107,6 +107,29 @@ internal static partial class Program
             }
         }
 
+        // Every NPC LOOT card owns a real catalog parameter and replaces its
+        // technical panel sections with gamer-facing text while selected.
+        {
+            var cardVm = new MainViewModel(Catalog);
+            Check(NpcLootCards.ByKey.Count == 10, "NPC LOOT must expose ten cards");
+            foreach (var card in NpcLootCards.ByKey.Values)
+            {
+                var owner = cardVm.AllParameters.SingleOrDefault(p => p.Id == card.OwnerId);
+                Check(owner is not null && card.Caption.Length > 0 && card.Title.Length > 0
+                    && card.Text.Length > 80 && card.Controls.Length > 20,
+                    "NPC LOOT card is incomplete or has no owner: " + card.Key);
+                owner!.PanelCard = card;
+                Check(owner.PanelTitle == card.Title && owner.PanelRationale == card.Text
+                    && owner.PanelControlHelp == card.Controls
+                    && !owner.PanelHasLogic && !owner.PanelHasInteraction
+                    && !owner.PanelHasValueMeaning,
+                    "NPC LOOT card did not take over the panel: " + card.Key);
+                owner.PanelCard = null;
+                Check(owner.PanelTitle == owner.Label && owner.PanelRationale == owner.RationaleDisplay,
+                    "Clearing an NPC LOOT card did not restore the parameter panel: " + card.Key);
+            }
+        }
+
         Console.WriteLine(
             "PASS NPC 2.1 baseline: corpse choice, 6/58/104 medical, 43 bonus ammo, "
             + "738 weapon rows / 92 roots; UI medical independent in all four difficulties");
