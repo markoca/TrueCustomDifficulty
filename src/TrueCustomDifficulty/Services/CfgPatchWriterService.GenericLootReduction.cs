@@ -15,6 +15,10 @@ public sealed partial class CfgPatchWriterService
 {
     private const string NpcSupplyReductionId = "loot.genericCorpseReduction";
     private const string StashSupplyReductionId = "loot.genericStashReduction";
+    // Logical sidecar editor id (not a catalog parameter).
+    internal const string NpcNeedBoostEditorId = "corpseSmartLootNeedBoost";
+    // Every authored corpse SmartLoot group uses MinSpawnChance = 0.1f.
+    private const double NpcBonusMinSpawnChance = 0.1;
 
     private static double GenericSupplyRemaining(
         IReadOnlyDictionary<string, ParameterViewModel> all, string id)
@@ -78,12 +82,21 @@ public sealed partial class CfgPatchWriterService
         IReadOnlyDictionary<string, ParameterViewModel> modified,
         IReadOnlyDictionary<string, ParameterViewModel> all,
         string difficultySid,
+        double needBoost,
         IDictionary<string, PatchDocument> documents,
         ISet<string> written)
     {
-        if (!modified.ContainsKey(NpcSupplyReductionId)) return 0;
-        var remaining = GenericSupplyRemaining(all, NpcSupplyReductionId);
-        if (remaining >= 1.0) return 0;
+        // Two composable transforms of the same SmartLoot endpoints:
+        // NEED BOOST stretches the need-driven span Min→Max (0 = flat Min,
+        // 1 = vanilla, 2 = doubled span), FEWER SUPPLIES then scales both.
+        if (!double.IsFinite(needBoost) || needBoost < 0.0 || needBoost > 2.0)
+            throw new InvalidDataException("Corpse SmartLoot NEED BOOST must be 0–2x.");
+        var reductionActive = modified.ContainsKey(NpcSupplyReductionId);
+        var boostActive = Math.Abs(needBoost - 1.0) > 0.000001;
+        if (!reductionActive && !boostActive) return 0;
+        var remaining = reductionActive
+            ? GenericSupplyRemaining(all, NpcSupplyReductionId) : 1.0;
+        if (remaining >= 1.0 && !boostActive) return 0;
         if (!all.TryGetValue("loot.npcCorpseBonus", out var choice))
             throw new InvalidDataException("Missing Corpse SmartLoot selector.");
         var selected = choice.CurrentText.Split(',',
@@ -124,10 +137,13 @@ public sealed partial class CfgPatchWriterService
                             .GetOrAddChild("SmartLootParams", useBpatch: true)
                             .GetOrAddChild(groupName, useBpatch: true)
                             .GetOrAddChild($"[{group}]", useBpatch: true);
+                        var boostedMax = Math.Clamp(NpcBonusMinSpawnChance
+                            + (sourceGroups[rank][group] - NpcBonusMinSpawnChance) * needBoost,
+                            0.0, 1.0);
                         node.SetAssignment("MinSpawnChance",
-                            FormatLikeSource(.1 * remaining, "0.1f"));
+                            FormatLikeSource(NpcBonusMinSpawnChance * remaining, "0.1f"));
                         node.SetAssignment("MaxSpawnChance",
-                            FormatLikeSource(sourceGroups[rank][group] * remaining, "0.7f"));
+                            FormatLikeSource(boostedMax * remaining, "0.7f"));
                         edits += 2;
                     }
                 }
@@ -158,7 +174,10 @@ public sealed partial class CfgPatchWriterService
 
         // Ordinary NPC Chance writer also emits 104 rows, including a
         // source-edited 100% sid, so a master always has concrete output.
-        written.Add(NpcSupplyReductionId);
+        if (reductionActive)
+            written.Add(NpcSupplyReductionId);
+        if (boostActive && selected.Length > 0 && remaining > 0.0)
+            written.Add(NpcNeedBoostEditorId);
         return edits;
     }
 }

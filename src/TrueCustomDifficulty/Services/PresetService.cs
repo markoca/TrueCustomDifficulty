@@ -81,6 +81,10 @@ public sealed class PresetService
             if (fraction is double value && (!double.IsFinite(value) || value < 0.0 || value > 1.0))
                 throw new InvalidDataException($"{label} must be between 0% and 100%.");
         }
+        if (preset.CorpseSmartLootNeedBoost is double needBoost
+            && (!double.IsFinite(needBoost) || needBoost < 0.0 || needBoost > 2.0
+                || Math.Abs(needBoost * 20.0 - Math.Round(needBoost * 20.0)) > 0.0000001))
+            throw new InvalidDataException("Corpse SmartLoot NEED BOOST must use 0–2x in 0.05x steps.");
 
         // Optional per-SID Chance sidecars: current 0–3x multiplier (0.05x
         // steps) or legacy absolute 0–100% (1% steps), never both.

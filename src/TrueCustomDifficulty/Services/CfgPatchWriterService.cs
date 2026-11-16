@@ -194,7 +194,7 @@ public sealed partial class CfgPatchWriterService
 
         editCount += WriteNpcBonusSupplyReduction(
             baseline, modifiedById, allById, difficulty.Sid,
-            documents, writtenParameters);
+            vm.CorpseSmartLootNeedBoost, documents, writtenParameters);
 
         editCount += WriteNpcMedicalLootProduction(
             baseline,

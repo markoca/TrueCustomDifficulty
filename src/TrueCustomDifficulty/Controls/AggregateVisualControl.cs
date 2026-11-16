@@ -1276,11 +1276,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
     // Identical geometry is used by OnRender and MeasureOverride.
     // Three tiers inside one centered, width-capped column:
-    //   1) SmartLoot package selector + three peer knobs (one 88-DIP row),
+    //   1) SmartLoot packages + NEED BOOST + three peer knobs (one 88-DIP row),
     //   2) Dropped Weapon Condition + optional Bonus Ammo card side by side,
     //   3) FOOD / DRINKS / MEDICAL per-item Chance columns.
     private readonly record struct NpcLootGeometry(
-        Rect Selector, Rect Ammo, Rect Supply, Rect Medical,
+        Rect Selector, Rect Boost, Rect Ammo, Rect Supply, Rect Medical,
         Rect Mod, Rect Condition, double ContentLeft, double ContentWidth,
         double ConsumablesTop, double Height);
 
@@ -1298,15 +1298,18 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var top = 54.0;
 
         Rect selector;
+        Rect boost;
         Rect supply;
         Rect medical;
         Rect mod;
         if (contentWidth >= 600.0)
         {
-            // Package selector gets 1.5 knob widths; all four share one row.
-            var unit = (contentWidth - 3.0 * gap) / 4.5;
+            // Package selector gets 1.5 knob widths; NEED BOOST sits right
+            // beside the packages it shapes, then the three peer knobs.
+            var unit = (contentWidth - 4.0 * gap) / 5.5;
             selector = new Rect(left, top, unit * 1.5, scalarHeight);
-            supply = new Rect(selector.Right + gap, top, unit, scalarHeight);
+            boost = new Rect(selector.Right + gap, top, unit, scalarHeight);
+            supply = new Rect(boost.Right + gap, top, unit, scalarHeight);
             medical = new Rect(supply.Right + gap, top, unit, scalarHeight);
             mod = new Rect(medical.Right + gap, top, unit, scalarHeight);
             top = selector.Bottom + gap;
@@ -1317,8 +1320,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             selector = new Rect(left + (contentWidth - selectorWidth) / 2.0,
                 top, selectorWidth, scalarHeight);
             top = selector.Bottom + gap;
-            var knobWidth = (contentWidth - 2.0 * gap) / 3.0;
-            supply = new Rect(left, top, knobWidth, scalarHeight);
+            var knobWidth = (contentWidth - 3.0 * gap) / 4.0;
+            boost = new Rect(left, top, knobWidth, scalarHeight);
+            supply = new Rect(boost.Right + gap, top, knobWidth, scalarHeight);
             medical = new Rect(supply.Right + gap, top, knobWidth, scalarHeight);
             mod = new Rect(medical.Right + gap, top, knobWidth, scalarHeight);
             top = supply.Bottom + gap;
@@ -1345,7 +1349,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
 
         var itemsTop = top + 12.0;
-        return new NpcLootGeometry(selector, ammo, supply, medical, mod,
+        return new NpcLootGeometry(selector, boost, ammo, supply, medical, mod,
             condition, left, contentWidth, itemsTop, itemsTop + 167.0);
     }
 
@@ -1540,6 +1544,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawNpcCompactMultiplierKnob(dc, medical, "MED DROPS", layout.Medical,
             text, muted, border, accent, panel);
         DrawNpcModItemsCard(dc, layout.Mod, text, muted, border, accent, panel);
+        DrawNpcNeedBoostCard(dc, layout.Boost, text, muted, border, accent, panel);
 
         // Bonus ammo only applies with the AMMO package. Without it the
         // same card stays in place, muted and locked (no hit target), so the
@@ -6664,6 +6669,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         Focus();
 
         var point = e.GetPosition(this);
+        if (NpcNeedBoostMouseDown(point))
+        {
+            e.Handled = true;
+            return;
+        }
         if (NpcConsumableMouseDown(point))
         {
             e.Handled = true;
@@ -6776,6 +6786,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         base.OnMouseMove(e);
 
         var point = e.GetPosition(this);
+        if (NpcNeedBoostMouseMove(point, e.LeftButton))
+        {
+            e.Handled = true;
+            return;
+        }
         if (NpcConsumableMouseMove(point, e.LeftButton))
         {
             e.Handled = true;
@@ -6878,6 +6893,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     {
         base.OnMouseWheel(e);
         var pointer = e.GetPosition(this);
+        if (NpcNeedBoostWheel(pointer, e.Delta))
+        {
+            e.Handled = true;
+            return;
+        }
         if (Family == "NpcLootLoadout" && IsEnabled
             && ModItemsEditorAvailable && ModItemsEnabled
             && _npcModKnobHit.Contains(pointer))
@@ -6958,6 +6978,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonUp(e);
+        if (NpcNeedBoostMouseUp())
+        {
+            e.Handled = true;
+            return;
+        }
         if (_npcConsumableDragged is not null)
         {
             _npcConsumableDragged = null;
@@ -6997,6 +7022,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         ToolTip = null;
         _npcConsumableHoverSid = null;
         _npcConsumableHoverCheckbox = false;
+        NpcNeedBoostMouseLeave();
         if (Family == "NpcLootLoadout") InvalidateVisual();
         if (_npcModHoverCheckbox)
         {
@@ -7019,6 +7045,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     {
         base.OnLostMouseCapture(e);
         _npcConsumableDragged = null;
+        NpcNeedBoostLostCapture();
         if (_npcModDragging)
         {
             _npcModDragging = false;
@@ -7061,6 +7088,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseRightButtonDown(e);
+        if (NpcNeedBoostRightClick(e.GetPosition(this)))
+        {
+            e.Handled = true;
+            return;
+        }
         if (NpcConsumableRightClick(e.GetPosition(this)))
         {
             e.Handled = true;
@@ -7138,6 +7170,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     {
         base.OnKeyDown(e);
 
+        if (NpcNeedBoostKeyDown(e.Key))
+        {
+            e.Handled = true;
+            return;
+        }
         if (NpcConsumableKeyDown(e.Key))
         {
             e.Handled = true;

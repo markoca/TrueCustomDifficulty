@@ -28,6 +28,7 @@ public sealed class MainViewModel : ObservableObject
     private bool _genericNpcRareGearEnabled;
     private double _worldModItemsRemoval;
     private double _corpseModItemsRemoval;
+    private double _corpseSmartLootNeedBoost = 1.0;
     private bool _worldModItemsEnabled;
     private bool _corpseModItemsEnabled;
     private double _genericNpcRareGearChance = 0.02;
@@ -151,6 +152,29 @@ public sealed class MainViewModel : ObservableObject
         }
     }
     public string CorpseModItemsRemovalDisplay => $"{CorpseModItemsRemoval * 100:0}%";
+
+    // NEED BOOST sidecar: stretches the need-driven corpse SmartLoot span
+    // (MinSpawnChance → MaxSpawnChance). 0 = off (flat 10%), 1 = vanilla,
+    // 2 = doubled span. 0.05x grid; not a catalog parameter.
+    public double CorpseSmartLootNeedBoost
+    {
+        get => _corpseSmartLootNeedBoost;
+        set
+        {
+            if (!double.IsFinite(value))
+                throw new ArgumentOutOfRangeException(nameof(value));
+            var snapped = Math.Round(Math.Clamp(value, 0.0, 2.0) / 0.05,
+                MidpointRounding.AwayFromZero) * 0.05;
+            if (SetProperty(ref _corpseSmartLootNeedBoost, snapped))
+            {
+                OnPropertyChanged(nameof(IsCorpseSmartLootNeedBoostModified));
+                AllParameters.FirstOrDefault(p => p.Id == "loot.npcCorpseBonus")
+                    ?.RefreshAggregateModifiedState();
+            }
+        }
+    }
+    public bool IsCorpseSmartLootNeedBoostModified =>
+        Math.Abs(CorpseSmartLootNeedBoost - 1.0) > 0.000001;
     public bool IsCorpseModItemsRemovalModified => CorpseModItemsEnabled && CorpseModItemsRemoval > 0.000001;
 
     public double GenericNpcRareGearChance
@@ -427,7 +451,8 @@ public sealed class MainViewModel : ObservableObject
             visualAnchor.SetAggregateModifiedProvider(
                 () => members.Any(parameter => parameter.IsValueModifiedFromReference())
                     || (anchorId == "loot.npcCorpseBonus"
-                        && NpcConsumableItems.Any(item => item.IsEffectiveChange)));
+                        && (NpcConsumableItems.Any(item => item.IsEffectiveChange)
+                            || IsCorpseSmartLootNeedBoostModified)));
 
             foreach (var visualMember in members)
             {
@@ -1416,6 +1441,7 @@ public sealed class MainViewModel : ObservableObject
             CorpseModItemsRemoval = 0.0;
             WorldModItemsEnabled = false;
             CorpseModItemsEnabled = false;
+            CorpseSmartLootNeedBoost = 1.0;
             foreach (var item in NpcConsumableItems)
                 item.Reset();
             AllParameters.First(p => p.Id == "survival.waterInstantStaminaRestore")
@@ -1448,6 +1474,7 @@ public sealed class MainViewModel : ObservableObject
                 CorpseModItemsRemoval = 0.0;
                 WorldModItemsEnabled = false;
                 CorpseModItemsEnabled = false;
+                CorpseSmartLootNeedBoost = 1.0;
                 foreach (var item in NpcConsumableItems)
                     item.Reset();
             }
@@ -1616,6 +1643,8 @@ public sealed class MainViewModel : ObservableObject
             CorpseModItemsRemoval = CorpseModItemsRemoval,
             WorldModItemsEnabled = WorldModItemsEnabled,
             CorpseModItemsEnabled = CorpseModItemsEnabled,
+            CorpseSmartLootNeedBoost = IsCorpseSmartLootNeedBoostModified
+                ? CorpseSmartLootNeedBoost : null,
             NpcConsumableChances = NpcConsumableItems.ToDictionary(
                 item => item.Sid, item => item.ToPreset(), StringComparer.Ordinal),
             DrinkDurationOverride = AllParameters.First(p =>
@@ -1695,6 +1724,8 @@ public sealed class MainViewModel : ObservableObject
                 // Existing percentage presets were implicitly active; migrate their effect.
                 WorldModItemsEnabled = preset.WorldModItemsEnabled ?? WorldModItemsRemoval > 0.0;
                 CorpseModItemsEnabled = preset.CorpseModItemsEnabled ?? CorpseModItemsRemoval > 0.0;
+                // Older presets omit NEED BOOST and load at vanilla 1x.
+                CorpseSmartLootNeedBoost = preset.CorpseSmartLootNeedBoost ?? 1.0;
                 var npcChances = preset.NpcConsumableChances
                     ?? new Dictionary<string, NpcConsumableChancePreset>(StringComparer.Ordinal);
                 var knownSids = NpcConsumableItemViewModel.SourceItems

@@ -49,6 +49,10 @@ public sealed class PresetFile
     [JsonPropertyName("corpseModItemsEnabled")]
     public bool? CorpseModItemsEnabled { get; set; }
 
+    // Corpse SmartLoot NEED BOOST, 0–2x (0.05x steps). Null/omitted = 1x.
+    [JsonPropertyName("corpseSmartLootNeedBoost")]
+    public double? CorpseSmartLootNeedBoost { get; set; }
+
     // Ten independent closed-allowlist standard-human consumable Chance
     // overrides. Old presets omit this field and load all rows disabled.
     [JsonPropertyName("npcConsumableChances")]

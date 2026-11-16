@@ -376,7 +376,8 @@
                                                                                                  ModItemsEnabled="{Binding DataContext.CorpseModItemsEnabled, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Window}}"
                                                                                                  NpcConsumables="{Binding DataContext.NpcConsumableItems, RelativeSource={RelativeSource AncestorType=Window}}"
                                                                                                  ModItemsEditorAvailable="{Binding DataContext.IsBuildIdle, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                                                                 ModItemsRemoval="{Binding DataContext.CorpseModItemsRemoval, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Window}}" />
+                                                                                                 ModItemsRemoval="{Binding DataContext.CorpseModItemsRemoval, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                                                 NeedBoost="{Binding DataContext.CorpseSmartLootNeedBoost, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Window}}" />
 
                                                                 <controls:BleedingCurveControl x:Name="BleedingCurveControl"
                                                                                                 MaxWidth="920"

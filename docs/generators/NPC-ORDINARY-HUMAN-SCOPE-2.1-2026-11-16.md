@@ -62,3 +62,4 @@ Use a **fresh save or a new zone visit** — already rolled corpses keep their l
 5. **DROPPED WEAPON CONDITION 90–100%** → primary weapons and pistols dropped by roaming NPCs show 90–100% condition.
 6. **DLC1 (if owned):** repeat 1 and 5 on NORD mercenaries.
 7. **Zombies:** with the settings from 1 and 5, zombie corpses keep vanilla consumables and weapon condition.
+8. **NEED BOOST** (MED chip on, NONE of the others): at **OFF** a player with an empty medical pouch should see bonus medkits/bandages rarely (flat 10% per group); at **2×** almost always while short, and still ~10% when fully stocked. Compare against 1× on fresh NPCs.

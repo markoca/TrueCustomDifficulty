@@ -118,9 +118,10 @@ public sealed partial class AggregateVisualControl
                 new Point(card.Right - 9.0, card.Top + headerHeight - 3.0));
 
             // Player-rank columns (Newbie / Experienced / Veteran / Master)
-            // share one fixed lane just left of the value readout.
-            var rankLaneRight = card.Right - 12.0 - NpcRankValueReserve - 6.0;
-            var rankLaneLeft = rankLaneRight - NpcRankLaneWidth;
+            // own a full-row-height lane at the card's right edge; the value
+            // readout and the rail stop before it.
+            var rankLaneLeft = card.Right - 11.0 - NpcRankLaneWidth;
+            var valueRight = rankProfile is null ? card.Right - 12.0 : rankLaneLeft - 9.0;
             if (rankProfile is not null)
                 for (var rank = 0; rank < NpcConsumableRankProfile.RankInitials.Length; rank++)
                     DrawCenteredText(dc, NpcConsumableRankProfile.RankInitials[rank],
@@ -135,7 +136,7 @@ public sealed partial class AggregateVisualControl
                     + (pitch - rowHeight) / 2.0;
                 var box = new Rect(card.Left + 9.0, rowTop + 3.0, 15.0, 15.0);
                 var rail = new Rect(card.Left + 14.0, rowTop + 23.0,
-                    Math.Max(1.0, card.Width - 28.0), 2.5);
+                    Math.Max(1.0, valueRight - (card.Left + 14.0) - 2.0), 2.5);
                 var trackHit = new Rect(rail.Left - 5.0, rowTop + 16.5,
                     rail.Width + 10.0, 14.5);
                 var hovered = _npcConsumableHoverSid == item.Sid;
@@ -144,7 +145,7 @@ public sealed partial class AggregateVisualControl
                 // Stamina Usage grammar: label left, single value right.
                 dc.DrawText(CreateText(item.Label, 9.6, enabled ? text : muted,
                         FontWeights.SemiBold,
-                        Math.Max(1.0, rankLaneLeft - (card.Left + 30.0) - 6.0)),
+                        Math.Max(1.0, valueRight - NpcRankValueReserve - (card.Left + 30.0) - 4.0)),
                     new Point(card.Left + 30.0, rowTop + 2.0));
                 if (rankProfile is not null)
                 {
@@ -153,11 +154,11 @@ public sealed partial class AggregateVisualControl
                     var effective = rankProfile.Average(item.Sid, difficultySid,
                         chance => item.ScaleSourceChance(chance, inherited) * supplyRemaining);
                     if (vanilla is not null && effective is not null)
-                        DrawNpcRankBars(dc, rankLaneLeft, rowTop + 15.5,
-                            vanilla, effective, tint, muted);
+                        DrawNpcRankBars(dc, rankLaneLeft, rowTop + 27.5,
+                            vanilla, effective, tint, muted, border);
                 }
                 DrawRightAlignedText(dc, item.PercentText,
-                    new Point(card.Right - 12.0, rowTop + 2.0),
+                    new Point(valueRight, rowTop + 2.0),
                     enabled && item.IsEffectiveChange ? 10.8 : 10.1,
                     enabled && item.IsEffectiveChange ? accent
                         : enabled ? text : CloneWithOpacity(muted, 0.7),
@@ -329,9 +330,9 @@ public sealed partial class AggregateVisualControl
         return true;
     }
 
-    private const double NpcRankBarWidth = 4.5;
+    private const double NpcRankBarWidth = 7.0;
     private const double NpcRankBarGap = 2.5;
-    private const double NpcRankBarHeight = 12.0;
+    private const double NpcRankBarHeight = 24.0;
     private const double NpcRankValueReserve = 34.0;
     private static double NpcRankLaneWidth =>
         4 * NpcRankBarWidth + 3 * NpcRankBarGap;
@@ -339,30 +340,35 @@ public sealed partial class AggregateVisualControl
     private static double NpcRankBarCenter(double laneLeft, int rank)
         => laneLeft + rank * (NpcRankBarWidth + NpcRankBarGap) + NpcRankBarWidth / 2.0;
 
-    // Four tiny columns: dim ghost = vanilla Chance, category tint = Chance
-    // after this board's settings. A raised value shows a muted tick at the
-    // vanilla height; an absent rank keeps a 1-DIP baseline stub.
+    // Four full-row-height columns on a recessed 0–100% well. Solid
+    // category tint = Chance after this board; a bright outline marks the
+    // vanilla height (always visible, also when equal or lowered). Absent
+    // ranks show only the empty well and a baseline.
     private void DrawNpcRankBars(
         DrawingContext dc, double laneLeft, double bottom,
         IReadOnlyList<double> vanilla, IReadOnlyList<double> effective,
-        Brush tint, Brush muted)
+        Brush tint, Brush muted, Brush border)
     {
-        var ghost = CloneWithOpacity(muted, 0.30);
-        var fill = CloneWithOpacity(tint, 0.88);
-        var tick = new Pen(CloneWithOpacity(muted, 0.85), 1.0);
+        var well = CloneWithOpacity(border, 0.45);
+        var fill = CloneWithOpacity(tint, 0.95);
+        var outline = new Pen(CloneWithOpacity(muted, 0.95), 1.2);
+        var baseline = new Pen(CloneWithOpacity(muted, 0.6), 1.0);
         for (var rank = 0; rank < 4; rank++)
         {
             var left = laneLeft + rank * (NpcRankBarWidth + NpcRankBarGap);
             var vanillaHeight = Math.Clamp(vanilla[rank], 0.0, 1.0) * NpcRankBarHeight;
             var effectiveHeight = Math.Clamp(effective[rank], 0.0, 1.0) * NpcRankBarHeight;
-            dc.DrawRectangle(ghost, null, new Rect(left, bottom - Math.Max(1.0, vanillaHeight),
-                NpcRankBarWidth, Math.Max(1.0, vanillaHeight)));
+            dc.DrawRectangle(well, null, new Rect(left, bottom - NpcRankBarHeight,
+                NpcRankBarWidth, NpcRankBarHeight));
             if (effectiveHeight > 0.05)
                 dc.DrawRectangle(fill, null, new Rect(left, bottom - effectiveHeight,
                     NpcRankBarWidth, effectiveHeight));
-            if (effectiveHeight > vanillaHeight + 0.6 && vanillaHeight > 0.05)
-                dc.DrawLine(tick, new Point(left - 0.5, bottom - vanillaHeight),
-                    new Point(left + NpcRankBarWidth + 0.5, bottom - vanillaHeight));
+            if (vanillaHeight > 0.05)
+                dc.DrawRectangle(null, outline, new Rect(left + 0.6,
+                    bottom - vanillaHeight + 0.6, NpcRankBarWidth - 1.2,
+                    Math.Max(0.6, vanillaHeight - 1.2)));
+            dc.DrawLine(baseline, new Point(left, bottom + 0.5),
+                new Point(left + NpcRankBarWidth, bottom + 0.5));
         }
     }
 }

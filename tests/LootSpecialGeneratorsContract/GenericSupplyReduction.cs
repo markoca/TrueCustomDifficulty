@@ -109,6 +109,76 @@ internal static partial class Program
             }
         }
 
+        // NEED BOOST stretches only the need-driven span of the selected
+        // packages: Max = clamp(0.1 + (vanillaMax - 0.1) * boost), then the
+        // corpse master scales Min and Max. 1x emits nothing.
+        foreach (var (boost, reductionValue, expectedMax, expectedMin) in new[]
+        {
+            (0.0, 0.0, 0.1, 0.1),
+            (2.0, 0.0, 1.0, 0.1),
+            (1.5, 0.5, (0.1 + 0.6 * 1.5) * 0.5, 0.05),
+            (1.0, 0.0, double.NaN, double.NaN)
+        })
+        {
+            var boostVm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Novice" };
+            boostVm.CorpseSmartLootNeedBoost = boost;
+            if (reductionValue > 0.0)
+                boostVm.AllParameters.Single(p => p.Id == corpseId).SnapCurrentNumberToMarker(reductionValue);
+            var boostDir = Path.Combine(Path.GetTempPath(), "TCD_GenericSupplyReduction",
+                "boost-" + boost.ToString(CultureInfo.InvariantCulture) + "-" + reductionValue.ToString(CultureInfo.InvariantCulture));
+            try
+            {
+                if (Directory.Exists(boostDir)) Directory.Delete(boostDir, true);
+                var boostWrite = new CfgPatchWriterService().Write(boostVm, Catalog, null, boostDir);
+                var boostOutput = ReadOutput(boostDir);
+                if (double.IsNaN(expectedMax))
+                {
+                    Check(boostWrite.EditCount == 0 && !boostOutput.ContainsKey("GameData/StashPrototypes.cfg"),
+                        "NEED BOOST 1x must not emit any SmartLoot clone");
+                    continue;
+                }
+                var boostSmart = boostOutput["GameData/StashPrototypes.cfg"];
+                var boostGroup = "TCD_Supply_NPC_Medicine_Smart/ItemGenerators/[0]/SmartLootParams/ConsumablesParams/[0]/";
+                Check(boostSmart.TryGetValue(boostGroup + "MaxSpawnChance", out var boostMax)
+                    && Math.Abs(Num(boostMax!) - expectedMax) < 0.000001
+                    && boostSmart.TryGetValue(boostGroup + "MinSpawnChance", out var boostMin)
+                    && Math.Abs(Num(boostMin!) - expectedMin) < 0.000001,
+                    "NEED BOOST endpoints wrong at " + boost + "x / reduction " + reductionValue);
+                var boostEconomy = boostOutput["GameData/DifficultyPrototypes.cfg"];
+                Check(boostEconomy.Any(kv => kv.Key.EndsWith("CorpseSmartLoot/GeneralNPC", StringComparison.Ordinal)
+                        && kv.Value == "TCD_Supply_NPC_Medicine_Smart, TCD_Supply_NPC_Ammo_Smart"),
+                    "NEED BOOST did not link both selected boosted packages");
+                Check(boostWrite.ParameterCount == (reductionValue > 0.0 ? 2 : 1),
+                    "NEED BOOST must count as one logical editor");
+            }
+            finally
+            {
+                if (Keep is null && Directory.Exists(boostDir)) Directory.Delete(boostDir, true);
+            }
+        }
+
+        // Sidecar persistence: omitted = 1x, saved value round-trips.
+        var boostPreset = Path.Combine(Path.GetTempPath(), "TCD_NeedBoost_" + Guid.NewGuid().ToString("N") + ".json");
+        try
+        {
+            var boostFile = new PresetFile
+            {
+                PresetFormatVersion = PresetService.CurrentPresetVersion,
+                ReferenceDifficulty = "Veteran",
+                CorpseSmartLootNeedBoost = 1.35
+            };
+            new PresetService().Save(boostFile, boostPreset);
+            var boostBack = new PresetService().Load(boostPreset);
+            Check(boostBack.CorpseSmartLootNeedBoost is double boostLoaded && Math.Abs(boostLoaded - 1.35) < 0.000001,
+                "NEED BOOST preset sidecar did not round-trip");
+            Check(new PresetFile().CorpseSmartLootNeedBoost is null,
+                "Old presets must omit NEED BOOST (loads as 1x)");
+        }
+        finally
+        {
+            if (File.Exists(boostPreset)) File.Delete(boostPreset);
+        }
+
         // Assert cloned source output at both native endpoints, with and
         // without separately edited optional CorpseSmartLoot packages.
         foreach (var reduction in new[] { 0.5, 1.0 })
