@@ -109,6 +109,39 @@ internal sealed class CardHoverTracker
         return _cards.FirstOrDefault(entry => Near(entry.Rect, card)).Owner;
     }
 
+    /// <summary>
+    /// Parameter to select for a click at <paramref name="point"/>: the
+    /// owner of the smallest card under it, otherwise the control target
+    /// inside that card nearest to the click (null outside every card).
+    /// </summary>
+    public ParameterViewModel? SelectAt(Point point,
+        IEnumerable<(Rect Hit, ParameterViewModel? Parameter)> targets)
+    {
+        if (CardAt(point) is not Rect card)
+            return null;
+        if (OwnerAt(point) is { } owner)
+            return owner;
+        ParameterViewModel? best = null;
+        var bestDistance = double.MaxValue;
+        foreach (var (hit, parameter) in targets)
+        {
+            if (parameter is null)
+                continue;
+            var center = new Point(hit.Left + hit.Width / 2.0, hit.Top + hit.Height / 2.0);
+            if (!card.Contains(center))
+                continue;
+            var dx = Math.Max(0.0, Math.Max(hit.Left - point.X, point.X - hit.Right));
+            var dy = Math.Max(0.0, Math.Max(hit.Top - point.Y, point.Y - hit.Bottom));
+            var distance = dx * dx + dy * dy;
+            if (distance < bestDistance)
+            {
+                best = parameter;
+                bestDistance = distance;
+            }
+        }
+        return best;
+    }
+
     /// <returns>True when the hovered card changed (caller re-renders).</returns>
     public bool UpdateHover(Point point)
     {

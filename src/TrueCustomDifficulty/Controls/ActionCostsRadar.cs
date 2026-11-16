@@ -650,10 +650,19 @@ public sealed class ActionCostsRadar : FrameworkElement
         InvalidateVisual();
     }
 
+    public event EventHandler<AggregateParameterSelectedEventArgs>? ParameterSelected;
+
+    private void SelectCardAt(Point point)
+    {
+        if (_cardHover.SelectAt(point, _targets.Select(t => (t.HitRect, (ParameterViewModel?)t.Parameter))) is { } parameter)
+            ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
+    }
+
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonDown(e);
         Focus();
+        SelectCardAt(e.GetPosition(this));
 
         var target = FindTarget(e.GetPosition(this));
         if (target is null)
@@ -714,6 +723,7 @@ public sealed class ActionCostsRadar : FrameworkElement
     protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseRightButtonDown(e);
+        SelectCardAt(e.GetPosition(this));
 
         var target = FindTarget(e.GetPosition(this));
         if (target is null)

@@ -263,6 +263,7 @@
                                                                                              Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
                                                                 <controls:ActionCostsRadar x:Name="ActionCostsRadarControl"
+                                                                                                ParameterSelected="AggregateVisualControl_ParameterSelected"
                                                                                                 MaxWidth="920"
                                                                                                 HorizontalAlignment="Center"
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
@@ -273,6 +274,7 @@
                                                                                         Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
 
                                                                 <controls:ActionCostsRadar Mode="Exhaustion" x:Name="ExhaustionRecoveryControl"
+                                                                                                ParameterSelected="AggregateVisualControl_ParameterSelected"
                                                                                                 MaxWidth="920"
                                                                                                 HorizontalAlignment="Center"
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"

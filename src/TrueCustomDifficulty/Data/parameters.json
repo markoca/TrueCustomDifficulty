@@ -4634,7 +4634,7 @@
       "group": "Core Stamina",
       "label": "Max Stamina",
       "description": "Vanilla maximum stamina is 100. This changes the size of your stamina pool, not how fast it recovers or how much actions cost.",
-      "rationale": "Changes your total stamina pool. Recovery speed and action costs stay separate.",
+      "rationale": "The size of your stamina bar. Vanilla: 100. A bigger bar lets you sprint, jump and swing longer before you're winded; recovery speed and action costs don't change.",
       "logic": "",
       "interaction": "Action costs are direct stamina values, so changing Maximum Stamina changes how many actions fit into a full bar even when their individual costs are untouched.",
       "control": "slider",
@@ -4679,7 +4679,7 @@
       "group": "Exhaustion & Recovery",
       "label": "Sprint Stops Below",
       "description": "Below this stamina value, sprinting is disabled. Default: 16.1 of the vanilla 100 stamina pool.",
-      "rationale": "Sets how low your stamina can fall before sprinting is forced to stop. Vanilla is 16.1 stamina.",
+      "rationale": "When your stamina drops below this, you can't sprint any more until it recovers. Vanilla: 16.1 out of 100. Lower it to squeeze out a longer final dash.",
       "logic": "Higher values make sprint lock out earlier while stamina is still relatively high; lower values let the player sprint deeper into the stamina bar.",
       "interaction": "Pairs with Exhaustion Regen Delay; sets sprint lockout, not sprint speed or stamina drain.",
       "control": "slider",
@@ -4724,7 +4724,7 @@
       "group": "Exhaustion & Recovery",
       "label": "Exhaustion Regen Delay",
       "description": "Seconds before stamina regeneration resumes after sprint exhaustion.",
-      "rationale": "Changes how long you must wait after running out of sprint stamina before recovery can begin.",
+      "rationale": "How long you stand there gasping after sprinting yourself out before stamina starts coming back. Vanilla: 1 second.",
       "logic": "Higher values make exhaustion pauses last longer before recovery can resume; lower values shorten the pause.",
       "interaction": "Applies after sprint exhaustion; Sprint Stops Below determines the separate lockout threshold.",
       "control": "slider",
@@ -4767,7 +4767,7 @@
       "group": "Exhaustion & Recovery",
       "label": "Boost Starts Below",
       "description": "Below this stamina value, the separate low-stamina recovery boost becomes eligible. Default: 30 stamina.",
-      "rationale": "Sets the stamina level that triggers emergency low-stamina recovery. Vanilla is 30 stamina.",
+      "rationale": "When stamina falls below this, the game gives you a short second-wind boost. Vanilla: 30 out of 100.",
       "logic": "Higher values allow the low-stamina recovery helper to engage across a larger portion of the bar; lower values reserve it for near-exhaustion.",
       "interaction": "Pairs with low-stamina Boost Rate and low-stamina Boost Duration, not the sprint lockout threshold.",
       "control": "slider",
@@ -4812,7 +4812,7 @@
       "group": "Exhaustion & Recovery",
       "label": "Boost Strength",
       "description": "Regeneration strength of the temporary low-stamina recovery boost (10 stamina/s originally).",
-      "rationale": "Sets how strong emergency stamina recovery is while it is active. Vanilla is 10 stamina/s.",
+      "rationale": "How strong that second wind is. Vanilla: 10 stamina per second on top of normal recovery. 0 removes it.",
       "logic": "Higher values make the emergency recovery effect stronger; lower values make low-stamina recovery closer to the ordinary base rate.",
       "interaction": "Boost Starts Below sets its trigger; low-stamina Boost Duration sets how long it lasts.",
       "control": "slider",
@@ -4861,7 +4861,7 @@
       "group": "Exhaustion & Recovery",
       "label": "Boost Duration",
       "description": "Seconds that the conditional low-stamina stamina regeneration boost remains active (4 seconds originally).",
-      "rationale": "Sets how long emergency stamina recovery lasts once it is triggered. Vanilla is 4 seconds.",
+      "rationale": "How long the second wind lasts once it kicks in. Vanilla: 4 seconds.",
       "logic": "Higher values keep the low-stamina recovery effect active longer; lower values shorten the boost.",
       "interaction": "Boost Activates Below sets the trigger; low-stamina Boost Rate sets the boost strength.",
       "control": "slider",
@@ -4904,7 +4904,7 @@
       "group": "Movement Stamina - Internal Speed States",
       "label": "Speed-Limited Sprint Stamina Effect",
       "description": "Changes stamina recovery while you are sprinting but your movement speed is being limited. The game decides when this slower sprint state is active.",
-      "rationale": "Changes stamina recovery during speed-limited sprinting.",
+      "rationale": "Stamina drain when you hold sprint but the game limits you to a slower speed. Vanilla: −0.65, the same as normal running. The game decides when this state applies.",
       "logic": "More negative values suppress recovery more strongly; zero adds no state penalty; positive values help recovery. Do not read this as a separate 'slow sprint' button.",
       "interaction": "This works alongside normal Sprint stamina behavior. Encumbrance and other movement limits can affect when the game uses this slower sprint state.",
       "control": "slider",
@@ -4948,7 +4948,7 @@
       "group": "Movement Stamina - Internal Speed States",
       "label": "Jogging-State Stamina Effect",
       "description": "Changes stamina recovery during the game's lighter running movement state. There is no separate Jogging keybind.",
-      "rationale": "Changes stamina recovery while the game treats your movement as jogging.",
+      "rationale": "Stamina effect while the game counts you as jogging. Vanilla: 0 — no drain. There's no jog key; the game picks this state itself.",
       "logic": "Negative settings slow stamina recovery while jogging; 0 is neutral; positive settings help stamina recover.",
       "interaction": "The game decides when your movement counts as jogging. This setting only affects stamina recovery during that movement.",
       "control": "slider",
@@ -4992,7 +4992,7 @@
       "group": "Movement Stamina - Internal Speed States",
       "label": "Slow-Run-State Stamina Effect",
       "description": "Changes stamina recovery during the game's slow-running movement state. There is no separate Slow Run keybind.",
-      "rationale": "Changes stamina recovery while the game treats your movement as slow running.",
+      "rationale": "Stamina effect while the game counts you as slow-running. Vanilla: 0 — no drain. There's no key for it; the game picks this state itself.",
       "logic": "Negative values add a stamina penalty in the SlowRun state; zero is neutral; positive values help recovery. Do not treat this as the game's Walk toggle.",
       "interaction": "This is separate from walking. The game decides when movement counts as slow running.",
       "control": "slider",
@@ -5036,7 +5036,7 @@
       "group": "Traversal",
       "label": "Vault Height",
       "description": "Changes the tallest obstacle you can vault over. The WAIST / EYES / ABOVE EYES markers are simple player-friendly height references.",
-      "rationale": "Changes the tallest obstacle you can vault over. Waist and eye-height markers are visual guides.",
+      "rationale": "The tallest obstacle you can climb over. Vanilla: 130 — the WAIST / EYES markers show what that means in-game. Raise it to vault fences and crates that used to block you.",
       "logic": "Higher lets you vault taller obstacles; lower restricts vaulting. This changes height reach, not jump distance.",
       "interaction": "Vault stamina cost, landing rules and collision checks remain independent.",
       "control": "slider",
@@ -5095,7 +5095,7 @@
       "group": "Water",
       "label": "Medium-Water Stamina Drain",
       "description": "Changes the extra stamina drain while moving through medium-depth water.",
-      "rationale": "Changes the extra stamina spent while moving through medium-depth water.",
+      "rationale": "Extra stamina lost while wading through waist-deep water. Vanilla: 1. 0 makes wading free.",
       "logic": "Higher percentages make movement actions consume more stamina while moderately immersed; lower values soften the water penalty.",
       "interaction": "This changes penalty strength only. Water immersion thresholds remain unchanged.",
       "control": "slider",
@@ -5145,7 +5145,7 @@
       "group": "Water",
       "label": "Deep-Water Stamina Drain",
       "description": "Changes the extra stamina drain while moving through deep water.",
-      "rationale": "Changes the extra stamina spent while moving through deep water.",
+      "rationale": "Extra stamina lost while pushing through deep water. Vanilla: 2 — deep water wears you out fast.",
       "logic": "Higher percentages make deep-water movement substantially more expensive; lower values reduce that stamina pressure.",
       "interaction": "This does not change the water-depth thresholds or the separate deadly-water instant-death effect.",
       "control": "slider",
@@ -5229,7 +5229,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes how fast stamina comes back. Sprinting and other action costs are separate.",
+      "rationale": "How fast your stamina refills when you ease off. Vanilla: 5 per second. Higher = shorter breathers between sprints.",
       "logic": "",
       "interaction": "Movement-state values, hunger penalties and fatigue effects can reduce this base regeneration in context."
     },
@@ -5272,7 +5272,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes stamina spent sprinting, jumping, vaulting and using melee. Aiming instead has a separate recovery effect.",
+      "rationale": "How much stamina sprinting burns. Vanilla: 5.25. Lower it to run further; raise it to make every dash count. Jump, vault and melee costs have their own bars.",
       "logic": "",
       "interaction": "",
       "exposeInUi": true
@@ -5316,7 +5316,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Controls stamina consumed by a jump.",
+      "rationale": "Stamina spent on every jump. Vanilla: 16 — about six jumps empty a full bar.",
       "logic": "",
       "interaction": "This is a per-action cost and does not change stamina regeneration.",
       "exposeInUi": false
@@ -5360,7 +5360,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Controls stamina consumed by vaulting.",
+      "rationale": "Stamina spent on every vault over an obstacle. Vanilla: 12.",
       "logic": "",
       "interaction": "The effect is independent of jump cost even though both affect traversal.",
       "exposeInUi": false
@@ -5404,7 +5404,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Controls stamina consumed by a quick melee attack.",
+      "rationale": "Stamina spent on each quick knife swing. Vanilla: 16.",
       "logic": "",
       "interaction": "Strong melee and buttstock attacks have independent costs.",
       "exposeInUi": false
@@ -5448,7 +5448,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Controls stamina consumed by a strong melee attack.",
+      "rationale": "Stamina spent on each heavy knife swing. Vanilla: 25 — four in a row and you're out of breath.",
       "logic": "",
       "interaction": "This does not alter melee damage, only the stamina economy of the action.",
       "exposeInUi": false
@@ -5492,7 +5492,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Controls stamina consumed by a buttstock melee attack.",
+      "rationale": "Stamina spent on each rifle-butt strike. Vanilla: 12.",
       "logic": "",
       "interaction": "Normal and strong melee use their own stamina values.",
       "exposeInUi": false
@@ -5536,7 +5536,7 @@
           "Player-facing Sprint action; CFG target EStateTag::Sprint is confirmed."
         ]
       },
-      "rationale": "Changes stamina recovery while sprinting.",
+      "rationale": "How hard full sprinting drains you. Vanilla: −1.4 (a strong drain). Closer to 0 = you can sprint much longer.",
       "logic": "Lower recovery makes sustained sprinting more exhausting. 0 adds no sprint-specific recovery change; higher recovery lets stamina come back faster.",
       "interaction": "Stacks with Base Stamina Regeneration and the separate Sprint Stamina Drain. Speed-limited sprinting can use the separate SprintUnderRunSpeed state instead.",
       "exposeInUi": false
@@ -5580,7 +5580,7 @@
           "CFG target EStateTag::Run is confirmed; exact state-selection semantics versus Jogging/SlowRun require runtime verification."
         ]
       },
-      "rationale": "Changes stamina recovery during normal running.",
+      "rationale": "How much normal running drains stamina. Vanilla: −0.65. Closer to 0 = running costs less.",
       "logic": "Negative settings slow stamina recovery while running; 0 is neutral; positive settings help stamina recover.",
       "interaction": "The game switches between several movement states depending on how you move. This setting affects only normal running.",
       "exposeInUi": false
@@ -5626,7 +5626,7 @@
           "UI stores a positive penalty magnitude; production writer emits the corresponding negative CFG coefficient via negateSet."
         ]
       },
-      "rationale": "Controls the aiming-only regeneration penalty independently from low-stamina recovery effects.",
+      "rationale": "How much slower stamina refills while you aim down sights. Vanilla: −25%. 0 lets you catch your breath at full speed while aiming.",
       "logic": "Higher settings slow stamina recovery more while aiming. 0 removes the aiming recovery penalty.",
       "interaction": "This is a continuous recovery-state penalty, not a one-time stamina charge. Base Stamina Recovery sets the underlying recovery rate; Sprint, Jump, Vault and melee costs remain independent.",
       "exposeInUi": false
@@ -5670,7 +5670,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes your normal carrying limit before weight penalties start.",
+      "rationale": "How much you can carry before you get slowed down. Vanilla: 80 kg. Raise it to haul more loot; lower it for a tighter backpack.",
       "logic": "",
       "interaction": "Encumbrance thresholds and equipment-derived carry-weight bonuses can affect how the load feels before the absolute maximum is reached."
     },
