@@ -1,3 +1,13 @@
+## 2026-11-16 — CURRENT: gamer-friendly NPC loot control grammar
+
+**Two native multipliers use compact 270-degree knobs, not crowded sliders:** `AMMO QTY` (`loot.npcWeaponAmmoSupply`, only visible in MED + AMMO) and `STANDARD MED` (`loot.npcMedicalChance`, visible in all packages). Each knob lives in its existing **88-DIP card**, keeps the exact native multiplier scale, tick step, original reference marker and numeric readout, and inherits the shared 270° `HitKind.Knob` click/drag, wheel, keyboard and right-click-to-reference behavior. Hovered pointer turns white; only modified digits turn yellow, not the units. Min/max multipliers are small and muted at the outside edges. No additional title bar or redundant BASE/Vanilla labels.
+
+**Percentages and ranges stay as real sliders:** `SUPPLY REDUCTION` remains a horizontal 0–100% scarcity rail, checked `MOD ITEMS` remains an opt-in 0–100% rail with native checkbox, `DROPPED WEAPON CONDITION` keeps its two-handle MIN/MAX physical range rail, and FOOD/DRINKS/MEDICAL per-item Chance editors keep compact literal 0–100% tracks with muted DEFAULT when off. The centered three-way SmartLoot chooser remains the only top selector, and AMMO QTY plus BONUS AMMO STACKS are absent under WATER/NONE.
+
+**Layout lock:** The knob changes are entirely within existing card bounds. No row is enlarged, no new panel is added, and `LayoutNpcLoot(hostWidth, showBonusAmmo)` continues to control paint and measurement. Wide, medium and narrow heights, mode-specific visibility and source control hit ownership do not change. Source IDs, CFG writers, serialized presets, generator Chances and mod allowlists are untouched. The static source audits assert dial construction and selected-only presentation; successful Wine rendering remains a separate acceptance step.
+
+---
+
 ## 2026-11-16 — CURRENT: centered NPC SmartLoot selector with contextual controls
 
 The three native CORPSE SMART LOOT options, MED + AMMO / WATER / NONE, sit alone in one centered top selector (330-DIP max width, 88-DIP height, Y=54); no unrelated editor shares their row. The source options remain mutually exclusive and their original source values are unchanged.

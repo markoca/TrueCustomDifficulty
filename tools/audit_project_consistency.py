@@ -5274,12 +5274,17 @@ if any(_tok not in _npc_preview_source for _tok in (
     'if (hostWidth < 680.0)',
     'if (hostWidth >= 900.0)',
     'if (NpcBonusPackageSelected())',
-    'DrawNpcCompactScalar(dc, ammo, "AMMO QTY", layout.Ammo,',
+    'DrawNpcCompactMultiplierKnob(dc, ammo, "AMMO QTY", layout.Ammo,',
     'DrawText(dc, "BONUS AMMO STACKS",',
     'DrawNpcCompactScalar(dc, scarcity, "SUPPLY REDUCTION", layout.Supply,',
-    'DrawNpcCompactScalar(dc, medical, "STANDARD MED", layout.Medical,',
+    'DrawNpcCompactMultiplierKnob(dc, medical, "STANDARD MED", layout.Medical,',
     'DrawNpcModItemsCard(dc, layout.Mod,',
     'var rangeCard = layout.Condition;',
+    'private void DrawNpcCompactMultiplierKnob(',
+    'KnobVisibleStepStride(pxPerStep)',
+    'var enabled = parameter.IsControlEnabled && !IsNpcBonusSliderLocked(parameter);',
+    '_hitTargets.Add(new HitTarget(parameter, hit, hit, HitKind.Knob,',
+    'parameter.Minimum, parameter.Maximum, false));',
     'DrawNpcCorpsePackageIcon(dc, optionValue,',
     'optionValue.Contains("NPC_Ammo_Smart", StringComparison.Ordinal)',
     'optionValue.Contains("NPC_Water_Smart", StringComparison.Ordinal)',
@@ -5296,7 +5301,7 @@ if any(_tok not in _npc_preview_source for _tok in (
     fail("NPC SmartLoot context or original source control drifted")
 _npc_paint = _npc_preview_source.split("private void DrawNpcLootLoadout(", 1)[-1].split("private void DrawWorldLootLayout(", 1)[0]
 _parts = _npc_paint.split("if (NpcBonusPackageSelected())", 1)
-if len(_parts) != 2 or 'DrawNpcCompactScalar(dc, ammo,' in _parts[0]:
+if len(_parts) != 2 or 'DrawNpcCompactMultiplierKnob(dc, ammo,' in _parts[0]:
     fail("NPC bonus control is not guarded by MED + AMMO selection")
 if '"Bonus ammo off · weapon ammo unaffected"' in _npc_preview_source or 'Inactive until Medicine + Ammo is selected' in _npc_preview_source:
     fail("NPC bonus preview must not display an inactive explanatory sentence")
@@ -5308,6 +5313,17 @@ if '"NpcLootLoadout" => NpcLootBoardHeight(width),' not in _npc_preview_source:
     fail("NPC board must measure from its responsive geometry")
 if '"NpcLootLoadout" => NpcLootBoardHeight(width),' not in _npc_preview_source:
     fail("NPC board must measure the current selected package geometry")
+if ('DrawNpcCompactScalar(dc, ammo,' in _npc_paint
+        or 'DrawNpcCompactScalar(dc, medical,' in _npc_paint):
+    fail("NPC quantity multipliers regressed to cramped horizontal rails")
+_knob_body = _npc_preview_source.split("private void DrawNpcCompactMultiplierKnob(", 1)[-1].split("private void DrawNpcLootLoadout(", 1)[0]
+if any(token not in _knob_body for token in (
+    'WeaponKnobStartAngle', 'WeaponKnobSweepAngle',
+    'parameter.TickFrequency', 'parameter.ReferenceNumber',
+    'KnobVisibleStepStride', 'HitKind.Knob',
+    'parameter.IsValueModifiedFromReference()', 'SetForegroundBrush(accent',
+    'IsNpcBonusSliderLocked(parameter)')):
+    fail("NPC mini-knob is not following the catalog-native dial and reset grammar")
 _npc_items_ui = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" /
                  "AggregateVisualControl.NpcConsumables.cs").read_text(encoding="utf-8")
 if "var top = NpcLootConsumablesTop(ActualWidth);" not in _npc_items_ui:

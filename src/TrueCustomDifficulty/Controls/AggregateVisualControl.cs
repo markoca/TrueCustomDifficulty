@@ -1425,6 +1425,101 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
     }
 
+    // The quantity multipliers are game-style 270-degree mini-knobs.
+    // Keep their native parameter IDs/range/steps, hover, keyboard, wheel
+    // and right-click reset through the existing HitKind.Knob pathway.
+    // Only actual numeric changes highlight; the multiplier suffix stays neutral.
+    private void DrawNpcCompactMultiplierKnob(
+        DrawingContext dc, ParameterViewModel parameter, string label, Rect card,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        var enabled = parameter.IsControlEnabled && !IsNpcBonusSliderLocked(parameter);
+        var hovered = enabled && _hoverTarget?.Kind == HitKind.Knob
+            && ReferenceEquals(_hoverTarget.Parameter, parameter);
+        IndustrialChrome.DrawRecessedCard(dc, card, panel,
+            enabled ? border : CloneWithOpacity(border, 0.55));
+        DrawCenteredText(dc, label,
+            new Point(card.Left + card.Width / 2.0, card.Top + 8.0),
+            9.4, enabled ? text : muted, FontWeights.Bold);
+
+        var center = new Point(card.Left + card.Width / 2.0, card.Top + 54.0);
+        const double radius = 25.0;
+        var span = Math.Max(Epsilon, parameter.Maximum - parameter.Minimum);
+        var amount = Math.Clamp(
+            (parameter.CurrentNumber - parameter.Minimum) / span, 0.0, 1.0);
+        var reference = Math.Clamp(
+            (parameter.ReferenceNumber - parameter.Minimum) / span, 0.0, 1.0);
+        var dialInk = enabled ? accent : muted;
+
+        dc.DrawEllipse(CloneWithOpacity(panel, 0.96), null,
+            center, radius - 6.0, radius - 6.0);
+        DrawKnobArc(dc, center, radius, WeaponKnobStartAngle,
+            WeaponKnobSweepAngle,
+            new Pen(CloneWithOpacity(border, enabled ? .9 : .5), 4.0));
+
+        // Display a legible subset of the exact catalog step ticks rather
+        // than inventing coarse precision for the small dial.
+        var nativeStep = Math.Max(Epsilon, parameter.TickFrequency);
+        var stepCount = (int)Math.Floor(span / nativeStep + .000001);
+        var pxPerStep = radius * WeaponKnobSweepAngle * Math.PI / 180.0 /
+            Math.Max(1.0, span / nativeStep);
+        var stride = KnobVisibleStepStride(pxPerStep);
+        for (var stepIndex = 0; stepIndex <= stepCount; stepIndex += stride)
+        {
+            var angle = WeaponKnobStartAngle
+                + (stepIndex * nativeStep / span) * WeaponKnobSweepAngle;
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, .56), 1.0),
+                KnobPoint(center, radius + 2.0, angle),
+                KnobPoint(center, radius + 6.0, angle));
+        }
+
+        if (amount > Epsilon)
+            DrawKnobArc(dc, center, radius, WeaponKnobStartAngle,
+                amount * WeaponKnobSweepAngle,
+                new Pen(CloneWithOpacity(dialInk, enabled ? .92 : .35), 4.2));
+        var referenceAngle = WeaponKnobStartAngle
+            + reference * WeaponKnobSweepAngle;
+        dc.DrawLine(new Pen(muted, 1.8),
+            KnobPoint(center, radius - 4.0, referenceAngle),
+            KnobPoint(center, radius + 5.0, referenceAngle));
+        var pointerAngle = WeaponKnobStartAngle
+            + amount * WeaponKnobSweepAngle;
+        if (hovered)
+            dc.DrawEllipse(CloneWithOpacity(accent, .13), null,
+                center, radius - 5.0, radius - 5.0);
+        dc.DrawLine(new Pen(hovered ? Brushes.White : dialInk,
+                hovered ? 2.7 : 1.9),
+            KnobPoint(center, radius - 5.0, pointerAngle),
+            KnobPoint(center, radius + 3.0, pointerAngle));
+
+        var value = ComparablePairedValue(parameter, parameter.CurrentNumber);
+        var formatted = CreateText(value, 11.2, enabled ? text : muted,
+            FontWeights.Bold, Math.Max(1.0, card.Width - 18.0));
+        if (enabled && parameter.IsValueModifiedFromReference())
+            foreach (System.Text.RegularExpressions.Match number in
+                System.Text.RegularExpressions.Regex.Matches(
+                    value, @"\d+(?:\.\d+)?"))
+                formatted.SetForegroundBrush(accent, number.Index, number.Length);
+        dc.DrawText(formatted, new Point(
+            center.X - formatted.WidthIncludingTrailingWhitespace / 2.0,
+            center.Y - 7.0));
+
+        DrawText(dc, $"{parameter.Minimum:0.##}×",
+            new Point(card.Left + 9.0, card.Top + 54.0),
+            8.6, muted, FontWeights.SemiBold);
+        DrawRightAlignedText(dc, $"{parameter.Maximum:0.##}×",
+            new Point(card.Right - 9.0, card.Top + 54.0),
+            8.6, muted, FontWeights.SemiBold);
+
+        if (!enabled)
+            return;
+        var hit = new Rect(center.X - radius - 7.0,
+            center.Y - radius - 7.0, 2.0 * (radius + 7.0),
+            2.0 * (radius + 7.0));
+        _hitTargets.Add(new HitTarget(parameter, hit, hit, HitKind.Knob,
+            parameter.Minimum, parameter.Maximum, false));
+    }
+
     private void DrawNpcLootLoadout(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
@@ -1487,7 +1582,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // The four normal NPC loot controls are independent of SmartLoot.
         DrawNpcCompactScalar(dc, scarcity, "SUPPLY REDUCTION", layout.Supply,
             text, muted, border, accent, panel);
-        DrawNpcCompactScalar(dc, medical, "STANDARD MED", layout.Medical,
+        DrawNpcCompactMultiplierKnob(dc, medical, "STANDARD MED", layout.Medical,
             text, muted, border, accent, panel);
         DrawNpcModItemsCard(dc, layout.Mod, text, muted, border, accent, panel);
 
@@ -1495,7 +1590,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // Switching the package does not reset the saved ammo quantity value.
         if (NpcBonusPackageSelected())
         {
-            DrawNpcCompactScalar(dc, ammo, "AMMO QTY", layout.Ammo,
+            DrawNpcCompactMultiplierKnob(dc, ammo, "AMMO QTY", layout.Ammo,
                 text, muted, border, accent, panel);
             var examples = new (string Label, string Rank, int Min, int Max)[]
             {
