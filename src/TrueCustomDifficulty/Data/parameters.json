@@ -9870,7 +9870,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Scales damage from all supported harmful anomalies. Individual anomaly damage still matters.",
+      "rationale": "How much all damaging anomalies hurt, on top of each anomaly's own damage. Vanilla: 0.3× on Novice, 1× on Stalker, 1.45× on Veteran, 1.75× on Master. Your suit's protection still applies after this.",
       "logic": "Higher raises the global damage multiplier; lower reduces it. Individual anomaly damage settings still apply.",
       "interaction": "Individual anomaly damage and this global setting combine before armor and other protection."
     },
@@ -11103,7 +11103,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes damage separately for each supported anomaly. The global anomaly setting adds another layer.",
+      "rationale": "How hard electro anomalies hit you. Vanilla: 65 base damage, then scaled by Global Anomaly Damage (Stalker 1×). Each anomaly type has its own bar on this board. 0 makes them harmless.",
       "logic": "",
       "interaction": "Use Global Anomaly Damage when you want to make all damaging anomalies stronger or weaker at once.",
       "exposeInUi": true
@@ -11147,7 +11147,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Fine-tunes Chemical damage without changing the other anomalies. Global Anomaly Damage still affects it too.",
+      "rationale": "How hard chemical anomalies hit you. Vanilla: 30 base damage, then scaled by Global Anomaly Damage (Stalker 1×). 0 makes them harmless.",
       "logic": "Effective pre-protection output is approximately base damage x Global Anomaly Damage. With the vanilla base 30, the four vanilla difficulty references are approximately: Novice 9, Stalker 30, Veteran 43.5, Master 52.5. The Base value is the game setting written for this anomaly; Effective is the live result after the global anomaly difficulty setting.",
       "interaction": "Keep this at 100% to preserve that anomaly's vanilla balance, or change it when this specific hazard should be stronger or weaker than the rest. Global Anomaly Damage stacks with this setting.",
       "exposeInUi": false
@@ -11191,7 +11191,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Fine-tunes Fire damage without changing the other anomalies. Global Anomaly Damage still affects it too.",
+      "rationale": "How hard fire anomalies hit you. Vanilla: 60 base damage, then scaled by Global Anomaly Damage (Stalker 1×). 0 makes them harmless.",
       "logic": "Effective pre-protection output is approximately base damage x Global Anomaly Damage. With the vanilla base 60, the four vanilla difficulty references are approximately: Novice 18, Stalker 60, Veteran 87, Master 105. The Base value is the game setting written for this anomaly; Effective is the live result after the global anomaly difficulty setting.",
       "interaction": "Keep this at 100% to preserve that anomaly's vanilla balance, or change it when this specific hazard should be stronger or weaker than the rest. Global Anomaly Damage stacks with this setting.",
       "exposeInUi": false
@@ -11235,7 +11235,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Fine-tunes Carousel damage without changing the other anomalies. Global Anomaly Damage still affects it too.",
+      "rationale": "How hard carousel (gravity whirl) anomalies hit you. Vanilla: 105 base damage, then scaled by Global Anomaly Damage (Stalker 1×). The hardest-hitting of the group. 0 makes them harmless.",
       "logic": "Effective pre-protection output is approximately base damage x Global Anomaly Damage. With the vanilla base 105, the four vanilla difficulty references are approximately: Novice 31.5, Stalker 105, Veteran 152.25, Master 183.75. The Base value is the game setting written for this anomaly; Effective is the live result after the global anomaly difficulty setting.",
       "interaction": "Keep this at 100% to preserve that anomaly's vanilla balance, or change it when this specific hazard should be stronger or weaker than the rest. Global Anomaly Damage stacks with this setting.",
       "exposeInUi": false
@@ -11279,7 +11279,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Fine-tunes Toxic Cloud damage without changing the other anomalies. Global Anomaly Damage still affects it too.",
+      "rationale": "How hard toxic cloud anomalies hit you. Vanilla: 25 base damage, then scaled by Global Anomaly Damage (Stalker 1×). 0 makes them harmless.",
       "logic": "Effective pre-protection output is approximately base damage x Global Anomaly Damage. With the vanilla base 25, the four vanilla difficulty references are approximately: Novice 7.5, Stalker 25, Veteran 36.25, Master 43.75. The Base value is the game setting written for this anomaly; Effective is the live result after the global anomaly difficulty setting.",
       "interaction": "Keep this at 100% to preserve that anomaly's vanilla balance, or change it when this specific hazard should be stronger or weaker than the rest. Global Anomaly Damage stacks with this setting.",
       "exposeInUi": false
@@ -11323,7 +11323,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Fine-tunes Steam damage without changing the other anomalies. Global Anomaly Damage still affects it too.",
+      "rationale": "How hard steam anomalies hit you. Vanilla: 60 base damage, then scaled by Global Anomaly Damage (Stalker 1×). 0 makes them harmless.",
       "logic": "Effective pre-protection output is approximately base damage x Global Anomaly Damage. With the vanilla base 60, the four vanilla difficulty references are approximately: Novice 18, Stalker 60, Veteran 87, Master 105. The Base value is the game setting written for this anomaly; Effective is the live result after the global anomaly difficulty setting.",
       "interaction": "Keep this at 100% to preserve that anomaly's vanilla balance, or change it when this specific hazard should be stronger or weaker than the rest. Global Anomaly Damage stacks with this setting.",
       "exposeInUi": false
@@ -11367,7 +11367,7 @@
           "Runtime CFG 2.0.5 stores FlycatcherVelocityChange as -50%. The UI exposes retained movement speed instead: CFG delta = UI value - 1.0."
         ]
       },
-      "rationale": "Controls how fast you can move inside a Flycatcher anomaly. 100% keeps normal movement speed.",
+      "rationale": "How fast you can still move when a Flycatcher grabs you. Vanilla: 50% of normal speed. 100% = no slowdown; 0% = stuck in place.",
       "logic": "Vanilla applies a -50% velocity change, so 50% of normal movement speed remains. 100% means no movement slowdown; 0% corresponds to a -100% velocity change.",
       "interaction": "Changes only player movement slowdown inside the Flycatcher. Projectile slowdown, HP/stamina regeneration penalties and turn slowdown remain separate."
     },
@@ -11417,7 +11417,7 @@
           "Runtime CFG 2.0.5 stores both yaw and pitch effects as -0.7. One UI value intentionally drives both targets: CFG delta = UI value - 1.0."
         ]
       },
-      "rationale": "Controls how fast you can turn inside a Flycatcher anomaly. 100% keeps normal turning speed.",
+      "rationale": "How fast you can still turn and look around inside a Flycatcher. Vanilla: 30% of normal. 100% = no slowdown.",
       "logic": "Vanilla applies -0.7 to both yaw and pitch turn-rate effects, leaving 30% of normal turn speed. 100% means no turn slowdown; 0% corresponds to -1.0 on both effects.",
       "interaction": "The same setting is applied to Flycatcher yaw and pitch so horizontal and vertical looking stay synchronized. Movement speed is controlled separately."
     },
@@ -11460,7 +11460,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Exposes only the Clicker's clean direct-damage effect. Equipment corrosion, flash behavior, radius, charge time and cooldown stay vanilla.",
+      "rationale": "How much health a Clicker hit takes. Vanilla: 70 base damage. Only the health damage changes; the hit still wears down your gear as usual.",
       "logic": "Vanilla ClickerAnomalyHit deals 70 base Burn damage before the normal anomaly-difficulty/protection layers are resolved. 100% keeps that base value; 0% removes this direct health-damage component.",
       "interaction": "This slider changes only the ClickerAnomalyHit base value. Global anomaly difficulty and player protection remain separate layers; Clicker equipment corrosion is intentionally untouched.",
       "exposeInUi": false
@@ -11511,7 +11511,7 @@
           "Runtime CFG stores low-speed Glass Shards damage as 20-25 and high-speed damage as 100. The slider scales both tiers together and leaves MinSpeed/MaxSpeed thresholds unchanged."
         ]
       },
-      "rationale": "Changes Glass Shards health damage while preserving its different low-speed and high-speed hit strengths.",
+      "rationale": "How much health Glass Shards take as you move through them. Vanilla: 100%. Running through still hurts more than walking.",
       "logic": "100% keeps vanilla Glass Shards damage. 0% removes its health damage; 200% doubles both low-speed and high-speed damage.",
       "interaction": "Glass Shards Bleeding and Glass Shards equipment corrosion remain separate effects. This control does not change the anomaly speed thresholds.",
       "exposeInUi": false
@@ -11562,7 +11562,7 @@
           "Runtime CFG stores Glass Shards bleeding as 20 at the low-speed tier and 60 at the high-speed tier. The slider scales both values together."
         ]
       },
-      "rationale": "Changes bleeding caused by Glass Shards without changing the anomaly's direct HP damage.",
+      "rationale": "How badly Glass Shards make you bleed. Vanilla: 100%. 0% = no bleeding; running through still cuts deeper than walking.",
       "logic": "100% keeps vanilla Glass Shards bleeding. 0% removes it; 200% doubles it.",
       "interaction": "Glass Shards Health Damage is independent. Movement-speed thresholds and corrosion values remain vanilla."
     },
@@ -11607,7 +11607,7 @@
           "Runtime CFG stores SoapBubbleDamage ValueMin/ValueMax as 100/100. Particle and other Soap Bubble behavior is intentionally left untouched."
         ]
       },
-      "rationale": "Exposes the clearly separated direct health-damage effect without turning the full Soap Bubble behavior into one misleading strength slider.",
+      "rationale": "How much health a Soap Bubble's chemical burn takes. Vanilla: 100. 0 removes the health damage only.",
       "logic": "100% keeps vanilla Soap Bubble health damage. 0% removes it; 200% doubles it.",
       "interaction": "Does not change particle behavior, spread, movement or other Soap Bubble effects.",
       "exposeInUi": false
@@ -11653,7 +11653,7 @@
           "Runtime CFG stores FireBallAnomaly ValueMin/ValueMax as 100/100 Burn damage. Fireball movement/trail behavior remains untouched."
         ]
       },
-      "rationale": "Exposes only the confirmed direct health-damage effect.",
+      "rationale": "How much health a Fireball's burn takes. Vanilla: 100. 0 removes the health damage only.",
       "logic": "100% keeps vanilla Fireball health damage. 0% removes it; 200% doubles it.",
       "interaction": "Does not change Fireball movement, trail, collision or other behavior.",
       "exposeInUi": false
@@ -11700,7 +11700,7 @@
           "Runtime CFG stores DiamondDPS ValueMin/ValueMax as 15/15."
         ]
       },
-      "rationale": "Keeps Diamond direct damage separate from its bleeding effect.",
+      "rationale": "How much health a Diamond hit takes. Vanilla: 15. Its bleeding is a separate setting.",
       "logic": "100% keeps vanilla Diamond health damage. 0% removes it; 200% doubles it.",
       "interaction": "Diamond Bleeding is controlled separately.",
       "exposeInUi": false
@@ -11747,7 +11747,7 @@
           "Runtime CFG stores DiamondBleeding ValueMin/ValueMax as 10/10."
         ]
       },
-      "rationale": "Exposes the confirmed bleeding layer independently from direct Diamond damage.",
+      "rationale": "How badly a Diamond hit makes you bleed. Vanilla: 10. 0 = no bleeding from it.",
       "logic": "100% corresponds to vanilla bleeding value 10. The slider ranges from 0 to 20.",
       "interaction": "Diamond Health Damage is a separate legacy CFG target.",
       "exposeInUi": false
@@ -11791,7 +11791,7 @@
           "Runtime CFG stores PsyAnomalyIncreaseRegen as DegenPsyPoints with ValueMin/ValueMax = -1.7/-1.7. The UI exposes the magnitude as a positive 0-200% multiplier."
         ]
       },
-      "rationale": "Changes how strongly Psy anomalies affect your Psy meter. Other Psy effects are separate.",
+      "rationale": "How fast psy anomalies drain your psy meter. Vanilla: 100%. 0% = they stop draining it; 200% = twice as fast.",
       "logic": "100% keeps vanilla Psy intensity. 0% removes this Psy effect; 200% doubles its strength.",
       "interaction": "Changes the continuous Psy drain only. Other Psy effects and thresholds remain unchanged."
     },

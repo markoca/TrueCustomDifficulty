@@ -1,4 +1,4 @@
-## 2026-11-16 — CURRENT: gamer-facing WHAT IT DOES text, tab by tab (Combat, Survival, Health, Stamina, Loot, Stashes, Economy, Equipment done)
+## 2026-11-16 — CURRENT: gamer-facing WHAT IT DOES text, tab by tab (Combat, Survival, Health, Stamina, Loot, Stashes, Economy, Equipment, Environment done)
 
 Every catalog `rationale` is being rewritten tab by tab (Combat → Survival → Health → Stamina → Loot → Stashes → Economy → Equipment → Environment → A-Life → Master) into plain gamer language: what you feel in play, the vanilla value per difficulty taken from the catalog's own `vanilla` field, and one practical tip — no CFG keys or file names. Technical detail stays in the separate value / logic / interaction sections. Custom radar controls of each tab get per-card selection as the tab is done: the card's owning parameter is passed to `dc.DrawTrackedRoundedRectangle(..., owner)` and a click anywhere in the card raises `ParameterSelected`.
 
@@ -10,6 +10,7 @@ Every catalog `rationale` is being rewritten tab by tab (Combat → Survival →
 * **Stashes (done):** all 42 parameters (supply reduction, content mix, medical composition incl. medkit stack floors/caps as shown on the board — MAX 5 = game cap, MAX 0 = none, MIN 0 = game floor — stash gear, Basic / Standard / Rare amounts and chances). `StashAmmoRadar`: each tier card selects its ammo amount.
 * **Economy (done):** all 94 parameters (trading, stock, item values, services, repair per reputation, quest coupons, the 40-cell Trader Buys and 31-cell Trader Stock matrices — each cell names its trader type, item kind and vanilla state; the Trader Stock named-trader reference is still appended). `ItemPriceScalersRadar`: each item-value lane selects its price parameter.
 * **Equipment (done):** all 6 parameters (armor durability, weapon wear, ammo / consumable / weapon / armor weight). Equipment has no custom radar: its WEAR and WEIGHT boards are `AggregateVisualControl` families, which already select per card.
+* **Environment (done):** all 17 parameters (global anomaly multiplier per difficulty, per-anomaly base damage, Clicker / Glass Shards / Soap Bubble / Fireball / Diamond effects, Flycatcher slowdown, psy drain). `AnomalyDamageRadar`: a click anywhere in an anomaly lane selects that anomaly; the borderless GLOBAL MULTIPLIER area is recorded as a card with `CardHoverTracker.Record(card, 4, global)`, so it gets the white hover outline and selects the global multiplier.
 
 ## 2026-11-16 — CURRENT: white card hover on every control, all tabs
 

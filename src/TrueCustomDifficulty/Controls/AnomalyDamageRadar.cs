@@ -203,7 +203,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             var barLeft = center - width / 2.0;
             dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .32),
                 new Pen(CloneWithOpacity(border, .55), .8),
-                new Rect(left + i * lane + 2, 248, lane - 4, 279), 4, 4);
+                new Rect(left + i * lane + 2, 248, lane - 4, 279), 4, 4, parameter);
             dc.DrawRectangle(CloneWithOpacity(border, .12), null,
                 new Rect(barLeft, top, width, bottom - top));
             dc.DrawRectangle(CloneWithOpacity(accent, .72), null,
@@ -289,6 +289,8 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         // Keep the global multiplier dial, but remove its enclosing card outline.
         dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .40),
             null, card, 4.0, 4.0);
+        // Borderless, but still one card: hover outline + click selects GLOBAL.
+        CardHoverTracker.Record(card, 4.0, p);
         DrawCenteredText(dc, "GLOBAL MULTIPLIER", new Point(card.Left + 97.0, 65.0),
             KnobTypography.CaptionSize, text, FontWeights.Bold);
 
@@ -404,6 +406,8 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         Focus();
 
         var point = e.GetPosition(this);
+        if (_cardHover.OwnerAt(point) is { } cardOwner)
+            ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(cardOwner));
         if (_globalKnobHit.Contains(point) && _globalDamage is { IsControlEnabled: true } global)
         {
             _selectedGlobalKnob = true;
@@ -496,6 +500,8 @@ public sealed class AnomalyDamageRadar : FrameworkElement
     {
         base.OnMouseRightButtonDown(e);
         var point = e.GetPosition(this);
+        if (_cardHover.OwnerAt(point) is { } cardOwner)
+            ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(cardOwner));
         if (_globalKnobHit.Contains(point) && _globalDamage is { IsControlEnabled: true } global)
         {
             _selectedGlobalKnob = true;
