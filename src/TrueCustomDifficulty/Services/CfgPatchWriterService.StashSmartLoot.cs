@@ -291,13 +291,21 @@ public sealed partial class CfgPatchWriterService
                 var biases = items.Select(item =>
                     effective.SmartSelectionFactor(item.ItemSid, selectionField)).ToArray();
                 var groupNode = SmartStashGroupNode(root, items[0]);
-                var useCategoryEndpoint =
-                    StashEffectiveState.UniformSmartFactor(biases, out var factor)
-                    && (selectionField == "Chance" || factor <= 0.0000001);
-                // Apply the master once, AFTER the existing uniform source
-                // correction. Never multiply two separately emitted endpoint
-                // assignments or use a Weight sum as spawn probability.
-                var endpointFactor = (useCategoryEndpoint ? factor : 1.0) * remaining;
+                // Weight group (one pick by Weight per spawned set): scale the
+                // native spawn endpoints by the KEPT share of source Weight,
+                // so every item keeps exactly its own factor of the game odds
+                // (docs/STASH-WEIGHT-VS-CHANCE.md). Chance groups keep the
+                // existing uniform-factor endpoint rule.
+                double groupFactor;
+                if (selectionField == "Weight")
+                    groupFactor = StashEffectiveState.SmartKeptShare(items.Select((item, i) =>
+                        (StashEffectiveState.Number(item.Weight), biases[i])));
+                else
+                    groupFactor = StashEffectiveState.UniformSmartFactor(biases, out var factor)
+                        ? factor : 1.0;
+                // Apply the master once, AFTER the source correction. Never
+                // multiply two separately emitted endpoint assignments.
+                var endpointFactor = groupFactor * remaining;
                 if (Math.Abs(endpointFactor - 1.0) > 0.0000001)
                 {
                     foreach (var pair in new[]

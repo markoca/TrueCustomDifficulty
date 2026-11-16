@@ -5264,6 +5264,20 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             or "loot.stashMedicalMedkitBias"
             or "loot.stashMedicalArmyMedkitBias";
 
+    private static readonly (string Sid, string Label, string Id)[] StashMedicalItems =
+    {
+        ("Bandage", "BANDAGES", "loot.stashMedicalBandageChanceScale"),
+        ("Medkit", "MEDKITS", "loot.stashMedicalMedkitChanceScale"),
+        ("ArmyMedkit", "ARMY MEDKITS", "loot.stashMedicalArmyMedkitChanceScale"),
+        ("AntiRad", "ANTI-RAD", "loot.stashMedicalAntiRadChanceScale")
+    };
+
+    private const double StashMedicalOddsHeight = 134.0;
+    private const double StashMedicalCellHeight = 48.0;
+
+    // MEDICAL COMPOSITION, same grammar as STASH LOOT MIX: what a stash holds
+    // per item, then ONE "keep X% of game odds" control per item (it drives
+    // the mirrored native Chance scale and Weight factor), then quantities.
     private void DrawStashMedicalComposition(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
@@ -5272,78 +5286,142 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var width = Math.Min(778.0, Math.Max(1.0, ActualWidth - 30.0));
         var left = (ActualWidth - width) / 2.0;
         var wide = width >= 670.0;
-        const double gap = 8.0;
-        const double inset = 12.0;
-        const double cardHeight = 146.0;
 
-        DrawText(dc, "DROP ROLLS · CHANCE %",
-            new Point(left + 12.0, 36.0), 10.1, text, FontWeights.Bold);
-        var chances = new (string Label, string Id, Brush Color)[]
+        // ---- ODDS PER STASH · MEDS ----------------------------------------
+        var odds = new Rect(left, 40.0, width, StashMedicalOddsHeight);
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .65),
+            new Pen(CloneWithOpacity(border, .61), .9), odds, 4.0, 4.0);
+        dc.DrawText(CreateText("ODDS PER STASH · MEDS", 11.4, text, FontWeights.Bold),
+            new Point(left + 12.0, odds.Top + 8.0));
+        DrawRightAlignedText(dc,
+            $"{SelectedReferenceDifficulty?.ToUpperInvariant()} · ALL RANKS",
+            new Point(odds.Right - 12.0, odds.Top + 9.0), 9.4, muted, FontWeights.SemiBold);
+        var sids = StashMedicalItems.Select(item => item.Sid).ToArray();
+        var current = CurrentStashEffectiveState(StashDifficultySid());
+        var reference = ReferenceStashEffectiveState();
+        var now = StashOddsTiers.Select(t => StashItemOdds(current, t, sids)).ToArray();
+        var was = StashOddsTiers.Select(t => StashItemOdds(reference, t, sids)).ToArray();
+        const double labelWidth = 104.0;
+        const double columnGap = 12.0;
+        var gridLeft = left + 12.0 + labelWidth;
+        var columnWidth = Math.Max(1.0, (odds.Right - 12.0 - gridLeft - 2.0 * columnGap) / 3.0);
+        var headerY = odds.Top + 30.0;
+        for (var t = 0; t < 3; t++)
+            DrawText(dc, StashOddsTierLabels[t],
+                new Point(gridLeft + t * (columnWidth + columnGap), headerY),
+                9.4, muted, FontWeights.Bold);
+        for (var k = 0; k < StashMedicalItems.Length; k++)
         {
-            ("BANDAGES", "loot.stashMedicalBandageChanceScale", StashMedicalPalette[0]),
-            ("MEDKITS", "loot.stashMedicalMedkitChanceScale", StashMedicalPalette[1]),
-            ("ARMY MEDKITS", "loot.stashMedicalArmyMedkitChanceScale", StashMedicalPalette[2]),
-            ("ANTI-RAD", "loot.stashMedicalAntiRadChanceScale", StashMedicalPalette[3])
-        };
-        var chanceColumns = wide ? 4 : 2;
-        var chanceWidth = (width - 2 * inset - (chanceColumns - 1) * gap) / chanceColumns;
-        for (var i = 0; i < chances.Length; i++)
-        {
-            var source = chances[i];
-            var card = new Rect(left + inset + i % chanceColumns * (chanceWidth + gap),
-                53.0 + i / chanceColumns * (cardHeight + gap),
-                chanceWidth, cardHeight);
-            DrawSourceKnob(dc, P(source.Id), source.Label, card,
-                text, muted, border, accent, panel,
-                percentageReadout: true, dialAccent: source.Color, dialScale: .74);
+            var y = headerY + 18.0 + k * 20.0;
+            dc.DrawRectangle(StashMedicalPalette[k], null, new Rect(left + 12.0, y + 3.0, 3.0, 11.0));
+            DrawText(dc, StashMedicalItems[k].Label, new Point(left + 20.0, y),
+                10.0, text, FontWeights.SemiBold);
+            for (var t = 0; t < 3; t++)
+            {
+                var x = gridLeft + t * (columnWidth + columnGap);
+                if (!StashItemAuthored(StashOddsTiers[t], StashMedicalItems[k].Sid))
+                {
+                    // The game never puts this item in this tier.
+                    DrawText(dc, "—", new Point(x, y), 10.0,
+                        CloneWithOpacity(muted, .7), FontWeights.SemiBold);
+                    continue;
+                }
+                DrawStashOddsBar(dc, x, y, columnWidth, now[t][k], was[t][k],
+                    StashMedicalPalette[k], text, muted, border, accent);
+            }
         }
 
-        var weightHeading = wide ? 213.0 : 367.0;
-        DrawText(dc, "LOOT PRIORITY · NATIVE WEIGHTS",
-            new Point(left + 12.0, weightHeading), 10.1, text, FontWeights.Bold);
-        var weightTop = wide ? 230.0 : 384.0;
-        var weightColumns = wide ? 3 : 2;
-        var weightWidth = (width - 2 * inset - (weightColumns - 1) * gap) / weightColumns;
-        // Basic Bandages compete against foods/drinks (sometimes coupons);
-        // Medkits and Army Medkits compete WITH EACH OTHER in SmartLoot.
-        var bandage = new Rect(left + inset, weightTop, weightWidth, cardHeight);
-        var medkit = new Rect(left + inset + (wide ? 1 : 0) * (weightWidth + gap),
-            weightTop + (wide ? 0 : cardHeight + gap), weightWidth, cardHeight);
-        var army = new Rect(medkit.Right + gap, medkit.Top, weightWidth, cardHeight);
-        var competition = new Rect(medkit.Left - 4.0, medkit.Top - 4.0,
-            army.Right - medkit.Left + 8.0, cardHeight + 8.0);
-        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .46),
-            new Pen(CloneWithOpacity(border, .76), .9), competition, 4.0, 4.0);
-        DrawSourceKnob(dc, P("loot.stashMedicalBandageBias"), "BANDAGES · BASIC",
-            bandage, text, muted, border, accent, panel,
-            dialAccent: StashMedicalPalette[0], dialScale: .74,
-            visualMaximum: 1.0);
-        DrawSourceKnob(dc, P("loot.stashMedicalMedkitBias"), "MEDKITS",
-            medkit, text, muted, border, accent, panel,
-            dialAccent: StashMedicalPalette[1], dialScale: .74,
-            visualMaximum: 1.0);
-        DrawSourceKnob(dc, P("loot.stashMedicalArmyMedkitBias"), "ARMY MEDKITS",
-            army, text, muted, border, accent, panel,
-            dialAccent: StashMedicalPalette[2], dialScale: .74,
-            visualMaximum: 1.0);
+        // ---- ADJUST ODDS ----------------------------------------------------
+        var columns = wide ? 4 : 2;
+        var rows = (StashMedicalItems.Length + columns - 1) / columns;
+        var adjust = new Rect(left, odds.Bottom + 8.0, width,
+            30.0 + rows * StashMedicalCellHeight + (rows - 1) * 6.0 + 10.0);
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .65),
+            new Pen(CloneWithOpacity(border, .61), .9), adjust, 4.0, 4.0);
+        dc.DrawText(CreateText("ADJUST ODDS", 11.4, text, FontWeights.Bold),
+            new Point(left + 12.0, adjust.Top + 8.0));
+        DrawRightAlignedText(dc, "100% = GAME ODDS",
+            new Point(adjust.Right - 12.0, adjust.Top + 9.0), 9.4, muted, FontWeights.SemiBold);
+        const double cellGap = 8.0;
+        var cellWidth = (width - 24.0 - (columns - 1) * cellGap) / columns;
+        for (var k = 0; k < StashMedicalItems.Length; k++)
+        {
+            var cell = new Rect(left + 12.0 + (k % columns) * (cellWidth + cellGap),
+                adjust.Top + 30.0 + (k / columns) * (StashMedicalCellHeight + 6.0),
+                cellWidth, StashMedicalCellHeight);
+            DrawStashMedicalCell(dc, P(StashMedicalItems[k].Id), StashMedicalItems[k].Label,
+                StashMedicalPalette[k], cell, text, muted, border, accent, panel);
+        }
 
-        // One fixed-source effective bar; Anti-Rad sits beside it on the right.
-        var previewTop = wide ? 384.0 : 692.0;
-        var innerWidth = width - 2.0 * inset;
-        var shareWidth = Math.Max(1.0, innerWidth * .64);
-        DrawStashMedicalPairShares(dc,
-            new Rect(left + inset, previewTop, shareWidth, 60.0),
-            text, border, panel);
-        DrawStashAntiRadWeightSwitch(dc,
-            new Rect(left + inset + shareWidth + gap, previewTop + 2.0,
-                Math.Max(1.0, innerWidth - shareWidth - gap), 56.0),
-            text, muted, border, accent, panel);
-
-        DrawText(dc, "QUANTITY",
-            new Point(left + 12.0, wide ? 452.0 : 761.0),
+        // ---- QUANTITY ---------------------------------------------------------
+        DrawText(dc, "QUANTITY", new Point(left + 12.0, adjust.Bottom + 10.0),
             10.8, text, FontWeights.Bold);
-        DrawStashMedicalQuantityCards(dc, left, width,
-            wide ? 473.0 : 782.0, wide, text, muted, border, panel);
+        DrawStashMedicalQuantityCards(dc, left, width, adjust.Bottom + 27.0, wide,
+            text, muted, border, panel);
+    }
+
+    // Shared odds bar: category/item colour fill, grey reference tick, value
+    // right (gold when it differs from the untouched value).
+    private void DrawStashOddsBar(DrawingContext dc, double x, double y, double columnWidth,
+        double value, double vanilla, Brush tone, Brush text, Brush muted, Brush border, Brush accent)
+    {
+        value = Math.Clamp(value, 0.0, 1.0);
+        vanilla = Math.Clamp(vanilla, 0.0, 1.0);
+        var changed = Math.Abs(value - vanilla) > 0.005;
+        var number = CreateText($"{value * 100.0:0}%", 10.0,
+            changed ? accent : value <= Epsilon ? muted : text, FontWeights.Bold);
+        const double numberWidth = 38.0;
+        var bar = new Rect(x, y + 5.0, Math.Max(1.0, columnWidth - numberWidth - 6.0), 7.0);
+        dc.DrawRectangle(CloneWithOpacity(border, .30), null, bar);
+        if (value > Epsilon)
+            dc.DrawRectangle(CloneWithOpacity(tone, .9), null,
+                new Rect(bar.Left, bar.Top, bar.Width * value, bar.Height));
+        var tick = bar.Left + bar.Width * vanilla;
+        dc.DrawLine(new Pen(CloneWithOpacity(muted, .75), 1.2),
+            new Point(tick, bar.Top - 2.0), new Point(tick, bar.Bottom + 2.0));
+        dc.DrawText(number, new Point(
+            bar.Right + 6.0 + numberWidth - number.WidthIncludingTrailingWhitespace, y));
+    }
+
+    // One medical "keep X% of game odds" cell: caption + value on top, rail below.
+    private void DrawStashMedicalCell(DrawingContext dc, ParameterViewModel? parameter,
+        string label, Brush tone, Rect cell, Brush text, Brush muted, Brush border,
+        Brush accent, Brush panel)
+    {
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .45),
+            new Pen(CloneWithOpacity(border, .45), .7), cell, 3.0, 3.0, parameter);
+        if (parameter is null) return;
+        _stashChanceTooltipAreas.Add((cell,
+            "How much of the game's odds for this item you keep in stashes. 100% = game odds, 0% = never. Other items are not affected."));
+        var enabled = parameter.IsControlEnabled;
+        dc.DrawRectangle(tone, null, new Rect(cell.Left + 7.0, cell.Top + 7.0, 3.0, 11.0));
+        dc.DrawText(CreateText(label, 9.8, enabled ? text : muted, FontWeights.SemiBold,
+                Math.Max(1.0, cell.Width - 64.0)),
+            new Point(cell.Left + 14.0, cell.Top + 5.0));
+        var digits = (parameter.CurrentNumber * 100.0).ToString("0.#",
+            System.Globalization.CultureInfo.InvariantCulture);
+        var number = CreateText(digits + "%", 10.6, enabled ? text : muted, FontWeights.Bold);
+        if (enabled && parameter.IsValueModifiedFromReference())
+            number.SetForegroundBrush(accent, 0, digits.Length);
+        dc.DrawText(number, new Point(cell.Right - 8.0 - number.WidthIncludingTrailingWhitespace,
+            cell.Top + 4.0));
+        var rail = new Rect(cell.Left + 12.0, cell.Bottom - 15.0, Math.Max(1.0, cell.Width - 24.0), 3.0);
+        double X(double v) => rail.Left + rail.Width * Math.Clamp(
+            (v - parameter.Minimum) / Math.Max(Epsilon, parameter.Maximum - parameter.Minimum), 0.0, 1.0);
+        var cy = rail.Top + 1.5;
+        dc.DrawLine(new Pen(CloneWithOpacity(border, .9), 3.0),
+            new Point(rail.Left, cy), new Point(rail.Right, cy));
+        dc.DrawLine(new Pen(CloneWithOpacity(enabled ? tone : muted, enabled ? .94 : .34), 3.0),
+            new Point(rail.Left, cy), new Point(X(parameter.CurrentNumber), cy));
+        var tick = X(parameter.ReferenceNumber);
+        dc.DrawLine(new Pen(CloneWithOpacity(muted, .7), 1.2),
+            new Point(tick, cy - 5.0), new Point(tick, cy + 5.0));
+        var hovered = enabled && _hoverTarget?.Kind == HitKind.Horizontal
+            && ReferenceEquals(_hoverTarget.Parameter, parameter);
+        dc.DrawEllipse(panel, new Pen(hovered ? Brushes.White : enabled ? tone : muted,
+            hovered ? 1.8 : 1.4), new Point(X(parameter.CurrentNumber), cy), 4.5, 4.5);
+        AddHorizontalTarget(parameter, new Rect(rail.Left - 6.0, cell.Top + 20.0,
+            rail.Width + 12.0, cell.Height - 20.0), rail, parameter.Minimum, parameter.Maximum);
     }
 
     // Show the original Veteran source pair only; no rank selector or blended rank odds.
@@ -6883,7 +6961,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private void UpdateStashChanceTooltip(Point point)
     {
         string? hint = null;
-        if (Family == "StashContentMix")
+        if (Family is "StashContentMix" or "StashMedicalComposition")
         {
             foreach (var (area, areaHint) in _stashChanceTooltipAreas)
             {
@@ -8152,8 +8230,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     // ODDS 258 + 8 + BASIC MIX (116 wide / 180 narrow) + 12 padding.
     private double StashContentMixHeight(double width)
         => width >= 700.0 ? 695.0 : 823.0;
+    // 40 + ODDS 134 + 8 + ADJUST (88 wide / 142 narrow) + 27 + QUANTITY
+    // (122 wide / 254 narrow) + 14 padding.
     private static double StashMedicalCompositionHeight(double width)
-        => width >= 700.0 ? 609.0 : 1050.0;
+        => width >= 700.0 ? 433.0 : 619.0;
     // Paint width is ActualWidth - 30 DIP. At host widths 540–569 DIP
     // the FOUR-knob mixer still paints in two rows and needs 612 DIP.
     private static double StashGearHeight(double width)

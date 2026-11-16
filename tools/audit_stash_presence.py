@@ -103,7 +103,23 @@ ammo = [float(i["fields"]["Weight"]) for i in
 kept, empty = edit(ammo, [1, 1, 1], presence=0.25)
 assert abs(empty / (sum(kept) + empty) - 0.75) < 1e-12
 
-for token in ("ONE entry", "Empty", "Desolation", "13564", "never mix"):
+# ---- 5. SmartLoot Weight groups: kept-share spawn endpoints --------------
+smart_writer = read("Services/CfgPatchWriterService.StashSmartLoot.cs")
+assert "public static double SmartKeptShare(" in state
+assert "groupFactor = StashEffectiveState.SmartKeptShare(" in smart_writer
+for weights, factors in (([5, 1], [0.5, 1.0]), ([4, 1], [1.0, 0.0]), ([1], [0.3])):
+    source = sum(weights)
+    kept = [w * k for w, k in zip(weights, factors)]
+    share = min(1.0, sum(kept) / source)
+    for i, (w, k) in enumerate(zip(weights, factors)):
+        item_odds = share * (kept[i] / sum(kept) if sum(kept) else 0.0)
+        assert abs(item_odds - k * w / source) < 1e-12, (weights, factors)
+
+# ---- 6. Medical: one control per item, Chance scale <-> Weight factor -----
+assert "Mirror(scale, bias);" in vm and "Mirror(bias, scale);" in vm
+assert 'DrawStashMedicalCell(dc, P(StashMedicalItems[k].Id)' in aggregate
+
+for token in ("ONE entry", "Empty", "Desolation", "13564", "never mix", "SmartKeptShare"):
     assert token in docs, token
 
 print("PASS: one Weight/Chance rule — Weight lists keep their source total via Empty; writer, odds, preview, presets share it")

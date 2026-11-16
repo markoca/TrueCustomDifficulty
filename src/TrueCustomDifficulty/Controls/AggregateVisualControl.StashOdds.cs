@@ -39,12 +39,29 @@ public sealed partial class AggregateVisualControl
     /// appended Empty, if any); every native Chance entry rolls on its own.
     /// </summary>
     private static double[] StashCategoryOdds(StashEffectiveState state, string tier)
+        => StashOddsCore(state, tier, StashCategoryIndex, StashOddsCategoryLabels.Length);
+
+    /// <summary>Same odds, one row per item SID (Medical Composition).</summary>
+    private static double[] StashItemOdds(StashEffectiveState state, string tier,
+        IReadOnlyList<string> sids)
+        => StashOddsCore(state, tier,
+            sid => sids.ToList().FindIndex(x => x.Equals(sid, StringComparison.OrdinalIgnoreCase)),
+            sids.Count);
+
+    /// <summary>True when the tier's native source lists contain this SID at all.</summary>
+    private static bool StashItemAuthored(string tier, string sid)
+        => StashSourceGroups.Value.Any(g => !g.IsSmart && g.Tier == tier
+            && g.Items.Any(item => item.ItemSid.Equals(sid, StringComparison.OrdinalIgnoreCase)
+                && StashEffectiveState.Number(item.SourceRaw) > Epsilon));
+
+    private static double[] StashOddsCore(StashEffectiveState state, string tier,
+        Func<string, int> indexOf, int count)
     {
         var baseline = StashPreviewBaseline.Value;
         var difficulty = state.DifficultySid;
         var groups = StashSourceGroups.Value
             .Where(g => !g.IsSmart && g.Tier == tier).ToArray();
-        var odds = new double[StashOddsCategoryLabels.Length];
+        var odds = new double[count];
         for (var rank = 0; rank < 4; rank++)
         {
             var none = Enumerable.Repeat(1.0, odds.Length).ToArray();
@@ -58,7 +75,7 @@ public sealed partial class AggregateVisualControl
                     var total = edit.Values.Sum() + edit.EmptyValue;
                     if (total <= Epsilon) continue;
                     var kinds = category.Items
-                        .Select(item => StashCategoryIndex(item.Fields["ItemPrototypeSID"]))
+                        .Select(item => indexOf(item.Fields["ItemPrototypeSID"]))
                         .ToArray();
                     foreach (var kind in kinds.Where(k => k >= 0).Distinct())
                         none[kind] *= 1.0 - Enumerable.Range(0, kinds.Length)
@@ -68,7 +85,7 @@ public sealed partial class AggregateVisualControl
                 {
                     foreach (var item in group.Items)
                     {
-                        var kind = StashCategoryIndex(item.ItemSid);
+                        var kind = indexOf(item.ItemSid);
                         if (kind < 0) continue;
                         var chance = StashEffectiveState.Number(
                             group.EffectiveSelection(baseline, state, item));

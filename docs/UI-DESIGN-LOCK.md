@@ -1,3 +1,13 @@
+## 2026-11-16 — CURRENT: MEDICAL COMPOSITION — one keep-odds control per item, odds table, SmartLoot kept-share rule
+
+**Supersedes DROP ROLLS · CHANCE %, LOOT PRIORITY · NATIVE WEIGHTS, EFFECTIVE PICK and the ANTI-RAD ON/OFF switch.** Same grammar as STASH LOOT MIX (definition: `docs/STASH-WEIGHT-VS-CHANCE.md`).
+
+* **ODDS PER STASH · MEDS** (134 DIP): rows BANDAGES / MEDKITS / ARMY MEDKITS / ANTI-RAD × BASIC / STANDARD / RARE, ≈ odds that one regular stash holds that item (selected difficulty, all ranks), item colour bar, grey reference tick, gold when changed; "—" where the game never puts that item in that tier. Same `StashOddsCore` as the category table (per-SID index).
+* **ADJUST ODDS**: one "keep X% of game odds" cell per item (4×1 wide, 2×2 narrow, 48 DIP cells: colour mark, caption, value, rail, reference tick). The cell edits `loot.stashMedical{Item}ChanceScale`; the VM mirrors it to `loot.stashMedical{Item}Bias` both ways (last change wins; bias step now 0.05), so native Chance rows and native Weight picks always move together.
+* **QUANTITY**: unchanged Medkit / Army Medkit stack floors and caps.
+* **SmartLoot writer** (also fixes the "still relative" note for smart stashes): for every SmartLoot **Weight** group each item's Weight is scaled by its own factor k and the group's native `MinSpawnChance` / `MaxSpawnChance` by the kept share Σw·k/Σw (`StashEffectiveState.SmartKeptShare`). Every item then keeps exactly k of its game odds with native fields only (no `Empty`). Single-item groups (bandage, medkit, anti-rad) now respond across the whole range instead of only at 0%. Chance groups keep the existing uniform-factor rule.
+* Heights 433 / 619 DIP. C# harness `LootSpecialGeneratorsContract` expects the mirrored pair for medical Bias cases.
+
 ## 2026-11-16 — CURRENT: STASH LOOT MIX — one Weight/Chance rule, every ADJUST ODDS cell = "keep X% of game odds"
 
 **Authoritative definition: `docs/STASH-WEIGHT-VS-CHANCE.md`** (Weight list = exactly one pick, Chance list = independent rolls, never mixed; evidence from the 2.1 dump scan and the Desolation generator tutorial). Supersedes the "IN MIX / priority" reading of the Basic cells below.

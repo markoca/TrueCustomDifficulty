@@ -771,6 +771,37 @@ public sealed class MainViewModel : ObservableObject
         };
         SyncStashAmmoQuantity();
 
+        // Medical Composition: ONE visible control per item. The native Chance
+        // scale and the native Weight factor both mean "keep X% of the game's
+        // odds" (docs/STASH-WEIGHT-VS-CHANCE.md), so they are mirrored: the
+        // last one changed (UI, preset load, reset) wins.
+        foreach (var sid in new[] { "Bandage", "Medkit", "ArmyMedkit", "AntiRad" })
+        {
+            var scale = parametersById[$"loot.stashMedical{sid}ChanceScale"];
+            var bias = parametersById[$"loot.stashMedical{sid}Bias"];
+            var syncing = false;
+            void Mirror(ParameterViewModel from, ParameterViewModel to)
+            {
+                if (syncing) return;
+                var value = Math.Clamp(from.CurrentNumber, to.Minimum, to.Maximum);
+                if (Math.Abs(to.CurrentNumber - value) <= 0.0000001) return;
+                syncing = true;
+                try { to.SnapCurrentNumberToMarker(value); }
+                finally { syncing = false; }
+            }
+            scale.PropertyChanged += (_, args) =>
+            {
+                if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
+                    Mirror(scale, bias);
+            };
+            bias.PropertyChanged += (_, args) =>
+            {
+                if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
+                    Mirror(bias, scale);
+            };
+            Mirror(scale, bias);
+        }
+
         // One native relative-bias chart for actual medical ItemPrototypeSIDs
         // and one separate Medkit/Army stack floor/cap editor (0 = AUTO).
         WireVisualAggregate(

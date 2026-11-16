@@ -6297,7 +6297,7 @@
       "slider": {
         "min": 0,
         "max": 3,
-        "step": 0.25,
+        "step": 0.05,
         "stepMode": "absolute"
       },
       "targets": [
@@ -6317,7 +6317,7 @@
           "0× disables the matching Weight entries, not separate Chance rolls. Source eligibility and excluded quest/unique stashes remain unchanged."
         ]
       },
-      "rationale": "How often bandages win when a stash picks a med. Vanilla: 1×. 0 takes bandages out of that pick; the chance roll is a separate setting.",
+      "rationale": "Follows the BANDAGES cell automatically: the same \"keep X% of the game's odds\" for bandages in the game's weighted stash picks (the shared Basic pick and smart world stashes). Vanilla: 100%.",
       "logic": "Higher priority favors Bandages relative to other supported medical loot. Zero excludes this type from the weighted selection.",
       "interaction": "The separate Bandage Chance Modifier still controls original chance rolls.",
       "exposeInUi": true
@@ -6364,7 +6364,7 @@
           "Native chance rows can differ by tier/difficulty; this is a percentage-of-native control, not a single absolute drop chance."
         ]
       },
-      "rationale": "Scales the game's own chance of a bandage turning up in stashes. Vanilla: 100%. 50% = half as likely; 0% = no bandages from those rolls.",
+      "rationale": "How much of the game's odds for bandages you keep in stashes (the BANDAGES cell in MEDICAL COMPOSITION). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
       "logic": "100% keeps the original Bandage chance; 50% halves it and 0% disables that chance roll. This is not a whole-stash drop rate.",
       "interaction": "Bandage priority or availability is separate; the stash's existing eligibility rules still apply.",
       "exposeInUi": true
@@ -6391,7 +6391,7 @@
       "slider": {
         "min": 0,
         "max": 3,
-        "step": 0.25,
+        "step": 0.05,
         "stepMode": "absolute"
       },
       "targets": [
@@ -6411,7 +6411,7 @@
           "0× disables the matching Weight entries, not separate Chance rolls. Source eligibility and excluded quest/unique stashes remain unchanged."
         ]
       },
-      "rationale": "How often medkits win when a stash picks a med. Vanilla: 1×. 0 takes medkits out of that pick.",
+      "rationale": "Follows the MEDKITS cell automatically: the same \"keep X% of the game's odds\" for medkits in the game's weighted stash picks (the shared Basic pick and smart world stashes). Vanilla: 100%.",
       "logic": "Higher priority favors Medkits relative to other supported medical loot. Zero excludes this type from the weighted selection.",
       "interaction": "The separate Medkit Chance Modifier still controls original chance rolls.",
       "exposeInUi": true
@@ -6458,7 +6458,7 @@
           "Native chance rows can differ by tier/difficulty; this is a percentage-of-native control, not a single absolute drop chance."
         ]
       },
-      "rationale": "Scales the game's own chance of a medkit turning up in stashes. Vanilla: 100%. 50% = half as likely.",
+      "rationale": "How much of the game's odds for medkits you keep in stashes (the MEDKITS cell in MEDICAL COMPOSITION). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
       "logic": "100% keeps the original Medkit chance; 50% halves it and 0% disables that chance roll. This is not a whole-stash drop rate.",
       "interaction": "Medkit priority or availability is separate; the stash's existing eligibility rules still apply.",
       "exposeInUi": true
@@ -6485,7 +6485,7 @@
       "slider": {
         "min": 0,
         "max": 3,
-        "step": 0.25,
+        "step": 0.05,
         "stepMode": "absolute"
       },
       "targets": [
@@ -6505,7 +6505,7 @@
           "0× disables the matching Weight entries, not separate Chance rolls. Source eligibility and excluded quest/unique stashes remain unchanged."
         ]
       },
-      "rationale": "How often army medkits win when a stash picks a med. Vanilla: 1×. 0 takes them out of that pick.",
+      "rationale": "Follows the ARMY MEDKITS cell automatically: the same \"keep X% of the game's odds\" for army medkits in the game's weighted stash picks (the shared Basic pick and smart world stashes). Vanilla: 100%.",
       "logic": "Higher priority favors Army Medkits relative to other supported medical loot. Zero excludes this type from the weighted selection.",
       "interaction": "The separate Army Medkit Chance Modifier still controls original chance rolls.",
       "exposeInUi": true
@@ -6552,7 +6552,7 @@
           "Native chance rows can differ by tier/difficulty; this is a percentage-of-native control, not a single absolute drop chance."
         ]
       },
-      "rationale": "Scales the game's own chance of an army medkit turning up in stashes. Vanilla: 100%. 50% = half as likely.",
+      "rationale": "How much of the game's odds for army medkits you keep in stashes (the ARMY MEDKITS cell in MEDICAL COMPOSITION). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
       "logic": "100% keeps the original Army Medkit chance; 50% halves it and 0% disables that chance roll. This is not a whole-stash drop rate.",
       "interaction": "Army Medkit priority or availability is separate; the stash's existing eligibility rules still apply.",
       "exposeInUi": true
@@ -6579,7 +6579,7 @@
       "slider": {
         "min": 0,
         "max": 3,
-        "step": 0.25,
+        "step": 0.05,
         "stepMode": "absolute"
       },
       "targets": [
@@ -6599,7 +6599,7 @@
           "0× disables the matching Weight entries, not separate Chance rolls. Source eligibility and excluded quest/unique stashes remain unchanged."
         ]
       },
-      "rationale": "Whether anti-rads can be picked in stash med pools. Vanilla: ON. Turn OFF to make anti-rads a trader-only buy; the chance roll is a separate setting.",
+      "rationale": "Follows the ANTI-RADS cell automatically: the same \"keep X% of the game's odds\" for anti-rads in the game's weighted stash picks (the shared Basic pick and smart world stashes). Vanilla: 100%.",
       "logic": "ON allows Anti-Rad in its eligible stash pool; OFF excludes it from that pool. The original chance check still applies.",
       "interaction": "Anti-Rad Chance Modifier scales the separate chance check while Anti-Rad is allowed.",
       "exposeInUi": true
@@ -6646,7 +6646,7 @@
           "Native chance rows can differ by tier/difficulty; this is a percentage-of-native control, not a single absolute drop chance."
         ]
       },
-      "rationale": "Scales the game's own chance of an anti-rad turning up in stashes. Vanilla: 100%. 50% = half as likely.",
+      "rationale": "How much of the game's odds for anti-rads you keep in stashes (the ANTI-RADS cell in MEDICAL COMPOSITION). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
       "logic": "100% keeps the original Anti-Rad chance; 50% halves it and 0% disables that chance roll. This is not a whole-stash drop rate.",
       "interaction": "Anti-Rad priority or availability is separate; the stash's existing eligibility rules still apply.",
       "exposeInUi": true

@@ -65,10 +65,20 @@ public sealed record StashBranchPreview(
         var min = MinSpawnChance;
         var max = MaxSpawnChance;
         var sets = ItemSetCount;
-        if (StashEffectiveState.UniformSmartFactor(
+        var keptShare = Field == "Weight"
+            ? StashEffectiveState.SmartKeptShare(Items.Select(i =>
+                (StashEffectiveState.Number(i.SourceRaw),
+                    state.SmartSelectionFactor(i.ItemSid, Field))))
+            : 1.0;
+        if (Field == "Weight" && keptShare < 1.0 - 0.0000001)
+        {
+            if (min.Length > 0) min = StashEffectiveState.SmartSpawnEndpoint(min, keptShare);
+            if (max.Length > 0) max = StashEffectiveState.SmartSpawnEndpoint(max, keptShare);
+            if (keptShare <= 0 && sets.Length > 0) sets = "0";
+        }
+        else if (Field == "Chance" && StashEffectiveState.UniformSmartFactor(
                 Items.Select(i => state.SmartSelectionFactor(i.ItemSid, Field)),
-                out var factor)
-            && (Field == "Chance" || factor <= 0.0000001))
+                out var factor))
         {
             if (min.Length > 0) min = StashEffectiveState.SmartSpawnEndpoint(min, factor);
             if (max.Length > 0) max = StashEffectiveState.SmartSpawnEndpoint(max, factor);

@@ -483,6 +483,22 @@ public sealed class StashEffectiveState
         return TuneCount(original, field, raw);
     }
 
+    /// <summary>
+    /// SmartLoot Weight group: share of the group's source Weight that is
+    /// kept (Σ w·k / Σ w, capped at 1). Scaling the group's native spawn
+    /// endpoints by this share while each Weight is scaled by its own k makes
+    /// every item keep exactly k of its game odds — the same "keep X% of game
+    /// odds" rule as the tier lists, using only native fields (no Empty).
+    /// </summary>
+    public static double SmartKeptShare(IEnumerable<(double Weight, double Factor)> items)
+    {
+        var list = items.ToArray();
+        var source = list.Sum(item => Math.Max(0.0, item.Weight));
+        if (source <= 0.0000001) return 1.0;
+        var kept = list.Sum(item => Math.Max(0.0, item.Weight) * Math.Max(0.0, item.Factor));
+        return Math.Min(1.0, kept / source);
+    }
+
     public static bool UniformSmartFactor(
         IEnumerable<double> values, out double factor)
     {

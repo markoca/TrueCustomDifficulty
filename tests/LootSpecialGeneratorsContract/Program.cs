@@ -247,10 +247,16 @@ internal static partial class Program
                 var edited = vm.AllParameters.Where(q => q.IsControlEnabled
                     && q.IsValueModifiedFromReference()).Select(q => q.Id)
                     .ToHashSet(StringComparer.Ordinal);
-                Check(edited.SetEquals(new[] { id }),
+                // Medical Weight factors mirror their Chance scale (one
+                // Medical Composition control per item, 2026-11-16).
+                var expectedIds = id.StartsWith("loot.stashMedical", StringComparison.Ordinal)
+                        && id.EndsWith("Bias", StringComparison.Ordinal)
+                    ? new[] { id, id[..^"Bias".Length] + "ChanceScale" }
+                    : new[] { id };
+                Check(edited.SetEquals(expectedIds),
                     name + ": unrelated modified source controls: " + string.Join(",", edited));
                 var result = new CfgPatchWriterService().Write(vm, Catalog, null, dir);
-                Check(result.ParameterCount == 1,
+                Check(result.ParameterCount >= 1 && result.ParameterCount <= expectedIds.Length,
                     name + ": expected only the explicitly edited SmartLoot source, got "
                     + result.ParameterCount);
                 var outp = ReadOutput(dir);

@@ -34,11 +34,14 @@ Every cell in **ADJUST ODDS** means: **keep X% of the game's own odds** for that
 
 `Empty` is written as `[n] { ItemPrototypeSID = Empty; Weight = removed }` after the source entries, only in the TCD tier template clones. At 100% nothing is appended. A legacy factor above 1× (old presets) leaves no `Empty` and only boosts that kind relative to the others.
 
+## SmartLoot world stashes
+
+A SmartLoot group spawns with a native chance between `MinSpawnChance` and `MaxSpawnChance` (player need) and then picks by Weight. For every **Weight** group the writer scales each item's Weight by its own factor k and both spawn endpoints by the kept share Σw·k / Σw (`StashEffectiveState.SmartKeptShare`). Item odds = spawn × share, so every item keeps exactly k of its game odds — the same rule, native fields only, no `Empty`.
+
+## Medical items
+
+Each medical item exists in Chance rows (Basic / Standard / Rare) and in Weight picks (Basic shared pick, SmartLoot). MEDICAL COMPOSITION therefore shows ONE control per item; its native Chance scale and Weight factor are mirrored so both list types keep the same share of game odds.
+
 ## Paths that still use plain relative Weight scaling
 
-The same `loot.stashMix*` and medical-priority factors also feed these writers, which **do not** append `Empty` yet. There, lowering a kind still hands its share to the other kinds in that list:
-
-* SmartLoot world stash groups (`WriteWorldStashSmartLoot`; uniform single-kind groups use the native spawn endpoints instead);
-* DLC1 regular stash rows (`StashDlc1`), Cabin and direct medical rows.
-
-These are outside ODDS PER STASH and are listed in the WHAT IT DOES texts as "smart world stashes".
+DLC1 regular stash rows (`StashDlc1`), Cabin and direct medical rows still scale Weight relatively (no `Empty`); they are outside ODDS PER STASH.

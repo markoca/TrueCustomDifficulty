@@ -75,7 +75,7 @@ gear = method("DrawStashGear", "DrawStashPoolBar")
 preview = method("DrawStashPoolBar", "DrawStashNumericReadout")
 
 assert 'DrawStashControlGrid(dc, new Rect(left, controlsTop, width, StashControlsHeight),' in content
-assert all(f'("{label}"' in medical for label in
+assert all(f'"{label}", "loot.stashMedical' in source for label in
     ("BANDAGES", "MEDKITS", "ARMY MEDKITS", "ANTI-RAD"))
 assert quantity.count('("MEDKITS"') + quantity.count('("ARMY MEDKITS"') == 2
 assert len([p for p in catalog["parameters"]
@@ -88,7 +88,7 @@ assert '"StashMedicalQuantity" => StashMedicalQuantityHeight' not in source
 assert "DrawStashMedicalQuantityCards(dc, left, width," in medical
 assert "DrawStashMedicalWeightPreview(" not in coverage
 assert "DrawStashMedicalWeightPreview(" not in medical
-assert "wide ? 473.0 : 782.0" in medical
+assert "DrawStashMedicalQuantityCards(dc, left, width, adjust.Bottom + 27.0, wide," in medical
 assert "cardWidth, 122.0" in quantity
 assert "(i / columns) * 132.0" in quantity
 assert "DrawStashQuantityDualRail(dc, P(family.Min), P(family.Max)" in quantity
@@ -120,7 +120,7 @@ assert "ReferenceEquals(t.Parameter, min) && t.Kind == HitKind.Horizontal" in so
 assert "ReferenceEquals(t.Parameter, max) && t.Kind == HitKind.Horizontal" in source
 assert "dMin < dMax ? lower : upper" in source
 assert "private static bool IsStashMedicalMin(string id)" in source
-assert "width >= 700.0 ? 609.0 : 1050.0" in source
+assert "width >= 700.0 ? 433.0 : 619.0" in source
 assert '"VANILLA"' not in quantity_rail and '"AUTO"' not in quantity_rail
 assert 'Math.Round(StashMedicalMaxDisplay(max.CurrentNumber))' in quantity_rail
 assert 'StashMedicalMaxStore(Math.Clamp(Math.Round(raw), 0.0, 5.0))' in source
@@ -141,22 +141,22 @@ for medical_id in ("loot.stashMedkitMinCount", "loot.stashMedkitMaxCount",
     bound = "minimum" if medical_id.endswith("MinCount") else "maximum"
     assert bound in entry["rationale"].lower()
     assert "stack" in entry["interaction"].lower() and "chance" in entry["interaction"].lower()
-assert 'var shareWidth = Math.Max(1.0, innerWidth * .64);' in medical
+# Medical Composition = ODDS PER STASH · MEDS + one keep-odds cell per item.
+assert '"ODDS PER STASH · MEDS"' in medical and '"ADJUST ODDS"' in medical
+assert 'StashItemOdds(current, t, sids)' in medical
+assert 'DrawStashMedicalCell(dc, P(StashMedicalItems[k].Id)' in medical
 assert '_medicalWeightRankTargets.Clear();' not in source
-assert 'innerWidth - shareWidth - gap' in medical
-assert 'previewTop + 2.0' in medical
 assert 'g.Field == "Weight" && g.RankIndex == 2' in pair
 assert 'const double rankWidth = 62.0;' not in pair
 assert 'var rail = new Rect(outer.Left + 9.0, outer.Top + 28.0,' in pair
 assert 'for (var i = 0; i < groups.Length; i++)' not in pair
 assert '_medicalWeightRankTargets.Add((rect, rank));' not in source
 assert 'var medkitShare = total > Epsilon ? medkit / total : 0.0;' in pair
-assert 'DrawStashAntiRadWeightSwitch(dc,' in medical
+assert 'DrawStashAntiRadWeightSwitch(dc,' not in medical  # bias mirrors the cell now
 assert '"ANTI-RAD · PRIORITY"' in anti_weight
 assert "dc.DrawRectangle(accent, null" not in anti_weight
 assert 'new Rect(x + i * cellWidth, card.Top + 24.0, cellWidth, 25.0)' in anti_weight
 assert 'var dialMaximum = visualMaximum ?? parameter.Maximum;' in source
-assert source.count('visualMaximum: 1.0') == 3
 assert 'IsMedicalPriorityWeight(target.Parameter)' in source
 assert 'IsMedicalPriorityWeight(_selectedParameter)' in source
 assert '_medicalWeightPreviewRank' not in source
@@ -165,23 +165,16 @@ assert '_medicalWeightRankTargets' not in source
 assert 'var group = groups[0];' in pair
 assert 'groups.Length != 1' in pair
 for pid in ("loot.stashMedicalBandageBias", "loot.stashMedicalMedkitBias",
-            "loot.stashMedicalArmyMedkitBias"):
+            "loot.stashMedicalArmyMedkitBias", "loot.stashMedicalAntiRadBias"):
     entry = next(p for p in catalog["parameters"] if p["id"] == pid)
     assert entry["slider"] == {"min": 0, "max": 3,
-        "step": 0.25, "stepMode": "absolute"}
-    assert "priority" in entry["logic"].lower()
-    assert "Chance Modifier" in entry["interaction"]
-    assert "Zero excludes" in entry["logic"]
-assert "DrawStashMedicalPairShares(dc," in medical
-assert "DrawStashAntiRadWeightSwitch(dc," in medical
-assert '"DROP ROLLS · CHANCE %"' in medical
-assert '"LOOT PRIORITY · NATIVE WEIGHTS"' in medical
-assert 'var chanceColumns = wide ? 4 : 2;' in medical
-assert 'var weightColumns = wide ? 3 : 2;' in medical
-assert 'percentageReadout: true, dialAccent: source.Color' in medical
-assert 'DrawSourceKnob(dc, P("loot.stashMedicalBandageBias")' in medical
-assert 'DrawSourceKnob(dc, P("loot.stashMedicalMedkitBias")' in medical
-assert 'DrawSourceKnob(dc, P("loot.stashMedicalArmyMedkitBias")' in medical
+        "step": 0.05, "stepMode": "absolute"}
+# The native Weight factor mirrors its Chance scale (one control per item).
+assert 'Mirror(scale, bias);' in main_vm_source and 'Mirror(bias, scale);' in main_vm_source
+assert "DrawStashMedicalPairShares(dc," not in medical
+assert '"DROP ROLLS · CHANCE %"' not in medical
+assert '"LOOT PRIORITY · NATIVE WEIGHTS"' not in medical
+assert 'DrawSourceKnob(' not in medical
 assert 'g.Prototype == "StashMedicine_Smart"' in pair
 assert 'g.RankIndex is 2 or 3' not in pair
 assert 'group.EffectiveSelection(StashPreviewBaseline.Value, state,' in pair
@@ -197,7 +190,7 @@ assert '"OFF"' in anti_weight and '"ON"' in anti_weight
 assert "_stashMedicalShowChance" not in source
 assert "DrawStashQuantityDots(" not in source
 assert "DrawStashMedicalSourcePreview(" not in source
-assert '=> width >= 700.0 ? 609.0 : 1050.0;' in source
+assert '=> width >= 700.0 ? 433.0 : 619.0;' in source
 assert 'P("loot.stashGearCoveragePercent")' in gear
 for key in ("Weapon", "Armor", "Artifact", "Attachment"):
     assert '"loot.stashGear' + key + 'Weight"' in gear
@@ -231,9 +224,7 @@ assert "DrawStashControlGrid(dc," in content
 assert "DrawStashBasicNativePools(dc," in content
 assert "DrawStashRewardGraphRow(dc, P(entries[i].Id)" not in medical
 assert "DrawStashMedicalSourcePreview(" not in source
-assert "DrawSourceKnob(dc, P(source.Id), source.Label, card," in medical
-assert "percentageReadout: true, dialAccent: source.Color" in medical
-assert "StashMedicalPalette[0]" in medical and "StashMedicalPalette[3]" in medical
+assert "StashMedicalPalette[k]" in medical
 assert '"MEDICAL COMPOSITION"' in medical
 assert "DrawStashMedicalModeSelector" not in source
 assert "DrawStashGearMode(" not in gear
@@ -416,7 +407,7 @@ assert "var wide = width >= 670.0;" in content
 # were retired with the current compact Stashes rendering. Guard the
 # actual measured heights rather than asserting removed helper formulas.
 assert '=> width >= 700.0 ? 695.0 : 823.0;' in source
-assert '=> width >= 700.0 ? 609.0 : 1050.0;' in source
+assert '=> width >= 700.0 ? 433.0 : 619.0;' in source
 assert '=> width < 570.0 ? 670.0 : 502.0;' in source
 for name, document in [("UI-DESIGN-LOCK", lock),
                        ("VISUAL-CONTROL-SYSTEM", system),
@@ -461,7 +452,7 @@ harness = (root / "tests/LootSpecialGeneratorsContract/Program.cs").read_text()
 assert writer.count("effective.TierField(") == 3
 assert "effective.SmartSelection(" in smart
 assert "StashEffectiveState.UniformSmartFactor(" in smart
-assert 'selectionField == "Chance" || factor <= 0.0000001' in smart
+assert 'StashEffectiveState.SmartKeptShare(' in smart  # Weight groups keep per-item odds via spawn endpoints
 assert "effective.SmartSelectionFactor(item.ItemSid, selectionField)" in smart
 assert "StashEffectiveState.SmartSpawnEndpoint(" in smart
 assert "StashState(all).TuneSelection(" in tuning
