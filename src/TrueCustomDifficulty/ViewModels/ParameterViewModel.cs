@@ -2115,6 +2115,13 @@ public sealed class ParameterViewModel : ObservableObject
         if (definition.Control != "choiceSlider")
             return Array.Empty<ChoiceOptionViewModel>();
 
+        // Corpse SmartLoot is a native list: every subset of the three
+        // authored packages is valid. Canonical order keeps vanilla text.
+        if (definition.ValueKind == "smartLootPreset")
+            return NpcCorpsePackages.AllCombinations
+                .Select(value => new ChoiceOptionViewModel(value, NpcCorpsePackages.Label(value)))
+                .ToArray();
+
         var order = new[] { "Novice", "Stalker", "Veteran", "Master", "All" };
         var result = new List<ChoiceOptionViewModel>();
         var seen = new HashSet<string>(StringComparer.Ordinal);

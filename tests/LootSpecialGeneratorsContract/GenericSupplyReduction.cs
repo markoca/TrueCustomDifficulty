@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using TrueCustomDifficulty.Controls;
+using TrueCustomDifficulty.Models;
 using TrueCustomDifficulty.Services;
 using TrueCustomDifficulty.ViewModels;
 
@@ -34,8 +35,7 @@ internal static partial class Program
         };
         var smart = pristine.AllParameters.Single(p => p.Id == "loot.npcCorpseBonus");
         var initialChoice = smart.CurrentText;
-        smart.CurrentText = smart.ChoiceOptions.Single(x =>
-            x.Value.Contains("NPC_Ammo_Smart", StringComparison.Ordinal)).Value;
+        smart.CurrentText = "NPC_Medicine_Smart, NPC_Ammo_Smart";
         npcBoard.Measure(new System.Windows.Size(920.0, 1200.0));
         Check(Math.Abs(npcBoard.DesiredSize.Height - 470.0) < 0.000001,
             "NPC bonus card must sit beside weapon condition");
@@ -45,9 +45,7 @@ internal static partial class Program
         npcBoard.Measure(new System.Windows.Size(600.0, 1200.0));
         Check(Math.Abs(npcBoard.DesiredSize.Height - 568.0) < 0.000001,
             "Narrow NPC ammo mode must keep the two-column middle tier");
-        smart.CurrentText = smart.ChoiceOptions.Single(x =>
-            !x.Value.Contains("NPC_Ammo_Smart", StringComparison.Ordinal)
-            && !x.Value.Contains("NPC_Water_Smart", StringComparison.Ordinal)).Value;
+        smart.CurrentText = string.Empty;
         npcBoard.Measure(new System.Windows.Size(920.0, 1200.0));
         Check(Math.Abs(npcBoard.DesiredSize.Height - 470.0) < 0.000001,
             "NPC NONE mode must collapse optional ammo controls");
@@ -83,6 +81,33 @@ internal static partial class Program
                 chanceRow.Category, chanceRow.Item, "Chance"))
             - StashEffectiveState.Number(chanceRow.Item.Fields["Chance"]) / 2.0)
             < 0.000001, "Chance-only stash row was not reduced after source tuning");
+
+        // A non-vanilla package subset (Medicine + Water) is a valid native
+        // list: the 50% master clones and links exactly those two packages.
+        {
+            var combo = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+            var choice = combo.AllParameters.Single(p => p.Id == "loot.npcCorpseBonus");
+            choice.CurrentText = NpcCorpsePackages.Compose(new[]
+                { NpcCorpsePackages.Water, NpcCorpsePackages.Medicine });
+            Check(choice.CurrentText == "NPC_Medicine_Smart, NPC_Water_Smart"
+                && choice.ChoiceOptions.Any(o => o.Value == choice.CurrentText),
+                "Medicine + Water must be a canonical, selectable package subset");
+            combo.AllParameters.Single(p => p.Id == corpseId).SnapCurrentNumberToMarker(.5);
+            var comboDir = Path.Combine(Path.GetTempPath(), "TCD_GenericSupplyReduction", "combo");
+            try
+            {
+                if (Directory.Exists(comboDir)) Directory.Delete(comboDir, true);
+                new CfgPatchWriterService().Write(combo, Catalog, null, comboDir);
+                var economy = ReadOutput(comboDir)["GameData/DifficultyPrototypes.cfg"];
+                Check(economy.Any(kv => kv.Key.EndsWith("CorpseSmartLoot/GeneralNPC", StringComparison.Ordinal)
+                        && kv.Value == "TCD_Supply_NPC_Medicine_Smart, TCD_Supply_NPC_Water_Smart"),
+                    "Medicine + Water subset was not linked through the reduced clones");
+            }
+            finally
+            {
+                if (Keep is null && Directory.Exists(comboDir)) Directory.Delete(comboDir, true);
+            }
+        }
 
         // Assert cloned source output at both native endpoints, with and
         // without separately edited optional CorpseSmartLoot packages.

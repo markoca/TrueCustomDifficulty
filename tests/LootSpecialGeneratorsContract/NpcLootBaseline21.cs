@@ -1,5 +1,6 @@
 using System.Reflection;
 using TrueCustomDifficulty.Controls;
+using TrueCustomDifficulty.Models;
 using TrueCustomDifficulty.ViewModels;
 
 namespace LootSpecialGeneratorsContract;
@@ -67,13 +68,17 @@ internal static partial class Program
             };
             var corpseChoice = vm.AllParameters.Single(p =>
                 p.Id == "loot.npcCorpseBonus");
-            Check(corpseChoice.ChoiceOptions.Count == 3
+            // Any subset of the three authored packages (8) is selectable;
+            // the three vanilla lists must be among them byte-for-byte.
+            Check(corpseChoice.ChoiceOptions.Count == 8
+                && corpseChoice.ChoiceOptions.Select(x => x.Value)
+                    .SequenceEqual(NpcCorpsePackages.AllCombinations)
                 && corpseChoice.ChoiceOptions.Any(x =>
                     x.Value == "NPC_Medicine_Smart, NPC_Ammo_Smart")
                 && corpseChoice.ChoiceOptions.Any(x =>
                     x.Value == "NPC_Water_Smart")
                 && corpseChoice.ChoiceOptions.Any(x => x.Value == string.Empty),
-                difficulty + ": corpse SmartLoot choices must remain three source-backed states");
+                difficulty + ": corpse SmartLoot choices must be the 8 canonical package subsets");
             var medical = vm.AllParameters.Single(p =>
                 p.Id == "loot.npcMedicalChance");
             var ammo = vm.AllParameters.Single(p =>

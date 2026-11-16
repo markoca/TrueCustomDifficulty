@@ -5720,7 +5720,7 @@
       "tab": "loot",
       "group": "NPC Loot & Equipment",
       "label": "Corpse Smart Loot",
-      "description": "Selects only one authored extra corpse SmartLoot package: Medicine + Ammo, Water or None. Standard NPC consumables and carried weapon loot remain independent.",
+      "description": "Toggles the three authored extra corpse SmartLoot packages (Medicine, Ammo, Water) independently; any combination, including none, is a valid native list. Standard NPC consumables and carried weapon loot remain independent.",
       "control": "choiceSlider",
       "valueKind": "smartLootPreset",
       "vanilla": {
@@ -5750,9 +5750,9 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Selects a bonus loot package for ordinary human corpses: Medicine + Ammo, Water, or None. Normal NPC loot is separate.",
-      "logic": "Medicine + Ammo enables the bonus medicine and bonus ammunition SmartLoot packages. Water enables the bonus water package. None adds no extra corpse package.",
-      "interaction": "Bonus ammo quantity can be changed only with Medicine + Ammo. Standard medical items are not switched off by Water or None."
+      "rationale": "Adds bonus loot packages to ordinary human corpses: Medicine, Ammo and Water can be switched on in any combination. Normal NPC loot is separate.",
+      "logic": "Each chip adds one native SmartLoot package to EconomyDifficulty.CorpseSmartLoot.GeneralNPC of the selected difficulty, written in the canonical order Medicine, Ammo, Water. Vanilla authors Medicine + Ammo (Novice), Water (Stalker) and none (Veteran, Master); other combinations are the same list format.",
+      "interaction": "Bonus ammo quantity applies whenever the Ammo package is on. Standard medical items are not switched off by any package choice."
     },
     {
       "id": "loot.npcMedicalChance",
@@ -5806,7 +5806,7 @@
       "tab": "loot",
       "group": "NPC Loot & Equipment",
       "label": "Bonus Ammo Amount",
-      "description": "Changes MinCount/MaxCount in additional NPC_Ammo_Smart corpse ammo stacks, only when Medicine + Ammo SmartLoot is selected. This is ammo quantity, not item drop Chance, loaded-magazine ammo or breakable-box loot.",
+      "description": "Changes MinCount/MaxCount in additional NPC_Ammo_Smart corpse ammo stacks, only when the Ammo SmartLoot package is on. This is ammo quantity, not item drop Chance, loaded-magazine ammo or breakable-box loot.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -5840,7 +5840,7 @@
         "notes": [
           "Exact source data: 43 NPC_Ammo_Smart item rows across 24 PrimaryWeaponParams groups and four ranks; matches GameData/StashPrototypes.cfg supplied dump row-for-row (FNV32 0x61073f67).",
           "Only MinCount/MaxCount are scaled in a source-derived clone with integer-half-up rounding; native MinSpawnChance, MaxSpawnChance, PriorityCaliber, MainWeaponAmmoCount, Weight and item/rank eligibility remain inherited.",
-          "Only the selected difficulty GeneralNPC CorpseSmartLoot list references the clone. Medicine + Ammo activates it; Water or None leaves the player-selected multiplier saved but causes no ammo override.",
+          "Only the selected difficulty GeneralNPC CorpseSmartLoot list references the clone. The Ammo package activates it; without it the player-selected multiplier saved but causes no ammo override.",
           "Breakable ammo uses the separate ItemGeneratorPrototypes.cfg DestructibleStash_AmmoSNG/NATO generator clones and is never affected by this control.",
           "Legacy weapon-attached AmmoMinCount/AmmoMaxCount edits on 121 NPC weapon rows are retired (242 direct edit points removed).",
           "Actual in-game corpse drop result and source-derived clone inheritance require a Wine build and runtime test."
@@ -5848,7 +5848,7 @@
       },
       "rationale": "Sets the quantity of bonus rounds from the NPC_Ammo_Smart corpse package. It does not change whether ammo drops or ammunition inside carried weapons.",
       "logic": "The 0–3× amount multiplier scales only original MinCount/MaxCount. Zero removes these optional stacks; progression rank still controls which calibers can appear.",
-      "interaction": "Active only when Corpse Smart Loot is Medicine + Ammo; Water or None leaves this value saved but inactive."
+      "interaction": "Active only when the Ammo package of Corpse Smart Loot is on; otherwise this value stays saved but inactive."
     },
     {
       "id": "loot.droppedWeaponCondition",

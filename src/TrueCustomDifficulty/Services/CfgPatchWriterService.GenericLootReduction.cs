@@ -88,10 +88,9 @@ public sealed partial class CfgPatchWriterService
             throw new InvalidDataException("Missing Corpse SmartLoot selector.");
         var selected = choice.CurrentText.Split(',',
             StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        // Any canonical subset of the three authored packages is valid.
         if (selected.Any(sid => !NpcBonusGroupMax.ContainsKey(sid))
-            || selected.Length > 2
-            || selected.Length == 2 && !selected.SequenceEqual(
-                new[] { "NPC_Medicine_Smart", "NPC_Ammo_Smart" }, StringComparer.Ordinal))
+            || !NpcCorpsePackages.IsCanonical(choice.CurrentText))
             throw new InvalidDataException("Unexpected generic NPC bonus SmartLoot list.");
 
         var replacements = new Dictionary<string, string>(StringComparer.Ordinal);

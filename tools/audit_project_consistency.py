@@ -5326,8 +5326,12 @@ if '"Bonus ammo off · weapon ammo unaffected"' in _npc_preview_source or 'Inact
     fail("NPC bonus preview must not display an inactive explanatory sentence")
 if 'var caption = CreateText(corpse.ChoiceOptions[i].Label,' in _npc_preview_source:
     fail("NPC corpse package chips must use short sourced captions, not verbose raw option labels")
-if 'var optionLabel = optionValue.Contains("NPC_Ammo_Smart", StringComparison.Ordinal)' not in _npc_preview_source:
-    fail("NPC source package chips must show MED + AMMO / WATER / NONE instead of icons only")
+if any(_tok not in _npc_preview_source for _tok in (
+    'var optionLabel = NpcCorpsePackages.ChipLabels[i];',
+    'var selected = NpcCorpsePackages.Contains(corpse.CurrentText, optionValue);',
+    'target.Parameter.CurrentText = NpcCorpsePackages.Toggle(',
+)) or 'target.Parameter.ChoiceIndex = target.VisualMinimum;' in _npc_preview_source:
+    fail("NPC corpse packages must be three independent MED / AMMO / WATER toggle chips")
 if '"NpcLootLoadout" => NpcLootBoardHeight(width),' not in _npc_preview_source:
     fail("NPC board must measure from its responsive geometry")
 if '"NpcLootLoadout" => NpcLootBoardHeight(width),' not in _npc_preview_source:
@@ -5381,15 +5385,12 @@ if 'public const string UntouchedText = "—";' not in _npc_item_vm or '"DEFAULT
 for _icon_marker in (
     "private static readonly Geometry[] NpcMedkitIcon =",
     "private static readonly Geometry[] NpcWaterBottleIcon =",
-    "private static readonly Geometry[] NpcNoBonusIcon =",
     "private static readonly Geometry NpcAmmunitionIcon = Geometry.Parse(",
     "private static void DrawNpcOutlineIcon(",
     "private static void DrawNpcFilledIcon(",
     "DrawNpcOutlineIcon(dc, NpcMedkitIcon,",
     "DrawNpcFilledIcon(dc, NpcAmmunitionIcon,",
     "DrawNpcOutlineIcon(dc, NpcWaterBottleIcon, center, 25.0, ink);",
-    "DrawNpcOutlineIcon(dc, NpcNoBonusIcon, center, 24.0, ink);",
-    "M5.7 5.7l12.6 12.6",
     "docs/ICON-ASSET-CREDITS.md",
 ):
     if _icon_marker not in _npc_preview_source:

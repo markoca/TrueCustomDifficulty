@@ -1160,12 +1160,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         Geometry.Parse("M7 14.803a2.4 2.4 0 0 0 1 -.803a2.4 2.4 0 0 1 2 -1a2.4 2.4 0 0 1 2 1a2.4 2.4 0 0 0 2 1a2.4 2.4 0 0 0 2 -1a2.4 2.4 0 0 1 1 -.805")
     ];
 
-    private static readonly Geometry[] NpcNoBonusIcon =
-    [
-        Geometry.Parse("M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"),
-        Geometry.Parse("M5.7 5.7l12.6 12.6")
-    ];
-
     // MDI "ammunition" SVG path, native fill (not a stroked approximation).
     private static readonly Geometry NpcAmmunitionIcon = Geometry.Parse(
         "M14,22H10V21H14V22M13,10V7H11V10L10,11.5V20H14V11.5L13,10M12,2C12,2 11,3 11,5V6H13V5C13,5 13,3 12,2" +
@@ -1202,22 +1196,13 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private static void DrawNpcCorpsePackageIcon(
         DrawingContext dc, string optionValue, Point center, Brush ink)
     {
+        // One licensed pictogram per independent package chip.
         if (optionValue.Contains("NPC_Ammo_Smart", StringComparison.Ordinal))
-        {
-            // Clearly separated first-aid kit + real ammunition pictograms.
-            DrawNpcOutlineIcon(dc, NpcMedkitIcon,
-                new Point(center.X - 13.5, center.Y), 22.0, ink);
-            DrawNpcFilledIcon(dc, NpcAmmunitionIcon,
-                new Point(center.X + 13.5, center.Y), 22.0, ink);
-        }
+            DrawNpcFilledIcon(dc, NpcAmmunitionIcon, center, 22.0, ink);
         else if (optionValue.Contains("NPC_Water_Smart", StringComparison.Ordinal))
-        {
             DrawNpcOutlineIcon(dc, NpcWaterBottleIcon, center, 25.0, ink);
-        }
         else
-        {
-            DrawNpcOutlineIcon(dc, NpcNoBonusIcon, center, 24.0, ink);
-        }
+            DrawNpcOutlineIcon(dc, NpcMedkitIcon, center, 22.0, ink);
     }
 
     // Bonus ammo requires the optional NPC_Ammo_Smart corpse package.
@@ -1226,9 +1211,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private bool NpcBonusPackageSelected()
     {
         var corpse = P("loot.npcCorpseBonus");
-        return corpse is not null && corpse.CurrentText.Split(',',
-            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .Contains("NPC_Ammo_Smart", StringComparer.Ordinal);
+        return corpse is not null
+            && NpcCorpsePackages.Contains(corpse.CurrentText, NpcCorpsePackages.Ammo);
     }
 
     private bool IsNpcBonusSliderLocked(ParameterViewModel? parameter)
@@ -1514,12 +1498,14 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var layout = CurrentNpcLootLayout(ActualWidth);
         var choiceCard = layout.Selector;
 
-        // This selector chooses an exact source package, not a drop chance.
+        // Three independent package toggles: the native CorpseSmartLoot
+        // field is a list, so any subset (including none) is valid. Each
+        // chip adds or removes one authored package, not a drop chance.
         IndustrialChrome.DrawRecessedCard(dc, choiceCard, panel, border);
         DrawText(dc, "CORPSE SMART LOOT",
             new Point(choiceCard.Left + 9.0, choiceCard.Top + 12.0),
             9.2, text, FontWeights.Bold);
-        var count = corpse.ChoiceOptions.Count;
+        var count = NpcCorpsePackages.Sids.Count;
         var chipGap = 4.0;
         var cell = Math.Min(88.0,
             (choiceCard.Width - 16.0 - (count - 1) * chipGap) / count);
@@ -1529,21 +1515,18 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         {
             var rect = new Rect(start + i * (cell + chipGap),
                 choiceCard.Top + 35.0, cell, 43.0);
-            var selected = Math.Abs(corpse.ChoiceIndex - i) < 0.5;
+            var optionValue = NpcCorpsePackages.Sids[i];
+            var selected = NpcCorpsePackages.Contains(corpse.CurrentText, optionValue);
             var hover = _hoverTarget?.Kind == HitKind.Choice
                 && Math.Abs(_hoverTarget.VisualMinimum - i) < Epsilon;
             dc.DrawRoundedRectangle(
                 selected ? CloneWithOpacity(accent, 0.10) : panel,
                 new Pen(selected ? accent : hover ? CloneWithOpacity(accent, 0.7) : border,
                     selected ? 1.6 : 0.9), rect, 4.0, 4.0);
-            var optionValue = corpse.ChoiceOptions[i].Value;
             DrawNpcCorpsePackageIcon(dc, optionValue,
                 new Point(rect.Left + rect.Width / 2.0, rect.Top + 13.0),
-                hover ? Brushes.White : selected ? accent : text);
-            var optionLabel = optionValue.Contains("NPC_Ammo_Smart", StringComparison.Ordinal)
-                ? "MED + AMMO"
-                : optionValue.Contains("NPC_Water_Smart", StringComparison.Ordinal)
-                    ? "WATER" : "NONE";
+                hover ? Brushes.White : selected ? accent : muted);
+            var optionLabel = NpcCorpsePackages.ChipLabels[i];
             DrawCenteredText(dc, optionLabel,
                 new Point(rect.Left + rect.Width / 2.0, rect.Top + 30.0),
                 8.1, selected ? accent : text, FontWeights.Bold);
@@ -1558,7 +1541,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             text, muted, border, accent, panel);
         DrawNpcModItemsCard(dc, layout.Mod, text, muted, border, accent, panel);
 
-        // Bonus ammo only applies with MED + AMMO. Under WATER / NONE the
+        // Bonus ammo only applies with the AMMO package. Without it the
         // same card stays in place, muted and locked (no hit target), so the
         // row never collapses into empty space. The saved value is kept.
         // One Stamina Usage-style card: label left, live multiplier right,
@@ -7457,7 +7440,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         if (target.Kind == HitKind.Choice && Family == "NpcLootLoadout")
         {
-            target.Parameter.ChoiceIndex = target.VisualMinimum;
+            // Chip index = package; toggle it within the canonical list.
+            var package = NpcCorpsePackages.Sids[
+                Math.Clamp((int)Math.Round(target.VisualMinimum), 0, NpcCorpsePackages.Sids.Count - 1)];
+            target.Parameter.CurrentText = NpcCorpsePackages.Toggle(
+                target.Parameter.CurrentText, package);
             _status.ClearTransient();
             InvalidateVisual();
             return;

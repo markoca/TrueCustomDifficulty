@@ -72,12 +72,9 @@ internal static partial class Program
         };
         // All three native options must remeasure without hidden ammo space.
         var smart = uiVm.AllParameters.Single(p => p.Id == "loot.npcCorpseBonus");
-        var ammoPackage = smart.ChoiceOptions.Single(x =>
-            x.Value.Contains("NPC_Ammo_Smart", StringComparison.Ordinal)).Value;
-        var waterPackage = smart.ChoiceOptions.Single(x =>
-            x.Value.Contains("NPC_Water_Smart", StringComparison.Ordinal)).Value;
-        var nonePackage = smart.ChoiceOptions.Single(x =>
-            x.Value != ammoPackage && x.Value != waterPackage).Value;
+        var ammoPackage = "NPC_Medicine_Smart, NPC_Ammo_Smart";
+        var waterPackage = "NPC_Water_Smart";
+        var nonePackage = string.Empty;
         foreach (var (option, wide, middle, narrow) in new[]
         {
             (ammoPackage, 470.0, 470.0, 568.0),
