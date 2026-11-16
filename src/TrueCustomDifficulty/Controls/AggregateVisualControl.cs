@@ -6030,7 +6030,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
 
         const double margin = 17.0;
-        const double gap = 10.0;
         var geometry = LayoutAmmoDistribution(ActualWidth);
 
         // Yield sliders sit beside the preview on wide boards (stacked in a
@@ -6047,11 +6046,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // Live, source-exact read-only output for EACH of the eight
         // destructible ammo rows (ItemGeneratorPrototypes.cfg
         // DestructibleStash_AmmoSNG/NATO, all source Weight 2). Each tile shows
-        // the stack range (only Ammo Yield scales it; same positive integer
-        // half-up arithmetic as CfgPatchWriterService.ScalePositiveInteger)
-        // and the row's share of ITS OWN pool from the four family weights.
-        // SNG and NATO are different physical boxes, so shares are never
-        // merged. This replaces the former separate SNG/NATO pool bars.
+        // the stack range; only Ammo Yield scales it (same positive integer
+        // half-up arithmetic as CfgPatchWriterService.ScalePositiveInteger).
+        // The weight share lives in the single AMMO MIX card below the knobs.
         var countsModified = ammoYield.IsValueModifiedFromReference();
         var preview = geometry.Preview;
         dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9),
@@ -6059,7 +6056,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawText(dc, "AMMO YIELD PREVIEW",
             new Point(preview.Left + 11.0, preview.Top + 6.0),
             10.2, text, FontWeights.Bold);
-        DrawRightAlignedText(dc, "ROUNDS IF ROLLED · SHARE OF BOX",
+        DrawRightAlignedText(dc, "ROUNDS IF ROLLED",
             new Point(preview.Right - 11.0, preview.Top + 6.0),
             9.4, muted, FontWeights.SemiBold);
 
@@ -6080,10 +6077,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 + 4.0 * tileWidth + 3.0 * sampleGap;
             var rowLeft = preview.Left + (preview.Width - groupWidth) / 2.0;
             DrawCenteredText(dc, pool,
-                new Point(rowLeft + poolLabelWidth / 2.0, rowTop + 19.0),
+                new Point(rowLeft + poolLabelWidth / 2.0, rowTop + 12.0),
                 10.0, muted, FontWeights.Bold);
 
-            var rowWeight = items.Sum(item => Math.Max(0.0, item.Weight.CurrentNumber));
             for (var i = 0; i < items.Length; i++)
             {
                 var item = items[i];
@@ -6112,27 +6108,23 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                     countsModified ? 12.8 : 11.6,
                     countsModified ? accent : eligible ? text : muted,
                     FontWeights.SemiBold);
-                // Share of this pool, keyed to the family knob color.
-                var share = rowWeight <= Epsilon ? 0.0
-                    : Math.Max(0.0, item.Weight.CurrentNumber) / rowWeight;
-                var shareText = CreateText($"{share * 100.0:0.#}%", 9.6,
-                    eligible ? text : muted, FontWeights.SemiBold);
-                var shareLeft = tile.Left + (tile.Width
-                    - shareText.WidthIncludingTrailingWhitespace - 10.0) / 2.0;
-                dc.DrawRectangle(CloneWithOpacity(BreakableAmmoPalette[item.Color], eligible ? 1.0 : 0.35),
-                    null, new Rect(shareLeft, tile.Top + 39.0, 6.0, 6.0));
-                dc.DrawText(shareText, new Point(shareLeft + 10.0, tile.Top + 35.0));
             }
         }
 
-        YieldRow("SNG", preview.Top + 28.0, new[]
+        // Center the two tile rows in the preview (it is taller on wide
+        // boards, where it matches the stacked slider column).
+        var rowSpace = preview.Height - 28.0 - 8.0;
+        var rowGap = Math.Clamp(rowSpace - 2.0 * AmmoYieldTileHeight, 9.0, 16.0);
+        var firstRowTop = preview.Top + 28.0
+            + Math.Max(0.0, (rowSpace - 2.0 * AmmoYieldTileHeight - rowGap) / 2.0);
+        YieldRow("SNG", firstRowTop, new[]
         {
             (Caliber: "9×18", MinCount: 3, MaxCount: 6, Weight: weight918, Color: 0),
             (Caliber: "9×19", MinCount: 5, MaxCount: 10, Weight: weight918, Color: 0),
             (Caliber: "5.45", MinCount: 5, MaxCount: 10, Weight: weight545, Color: 2),
             (Caliber: "12 GA", MinCount: 2, MaxCount: 4, Weight: weight012, Color: 3)
         });
-        YieldRow("NATO", preview.Top + 28.0 + AmmoYieldTileHeight + 9.0, new[]
+        YieldRow("NATO", firstRowTop + AmmoYieldTileHeight + rowGap, new[]
         {
             (Caliber: ".45 ACP", MinCount: 5, MaxCount: 10, Weight: weight045, Color: 1),
             (Caliber: "9×19", MinCount: 5, MaxCount: 10, Weight: weight918, Color: 0),
@@ -6166,13 +6158,68 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 text, muted, border, accent, panel,
                 dialAccent: BreakableAmmoPalette[i]);
         }
+
+        // ONE consolidated weight-share card: SNG and NATO stay separate bars
+        // (different physical boxes, shares never merged), sharing a single
+        // four-family legend in the knob colors. Percentages sit inside a
+        // segment when it is wide enough; a 0% family simply has no segment.
+        var mix = geometry.Mix;
+        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9), mix, 4.0, 4.0);
+        DrawText(dc, "AMMO MIX PER BOX", new Point(mix.Left + 11.0, mix.Top + 6.0),
+            10.2, text, FontWeights.Bold);
+        var w918 = Math.Max(0.0, weight918.CurrentNumber);
+        var w045 = Math.Max(0.0, weight045.CurrentNumber);
+        var w545 = Math.Max(0.0, weight545.CurrentNumber);
+        var w012 = Math.Max(0.0, weight012.CurrentNumber);
+        void MixBar(string pool, double top, (double Weight, int Color)[] segments)
+        {
+            const double labelWidth = 42.0;
+            var bar = new Rect(mix.Left + 11.0 + labelWidth, top,
+                Math.Max(1.0, mix.Width - 22.0 - labelWidth), 16.0);
+            DrawCenteredText(dc, pool, new Point(mix.Left + 11.0 + labelWidth / 2.0 - 4.0, top + 1.0),
+                10.0, muted, FontWeights.Bold);
+            dc.DrawTrackedRoundedRectangle(CloneWithOpacity(border, 0.22),
+                new Pen(border, 0.7), bar, 2.0, 2.0);
+            var sum = segments.Sum(segment => segment.Weight);
+            var cursor = bar.Left;
+            foreach (var segment in segments)
+            {
+                if (sum <= Epsilon || segment.Weight <= Epsilon)
+                    continue;
+                var share = segment.Weight / sum;
+                var span = bar.Width * share;
+                var rect = new Rect(cursor, bar.Top, span, bar.Height);
+                dc.DrawRectangle(BreakableAmmoPalette[segment.Color], null, rect);
+                var label = CreateText($"{share * 100.0:0.#}%", 9.4,
+                    Brushes.Black, FontWeights.Bold);
+                if (label.WidthIncludingTrailingWhitespace + 6.0 <= span)
+                    dc.DrawText(label, new Point(
+                        cursor + (span - label.WidthIncludingTrailingWhitespace) / 2.0,
+                        bar.Top + (bar.Height - label.Height) / 2.0));
+                cursor += span;
+            }
+        }
+        // SNG: 9×18 and 9×19 are two source rows under one family weight.
+        MixBar("SNG", mix.Top + 27.0, new[] { (2.0 * w918, 0), (w545, 2), (w012, 3) });
+        MixBar("NATO", mix.Top + 49.0, new[] { (w045, 1), (w918, 0), (w545, 2), (w012, 3) });
+        var legendLeft = mix.Left + 53.0;
+        var legendWidth = Math.Max(1.0, mix.Width - 64.0) / weights.Length;
+        for (var i = 0; i < weights.Length; i++)
+        {
+            var x = legendLeft + i * legendWidth;
+            dc.DrawRectangle(BreakableAmmoPalette[i], null, new Rect(x, mix.Top + 76.0, 9.0, 9.0));
+            dc.DrawText(CreateText(weights[i].Label, 9.6, muted, FontWeights.SemiBold,
+                    Math.Max(1.0, legendWidth - 16.0)),
+                new Point(x + 13.0, mix.Top + 73.0));
+        }
     }
 
-    private const double AmmoYieldTileHeight = 52.0;
+    private const double AmmoYieldTileHeight = 39.0;
+    private const double AmmoMixCardHeight = 96.0;
     private const double AmmoDistributionWideWidth = 760.0;
 
     private readonly record struct AmmoDistributionGeometry(
-        Rect AmmoYield, Rect GrenadeYield, Rect Preview, double KnobTop, double Height);
+        Rect AmmoYield, Rect GrenadeYield, Rect Preview, double KnobTop, Rect Mix, double Height);
 
     // Wide: a compact slider column (two stacked track cards) beside the
     // preview. Narrow: the two sliders side by side, preview below.
@@ -6202,7 +6249,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             preview = new Rect(margin, ammo.Bottom + gap, inner, previewHeight);
         }
         var knobTop = preview.Bottom + 30.0;
-        return new AmmoDistributionGeometry(ammo, grenade, preview, knobTop, knobTop + 181.0 + 16.0);
+        var mix = new Rect(margin, knobTop + 181.0 + gap, inner, AmmoMixCardHeight);
+        return new AmmoDistributionGeometry(ammo, grenade, preview, knobTop, mix, mix.Bottom + 14.0);
     }
 
     // Shared density for the large Survival/Health aggregate panels. Rows are

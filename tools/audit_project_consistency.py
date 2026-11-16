@@ -1161,12 +1161,15 @@ else:
         'DrawHorizontalTrackCard(dc, ammoYield,',
         'DrawHorizontalTrackCard(dc, P("loot.destructibleGrenadeQuantity"),',
         '"AMMO YIELD PREVIEW"',
-        '"ROUNDS IF ROLLED · SHARE OF BOX"',
+        '"ROUNDS IF ROLLED"',
+        '"AMMO MIX PER BOX"',
+        'MixBar("SNG", mix.Top + 27.0, new[] { (2.0 * w918, 0), (w545, 2), (w012, 3) });',
+        'MixBar("NATO", mix.Top + 49.0, new[] { (w045, 1), (w918, 0), (w545, 2), (w012, 3) });',
         'var countsModified = ammoYield.IsValueModifiedFromReference();',
         'item.MinCount * ammoYield.CurrentNumber + 0.5',
         'item.MaxCount * ammoYield.CurrentNumber + 0.5',
-        'YieldRow("SNG", preview.Top + 28.0, new[]',
-        'YieldRow("NATO", preview.Top + 28.0 + AmmoYieldTileHeight + 9.0, new[]',
+        'YieldRow("SNG", firstRowTop, new[]',
+        'YieldRow("NATO", firstRowTop + AmmoYieldTileHeight + rowGap, new[]',
         'private static AmmoDistributionGeometry LayoutAmmoDistribution(double width)',
         'if (width >= AmmoDistributionWideWidth)',
         'EnforceAmmoPoolValidity(',
@@ -1216,12 +1219,13 @@ else:
     )
     if any(color not in _abd_palette_code for color in _abd_colors):
         _abd_errors.append("breakable ammo family palette missing unique four-color mapping")
-    # The separate SNG/NATO pool bars are retired: each preview tile carries
-    # its own pool share with a swatch in the same family brush as its knob.
+    # One consolidated AMMO MIX card (two bars, one shared legend) replaces
+    # the two separate SNG/NATO pool cards; segments + legend share the knob brush.
     if 'Pool("SNG POOL",' in _abd_control_text or 'Pool("NATO POOL",' in _abd_control_text:
-        _abd_errors.append("retired SNG/NATO pool composition bars returned")
-    if 'CloneWithOpacity(BreakableAmmoPalette[item.Color]' not in _abd_control_text:
-        _abd_errors.append("preview share swatch must use the same family brush as its knob")
+        _abd_errors.append("retired separate SNG/NATO pool cards returned")
+    if 'dc.DrawRectangle(BreakableAmmoPalette[segment.Color], null, rect);' not in _abd_control_text \
+            or 'dc.DrawRectangle(BreakableAmmoPalette[i], null, new Rect(x, mix.Top + 76.0, 9.0, 9.0));' not in _abd_control_text:
+        _abd_errors.append("mix segments and legend must use the same family brush")
     if 'var tones = new[] { 0.95, 0.72, 0.50, 0.30 };' in _abd_control_text:
         _abd_errors.append("legacy single-yellow pool tint mix returned")
     _abd_knob_input = (
