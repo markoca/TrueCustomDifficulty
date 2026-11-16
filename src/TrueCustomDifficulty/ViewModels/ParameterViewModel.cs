@@ -146,7 +146,6 @@ public sealed class ParameterViewModel : ObservableObject
                     "CouponFlow" => "Drag Starting Coupons to change your new-game wallet. Main and side quest payouts are separate.",
                     "TradingDashboard" => "PRICES TRADERS PAY controls selling; PRICES YOU PAY controls buying. The lower tracks handle sellable condition and broken-gear value.",
                     "RepairCurve" => "Drag one reputation point vertically to set its repair-price multiplier. Linked values follow the existing source-value ordering.",
-                    "TraderStockBoard" => "AMMO SUPPLY and MEDICAL SUPPLY change how much every trader carries, not which items they can offer.",
                     "ServiceCostsBoard" => "Adjust guide travel, upgrades and repairs separately. Discounts and reputation may still affect final prices.",
                     "ItemWeightBoard" => "Adjust ammunition, food and medicine, weapons or armor weight independently.",
                     "ArtifactHunting" => "Drag a card's track: RESPAWN RATE (how often fields roll), SPAWN CHANCE (each roll), RARE LUCK (rarity split, shown per zone below) and PER SPAWN (artifacts per success). Quest and unique artifacts are not changed. Right-click a track to reset it; R resets the board.",
@@ -208,9 +207,9 @@ public sealed class ParameterViewModel : ObservableObject
                 return "Drag the track for a mutant species; its four player-rank squad caps update together."
                     + Environment.NewLine + "Right-click one species to reset it; R resets all fourteen.";
 
-            if (IsTraderSellsMember)
-                return "Drag a category's rail: 100% keeps the game's odds for those offers, lower makes them rarer, 0% removes the category. AMMO SUPPLY and MEDICAL SUPPLY change how much traders carry. GEAR (Generic traders only) adds a CHANCE to offer one rare item, occasionally two (8% second roll); corpse loot is unchanged."
-                    + Environment.NewLine + "Right-click a rail to reset that category.";
+            if (IsTraderSellsMember || IsTraderSupply)
+                return "Pick a trader type, then drag a category's rail: 100% keeps the game's odds for those offers, lower makes them rarer, 0% removes the category. AMMO / MEDICAL SUPPLY change stack sizes for every trader; where a stack is already 1 a lower supply makes the offer rarer instead. RARE GEAR (Generic NPC only): chance to offer one rare item, occasionally two (8% second roll); 0% = off."
+                    + Environment.NewLine + "Right-click a rail to reset it; R resets the board. CLEAR removes restrictions left by older presets.";
             if (IsRange)
                 return "Drag MIN or MAX to choose the range. Use Arrow keys for small changes and Home/End for the limits."
                     + Environment.NewLine + "Right-click the range to reset it.";
@@ -347,6 +346,7 @@ public sealed class ParameterViewModel : ObservableObject
     public void RefreshCurrentDisplay() => OnPropertyChanged(nameof(CurrentDisplay));
 
     public bool IsTraderSellsMember => Id.StartsWith(TraderSellsPolicy.Prefix, StringComparison.Ordinal);
+    public bool IsTraderSupply => Id is "economy.traderAmmoStock" or "economy.medicStock";
     public bool IsTraderSellsAnchor => Id == TraderSellsPolicy.AnchorId;
 
     private static readonly HashSet<string> MedicalHealingParameterIds = new(StringComparer.Ordinal)
@@ -590,8 +590,6 @@ public sealed class ParameterViewModel : ObservableObject
         ["combat.explosionDamage"] = "HumanCombatProfile",
         ["stamina.vaultMaxHeight"] = "StaminaCore",
         ["stamina.maxCarryWeight"] = "StaminaCore",
-        ["economy.traderAmmoStock"] = "TraderStockBoard",
-        ["economy.medicStock"] = "TraderStockBoard",
         ["economy.fastTravelCost"] = "ServiceCostsBoard",
         ["economy.upgradeCost"] = "ServiceCostsBoard",
         ["economy.repairCostBase"] = "ServiceCostsBoard",
@@ -697,7 +695,6 @@ public sealed class ParameterViewModel : ObservableObject
         ["CouponFlow"] = "economy.startingMoney",
         ["TradingDashboard"] = "economy.buyCondition",
         ["RepairCurve"] = "economy.repairEnemy",
-        ["TraderStockBoard"] = "economy.traderAmmoStock",
         ["ServiceCostsBoard"] = "economy.fastTravelCost",
         ["ItemWeightBoard"] = "equipment.ammoWeight",
         ["ArtifactHunting"] = "environment.artifactRespawnRate",
@@ -779,9 +776,9 @@ public sealed class ParameterViewModel : ObservableObject
         // own a standalone parameter card. Trader Stock uses the SELL anchor.
         && !IsTraderBuysMember
         && (!IsTraderSellsMember || IsTraderSellsAnchor)
-        // Native stock and service knobs are hosted in TraderEconomyPanel,
-        // not duplicated as standalone rows in Market / Expenses.
-        && Id != "economy.traderAmmoStock"
+        // AMMO / MEDICAL SUPPLY live on the TRADER STOCK board and the
+        // service knobs in TraderEconomyPanel; no standalone rows.
+        && !IsTraderSupply
         && Id != "economy.fastTravelCost"
         && (!IsMedicalHealingMember || IsMedicalHealingAnchor)
         && (!IsActionCostMember || IsActionCostAnchor)

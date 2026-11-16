@@ -1733,11 +1733,11 @@ if not all(v in _economy_responsive for v in (
 )):
     fail("Economy pairable visual anchors reverted to full-width rows")
 _economy_coupon_start = _economy_aggregate.find('private void DrawCouponFlow(')
-_economy_coupon_end = _economy_aggregate.find('private void DrawTraderStockKnobs(', _economy_coupon_start)
+_economy_coupon_end = _economy_aggregate.find('private void DrawEconomyCard(', _economy_coupon_start)
 _economy_coupon = (_economy_aggregate[_economy_coupon_start:_economy_coupon_end]
                    if 0 <= _economy_coupon_start < _economy_coupon_end else "")
 _economy_service_start = _economy_aggregate.find('private void DrawServicePriceKnobs(')
-_economy_service_end = _economy_aggregate.find('private void DrawTraderStockKnobs(', _economy_service_start)
+_economy_service_end = _economy_aggregate.find('private void DrawEconomyCard(', _economy_service_start)
 _economy_service = (_economy_aggregate[_economy_service_start:_economy_service_end]
                     if 0 <= _economy_service_start < _economy_service_end else "")
 _economy_coupon_contract = (
@@ -4372,16 +4372,15 @@ if (len(_stash_med_caps) != 2
 else:
     note("Stashes Phase 3: common native tier/SmartLoot effective values, bonus overrides and output parity harness")
 
-# Trader Stock native rotary bank uses the existing input/grid infrastructure.
-_stock_knob_source = _knob_source
-if (not all(v in _stock_knob_source for v in (
-    'private void DrawTraderStockKnobs(',
-    '("economy.traderAmmoStock", "AMMO SUPPLY")',
-    '("economy.medicStock", "MEDICAL SUPPLY")',
-    '"TraderStockBoard" => StockAmountBoardHeight(width)',
-)) or not knob_wheel_gate_contains(_stock_knob_source, "TraderStockBoard") or any('2026-10-11 — Trader Stock native knobs' not in d
-          for d in _knob_catalog_texts)):
-    fail("Trader Stock dual source knob contract drifted")
+# Trader Stock (2026-11-16): AMMO / MEDICAL SUPPLY are rails on the custom-drawn
+# TRADER STOCK board; the former knob bank is retired.
+_stock_board = (ROOT / "src/TrueCustomDifficulty/Controls/TraderBuysMatrix.cs").read_text(encoding="utf-8")
+if (not all(v in _stock_board for v in (
+    'DrawSupply(dc, AmmoSupplyId, "AMMO SUPPLY",',
+    'DrawSupply(dc, MedicalSupplyId, "MEDICAL SUPPLY",',
+    'public sealed class TraderBuysMatrix : FrameworkElement',
+)) or 'DrawTraderStockKnobs' in _knob_source or '"TraderStockBoard"' in _knob_source):
+    fail("Trader Stock supply rails contract drifted")
 
 # Live Equipment Wear knobs stay supported; hidden Combat visual families do not.
 if (not all(t in _knob_source for t in (
@@ -5454,7 +5453,7 @@ _ctrl_dir = ROOT / "src" / "TrueCustomDifficulty" / "Controls"
 _hover_controls = ("ActionCostsRadar", "AnomalyDamageRadar", "HumanGroupSizeRadar",
     "ItemPriceScalersRadar", "MedicalHealingRadar", "MutantDropRadar", "MutantGroupSizeRadar",
     "MutantHealthRadar", "WorldLootRemovalRadar", "BleedingCurveControl",
-    "DrunkennessControl")
+    "DrunkennessControl", "TraderBuysMatrix")
 _missing_hover = [n for n in _hover_controls if any(t not in (_ctrl_dir / (n + ".cs")).read_text(encoding="utf-8") for t in (
     "private readonly CardHoverTracker _cardHover = new();", "using (_cardHover.BeginRender())",
     "_cardHover.DrawHover(dc);", "if (_cardHover.UpdateHover(e.GetPosition(this))) InvalidateVisual();",

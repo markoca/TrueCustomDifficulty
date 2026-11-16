@@ -5,26 +5,23 @@ using System.Windows.Controls;
 namespace TrueCustomDifficulty.Infrastructure;
 
 /// <summary>
-/// One responsive Economy editor: Trader Stock on the left, with horizontal
-/// Stock Amount and Service Prices knob banks stacked on its right.
-/// Existing parameters and CFG writer behavior remain unchanged.
+/// One responsive Economy editor: the TRADER STOCK board (with its AMMO /
+/// MEDICAL SUPPLY rails) on the left and the Service Prices bank on the right.
+/// Narrow windows stack the bank below the board.
 /// </summary>
 public sealed class TraderEconomyPanel : Panel
 {
     private const double Gap = 10.0;
-    private const double TableShare = 0.30;
-    private const double MinTableWidth = 300.0;
-    private const double MinBankWidth = 470.0;
-    // Only used when the window is too narrow to preserve a readable 30/70 split.
+    private const double TableShare = 0.42;
+    private const double MinTableWidth = 380.0;
+    private const double MinBankWidth = 420.0;
+    // Only used when the window is too narrow for the side-by-side split.
     private const double FallbackTableWidth = 820.0;
     private const double FallbackBankWidth = 606.0;
 
     private static double UsableWidth(double width)
         => double.IsFinite(width) ? Math.Max(1.0, width) : 1120.0;
 
-    // Split the available content (not the 10-DIP gutter) precisely 30/70.
-    // Both Measure and Arrange use the same calculation, with no maximum
-    // width on either column that would silently undo the requested ratio.
     private static (double Table, double Banks) ColumnWidths(double width)
     {
         var contentWidth = Math.Max(1.0, width - Gap);
@@ -41,51 +38,37 @@ public sealed class TraderEconomyPanel : Panel
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = UsableWidth(availableSize.Width);
-        if (InternalChildren.Count != 3)
-            throw new InvalidOperationException("Trader Economy requires a stock table and two knob banks.");
+        if (InternalChildren.Count != 2)
+            throw new InvalidOperationException("Trader Economy requires the stock board and the service bank.");
 
         var table = InternalChildren[0];
-        var stock = InternalChildren[1];
-        var services = InternalChildren[2];
+        var services = InternalChildren[1];
 
         if (UseSideColumn(width))
         {
             var (tableWidth, bankWidth) = ColumnWidths(width);
             table.Measure(new Size(tableWidth, double.PositiveInfinity));
-            stock.Measure(new Size(bankWidth, double.PositiveInfinity));
             services.Measure(new Size(bankWidth, double.PositiveInfinity));
-            var rightHeight = stock.DesiredSize.Height + Gap + services.DesiredSize.Height;
-            return new Size(width, Math.Max(table.DesiredSize.Height, rightHeight));
+            return new Size(width, Math.Max(table.DesiredSize.Height, services.DesiredSize.Height));
         }
 
-        // Narrow fallback preserves the horizontal knob orientation within
-        // each bank; only the two bank cards move below the stock table.
-        var narrowTableWidth = Math.Min(FallbackTableWidth, width);
-        var narrowBankWidth = Math.Min(FallbackBankWidth, width);
-        table.Measure(new Size(narrowTableWidth, double.PositiveInfinity));
-        stock.Measure(new Size(narrowBankWidth, double.PositiveInfinity));
-        services.Measure(new Size(narrowBankWidth, double.PositiveInfinity));
-        return new Size(width, table.DesiredSize.Height + Gap
-            + stock.DesiredSize.Height + Gap + services.DesiredSize.Height);
+        table.Measure(new Size(Math.Min(FallbackTableWidth, width), double.PositiveInfinity));
+        services.Measure(new Size(Math.Min(FallbackBankWidth, width), double.PositiveInfinity));
+        return new Size(width, table.DesiredSize.Height + Gap + services.DesiredSize.Height);
     }
 
     protected override Size ArrangeOverride(Size finalSize)
     {
         var width = Math.Max(1.0, finalSize.Width);
         var table = InternalChildren[0];
-        var stock = InternalChildren[1];
-        var services = InternalChildren[2];
+        var services = InternalChildren[1];
 
         if (UseSideColumn(width))
         {
             var (tableWidth, bankWidth) = ColumnWidths(width);
-            var totalWidth = tableWidth + Gap + bankWidth;
-            var left = Math.Max(0.0, (width - totalWidth) / 2.0);
-            var right = left + tableWidth + Gap;
+            var left = Math.Max(0.0, (width - (tableWidth + Gap + bankWidth)) / 2.0);
             table.Arrange(new Rect(left, 0.0, tableWidth, table.DesiredSize.Height));
-            stock.Arrange(new Rect(right, 0.0, bankWidth, stock.DesiredSize.Height));
-            services.Arrange(new Rect(right, stock.DesiredSize.Height + Gap,
-                bankWidth, services.DesiredSize.Height));
+            services.Arrange(new Rect(left + tableWidth + Gap, 0.0, bankWidth, services.DesiredSize.Height));
             return finalSize;
         }
 
@@ -93,10 +76,7 @@ public sealed class TraderEconomyPanel : Panel
         var bankWidthNarrow = Math.Min(FallbackBankWidth, width);
         table.Arrange(new Rect((width - tableWidthNarrow) / 2.0, 0.0,
             tableWidthNarrow, table.DesiredSize.Height));
-        var top = table.DesiredSize.Height + Gap;
-        var bankLeft = (width - bankWidthNarrow) / 2.0;
-        stock.Arrange(new Rect(bankLeft, top, bankWidthNarrow, stock.DesiredSize.Height));
-        services.Arrange(new Rect(bankLeft, top + stock.DesiredSize.Height + Gap,
+        services.Arrange(new Rect((width - bankWidthNarrow) / 2.0, table.DesiredSize.Height + Gap,
             bankWidthNarrow, services.DesiredSize.Height));
         return finalSize;
     }

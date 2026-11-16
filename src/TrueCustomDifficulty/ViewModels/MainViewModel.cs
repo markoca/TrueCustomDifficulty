@@ -468,11 +468,20 @@ public sealed class MainViewModel : ObservableObject
                         && (NpcConsumableItems.Any(item => item.IsEffectiveChange)
                             || IsCorpseSmartLootNeedBoostModified))
                     || (anchorId == "loot.stashMixMedical" && StashPresence.IsModified)
-                    || (anchorId == TraderSellsPolicy.AnchorId && TraderSellOdds.IsModified));
+                    || (anchorId == TraderSellsPolicy.AnchorId && (TraderSellOdds.IsModified
+                        || GenericNpcRareGearEnabled
+                        || TraderOffersPolicy.Decode(TraderItemOverrides).Count > 0)));
             if (anchorId == "loot.stashMixMedical")
                 StashPresence.Changed += (_, _) => visualAnchor.RefreshAggregateModifiedState();
             if (anchorId == TraderSellsPolicy.AnchorId)
+            {
                 TraderSellOdds.Changed += (_, _) => visualAnchor.RefreshAggregateModifiedState();
+                PropertyChanged += (_, args) =>
+                {
+                    if (args.PropertyName is nameof(GenericNpcRareGearEnabled) or nameof(TraderItemOverrides))
+                        visualAnchor.RefreshAggregateModifiedState();
+                };
+            }
 
             foreach (var visualMember in members)
             {
@@ -633,9 +642,11 @@ public sealed class MainViewModel : ObservableObject
             TraderBuysPolicy.AnchorId,
             traderBuysParameterIds.OrderBy(id => id, StringComparer.Ordinal).ToArray());
 
+        // TRADER STOCK board: category rails plus AMMO / MEDICAL SUPPLY.
         WireVisualAggregate(
             TraderSellsPolicy.AnchorId,
-            traderSellsParameterIds.OrderBy(id => id, StringComparer.Ordinal).ToArray());
+            traderSellsParameterIds.OrderBy(id => id, StringComparer.Ordinal)
+                .Append("economy.traderAmmoStock").Append("economy.medicStock").ToArray());
         // A removed category (toggle off) owns 0%; drop any partial odds.
         foreach (var sellId in TraderSellsPolicy.ParameterIds)
         {
@@ -650,11 +661,6 @@ public sealed class MainViewModel : ObservableObject
                     TraderSellOdds.Set(sell.Id, 1.0);
             };
         }
-
-        WireVisualAggregate(
-            "economy.traderAmmoStock",
-            "economy.traderAmmoStock",
-            "economy.medicStock");
 
         WireVisualAggregate(
             "economy.fastTravelCost",

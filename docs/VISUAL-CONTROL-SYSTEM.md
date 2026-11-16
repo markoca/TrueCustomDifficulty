@@ -1,3 +1,13 @@
+## 2026-11-16 — CURRENT: TRADER STOCK redrawn as a board (supply rails, all roles, CLEAR, R)
+
+* **TRADER STOCK** is now a custom-drawn board like every other (was native WPF Slider / Button / CheckBox): BoardTitle heading, `100% = GAME ODDS · 0% = REMOVED`, compact rail cards with the reference tick, gold handle and gold value when changed, white card hover. Same `TraderBuysMatrix` class / XAML slot.
+* Top: **AMMO SUPPLY** and **MEDICAL SUPPLY** rails (0.25x–3x) replace the separate STOCK AMOUNT knob bank; the Economy trader row is now TRADER STOCK (42%) + SERVICE PRICES.
+* Role chips **GENERAL · MEDIC · TECHNICIAN · BARTENDER · GENERIC NPC** (a gold dot marks a changed role). TECHNICIAN is shown again: its values are written, so it must be editable (mostly Bolshak, DLC1).
+* One rail per category (0% = removed). Generic NPC: **RARE GEAR** is one rail, 0% = OFF, 1–100% = chance (was checkbox + CHANCE row).
+* Older presets: a notice `OLDER PRESET: n item exclusions + m BUY restrictions still active` with **CLEAR** (was text only, impossible to undo).
+* Click a track or card = its own panel text (GEAR and role chips included); right-click resets one rail; **R resets the board** (rails, odds, RARE GEAR, supplies; CLEAR stays separate). Arrow keys / Home / End on the selected rail.
+* The board is marked modified also by RARE GEAR and legacy restrictions. Panel title of General → Weapons is *General Sells Weapons* (was *Trader Stock*).
+
 ## 2026-11-16 — CURRENT: Mutant Health covers variants
 
 * No layout change. The species health tracks now also scale the variants with their own HP (Moldy Blind Dog, Ashy and prologue Bloodsucker, Helmed and Porcupine Boar, Boggy Flesh, five Poltergeist variants), matching ATTACKS / ABILITIES. The HP number on each card stays the base species value; the panel text names the variants. Illusion clones are not scaled.

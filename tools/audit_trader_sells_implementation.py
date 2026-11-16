@@ -31,20 +31,15 @@ assert 'TraderSellsPolicy.Categories.Where' in ui
 assert 'TraderSellsPolicy.IsAvailable(role, c)' in ui
 # One "keep X% of game odds" rail per category: 0% = SELL toggle off,
 # 5–95% = TraderSellOdds sidecar, 100% = vanilla.
-assert 'parameter.CurrentBoolean = value > 0.0000001;' in ui
-assert 'SellOdds?.Set(id, value);' in ui
-assert 'TraderItemOverrides' in ui
-assert 'legacy item-specific exclusions' in ui
-assert 'legacy BUY restrictions' in ui
-# Technician has native CFG SELL routes but only exceptional game merchants
-# actually open a stock shop. Suppress misleading role-wide Technician cards,
-# without dropping existing preset/CFG writer parameters.
-assert 'Roles.Where(role => role.Id != "technician").ToArray()' in policy
-assert 'foreach (var role in TraderSellsPolicy.EditorRoles)' in ui
-assert 'TraderSellsPolicy.EditorRoles.Single(r => r.Id == _roleId)' in ui
-assert 'foreach (var role in TraderSellsPolicy.Roles)' not in ui
-assert 'TraderSellsPolicy.ParameterIds.Any(id => !_source.ContainsKey(id))' in ui
-assert 'TraderSellsPolicy.ParameterIds.Concat(' in ui
+assert 'sell.CurrentBoolean = value > Epsilon;' in ui
+assert 'SellOdds?.Set(rail.Id, value);' in ui
+# Legacy restrictions from older presets are visible and clearable.
+assert 'OLDER PRESET: ' in ui and '"CLEAR"' in ui and 'private void ClearLegacy()' in ui
+assert 'TraderItemOverrides = string.Empty;' in ui
+# Every role whose values are written is editable (TECHNICIAN included).
+assert 'public static readonly IReadOnlyList<TraderBuysPolicy.Role> EditorRoles = Roles;' in policy
+assert 'var roles = TraderSellsPolicy.Roles;' in ui
+assert 'TraderSellsPolicy.ParameterIds\n            .Concat(' in ui.replace("\r", "")
 assert '["technician"] = new HashSet<string>(StringComparer.Ordinal)' in policy
 assert 'Binding="{Binding IsTraderSellsAnchor}"' in xaml
 assert '<controls:TraderBuysMatrix' in xaml
@@ -54,34 +49,32 @@ assert '<controls:TraderBuysMatrix' in xaml
 assert '<infra:TraderEconomyPanel x:Name="TraderEconomyPanel"' in xaml
 assert '<Setter TargetName="TraderEconomyPanel" Property="Visibility" Value="Visible" />' in xaml
 assert 'VerticalKnobLayout="True"' not in xaml
-assert 'Family="TraderStockBoard"' in xaml and 'Family="ServiceCostsBoard"' in xaml
-assert xaml.index('Family="TraderStockBoard"') < xaml.index('Family="ServiceCostsBoard"')
+# AMMO / MEDICAL SUPPLY are rails on the TRADER STOCK board (no knob bank).
+assert 'Family="TraderStockBoard"' not in xaml and 'Family="ServiceCostsBoard"' in xaml
+assert xaml.index('<controls:TraderBuysMatrix') < xaml.index('Family="ServiceCostsBoard"')
 assert 'TraderBuysMatrixControl" Property="Visibility" Value="Visible"' not in xaml
 aggregate = (src / "Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
-assert 'DrawHeader(dc, "STOCK AMOUNT", "", text, muted, accent);' in aggregate
+assert '"STOCK AMOUNT"' not in aggregate and 'DrawTraderStockKnobs' not in aggregate
 assert '"ServiceCostsBoard" => ServicePriceBoardHeight(width)' in aggregate
-assert '"TraderStockBoard" => StockAmountBoardHeight(width)' in aggregate
+assert '"TraderStockBoard"' not in aggregate
 assert 'var columns = ActualWidth >= 470.0 ? 3 : 2;' in aggregate
-assert 'var twoColumns = ActualWidth >= 320.0;' in aggregate
 assert 'VerticalKnobLayout' not in aggregate
 viewmodel = (src / "ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
 visible = viewmodel.split("public bool IsControlVisible =>", 1)[1].split("public string ToggleStateLabel", 1)[0]
-assert '&& Id != "economy.traderAmmoStock"' in visible
+assert '&& !IsTraderSupply' in visible
 assert '&& Id != "economy.fastTravelCost"' in visible
 panel = (src / "Infrastructure/TraderEconomyPanel.cs").read_text(encoding="utf-8")
 assert 'UseSideColumn(width)' in panel
-assert 'private const double TableShare = 0.30;' in panel
+assert 'private const double TableShare = 0.42;' in panel
 assert 'var tableWidth = contentWidth * TableShare;' in panel
 assert 'return (tableWidth, contentWidth - tableWidth);' in panel
 assert 'tableWidth >= MinTableWidth && bankWidth >= MinBankWidth' in panel
 assert 'var (tableWidth, bankWidth) = ColumnWidths(width);' in panel
-assert 'var right = left + tableWidth + Gap;' in panel
+assert 'services.Arrange(new Rect(left + tableWidth + Gap, 0.0, bankWidth' in panel
 assert 'Math.Min(FallbackTableWidth, width)' in panel
 assert 'Math.Min(FallbackBankWidth, width)' in panel
-assert 'Family="TraderStockBoard"\n                                                                                                     HorizontalAlignment="Stretch"' in xaml
 assert 'Family="ServiceCostsBoard"\n                                                                                                     HorizontalAlignment="Stretch"' in xaml
-assert 'stock.DesiredSize.Height + Gap + services.DesiredSize.Height' in panel
-assert 'new Rect(right, stock.DesiredSize.Height + Gap,' in panel
+assert 'InternalChildren.Count != 2' in panel
 assert 'table.DesiredSize.Height + Gap' in panel
 # The category-only UI does not bind the retired per-item list. The saved
 # sidecar must continue to reach the writer through MainViewModel.

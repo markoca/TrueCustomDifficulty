@@ -1,3 +1,10 @@
+## 2026-11-16 — TRADER STOCK board checks
+
+* Wine: the board draws like the other boards at wide and narrow widths (supply rails side by side / stacked, chips in one or two rows); right-click, R, arrow keys, role chips and CLEAR work; TECHNICIAN chip present.
+* Load an older preset with item exclusions or BUY restrictions: the notice appears, CLEAR removes it and the board is no longer marked modified.
+* MEDICAL SUPPLY 0.25x: a medic's single bandages/medkits appear clearly less often (odds), larger stacks shrink. AMMO SUPPLY 2x: stacks double, odds unchanged.
+* RARE GEAR 0% = off (no rare branch written), 5% = rare branch with 5% chance.
+
 ## 2026-11-16 — ARTIFACT HUNTING in-game checks (runtime_test_required)
 
 * **SPAWN CHANCE 0x**: build, take or wait out artifacts in two ordinary anomaly fields: no new artifact should appear (quest / unique artifacts still do). Then **4x** (`100% +60%`): fields refill noticeably more reliably.

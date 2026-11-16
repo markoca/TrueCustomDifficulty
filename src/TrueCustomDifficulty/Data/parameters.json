@@ -10044,8 +10044,8 @@
           "AVOG in Trader_SovietAmmo_ItemGenerator has no authored count and keeps its native default."
         ]
       },
-      "rationale": "How much ammo every trader has on the shelf — general traders, bartenders, generic stalkers and DLC traders alike. Vanilla: 1×. Lower = ammo runs out at the counter too; higher = bigger stacks. Doesn't add new calibers.",
-      "logic": "1x keeps vanilla trader ammo stock. Lower settings reduce how much ammo traders carry; higher settings increase it.",
+      "rationale": "How much ammo every trader has on the shelf — general traders, bartenders, generic stalkers and DLC traders alike. Vanilla: 1×. Lower = smaller stacks, and where a stack is already 1 the offer turns up less often; higher = bigger stacks. Doesn't add new calibers.",
+      "logic": "1x keeps vanilla trader ammo stock. Below 1x stacks shrink (never below 1) and whatever they cannot lose comes off the offer's odds, so the expected amount follows the setting. Above 1x only stack sizes grow.",
       "interaction": "Changes amount only. It does not add ammo types, alter availability chance, bypass player-rank progression, or change refresh timing. TRADER STOCK odds sliders change how often ammo is offered."
     },
     {
@@ -10089,8 +10089,8 @@
           "Since 2026-11-16 every Medical offer of every trader profile is also written as explicit source x factor counts in per-trader generator clones (trader-stock-entries-2.1.csv)."
         ]
       },
-      "rationale": "How many meds every trader has for sale — medics, general traders and generic stalkers alike. Vanilla: 1×. Lower = you can't restock everything in one visit.",
-      "logic": "100% keeps vanilla medic stock. Lower settings reduce stock; higher settings increase it.",
+      "rationale": "How many meds every trader has for sale — medics, general traders and generic stalkers alike. Vanilla: 1×. Lower = smaller stacks, and single meds turn up less often, so you can't restock everything in one visit; higher = bigger stacks.",
+      "logic": "1x keeps vanilla trader medical stock. Below 1x stacks shrink (never below 1) and whatever they cannot lose comes off the offer's odds (most meds are sold one or two at a time). Above 1x only stack sizes grow.",
       "interaction": "Changes amount only. Availability chance, progression and restock timing stay vanilla. TRADER STOCK odds sliders change how often meds are offered."
     },
     {
@@ -17317,8 +17317,8 @@
       "id": "economy.traderSells.general.weapons",
       "tab": "economy",
       "group": "Traders",
-      "label": "Trader Stock",
-      "description": "One rail per trader role and category: keep X% of the game's odds for those offers; 0% removes the category. Controls apply by trader role, not by individual NPC.",
+      "label": "General Sells Weapons",
+      "description": "Keeps X% of the game's odds for weapons offered by general traders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {

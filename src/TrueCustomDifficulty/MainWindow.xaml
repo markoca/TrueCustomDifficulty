@@ -340,16 +340,12 @@
                                                                                                HorizontalAlignment="Stretch"
                                                                                                PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                                ParameterSelected="AggregateVisualControl_ParameterSelected"
+                                                                                               TraderItemOverrides="{Binding DataContext.TraderItemOverrides, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Window}}"
                                                                                                RareGearEnabled="{Binding DataContext.GenericNpcRareGearEnabled, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Window}}"
                                                                                                RareGearChance="{Binding DataContext.GenericNpcRareGearChance, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Window}}"
                                                                                                SellOdds="{Binding DataContext.TraderSellOdds, RelativeSource={RelativeSource AncestorType=Window}}"
                                                                                                IsEnabled="{Binding DataContext.IsBuildIdle, RelativeSource={RelativeSource AncestorType=Window}}"
                                                                                                Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
-                                                                    <controls:AggregateVisualControl Family="TraderStockBoard"
-                                                                                                     HorizontalAlignment="Stretch"
-                                                                                                     PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
-                                                                                                     ParameterSelected="AggregateVisualControl_ParameterSelected"
-                                                                                                     Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
                                                                     <controls:AggregateVisualControl Family="ServiceCostsBoard"
                                                                                                      HorizontalAlignment="Stretch"
                                                                                                      PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"

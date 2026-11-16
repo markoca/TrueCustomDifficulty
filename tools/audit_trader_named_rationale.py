@@ -22,8 +22,9 @@ assert 'SelectedParameter.PanelRationale' in xaml
 assert 'public string PanelRationale => _panelCard?.Text ?? RationaleDisplay;' in vm
 assert '"id": "economy.traderSells.general.weapons"' in catalog
 assert 'NamedProfiles.Select(p => p.Name + " — " + p.Categories)' in rationale
-assert "Binoculars are source-listed but have no category switch" in rationale
-assert "technicians have no Trader Stock tab" in rationale
+assert "Binoculars are source-listed but have no category rail" in rationale
+assert "TECHNICIAN rails matter mainly for Bolshak (DLC1)" in rationale
+assert "checkboxes" not in rationale
 
 source = defaultdict(set)
 with (SOURCE / "Data/trader-sells-2.1-runtime.csv").open(encoding="utf-8", newline="") as handle:

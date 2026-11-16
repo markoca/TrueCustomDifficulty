@@ -214,3 +214,8 @@ The current GUI groups **22 existing source-bound settings** into six full-width
 Starting Coupons and the two distinct quest reward multipliers share one compact board but are **not added together**; starting coupons still apply only when a new game initializes. The five category-cost scalers share visual controls with Mutant Parts but remain logically separate from the per-item `Cost` transformations. Fast travel, upgrades and Base Repair Price each edit an independent source; the last remains distinct from the four repair-reputation modifiers. Stock quantities do not rewrite restock, rank or membership. Do not infer a final trader buy/sell formula from the editable raw scalers.
 
 The grey reference tick reflects the chosen Base difficulty; values are highlighted only when actually modified. Historical source audits remain valid: this change adds no new CFG edit point and does not resurrect disallowed aggregate trader-stock controls.
+
+
+## Trader supply below 1x (2026-11-16)
+
+AMMO SUPPLY / MEDICAL SUPPLY scale MinCount/MaxCount of every Ammo / Medical offer in per-trader clones (never below 1). Below 1x, the share a stack cannot lose any more (e.g. medicine sold 1/1) is taken from the offer's Chance (or a native `Empty` pick for the five single-entry Weight lists), so the expected amount follows the setting, like the stash supply rule. Pure rounding remainders above 0.98 are ignored. At 0.25x medical: 72 of 79 offers get lower odds; at 0.5x ammo only 9 of 62.

@@ -62,7 +62,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private void RaiseParameterSelected(ParameterViewModel parameter)
     {
         if (Family is "AnomalyGlobalDamage" or "FlycatcherSlowdown" or "AnomalySpecialEffects" or "ServiceCostsBoard"
-            or "CouponFlow" or "TraderStockBoard" or "ItemWeightBoard" or "ArtifactHunting" or "EquipmentWearBalance"
+            or "CouponFlow" or "ItemWeightBoard" or "ArtifactHunting" or "EquipmentWearBalance"
             or "StashContentMix" or "StashMedicalComposition"
             or "StashGear" or "NpcLootLoadout" or "HumanCombatProfile" or "PlayerWeaponProfile"
             or "StarvationTimeline" or "SevereFatiguePenaltyBoard"
@@ -180,7 +180,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // The paired Economy dashboard cards must measure at their actual host
         // width rather than demanding the unrelated 520-DIP plot minimum.
         var compactBoard = Family is "CouponFlow" or "TradingDashboard"
-            or "ServiceCostsBoard" or "TraderStockBoard" or "RepairCurve"
+            or "ServiceCostsBoard" or "RepairCurve"
             or "MasterLowHealth" or "MasterRadiationPenalty";
         var minimumWidth = compactBoard ? 280.0 : 520.0;
         var width = double.IsInfinity(availableSize.Width) ? 760.0
@@ -356,9 +356,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         switch (Family)
         {
-            case "TraderStockBoard":
-                DrawTraderStockKnobs(dc, text, muted, border, accent, panel);
-                break;
             case "ServiceCostsBoard":
                 DrawServicePriceKnobs(dc, text, muted, border, accent, panel);
                 break;
@@ -601,9 +598,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private static double ServicePriceBoardHeight(double width)
         => width >= 470.0 ? 242.0 : 438.0;
 
-    private static double StockAmountBoardHeight(double width)
-        => width >= 320.0 ? 242.0 : 423.0;
-
     private static string EconomyValue(ParameterViewModel parameter, double value)
         => parameter.Id switch
         {
@@ -737,35 +731,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 text, muted, border, accent, panel,
                 percentageReadout: channels[i].Id == "economy.repairCostBase");
         }
-    }
-
-    // Independent native stock multipliers: no suggestion of actual item slots.
-    // The two dials sit side by side beside the trader table, not one above another.
-    private void DrawTraderStockKnobs(
-        DrawingContext dc, Brush text, Brush muted, Brush border,
-        Brush accent, Brush panel)
-    {
-        DrawHeader(dc, "STOCK AMOUNT", "", text, muted, accent);
-        var channels = new (string Id, string Label)[]
-        {
-            ("economy.traderAmmoStock", "AMMO SUPPLY"),
-            ("economy.medicStock", "MEDICAL SUPPLY")
-        };
-        // Exceptionally narrow windows may use a two-row fallback so neither
-        // dial or its caption gets cropped.
-        var twoColumns = ActualWidth >= 320.0;
-        const double gap = 12.0;
-        var bankWidth = Math.Min(400.0, Math.Max(1.0, ActualWidth - 28.0));
-        var cellWidth = Math.Min(194.0,
-            twoColumns ? (bankWidth - gap) / 2.0 : bankWidth);
-        var rowWidth = twoColumns ? 2 * cellWidth + gap : cellWidth;
-        var left = (ActualWidth - rowWidth) / 2.0;
-        for (var i = 0; i < channels.Length; i++)
-            DrawSourceKnob(dc, P(channels[i].Id), channels[i].Label,
-                new Rect(left + (twoColumns ? i * (cellWidth + gap) : 0.0),
-                    49.0 + (twoColumns ? 0.0 : i * 187.0),
-                    cellWidth, 181.0),
-                text, muted, border, accent, panel);
     }
 
     private void DrawEconomyCard(
@@ -6824,7 +6789,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
         var stashGraph = Family is "StashContentMix"
             or "StashMedicalComposition" or "StashGear";
-        if (!stashGraph && Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer" or "TraderStockBoard" or "EquipmentWearBalance" or "ServiceCostsBoard" or "RadiationBalance" or "HumanCombatProfile" or "StarvationTimeline" or "FlycatcherSlowdown" or "AnomalySpecialEffects" or "NpcLootLoadout"))
+        if (!stashGraph && Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer" or "EquipmentWearBalance" or "ServiceCostsBoard" or "RadiationBalance" or "HumanCombatProfile" or "StarvationTimeline" or "FlycatcherSlowdown" or "AnomalySpecialEffects" or "NpcLootLoadout"))
             return;
 
         var target = FindTarget(e.GetPosition(this));
@@ -7910,7 +7875,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         {
             "CouponFlow" => CouponBoardHeight(width),
             "ServiceCostsBoard" => ServicePriceBoardHeight(width),
-            "TraderStockBoard" => StockAmountBoardHeight(width),
             "ItemWeightBoard" => EconomyBoardHeight(width, 4),
             "ArtifactHunting" => ArtifactHuntingHeight(width),
             "AnomalyGlobalDamage" => 242.0,
@@ -7988,11 +7952,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 "economy.startingMoney",
                 "economy.mainQuestReward",
                 "economy.sideQuestReward"
-            },
-            "TraderStockBoard" => new[]
-            {
-                "economy.traderAmmoStock",
-                "economy.medicStock"
             },
             "ServiceCostsBoard" => new[]
             {

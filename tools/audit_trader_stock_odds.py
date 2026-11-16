@@ -56,7 +56,8 @@ assert {r["item_sid"] for r in uncounted} == {"AVOG"}  # native default count, l
 for token in (
     'var ammoFactor = Factor("economy.traderAmmoStock");',
     'var medicalFactor = Factor("economy.medicStock");',
-    'var keep = Removed(leaf) ? 0.0 : OddsFor(leaf);',
+    'var keep = Removed(leaf) ? 0.0 : OddsFor(leaf) * SupplyOddsFactor(entry, AmountFor(leaf));',
+    'private static double SupplyOddsFactor(TraderStockEntry entry, double amount)',
     'document.AddAssignment(targetClone, emptyPath, "ItemPrototypeSID", "Empty");',
     'ScalePositiveInteger(sourceCount, amount)',
     'result.Count != 608',
@@ -74,7 +75,9 @@ assert '[JsonPropertyName("traderSellOdds")]' in preset_file
 assert "Unknown trader stock category" in preset_service
 assert "public static IReadOnlyCollection<string> Ids" in sidecar
 assert 'SellOdds="{Binding DataContext.TraderSellOdds' in xaml
-assert '"100% = GAME ODDS  ·  0% = REMOVED"' in ui
+assert '"100% = GAME ODDS · 0% = REMOVED"' in ui
+assert 'private void ResetBoard()' in ui and 'if (e.Key == Key.R)' in ui
+assert '"AMMO SUPPLY"' in ui and '"MEDICAL SUPPLY"' in ui
 
 # Texts and panel match the rails (no ON/OFF checkbox wording left).
 import json as _json
@@ -88,7 +91,7 @@ for _x in _sells:
     assert "Vanilla: 100%" in _x["rationale"], _x["id"]
 _pvm = read("ViewModels/ParameterViewModel.cs")
 assert "if (IsTraderSellsMember && IsToggle)" in _pvm and "SellOddsProvider?.Invoke()" in _pvm
-assert "if (IsTraderSellsMember)\n                return \"Drag a category's rail" in _pvm.replace("\r", "")
+assert "if (IsTraderSellsMember || IsTraderSupply)\n                return \"Pick a trader type, then drag a category's rail" in _pvm.replace("\r", "")
 _mvm = read("ViewModels/MainViewModel.cs")
 assert "sell.SellOddsProvider = () => TraderSellOdds.Get(sell.Id);" in _mvm
 

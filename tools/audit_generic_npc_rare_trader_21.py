@@ -70,19 +70,12 @@ xaml = (SRC / "MainWindow.xaml").read_text(encoding="utf-8")
 vm = (SRC / "ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
 preset = (SRC / "Models/PresetFile.cs").read_text(encoding="utf-8")
 assert 'if (_roleId == "genericNpc")' in ui
-assert 'RenderRareGear(fg, muted, accent, border, background)' in ui
-assert 'Text("GEAR", 11, fg)' in ui
-assert 'Text("CHANCE", 10, muted)' in ui
-assert 'Visibility.Visible : Visibility.Collapsed' in ui
-assert 'Minimum = 0.01, Maximum = 1.0' in ui
-assert 'TickFrequency = 0.01' in ui
-assert 'row.PreviewMouseRightButtonDown +=' in ui
-assert 'parameter.ResetToReference();' in ui
-assert 'if (!parameter.IsControlEnabled) return;' in ui
-assert '_gearOutline.PreviewMouseRightButtonDown +=' in ui
-assert 'RareGearEnabled = false;' in ui
-assert '_gearChanceRow.PreviewMouseRightButtonDown +=' in ui
-assert 'RareGearChance = 0.02;' in ui
+# One RARE GEAR rail: 0% = off, 1–100% = chance (0.01 steps).
+assert 'DrawPercentRow(dc, RailKind.Gear, "gear", "RARE GEAR", GearValue, 0.0,' in ui
+assert 'private double GearValue => RareGearEnabled ? RareGearChance : 0.0;' in ui
+assert 'if (value < 0.01)\n                    RareGearEnabled = false;' in ui.replace("\r", "")
+assert 'RareGearEnabled = false;\n                RareGearChance = RareGearDefault;' in ui.replace("\r", "")
+assert 'private const double RareGearDefault = 0.02;' in ui
 assert 'RareGearEnabled="{Binding DataContext.GenericNpcRareGearEnabled, Mode=TwoWay' in xaml
 assert 'RareGearChance="{Binding DataContext.GenericNpcRareGearChance, Mode=TwoWay' in xaml
 assert '_genericNpcRareGearChance = 0.02' in vm
@@ -97,4 +90,4 @@ assert (ROOT / "docs/generators/GENERIC-NPC-RARE-TRADER-STOCK-21.md").exists()
 for doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
     s = (ROOT / "docs" / doc).read_text(encoding="utf-8")
     assert "Generic NPC rare trader stock, **explicit test opt-in**" in s
-print("PASS: 9 exact 2.1 generic merchants, conditional GEAR checkbox and 1-100% CHANCE slider, persisted preset, isolated CFG branch")
+print("PASS: 9 exact 2.1 generic merchants, RARE GEAR rail (0% = off, 1-100% chance), persisted preset, isolated CFG branch")

@@ -163,6 +163,26 @@ public sealed partial class CfgPatchWriterService
         _ => throw new InvalidDataException("Unknown native trade profile scope.")
     };
 
+    /// <summary>
+    /// Supply below 1x: stacks shrink first (never below 1); whatever share
+    /// the stack cannot lose any more is taken from the offer's odds, like the
+    /// stash supply rule. 1x and above change only stack sizes.
+    /// </summary>
+    private static double SupplyOddsFactor(TraderStockEntry entry, double amount)
+    {
+        if (amount >= 1.0 - 0.0000001)
+            return 1.0;
+        var culture = System.Globalization.CultureInfo.InvariantCulture;
+        if (!int.TryParse(entry.MinCount, System.Globalization.NumberStyles.Integer, culture, out var min)
+            || !int.TryParse(entry.MaxCount, System.Globalization.NumberStyles.Integer, culture, out var max)
+            || min <= 0 || max <= 0)
+            return Math.Clamp(amount, 0.0, 1.0);
+        var achieved = (double)(ScalePositiveInteger(min, amount) + ScalePositiveInteger(max, amount)) / (min + max);
+        var factor = Math.Clamp(amount / Math.Max(achieved, 0.0000001), 0.0, 1.0);
+        // Ignore pure rounding remainders of stacks that did shrink.
+        return factor > 0.98 ? 1.0 : factor;
+    }
+
     private static int WriteTraderSells(
         IReadOnlyDictionary<string, ParameterViewModel> modifiedById,
         string traderItemOverrides,
@@ -298,7 +318,7 @@ public sealed partial class CfgPatchWriterService
                     var entry = entryValues[(leaf.GeneratorScope, leaf.GeneratorSid, leaf.EntryPath)];
                     if (entry.ItemSid != leaf.ItemSid)
                         throw new InvalidDataException("Trader stock entry value mismatch: " + leaf.EntryPath);
-                    var keep = Removed(leaf) ? 0.0 : OddsFor(leaf);
+                    var keep = Removed(leaf) ? 0.0 : OddsFor(leaf) * SupplyOddsFactor(entry, AmountFor(leaf));
                     if (entry.Field == "Chance" && keep <= 0.0000001)
                     {
                         // Chance offer removed: no other offer gains from it.

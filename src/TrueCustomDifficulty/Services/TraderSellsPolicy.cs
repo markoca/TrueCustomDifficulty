@@ -14,12 +14,9 @@ public static class TraderSellsPolicy
     public sealed record Category(string Id, string Label);
     public static readonly IReadOnlyList<TraderBuysPolicy.Role> Roles = TraderBuysPolicy.Roles;
 
-    // Most technician NPCs are repair/upgrade services, not player-facing
-    // stock merchants. A small source-level technician stock inventory does
-    // not justify a role-wide editor. Keep all TECHNICIAN CFG routes and
-    // saved preset values for compatibility; omit this role only from the UI.
-    public static readonly IReadOnlyList<TraderBuysPolicy.Role> EditorRoles =
-        Roles.Where(role => role.Id != "technician").ToArray();
+    // Every role is editable: a role whose values are written must be visible
+    // (technician stock is small and mostly DLC1 Bolshak, but real).
+    public static readonly IReadOnlyList<TraderBuysPolicy.Role> EditorRoles = Roles;
 
     public static readonly IReadOnlyList<Category> Categories = new[]
     {

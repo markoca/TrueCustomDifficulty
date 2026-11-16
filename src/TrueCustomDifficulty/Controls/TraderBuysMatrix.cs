@@ -2,9 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using TrueCustomDifficulty.Services;
@@ -13,29 +13,45 @@ using TrueCustomDifficulty.ViewModels;
 namespace TrueCustomDifficulty.Controls;
 
 /// <summary>
-/// Category-only original trader stock editor. Native SELL toggles are the
-/// backing model; legacy per-SID exclusions remain readable but not editable.
+/// TRADER STOCK board (custom drawn, same grammar as the other boards):
+/// AMMO / MEDICAL SUPPLY rails, trader-role chips, one "keep X% of the game's
+/// odds" rail per stock category (0% = native SELL toggle off), the Generic
+/// NPC GEAR rail (0% = off) and a CLEAR action for legacy restrictions.
+/// The historical class name stays for XAML and audit compatibility.
 /// </summary>
-public sealed class TraderBuysMatrix : UserControl
+public sealed class TraderBuysMatrix : FrameworkElement
 {
+    private readonly CardHoverTracker _cardHover = new();
+
+    protected override void OnRender(DrawingContext dc)
+    {
+        using (_cardHover.BeginRender())
+            RenderCardContent(dc);
+        _cardHover.Finish(Array.Empty<Rect>(), RenderSize);
+        _cardHover.DrawHover(dc);
+    }
+
+    // ---- dependency properties ---------------------------------------------
     public static readonly DependencyProperty ParametersProperty = DependencyProperty.Register(
         nameof(Parameters), typeof(IEnumerable), typeof(TraderBuysMatrix),
-        new PropertyMetadata(null, (o, _) => ((TraderBuysMatrix)o).Rebuild()));
+        new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender,
+            (o, _) => ((TraderBuysMatrix)o).Rebind()));
 
     public static readonly DependencyProperty TraderItemOverridesProperty = DependencyProperty.Register(
         nameof(TraderItemOverrides), typeof(string), typeof(TraderBuysMatrix),
-        new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
-            (o, _) => ((TraderBuysMatrix)o).Refresh()));
+        new FrameworkPropertyMetadata(string.Empty,
+            FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsRender
+            | FrameworkPropertyMetadataOptions.AffectsMeasure));
 
     public static readonly DependencyProperty RareGearEnabledProperty = DependencyProperty.Register(
         nameof(RareGearEnabled), typeof(bool), typeof(TraderBuysMatrix),
-        new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
-            (o, _) => ((TraderBuysMatrix)o).Refresh()));
+        new FrameworkPropertyMetadata(false,
+            FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsRender));
 
     public static readonly DependencyProperty RareGearChanceProperty = DependencyProperty.Register(
         nameof(RareGearChance), typeof(double), typeof(TraderBuysMatrix),
-        new FrameworkPropertyMetadata(0.02, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
-            (o, _) => ((TraderBuysMatrix)o).Refresh()));
+        new FrameworkPropertyMetadata(RareGearDefault,
+            FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.AffectsRender));
 
     public static readonly DependencyProperty SellOddsProperty = DependencyProperty.Register(
         nameof(SellOdds), typeof(TraderSellOddsViewModel), typeof(TraderBuysMatrix),
@@ -44,29 +60,8 @@ public sealed class TraderBuysMatrix : UserControl
             var matrix = (TraderBuysMatrix)o;
             if (e.OldValue is TraderSellOddsViewModel old) old.Changed -= matrix.OnOddsChanged;
             if (e.NewValue is TraderSellOddsViewModel now) now.Changed += matrix.OnOddsChanged;
-            matrix.Refresh();
+            matrix.InvalidateVisual();
         }));
-
-    /// <summary>Partial "keep X% of game odds" per role x category.</summary>
-    public TraderSellOddsViewModel? SellOdds
-    {
-        get => (TraderSellOddsViewModel?)GetValue(SellOddsProperty);
-        set => SetValue(SellOddsProperty, value);
-    }
-
-    private void OnOddsChanged(object? sender, EventArgs e) => Refresh();
-
-    public bool RareGearEnabled
-    {
-        get => (bool)GetValue(RareGearEnabledProperty);
-        set => SetValue(RareGearEnabledProperty, value);
-    }
-
-    public double RareGearChance
-    {
-        get => (double)GetValue(RareGearChanceProperty);
-        set => SetValue(RareGearChanceProperty, value);
-    }
 
     public IEnumerable? Parameters
     {
@@ -80,332 +75,563 @@ public sealed class TraderBuysMatrix : UserControl
         set => SetValue(TraderItemOverridesProperty, value);
     }
 
+    public bool RareGearEnabled
+    {
+        get => (bool)GetValue(RareGearEnabledProperty);
+        set => SetValue(RareGearEnabledProperty, value);
+    }
+
+    public double RareGearChance
+    {
+        get => (double)GetValue(RareGearChanceProperty);
+        set => SetValue(RareGearChanceProperty, value);
+    }
+
+    /// <summary>Partial "keep X% of game odds" per role x category.</summary>
+    public TraderSellOddsViewModel? SellOdds
+    {
+        get => (TraderSellOddsViewModel?)GetValue(SellOddsProperty);
+        set => SetValue(SellOddsProperty, value);
+    }
+
     public event EventHandler<AggregateParameterSelectedEventArgs>? ParameterSelected;
+
+    // ---- state ----------------------------------------------------------------
+    public const string AmmoSupplyId = "economy.traderAmmoStock";
+    public const string MedicalSupplyId = "economy.medicStock";
+    private const double RareGearDefault = 0.02;
+    private const double Epsilon = 0.0000001;
+    private const double RowPitch = 32.0;
+    private const double RowHeight = 28.0;
+    private const int MaxRows = 10;
+
+    private enum RailKind { Supply, Sell, Gear }
+
+    private sealed record Rail(RailKind Kind, string Id, Rect Hit, Rect Track, Rect Card);
 
     private Dictionary<string, ParameterViewModel> _source = new(StringComparer.Ordinal);
     private readonly List<ParameterViewModel> _observed = new();
-    private readonly Dictionary<string, (Slider Slider, TextBlock Value, Border Row)> _cells =
-        new(StringComparer.Ordinal);
-    private bool _syncingSliders;
-    private TextBlock? _legacyNotice;
-    private CheckBox? _gearCheck;
-    private Border? _gearOutline;
-    private Border? _gearChanceRow;
-    private Slider? _gearChanceSlider;
-    private TextBlock? _gearChanceValue;
+    private readonly List<Rail> _rails = new();
+    private readonly List<(string RoleId, Rect Hit)> _roleChips = new();
+    private Rect _clearHit = Rect.Empty;
     private string _roleId = "general";
-    private StackPanel? _roles;
-    private StackPanel? _categories;
+    private string? _selectedRail;
+    private string? _hoverRail;
+    private string? _dragRail;
+    private readonly VisualStatusMessage _status;
 
-    private static Brush BrushFor(string name, Brush fallback) =>
-        Application.Current?.TryFindResource(name) as Brush ?? fallback;
-
-    private static TextBlock Text(string value, double size, Brush color) => new()
+    public TraderBuysMatrix()
     {
-        Text = value, FontSize = size, Foreground = color,
-        FontWeight = FontWeights.SemiBold, VerticalAlignment = VerticalAlignment.Center,
-        TextTrimming = TextTrimming.CharacterEllipsis
-    };
+        Focusable = true;
+        SnapsToDevicePixels = true;
+        Cursor = Cursors.Arrow;
+        _status = new VisualStatusMessage(InvalidateVisual);
+    }
 
-    private void Rebuild()
+    private void OnOddsChanged(object? sender, EventArgs e) => InvalidateVisual();
+
+    private void Rebind()
     {
         foreach (var p in _observed) p.PropertyChanged -= OnParameterChanged;
         _observed.Clear();
-        _cells.Clear();
-        if (Parameters is null) { Content = null; return; }
-        _source = Parameters.OfType<ParameterViewModel>()
-            .ToDictionary(p => p.Id, StringComparer.Ordinal);
-        if (!_source.ContainsKey(TraderSellsPolicy.AnchorId) ||
-            TraderSellsPolicy.ParameterIds.Any(id => !_source.ContainsKey(id)))
-        {
-            Content = Text("TRADER STOCK CATALOG MISSING", 11, Brushes.White);
-            return;
-        }
-        foreach (var id in TraderSellsPolicy.ParameterIds.Concat(
-            TraderBuysPolicy.Roles.SelectMany(r =>
-                TraderBuysPolicy.Categories.Select(c => TraderBuysPolicy.ParameterId(r, c)))))
+        _source = Parameters?.OfType<ParameterViewModel>()
+            .ToDictionary(p => p.Id, StringComparer.Ordinal)
+            ?? new Dictionary<string, ParameterViewModel>(StringComparer.Ordinal);
+        foreach (var id in TraderSellsPolicy.ParameterIds
+            .Concat(new[] { AmmoSupplyId, MedicalSupplyId })
+            .Concat(LegacyBuyIds()))
         {
             if (!_source.TryGetValue(id, out var p)) continue;
             p.PropertyChanged += OnParameterChanged;
             _observed.Add(p);
         }
-
-        var accent = BrushFor("AccentBrush", Brushes.Gold);
-        var fg = BrushFor("TextBrush", Brushes.White);
-        var muted = BrushFor("RadarMutedTextBrush", Brushes.LightGray);
-        var border = BrushFor("BorderSoftBrush", Brushes.DimGray);
-        var root = new StackPanel { Margin = new Thickness(10) };
-        root.Children.Add(Text("TRADER STOCK", 13, accent));
-        root.Children.Add(new TextBlock
-        {
-            Text = "100% = GAME ODDS  ·  0% = REMOVED",
-            Foreground = muted, FontSize = 10, Margin = new Thickness(0, 4, 0, 10)
-        });
-        _roles = new StackPanel { Orientation = Orientation.Horizontal };
-        root.Children.Add(_roles);
-        _legacyNotice = Text("", 10, muted);
-        _legacyNotice.TextWrapping = TextWrapping.Wrap;
-        _legacyNotice.Margin = new Thickness(2, 8, 2, 3);
-        root.Children.Add(_legacyNotice);
-        _categories = new StackPanel { Margin = new Thickness(0, 6, 0, 0) };
-        root.Children.Add(_categories);
-        Content = new Border
-        {
-            MaxWidth = 820, Margin = new Thickness(2), BorderBrush = border,
-            BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(4),
-            Background = BrushFor("PanelBrush", Brushes.Black), Child = root
-        };
-        RenderRoles();
-        RenderCategories();
+        InvalidateMeasure();
+        InvalidateVisual();
     }
 
-    private void RenderRoles()
-    {
-        if (_roles is null) return;
-        _roles.Children.Clear();
-        var accent = BrushFor("AccentBrush", Brushes.Gold);
-        var fg = BrushFor("TextBrush", Brushes.White);
-        var border = BrushFor("BorderSoftBrush", Brushes.DimGray);
-        foreach (var role in TraderSellsPolicy.EditorRoles)
-        {
-            var selected = role.Id == _roleId;
-            var button = new Button
-            {
-                Content = role.Label.ToUpperInvariant(),
-                Height = 29, FontSize = 10, Padding = new Thickness(8, 2, 8, 2),
-                Margin = new Thickness(0, 0, 4, 0),
-                Foreground = selected ? accent : fg,
-                BorderBrush = selected ? accent : border,
-                BorderThickness = new Thickness(1)
-            };
-            button.Click += (_, _) =>
-            {
-                _roleId = role.Id;
-                RenderRoles();
-                RenderCategories();
-            };
-            _roles.Children.Add(button);
-        }
-    }
-
-    private void RenderCategories()
-    {
-        if (_categories is null) return;
-        _categories.Children.Clear();
-        _cells.Clear();
-        _gearCheck = null;
-        _gearOutline = null;
-        _gearChanceRow = null;
-        _gearChanceSlider = null;
-        _gearChanceValue = null;
-        var role = TraderSellsPolicy.EditorRoles.Single(r => r.Id == _roleId);
-        var fg = BrushFor("TextBrush", Brushes.White);
-        var muted = BrushFor("RadarMutedTextBrush", Brushes.LightGray);
-        var accent = BrushFor("AccentBrush", Brushes.Gold);
-        var border = BrushFor("BorderSoftBrush", Brushes.DimGray);
-        var background = BrushFor("RecessedParameterRowBrush", Brushes.Black);
-
-        foreach (var category in TraderSellsPolicy.Categories.Where(c =>
-            TraderSellsPolicy.IsAvailable(role, c)))
-        {
-            var id = TraderSellsPolicy.ParameterId(role, category);
-            var parameter = _source[id];
-            // One compact "keep X% of the game's odds" rail per category:
-            // 0% = the native SELL toggle off (category removed), 5–95% =
-            // TraderSellOdds sidecar (scaled native Chance), 100% = vanilla.
-            var grid = new Grid { Height = 34 };
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(110) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(46) });
-            var name = Text(category.Label.ToUpperInvariant(), 11, fg);
-            name.Margin = new Thickness(10, 0, 0, 0);
-            grid.Children.Add(name);
-            var slider = new Slider
-            {
-                Minimum = 0.0, Maximum = 1.0, TickFrequency = TraderSellOddsViewModel.Step,
-                SmallChange = TraderSellOddsViewModel.Step, LargeChange = 0.1,
-                IsSnapToTickEnabled = true, VerticalAlignment = VerticalAlignment.Center,
-                Margin = new Thickness(4, 0, 8, 0), MaxWidth = 360
-            };
-            slider.ValueChanged += (_, _) =>
-            {
-                if (_syncingSliders) return;
-                var value = TraderSellOddsViewModel.Snap(slider.Value);
-                SellOdds?.Set(id, value);
-                parameter.CurrentBoolean = value > 0.0000001;
-                ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
-                Refresh();
-            };
-            Grid.SetColumn(slider, 1);
-            grid.Children.Add(slider);
-            var valueText = Text("100%", 11, fg);
-            valueText.HorizontalAlignment = HorizontalAlignment.Right;
-            valueText.Margin = new Thickness(0, 0, 8, 0);
-            Grid.SetColumn(valueText, 2);
-            grid.Children.Add(valueText);
-            var row = new Border
-            {
-                BorderBrush = border, BorderThickness = new Thickness(1),
-                CornerRadius = new CornerRadius(3), Background = background,
-                Margin = new Thickness(1, 2, 1, 2), Child = grid
-            };
-            // Preview catches right-clicks on the row and its slider.
-            // Reset only this category (toggle and partial odds).
-            row.PreviewMouseRightButtonDown += (_, e) =>
-            {
-                if (!parameter.IsControlEnabled) return;
-                parameter.ResetToReference();
-                SellOdds?.Set(id, 1.0);
-                ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
-                Refresh();
-                e.Handled = true;
-            };
-            _categories.Children.Add(row);
-            _cells[id] = (slider, valueText, row);
-        }
-
-        if (_roleId == "genericNpc")
-            RenderRareGear(fg, muted, accent, border, background);
-
-        Refresh();
-    }
-
-    // The Generic NPC trade-only bonus is a persisted optional preset sidecar,
-    // just like legacy TraderItemOverrides: no extra 359-catalog source ID.
-    // The conditional CHANCE row uses the same compact native Slider grammar.
-    private void RenderRareGear(Brush fg, Brush muted, Brush accent,
-        Brush border, Brush background)
-    {
-        if (_categories is null) return;
-        var grid = new Grid { Height = 34 };
-        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(58) });
-        var name = Text("GEAR", 11, fg);
-        name.Margin = new Thickness(10, 0, 0, 0);
-        grid.Children.Add(name);
-        _gearCheck = new CheckBox
-        {
-            IsChecked = RareGearEnabled,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center
-        };
-        _gearCheck.Click += (_, _) => RareGearEnabled = _gearCheck.IsChecked == true;
-        _gearOutline = new Border
-        {
-            BorderBrush = RareGearEnabled ? accent : Brushes.Transparent,
-            BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(3),
-            Width = 28, Height = 27, HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center, Child = _gearCheck
-        };
-        _gearOutline.PreviewMouseRightButtonDown += (_, e) =>
-        {
-            RareGearEnabled = false;
-            e.Handled = true;
-        };
-        Grid.SetColumn(_gearOutline, 1);
-        grid.Children.Add(_gearOutline);
-        _categories.Children.Add(new Border
-        {
-            BorderBrush = border, BorderThickness = new Thickness(1),
-            CornerRadius = new CornerRadius(3), Background = background,
-            Margin = new Thickness(1, 2, 1, 2), Child = grid
-        });
-
-        var chanceGrid = new Grid { Height = 42, Margin = new Thickness(8, 0, 8, 0) };
-        chanceGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(54) });
-        chanceGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-        chanceGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(43) });
-        var caption = Text("CHANCE", 10, muted);
-        chanceGrid.Children.Add(caption);
-        _gearChanceSlider = new Slider
-        {
-            Minimum = 0.01, Maximum = 1.0,
-            Value = RareGearChance, TickFrequency = 0.01,
-            SmallChange = 0.01, LargeChange = 0.01, IsSnapToTickEnabled = true,
-            VerticalAlignment = VerticalAlignment.Center,
-            Margin = new Thickness(2, 0, 8, 0)
-        };
-        _gearChanceSlider.ValueChanged += (_, _) =>
-        {
-            var value = Math.Round(_gearChanceSlider.Value, 2);
-            if (Math.Abs(RareGearChance - value) > 0.000001)
-                RareGearChance = value;
-        };
-        Grid.SetColumn(_gearChanceSlider, 1);
-        chanceGrid.Children.Add(_gearChanceSlider);
-        _gearChanceValue = Text("2%", 11, fg);
-        _gearChanceValue.HorizontalAlignment = HorizontalAlignment.Right;
-        Grid.SetColumn(_gearChanceValue, 2);
-        chanceGrid.Children.Add(_gearChanceValue);
-        _gearChanceRow = new Border
-        {
-            BorderBrush = border, BorderThickness = new Thickness(1),
-            CornerRadius = new CornerRadius(3), Background = background,
-            Margin = new Thickness(1, 1, 1, 2), Child = chanceGrid
-        };
-        // Keep the optional chance independent of GEAR: reset to its
-        // persisted 2% default without turning the checkbox off.
-        _gearChanceRow.PreviewMouseRightButtonDown += (_, e) =>
-        {
-            RareGearChance = 0.02;
-            e.Handled = true;
-        };
-        _categories.Children.Add(_gearChanceRow);
-    }
+    private static IEnumerable<string> LegacyBuyIds()
+        => TraderBuysPolicy.Roles.SelectMany(r =>
+            TraderBuysPolicy.Categories.Select(c => TraderBuysPolicy.ParameterId(r, c)));
 
     private void OnParameterChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName is nameof(ParameterViewModel.CurrentBoolean) or
-            nameof(ParameterViewModel.IsOwnValueModified)) Refresh();
+        if (e.PropertyName is nameof(ParameterViewModel.CurrentBoolean)
+            or nameof(ParameterViewModel.CurrentNumber)
+            or nameof(ParameterViewModel.IsOwnValueModified))
+        {
+            InvalidateMeasure();
+            InvalidateVisual();
+        }
     }
 
-    private void Refresh()
+    // ---- layout -----------------------------------------------------------------
+    private const double SupplyTop = 50.0;
+    private const double SupplyHeight = 58.0;
+
+    private bool TwoSupplyColumns => ActualWidth >= 340.0;
+    private double ChipsTop => SupplyTop + (TwoSupplyColumns ? SupplyHeight : 2 * SupplyHeight + 6.0) + 12.0;
+    private double RowsTop => ChipsTop + ChipRows(ActualWidth) * 28.0 + 8.0;
+
+    private static int ChipRows(double width) => width >= 430.0 ? 1 : 2;
+
+    private static double DesiredHeightFor(double width, bool legacy)
     {
-        foreach (var (id, cell) in _cells)
+        var supply = width >= 340.0 ? SupplyHeight : 2 * SupplyHeight + 6.0;
+        return SupplyTop + supply + 12.0 + ChipRows(width) * 28.0 + 8.0
+            + MaxRows * RowPitch + (legacy ? 40.0 : 0.0) + 12.0;
+    }
+
+    protected override Size MeasureOverride(Size availableSize)
+    {
+        var width = double.IsInfinity(availableSize.Width) ? 520.0 : Math.Max(300.0, availableSize.Width);
+        return new Size(width, DesiredHeightFor(width, LegacyCount() > 0));
+    }
+
+    // ---- values ---------------------------------------------------------------------
+    private double SellValue(string id)
+        => _source.TryGetValue(id, out var p) && p.CurrentBoolean ? SellOdds?.Get(id) ?? 1.0 : 0.0;
+
+    private double SellReference(string id)
+        => _source.TryGetValue(id, out var p) && p.ReferenceBoolean ? 1.0 : 0.0;
+
+    private double GearValue => RareGearEnabled ? RareGearChance : 0.0;
+
+    private (int Items, int Buys) LegacyCounts()
+    {
+        var items = TraderOffersPolicy.Decode(TraderItemOverrides).Count;
+        var buys = LegacyBuyIds().Count(id => _source.TryGetValue(id, out var p) && p.IsValueModifiedFromReference());
+        return (items, buys);
+    }
+
+    private int LegacyCount()
+    {
+        var (items, buys) = LegacyCounts();
+        return items + buys;
+    }
+
+    // ---- render ---------------------------------------------------------------------
+    private void RenderCardContent(DrawingContext dc)
+    {
+        var text = FindBrush("TextBrush", Brushes.White);
+        var muted = FindBrush("RadarMutedTextBrush", Brushes.Gray);
+        var border = FindBrush("BorderSoftBrush", Brushes.DimGray);
+        var accent = FindBrush("AccentBrush", Brushes.Goldenrod);
+        var panel = FindBrush("PanelAltBrush", Brushes.Black);
+        IndustrialChrome.DrawFrame(dc,
+            new Rect(2, 2, Math.Max(0, ActualWidth - 4), Math.Max(0, ActualHeight - 4)),
+            panel, border, accent, border, 8, accentEdge: true, technicalMarks: true);
+        _rails.Clear();
+        _roleChips.Clear();
+        _clearHit = Rect.Empty;
+
+        Center(dc, "TRADER STOCK", ActualWidth / 2.0, 21.0,
+            VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
+        Center(dc, "100% = GAME ODDS · 0% = REMOVED", ActualWidth / 2.0, 38.0,
+            9.0, muted, FontWeights.SemiBold);
+
+        var left = 12.0;
+        var width = Math.Max(1.0, ActualWidth - 24.0);
+
+        // AMMO / MEDICAL SUPPLY: how much each offer carries (all traders).
+        var supplyWidth = TwoSupplyColumns ? (width - 10.0) / 2.0 : width;
+        DrawSupply(dc, AmmoSupplyId, "AMMO SUPPLY",
+            new Rect(left, SupplyTop, supplyWidth, SupplyHeight - 6.0), text, muted, border, accent, panel);
+        DrawSupply(dc, MedicalSupplyId, "MEDICAL SUPPLY",
+            TwoSupplyColumns
+                ? new Rect(left + supplyWidth + 10.0, SupplyTop, supplyWidth, SupplyHeight - 6.0)
+                : new Rect(left, SupplyTop + SupplyHeight + 6.0, supplyWidth, SupplyHeight - 6.0),
+            text, muted, border, accent, panel);
+
+        // Trader role chips.
+        var roles = TraderSellsPolicy.Roles;
+        var perRow = ChipRows(ActualWidth) == 1 ? roles.Count : 3;
+        var chipWidth = (width - (perRow - 1) * 6.0) / perRow;
+        for (var i = 0; i < roles.Count; i++)
         {
-            if (!_source.TryGetValue(id, out var parameter)) continue;
-            var value = parameter.CurrentBoolean ? SellOdds?.Get(id) ?? 1.0 : 0.0;
-            var modified = Math.Abs(value - 1.0) > 0.0000001;
-            _syncingSliders = true;
-            try { if (Math.Abs(cell.Slider.Value - value) > 0.0000001) cell.Slider.Value = value; }
-            finally { _syncingSliders = false; }
-            cell.Value.Text = Math.Round(value * 100.0)
-                .ToString(System.Globalization.CultureInfo.InvariantCulture) + "%";
-            cell.Value.Foreground = modified
-                ? BrushFor("AccentBrush", Brushes.Gold) : BrushFor("TextBrush", Brushes.White);
+            var role = roles[i];
+            var chip = new Rect(left + (i % perRow) * (chipWidth + 6.0),
+                ChipsTop + (i / perRow) * 28.0, chipWidth, 22.0);
+            var selected = role.Id == _roleId;
+            var roleModified = TraderSellsPolicy.Categories
+                .Where(c => TraderSellsPolicy.IsAvailable(role, c))
+                .Any(c => Math.Abs(SellValue(TraderSellsPolicy.ParameterId(role, c))
+                    - SellReference(TraderSellsPolicy.ParameterId(role, c))) > Epsilon)
+                || (role.Id == "genericNpc" && RareGearEnabled);
+            dc.DrawTrackedRoundedRectangle(Clone(panel, selected ? .9 : .45),
+                new Pen(selected ? accent : Clone(border, .8), selected ? 1.4 : .9), chip, 3, 3);
+            var label = Text(role.Label.ToUpperInvariant(), 9.6,
+                selected ? accent : text, FontWeights.Bold);
+            dc.DrawText(label, new Point(chip.Left + (chip.Width - label.Width) / 2.0,
+                chip.Top + (chip.Height - label.Height) / 2.0));
+            if (roleModified)
+                dc.DrawEllipse(accent, null, new Point(chip.Right - 6.0, chip.Top + 6.0), 2.2, 2.2);
+            _roleChips.Add((role.Id, chip));
         }
-        if (_gearCheck is not null)
+
+        // Category rails of the selected role.
+        var current = roles.Single(r => r.Id == _roleId);
+        var y = RowsTop;
+        foreach (var category in TraderSellsPolicy.Categories.Where(c => TraderSellsPolicy.IsAvailable(current, c)))
         {
-            _gearCheck.IsChecked = RareGearEnabled;
-            if (_gearOutline is not null)
-                _gearOutline.BorderBrush = RareGearEnabled
-                    ? BrushFor("AccentBrush", Brushes.Gold) : Brushes.Transparent;
-            if (_gearChanceRow is not null)
-                _gearChanceRow.Visibility = RareGearEnabled
-                    ? Visibility.Visible : Visibility.Collapsed;
-            if (_gearChanceSlider is not null
-                && Math.Abs(_gearChanceSlider.Value - RareGearChance) > 0.000001)
-                _gearChanceSlider.Value = RareGearChance;
-            if (_gearChanceValue is not null)
+            var id = TraderSellsPolicy.ParameterId(current, category);
+            DrawPercentRow(dc, RailKind.Sell, id, category.Label.ToUpperInvariant(),
+                SellValue(id), SellReference(id), _source.GetValueOrDefault(id),
+                new Rect(left, y, width, RowHeight), text, muted, border, accent, panel);
+            y += RowPitch;
+        }
+        if (_roleId == "genericNpc")
+        {
+            DrawPercentRow(dc, RailKind.Gear, "gear", "RARE GEAR", GearValue, 0.0,
+                _source.GetValueOrDefault(TraderSellsPolicy.ParameterId(current,
+                    TraderSellsPolicy.Categories.First(c => TraderSellsPolicy.IsAvailable(current, c)))),
+                new Rect(left, y, width, RowHeight), text, muted, border, accent, panel);
+        }
+
+        // Legacy restrictions from older presets: visible and clearable.
+        var (items, buys) = LegacyCounts();
+        if (items + buys > 0)
+        {
+            var noticeTop = RowsTop + MaxRows * RowPitch + 4.0;
+            var notice = new Rect(left, noticeTop, width, 32.0);
+            dc.DrawTrackedRoundedRectangle(Clone(panel, .45), new Pen(Clone(accent, .55), .9), notice, 3, 3);
+            var parts = new List<string>();
+            if (items > 0) parts.Add($"{items} item exclusions");
+            if (buys > 0) parts.Add($"{buys} BUY restrictions");
+            var message = Text("OLDER PRESET: " + string.Join(" + ", parts) + " still active",
+                9.4, text, FontWeights.SemiBold, Math.Max(1.0, width - 90.0));
+            dc.DrawText(message, new Point(notice.Left + 10.0, notice.Top + (notice.Height - message.Height) / 2.0));
+            _clearHit = new Rect(notice.Right - 70.0, notice.Top + 5.0, 62.0, 22.0);
+            dc.DrawTrackedRoundedRectangle(Clone(panel, .9), new Pen(accent, 1.1), _clearHit, 3, 3);
+            Center(dc, "CLEAR", _clearHit.Left + _clearHit.Width / 2.0,
+                _clearHit.Top + _clearHit.Height / 2.0, 9.6, accent, FontWeights.Bold);
+        }
+    }
+
+    private void DrawSupply(DrawingContext dc, string id, string label, Rect card,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        if (!_source.TryGetValue(id, out var p)) return;
+        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, .9), card, 4, 4, p);
+        DrawText(dc, label, new Point(card.Left + 10.0, card.Top + 7.0), 10.0, text, FontWeights.Bold);
+        var modified = p.IsValueModifiedFromReference();
+        var value = Text($"{p.CurrentNumber.ToString("0.##", CultureInfo.InvariantCulture)}x",
+            modified ? 12.4 : 11.4, modified ? accent : text, FontWeights.Bold);
+        dc.DrawText(value, new Point(card.Right - 10.0 - value.Width, card.Top + 6.0));
+        var track = new Rect(card.Left + 12.0, card.Top + 32.0, Math.Max(1.0, card.Width - 24.0), 10.0);
+        DrawTrack(dc, id, track, p.CurrentNumber, p.ReferenceNumber, p.Minimum, p.Maximum,
+            p.IsControlEnabled, muted, border, accent, panel);
+        _rails.Add(new Rail(RailKind.Supply, id,
+            new Rect(track.Left - 6.0, track.Top - 8.0, track.Width + 12.0, track.Height + 16.0), track, card));
+    }
+
+    private void DrawPercentRow(DrawingContext dc, RailKind kind, string id, string label,
+        double value, double reference, ParameterViewModel? owner, Rect card,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        dc.DrawTrackedRoundedRectangle(Clone(panel, .55), new Pen(Clone(border, .85), .9), card, 3, 3, owner);
+        var name = Text(label, 10.0, text, FontWeights.Bold, 104.0);
+        dc.DrawText(name, new Point(card.Left + 10.0, card.Top + (card.Height - name.Height) / 2.0));
+        var modified = Math.Abs(value - reference) > Epsilon;
+        var readout = kind == RailKind.Gear && value <= Epsilon
+            ? "OFF"
+            : Math.Round(value * 100.0).ToString(CultureInfo.InvariantCulture) + "%";
+        var valueText = Text(readout, modified ? 11.4 : 10.6, modified ? accent : text, FontWeights.Bold);
+        dc.DrawText(valueText, new Point(card.Right - 10.0 - valueText.Width,
+            card.Top + (card.Height - valueText.Height) / 2.0));
+        var track = new Rect(card.Left + 120.0, card.Top + card.Height / 2.0 - 4.0,
+            Math.Max(1.0, card.Width - 120.0 - 58.0), 8.0);
+        DrawTrack(dc, id, track, value, reference, 0.0, 1.0, owner?.IsControlEnabled ?? true,
+            muted, border, accent, panel);
+        _rails.Add(new Rail(kind, id,
+            new Rect(track.Left - 6.0, card.Top, track.Width + 12.0, card.Height), track, card));
+    }
+
+    private void DrawTrack(DrawingContext dc, string id, Rect track, double value, double reference,
+        double minimum, double maximum, bool enabled, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        var y = track.Top + track.Height / 2.0;
+        double X(double v) => track.Left + track.Width
+            * Math.Clamp((v - minimum) / Math.Max(Epsilon, maximum - minimum), 0.0, 1.0);
+        var x = X(value);
+        dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
+        dc.DrawLine(new Pen(Clone(enabled ? accent : muted, .7), 3.0), new Point(track.Left, y), new Point(x, y));
+        var rx = X(reference);
+        dc.DrawLine(new Pen(muted, 1.6), new Point(rx, y - 7.0), new Point(rx, y + 7.0));
+        var hovered = _hoverRail == id || _dragRail == id;
+        ControlHoverGlow.Draw(dc, new Point(x, y), accent, hovered && enabled);
+        dc.DrawEllipse(panel, new Pen(enabled ? accent : muted, hovered || _selectedRail == id ? 2.5 : 1.5),
+            new Point(x, y), 6.0, 6.0);
+        dc.DrawEllipse(enabled ? accent : muted, null, new Point(x, y), 2.5, 2.5);
+    }
+
+    // ---- editing -----------------------------------------------------------------------
+    private void SetRail(Rail rail, double raw)
+    {
+        switch (rail.Kind)
+        {
+            case RailKind.Supply when _source.TryGetValue(rail.Id, out var p) && p.IsControlEnabled:
             {
-                _gearChanceValue.Text = Math.Round(RareGearChance * 100.0)
-                    .ToString(System.Globalization.CultureInfo.InvariantCulture) + "%";
-                _gearChanceValue.Foreground = Math.Abs(RareGearChance - 0.02) > 0.000001
-                    ? BrushFor("AccentBrush", Brushes.Gold)
-                    : BrushFor("TextBrush", Brushes.White);
+                var step = Math.Max(p.TickFrequency, Epsilon);
+                var snapped = Math.Clamp(p.Minimum + Math.Round((raw - p.Minimum) / step,
+                    MidpointRounding.AwayFromZero) * step, p.Minimum, p.Maximum);
+                p.CurrentNumber = p.ReferenceMagnet(raw, snapped);
+                Select(p);
+                break;
+            }
+            case RailKind.Sell when _source.TryGetValue(rail.Id, out var sell) && sell.IsControlEnabled:
+            {
+                var value = TraderSellOddsViewModel.Snap(raw);
+                SellOdds?.Set(rail.Id, value);
+                sell.CurrentBoolean = value > Epsilon;
+                Select(sell);
+                break;
+            }
+            case RailKind.Gear:
+            {
+                var value = Math.Round(Math.Clamp(raw, 0.0, 1.0), 2);
+                if (value < 0.01)
+                    RareGearEnabled = false;
+                else
+                {
+                    RareGearChance = value;
+                    RareGearEnabled = true;
+                }
+                SelectGearOwner();
+                break;
             }
         }
-        if (_legacyNotice is null) return;
-        var itemCount = TraderOffersPolicy.Decode(TraderItemOverrides).Count;
-        var buyCount = TraderBuysPolicy.Roles.SelectMany(role =>
-            TraderBuysPolicy.Categories.Select(cat => TraderBuysPolicy.ParameterId(role, cat)))
-            .Count(id => _source.TryGetValue(id, out var p) && p.IsValueModifiedFromReference());
-        var notes = new List<string>();
-        if (itemCount > 0)
-            notes.Add(itemCount + " legacy item-specific exclusions remain active from an older preset.");
-        if (buyCount > 0)
-            notes.Add(buyCount + " legacy BUY restrictions remain active from an older preset.");
-        _legacyNotice.Text = string.Join("  ", notes);
-        _legacyNotice.Visibility = notes.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        _status.Clear();
+        InvalidateVisual();
+    }
+
+    private void ResetRail(Rail rail)
+    {
+        switch (rail.Kind)
+        {
+            case RailKind.Supply when _source.TryGetValue(rail.Id, out var p):
+                p.ResetToReference();
+                Select(p);
+                break;
+            case RailKind.Sell when _source.TryGetValue(rail.Id, out var sell):
+                sell.ResetToReference();
+                SellOdds?.Set(rail.Id, 1.0);
+                Select(sell);
+                break;
+            case RailKind.Gear:
+                RareGearEnabled = false;
+                RareGearChance = RareGearDefault;
+                SelectGearOwner();
+                break;
+        }
+        _status.ShowTransient("Reset to Base Preset.");
+        InvalidateVisual();
+    }
+
+    private void ResetBoard()
+    {
+        foreach (var id in TraderSellsPolicy.ParameterIds)
+            if (_source.TryGetValue(id, out var sell)) sell.ResetToReference();
+        SellOdds?.Reset();
+        RareGearEnabled = false;
+        RareGearChance = RareGearDefault;
+        foreach (var id in new[] { AmmoSupplyId, MedicalSupplyId })
+            if (_source.TryGetValue(id, out var p)) p.ResetToReference();
+        _status.ShowTransient("Trader stock reset to Base Preset.");
+        InvalidateVisual();
+    }
+
+    private void ClearLegacy()
+    {
+        TraderItemOverrides = string.Empty;
+        foreach (var id in LegacyBuyIds())
+            if (_source.TryGetValue(id, out var p)) p.ResetToReference();
+        _status.ShowTransient("Older preset restrictions cleared.");
+        InvalidateMeasure();
+        InvalidateVisual();
+    }
+
+    private void Select(ParameterViewModel parameter)
+        => ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
+
+    // GEAR is a preset sidecar without its own catalog id; the panel shows the
+    // Generic NPC category help, which explains GEAR.
+    private void SelectGearOwner()
+    {
+        var role = TraderSellsPolicy.Roles.Single(r => r.Id == "genericNpc");
+        var first = TraderSellsPolicy.Categories.First(c => TraderSellsPolicy.IsAvailable(role, c));
+        if (_source.TryGetValue(TraderSellsPolicy.ParameterId(role, first), out var owner))
+            Select(owner);
+    }
+
+    private Rail? RailAt(Point point) => _rails.FirstOrDefault(r => r.Hit.Contains(point))
+        ?? _rails.FirstOrDefault(r => r.Card.Contains(point));
+
+    private double RawAt(Rail rail, double x)
+    {
+        var ratio = Math.Clamp((x - rail.Track.Left) / Math.Max(1.0, rail.Track.Width), 0.0, 1.0);
+        if (rail.Kind == RailKind.Supply && _source.TryGetValue(rail.Id, out var p))
+            return p.Minimum + ratio * (p.Maximum - p.Minimum);
+        return ratio;
+    }
+
+    protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+    {
+        base.OnMouseLeftButtonDown(e);
+        Focus();
+        var point = e.GetPosition(this);
+        if (!_clearHit.IsEmpty && _clearHit.Contains(point))
+        {
+            ClearLegacy();
+            e.Handled = true;
+            return;
+        }
+        foreach (var (roleId, hit) in _roleChips)
+        {
+            if (!hit.Contains(point)) continue;
+            _roleId = roleId;
+            var role = TraderSellsPolicy.Roles.Single(r => r.Id == roleId);
+            var first = TraderSellsPolicy.Categories.First(c => TraderSellsPolicy.IsAvailable(role, c));
+            if (_source.TryGetValue(TraderSellsPolicy.ParameterId(role, first), out var owner))
+                Select(owner);
+            InvalidateMeasure();
+            InvalidateVisual();
+            e.Handled = true;
+            return;
+        }
+        var rail = RailAt(point);
+        if (rail is null) return;
+        _selectedRail = rail.Id;
+        if (!rail.Hit.Contains(point))
+        {
+            // A click on the card (not the track) only selects it.
+            if (rail.Kind == RailKind.Gear) SelectGearOwner();
+            else if (_source.TryGetValue(rail.Id, out var owner)) Select(owner);
+            InvalidateVisual();
+            e.Handled = true;
+            return;
+        }
+        _dragRail = rail.Id;
+        CaptureMouse();
+        SetRail(rail, RawAt(rail, point.X));
+        e.Handled = true;
+    }
+
+    protected override void OnMouseMove(MouseEventArgs e)
+    {
+        if (_cardHover.UpdateHover(e.GetPosition(this))) InvalidateVisual();
+        base.OnMouseMove(e);
+        var point = e.GetPosition(this);
+        if (_dragRail is not null && e.LeftButton == MouseButtonState.Pressed)
+        {
+            var rail = _rails.FirstOrDefault(r => r.Id == _dragRail);
+            if (rail is not null) SetRail(rail, RawAt(rail, point.X));
+            e.Handled = true;
+            return;
+        }
+        var hit = _rails.FirstOrDefault(r => r.Hit.Contains(point));
+        var next = hit?.Id;
+        if (next != _hoverRail)
+        {
+            _hoverRail = next;
+            InvalidateVisual();
+        }
+        Cursor = hit is not null || _roleChips.Any(c => c.Hit.Contains(point))
+            || (!_clearHit.IsEmpty && _clearHit.Contains(point)) ? Cursors.Hand : Cursors.Arrow;
+    }
+
+    protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
+    {
+        base.OnMouseLeftButtonUp(e);
+        if (_dragRail is null) return;
+        _dragRail = null;
+        ReleaseMouseCapture();
+        InvalidateVisual();
+        e.Handled = true;
+    }
+
+    protected override void OnMouseLeave(MouseEventArgs e)
+    {
+        if (_cardHover.ClearHover()) InvalidateVisual();
+        base.OnMouseLeave(e);
+        _hoverRail = null;
+        Cursor = Cursors.Arrow;
+        InvalidateVisual();
+    }
+
+    protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
+    {
+        base.OnMouseRightButtonDown(e);
+        var rail = RailAt(e.GetPosition(this));
+        if (rail is null) return;
+        _selectedRail = rail.Id;
+        ResetRail(rail);
+        e.Handled = true;
+    }
+
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+        base.OnKeyDown(e);
+        if (e.Key == Key.R)
+        {
+            ResetBoard();
+            e.Handled = true;
+            return;
+        }
+        var rail = _rails.FirstOrDefault(r => r.Id == _selectedRail);
+        if (rail is null) return;
+        var (value, minimum, maximum, step) = rail.Kind switch
+        {
+            RailKind.Supply when _source.TryGetValue(rail.Id, out var p)
+                => (p.CurrentNumber, p.Minimum, p.Maximum, p.TickFrequency),
+            RailKind.Sell => (SellValue(rail.Id), 0.0, 1.0, TraderSellOddsViewModel.Step),
+            _ => (GearValue, 0.0, 1.0, 0.01)
+        };
+        double? next = e.Key switch
+        {
+            Key.Right or Key.Up or Key.Add or Key.OemPlus => value + step,
+            Key.Left or Key.Down or Key.Subtract or Key.OemMinus => value - step,
+            Key.Home => minimum,
+            Key.End => maximum,
+            _ => null
+        };
+        if (next is null) return;
+        SetRail(rail, Math.Clamp(next.Value, minimum, maximum));
+        e.Handled = true;
+    }
+
+    // ---- drawing helpers ------------------------------------------------------------------
+    private static Brush FindBrush(string key, Brush fallback) =>
+        Application.Current?.TryFindResource(key) as Brush ?? fallback;
+
+    private static Brush Clone(Brush brush, double opacity)
+    {
+        var clone = brush.Clone();
+        clone.Opacity = Math.Clamp(opacity, 0, 1);
+        return clone;
+    }
+
+    private void Center(DrawingContext dc, string value, double x, double y,
+        double size, Brush brush, FontWeight weight)
+    {
+        var formatted = Text(value, size, brush, weight);
+        dc.DrawText(formatted, new Point(x - formatted.Width / 2, y - formatted.Height / 2));
+    }
+
+    private void DrawText(DrawingContext dc, string value, Point point, double size, Brush brush, FontWeight weight)
+        => dc.DrawText(Text(value, size, brush, weight), point);
+
+    private FormattedText Text(string value, double size, Brush brush, FontWeight weight,
+        double maxWidth = double.PositiveInfinity)
+    {
+        var formatted = new FormattedText(value, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight,
+            new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
+            size, brush, VisualTreeHelper.GetDpi(this).PixelsPerDip);
+        if (double.IsFinite(maxWidth))
+        {
+            formatted.MaxTextWidth = Math.Max(1.0, maxWidth);
+            formatted.MaxLineCount = 1;
+            formatted.Trimming = TextTrimming.CharacterEllipsis;
+        }
+        return formatted;
     }
 }
