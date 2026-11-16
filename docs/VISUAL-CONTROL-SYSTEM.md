@@ -1,3 +1,9 @@
+## 2026-11-16 — CURRENT: gamer-facing WHAT IT DOES text, tab by tab (Combat done)
+
+Every catalog `rationale` is being rewritten tab by tab (Combat → Survival → Health → Stamina → Loot → Stashes → Economy → Equipment → Environment → A-Life → Master) into plain gamer language: what you feel in play, the vanilla value per difficulty taken from the catalog's own `vanilla` field, and one practical tip — no CFG keys or file names. Technical detail stays in the separate value / logic / interaction sections. Custom radar controls of each tab get per-card selection as the tab is done: the card's owning parameter is passed to `dc.DrawTrackedRoundedRectangle(..., owner)` and a click anywhere in the card raises `ParameterSelected`.
+
+* **Combat (done):** all 28 parameters, including the 13 per-species mutant health entries that previously had no text (vanilla HP from the radar's source table). `MutantHealthRadar` now selects the clicked mutant or MUTANT HIT DAMAGE card.
+
 ## 2026-11-16 — CURRENT: white card hover on every control, all tabs
 
 **Extends the NPC LOOT white card hover to the whole app** and supersedes every older "cards never glow" rule. Control-level hover (white dial pointer, handle rings, chip icons, checkbox edge) is unchanged and still drawn by each control.

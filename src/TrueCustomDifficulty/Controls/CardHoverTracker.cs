@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Media;
+using TrueCustomDifficulty.ViewModels;
 
 namespace TrueCustomDifficulty.Controls;
 
@@ -16,8 +17,8 @@ internal sealed class CardHoverTracker
 {
     [ThreadStatic] private static CardHoverTracker? s_current;
 
-    private readonly List<(Rect Rect, double Radius)> _recorded = new();
-    private readonly List<(Rect Rect, double Radius)> _cards = new();
+    private readonly List<(Rect Rect, double Radius, ParameterViewModel? Owner)> _recorded = new();
+    private readonly List<(Rect Rect, double Radius, ParameterViewModel? Owner)> _cards = new();
     private Rect? _hover;
 
     public const double MinimumWidth = 46.0;
@@ -31,12 +32,12 @@ internal sealed class CardHoverTracker
         return new Scope(() => s_current = previous);
     }
 
-    internal static void Record(Rect rect, double radius)
+    internal static void Record(Rect rect, double radius, ParameterViewModel? owner = null)
     {
         if (s_current is null || rect.IsEmpty
             || rect.Width < MinimumWidth || rect.Height < MinimumHeight)
             return;
-        s_current._recorded.Add((rect, radius));
+        s_current._recorded.Add((rect, radius, owner));
     }
 
     /// <summary>
@@ -50,7 +51,7 @@ internal sealed class CardHoverTracker
         _cards.Clear();
         var hits = controlHits.ToArray();
         var area = Math.Max(1.0, bounds.Width * bounds.Height);
-        foreach (var (rect, radius) in _recorded)
+        foreach (var (rect, radius, owner) in _recorded)
         {
             if (rect.Width * rect.Height > area * 0.80)
                 continue;
@@ -58,7 +59,7 @@ internal sealed class CardHoverTracker
                 continue;
             if (_cards.Any(card => Near(card.Rect, rect)))
                 continue;
-            _cards.Add((rect, radius));
+            _cards.Add((rect, radius, owner));
         }
         if (_hover is Rect hover && !_cards.Any(card => Near(card.Rect, hover)))
             _hover = null;
@@ -67,11 +68,22 @@ internal sealed class CardHoverTracker
     public Rect? CardAt(Point point)
     {
         Rect? best = null;
-        foreach (var (rect, _) in _cards)
+        foreach (var (rect, _, _) in _cards)
             if (rect.Contains(point)
                 && (best is null || rect.Width * rect.Height < best.Value.Width * best.Value.Height))
                 best = rect;
         return best;
+    }
+
+    /// <summary>
+    /// The parameter a custom control attached to the smallest card under
+    /// <paramref name="point"/> (null when that card has no single owner).
+    /// </summary>
+    public ParameterViewModel? OwnerAt(Point point)
+    {
+        if (CardAt(point) is not Rect card)
+            return null;
+        return _cards.FirstOrDefault(entry => Near(entry.Rect, card)).Owner;
     }
 
     /// <returns>True when the hovered card changed (caller re-renders).</returns>
@@ -120,10 +132,11 @@ internal sealed class CardHoverTracker
 internal static class TrackedDrawing
 {
     public static void DrawTrackedRoundedRectangle(this DrawingContext dc,
-        Brush? brush, Pen? pen, Rect rectangle, double radiusX, double radiusY)
+        Brush? brush, Pen? pen, Rect rectangle, double radiusX, double radiusY,
+        ParameterViewModel? owner = null)
     {
         dc.DrawRoundedRectangle(brush, pen, rectangle, radiusX, radiusY);
         if (brush is not null && pen is not null)
-            CardHoverTracker.Record(rectangle, radiusX);
+            CardHoverTracker.Record(rectangle, radiusX, owner);
     }
 }

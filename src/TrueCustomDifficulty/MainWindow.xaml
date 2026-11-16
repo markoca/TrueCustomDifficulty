@@ -299,7 +299,8 @@
                                                                                        Grid.RowSpan="2"
                                                                                        MinHeight="605"
                                                                                        Visibility="Collapsed"
-                                                                                       Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
+                                                                                       Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                                                ParameterSelected="AggregateVisualControl_ParameterSelected" />
         
                                                                 <controls:HumanGroupSizeRadar x:Name="HumanGroupSizeRadarControl"
                                                                                                 ParameterSelected="AggregateVisualControl_ParameterSelected"

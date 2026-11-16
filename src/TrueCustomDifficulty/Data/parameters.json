@@ -251,7 +251,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Makes human enemies tougher or easier to kill. This changes their health, not their attack damage.",
+      "rationale": "How many bullets a human enemy can soak up before going down. Higher = longer, more ammo-hungry firefights; lower = enemies drop fast.\n\nVanilla: Novice 1×, Stalker 1.2×, Veteran 1×, Master 1.5×. Pair it with Weapon Damage — both set your time-to-kill, so raising one and lowering the other stacks hard.",
       "logic": "",
       "interaction": "Weapon Damage affects the same time-to-kill from the opposite side. Raising enemy health while lowering your weapon damage compounds the effect."
     },
@@ -296,7 +296,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes how much damage you take from human enemy gunfire. Mutants and explosions are separate.",
+      "rationale": "How much it hurts when a human enemy shoots you. Low values let you tank a burst; high values make every exposed second dangerous.\n\nVanilla: Novice 0.17×, Stalker 0.85×, Veteran 1.02×, Master 1.35×. Mutant bites and explosions have their own settings.",
       "logic": "",
       "interaction": "Human Enemy HP controls how long enemies survive; this controls how dangerous their shots are. Repeated-Hit Protection can also affect how sustained incoming fire feels."
     },
@@ -341,7 +341,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Makes explosions more or less deadly, including grenade blasts.",
+      "rationale": "How deadly grenades and other blasts are — both yours and the enemy's. Raise it if you want grenades to feel lethal, lower it to survive the odd F1 at your feet.\n\nVanilla: Novice 0.25×, Stalker and Veteran 1×, Master 1.2×.",
       "logic": "",
       "interaction": "Each explosion still has its own base damage. This setting scales the difficulty layer applied on top of those base values."
     },
@@ -385,7 +385,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes the damage your weapons deal on a normal hit. Headshots have a separate multiplier.",
+      "rationale": "The damage your own guns deal on a normal body hit. Lower values mean more bullets per kill and more ammo burned.\n\nVanilla: Novice 1.3×, Stalker 1×, Veteran and Master 0.75×. Headshots get an extra boost on top from Headshot Damage.",
       "logic": "",
       "interaction": "Headshot Damage adds another layer on headshots. Human Enemy HP also changes the final time-to-kill."
     },
@@ -429,7 +429,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Makes your headshots more or less powerful. This multiplies the hit instead of adding a flat damage bonus.",
+      "rationale": "Extra punch for your headshots on top of normal weapon damage. 2× doubles the headshot bonus, rewarding careful aim over spraying.\n\nVanilla: 1× on every difficulty except Master, which uses 2×.",
       "logic": "1.0x is the normal multiplier. 2.0x doubles the headshot damage multiplier used by the selected Base Preset; it is not an additive extra-damage percentage.",
       "interaction": "Weapon Damage also affects the underlying hit. The headshot multiplier scales that hit; changing both settings compounds their effect."
     },
@@ -473,7 +473,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes how often worn weapons jam. Each weapon's condition still matters.",
+      "rationale": "How often worn guns jam on you. Higher values make maintenance and weapon condition matter much more; 0.5× halves jams.\n\nVanilla: 1× on Novice, Stalker and Veteran; Master 1.5×. A gun in good condition still rarely jams.",
       "logic": "",
       "interaction": "Weapon condition and each weapon's own jam behavior still matter. Use this to make jams generally more or less common."
     },
@@ -518,7 +518,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes the damage from mutant attacks when they hit you. Mutant health is separate.",
+      "rationale": "How hard mutants hit when they reach you — bites, claws and charges. Mutant toughness is set separately in the health cards.\n\nVanilla: Novice 0.35×, Stalker 1×, Veteran 1.35×, Master 1.5×.",
       "logic": "",
       "interaction": "Mutant Health controls how much damage they can absorb; this control changes only damage dealt to the player."
     },
@@ -563,7 +563,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Sets the strongest protection against several hits in quick succession. Higher means more protection.",
+      "rationale": "The game quietly softens damage when many hits land at once, so you don't melt in a single burst. This is the strongest that safety net can get.\n\nHigher = more forgiving under heavy fire, lower = bursts hit closer to full damage. Vanilla: Novice 1, Stalker 0.75, Veteran 0.5, Master 0.4.",
       "logic": "Higher values give more protection against rapid hits; lower values make them harsher. The number is protection strength, not a literal damage-reduction percentage.",
       "interaction": "Minimum Hit Protection sets the weakest protection in the same repeated-hit system. Incoming gun damage is independent."
     },
@@ -608,7 +608,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Sets the weakest protection against several quick hits. Raising it makes sustained incoming fire less punishing.",
+      "rationale": "The weakest end of the same hidden safety net against rapid hits. Raising it keeps some protection even in long, sustained fights.\n\nVanilla: Novice 1, Stalker 0.33, Veteran 0.15, Master 0.12. Works together with Peak Hit Protection.",
       "logic": "Higher values give more protection at the weak end; lower values make rapid hits harsher. This is not a literal damage-reduction percentage.",
       "interaction": "Peak Hit Protection sets the strongest protection in the same system. Incoming gun damage is independent."
     },
@@ -642,7 +642,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Decides whether damage you've already healed still counts toward repeated-hit protection. Your healing amount stays unchanged.",
+      "rationale": "Decides whether hits you already healed still count against your burst protection. ON (Veteran, Master) means patching up mid-fight doesn't reset the safety net; OFF (Novice, Stalker) is more forgiving.\n\nHealing itself always restores your HP normally.",
       "logic": "OFF matches Novice and Stalker. ON matches Veteran and Master. Healing always restores HP normally; this toggle only decides whether the healed portion is still remembered by the repeated-hit protection system.",
       "interaction": "Works with Minimum and Peak Hit Protection; healing always restores HP even when past hits remain counted."
     },
@@ -696,7 +696,7 @@
           "The Bloodsucker family control applies the same multiplier to Bloodsucker (500 MaxHP) and MistBloodsucker (1000 MaxHP); the radar displays the standard Bloodsucker value only."
         ]
       },
-      "rationale": "Makes Bloodsuckers tougher or weaker, including their Mist variant. Other mutants are adjusted separately.",
+      "rationale": "How tough Bloodsuckers are — the invisible stalkers of the Zone. Includes the Mist variant. Vanilla HP: 500.\n\nHigher values mean longer, scarier close-range fights; every other mutant has its own card.",
       "logic": "",
       "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": true
@@ -743,7 +743,7 @@
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
-      "rationale": "",
+      "rationale": "How tough the Chimera is — the two-headed leaping apex predator. Vanilla HP: 1400, the second toughest mutant in the game.\n\nLowering it makes a Chimera encounter survivable with mid-game gear.",
       "logic": "",
       "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": false
@@ -790,7 +790,7 @@
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
-      "rationale": "",
+      "rationale": "How tough the Deer mutant is. Vanilla HP: 600 — tougher than a Bloodsucker.",
       "logic": "",
       "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": false
@@ -837,7 +837,7 @@
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
-      "rationale": "",
+      "rationale": "How tough the Pseudogiant is — the stomping tank of the Zone. Vanilla HP: 2500, by far the highest of any mutant.\n\nAt 2× you'll want an entire backpack of ammo; at 0.5× a good rifle can drop it in one magazine or two.",
       "logic": "",
       "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": false
@@ -884,7 +884,7 @@
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
-      "rationale": "",
+      "rationale": "How tough Pseudodogs are — big, fast dogs that hit harder than Blind Dogs. Vanilla HP: 300.",
       "logic": "",
       "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": false
@@ -938,7 +938,7 @@
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
-      "rationale": "",
+      "rationale": "How tough the Burer is — the telekinetic that rips weapons from your hands. Vanilla HP: 400.",
       "logic": "",
       "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": false
@@ -985,7 +985,7 @@
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
-      "rationale": "",
+      "rationale": "How tough the Bayun is. Vanilla HP: 400, the same as a Burer.",
       "logic": "",
       "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": false
@@ -1030,7 +1030,8 @@
           "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty."
         ]
       },
-      "exposeInUi": false
+      "exposeInUi": false,
+      "rationale": "How tough Blind Dogs are — the pack hunters you meet from the first hour. Vanilla HP: 63, so even a pistol handles them.\n\nRaising it makes early packs a real threat."
     },
     {
       "id": "combat.mutantHealth.boar",
@@ -1072,7 +1073,8 @@
           "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty."
         ]
       },
-      "exposeInUi": false
+      "exposeInUi": false,
+      "rationale": "How tough Boars are — charging bullet sponges. Vanilla HP: 300."
     },
     {
       "id": "combat.mutantHealth.flesh",
@@ -1114,7 +1116,8 @@
           "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty."
         ]
       },
-      "exposeInUi": false
+      "exposeInUi": false,
+      "rationale": "How tough Flesh are — the clumsy mutated pigs. Vanilla HP: 280."
     },
     {
       "id": "combat.mutantHealth.poltergeist",
@@ -1156,7 +1159,8 @@
           "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty."
         ]
       },
-      "exposeInUi": false
+      "exposeInUi": false,
+      "rationale": "How tough Poltergeists are — invisible spirits that throw objects at you. Vanilla HP: 400."
     },
     {
       "id": "combat.mutantHealth.snork",
@@ -1198,7 +1202,8 @@
           "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty."
         ]
       },
-      "exposeInUi": false
+      "exposeInUi": false,
+      "rationale": "How tough Snorks are — the leaping gas-mask mutants. Vanilla HP: 150."
     },
     {
       "id": "combat.mutantHealth.tushkan",
@@ -1240,7 +1245,8 @@
           "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty."
         ]
       },
-      "exposeInUi": false
+      "exposeInUi": false,
+      "rationale": "How tough Tushkans are — the small, fast rat-like swarmers. Vanilla HP: 19, one hit usually does it."
     },
     {
       "id": "combat.mutantHealth.controller",
@@ -1284,7 +1290,7 @@
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
-      "rationale": "",
+      "rationale": "How tough the Controller is — the psychic that scrambles your mind from a distance. Vanilla HP: 500.",
       "logic": "",
       "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": false
@@ -1339,7 +1345,7 @@
           "Novice/Stalker/Veteran contain no PsyPhantomNPCOverrides block; the UI represents absence as neutral 1.0 / Off. Creating equivalent overrides in Novice/Stalker/Veteran requires runtime validation."
         ]
       },
-      "rationale": "Changes the wait between phantom spawn waves in affected Master Psy encounters. Shorter waits mean more frequent waves.",
+      "rationale": "In the Psy encounters that Master makes harder, how long you get before the next wave of phantoms appears. Lower = less breathing room.\n\nVanilla: 100% everywhere except Master, which halves the wait (50%).",
       "logic": "Lower percentages mean new phantom waves can return sooner. Master uses 50% of the normal wait time; 100% represents no extra Master override.",
       "interaction": "Pair this with Psy Phantom Count: shorter waits plus more phantoms can make an encounter far more intense."
     },
@@ -1393,7 +1399,7 @@
           "Novice/Stalker/Veteran contain no PsyPhantomNPCOverrides block; the UI represents absence as neutral 1.0 / Off. Creating equivalent overrides in Novice/Stalker/Veteran requires runtime validation."
         ]
       },
-      "rationale": "Changes how many phantoms appear per wave in affected Master Psy encounters. Their spawn timing is separate.",
+      "rationale": "In those Master Psy encounters, how many phantoms come at you per wave. 200% doubles them.\n\nVanilla: 100% everywhere except Master (200%). Combine with a short spawn interval for a real nightmare.",
       "logic": "100% keeps the normal count. 200% matches vanilla Master and doubles the configured phantom count.",
       "interaction": "Phantom Spawn Interval changes how quickly another wave can happen; this setting changes the size of each wave."
     },
@@ -1436,7 +1442,7 @@
           "Novice/Stalker/Veteran contain no PsyPhantomNPCOverrides block; the UI represents absence as neutral 1.0 / Off. Creating equivalent overrides in Novice/Stalker/Veteran requires runtime validation."
         ]
       },
-      "rationale": "Lets phantoms in affected Master Psy encounters cause bleeding on top of their usual attacks.",
+      "rationale": "Lets the Master Psy phantoms make you bleed, so bandages become part of surviving the encounter.\n\nVanilla: OFF on every difficulty except Master.",
       "logic": "OFF keeps this extra bleeding rule disabled. ON matches the Master override.",
       "interaction": "Bleeding Severity and medical treatment determine how serious the extra bleeding becomes."
     },
@@ -1490,7 +1496,7 @@
           "Novice/Stalker/Veteran contain no PsyPhantomNPCOverrides block; the UI represents absence as neutral 1.0 / Off. Creating equivalent overrides in Novice/Stalker/Veteran requires runtime validation."
         ]
       },
-      "rationale": "Affected Master Psy enemies wear down your equipment faster or slower. Direct HP damage is unchanged.",
+      "rationale": "How fast the Master Psy enemies chew through your armor and helmet condition. Their damage to your health is unchanged.\n\nVanilla: 100% everywhere except Master (200%).",
       "logic": "100% keeps normal durability damage. 200% matches vanilla Master and doubles this durability damage.",
       "interaction": "This does not change their direct health damage. Armor/helmet durability settings still affect how your gear wears overall."
     },

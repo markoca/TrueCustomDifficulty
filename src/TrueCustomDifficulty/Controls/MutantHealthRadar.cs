@@ -14,6 +14,15 @@ public sealed class MutantHealthRadar : FrameworkElement
     // renderer are recorded and the hovered one is outlined on top.
     private readonly CardHoverTracker _cardHover = new();
 
+    // A click anywhere in a mutant (or hit-damage) card explains that one.
+    public event EventHandler<AggregateParameterSelectedEventArgs>? ParameterSelected;
+
+    private void SelectCardAt(Point point)
+    {
+        if (_cardHover.OwnerAt(point) is { } owner)
+            ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(owner));
+    }
+
     protected override void OnRender(DrawingContext dc)
     {
         using (_cardHover.BeginRender())
@@ -176,7 +185,7 @@ public sealed class MutantHealthRadar : FrameworkElement
         if (_damage is not { } damage)
             return;
         var card = new Rect(content.Left, 43.0, content.Width, 71.0);
-        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0);
+        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0, damage);
         DrawText(dc, "MUTANT HIT DAMAGE", new Point(card.Left + 11.0, card.Top + 7.0), VisualControlTypography.CardTitle, text, FontWeights.Bold);
         var value = CreateText($"{damage.CurrentNumber:0.##}x hit dmg", 11.0,
             damage.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
@@ -232,7 +241,7 @@ public sealed class MutantHealthRadar : FrameworkElement
 
         // Static captions and card fill never turn gold on slider hover.
         dc.DrawTrackedRoundedRectangle(panel,
-            new Pen(border, 0.9), card, 4.0, 4.0);
+            new Pen(border, 0.9), card, 4.0, 4.0, parameter);
         DrawText(dc, mutant.Label.ToUpperInvariant(),
             new Point(card.Left + 11.0, card.Top + 6.0),
             10.8, text, FontWeights.Bold);
@@ -300,6 +309,7 @@ public sealed class MutantHealthRadar : FrameworkElement
         // Hit-test markers before the rail: their dots partially overlap it.
         // A marker click must never start a drag or go through normal tick snapping.
         var point = e.GetPosition(this);
+        SelectCardAt(point);
         var markerIndex = FindDamageMarker(point);
         if (markerIndex >= 0 && _damage is { } damage)
         {
@@ -371,6 +381,7 @@ public sealed class MutantHealthRadar : FrameworkElement
     {
         base.OnMouseRightButtonDown(e);
         var point = e.GetPosition(this);
+        SelectCardAt(point);
         var row = FindDamageMarker(point) >= 0 ? DamageRow : FindTarget(point);
         if (row < 0 || ParameterAt(row) is not { } parameter)
             return;
