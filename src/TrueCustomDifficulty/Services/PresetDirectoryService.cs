@@ -705,6 +705,24 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "a6cf2491025661cc47e86d42e79b39deacf2dc12",
     };
 
+    // Exact stock files before ARMY MEDKIT MIX (medical boxes) was added (2026-11-17).
+    private static readonly Dictionary<string, string> PreMedicalBoxFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "77aa6bf685e1786df158023cc8aa5f3df78f9ded",
+        ["Field Medic"] = "845417af12973e215fcb0a41965a423a37170aa0",
+        ["Hardcore+"] = "6c6e475c15447f0e1f8d34151a885685db1a03ee",
+        ["Hardcore"] = "7a90dfd416fffd7731f8da0c7ed053bbb3d907ba",
+        ["Immersive"] = "c540f7d61a97632da37fc69b29942cd30de237ec",
+        ["Mercenary"] = "497c66060e79298bd783a2445b732f5088c2aa90",
+        ["Mutant Hunter"] = "38c1860195c6a1c5352f0a84c0959f340f01f47b",
+        ["Outcast"] = "b5e3e997823386c69f45529836b2bf06e23a92b8",
+        ["Scavenger"] = "81e4cba3fc65870627c8a3832c0ccfe523f3d247",
+        ["Smuggler"] = "49bded4605691f3aa9092e0d704ddd60813ba1da",
+        ["Tactical"] = "e2b8647c0bf7821722aaf5b465261cd8e12498b3",
+        ["Wanderer"] = "1094eaf2950e80d56e0a5ffaf4c17d097ff7c3ee",
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -731,7 +749,8 @@ public sealed class PresetDirectoryService
             && !PreNewControlsFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreWeatherHealTimeFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreRespawnRetirementFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreLooseArtifactFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreLooseArtifactFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreMedicalBoxFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -793,7 +812,9 @@ public sealed class PresetDirectoryService
                 || (PreRespawnRetirementFactoryBlobs.TryGetValue(name, out var preRespawnHash)
                     && actual.Equals(preRespawnHash, StringComparison.OrdinalIgnoreCase))
                 || (PreLooseArtifactFactoryBlobs.TryGetValue(name, out var preLooseArtifactHash)
-                    && actual.Equals(preLooseArtifactHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preLooseArtifactHash, StringComparison.OrdinalIgnoreCase))
+                || (PreMedicalBoxFactoryBlobs.TryGetValue(name, out var preMedicalBoxHash)
+                    && actual.Equals(preMedicalBoxHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

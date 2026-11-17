@@ -9867,6 +9867,53 @@
       "exposeInUi": false
     },
     {
+      "id": "loot.medicalBoxArmyMedkitWeight",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "Army Medkit Mix (Medical Boxes)",
+      "description": "Changes how often breakable medical boxes give an Army Medkit instead of a Medkit or Eco Medkit (player rank Experienced and up).",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Army Medkit Weight"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "DestructibleStash_Medkit_Experienced / _Veteran / _Master",
+          "path": "ItemGenerator/[0]/PossibleItems/[1].Weight (ArmyMedkit)",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Scales only the ArmyMedkit Weight (4 / 10 / 10) in the three rank lists that world medical boxes use from player rank Experienced; Medkit and EcoMedkit Weights stay.",
+          "Newbie-rank boxes (DestructibleStash_Med: Medkit/Bandage) have no Army Medkit and are unchanged.",
+          "Box removal is separate (Medical Boxes Removed)."
+        ]
+      },
+      "rationale": "How often a breakable medical box gives an Army Medkit. Vanilla: 1× (16% / 29% / 33% of boxes at Experienced / Veteran / Master rank). 0 = never; 3× = much more often.",
+      "logic": "Multiplies the ArmyMedkit Weight in the medical box pick list; its share is Weight ÷ (Medkit + Army Medkit + Eco Medkit Weights).",
+      "interaction": "Medical Boxes Removed decides how many boxes exist; this decides what one box gives.",
+      "exposeInUi": false
+    },
+    {
       "id": "loot.destructibleGrenadeQuantity",
       "tab": "loot",
       "group": "Breakable Containers",

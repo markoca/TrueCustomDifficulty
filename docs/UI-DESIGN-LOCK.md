@@ -4034,3 +4034,13 @@ The caliber card below the AMMO TYPE MIX knobs is titled **AMMO BOX CONTENT DIST
 `environment.anomalyDamage` is edited only by the GLOBAL MULTIPLIER knob on the DAMAGE BY ANOMALY
 board. The former standalone AnomalyGlobalDamage aggregate board (already hidden by IsControlVisible)
 is removed from code; selecting GLOBAL shows the DAMAGE BY ANOMALY help.
+
+## CURRENT 2026-11-17 — ARMY MEDKIT: EVERY SOURCE VISIBLE AND EDITABLE
+
+* Stashes → MEDICAL COMPOSITION → ODDS PER STASH · MEDS: BASIC / STANDARD / RARE / **SMART**. SMART is
+  the SmartLoot medicine set as a `low–high%` range bar (well stocked → short of meds), grey ticks =
+  vanilla range, only changed digits gold.
+* Loot → Breakable Containers: new **MEDICAL BOXES** card (181 DIP) under AMMO BOX CONTENT
+  DISTRIBUTION: ARMY MEDKIT MIX knob (0–3×) + ARMY MEDKIT PER BOX bars for NEWBIE (—) / EXPERIENCED /
+  VETERAN / MASTER. See docs/generators/MEDICAL-BOX-ARMY-MEDKIT-2026-11-17.md.
+* Catalog 407 / 202 visible.

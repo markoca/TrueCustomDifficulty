@@ -134,3 +134,26 @@ quantity controls only reach: that Easy list, the SmartLoot medicine set (`Stash
 Veteran/Master player rank) and the audited direct stash entries. The ODDS PER STASH · MEDS row now
 shows "—" for every tier where the selected difficulty has no Army Medkit list (previously a dead 0%
 bar on Rare). TCD does not inject Army Medkits into lists where the game has none.
+
+## CURRENT 2026-11-17 — SMART column (all Army Medkit sources visible)
+
+ODDS PER STASH · MEDS has a fourth column, **SMART**: the SmartLoot medicine set
+(`StashMedicine_Smart`) that 817 of 831 regular stashes carry on top of their tier list. Per item it
+shows `low–high%` = odds that this set adds at least one, averaged over the four player ranks, at
+`MinSpawnChance` (you are well stocked) and `MaxSpawnChance` (you are short). The values come from the
+writer's own effective endpoints and selections (`EffectiveSpawn` / `EffectiveSelection`), so every
+odds/MIN/MAX control moves them. Model: each of `ItemSetCount` sets spawns with the endpoint chance and
+picks one entry by Weight. Vanilla (all ranks): Bandage 37–99%, Medkit 27–96%, Army Medkit 3–18%
+(Veteran/Master only), Anti-Rad 18–71%. This is an estimate of the engine's SmartLoot roll, not a
+measured drop rate.
+
+Army Medkit sources and their controls:
+
+| Source (vanilla) | Control |
+|---|---|
+| Rare stash Easy-only list | ARMY MEDKITS odds / MIN / MAX |
+| SmartLoot medicine (Veteran/Master rank) — SMART column | same |
+| Hand-placed regular stashes (direct entries) | same |
+| Breakable medical boxes (Experienced+ rank) | Loot → Breakable Containers → MEDICAL BOXES → ARMY MEDKIT MIX |
+
+No Army Medkit is injected where the game has none.

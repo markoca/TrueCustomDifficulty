@@ -69,6 +69,60 @@ public sealed partial class AggregateVisualControl
             && g.Items.Any(item => item.ItemSid.Equals(sid, StringComparison.OrdinalIgnoreCase)
                 && StashEffectiveState.Number(item.SourceRaw) > Epsilon));
 
+    /// <summary>SmartLoot medicine set carried by 817 of 831 regular stashes.</summary>
+    private const string StashSmartMedicinePrototype = "StashMedicine_Smart";
+
+    /// <summary>
+    /// Odds that the SmartLoot medicine set of ONE regular stash adds at
+    /// least one of each item, averaged over the four player ranks, at the
+    /// low-need (MinSpawnChance) and high-need (MaxSpawnChance) endpoints.
+    /// Uses the writer's own effective endpoints and selections
+    /// (EffectiveSpawn / EffectiveSelection). Model: each of ItemSetCount
+    /// sets spawns with the endpoint chance and then picks one entry by
+    /// Weight (Chance lists: each entry rolls its Chance).
+    /// </summary>
+    private static (double[] Low, double[] High) StashSmartMedicineOdds(
+        StashEffectiveState state, IReadOnlyList<string> sids)
+    {
+        var baseline = StashPreviewBaseline.Value;
+        var low = new double[sids.Count];
+        var high = new double[sids.Count];
+        var groups = StashSourceGroups.Value
+            .Where(g => g.IsSmart && g.Prototype == StashSmartMedicinePrototype).ToArray();
+        for (var rank = 0; rank < 4; rank++)
+        {
+            var noneLow = Enumerable.Repeat(1.0, sids.Count).ToArray();
+            var noneHigh = Enumerable.Repeat(1.0, sids.Count).ToArray();
+            foreach (var group in groups.Where(g => g.RankIndex == rank))
+            {
+                var (minRaw, maxRaw, setsRaw) = group.EffectiveSpawn(state);
+                var sets = setsRaw.Length == 0 ? 1.0 : StashEffectiveState.Number(setsRaw);
+                var pLow = minRaw.Length == 0 ? 1.0 : StashEffectiveState.Number(minRaw);
+                var pHigh = maxRaw.Length == 0 ? 1.0 : StashEffectiveState.Number(maxRaw);
+                var selection = group.Items.Select(item => Math.Max(0.0,
+                    StashEffectiveState.Number(group.EffectiveSelection(baseline, state, item)))).ToArray();
+                var total = selection.Sum();
+                for (var i = 0; i < group.Items.Count; i++)
+                {
+                    var k = sids.ToList().FindIndex(x =>
+                        x.Equals(group.Items[i].ItemSid, StringComparison.OrdinalIgnoreCase));
+                    if (k < 0) continue;
+                    var pick = group.Field == "Weight"
+                        ? total <= Epsilon ? 0.0 : selection[i] / total
+                        : Math.Clamp(selection[i], 0.0, 1.0);
+                    noneLow[k] *= Math.Pow(1.0 - Math.Clamp(pLow * pick, 0.0, 1.0), sets);
+                    noneHigh[k] *= Math.Pow(1.0 - Math.Clamp(pHigh * pick, 0.0, 1.0), sets);
+                }
+            }
+            for (var k = 0; k < sids.Count; k++)
+            {
+                low[k] += (1.0 - noneLow[k]) / 4.0;
+                high[k] += (1.0 - noneHigh[k]) / 4.0;
+            }
+        }
+        return (low, high);
+    }
+
     private static double[] StashOddsCore(StashEffectiveState state, string tier,
         Func<string, int> indexOf, int count)
     {

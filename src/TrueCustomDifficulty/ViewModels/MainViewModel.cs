@@ -220,7 +220,8 @@ public sealed class MainViewModel : ObservableObject
             "loot.ammoBoxWeight918",
             "loot.ammoBoxWeight045",
             "loot.ammoBoxWeight545",
-            "loot.ammoBoxWeight012"
+            "loot.ammoBoxWeight012",
+            "loot.medicalBoxArmyMedkitWeight"
         };
 
         var stashAmmoParameterIds = new HashSet<string>(StringComparer.Ordinal)
@@ -887,7 +888,8 @@ public sealed class MainViewModel : ObservableObject
             "loot.ammoBoxWeight918",
             "loot.ammoBoxWeight045",
             "loot.ammoBoxWeight545",
-            "loot.ammoBoxWeight012");
+            "loot.ammoBoxWeight012",
+            "loot.medicalBoxArmyMedkitWeight");
 
         if (parametersById.TryGetValue("survival.beerDrunknessStrength", out var alcoholAnchor))
         {
@@ -2555,13 +2557,14 @@ public sealed class MainViewModel : ObservableObject
                 "loot.npcWeaponAmmoSupply" => 202,
                 "loot.droppedWeaponCondition" => 203,
 
-                // Two box yields and four ammo family weight sources
+                // Two box yields, four ammo family weights, medical box Army Medkit mix
                 "loot.ammoBoxWeight918" => 400,
                 "loot.destructibleAmmoQuantity" => 401,
                 "loot.destructibleGrenadeQuantity" => 402,
                 "loot.ammoBoxWeight045" => 403,
                 "loot.ammoBoxWeight545" => 404,
                 "loot.ammoBoxWeight012" => 405,
+                "loot.medicalBoxArmyMedkitWeight" => 406,
 
                 // The 14 species remain an independently edited sixth card
                 _ when parameter.Id.StartsWith("loot.mutant.", StringComparison.Ordinal)

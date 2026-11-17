@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Strict original Loot direct structure/value/source-ancestry verifier.
 
-This covers only the 1554 direct loot edit points (1476 of them NPC weapon
+This covers only the 1557 direct loot edit points (+3 medical-box ArmyMedkit Weights, 2026-11-17) (1476 of them NPC weapon
 durability bounds, 80 in the DLC1 NORD generators); custom Loot production
 generators, actor removals and shuffle writers are separate contracts.
 """
@@ -20,9 +20,9 @@ ROOT = Path(__file__).resolve().parents[1]
 BASELINE = ROOT / "src" / "TrueCustomDifficulty" / "Data" / "cfg-writer-baseline.json"
 SOURCE = "GameData/ItemGeneratorPrototypes.cfg"
 DLC_SOURCE = "DLCGameData/DLC1/ItemGeneratorPrototypes.cfg"
-EXPECTED_TOTAL = 1554
-EXPECTED_KINDS = {"mutant": 14, "npcCondition": 1476, "coupons": 64}
-EXPECTED_STATUS = {"exact": 1490, "inherited_exact": 64}
+EXPECTED_TOTAL = 1557
+EXPECTED_KINDS = {"mutant": 14, "npcCondition": 1476, "coupons": 64, "medicalBox": 3}
+EXPECTED_STATUS = {"exact": 1493, "inherited_exact": 64}
 EXPECTED_NPC_PAIRS = 738
 EXPECTED_NPC_ROOTS = 92
 EXPECTED_DLC_POINTS = 80
@@ -181,6 +181,18 @@ def main() -> int:
                         raise ValueError("Coupon tier membership altered")
                 except (KeyError, ValueError, TypeError, AttributeError) as e:
                     findings.append({"reason": "Coupon original template/rank eligibility differs", "detail": str(e)})
+            elif pid == "loot.medicalBoxArmyMedkitWeight":
+                kind = "medicalBox"
+                try:
+                    if (point["operation"] != "scale" or point["key"] != "Weight"
+                            or path != ("ItemGenerator", "[0]", "PossibleItems", "[1]")
+                            or not point["prototype"].startswith("DestructibleStash_Medkit_")):
+                        raise ValueError("Medical box route/operation drift")
+                    item = descend(tree_for(point)[0][point["prototype"]], path)
+                    if item.values.get("ItemPrototypeSID") != "ArmyMedkit":
+                        raise ValueError("Medical box entry is no longer ArmyMedkit")
+                except (KeyError, ValueError) as e:
+                    findings.append({"reason": "Medical box ArmyMedkit source differs", "detail": str(e)})
             else:
                 findings.append({"reason": "Unhandled direct Loot owner", "id": pid})
                 kind = "unmapped"

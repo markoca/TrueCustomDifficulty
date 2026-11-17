@@ -157,7 +157,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "StashContentMix" => "ADJUST ODDS: each cell keeps X% of the game's odds for that kind of loot in that stash tier (100% = game odds, 0% = never); cells tagged CHANCE set the real chance. ODDS PER STASH shows the result. SUPPLY REDUCTION lowers the odds of all supplies; AMMO AMOUNT and RGD-5 AMOUNT change how much you get.",
                     "StashMedicalComposition" => "ADJUST ODDS: each item keeps X% of the game's odds in every stash (100% = game odds, 0% = never); ODDS PER STASH · MEDS shows the result per tier. QUANTITY sets Medkit and Army Medkit MIN/MAX stack sizes.",
                     "StashGear" => "BONUS GEAR COVERAGE chooses eligible stash locations. PRIORITY favors item categories; BONUS CHANCE checks each candidate. Quest and unique loot are protected.",
-                    "AmmoDistribution" => "AMMO PER BOX and GRENADES PER BOX change amounts. The AMMO TYPE MIX knobs favor calibers; AMMO BOX CONTENT DISTRIBUTION only previews the result.",
+                    "AmmoDistribution" => "AMMO PER BOX and GRENADES PER BOX change amounts. The AMMO TYPE MIX knobs favor calibers; AMMO BOX CONTENT DISTRIBUTION only previews the result. MEDICAL BOXES: the ARMY MEDKIT MIX knob sets how often a medical box gives an Army Medkit (per player rank).",
                     "BreakableBoxYields" => "Drag the ammo or grenade yield track to change only that box's contents.",
                     "PlayerWeaponProfile" => "Turn Weapon Damage, Headshot Damage and Jam Rate independently. Scroll or use arrow keys for fine adjustments.",
                     "HumanGroupSizeRadar" => "Drag each player-rank track to change that rank's maximum human squad size.",
@@ -688,6 +688,7 @@ public sealed class ParameterViewModel : ObservableObject
 
         ["loot.ammoBoxWeight918"] = "AmmoDistribution",
         ["loot.ammoBoxWeight045"] = "AmmoDistribution",
+        ["loot.medicalBoxArmyMedkitWeight"] = "AmmoDistribution",
         ["loot.ammoBoxWeight545"] = "AmmoDistribution",
         ["loot.ammoBoxWeight012"] = "AmmoDistribution"
     };

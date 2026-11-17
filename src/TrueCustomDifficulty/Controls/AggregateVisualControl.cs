@@ -5350,11 +5350,17 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var reference = ReferenceStashEffectiveState();
         var now = StashOddsTiers.Select(t => StashItemOdds(current, t, sids)).ToArray();
         var was = StashOddsTiers.Select(t => StashItemOdds(reference, t, sids)).ToArray();
+        // Three tier columns plus SMART: the SmartLoot medicine set most
+        // regular stashes also carry (range = low need → high need).
+        var smartNow = StashSmartMedicineOdds(current, sids);
+        var smartWas = StashSmartMedicineOdds(reference, sids);
         const double labelWidth = 104.0;
-        var (gridLeft, columnWidth, columnGap) = StashOddsColumns(odds, labelWidth);
+        const double columnGap = 12.0;
+        var gridLeft = odds.Left + 12.0 + labelWidth;
+        var columnWidth = Math.Max(1.0, (odds.Right - 12.0 - gridLeft - 3.0 * columnGap) / 4.0);
         var headerY = odds.Top + 30.0;
-        for (var t = 0; t < 3; t++)
-            DrawText(dc, StashOddsTierLabels[t],
+        for (var t = 0; t < 4; t++)
+            DrawText(dc, t < 3 ? StashOddsTierLabels[t] : "SMART",
                 new Point(gridLeft + t * (columnWidth + columnGap), headerY),
                 9.4, muted, FontWeights.Bold);
         for (var k = 0; k < StashMedicalItems.Length; k++)
@@ -5376,6 +5382,14 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 DrawStashOddsBar(dc, x, y, columnWidth, now[t][k], was[t][k],
                     StashMedicalPalette[k], text, muted, border, accent);
             }
+            var smartX = gridLeft + 3.0 * (columnWidth + columnGap);
+            if (smartNow.High[k] <= Epsilon && smartWas.High[k] <= Epsilon)
+                DrawText(dc, "—", new Point(smartX, y), 10.0,
+                    CloneWithOpacity(muted, .7), FontWeights.SemiBold);
+            else
+                DrawStashOddsRangeBar(dc, smartX, y, columnWidth,
+                    smartNow.Low[k], smartNow.High[k], smartWas.Low[k], smartWas.High[k],
+                    StashMedicalPalette[k], text, muted, border, accent);
         }
 
         // ---- ADJUST ODDS ----------------------------------------------------
@@ -5426,6 +5440,37 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var tick = bar.Left + bar.Width * vanilla;
         dc.DrawLine(new Pen(CloneWithOpacity(muted, .75), 1.2),
             new Point(tick, bar.Top - 2.0), new Point(tick, bar.Bottom + 2.0));
+        dc.DrawText(number, new Point(
+            bar.Right + 6.0 + numberWidth - number.WidthIncludingTrailingWhitespace, y));
+    }
+
+    // SMART column bar: a band from the low-need to the high-need odds, the
+    // reference band as a grey outline, "lo–hi%" right; only changed digits gold.
+    private void DrawStashOddsRangeBar(DrawingContext dc, double x, double y, double columnWidth,
+        double low, double high, double vanillaLow, double vanillaHigh, Brush tone,
+        Brush text, Brush muted, Brush border, Brush accent)
+    {
+        low = Math.Clamp(low, 0.0, 1.0);
+        high = Math.Clamp(Math.Max(low, high), 0.0, 1.0);
+        vanillaLow = Math.Clamp(vanillaLow, 0.0, 1.0);
+        vanillaHigh = Math.Clamp(Math.Max(vanillaLow, vanillaHigh), 0.0, 1.0);
+        var changed = Math.Abs(low - vanillaLow) > 0.005 || Math.Abs(high - vanillaHigh) > 0.005;
+        var label = $"{low * 100.0:0}–{high * 100.0:0}%";
+        var number = CreateText(label, 10.0,
+            changed ? ReadoutInk.Numbers(accent, text) : high <= Epsilon ? muted : text, FontWeights.Bold);
+        const double numberWidth = 52.0;
+        var bar = new Rect(x, y + 5.0, Math.Max(1.0, columnWidth - numberWidth - 6.0), 7.0);
+        dc.DrawRectangle(CloneWithOpacity(border, .30), null, bar);
+        if (high > Epsilon)
+            dc.DrawRectangle(CloneWithOpacity(tone, .9), null, new Rect(
+                bar.Left + bar.Width * low, bar.Top,
+                Math.Max(1.5, bar.Width * (high - low)), bar.Height));
+        foreach (var tickValue in new[] { vanillaLow, vanillaHigh })
+        {
+            var tick = bar.Left + bar.Width * tickValue;
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, .75), 1.2),
+                new Point(tick, bar.Top - 2.0), new Point(tick, bar.Bottom + 2.0));
+        }
         dc.DrawText(number, new Point(
             bar.Right + 6.0 + numberWidth - number.WidthIncludingTrailingWhitespace, y));
     }
@@ -6066,14 +6111,64 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         {
             (w045, 1, ".45 ACP"), (w918, 0, "9×19"), (w545, 2, "5.56"), (w012, 3, "12 GA")
         });
+
+        DrawMedicalBoxMix(dc, geometry.MedicalBox, text, muted, border, accent, panel);
+    }
+
+    // MEDICAL BOXES: the ARMY MEDKIT MIX knob (ArmyMedkit Weight factor) and,
+    // per player rank, the Army Medkit share of one box's pick with the
+    // vanilla tick (MedicalBoxPolicy, same Weights as the writer's points).
+    private void DrawMedicalBoxMix(DrawingContext dc, Rect card,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        var parameter = P(MedicalBoxPolicy.ArmyMedkitWeightId);
+        DrawText(dc, "MEDICAL BOXES", new Point(card.Left, card.Top - 19.0),
+            10.2, muted, FontWeights.Bold);
+        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0, parameter);
+        if (parameter is null)
+            return;
+        var tone = StashMedicalPalette[2];
+        const double knobWidth = 194.0;
+        DrawSourceKnob(dc, parameter, "ARMY MEDKIT MIX",
+            new Rect(card.Left, card.Top, knobWidth, card.Height),
+            text, muted, border, accent, panel, dialAccent: tone);
+
+        var table = new Rect(card.Left + knobWidth + 10.0, card.Top + 14.0,
+            Math.Max(1.0, card.Width - knobWidth - 24.0), card.Height - 28.0);
+        DrawText(dc, "ARMY MEDKIT PER BOX", new Point(table.Left, table.Top),
+            10.2, text, FontWeights.Bold);
+        const double labelWidth = 104.0;
+        const double rowPitch = 26.0;
+        var barLeft = table.Left + labelWidth;
+        var barWidth = Math.Max(1.0, table.Right - barLeft);
+        var rows = new[] { "NEWBIE" }.Concat(MedicalBoxPolicy.Ranks
+            .Select(r => r.Rank.ToUpperInvariant())).ToArray();
+        for (var i = 0; i < rows.Length; i++)
+        {
+            var y = table.Top + 28.0 + i * rowPitch;
+            DrawText(dc, rows[i], new Point(table.Left, y), 9.4, muted, FontWeights.Bold);
+            if (i == 0)
+            {
+                // Newbie-rank boxes hold Medkits and Bandages only.
+                DrawText(dc, "—", new Point(barLeft, y), 10.0,
+                    CloneWithOpacity(muted, .7), FontWeights.SemiBold);
+                continue;
+            }
+            DrawStashOddsBar(dc, barLeft, y, barWidth,
+                MedicalBoxPolicy.ArmyShare(i - 1, parameter.CurrentNumber),
+                MedicalBoxPolicy.ArmyShare(i - 1, parameter.ReferenceNumber),
+                tone, text, muted, border, accent);
+        }
     }
 
     private const double AmmoYieldTileHeight = 39.0;
     private const double AmmoMixCardHeight = 76.0;
+    private const double MedicalBoxCardHeight = 181.0;
     private const double AmmoDistributionWideWidth = 760.0;
 
     private readonly record struct AmmoDistributionGeometry(
-        Rect AmmoYield, Rect GrenadeYield, Rect Preview, double KnobTop, Rect Mix, double Height);
+        Rect AmmoYield, Rect GrenadeYield, Rect Preview, double KnobTop, Rect Mix,
+        Rect MedicalBox, double Height);
 
     // Wide: a compact slider column (two stacked track cards) beside the
     // preview. Narrow: the two sliders side by side, preview below.
@@ -6104,7 +6199,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
         var knobTop = preview.Bottom + 30.0;
         var mix = new Rect(margin, knobTop + 181.0 + gap, inner, AmmoMixCardHeight);
-        return new AmmoDistributionGeometry(ammo, grenade, preview, knobTop, mix, mix.Bottom + 14.0);
+        // MEDICAL BOXES: one knob + Army Medkit share per player rank.
+        var medicalBox = new Rect(margin, mix.Bottom + 30.0, inner, MedicalBoxCardHeight);
+        return new AmmoDistributionGeometry(ammo, grenade, preview, knobTop, mix,
+            medicalBox, medicalBox.Bottom + 14.0);
     }
 
     // Shared density for the large Survival/Health aggregate panels. Rows are
@@ -6363,7 +6461,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "loot.cheapStashAmmoQuantity" or "loot.mediumStashAmmoQuantity" or
             "loot.expensiveStashAmmoQuantity" or
             "loot.ammoBoxWeight918" or "loot.ammoBoxWeight045" or
-            "loot.ammoBoxWeight545" or "loot.ammoBoxWeight012" => $"{rawValue:0.##}x",
+            "loot.ammoBoxWeight545" or "loot.ammoBoxWeight012" or
+            "loot.medicalBoxArmyMedkitWeight" => $"{rawValue:0.##}x",
             "loot.cheapStashGrenadeChance" or "loot.expensiveStashMoneyChance" =>
                 $"{rawValue * 100.0:0}%",
             "loot.cheapStashGrenadeQuantity" => $"{rawValue:0}",
@@ -8226,7 +8325,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 "loot.ammoBoxWeight918",
                 "loot.ammoBoxWeight045",
                 "loot.ammoBoxWeight545",
-                "loot.ammoBoxWeight012"
+                "loot.ammoBoxWeight012",
+                "loot.medicalBoxArmyMedkitWeight"
             },
             _ => Array.Empty<string>()
         };
