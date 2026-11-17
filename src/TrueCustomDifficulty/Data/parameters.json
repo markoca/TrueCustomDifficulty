@@ -1135,7 +1135,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "The game quietly softens damage when many hits land at once, so you don't melt in a single burst. This is the strongest that safety net can get. Higher = more forgiving under heavy fire, lower = bursts hit closer to full damage. Vanilla: Novice 1, Stalker 0.75, Veteran 0.5, Master 0.4.",
+      "rationale": "The game quietly softens damage when many hits land at once, so you don't melt in a single burst. This is the strongest that safety net can get. Higher = more forgiving under heavy fire, lower = bursts hit closer to full damage. Vanilla: Novice 100%, Stalker 75%, Veteran 50%, Master 40%.",
       "logic": "Higher values give more protection against rapid hits; lower values make them harsher. The number is protection strength, not a literal damage-reduction percentage.",
       "interaction": "Minimum Hit Protection sets the weakest protection in the same repeated-hit system. Incoming gun damage is independent."
     },
@@ -1180,7 +1180,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "The weakest end of the same hidden safety net against rapid hits. Raising it keeps some protection even in long, sustained fights. Vanilla: Novice 1, Stalker 0.33, Veteran 0.15, Master 0.12. Works together with Peak Hit Protection.",
+      "rationale": "The weakest end of the same hidden safety net against rapid hits. Raising it keeps some protection even in long, sustained fights. Vanilla: Novice 100%, Stalker 33%, Veteran 15%, Master 12%. Works together with Peak Hit Protection.",
       "logic": "Higher values give more protection at the weak end; lower values make rapid hits harsher. This is not a literal damage-reduction percentage.",
       "interaction": "Peak Hit Protection sets the strongest protection in the same system. Incoming gun damage is independent."
     },
@@ -1283,7 +1283,7 @@
           "Variants with their own MaxHP follow the same multiplier: AshyBloodsucker, PrologueBloodsucker. Collar variants inherit from the base prototype; illusion clones (Bayun clone, Pseudodog phantoms) are not scaled."
         ]
       },
-      "rationale": "How tough Bloodsuckers are — the invisible stalkers of the Zone. Includes the Mist, Ashy and prologue variants. Vanilla HP: 500. Higher values mean longer, scarier close-range fights; every other mutant has its own card.",
+      "rationale": "How tough Bloodsuckers are — the invisible stalkers of the Zone. Includes the Mist, Ashy and prologue variants. Vanilla: 1× (500 HP). Higher values mean longer, scarier close-range fights; every other mutant has its own card.",
       "logic": "",
       "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": true
@@ -1330,7 +1330,7 @@
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
-      "rationale": "How tough the Chimera is — the two-headed leaping apex predator. Vanilla HP: 1400, the second toughest mutant in the game. Lowering it makes a Chimera encounter survivable with mid-game gear.",
+      "rationale": "How tough the Chimera is — the two-headed leaping apex predator. Vanilla: 1× (1400 HP), the second toughest mutant in the game. Lowering it makes a Chimera encounter survivable with mid-game gear.",
       "logic": "",
       "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": false
@@ -1377,7 +1377,7 @@
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
-      "rationale": "How tough the Deer mutant is. Vanilla HP: 600 — tougher than a Bloodsucker.",
+      "rationale": "How tough the Deer mutant is. Vanilla: 1× (600 HP) — tougher than a Bloodsucker.",
       "logic": "",
       "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": false
@@ -1424,7 +1424,7 @@
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
-      "rationale": "How tough the Pseudogiant is — the stomping tank of the Zone. Vanilla HP: 2500, by far the highest of any mutant. At 2× you'll want an entire backpack of ammo; at 0.5× a good rifle can drop it in one magazine or two.",
+      "rationale": "How tough the Pseudogiant is — the stomping tank of the Zone. Vanilla: 1× (2500 HP), by far the highest of any mutant. At 2× you'll want an entire backpack of ammo; at 0.5× a good rifle can drop it in one magazine or two.",
       "logic": "",
       "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": false
@@ -1471,7 +1471,7 @@
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
-      "rationale": "How tough Pseudodogs are — big, fast dogs that hit harder than Blind Dogs. Vanilla HP: 300.",
+      "rationale": "How tough Pseudodogs are — big, fast dogs that hit harder than Blind Dogs. Vanilla: 1× (300 HP).",
       "logic": "",
       "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": false
@@ -1525,7 +1525,7 @@
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
-      "rationale": "How tough the Burer is — the telekinetic that rips weapons from your hands. Vanilla HP: 400.",
+      "rationale": "How tough the Burer is — the telekinetic that rips weapons from your hands. Vanilla: 1× (400 HP).",
       "logic": "",
       "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": false
@@ -1572,7 +1572,7 @@
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
-      "rationale": "How tough the Bayun is. Vanilla HP: 400, the same as a Burer.",
+      "rationale": "How tough the Bayun is. Vanilla: 1× (400 HP), the same as a Burer.",
       "logic": "",
       "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": false
@@ -1626,7 +1626,7 @@
         ]
       },
       "exposeInUi": false,
-      "rationale": "How tough Blind Dogs are — the pack hunters you meet from the first hour. Includes the Moldy variant. Vanilla HP: 63, so even a pistol handles them. Raising it makes early packs a real threat."
+      "rationale": "How tough Blind Dogs are — the pack hunters you meet from the first hour. Includes the Moldy variant. Vanilla: 1× (63 HP), so even a pistol handles them. Raising it makes early packs a real threat."
     },
     {
       "id": "combat.mutantHealth.boar",
@@ -1684,7 +1684,7 @@
         ]
       },
       "exposeInUi": false,
-      "rationale": "How tough Boars are — charging bullet sponges. Includes the Helmed and Porcupine variants. Vanilla HP: 300."
+      "rationale": "How tough Boars are — charging bullet sponges. Includes the Helmed and Porcupine variants. Vanilla: 1× (300 HP)."
     },
     {
       "id": "combat.mutantHealth.flesh",
@@ -1735,7 +1735,7 @@
         ]
       },
       "exposeInUi": false,
-      "rationale": "How tough Flesh are — the clumsy mutated pigs. Includes the Boggy variant. Vanilla HP: 280."
+      "rationale": "How tough Flesh are — the clumsy mutated pigs. Includes the Boggy variant. Vanilla: 1× (280 HP)."
     },
     {
       "id": "combat.mutantHealth.poltergeist",
@@ -1814,7 +1814,7 @@
         ]
       },
       "exposeInUi": false,
-      "rationale": "How tough Poltergeists are — invisible spirits that throw objects at you. Includes the electro, toxic, fire and explosive variants. Vanilla HP: 400."
+      "rationale": "How tough Poltergeists are — invisible spirits that throw objects at you. Includes the electro, toxic, fire and explosive variants. Vanilla: 1× (400 HP)."
     },
     {
       "id": "combat.mutantHealth.snork",
@@ -1857,7 +1857,7 @@
         ]
       },
       "exposeInUi": false,
-      "rationale": "How tough Snorks are — the leaping gas-mask mutants. Vanilla HP: 150."
+      "rationale": "How tough Snorks are — the leaping gas-mask mutants. Vanilla: 1× (150 HP)."
     },
     {
       "id": "combat.mutantHealth.tushkan",
@@ -1900,7 +1900,7 @@
         ]
       },
       "exposeInUi": false,
-      "rationale": "How tough Tushkans are — the small, fast rat-like swarmers. Vanilla HP: 19, one hit usually does it."
+      "rationale": "How tough Tushkans are — the small, fast rat-like swarmers. Vanilla: 1× (19 HP), one hit usually does it."
     },
     {
       "id": "combat.mutantHealth.controller",
@@ -1944,7 +1944,7 @@
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
-      "rationale": "How tough the Controller is — the psychic that scrambles your mind from a distance. Vanilla HP: 500.",
+      "rationale": "How tough the Controller is — the psychic that scrambles your mind from a distance. Vanilla: 1× (500 HP).",
       "logic": "",
       "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": false
@@ -3416,7 +3416,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How fast your stomach empties while you roam. Higher = you need to eat more often and carry more food; lower = food lasts much longer. Vanilla: 0.015.",
+      "rationale": "How fast your stomach empties while you roam. Higher = you need to eat more often and carry more food; lower = food lasts much longer. Vanilla: 0.015 pts/s.",
       "logic": "",
       "interaction": "Food Hunger Relief changes how much hunger each item removes. Hunger-state thresholds still decide when penalties apply."
     },
@@ -3650,7 +3650,7 @@
           "Runtime CFG threshold is 17 HungerPoints."
         ]
       },
-      "rationale": "Where on the 0–100 hunger meter the first, mild hunger stage kicks in. Vanilla: 17.",
+      "rationale": "Where on the 0–100 hunger meter the first, mild hunger stage kicks in. Vanilla: 17 pts.",
       "logic": "Keep LOW at or below MEDIUM and SEVERE. Moving one threshold nudges its neighbours when needed.",
       "interaction": "This changes state timing only. Medium/Severe stamina-recovery penalties are tuned separately.",
       "exposeInUi": false
@@ -3697,7 +3697,7 @@
           "Medium hunger also applies HungerNoSleep."
         ]
       },
-      "rationale": "Where real hunger starts: stamina recovers slower and you can't sleep. Vanilla: 33 on the 0–100 meter.",
+      "rationale": "Where real hunger starts: stamina recovers slower and you can't sleep. Vanilla: 33 pts on the 0–100 meter.",
       "logic": "Keep LOW ≤ MEDIUM ≤ SEVERE.",
       "interaction": "This moves the stage boundary; the Medium stamina-recovery penalty magnitude remains a separate axis.",
       "exposeInUi": false
@@ -3745,7 +3745,7 @@
           "This is the standard HungerMechanics boundary; the separate Master HungerNegativeMechanics bundle retains its own authored activation semantics."
         ]
       },
-      "rationale": "Where severe hunger starts and the heavy penalties hit. Vanilla: 83 on the 0–100 meter.",
+      "rationale": "Where severe hunger starts and the heavy penalties hit. Vanilla: 83 pts on the 0–100 meter.",
       "logic": "Keep LOW ≤ MEDIUM ≤ SEVERE.",
       "interaction": "This changes the standard hunger stage boundary; it does not silently rewrite the separate Master starvation mechanics.",
       "exposeInUi": false
@@ -3871,7 +3871,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How fast you get tired while awake. Higher = fatigue penalties (slower aim and reloads) and the need to sleep arrive sooner. Vanilla: 0.01.",
+      "rationale": "How fast you get tired while awake. Higher = fatigue penalties (slower aim and reloads) and the need to sleep arrive sooner. Vanilla: 0.01 pts/s.",
       "logic": "",
       "interaction": "Vanilla fatigue states still decide when their penalties become active. Energy drinks can reduce accumulated fatigue separately."
     },
@@ -3916,7 +3916,7 @@
           "Runtime CFG threshold is 50 SleepinessPoints."
         ]
       },
-      "rationale": "Where on the 0–100 fatigue meter you start feeling tired (slightly slower aiming). Vanilla: 50.",
+      "rationale": "Where on the 0–100 fatigue meter you start feeling tired (slightly slower aiming). Vanilla: 50 pts.",
       "logic": "Keep LOW <= MEDIUM <= SEVERE.",
       "interaction": "Horizontal movement changes stage timing; vertical AIM/RELOAD handles control penalty magnitude.",
       "exposeInUi": false
@@ -3962,7 +3962,7 @@
           "Runtime CFG threshold is 60 SleepinessPoints."
         ]
       },
-      "rationale": "Where moderate fatigue starts: slower aiming and reloads. Vanilla: 60.",
+      "rationale": "Where moderate fatigue starts: slower aiming and reloads. Vanilla: 60 pts.",
       "logic": "Keep LOW <= MEDIUM <= SEVERE.",
       "interaction": "The Medium reload penalty begins at this stage.",
       "exposeInUi": false
@@ -4008,7 +4008,7 @@
           "Runtime CFG threshold is 80 SleepinessPoints."
         ]
       },
-      "rationale": "Where severe fatigue starts and the biggest aim and reload penalties kick in. Vanilla: 80.",
+      "rationale": "Where severe fatigue starts and the biggest aim and reload penalties kick in. Vanilla: 80 pts.",
       "logic": "Keep LOW <= MEDIUM <= SEVERE.",
       "interaction": "This moves the Severe stage boundary without changing its AIM/RELOAD penalty magnitudes.",
       "exposeInUi": false
@@ -4811,7 +4811,7 @@
           "Verified authored CFG default 10; gameplay scaling still requires runtime validation."
         ]
       },
-      "rationale": "How much faster you stop bleeding while Vinca is active. Vanilla: +10 bleed recovery — handy when you're out of bandages.",
+      "rationale": "How much faster you stop bleeding while Vinca is active. Vanilla: +10 bleed pts — handy when you're out of bandages.",
       "logic": "Set in bleed-recovery points (vanilla +10), not as a multiplier.",
       "interaction": "Separate from drinks and the other medicines; taking another dose still refreshes it like vanilla.",
       "exposeInUi": false
@@ -5013,7 +5013,7 @@
           "Verified authored CFG default 10; gameplay scaling still requires runtime validation."
         ]
       },
-      "rationale": "How much psy protection a Psi Block pill gives while it works. Vanilla: +10 psy points.",
+      "rationale": "How much psy protection a Psi Block pill gives while it works. Vanilla: +10 psi pts.",
       "logic": "Set directly in psi-protection points as the game shows them, not as a multiplier.",
       "interaction": "Separate from drinks and the other medicines; taking another dose still refreshes it like vanilla.",
       "exposeInUi": false
@@ -5252,7 +5252,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How tired you must be before the game lets you sleep. Vanilla: 50 on the 0–100 fatigue meter. Lower = nap whenever you like; higher = sleep only when exhausted.",
+      "rationale": "How tired you must be before the game lets you sleep. Vanilla: 50 pts on the 0–100 fatigue meter. Lower = nap whenever you like; higher = sleep only when exhausted.",
       "logic": "Higher values require more accumulated sleepiness before sleep becomes available; lower values allow sleeping earlier.",
       "interaction": "Separate no-sleep effects from hunger, bleeding, radiation or Psy can still block sleep regardless of this threshold."
     },
@@ -5382,7 +5382,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How fast radiation drains away on its own without anti-rad or vodka. Vanilla: 0.05 points per second — slow, so meds still matter.",
+      "rationale": "How fast radiation drains away on its own without anti-rad or vodka. Vanilla: 0.05 pts/s — slow, so meds still matter.",
       "logic": "",
       "interaction": "This acts on recovery, not exposure strength. Radiation Accumulation determines how quickly new radiation is gained."
     },
@@ -5583,7 +5583,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How fast bleeding stops on its own without bandages. Vanilla: 0.3. Raise it to shrug off scratches; lower it to make every wound need treatment.",
+      "rationale": "How fast bleeding stops on its own without bandages. Vanilla: 0.3 pts/s. Raise it to shrug off scratches; lower it to make every wound need treatment.",
       "logic": "",
       "interaction": "Bandages and medkits apply direct bleeding removal independently of this passive rate."
     },
@@ -5811,7 +5811,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "The small comeback heal the game gives you when you're almost dead. Vanilla: 100%. 0 removes it, so near-death means near-death; Master penalties can cut it further.",
+      "rationale": "The small comeback heal the game gives you when you're almost dead. Vanilla: 1 HP/s. 0 removes it, so near-death means near-death; Master penalties can cut it further.",
       "logic": "",
       "interaction": "Health Regen Strength can scale this effect, and the Master low-health penalty can reduce it further."
     },
@@ -6478,7 +6478,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much bleeding one bandage stops. Vanilla: 100 — it fully stops any bleed. Lower it and a bad wound needs more than one bandage.",
+      "rationale": "How much bleeding one bandage stops. Vanilla: 100 bleed pts — it fully stops any bleed. Lower it and a bad wound needs more than one bandage.",
       "logic": "",
       "interaction": "This changes direct treatment only. Natural Bleeding Recovery and bleeding damage remain separate."
     },
@@ -6521,7 +6521,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much bleeding a regular medkit stops. Vanilla: 15 — barely a dent, so you still want a bandage for a real bleed.",
+      "rationale": "How much bleeding a regular medkit stops. Vanilla: 15 bleed pts — barely a dent, so you still want a bandage for a real bleed.",
       "logic": "",
       "interaction": "This changes direct treatment only. Natural Bleeding Recovery and bleeding damage remain separate."
     },
@@ -6564,7 +6564,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much bleeding an army medkit stops. Vanilla: 35.",
+      "rationale": "How much bleeding an army medkit stops. Vanilla: 35 bleed pts.",
       "logic": "",
       "interaction": "This changes direct treatment only. Natural Bleeding Recovery and bleeding damage remain separate."
     },
@@ -6607,7 +6607,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much bleeding a scientific medkit stops. Vanilla: 25.",
+      "rationale": "How much bleeding a scientific medkit stops. Vanilla: 25 bleed pts.",
       "logic": "",
       "interaction": "This changes direct treatment only. Natural Bleeding Recovery and bleeding damage remain separate."
     },
@@ -6650,7 +6650,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much radiation a scientific medkit clears on top of healing. Vanilla: 60 — handy after a trip through a hot zone.",
+      "rationale": "How much radiation a scientific medkit clears on top of healing. Vanilla: 60 rad pts — handy after a trip through a hot zone.",
       "logic": "",
       "interaction": "This changes direct treatment only. Radiation build-up and natural radiation recovery remain separate."
     },
@@ -6693,7 +6693,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much radiation one anti-rad clears. Vanilla: 100 — a full cleanse. Lower it and heavy doses need more than one shot.",
+      "rationale": "How much radiation one anti-rad clears. Vanilla: 100 rad pts — a full cleanse. Lower it and heavy doses need more than one shot.",
       "logic": "",
       "interaction": "This changes direct treatment only. Radiation build-up and natural radiation recovery remain separate."
     },
@@ -6881,7 +6881,7 @@
       "group": "Exhaustion & Recovery",
       "label": "Boost Strength",
       "description": "Regeneration strength of the temporary low-stamina recovery boost (10 stamina/s originally).",
-      "rationale": "How strong that second wind is. Vanilla: 10 stamina per second on top of normal recovery. 0 removes it.",
+      "rationale": "How strong that second wind is. Vanilla: 10 stamina/s on top of normal recovery. 0 removes it.",
       "logic": "Higher values make the emergency recovery effect stronger; lower values make low-stamina recovery closer to the ordinary base rate.",
       "interaction": "Boost Starts Below sets its trigger; low-stamina Boost Duration sets how long it lasts.",
       "control": "slider",
@@ -7298,7 +7298,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How fast your stamina refills when you ease off. Vanilla: 5 per second. Higher = shorter breathers between sprints.",
+      "rationale": "How fast your stamina refills when you ease off. Vanilla: 5 stamina/s. Higher = shorter breathers between sprints.",
       "logic": "",
       "interaction": "Movement-state values, hunger penalties and fatigue effects can reduce this base regeneration in context."
     },
@@ -7786,7 +7786,7 @@
           "Engine execution of new spawn endpoints requires fresh-NPC validation."
         ]
       },
-      "rationale": "Makes ordinary human bodies carry less food, drinks and meds. Vanilla: 0 — no change. Higher = leaner pickings, so you rely more on stashes and traders. Weapons, their loaded ammo, armor and quest/special NPCs are never touched.",
+      "rationale": "Makes ordinary human bodies carry less food, drinks and meds. Vanilla: 0% — no change. Higher = leaner pickings, so you rely more on stashes and traders. Weapons, their loaded ammo, armor and quest/special NPCs are never touched.",
       "logic": "Regular corpse supplies and the SMART LOOT bonus packs both thin out. 0% keeps vanilla; 100% leaves ordinary bodies without food, drinks and meds.",
       "interaction": "Doesn't change which SMART LOOT packs are picked, AMMO PACK SIZE, MOD ITEMS or the per-item chances on this board."
     },
@@ -12601,7 +12601,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Seconds between starvation hits. Vanilla: 10. Lower = the same damage comes faster. Only works while STARVATION MECHANICS is ON.",
+      "rationale": "Seconds between starvation hits. Vanilla: 10 seconds. Lower = the same damage comes faster. Only works while STARVATION MECHANICS is ON.",
       "logic": "Lower values make the same damage arrive more frequently; higher values spread the damage out over a longer interval.",
       "interaction": "Practical starvation pressure depends on both this interval and Starvation Damage.",
       "requiresToggle": "advanced.starvationMechanics"
@@ -14201,7 +14201,7 @@
           "Runtime CFG stores DiamondBleeding ValueMin/ValueMax as 10/10."
         ]
       },
-      "rationale": "How badly a Diamond hit makes you bleed. Vanilla: 10. 0 = no bleeding from it.",
+      "rationale": "How badly a Diamond hit makes you bleed. Vanilla: 10 bleed pts. 0 = no bleeding from it.",
       "logic": "10 is vanilla; the range is 0–20.",
       "interaction": "Diamond Health Damage is a separate setting.",
       "exposeInUi": false
@@ -15821,7 +15821,7 @@
           "Does not modify LairPrototypes.cfg, respawn timers, faction population, or scenario frequency."
         ]
       },
-      "rationale": "How big human squads can get while you're a Newbie. Vanilla cap: 3 stalkers. 2× = up to twice as many per squad. How often squads show up doesn't change. Each rank has its own bar.",
+      "rationale": "How big human squads can get while you're a Newbie. Vanilla: 1× (3 NPC). 2× = up to twice as many per squad. How often squads show up doesn't change. Each rank has its own bar.",
       "logic": "",
       "interaction": "",
       "exposeInUi": true
@@ -15868,7 +15868,7 @@
           "Does not modify LairPrototypes.cfg, respawn timers, faction population, or scenario frequency."
         ]
       },
-      "rationale": "How big human squads can get while you're Experienced. Vanilla cap: 4 stalkers. How often squads show up doesn't change.",
+      "rationale": "How big human squads can get while you're Experienced. Vanilla: 1× (4 NPC). How often squads show up doesn't change.",
       "logic": "Vanilla Experienced squads cap at 4 NPCs. Lower settings make squads smaller; higher settings allow larger squads.",
       "interaction": "Each radar point represents one player rank. 1× keeps vanilla squad size; right-click that point or legend name to reset only that rank.",
       "exposeInUi": false
@@ -15915,7 +15915,7 @@
           "Does not modify LairPrototypes.cfg, respawn timers, faction population, or scenario frequency."
         ]
       },
-      "rationale": "How big human squads can get while you're a Veteran. Vanilla cap: 5 stalkers.",
+      "rationale": "How big human squads can get while you're a Veteran. Vanilla: 1× (5 NPC).",
       "logic": "Vanilla Veteran squads cap at 5 NPCs. Lower settings make squads smaller; higher settings allow larger squads.",
       "interaction": "Each radar point represents one player rank. 1× keeps vanilla squad size; right-click that point or legend name to reset only that rank.",
       "exposeInUi": false
@@ -15962,7 +15962,7 @@
           "Does not modify LairPrototypes.cfg, respawn timers, faction population, or scenario frequency."
         ]
       },
-      "rationale": "How big human squads can get while you're a Master. Vanilla cap: 6 stalkers — late-game firefights get crowded.",
+      "rationale": "How big human squads can get while you're a Master. Vanilla: 1× (6 NPC) — late-game firefights get crowded.",
       "logic": "Vanilla Master squads cap at 6 NPCs. Lower settings make squads smaller; higher settings allow larger squads.",
       "interaction": "Each radar point represents one player rank. 1× keeps vanilla squad size; right-click that point or legend name to reset only that rank.",
       "exposeInUi": false
@@ -16098,7 +16098,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many bloodsuckers can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 0 / 1 / 1 / 1. 2× = up to twice as many per group; how often they spawn doesn't change. Each species has its own bar. A Newbie cap of 0 stays 0.",
+      "rationale": "How many bloodsuckers can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 0 / 1 / 1 / 1). 2× = up to twice as many per group; how often they spawn doesn't change. Each species has its own bar. A Newbie cap of 0 stays 0.",
       "logic": "",
       "interaction": "",
       "exposeInUi": true
@@ -16166,7 +16166,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many blind dogs can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 4 / 6 / 8 / 12. 2× = up to twice as many per group; how often they spawn doesn't change.",
+      "rationale": "How many blind dogs can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 4 / 6 / 8 / 12). 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 4 / 6 / 8 / 12. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Blind Dog group size. 1× keeps vanilla; right-click the point or legend name to reset Blind Dog.",
       "exposeInUi": false
@@ -16234,7 +16234,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many fleshs can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 2 / 3 / 5 / 6. 2× = up to twice as many per group; how often they spawn doesn't change.",
+      "rationale": "How many fleshs can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 2 / 3 / 5 / 6). 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 2 / 3 / 5 / 6. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Flesh group size. 1× keeps vanilla; right-click the point or legend name to reset Flesh.",
       "exposeInUi": false
@@ -16302,7 +16302,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many controllers can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 0 / 1 / 1 / 1. 2× = up to twice as many per group; how often they spawn doesn't change. A Newbie cap of 0 stays 0.",
+      "rationale": "How many controllers can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 0 / 1 / 1 / 1). 2× = up to twice as many per group; how often they spawn doesn't change. A Newbie cap of 0 stays 0.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 0 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Controller group size. 1× keeps vanilla; right-click the point or legend name to reset Controller.",
       "exposeInUi": false
@@ -16370,7 +16370,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many poltergeists can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 1 / 1 / 2 / 2. 2× = up to twice as many per group; how often they spawn doesn't change.",
+      "rationale": "How many poltergeists can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 1 / 1 / 2 / 2). 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 2 / 2. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Poltergeist group size. 1× keeps vanilla; right-click the point or legend name to reset Poltergeist.",
       "exposeInUi": false
@@ -16438,7 +16438,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many snorks can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 1 / 3 / 4 / 6. 2× = up to twice as many per group; how often they spawn doesn't change.",
+      "rationale": "How many snorks can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 1 / 3 / 4 / 6). 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 3 / 4 / 6. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Snork group size. 1× keeps vanilla; right-click the point or legend name to reset Snork.",
       "exposeInUi": false
@@ -16506,7 +16506,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many boars can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 2 / 3 / 5 / 6. 2× = up to twice as many per group; how often they spawn doesn't change.",
+      "rationale": "How many boars can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 2 / 3 / 5 / 6). 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 2 / 3 / 5 / 6. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Boar group size. 1× keeps vanilla; right-click the point or legend name to reset Boar.",
       "exposeInUi": false
@@ -16574,7 +16574,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many chimeras can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 1 / 1 / 1 / 1. 2× = up to twice as many per group; how often they spawn doesn't change.",
+      "rationale": "How many chimeras can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 1). 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Chimera group size. 1× keeps vanilla; right-click the point or legend name to reset Chimera.",
       "exposeInUi": false
@@ -16642,7 +16642,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many bayuns can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 1 / 1 / 1 / 2. 2× = up to twice as many per group; how often they spawn doesn't change.",
+      "rationale": "How many bayuns can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 2). 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 2. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Bayun group size. 1× keeps vanilla; right-click the point or legend name to reset Bayun.",
       "exposeInUi": false
@@ -16710,7 +16710,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many tushkans can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 6 / 8 / 12 / 16. 2× = up to twice as many per group; how often they spawn doesn't change.",
+      "rationale": "How many tushkans can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 6 / 8 / 12 / 16). 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 6 / 8 / 12 / 16. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Tushkan group size. 1× keeps vanilla; right-click the point or legend name to reset Tushkan.",
       "exposeInUi": false
@@ -16778,7 +16778,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many rat swarms can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 1 / 1 / 1 / 1. 2× = up to twice as many per group; how often they spawn doesn't change.",
+      "rationale": "How many rat swarms can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 1). 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Rat Swarm group size. 1× keeps vanilla; right-click the point or legend name to reset Rat Swarm.",
       "exposeInUi": false
@@ -16846,7 +16846,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many burers can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 1 / 1 / 1 / 2. 2× = up to twice as many per group; how often they spawn doesn't change.",
+      "rationale": "How many burers can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 2). 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 2. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Burer group size. 1× keeps vanilla; right-click the point or legend name to reset Burer.",
       "exposeInUi": false
@@ -16914,7 +16914,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many pseudodogs can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 1 / 1 / 1 / 1. 2× = up to twice as many per group; how often they spawn doesn't change.",
+      "rationale": "How many pseudodogs can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 1). 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Pseudodog group size. 1× keeps vanilla; right-click the point or legend name to reset Pseudodog.",
       "exposeInUi": false
@@ -16982,7 +16982,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many deers can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 1 / 1 / 1 / 1. 2× = up to twice as many per group; how often they spawn doesn't change.",
+      "rationale": "How many deers can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 1). 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
       "interaction": "This radar point changes only Deer group size. 1× keeps vanilla; right-click the point or legend name to reset Deer.",
       "exposeInUi": false

@@ -44,3 +44,7 @@ The right-hand panel shows four sections for a selected control: **WHAT IT DOES*
 17. Texts use the unit the control shows: × for multiplier readouts, % for percent readouts, plain numbers for raw values. A resulting real-world value may follow in brackets (`Vanilla: 1× (45 seconds)`).
 18. Sibling readouts on one board use one unit (SEVERE FATIGUE: all signed %).
 19. Panel texts write multipliers with `×`.
+
+## Seventh pass (same day)
+
+20. The `Vanilla:` value carries the readout's unit (pts/s, pts, s, HP/s, bleed pts, rad pts, stamina/s, % strength). Where a multiplier board also shows a real amount, give both: `Vanilla: 1× (500 HP)`.

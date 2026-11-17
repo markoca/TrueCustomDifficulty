@@ -1,3 +1,8 @@
+## 2026-11-17 — CURRENT: Vanilla values carry the readout unit
+
+* `Vanilla:` now uses the same unit as the control's readout: Peak / Minimum Hit Protection in % (`Novice 100%, Stalker 75%…`, readout `% strength`), Low-HP Recovery Rate `1 HP/s` (was *100%*), Hunger / Fatigue / Bleeding / Radiation rates `pts/s`, hunger / fatigue / sleep thresholds `pts`, Starvation Damage Interval `10 seconds`, bleed-removal and anti-rad amounts `bleed pts` / `rad pts`, Stamina Regen and Boost Strength `stamina/s`, Psi Block / Vinca `+10 psi pts` / `+10 bleed pts`, Corpse Scarcity `0%`.
+* Multiplier boards that also show the real amount state both: mutant health `Vanilla: 1× (500 HP)`, human squads `Vanilla: 1× (3 NPC)`, mutant groups `Vanilla: 1× (by your rank …: 2 / 3 / 5 / 6)`.
+
 ## 2026-11-17 — CURRENT: texts use the unit the control shows
 
 * When a control reads out `1x`, its WHAT IT DOES / HIGHER / LOWER texts now speak in × too (was %): Psy Phantom Spawn Interval / Count / Gear Damage, Energy Drink Fatigue Relief, Radiation Damage, Prices Traders Pay / You Pay, Upgrade Cost, Main / Side Quest Coupons, Glass Shards Bleeding / Health Damage, Psy Drain Strength, Weapon Wear per Shot, Guide Travel Fees, Base Repair Cost (`0.7×`), Mutant Parts Cost, the item-price categories, Bleeding Severity, Ammo / Grenades per Box. Duration controls state `Vanilla: 1× (30 seconds)` etc.; Water cost cut `Vanilla: 1× (−10%)`; artifact knobs `Vanilla: 1× (25% + 15% bonus)`.
