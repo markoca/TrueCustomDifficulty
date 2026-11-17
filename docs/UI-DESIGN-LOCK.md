@@ -1,3 +1,8 @@
+## 2026-11-18 — CURRENT: player-voice pass on the longest texts
+
+* MUTANT AGGRESSION (25 species rows): WHAT IT DOES is `How often <species> use their attacks/abilities — <moves>. Vanilla: … Higher = less breathing room between them.` (variant lists, *2× = twice as often; 0.5× = twice the wait* and *The card shows the wait …* dropped — the card says it). HIGHER / LOWER: `2× halves every pause between these moves; 0.5× doubles it.` (was *Each attack has its own wait (cooldown) … scales the waits of all the family's attacks*).
+* Rewritten short in player words: Explosion Damage, Scientific Medkit healing, AMMO / MEDICAL SUPPLY logic and interaction, Well-Fed Stamina Bonus, Mutant Parts Cost, Basic Grenades Chance, Starvation / Radiation mechanics (*Once you're severely hungry: actions cost +200% stamina, you lose 4 HP every 10 s …* instead of *this bundle adds … on a 10-second interval after its delay*), Healed Damage Counts, Healing Item Efficiency Reduction, Bleeding Severity, Dropped Weapon Condition, Stash Supply Reduction, Extra Stash Gear.
+
 ## 2026-11-18 — CURRENT: SMART LOOT texts in player words
 
 * One idea everywhere: smart loot is **the Zone's helping hand** — stashes and bodies slip in what you are running low on. STASH SMART LOOT: `The Zone's helping hand: stashes slip in extra meds, ammo for your guns, food and grenades when you're running low. Vanilla: ON. OFF = stashes hold only their normal loot.` NPC SMART LOOT: `The same helping hand on bodies: dead stalkers may carry a bonus pack of meds, ammo or water you're short on.`

@@ -343,7 +343,7 @@
       },
       "rationale": "How deadly grenades and other blasts are — both yours and the enemy's. Raise it if you want grenades to feel lethal, lower it to survive the odd F1 at your feet. Vanilla: Novice 0.25×, Stalker and Veteran 1×, Master 1.2×.",
       "logic": "",
-      "interaction": "Each explosion still has its own base damage. This setting scales the difficulty layer applied on top of those base values."
+      "interaction": "Each explosive keeps its own base damage; this only scales the difficulty boost on top."
     },
     {
       "id": "combat.npcGrenadeRate",
@@ -1214,8 +1214,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Decides whether hits you already healed still count against your burst protection. ON (Veteran, Master) means patching up mid-fight doesn't reset the safety net; OFF (Novice, Stalker) is more forgiving. Healing itself always restores your HP normally.",
-      "logic": "OFF matches Novice and Stalker. ON matches Veteran and Master. Healing always restores HP normally; this toggle only decides whether the healed portion is still remembered by the PEAK / MINIMUM HIT PROTECTION.",
+      "rationale": "Whether hits you already healed still count against your burst protection. ON (Veteran, Master) = patching up mid-fight doesn't reset the safety net; OFF (Novice, Stalker) is more forgiving.",
+      "logic": "OFF = Novice and Stalker behaviour, ON = Veteran and Master. Healing always restores HP; this only decides whether PEAK / MINIMUM HIT PROTECTION still counts the healed damage.",
       "interaction": "Works with Minimum and PEAK HIT PROTECTION; healing always restores HP even when past hits remain counted."
     },
     {
@@ -1994,8 +1994,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Bayuns use their attacks — claw swipes, leaps, pounces and dodges (collar and quest variants included). Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 5 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (growls and blink teleports) are ABILITIES.",
+      "rationale": "How often Bayuns use their attacks — claw swipes, leaps, pounces and dodges. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its abilities (growls and blink teleports) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2041,8 +2041,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Blind Dogs use their attacks — bites and running bites (collar and moldy variants included). Vanilla: 1×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (bite every 5 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (the pack's shield) are ABILITIES.",
+      "rationale": "How often Blind Dogs use their attacks — bites and running bites. Vanilla: 1×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its abilities (the pack's shield) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2091,8 +2091,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Bloodsuckers use their attacks — claw slashes, running attacks, leaps and bites (Mist, Ashy, collar and prologue variants included). Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 6 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (roars and anomaly spawning) are ABILITIES.",
+      "rationale": "How often Bloodsuckers use their attacks — claw slashes, running attacks, leaps and bites. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its abilities (roars and anomaly spawning) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2138,8 +2138,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Boars use their attacks — gores, running rams and charges (helmed and porcupine variants included). Vanilla: 1×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (gore every 10 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. It has no special abilities.",
+      "rationale": "How often Boars use their attacks — gores, running rams and charges. Vanilla: 1×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. It has no special abilities.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2188,8 +2188,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Burers use their attacks — claw swipes (shooting variant included). Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 8 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (shields, telekinetic throws, grenade throws and weapon pulls) are ABILITIES.",
+      "rationale": "How often Burers use their attacks — claw swipes. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its abilities (shields, telekinetic throws, grenade throws and weapon pulls) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2238,8 +2238,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Chimeras use their attacks — claws, short and long leaps, runs, fly-through attacks and dodges. Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (leap every 8 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (growls) are ABILITIES.",
+      "rationale": "How often Chimeras use their attacks — claws, short and long leaps, runs, fly-through attacks and dodges. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its abilities (growls) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2288,8 +2288,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Controllers use their attacks — claw swipes (collar and deer variants included). Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 10 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (psy attacks, roars, raising the dead and zombifying) are ABILITIES.",
+      "rationale": "How often Controllers use their attacks — claw swipes. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its abilities (psy attacks, roars, raising the dead and zombifying) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2338,8 +2338,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Deer use their attacks — claws, leaps, runs and charges. Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 4 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. It has no special abilities.",
+      "rationale": "How often Deer use their attacks — claws, leaps, runs and charges. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. It has no special abilities.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2385,8 +2385,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Fleshes use their attacks — bites and leaps (boggy variant included). Vanilla: 1×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 3 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. It has no special abilities.",
+      "rationale": "How often Fleshes use their attacks — bites and leaps. Vanilla: 1×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. It has no special abilities.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2432,8 +2432,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Poltergeists use their attacks — area bursts (electro, toxic, fire and explosive variants included). Vanilla: 1×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (burst every 3 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (telekinetic throws, anomaly activation and shields) are ABILITIES.",
+      "rationale": "How often Poltergeists use their attacks — area bursts. Vanilla: 1×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its abilities (telekinetic throws, anomaly activation and shields) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2482,8 +2482,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Pseudodogs use their attacks — bites and running bites (its phantom copies included). Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (bite every 7 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (psi shockwaves) are ABILITIES.",
+      "rationale": "How often Pseudodogs use their attacks — bites and running bites. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its abilities (psi shockwaves) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2532,8 +2532,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Pseudogiants use their attacks — stomps, runs and charges (collar variant included). Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (stomp every 5 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (shockwaves, roars and throws) are ABILITIES.",
+      "rationale": "How often Pseudogiants use their attacks — stomps, runs and charges. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its abilities (shockwaves, roars and throws) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2579,8 +2579,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Snorks use their attacks — claws, kicks, leaps, fly-through attacks and dodges (collar variant included). Vanilla: 1×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (kick every 7 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (growls) are ABILITIES.",
+      "rationale": "How often Snorks use their attacks — claws, kicks, leaps, fly-through attacks and dodges. Vanilla: 1×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its abilities (growls) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2626,8 +2626,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Tushkans use their attacks — bites and leaps. Vanilla: 1×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 3 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. It has no special abilities.",
+      "rationale": "How often Tushkans use their attacks — bites and leaps. Vanilla: 1×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. It has no special abilities.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2676,8 +2676,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Bayuns use their abilities — growls and blink teleports (collar and quest variants included). Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (teleport every 12 s at 1×).",
-      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (claw swipes, leaps, pounces and dodges) are ATTACKS.",
+      "rationale": "How often Bayuns use their abilities — growls and blink teleports. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its basic attacks (claw swipes, leaps, pounces and dodges) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2723,8 +2723,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Blind Dogs use their abilities — the pack's shield (collar and moldy variants included). Vanilla: 1×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (shield every 25 s at 1×).",
-      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (bites and running bites) are ATTACKS.",
+      "rationale": "How often Blind Dogs use their abilities — the pack's shield. Vanilla: 1×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its basic attacks (bites and running bites) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2773,8 +2773,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Bloodsuckers use their abilities — roars and anomaly spawning (Mist, Ashy, collar and prologue variants included). Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (anomaly every 3 s at 1×).",
-      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (claw slashes, running attacks, leaps and bites) are ATTACKS.",
+      "rationale": "How often Bloodsuckers use their abilities — roars and anomaly spawning. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its basic attacks (claw slashes, running attacks, leaps and bites) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2823,8 +2823,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Burers use their abilities — shields, telekinetic throws, grenade throws and weapon pulls (shooting variant included). Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (shield every 17 s at 1×).",
-      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (claw swipes) are ATTACKS.",
+      "rationale": "How often Burers use their abilities — shields, telekinetic throws, grenade throws and weapon pulls. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its basic attacks (claw swipes) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2873,8 +2873,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Chimeras use their abilities — growls. Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (growl every 30 s at 1×).",
-      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (claws, short and long leaps, runs, fly-through attacks and dodges) are ATTACKS.",
+      "rationale": "How often Chimeras use their abilities — growls. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its basic attacks (claws, short and long leaps, runs, fly-through attacks and dodges) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2923,8 +2923,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Controllers use their abilities — psy attacks, roars, raising the dead and zombifying (collar and deer variants included). Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (psy every 12 s at 1×).",
-      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (claw swipes) are ATTACKS.",
+      "rationale": "How often Controllers use their abilities — psy attacks, roars, raising the dead and zombifying. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its basic attacks (claw swipes) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2970,8 +2970,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Poltergeists use their abilities — telekinetic throws, anomaly activation and shields (electro, toxic, fire and explosive variants included). Vanilla: 1×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (shield every 20 s at 1×).",
-      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (area bursts) are ATTACKS.",
+      "rationale": "How often Poltergeists use their abilities — telekinetic throws, anomaly activation and shields. Vanilla: 1×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its basic attacks (area bursts) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -3020,8 +3020,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Pseudodogs use their abilities — psi shockwaves (its phantom copies included). Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait.",
-      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (bites and running bites) are ATTACKS.",
+      "rationale": "How often Pseudodogs use their abilities — psi shockwaves. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its basic attacks (bites and running bites) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -3070,8 +3070,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Pseudogiants use their abilities — shockwaves, roars and throws (collar variant included). Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (shockwave every 8 s at 1×).",
-      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (stomps, runs and charges) are ATTACKS.",
+      "rationale": "How often Pseudogiants use their abilities — shockwaves, roars and throws. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its basic attacks (stomps, runs and charges) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -3117,8 +3117,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Snorks use their abilities — growls (collar variant included). Vanilla: 1×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (growl every 20 s at 1×).",
-      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (claws, kicks, leaps, fly-through attacks and dodges) are ATTACKS.",
+      "rationale": "How often Snorks use their abilities — growls. Vanilla: 1×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its basic attacks (claws, kicks, leaps, fly-through attacks and dodges) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -5542,7 +5542,7 @@
       },
       "rationale": "How bad bleeding wounds are overall. Higher = you bleed out faster and need bandages sooner. Vanilla: Novice 0.25×, Stalker and Veteran 1×, Master 1.5×.",
       "logic": "Higher values make bleeding effects stronger overall; lower values soften them. Vanilla: Novice 0.25×, Stalker and Veteran 1×, Master 1.5×.",
-      "interaction": "Low / Medium / SEVERE BLEEDING DAMAGE decide how much HP you lose once each bleeding state is active. NATURAL BLEEDING RECOVERY and medical treatment decide how quickly bleeding goes away."
+      "interaction": "LOW / MEDIUM / SEVERE BLEEDING DAMAGE set the HP lost per stage; NATURAL BLEEDING RECOVERY and meds decide how fast it stops."
     },
     {
       "id": "survival.bleedingRecovery",
@@ -6257,7 +6257,7 @@
       },
       "rationale": "How much health a scientific medkit gives back. Vanilla: 100 HP — a full vanilla bar in one go.",
       "logic": "",
-      "interaction": "Scientific Medkit bleeding and radiation treatment are separate. Vanilla Master does not apply the same healing penalty to Scientific Medkits that it applies to Bandages and the other Medkits.",
+      "interaction": "Its bleeding and radiation treatment are separate. Master's healing cut never applies to Scientific Medkits.",
       "exposeInUi": false
     },
     {
@@ -8017,7 +8017,7 @@
       },
       "rationale": "How worn the guns you pick up from ordinary human enemies are. Vanilla: 25–50%. Push it down to make looted guns repair projects; up to make them worth keeping.",
       "logic": "Higher MIN improves the worst condition you can find. Higher MAX allows better-condition weapons; MIN cannot exceed MAX.",
-      "interaction": "Changes only the condition of weapons dropped by ordinary human enemies. It does not change which weapons they use, their ammo, health, traders, zombies, or story characters."
+      "interaction": "Only weapons dropped by ordinary human enemies change — not their ammo, health, traders, zombies or story characters."
     },
     {
       "id": "loot.genericStashReduction",
@@ -8060,7 +8060,7 @@
           "Until 2026-11-16 Weight lists only lost stack size, so one-item Basic food/drink/bandage/coupon picks did not change below 100%."
         ]
       },
-      "rationale": "Makes ordinary stashes come up empty more often. Vanilla: 0% — no change. 50% = every supply item turns up half as often (food, meds, drinks, ammo, coupons alike); the amount you get when it does stays the same. Quest and special stashes are never touched.",
+      "rationale": "Makes ordinary stashes come up empty more often. Vanilla: 0% — no change. 50% = every supply item turns up half as often; when it does, you get the usual amount. Quest stashes are never touched.",
       "logic": "0% keeps vanilla odds; 50% halves the odds of every supply item; 100% leaves these stashes without optional supplies. Same rule for every list type.",
       "interaction": "Multiplies with every ADJUST ODDS cell and MEDICAL COMPOSITION; AMMO AMOUNT (stack sizes) and EXTRA STASH GEAR stay separate. Check it on stashes you haven't opened yet."
     },
@@ -9306,7 +9306,7 @@
           "Final native engine generation and existing-save behavior require in-game validation."
         ]
       },
-      "rationale": "Adds a chance of bonus gear (weapons, armor, artifacts, attachments) in regular stashes, matched to the area's progression. Vanilla: OFF. While ON, 13 plain weapon spots in stashes are replaced by this system; quest and unique rewards stay.",
+      "rationale": "Stashes can hide bonus gear — weapons, armor, artifacts, attachments — matched to the area. Vanilla: OFF. While ON it takes over 13 plain weapon spots in stashes; quest and unique rewards stay.",
       "logic": "ON enables extra, rank-appropriate gear in eligible stashes. OFF disables that bonus system.",
       "interaction": "It also takes over 13 regular-weapon stash spots. Quest and unique rewards stay protected.",
       "exposeInUi": true
@@ -9763,7 +9763,7 @@
       },
       "rationale": "Chance a Basic stash has an RGD-5 grenade in it. Vanilla: 10%.",
       "logic": "The real chance a Basic stash has an RGD-5: 10% is vanilla, 0% never, 100% every Basic stash that can carry one.",
-      "interaction": "Pair it with RGD-5 AMOUNT: Chance decides whether the grenade appears; RGD-5 AMOUNT decides how many you get. Six DLC1 Basic stashes always have their RGD-5 in vanilla; there the same setting keeps its ratio to the Basic 10% (e.g. 5% = half as often).",
+      "interaction": "RGD-5 AMOUNT decides how many. Six DLC1 Basic stashes that always have one in vanilla follow the same ratio (5% = half as often).",
       "lootHint": {
         "kind": "absoluteChancePer100",
         "label": "RGD-5 chance",
@@ -11198,8 +11198,8 @@
         ]
       },
       "rationale": "How much ammo every trader has on the shelf — shopkeepers, bartenders, stalkers you can trade with and DLC traders alike. Vanilla: 1×. Lower = smaller stacks, and where a stack is already 1 the offer turns up less often; higher = bigger stacks. Doesn't add new calibers.",
-      "logic": "1× keeps vanilla trader ammo stock. Below 1× stacks shrink (never below 1) and whatever they cannot lose comes off the offer's odds, so the expected amount follows the setting. Above 1× only stack sizes grow.",
-      "interaction": "Stack sizes change first; only offers already down to 1 turn up less often below 1×. It does not add ammo types, bypass player-rank progression or change refresh timing. The AMMO rail of each trader type changes how often ammo is offered."
+      "logic": "Below 1× stacks shrink (never below 1), then the offer turns up less often. Above 1× only stacks grow.",
+      "interaction": "Doesn't add calibers, skip rank unlocks or change restock timing. The AMMO rail of each trader type sets how often ammo is offered."
     },
     {
       "id": "economy.medicStock",
@@ -11243,8 +11243,8 @@
         ]
       },
       "rationale": "How many meds every trader has for sale — medics, shopkeepers and stalkers you can trade with alike. Vanilla: 1×. Lower = smaller stacks, and single meds turn up less often, so you can't restock everything in one visit; higher = bigger stacks.",
-      "logic": "1× keeps vanilla trader medical stock. Below 1× stacks shrink (never below 1) and whatever they cannot lose comes off the offer's odds (most meds are sold one or two at a time). Above 1× only stack sizes grow.",
-      "interaction": "Stack sizes change first; only offers already down to 1 turn up less often below 1×. Progression and restock timing stay vanilla. The MEDICAL rail of each trader type changes how often meds are offered."
+      "logic": "Below 1× stacks shrink (never below 1), then the offer turns up less often — most meds sell one or two at a time. Above 1× only stacks grow.",
+      "interaction": "Rank unlocks and restock timing stay vanilla. The MEDICAL rail of each trader type sets how often meds are offered."
     },
     {
       "id": "economy.consumableCost",
@@ -11611,8 +11611,8 @@
         ]
       },
       "rationale": "Base price of mutant parts. Vanilla: 1×. Higher = hunting mutants pays better.",
-      "logic": "1× keeps every mutant part at its vanilla value; 0.5× halves it, 2× doubles it. A Chimera part stays far more valuable than a Blind Dog part because all prices scale together.",
-      "interaction": "Trader pricing is applied separately. For example, at 1× the base game uses 1,000 coupons for Blind Dog loot and 18,000 for Chimera loot before trader-specific buy/sell rules.",
+      "logic": "1× = vanilla; 0.5× halves every part's price, 2× doubles it. Rare parts stay worth far more than common ones.",
+      "interaction": "Trader markups still apply on top. At 1× a Blind Dog part is worth 1,000 coupons and a Chimera part 18,000.",
       "exposeInUi": false
     },
     {
@@ -12360,7 +12360,7 @@
         "notes": []
       },
       "rationale": "Master's starvation punishment once you're severely hungry: actions cost much more stamina, you lose health every few seconds and stop healing. Vanilla: Novice–Veteran OFF, Master ON. Normal hunger effects work either way.",
-      "logic": "When the game reaches its severe-hunger state, this bundle adds +200% stamina drain, periodic 4 HP starvation damage on a 10-second interval after its delay, and -100% health regeneration. OFF leaves only the normal hunger effects.",
+      "logic": "Once you're severely hungry: actions cost +200% stamina, you lose 4 HP every 10 s after a short delay, and health stops regenerating. OFF leaves only normal hunger.",
       "interaction": "The game keeps the vanilla starvation activation point. The child controls only change stamina drain, damage, interval, delay and health-recovery strength."
     },
     {
@@ -12395,7 +12395,7 @@
         "notes": []
       },
       "rationale": "Master's extra stamina cost while you're heavily irradiated. Vanilla: Novice–Veteran OFF, Master ON. Radiation still builds up and hurts you either way.",
-      "logic": "When the game enters the heavy-radiation state used by this Master bundle, it adds an extra stamina-drain penalty (50% in vanilla). The normal radiation system remains active either way.",
+      "logic": "While you're heavily irradiated, actions cost extra stamina (+50% in vanilla). Normal radiation damage works either way.",
       "interaction": "The activation point stays vanilla. RADIATION ACCUMULATION and RADIATION RECOVERY determine how quickly the player reaches and leaves that state."
     },
     {
@@ -12473,7 +12473,7 @@
         "notes": []
       },
       "rationale": "Bonus stamina recovery while your stomach is full. Vanilla: +20% — a reward for eating before a fight. 0% removes it.",
-      "logic": "Higher values reward staying well fed with stronger stamina recovery; zero removes the bonus. The supported UI range does not turn this lowest-hunger state into a penalty.",
+      "logic": "Higher = a bigger stamina bonus for staying well fed; 0% removes it. It never turns into a penalty.",
       "interaction": "The game keeps the vanilla boundary for leaving the well-fed state. STAMINA REGEN in the Stamina tab sets the underlying regeneration rate."
     },
     {
@@ -13516,7 +13516,7 @@
       },
       "rationale": "Master's weaker meds: bandages and medkits heal less, plus a few food, energy-drink and artifact tweaks. Vanilla: Novice–Veteran OFF, Master ON. The healing cuts are the bars below.",
       "logic": "OFF leaves these extra Master penalties inactive. ON applies the Master-only changes on top of the normal item effects.",
-      "interaction": "The healing controls directly below only matter while this switch is ON. Some food, energy-drink and Weird Kettle changes are still part of the same switch and are not individually adjustable yet."
+      "interaction": "The healing controls below only matter while this is ON. A few food, energy-drink and Weird Kettle tweaks come with it and can't be set separately."
     },
     {
       "id": "environment.electroAnomalyDamage",

@@ -77,3 +77,8 @@ The right-hand panel shows four sections for a selected control: **WHAT IT DOES*
 
 30. CONTROLS help ends with one reset sentence: `Right-click one <part> to reset it; R resets <scope>.`
 31. Help must describe the control as it is now (raw BASE bars are not %; no notes about features that are not there).
+
+## Fourteenth pass (2026-11-18)
+
+32. Say what the player feels, not how the system is built: *less breathing room between attacks*, *you lose 4 HP every 10 s*, not *scales the waits of all the family's attacks* / *this bundle adds … on an interval*.
+33. Don't explain what the card already shows (readouts, variant lists).
