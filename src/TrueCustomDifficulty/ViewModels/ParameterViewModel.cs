@@ -198,7 +198,7 @@ public sealed class ParameterViewModel : ObservableObject
                 return "Drag a category's price track to tune its multiplier."
                     + Environment.NewLine + "Right-click one category to reset it; R resets the price group.";
             if (IsMutantHealthMember)
-                return "Each species card has a health track (multiplier and resulting HP on its top line), then ATTACKS (claws, bites, leaps) and ABILITIES (psy, shields, throws, roars): 2x = twice as often, the seconds show one of its cooldowns. SPECIAL ABILITY RATE paces special and knockdown moves for all mutants."
+                return "Each species card has a health track (multiplier and resulting HP on its top line), then ATTACKS (claws, bites, leaps) and ABILITIES (psy, shields, throws, roars). Each shows the wait between two uses of one of its moves, e.g. "gore every 10 s"; drag right to shorten the wait (2x = twice as often). SPECIAL ABILITY RATE paces special and knockdown moves for all mutants."
                     + Environment.NewLine + "Right-click one track to reset it; R resets the whole board.";
             if (IsHumanGroupSizeMember)
                 return "Drag NEWBIE, EXPERIENCED, VETERAN or MASTER to set that rank's maximum human squad size."
@@ -1323,10 +1323,10 @@ public sealed class ParameterViewModel : ObservableObject
         {
             if (Id == family.ParameterId)
                 return MutantAggressionPolicy.RateDisplay(family, MutantAggressionPolicy.Group.Attacks,
-                    CurrentNumber, ReferenceNumber) + " attacks";
+                    CurrentNumber, ReferenceNumber);
             if (Id == family.AbilityParameterId)
                 return MutantAggressionPolicy.RateDisplay(family, MutantAggressionPolicy.Group.Abilities,
-                    CurrentNumber, ReferenceNumber) + " abilities";
+                    CurrentNumber, ReferenceNumber);
         }
         return null;
     }

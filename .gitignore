@@ -17,3 +17,7 @@ audit/combat-patch-fixtures/
 
 # Manually retained generic NPC/stash pre-game source/CFG contract fixtures.
 audit/generic-loot-fixtures/
+
+# Local audit report outputs (never tracked).
+audit/final-cfg-mapping/
+audit/stashes-cfg-route-delta.csv

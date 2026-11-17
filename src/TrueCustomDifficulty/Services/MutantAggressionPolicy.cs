@@ -166,16 +166,25 @@ public static class MutantAggressionPolicy
         return 1.0 / rate;
     }
 
-    /// <summary>Card text, e.g. "2x · psy 6 s" (the family's headline cooldown).</summary>
+    /// <summary>Panel text, e.g. "2x · psy every 6 s" (rate + the family's headline cooldown).</summary>
     public static string RateDisplay(Family family, Group group, double rate, double reference)
     {
         var text = $"{rate.ToString("0.##", CultureInfo.InvariantCulture)}x";
+        return CooldownDisplay(family, group, rate, reference) is { } cooldown
+            ? text + " · " + cooldown
+            : text + (group == Group.Attacks ? " attacks" : " abilities");
+    }
+
+    /// <summary>Card text, e.g. "psy every 6 s": the time between two uses of
+    /// the headline move. Null when the group has no moves (e.g. Boar abilities).</summary>
+    public static string? CooldownDisplay(Family family, Group group, double rate, double reference)
+    {
         var headline = group == Group.Attacks ? family.AttackHeadline : family.AbilityHeadline;
         if (headline is not { } h)
-            return text;
+            return null;
         var tag = HeadlineTag(family, group);
         var multiplier = Multiplier(family.Agents[0], tag, rate, reference);
-        return text + $" · {h.Name} {(h.Seconds * multiplier).ToString("0.#", CultureInfo.InvariantCulture)} s";
+        return $"{h.Name} every {(h.Seconds * multiplier).ToString("0.#", CultureInfo.InvariantCulture)} s";
     }
 
     // Tag behind each headline (first agent decides the vanilla Master case).

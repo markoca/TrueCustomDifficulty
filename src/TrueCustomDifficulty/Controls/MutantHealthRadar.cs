@@ -334,7 +334,10 @@ public sealed class MutantHealthRadar : FrameworkElement
         if (rate is null)
             return;
         DrawText(dc, caption, new Point(area.Left - 1.0, area.Top + 3.0), 9.4, muted, FontWeights.Bold);
-        var label = MutantAggressionPolicy.RateDisplay(family, group, rate.CurrentNumber, rate.ReferenceNumber);
+        // The time between two uses of the headline move; the multiplier is in
+        // the panel. Groups without moves show the plain rate.
+        var label = MutantAggressionPolicy.CooldownDisplay(family, group, rate.CurrentNumber, rate.ReferenceNumber)
+            ?? MutantAggressionPolicy.RateDisplay(family, group, rate.CurrentNumber, rate.ReferenceNumber);
         var value = CreateText(label, 11.0, text, FontWeights.Bold);
         if (rate.IsValueModifiedFromReference())
         {

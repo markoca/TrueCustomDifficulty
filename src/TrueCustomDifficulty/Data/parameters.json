@@ -1851,8 +1851,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Bayuns use their attacks — claw swipes, leaps, pounces and dodges (collar and quest variants included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the result on one of them (claw 5 s at 1×).",
-      "logic": "Each attack starts its own cooldown after use; this scales all attacks cooldowns of the family. 1× keeps the game's timing. Its abilities (growls and blink teleports) are ABILITIES.",
+      "rationale": "How often Bayuns use their attacks — claw swipes, leaps, pounces and dodges (collar and quest variants included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 5 s at 1×).",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. Its abilities (growls and blink teleports) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -1898,8 +1898,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Blind Dogs use their attacks — bites and running bites (collar and moldy variants included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the result on one of them (bite 5 s at 1×).",
-      "logic": "Each attack starts its own cooldown after use; this scales all attacks cooldowns of the family. 1× keeps the game's timing. Its abilities (the pack's shield) are ABILITIES.",
+      "rationale": "How often Blind Dogs use their attacks — bites and running bites (collar and moldy variants included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (bite every 5 s at 1×).",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. Its abilities (the pack's shield) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -1948,8 +1948,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Bloodsuckers use their attacks — claw slashes, running attacks, leaps and bites (Mist, Ashy, collar and prologue variants included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the result on one of them (claw 6 s at 1×).",
-      "logic": "Each attack starts its own cooldown after use; this scales all attacks cooldowns of the family. 1× keeps the game's timing. Its abilities (roars and anomaly spawning) are ABILITIES.",
+      "rationale": "How often Bloodsuckers use their attacks — claw slashes, running attacks, leaps and bites (Mist, Ashy, collar and prologue variants included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 6 s at 1×).",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. Its abilities (roars and anomaly spawning) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -1995,8 +1995,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Boars use their attacks — gores, running rams and charges (helmed and porcupine variants included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the result on one of them (gore 10 s at 1×).",
-      "logic": "Each attack starts its own cooldown after use; this scales all attacks cooldowns of the family. 1× keeps the game's timing. It has no special abilities.",
+      "rationale": "How often Boars use their attacks — gores, running rams and charges (helmed and porcupine variants included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (gore every 10 s at 1×).",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. It has no special abilities.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2045,8 +2045,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Burers use their attacks — claw swipes (shooting variant included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the result on one of them (claw 8 s at 1×).",
-      "logic": "Each attack starts its own cooldown after use; this scales all attacks cooldowns of the family. 1× keeps the game's timing. Its abilities (shields, telekinetic throws, grenade throws and weapon pulls) are ABILITIES.",
+      "rationale": "How often Burers use their attacks — claw swipes (shooting variant included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 8 s at 1×).",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. Its abilities (shields, telekinetic throws, grenade throws and weapon pulls) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2095,8 +2095,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Chimeras use their attacks — claws, short and long leaps, runs, fly-through attacks and dodges. Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the result on one of them (leap 8 s at 1×).",
-      "logic": "Each attack starts its own cooldown after use; this scales all attacks cooldowns of the family. 1× keeps the game's timing. Its abilities (growls) are ABILITIES.",
+      "rationale": "How often Chimeras use their attacks — claws, short and long leaps, runs, fly-through attacks and dodges. Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (leap every 8 s at 1×).",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. Its abilities (growls) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2145,8 +2145,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Controllers use their attacks — claw swipes (collar and deer variants included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the result on one of them (claw 10 s at 1×).",
-      "logic": "Each attack starts its own cooldown after use; this scales all attacks cooldowns of the family. 1× keeps the game's timing. Its abilities (psy attacks, roars, raising the dead and zombifying) are ABILITIES.",
+      "rationale": "How often Controllers use their attacks — claw swipes (collar and deer variants included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 10 s at 1×).",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. Its abilities (psy attacks, roars, raising the dead and zombifying) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2195,8 +2195,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Deer use their attacks — claws, leaps, runs and charges. Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the result on one of them (claw 4 s at 1×).",
-      "logic": "Each attack starts its own cooldown after use; this scales all attacks cooldowns of the family. 1× keeps the game's timing. It has no special abilities.",
+      "rationale": "How often Deer use their attacks — claws, leaps, runs and charges. Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 4 s at 1×).",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. It has no special abilities.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2242,8 +2242,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Fleshes use their attacks — bites and leaps (boggy variant included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the result on one of them (claw 3 s at 1×).",
-      "logic": "Each attack starts its own cooldown after use; this scales all attacks cooldowns of the family. 1× keeps the game's timing. It has no special abilities.",
+      "rationale": "How often Fleshes use their attacks — bites and leaps (boggy variant included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 3 s at 1×).",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. It has no special abilities.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2289,8 +2289,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Poltergeists use their attacks — area bursts (electro, toxic, fire and explosive variants included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the result on one of them (burst 3 s at 1×).",
-      "logic": "Each attack starts its own cooldown after use; this scales all attacks cooldowns of the family. 1× keeps the game's timing. Its abilities (telekinetic throws, anomaly activation and shields) are ABILITIES.",
+      "rationale": "How often Poltergeists use their attacks — area bursts (electro, toxic, fire and explosive variants included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (burst every 3 s at 1×).",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. Its abilities (telekinetic throws, anomaly activation and shields) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2339,8 +2339,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Pseudodogs use their attacks — bites and running bites (its phantom copies included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the result on one of them (bite 7 s at 1×).",
-      "logic": "Each attack starts its own cooldown after use; this scales all attacks cooldowns of the family. 1× keeps the game's timing. Its abilities (psi shockwaves) are ABILITIES.",
+      "rationale": "How often Pseudodogs use their attacks — bites and running bites (its phantom copies included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (bite every 7 s at 1×).",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. Its abilities (psi shockwaves) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2389,8 +2389,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Pseudogiants use their attacks — stomps, runs and charges (collar variant included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the result on one of them (stomp 5 s at 1×).",
-      "logic": "Each attack starts its own cooldown after use; this scales all attacks cooldowns of the family. 1× keeps the game's timing. Its abilities (shockwaves, roars and throws) are ABILITIES.",
+      "rationale": "How often Pseudogiants use their attacks — stomps, runs and charges (collar variant included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (stomp every 5 s at 1×).",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. Its abilities (shockwaves, roars and throws) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2436,8 +2436,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Snorks use their attacks — claws, kicks, leaps, fly-through attacks and dodges (collar variant included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the result on one of them (kick 7 s at 1×).",
-      "logic": "Each attack starts its own cooldown after use; this scales all attacks cooldowns of the family. 1× keeps the game's timing. Its abilities (growls) are ABILITIES.",
+      "rationale": "How often Snorks use their attacks — claws, kicks, leaps, fly-through attacks and dodges (collar variant included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (kick every 7 s at 1×).",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. Its abilities (growls) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2483,8 +2483,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Tushkans use their attacks — bites and leaps. Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the result on one of them (claw 3 s at 1×).",
-      "logic": "Each attack starts its own cooldown after use; this scales all attacks cooldowns of the family. 1× keeps the game's timing. It has no special abilities.",
+      "rationale": "How often Tushkans use their attacks — bites and leaps. Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 3 s at 1×).",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. It has no special abilities.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2533,8 +2533,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Bayuns use their abilities — growls and blink teleports (collar and quest variants included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the result on one of them (teleport 12 s at 1×).",
-      "logic": "Each abilitie starts its own cooldown after use; this scales all abilities cooldowns of the family. 1× keeps the game's timing. Its basic attacks (claw swipes, leaps, pounces and dodges) are ATTACKS.",
+      "rationale": "How often Bayuns use their abilities — growls and blink teleports (collar and quest variants included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (teleport every 12 s at 1×).",
+      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps the game's timing. Its basic attacks (claw swipes, leaps, pounces and dodges) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2580,8 +2580,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Blind Dogs use their abilities — the pack's shield (collar and moldy variants included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the result on one of them (shield 25 s at 1×).",
-      "logic": "Each abilitie starts its own cooldown after use; this scales all abilities cooldowns of the family. 1× keeps the game's timing. Its basic attacks (bites and running bites) are ATTACKS.",
+      "rationale": "How often Blind Dogs use their abilities — the pack's shield (collar and moldy variants included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (shield every 25 s at 1×).",
+      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps the game's timing. Its basic attacks (bites and running bites) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2630,8 +2630,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Bloodsuckers use their abilities — roars and anomaly spawning (Mist, Ashy, collar and prologue variants included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the result on one of them (anomaly 3 s at 1×).",
-      "logic": "Each abilitie starts its own cooldown after use; this scales all abilities cooldowns of the family. 1× keeps the game's timing. Its basic attacks (claw slashes, running attacks, leaps and bites) are ATTACKS.",
+      "rationale": "How often Bloodsuckers use their abilities — roars and anomaly spawning (Mist, Ashy, collar and prologue variants included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (anomaly every 3 s at 1×).",
+      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps the game's timing. Its basic attacks (claw slashes, running attacks, leaps and bites) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2680,8 +2680,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Burers use their abilities — shields, telekinetic throws, grenade throws and weapon pulls (shooting variant included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the result on one of them (shield 17 s at 1×).",
-      "logic": "Each abilitie starts its own cooldown after use; this scales all abilities cooldowns of the family. 1× keeps the game's timing. Its basic attacks (claw swipes) are ATTACKS.",
+      "rationale": "How often Burers use their abilities — shields, telekinetic throws, grenade throws and weapon pulls (shooting variant included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (shield every 17 s at 1×).",
+      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps the game's timing. Its basic attacks (claw swipes) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2730,8 +2730,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Chimeras use their abilities — growls. Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the result on one of them (growl 30 s at 1×).",
-      "logic": "Each abilitie starts its own cooldown after use; this scales all abilities cooldowns of the family. 1× keeps the game's timing. Its basic attacks (claws, short and long leaps, runs, fly-through attacks and dodges) are ATTACKS.",
+      "rationale": "How often Chimeras use their abilities — growls. Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (growl every 30 s at 1×).",
+      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps the game's timing. Its basic attacks (claws, short and long leaps, runs, fly-through attacks and dodges) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2780,8 +2780,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Controllers use their abilities — psy attacks, roars, raising the dead and zombifying (collar and deer variants included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the result on one of them (psy 12 s at 1×).",
-      "logic": "Each abilitie starts its own cooldown after use; this scales all abilities cooldowns of the family. 1× keeps the game's timing. Its basic attacks (claw swipes) are ATTACKS.",
+      "rationale": "How often Controllers use their abilities — psy attacks, roars, raising the dead and zombifying (collar and deer variants included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (psy every 12 s at 1×).",
+      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps the game's timing. Its basic attacks (claw swipes) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2827,8 +2827,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Poltergeists use their abilities — telekinetic throws, anomaly activation and shields (electro, toxic, fire and explosive variants included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the result on one of them (shield 20 s at 1×).",
-      "logic": "Each abilitie starts its own cooldown after use; this scales all abilities cooldowns of the family. 1× keeps the game's timing. Its basic attacks (area bursts) are ATTACKS.",
+      "rationale": "How often Poltergeists use their abilities — telekinetic throws, anomaly activation and shields (electro, toxic, fire and explosive variants included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (shield every 20 s at 1×).",
+      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps the game's timing. Its basic attacks (area bursts) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2878,7 +2878,7 @@
         ]
       },
       "rationale": "How often Pseudodogs use their abilities — psi shockwaves (its phantom copies included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait.",
-      "logic": "Each abilitie starts its own cooldown after use; this scales all abilities cooldowns of the family. 1× keeps the game's timing. Its basic attacks (bites and running bites) are ATTACKS.",
+      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps the game's timing. Its basic attacks (bites and running bites) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2927,8 +2927,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Pseudogiants use their abilities — shockwaves, roars and throws (collar variant included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the result on one of them (shockwave 8 s at 1×).",
-      "logic": "Each abilitie starts its own cooldown after use; this scales all abilities cooldowns of the family. 1× keeps the game's timing. Its basic attacks (stomps, runs and charges) are ATTACKS.",
+      "rationale": "How often Pseudogiants use their abilities — shockwaves, roars and throws (collar variant included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master (the game halves these cooldowns there). 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (shockwave every 8 s at 1×).",
+      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps the game's timing. Its basic attacks (stomps, runs and charges) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2974,8 +2974,8 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Snorks use their abilities — growls (collar variant included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the result on one of them (growl 20 s at 1×).",
-      "logic": "Each abilitie starts its own cooldown after use; this scales all abilities cooldowns of the family. 1× keeps the game's timing. Its basic attacks (claws, kicks, leaps, fly-through attacks and dodges) are ATTACKS.",
+      "rationale": "How often Snorks use their abilities — growls (collar variant included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (growl every 20 s at 1×).",
+      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps the game's timing. Its basic attacks (claws, kicks, leaps, fly-through attacks and dodges) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },

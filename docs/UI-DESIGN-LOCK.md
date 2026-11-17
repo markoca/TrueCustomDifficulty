@@ -1,3 +1,13 @@
+## 2026-11-17 — CURRENT: MUTANT ATTACKS / ABILITIES read as the wait between uses
+
+* On each species card the ATTACKS / ABILITIES readout now shows the **time between two uses** of the family's representative move, e.g. **`gore every 10 s`**, `psy every 6 s`. It no longer shows `1x · gore 10 s`, which did not say what the seconds meant. Dragging right shortens the wait (2x = twice as often). The card stays within the 166-DIP half-track width at the 760-DIP minimum content width.
+* The selected-control panel keeps the rate: `1x · gore every 10 s`. A group without moves shows `1x attacks` / `1x abilities`.
+* `MutantAggressionPolicy.CooldownDisplay` (card) and `RateDisplay` (panel) share one calculation. Writer and presets are unchanged.
+* Copy:
+  * The MUTANT CONTROLS help explains the wait.
+  * The 24 rationales say "The card shows the wait for one of them (… every N s at 1×)".
+  * HIGHER / LOWER is rewritten without the "abilitie" typo.
+
 ## 2026-11-17 — CURRENT: build without warnings
 
 * `CfgPatchWriterService.StashTuning.cs`: `StashPresenceChanged` copies the thread-static presence map into a local before its local function uses it, removing warning CS8602. Behavior unchanged.

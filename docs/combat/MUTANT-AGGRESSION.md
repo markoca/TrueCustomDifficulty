@@ -70,3 +70,5 @@ Default **8–12 s**, Master **4–6 s** (= 2×).
 * `tools/audit_mutant_aggression.py` — policy ↔ catalog ↔ writer ↔ embedded tables ↔ baseline ↔ UI.
   `TCD_BASE_DUMP=<dump>/base` also checks the vanilla Master lists (order), every agent SID and every tag against the dump.
 * Factory presets do not store these ids; they load at the difficulty's vanilla.
+
+**Readout (2026-11-17):** species card = wait between two uses of the headline move (`gore every 10 s`); panel = rate + wait (`1x · gore every 10 s`).
