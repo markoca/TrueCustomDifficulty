@@ -17,6 +17,8 @@ POST_361_IDS = frozenset({
     "combat.npcFogVisibility", "combat.npcRainNoise", "combat.npcStormNoise",
     "health.bandageHealTime", "health.medkitHealTime", "health.armyMedkitHealTime",
     "health.ecoMedkitHealTime",
+    # 2026-11-17: REMOVE LOOSE ARTIFACTS (own audit).
+    "loot.looseArtifactsRemoved",
 })
 
 

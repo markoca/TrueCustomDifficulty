@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.1",
-  "supportedParameterCount": 405,
+  "supportedParameterCount": 406,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -48086,6 +48086,11 @@
       "parameterId": "loot.worldArmorRemoved",
       "directManifestResource": "TrueCustomDifficulty.Data.world-armor-direct-manifest.csv",
       "stashManifestResource": "TrueCustomDifficulty.Data.world-armor-stash-manifest.csv"
+    },
+    "looseArtifactsRemoved": {
+      "parameterId": "loot.looseArtifactsRemoved",
+      "manifestResource": "TrueCustomDifficulty.Data.loose-artifact-spawner-manifest.csv",
+      "actors": 5
     },
     "traderBuys": {
       "parameterIds": [

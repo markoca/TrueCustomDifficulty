@@ -4,8 +4,8 @@ Adding a control is a deliberate change: update these numbers here once
 (together with the CURRENT doc entry) instead of in a dozen audits.
 """
 
-CATALOG = 405          # parameters.json entries == baseline supportedParameterCount
-VISIBLE = 201          # exposeInUi != false
+CATALOG = 406          # parameters.json entries == baseline supportedParameterCount
+VISIBLE = 202          # exposeInUi != false
 HIDDEN = CATALOG - VISIBLE
 EDIT_POINTS = 2819     # cfg-writer-baseline.json editPoints
 DIRECT_IDS = 228       # distinct parameterIds with direct edit points

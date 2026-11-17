@@ -1870,10 +1870,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var attachments = P("loot.worldAttachmentShuffle");
         var detectors = P("loot.worldDetectors");
         var armor = P("loot.worldArmorRemoved");
+        var artifacts = P("loot.looseArtifactsRemoved");
         var blueprints = P("loot.blueprintShuffle");
         DrawHeader(dc, "WORLD ITEM SPAWNS", "", text, muted, accent);
         if (uniqueWeapons is null || weapons is null || density is null || attachments is null
-            || detectors is null || armor is null || blueprints is null)
+            || detectors is null || armor is null || artifacts is null || blueprints is null)
         {
             DrawCenteredText(dc, "World placement data unavailable.",
                 new Point(ActualWidth / 2.0, 125.0),
@@ -1900,7 +1901,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         };
         var removeRows = new (ParameterViewModel Parameter, string Label)[]
         {
-            (detectors, "Detectors"), (armor, "Armor")
+            (detectors, "Detectors"), (armor, "Armor"), (artifacts, "Loose Artifacts")
         };
         DrawWorldToggleListCard(dc, layout.Shuffle, "SHUFFLE", shuffleRows,
             text, muted, border, accent, panel);
@@ -8049,6 +8050,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 "loot.worldAttachmentShuffle",
                 "loot.worldDetectors",
                 "loot.worldArmorRemoved",
+                "loot.looseArtifactsRemoved",
                 "loot.blueprintShuffle"
             },
             "StashContentMix" => new[]

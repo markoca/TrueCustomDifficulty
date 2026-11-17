@@ -1153,6 +1153,10 @@
       "kind": "toggle",
       "boolean": false
     },
+    "loot.looseArtifactsRemoved": {
+      "kind": "toggle",
+      "boolean": false
+    },
     "equipment.weaponWeight": {
       "kind": "slider",
       "number": 1

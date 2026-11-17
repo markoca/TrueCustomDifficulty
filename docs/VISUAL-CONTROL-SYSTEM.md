@@ -4299,3 +4299,10 @@ ARTIFACT HUNTING has three cards: SPAWN CHANCE, RARE LUCK, PER SPAWN, plus the R
 strip. RESPAWN RATE (`environment.artifactRespawnRate`, spawner `MinCooldown`/`MaxCooldown`) is
 removed: field refill follows emissions, so the cooldown had no proven effect. Catalog 405 /
 201 visible; old presets with the key load and ignore it. See docs/environment/ARTIFACT-HUNTING.md.
+
+## CURRENT 2026-11-17 — WORLD ITEM SPAWNS: REMOVE LOOSE ARTIFACTS
+
+The REMOVE card has three rows: Detectors, Armor, **Loose Artifacts** (`loot.looseArtifactsRemoved`,
+universal checkbox, vanilla OFF). It removes the four fixed Weird artifact spots and the DLC Water Drip
+spot; anomaly fields and quest artifacts stay. Catalog 406 / 202 visible. See
+docs/generators/LOOSE-ARTIFACT-REMOVAL-2026-11-17.md.

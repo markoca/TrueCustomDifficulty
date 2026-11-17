@@ -154,7 +154,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "AnomalyGlobalDamage" => "GLOBAL MULTIPLIER affects all supported anomaly damage. Each anomaly also has its own damage setting; EFFECTIVE includes both before protection.",
                     "AnomalySpecialEffects" => "Adjust Glass Shards bleeding and Psy drain independently. Their other damage effects remain separate.",
                     "NpcLootLoadout" => "SCARCITY scales eligible ordinary NPC consumable Chance and optional corpse SmartLoot activation, not weapons. Other controls select packages, bonus stacks, medical Chance and condition. R also resets NEED BOOST and the item rows; MOD LOOT SCARCITY resets on its own (R with it focused).",
-                    "WorldLootLayout" => "Shuffle weapons, attachments and blueprints separately. Remove ordinary armor or detectors independently; quest rewards stay. Weapon density only affects weapon shuffle.",
+                    "WorldLootLayout" => "Shuffle weapons, attachments and blueprints separately. Remove ordinary armor, detectors or the fixed loose artifacts (Weird Kettle/Nut/Flower/Ball, DLC Water Drip) independently; quest rewards and anomaly fields stay. Weapon density only affects weapon shuffle.",
                     "StashContentMix" => "ADJUST ODDS: each cell keeps X% of the game's odds for that kind of loot in that stash tier (100% = game odds, 0% = never); cells tagged CHANCE set the real chance. ODDS PER STASH shows the result. SUPPLY REDUCTION lowers the odds of all supplies; AMMO AMOUNT and RGD-5 AMOUNT change how much you get.",
                     "StashMedicalComposition" => "ADJUST ODDS: each item keeps X% of the game's odds in every stash (100% = game odds, 0% = never); ODDS PER STASH · MEDS shows the result per tier. QUANTITY sets Medkit and Army Medkit MIN/MAX stack sizes.",
                     "StashGear" => "BONUS GEAR COVERAGE chooses eligible stash locations. PRIORITY favors item categories; BONUS CHANCE checks each candidate. Quest and unique loot are protected.",
@@ -638,6 +638,7 @@ public sealed class ParameterViewModel : ObservableObject
         ["loot.worldAttachmentShuffle"] = "WorldLootLayout",
         ["loot.worldDetectors"] = "WorldLootLayout",
         ["loot.worldArmorRemoved"] = "WorldLootLayout",
+        ["loot.looseArtifactsRemoved"] = "WorldLootLayout",
         ["loot.blueprintShuffle"] = "WorldLootLayout",
 
         ["loot.genericStashReduction"] = "StashContentMix",
@@ -1431,6 +1432,8 @@ public sealed class ParameterViewModel : ObservableObject
                 return "Redistribute optics, suppressors, magazines and underbarrel attachments across compatible world locations.";
             if (Id == "loot.worldDetectors")
                 return "ON removes the audited loose and stash detectors. OFF leaves vanilla detector spawns untouched.";
+            if (Id == "loot.looseArtifactsRemoved")
+                return "ON removes 4 fixed Weird artifact spots (+1 Water Drip with DLC). Anomaly fields stay.";
             if (Id == "loot.blueprintShuffle")
                 return "Randomize blueprint locations.";
             if (Id == "combat.accumulatedDamageIncludesHealedHealth")

@@ -687,6 +687,24 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "1c5f703e141ec5a8dfc996eaa89d7033457ca584",
     };
 
+    // Exact stock files before REMOVE LOOSE ARTIFACTS was added (2026-11-17).
+    private static readonly Dictionary<string, string> PreLooseArtifactFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "82dab5bf75940c0851d99e74af3d14ef732345ac",
+        ["Field Medic"] = "a82b88302cef6214dc973c188b8f99a4e7728160",
+        ["Hardcore+"] = "20729fda95a7ce5c65ee0c247e9f42672464ab4d",
+        ["Hardcore"] = "413463e4c5f2085bb15a5993d6bf156aea60e86f",
+        ["Immersive"] = "1753c42747c7056df47a6db5342cd1d26ba019b7",
+        ["Mercenary"] = "0ce7168c710d6f9a70fc99dbdca5a8f700b4e716",
+        ["Mutant Hunter"] = "0145c04e9884ba4ddf66234f88361c4979a1cbf2",
+        ["Outcast"] = "1d59077609b9ddaae8edb44805953cc1dc7b4b16",
+        ["Scavenger"] = "31b83037ed1630e9d140851b1847b9ba44c83f00",
+        ["Smuggler"] = "c58ea4693212218fb68ec88555d451c9ce094ca5",
+        ["Tactical"] = "b76c40136fc40311291ace64d020d381961d9311",
+        ["Wanderer"] = "a6cf2491025661cc47e86d42e79b39deacf2dc12",
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -712,7 +730,8 @@ public sealed class PresetDirectoryService
             && !PreMedicalMirrorFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreNewControlsFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreWeatherHealTimeFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreRespawnRetirementFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreRespawnRetirementFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreLooseArtifactFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -772,7 +791,9 @@ public sealed class PresetDirectoryService
                 || (PreWeatherHealTimeFactoryBlobs.TryGetValue(name, out var preWeatherHealTimeHash)
                     && actual.Equals(preWeatherHealTimeHash, StringComparison.OrdinalIgnoreCase))
                 || (PreRespawnRetirementFactoryBlobs.TryGetValue(name, out var preRespawnHash)
-                    && actual.Equals(preRespawnHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preRespawnHash, StringComparison.OrdinalIgnoreCase))
+                || (PreLooseArtifactFactoryBlobs.TryGetValue(name, out var preLooseArtifactHash)
+                    && actual.Equals(preLooseArtifactHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

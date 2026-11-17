@@ -15313,6 +15313,53 @@
       "exposeInUi": true
     },
     {
+      "id": "loot.looseArtifactsRemoved",
+      "tab": "loot",
+      "group": "World Loot",
+      "label": "Remove Loose Artifacts",
+      "description": "Remove the fixed artifact spots outside anomaly fields: Weird Kettle, Weird Nut, Weird Flower, Weird Ball and (DLC) Water Drip. Anomaly fields and quest artifacts remain.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "display": {
+        "valueLabel": "Remove Loose Artifacts"
+      },
+      "vanilla": {
+        "All": false
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/SpawnActorPrototypes.cfg",
+          "prototype": "4 Weird* single-artifact spawner actors",
+          "path": "world actor root",
+          "operation": "removeNode"
+        },
+        {
+          "scope": "dlc1",
+          "file": "DLCGameData/DLC1/SpawnActorPrototypes.cfg",
+          "prototype": "1 non-quest WaterDrip spawner actor",
+          "path": "world actor root",
+          "operation": "removeNode"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "OFF preserves vanilla placement.",
+          "ON removes 4 base and 1 DLC1 WorldMap_WP ArtifactSpawner actors (SpawnOnStart true) whose spawner is a single fixed artifact (Weird*, WaterDrip) with no quest reference.",
+          "UniversalArtifactSpawner/LesserZoneMagneticShortDistance anomaly fields, Quest* spawners, quest-referenced WaterDrip actors and test maps stay untouched.",
+          "An artifact already spawned in an existing save may stay; best on a new game."
+        ]
+      },
+      "rationale": "Removes the few artifacts lying at fixed spots outside anomaly fields. Vanilla: OFF. Anomaly fields and quest artifacts stay.",
+      "logic": "OFF keeps vanilla. ON removes the four Weird artifact spots and the DLC Water Drip spot.",
+      "interaction": "Anomaly fields (ARTIFACT HUNTING) and quest artifacts are not affected.",
+      "exposeInUi": true
+    },
+    {
       "id": "loot.blueprintShuffle",
       "tab": "loot",
       "group": "World Loot",

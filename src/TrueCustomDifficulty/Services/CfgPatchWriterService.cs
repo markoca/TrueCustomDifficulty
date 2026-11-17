@@ -333,6 +333,10 @@ public sealed partial class CfgPatchWriterService
             modifiedById, allById, hasDlc1, outputRoot, documents, writtenParameters);
         editCount += worldArmorRemoval.EditCount;
 
+        // Fixed unique artifact spots outside anomaly fields (Weird*, DLC1 WaterDrip).
+        editCount += WriteLooseArtifactRemovals(
+            modifiedById, allById, hasDlc1, outputRoot, writtenParameters);
+
         // Strictly allowlisted original regular weapon reward nodes disappear
         // only while the Extra Stash Gear master checkbox is enabled.
         editCount += WriteStashAuthoredWeaponRemovals(allById, documents);
@@ -513,6 +517,7 @@ public sealed partial class CfgPatchWriterService
         supported.Add("loot.worldAttachmentShuffle");
         supported.Add("loot.worldDetectors");
         supported.Add("loot.worldArmorRemoved");
+        supported.Add(LooseArtifactsRemovedId);
         supported.Add("loot.worldF1GrenadeBoxes");
         supported.Add("loot.blueprintShuffle");
         supported.Add("loot.looseWorldLootRemoved");

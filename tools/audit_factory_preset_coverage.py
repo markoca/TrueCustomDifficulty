@@ -26,7 +26,7 @@ assert len(NEW_IDS) == 39, len(NEW_IDS)  # 40 before RESPAWN RATE retired
 # 2026-11-17: weather AI coefficients and per-item medical HEAL TIME seconds.
 NEW_IDS |= {"combat.npcFogVisibility", "combat.npcRainNoise", "combat.npcStormNoise",
             "health.bandageHealTime", "health.medkitHealTime", "health.armyMedkitHealTime",
-            "health.ecoMedkitHealTime"}
+            "health.ecoMedkitHealTime", "loot.looseArtifactsRemoved"}
 
 presets = sorted((APP / "Presets").glob("*.json"))
 assert len(presets) == 12, len(presets)
@@ -40,7 +40,9 @@ for path in presets:
     for pid in NEW_IDS:
         p = by_id[pid]
         expected = p["vanilla"].get(ref, p["vanilla"].get("All"))
-        assert values[pid] == {"kind": "slider", "number": expected}, (path.name, pid, values[pid])
+        want = ({"kind": "toggle", "boolean": expected} if p.get("control") == "toggle"
+                else {"kind": "slider", "number": expected})
+        assert values[pid] == want, (path.name, pid, values[pid])
     for pid, stored in values.items():
         p = by_id[pid]
         if stored.get("kind") == "slider" and p.get("slider") and not data.get("drinkDurationOverride"):
@@ -48,6 +50,7 @@ for path in presets:
 
 pds = (APP / "Services/PresetDirectoryService.cs").read_text(encoding="utf-8")
 assert pds.count("PreNewControlsFactoryBlobs") == 3 and pds.count("PreWeatherHealTimeFactoryBlobs") == 3
+assert pds.count("PreRespawnRetirementFactoryBlobs") == 3 and pds.count("PreLooseArtifactFactoryBlobs") == 3
 assert len(pds.split("PreNewControlsFactoryBlobs =", 1)[1].split("};", 1)[0].split('"] = "')) == 13
 
-print(f"PASS: 12 factory presets store all {len(by_id)} controls; the 46 newest at reference vanilla; stock upgrade hashes kept")
+print(f"PASS: 12 factory presets store all {len(by_id)} controls; the 47 newest at reference vanilla; stock upgrade hashes kept")

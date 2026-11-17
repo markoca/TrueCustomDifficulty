@@ -16,7 +16,8 @@ All three are `runtime_test_required` and independent of the selected difficulty
   **`UniversalArtifactSpawner`** (73 world spawn actors in `SpawnActorPrototypes.cfg`) and its child
   **`LesserZoneMagneticShortDistance`** (1, radius 800). Only these two are edited.
 * Per-artifact spawners (Eye, Battery, …) appear only on test maps; quest spawners (`Quest*`),
-  unique ones (`Weird*`, DLC1 `WaterDrip`) and `SQ13_Soul` are **never touched**.
+  unique ones (`Weird*`, DLC1 `WaterDrip`) and `SQ13_Soul` are **never touched** here (the fixed
+  non-quest Weird/WaterDrip spots can be removed by World Loot → REMOVE → Loose Artifacts).
 * Both edited spawners have four blocks `Newbie / Experienced / Veteran / Master`. These are the
   **area rank** of the anomaly field, not the game difficulty. Count, cooldown and chance are equal in
   all four; the rarity split differs:
