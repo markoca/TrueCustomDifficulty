@@ -72,3 +72,8 @@ The right-hand panel shows four sections for a selected control: **WHAT IT DOES*
 
 28. Units follow the number after a space (`45 s`, `12 m`, `40 kg`); compact clocks (`1h05m`) are the exception.
 29. Separators: ` · ` between parts, `→` for before → after, en dash for ranges.
+
+## Thirteenth pass (2026-11-18)
+
+30. CONTROLS help ends with one reset sentence: `Right-click one <part> to reset it; R resets <scope>.`
+31. Help must describe the control as it is now (raw BASE bars are not %; no notes about features that are not there).

@@ -1,3 +1,10 @@
+## 2026-11-18 — CURRENT: CONTROLS help — one reset sentence, no stale descriptions
+
+* Reset hints follow one pattern: `Right-click one <bar | track | column | handle | marker | species | rank | category> to reset it; R resets <the whole board | all N>.` (was *Press R with the panel focused to reset the group*, *right-click to reset one source, or press R to reset this card*, *restore its starting setting*, *reset the selection*, *the price group*, *five physical categories*).
+* DAMAGE BY ANOMALY help no longer says the bars are *% (100% unchanged)* — they set raw BASE damage (tick = vanilla); EFFECTIVE includes GLOBAL ANOMALY DAMAGE before protection.
+* MEDICAL HEALING help: `Each medicine has HEAL, BLEED and TIME columns; four RAD columns … set radiation removal.` (was *source clusters … edit independent effects*); BLEEDING help drops the dev note *not clickable / no death-time simulation*.
+* Range / choice help: `Arrow keys make small changes; Home/End jump to the limits.` / `Arrow keys cycle through the choices.`
+
 ## 2026-11-18 — CURRENT: seconds, axis captions, separators
 
 * Single time readouts put a space before the unit like HUMAN TACTICS and the panel texts: `45 s`, `0 s`, `START 3 s` on the consumable / drink timelines, water and energy-drink duration knobs and hunger/fatigue timers (compound clocks such as `~1h05m` keep their compact form).

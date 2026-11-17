@@ -153,7 +153,7 @@ public sealed class ParameterViewModel : ObservableObject
                     _ => "Select a setting and click or drag its control. Each active handle edits its own value."
                 };
                 return instruction + Environment.NewLine
-                    + "Right-click a control to reset that setting. Press R with the panel focused to reset the group.";
+                    + "Right-click a control to reset it; R resets the whole board.";
             }
 
             if (IsDrunkennessMember)
@@ -161,31 +161,31 @@ public sealed class ParameterViewModel : ObservableObject
                     + Environment.NewLine + "Right-click one drink to reset it; R resets both.";
             if (IsBleedingCurveMember)
                 return "BLEEDING SEVERITY and NATURAL RECOVERY control bleeding strength and how quickly it fades. On the BLEEDING DAMAGE PROFILE, drag the LOW/MEDIUM/SEVERE damage handles or the Medium/Severe threshold markers."
-                    + Environment.NewLine + "The three stage cards below show current bleeding-point thresholds and HP per tick only. They are not clickable and no death-time simulation is shown."
-                    + Environment.NewLine + "Right-click a real graph control to reset it; R resets all seven bleeding settings.";
+                    + Environment.NewLine + "The three stage cards below only show thresholds and HP per tick."
+                    + Environment.NewLine + "Right-click one handle to reset it; R resets all seven bleeding settings.";
 
             if (IsActionCostMember)
                 return "Drag an action's track to change how much stamina that move costs."
                     + Environment.NewLine + "Right-click one track to reset it; R resets all Stamina Usage actions.";
             if (IsExhaustionRecoveryMember)
                 return "On the STAMINA THRESHOLDS ruler, drag the top marker to choose when sprint stops, or the bottom marker to choose when the low-stamina boost starts. The ruler uses 100 stamina by default and expands when MAX STAMINA exceeds 100; each marker keeps its own limit."
-                    + Environment.NewLine + "Aiming, exhaustion delay and low-stamina boost stay independent. Right-click one source or press R for all.";
+                    + Environment.NewLine + "Aiming, exhaustion delay and low-stamina boost stay independent. Right-click one marker to reset it; R resets all.";
             if (IsMedicalHealingMember)
-                return "Four HEAL/BLEED/TIME source clusters and four RAD columns (Scientific, Anti-Rad, Beer, Vodka) edit independent effects."
-                    + Environment.NewLine + "Drag a column to adjust it, right-click to reset one source, or press R to reset this card. Food Healing is independent.";
+                return "Each medicine has HEAL, BLEED and TIME columns; four RAD columns (Scientific, Anti-Rad, Beer, Vodka) set radiation removal."
+                    + Environment.NewLine + "Drag a column to adjust it. Right-click one column to reset it; R resets the board. FOOD HEALING is separate.";
             if (IsWorldLootRemovalMember)
                 return "Drag a vertical removal bar. MOD ITEMS is the sixth lane and has its own checkbox; disabled values have no effect."
-                    + Environment.NewLine + "Right-click a bar to reset it. R resets five physical categories; MOD ITEMS resets independently when selected.";
+                    + Environment.NewLine + "Right-click one bar to reset it; R resets the five loot bars. MOD ITEMS resets on its own when selected.";
             if (IsMutantDropMember)
                 return "Drag a mutant's track to change its part-drop chance."
                     + Environment.NewLine + "Right-click one species to reset it; R resets all fourteen.";
             // GLOBAL lives on the DAMAGE BY ANOMALY board (no separate board).
             if (IsIndividualAnomalyDamageMember || Id == "environment.anomalyDamage")
-                return "Each bar compares editable BASE damage with vanilla (100% unchanged). EFFECTIVE includes the global multiplier before protection."
-                    + Environment.NewLine + "Turn GLOBAL in the same card. Right-click a control to reset it; R resets the whole damage group.";
+                return "Each bar sets an anomaly's BASE damage (tick = vanilla). EFFECTIVE includes GLOBAL ANOMALY DAMAGE, before your protection."
+                    + Environment.NewLine + "Turn GLOBAL in the same card. Right-click one bar to reset it; R resets the whole board.";
             if (IsItemPriceScalerMember)
                 return "Drag a category's price track to tune its multiplier."
-                    + Environment.NewLine + "Right-click one category to reset it; R resets the price group.";
+                    + Environment.NewLine + "Right-click one category to reset it; R resets the whole board.";
             if (IsMutantHealthMember)
                 return "Each species card has a health track (multiplier and resulting HP on its top line), then ATTACKS (claws, bites, leaps) and ABILITIES (psy, shields, throws, roars). Each shows the wait between two uses of one of its moves, e.g. \"gore every 10 s\"; drag right to shorten the wait (2× = twice as often). SPECIAL ABILITY RATE paces special and knockdown moves for all mutants."
                     + Environment.NewLine + "Right-click one track to reset it; R resets the whole board.";
@@ -202,14 +202,14 @@ public sealed class ParameterViewModel : ObservableObject
                 return "Pick a trader type, then drag a category's rail: 100% keeps vanilla odds for those offers, lower makes them rarer, 0% removes the category. AMMO / MEDICAL SUPPLY change stack sizes for every trader; where a stack is already 1 a lower supply makes the offer rarer instead. RARE GEAR (STALKERS only): chance to offer one rare item, occasionally two (8% second roll); 0% = off."
                     + Environment.NewLine + "Right-click a rail to reset it; R resets the board. CLEAR removes restrictions left by older presets.";
             if (IsRange)
-                return "Drag MIN or MAX to choose the range. Use Arrow keys for small changes and Home/End for the limits."
+                return "Drag MIN or MAX to choose the range. Arrow keys make small changes; Home/End jump to the limits."
                     + Environment.NewLine + "Right-click the range to reset it.";
             if (IsChoiceSlider)
-                return "Click or drag to pick an option. Use Arrow keys to cycle through the choices."
-                    + Environment.NewLine + "Right-click to reset the selection.";
+                return "Click or drag to pick an option. Arrow keys cycle through the choices."
+                    + Environment.NewLine + "Right-click to reset it.";
             if (IsToggle)
                 return "Click to turn the rule ON or OFF. Press Space when the switch is focused."
-                    + Environment.NewLine + "Right-click to restore its starting setting.";
+                    + Environment.NewLine + "Right-click to reset it.";
             return "Click or drag the track to tune the value. Arrow keys adjust it in small steps; Home/End jump to its limits."
                 + Environment.NewLine + "Right-click the track to reset it.";
         }

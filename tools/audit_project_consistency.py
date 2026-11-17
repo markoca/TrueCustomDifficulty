@@ -5563,8 +5563,8 @@ if "BleedingTimelineProjectionCase" in _bleed_contract or "BleedTimelineResult" 
 if (len(_bleed_element) != 2
         or 'MinHeight="466"' not in _bleed_element[1].split('/>', 1)[0]):
     fail("Bleeding host must be compact 466 DIP without hidden timeline space")
-if ("three stage cards below show current bleeding-point thresholds and HP per tick only" not in _bleed_vm
-        or "They are not clickable" not in _bleed_vm):
+if ("three stage cards below only show thresholds and HP per tick" not in _bleed_vm
+        or "stage selector" in _bleed_vm or "timeline" in _bleed_vm.lower().split("isbleedingcurvemember", 1)[-1][:600]):
     fail("Bleeding tooltip still describes the removed stage selector/timeline")
 for _filename in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
     if "2026-10-14 — Remove Bleeding tick timeline and stage selection (CURRENT)" not in (
