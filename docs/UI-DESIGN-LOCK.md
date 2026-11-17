@@ -1,3 +1,7 @@
+## 2026-11-17 — CURRENT: build without warnings
+
+* `CfgPatchWriterService.StashTuning.cs`: `StashPresenceChanged` copies the thread-static presence map into a local before its local function uses it, removing warning CS8602. Behavior unchanged.
+
 ## 2026-11-17 — CURRENT: HUMAN AWARENESS · SIGHT readout names both distances
 
 * The SIGHT card readout was `1x · 80 m / 25 m`, which did not say what the two numbers are. It now reads **`1x · ahead 80 m · side 25 m`**: AHEAD = central vision straight in front of the enemy, SIDE = peripheral vision at the edge of his view. Both scale with the slider.

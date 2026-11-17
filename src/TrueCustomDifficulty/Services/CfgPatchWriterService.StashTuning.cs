@@ -76,8 +76,9 @@ public sealed partial class CfgPatchWriterService
 
     private static bool StashPresenceChanged(string tier)
     {
-        if (s_stashPresence is null) return false;
-        bool Changed(string id) => s_stashPresence.TryGetValue(id, out var value)
+        // Local copy: the null check must cover the captured value (CS8602).
+        if (s_stashPresence is not { } presence) return false;
+        bool Changed(string id) => presence.TryGetValue(id, out var value)
             && Math.Abs(value - 1.0) > 0.0000001;
         return tier switch
         {
