@@ -3042,8 +3042,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             ("survival.severeFatigueMaxStamina", "STAMINA LOSS", MasterNegativePercent),
             ("survival.severeFatigueCarryWeight", "CARRY LOSS", MasterNegativePercent),
             ("survival.severeFatigueRecoil", "RECOIL", MasterPositivePercent),
-            ("survival.severeFatigueAimSway", "AIM SWAY", MasterScalar),
-            ("survival.severeFatigueDispersion", "SHOT SPREAD", MasterScalar)
+            ("survival.severeFatigueAimSway", "AIM SWAY", MasterPositivePercent),
+            ("survival.severeFatigueDispersion", "SHOT SPREAD", MasterPositivePercent)
         };
         const double gap = 9.0;
         var width = Math.Min(780.0, ActualWidth - 34.0);

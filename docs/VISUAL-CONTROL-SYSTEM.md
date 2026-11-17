@@ -1,3 +1,11 @@
+## 2026-11-17 — CURRENT: texts use the unit the control shows
+
+* When a control reads out `1x`, its WHAT IT DOES / HIGHER / LOWER texts now speak in × too (was %): Psy Phantom Spawn Interval / Count / Gear Damage, Energy Drink Fatigue Relief, Radiation Damage, Prices Traders Pay / You Pay, Upgrade Cost, Main / Side Quest Coupons, Glass Shards Bleeding / Health Damage, Psy Drain Strength, Weapon Wear per Shot, Guide Travel Fees, Base Repair Cost (`0.7×`), Mutant Parts Cost, the item-price categories, Bleeding Severity, Ammo / Grenades per Box. Duration controls state `Vanilla: 1× (30 seconds)` etc.; Water cost cut `Vanilla: 1× (−10%)`; artifact knobs `Vanilla: 1× (25% + 15% bonus)`.
+* Raw-number controls speak in numbers: Clicker / Soap Bubble / Fireball / Diamond health damage (`100 keeps vanilla; 0 removes it; 200 doubles it`).
+* Percent controls keep % (Master healing lanes, Flycatcher, stash odds). Flycatcher logic no longer quotes raw effect values.
+* SEVERE FATIGUE board: AIM SWAY and SHOT SPREAD read `+40%` / `+50%` like RECOIL and the panel (was `0.4x` / `0.5x`).
+* Panel texts write the multiplier sign as `×` everywhere (37 texts had `1x`).
+
 ## 2026-11-17 — CURRENT: Master toggles, medicine labels, NPC LOOT cards
 
 * **Master boards:** panel titles now read what the toggle draws — `Starvation Mechanics`, `Severe Fatigue Mechanics`, `Low Health Mechanics`, `Healing Item Efficiency Reduction` (was *Master … Penalties* / *Master Consumable Effect Penalties*); every text that referred to them uses the drawn name (`Only works while STARVATION MECHANICS is ON.`, `… while HEALING ITEM EFFICIENCY REDUCTION is ON`).

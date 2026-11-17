@@ -555,7 +555,7 @@ if len(_combat_rows) != 27 or _combat_runtime_actual != _combat_runtime_expected
     fail(f"combat source-catalog exposed entries drifted: entries={len(_combat_rows)}, runtime={sorted(_combat_runtime_actual)}")
 elif _repeated.get("order") != "nondecreasing" or _repeated.get("parameterIds") != ["combat.accumulatedDamageWeightMin", "combat.accumulatedDamageWeightMax"]:
     fail("repeated-hit Min<=Max CFG-value constraint drifted")
-elif "extra damage" in str(_headshot.get("description", "")).lower() or "1.0x" not in str(_headshot.get("logic", "")):
+elif "extra damage" in str(_headshot.get("description", "")).lower() or "1.0×" not in str(_headshot.get("logic", "")):
     fail("headshot multiplier wording regressed to bonus/extra-damage semantics")
 elif not _combat_doc.exists():
     fail("combat deep-audit document missing from docs/")

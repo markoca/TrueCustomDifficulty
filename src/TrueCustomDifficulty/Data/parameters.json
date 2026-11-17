@@ -1002,7 +1002,7 @@
         "notes": []
       },
       "rationale": "Extra punch for your headshots on top of normal weapon damage. 2× doubles the headshot bonus, rewarding careful aim over spraying. Vanilla: Novice–Veteran 1×, Master 2×.",
-      "logic": "1.0x is the normal multiplier. 2.0x doubles the headshot damage multiplier used by the selected Base Preset; it is not an additive extra-damage percentage.",
+      "logic": "1.0× is the normal multiplier. 2.0× doubles the headshot damage multiplier used by the selected Base Preset; it is not an additive extra-damage percentage.",
       "interaction": "Weapon Damage also affects the underlying hit. The headshot multiplier scales that hit; changing both settings compounds their effect."
     },
     {
@@ -3222,8 +3222,8 @@
           "Novice/Stalker/Veteran contain no PsyPhantomNPCOverrides block; the UI represents absence as neutral 1.0 / Off. Creating equivalent overrides in Novice/Stalker/Veteran requires runtime validation."
         ]
       },
-      "rationale": "In the Psy encounters that Master makes harder, how long you get before the next wave of phantoms appears. Lower = less breathing room. Vanilla: Novice–Veteran 100%, Master 50%.",
-      "logic": "Lower = phantom waves come back sooner. Master already waits only half as long; 100% adds no extra Master speed-up.",
+      "rationale": "In the Psy encounters that Master makes harder, how long you get before the next wave of phantoms appears. Lower = less breathing room. Vanilla: Novice–Veteran 1×, Master 0.5×.",
+      "logic": "Lower = phantom waves come back sooner. 1× is the normal wait; vanilla Master already uses 0.5×.",
       "interaction": "Pair this with Psy Phantom Count: shorter waits plus more phantoms can make an encounter far more intense."
     },
     {
@@ -3276,8 +3276,8 @@
           "Novice/Stalker/Veteran contain no PsyPhantomNPCOverrides block; the UI represents absence as neutral 1.0 / Off. Creating equivalent overrides in Novice/Stalker/Veteran requires runtime validation."
         ]
       },
-      "rationale": "In those Master Psy encounters, how many phantoms come at you per wave. 200% doubles them. Vanilla: Novice–Veteran 100%, Master 200%. Combine with a short spawn interval for a real nightmare.",
-      "logic": "100% keeps the normal count. 200% matches vanilla Master and doubles the configured phantom count.",
+      "rationale": "In those Master Psy encounters, how many phantoms come at you per wave. 2× doubles them. Vanilla: Novice–Veteran 1×, Master 2×. Combine with a short spawn interval for a real nightmare.",
+      "logic": "1× keeps the normal count; 2× matches vanilla Master and doubles it.",
       "interaction": "Phantom Spawn Interval changes how quickly another wave can happen; this setting changes the size of each wave."
     },
     {
@@ -3373,8 +3373,8 @@
           "Novice/Stalker/Veteran contain no PsyPhantomNPCOverrides block; the UI represents absence as neutral 1.0 / Off. Creating equivalent overrides in Novice/Stalker/Veteran requires runtime validation."
         ]
       },
-      "rationale": "How fast the Master Psy enemies chew through your armor and helmet condition. Their damage to your health is unchanged. Vanilla: Novice–Veteran 100%, Master 200%.",
-      "logic": "100% keeps normal durability damage. 200% matches vanilla Master and doubles this durability damage.",
+      "rationale": "How fast the Master Psy enemies chew through your armor and helmet condition. Their damage to your health is unchanged. Vanilla: Novice–Veteran 1×, Master 2×.",
+      "logic": "1× keeps normal durability damage; 2× matches vanilla Master and doubles it.",
       "interaction": "This does not change their direct health damage. Armor/helmet durability settings still affect how your gear wears overall."
     },
     {
@@ -4075,7 +4075,7 @@
         ]
       },
       "rationale": "How much tiredness an energy drink washes away. Vanilla: 1×. 0× makes energy drinks useless against fatigue, 2× doubles their wake-up kick. It doesn't slow how fast you get tired again.",
-      "logic": "100% keeps vanilla fatigue relief. 50% halves it, 200% doubles it, and 0% makes energy drinks provide no fatigue relief.",
+      "logic": "1× keeps vanilla fatigue relief; 0.5× halves it, 2× doubles it, 0× removes it.",
       "interaction": "Fatigue Rate controls how quickly tiredness comes back. This changes the amount removed by ordinary and special Energy Drinks."
     },
     {
@@ -4211,7 +4211,7 @@
         ]
       },
       "rationale": "Strength of water's short +25% stamina bonus. Vanilla: 1×. 0× removes it, 2× makes it +50%. The instant refill is a separate setting.",
-      "logic": "0x removes this stamina bonus; 1x keeps +25%, 2x gives +50%. The instant 38% refill is a separate setting.",
+      "logic": "0× removes this stamina bonus; 1× keeps +25%, 2× gives +50%. The instant 38% refill is a separate setting.",
       "interaction": "Water cost cut and instant refill are separate independent controls.",
       "exposeInUi": false
     },
@@ -4255,8 +4255,8 @@
           "The yellow STAMINA COST mini-knob shows the native negative drain modifier as 0% to -20%, without changing its underlying 0–2x scale."
         ]
       },
-      "rationale": "Water also makes running and other actions cost less stamina for a while. Vanilla: −10%. 0× removes it, 2× doubles it to −20%.",
-      "logic": "0x = actions cost the normal stamina; 1x = vanilla 10% cheaper; 2x = 20% cheaper.",
+      "rationale": "Water also makes running and other actions cost less stamina for a while. Vanilla: 1× (−10%). 0× removes it, 2× doubles it to −20%.",
+      "logic": "0× = actions cost the normal stamina; 1× = vanilla 10% cheaper; 2× = 20% cheaper.",
       "interaction": "Water's +25% stamina bonus and its instant refill are separate settings.",
       "exposeInUi": false
     },
@@ -4303,7 +4303,7 @@
         ]
       },
       "rationale": "How much radiation one beer flushes out. Vanilla: 10 — a little help, not a cure. You still get drunk as usual.",
-      "logic": "1x removes 10 radiation like vanilla; 0x–3x covers 0–30 radiation in steps of 5.",
+      "logic": "1× removes 10 radiation like vanilla; 0×–3× covers 0–30 radiation in steps of 5.",
       "interaction": "Does not alter intoxication, drink duration or the other alcohol.",
       "exposeInUi": false
     },
@@ -4394,8 +4394,8 @@
           "Minimum main Water multiplier is exactly 5/30 so its optional regeneration cannot exceed the main duration."
         ]
       },
-      "rationale": "How long water's stamina-saving effect lasts after drinking. Vanilla: 30 seconds. Its shorter bonus can never outlast this.",
-      "logic": "1x restores the original 30-second stamina-cost effect; the separate regeneration control starts at its original 5 seconds and cannot outlast the main effect.",
+      "rationale": "How long water's stamina-saving effect lasts after drinking. Vanilla: 1× (30 seconds). Its shorter bonus can never outlast this.",
+      "logic": "1× restores the original 30-second stamina-cost effect; the separate regeneration control starts at its original 5 seconds and cannot outlast the main effect.",
       "interaction": "WATER STAMINA GAIN controls the instant refill separately."
     },
     {
@@ -4440,7 +4440,7 @@
         ]
       },
       "rationale": "How strongly an energy drink keeps refilling your stamina after the first gulp. Vanilla: 1×. 0× removes that boost, 2× doubles it.",
-      "logic": "1x keeps the energy drink's stamina regeneration; 0 removes it; 2x doubles it.",
+      "logic": "1× keeps the energy drink's stamina regeneration; 0 removes it; 2× doubles it.",
       "interaction": "ENERGY DRINK STAMINA GAIN, FATIGUE RELIEF and REGEN DURATION are separate controls.",
       "exposeInUi": false
     },
@@ -4493,8 +4493,8 @@
           "Source-confirmed Energy Drink variants: EnergeticStaminaPerAction1 gives -30% stamina action cost for 15 s; EnergeticStaminaPerAction2 gives -100% stamina action cost for 5 s. Energetic_Limited is a separate variant, and MeleeButstock participates in the source effect coverage. Engine stacking is handled by the original game effect system; duration controls retain separate prototype ownership."
         ]
       },
-      "rationale": "How long an energy drink keeps boosting your stamina regeneration. Vanilla: 45 seconds, for both the normal and the Limited drink.",
-      "logic": "1x preserves 45 seconds of normal/Limited stamina regeneration. Separate 5s/-100% and 15s/-30% action-cost effect durations cannot exceed the main regeneration period.",
+      "rationale": "How long an energy drink keeps boosting your stamina regeneration. Vanilla: 1× (45 seconds, for both the normal and the Limited drink).",
+      "logic": "1× keeps the 45-second regeneration for normal and Limited drinks. The shorter no-cost (5 s) and -30% cost (15 s) effects can't outlast it.",
       "interaction": "ENERGY DRINK STAMINA GAIN and FATIGUE RELIEF are separate controls."
     },
     {
@@ -4678,8 +4678,8 @@
           "Drunkenness duration is intentionally excluded until Drunkness/OverDrunkness mechanics are fully audited."
         ]
       },
-      "rationale": "How long vodka's stamina drain lasts after you drink it. Vanilla: 20 seconds. Its radiation removal is set separately.",
-      "logic": "1x keeps the 20 s vanilla stamina-drain penalty.",
+      "rationale": "How long vodka's stamina drain lasts after you drink it. Vanilla: 1× (20 seconds). Its radiation removal is set separately.",
+      "logic": "1× keeps the 20 s vanilla stamina-drain penalty.",
       "interaction": "How much radiation it removes is set under RADIATION REMOVAL."
     },
     {
@@ -4722,8 +4722,8 @@
           "Drunkenness duration is intentionally excluded until Drunkness/OverDrunkness mechanics are fully audited."
         ]
       },
-      "rationale": "How long beer's stamina drain lasts after you drink it. Vanilla: 20 seconds. Its radiation removal is set separately.",
-      "logic": "1x keeps the 20 s vanilla stamina-drain penalty.",
+      "rationale": "How long beer's stamina drain lasts after you drink it. Vanilla: 1× (20 seconds). Its radiation removal is set separately.",
+      "logic": "1× keeps the 20 s vanilla stamina-drain penalty.",
       "interaction": "How much radiation it removes is set under RADIATION REMOVAL."
     },
     {
@@ -4766,8 +4766,8 @@
           "Magic Vodka drunkenness is intentionally excluded from this duration control."
         ]
       },
-      "rationale": "How long Magic Vodka (Dvupalov) shields you from psy attacks. Vanilla: 90 seconds — longer means more time to deal with Controllers and psy zones.",
-      "logic": "1x keeps the 90 s vanilla psi-protection duration.",
+      "rationale": "How long Magic Vodka (Dvupalov) shields you from psy attacks. Vanilla: 1× (90 seconds) — longer means more time to deal with Controllers and psy zones.",
+      "logic": "1× keeps the 90 s vanilla psi-protection duration.",
       "interaction": "A quest/special drink; RADIATION REMOVAL doesn't change it."
     },
     {
@@ -5115,7 +5115,7 @@
         ]
       },
       "rationale": "Internal scale for when drinking makes you tipsy and then drunk. At 1×: tipsy at 30, drunk at 80. Hidden while the full over-drinking chain is still being mapped.",
-      "logic": "At 1x, Medium = 30 and Strong = 80. Low remains at its authored near-zero boundary.",
+      "logic": "At 1×, Medium = 30 and Strong = 80. Low remains at its authored near-zero boundary.",
       "interaction": "Not player-facing yet; Beer and Vodka direct strength remain the editable alcohol axes.",
       "exposeInUi": false
     },
@@ -5497,7 +5497,7 @@
         ]
       },
       "rationale": "How much health radiation eats once it becomes dangerous. Vanilla: 1×. 2× doubles the damage; the warning levels stay where they are.",
-      "logic": "100% keeps vanilla radiation damage. 50% halves it, 200% doubles it, 600% multiplies it by six, and 1000% multiplies it by ten. Original stage thresholds stay vanilla.",
+      "logic": "1× keeps vanilla radiation damage; 0.5× halves it, 2× doubles it, up to 25×. The warning levels stay vanilla.",
       "interaction": "Exposure determines how fast radiation builds up; recovery and Anti-Rad remove it. This setting only changes HP loss once radiation hurts."
     },
     {
@@ -5541,7 +5541,7 @@
         "notes": []
       },
       "rationale": "How bad bleeding wounds are overall. Higher = you bleed out faster and need bandages sooner. Vanilla: Novice 0.25×, Stalker and Veteran 1×, Master 1.5×.",
-      "logic": "Higher values make bleeding effects stronger overall; lower values soften them. Novice uses 25%, Stalker/Veteran 100%, and Master 150%.",
+      "logic": "Higher values make bleeding effects stronger overall; lower values soften them. Vanilla: Novice 0.25×, Stalker and Veteran 1×, Master 1.5×.",
       "interaction": "Low / Medium / Severe Bleeding Damage decide how much HP you lose once each bleeding state is active. Natural Bleeding Recovery and medical treatment decide how quickly bleeding goes away."
     },
     {
@@ -9691,7 +9691,7 @@
         ]
       },
       "rationale": "How many rounds you get from ammo in stashes — Basic, Standard and Rare together (the AMMO AMOUNT slider drives all three). Vanilla: 1×. Which calibers turn up still follows the game's progression.",
-      "logic": "1x keeps vanilla stack sizes; 0.5x halves them, 2x doubles them (rounded, never below 1).",
+      "logic": "1× keeps vanilla stack sizes; 0.5× halves them, 2× doubles them (rounded, never below 1).",
       "interaction": "One AMMO AMOUNT control changes ammo stack sizes in Basic, Standard and Rare stashes together.",
       "lootHint": {
         "kind": "scaledCountEntries",
@@ -9868,7 +9868,7 @@
         ]
       },
       "rationale": "Standard-stash ammo amount. It always follows the single AMMO AMOUNT slider. Vanilla: 1×.",
-      "logic": "0.25x–2x scales the amount of ammo found in Standard stashes. For example, a vanilla 18-24 round stack becomes about 9-12 at 0.5x and 36-48 at 2x.",
+      "logic": "0.25×–2× scales the amount of ammo found in Standard stashes. For example, a vanilla 18-24 round stack becomes about 9-12 at 0.5× and 36-48 at 2×.",
       "interaction": "The single AMMO AMOUNT slider adjusts native MinCount/MaxCount in Basic, Standard and Rare with the same multiplier; tier-specific IDs remain CFG/preset backings.",
       "lootHint": {
         "kind": "scaledCountEntries",
@@ -9973,7 +9973,7 @@
         ]
       },
       "rationale": "How many rounds you get from smashing an ammo box. Vanilla: 1×. Which calibers show up is a separate setting.",
-      "logic": "50-200% changes how many rounds are found in breakable ammo boxes. 100% keeps vanilla amounts.",
+      "logic": "0.5×–2× changes how many rounds breakable ammo boxes give. 1× keeps vanilla amounts.",
       "interaction": "Works with AMMO BOX CONTENT DISTRIBUTION: this sets how many rounds you get, the distribution sets which calibers turn up more often.",
       "lootHint": {
         "kind": "scaledCountEntries",
@@ -10107,7 +10107,7 @@
         ]
       },
       "rationale": "How often breakable ammo boxes give .45 ACP rounds. Vanilla: 1×. 0 removes them from the mix.",
-      "logic": "1x keeps the vanilla chance. Lower settings make .45 ACP less common; higher settings make it more common.",
+      "logic": "1× keeps the vanilla chance. Lower settings make .45 ACP less common; higher settings make it more common.",
       "interaction": "Set on the AMMO BOX CONTENT DISTRIBUTION board.",
       "exposeInUi": false
     },
@@ -10152,7 +10152,7 @@
         ]
       },
       "rationale": "How often breakable ammo boxes give 5.45 / 5.56 mm rifle rounds. Vanilla: 1×. 0 removes them from the mix.",
-      "logic": "1x keeps the vanilla chance. Lower settings make 5.45 / 5.56 mm less common; higher settings make it more common.",
+      "logic": "1× keeps the vanilla chance. Lower settings make 5.45 / 5.56 mm less common; higher settings make it more common.",
       "interaction": "Set on the AMMO BOX CONTENT DISTRIBUTION board.",
       "exposeInUi": false
     },
@@ -10197,7 +10197,7 @@
         ]
       },
       "rationale": "How often breakable ammo boxes give 12 gauge shells. Vanilla: 1×. 0 removes them from the mix.",
-      "logic": "1x keeps the vanilla chance. Lower settings make 12 Gauge less common; higher settings make it more common.",
+      "logic": "1× keeps the vanilla chance. Lower settings make 12 Gauge less common; higher settings make it more common.",
       "interaction": "Set on the AMMO BOX CONTENT DISTRIBUTION board.",
       "exposeInUi": false
     },
@@ -10292,7 +10292,7 @@
         ]
       },
       "rationale": "How many grenades you get from smashing a grenade box. Vanilla: 1×. F1 boxes still give F1s and RGD-5 boxes still give RGD-5s.",
-      "logic": "50-200% in 50% steps. Vanilla 1-2 becomes 1-1 at 50%, 1-2 at 100%, 2-3 at 150%, and 2-4 at 200%.",
+      "logic": "0.5×–2× in 0.5× steps. Vanilla 1–2 becomes 1–1 at 0.5×, 1–2 at 1×, 2–3 at 1.5× and 2–4 at 2×.",
       "interaction": "Changes grenade amounts in breakable grenade boxes only. Normal stashes, corpse loot, and NPC grenade loadouts are unaffected.",
       "lootHint": {
         "kind": "scaledCountEntries",
@@ -10355,7 +10355,7 @@
         ]
       },
       "rationale": "Rare-stash ammo amount. It always follows the single AMMO AMOUNT slider. Vanilla: 1×.",
-      "logic": "0.25x–2x changes the amount of ammo found in Rare stashes. 1x keeps vanilla amounts.",
+      "logic": "0.25×–2× changes the amount of ammo found in Rare stashes. 1× keeps vanilla amounts.",
       "interaction": "The single AMMO AMOUNT slider adjusts native MinCount/MaxCount in Basic, Standard and Rare with the same multiplier; tier-specific IDs remain CFG/preset backings.",
       "lootHint": {
         "kind": "scaledCountEntries",
@@ -11018,7 +11018,7 @@
         "status": "runtime_test_required",
         "notes": []
       },
-      "rationale": "How much traders pay you when you sell. Vanilla: Novice and Stalker 100%, Veteran 65%, Master 55%. Lower = selling loot earns less.",
+      "rationale": "How much traders pay you when you sell. Vanilla: Novice and Stalker 1×, Veteran 0.65×, Master 0.55×. Lower = selling loot earns less.",
       "logic": "Higher raises what traders offer when you sell; lower reduces it. This is a price modifier, not an exact payout.",
       "interaction": "Broken Gear Value and item condition also affect what you can sell and for how much."
     },
@@ -11062,7 +11062,7 @@
         "status": "runtime_test_required",
         "notes": []
       },
-      "rationale": "How much traders charge you when you buy. Vanilla: Novice and Stalker 100%, Veteran 125%, Master 165%. Higher = everything in the shop costs more.",
+      "rationale": "How much traders charge you when you buy. Vanilla: Novice and Stalker 1×, Veteran 1.25×, Master 1.65×. Higher = everything in the shop costs more.",
       "logic": "Higher makes buying more expensive; lower makes it cheaper. Each trader still applies their own pricing rules.",
       "interaction": "Item Values changes underlying prices; Prices Traders Pay applies when you sell instead."
     },
@@ -11198,8 +11198,8 @@
         ]
       },
       "rationale": "How much ammo every trader has on the shelf — shopkeepers, bartenders, stalkers you can trade with and DLC traders alike. Vanilla: 1×. Lower = smaller stacks, and where a stack is already 1 the offer turns up less often; higher = bigger stacks. Doesn't add new calibers.",
-      "logic": "1x keeps vanilla trader ammo stock. Below 1x stacks shrink (never below 1) and whatever they cannot lose comes off the offer's odds, so the expected amount follows the setting. Above 1x only stack sizes grow.",
-      "interaction": "Stack sizes change first; only offers already down to 1 turn up less often below 1x. It does not add ammo types, bypass player-rank progression or change refresh timing. The AMMO rail of each trader type changes how often ammo is offered."
+      "logic": "1× keeps vanilla trader ammo stock. Below 1× stacks shrink (never below 1) and whatever they cannot lose comes off the offer's odds, so the expected amount follows the setting. Above 1× only stack sizes grow.",
+      "interaction": "Stack sizes change first; only offers already down to 1 turn up less often below 1×. It does not add ammo types, bypass player-rank progression or change refresh timing. The AMMO rail of each trader type changes how often ammo is offered."
     },
     {
       "id": "economy.medicStock",
@@ -11243,8 +11243,8 @@
         ]
       },
       "rationale": "How many meds every trader has for sale — medics, shopkeepers and stalkers you can trade with alike. Vanilla: 1×. Lower = smaller stacks, and single meds turn up less often, so you can't restock everything in one visit; higher = bigger stacks.",
-      "logic": "1x keeps vanilla trader medical stock. Below 1x stacks shrink (never below 1) and whatever they cannot lose comes off the offer's odds (most meds are sold one or two at a time). Above 1x only stack sizes grow.",
-      "interaction": "Stack sizes change first; only offers already down to 1 turn up less often below 1x. Progression and restock timing stay vanilla. The MEDICAL rail of each trader type changes how often meds are offered."
+      "logic": "1× keeps vanilla trader medical stock. Below 1× stacks shrink (never below 1) and whatever they cannot lose comes off the offer's odds (most meds are sold one or two at a time). Above 1× only stack sizes grow.",
+      "interaction": "Stack sizes change first; only offers already down to 1 turn up less often below 1×. Progression and restock timing stay vanilla. The MEDICAL rail of each trader type changes how often meds are offered."
     },
     {
       "id": "economy.consumableCost",
@@ -11332,7 +11332,7 @@
         "notes": []
       },
       "rationale": "Base price of ammo. Vanilla: 1×. Higher = every magazine costs more to buy and sells for more.",
-      "logic": "100% preserves the vanilla category-cost setting. Higher values increase this category cost layer; lower values decrease it.",
+      "logic": "1× keeps vanilla prices for this category; higher raises them, lower cuts them.",
       "interaction": "Same on every difficulty. PRICES TRADERS PAY and PRICES YOU PAY still apply on top.",
       "exposeInUi": false
     },
@@ -11377,7 +11377,7 @@
         "notes": []
       },
       "rationale": "Base price of armor. Vanilla: 1×.",
-      "logic": "100% preserves the vanilla category-cost setting. Higher values increase this category cost layer; lower values decrease it.",
+      "logic": "1× keeps vanilla prices for this category; higher raises them, lower cuts them.",
       "interaction": "Same on every difficulty. PRICES TRADERS PAY and PRICES YOU PAY still apply on top.",
       "exposeInUi": false
     },
@@ -11422,7 +11422,7 @@
         "notes": []
       },
       "rationale": "Base price of weapons. Vanilla: 1×. Lower = looted guns sell for less.",
-      "logic": "100% preserves the vanilla category-cost setting. Higher values increase this category cost layer; lower values decrease it.",
+      "logic": "1× keeps vanilla prices for this category; higher raises them, lower cuts them.",
       "interaction": "Same on every difficulty. PRICES TRADERS PAY and PRICES YOU PAY still apply on top.",
       "exposeInUi": false
     },
@@ -11467,7 +11467,7 @@
         "notes": []
       },
       "rationale": "Base price of artifacts. Vanilla: 1×. Higher = artifact hunting pays better.",
-      "logic": "100% preserves the vanilla category-cost setting. Higher values increase this category cost layer; lower values decrease it.",
+      "logic": "1× keeps vanilla prices for this category; higher raises them, lower cuts them.",
       "interaction": "Same on every difficulty. PRICES TRADERS PAY and PRICES YOU PAY still apply on top.",
       "exposeInUi": false
     },
@@ -11611,8 +11611,8 @@
         ]
       },
       "rationale": "Base price of mutant parts. Vanilla: 1×. Higher = hunting mutants pays better.",
-      "logic": "100% keeps every mutant part at its vanilla base value. 50% halves every part's base value; 200% doubles it. A Chimera part still stays much more valuable than a Blind Dog part because all prices are scaled together.",
-      "interaction": "Trader pricing is applied separately. For example, at 100% the base game uses 1,000 coupons for Blind Dog loot and 18,000 for Chimera loot before trader-specific buy/sell rules.",
+      "logic": "1× keeps every mutant part at its vanilla value; 0.5× halves it, 2× doubles it. A Chimera part stays far more valuable than a Blind Dog part because all prices scale together.",
+      "interaction": "Trader pricing is applied separately. For example, at 1× the base game uses 1,000 coupons for Blind Dog loot and 18,000 for Chimera loot before trader-specific buy/sell rules.",
       "exposeInUi": false
     },
     {
@@ -11656,7 +11656,7 @@
         ]
       },
       "rationale": "What guides charge to take you to another area. Vanilla: 1×. Higher = fast travel hurts the wallet; 0 makes it free. Covers roaming guides too.",
-      "logic": "100% keeps vanilla guide prices. 50% halves paid routes, 200% doubles them, and 0% makes paid routes free.",
+      "logic": "1× keeps vanilla guide prices; 0.5× halves paid routes, 2× doubles them, 0× makes them free.",
       "interaction": "Guide fees and their minimum price scale with this. Difficulty, reputation and region still shape the final price."
     },
     {
@@ -11699,7 +11699,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Price of weapon and armor upgrades. Vanilla: Novice and Stalker 100%, Veteran 125%, Master 150%. Which upgrades exist doesn't change.",
+      "rationale": "Price of weapon and armor upgrades. Vanilla: Novice and Stalker 1×, Veteran 1.25×, Master 1.5×. Which upgrades exist doesn't change.",
       "logic": "",
       "interaction": "Each upgrade still has its own base price. This setting makes upgrades generally cheaper or more expensive without changing their relative costs."
     },
@@ -11785,7 +11785,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Base price of repairs at a technician. Vanilla: 0.7. Your standing with the technician's faction still raises or lowers the final bill.",
+      "rationale": "Base price of repairs at a technician. Vanilla: 0.7×. Your standing with the technician's faction still raises or lowers the final bill.",
       "logic": "",
       "interaction": "Reputation-based repair prices still apply and can further raise or lower the final repair bill."
     },
@@ -11993,7 +11993,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Coupons you get for main story quests. Vanilla: Novice 135%, Stalker 100%, Veteran 75%, Master 55%.",
+      "rationale": "Coupons you get for main story quests. Vanilla: Novice 1.35×, Stalker 1×, Veteran 0.75×, Master 0.55×.",
       "logic": "",
       "interaction": "Side Quest Coupons are adjusted independently. This does not change stash rewards or starting money."
     },
@@ -12037,7 +12037,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Coupons you get for side quests. Vanilla: Novice 135%, Stalker 100%, Veteran 75%, Master 55%.",
+      "rationale": "Coupons you get for side quests. Vanilla: Novice 1.35×, Stalker 1×, Veteran 0.75×, Master 0.55×.",
       "logic": "",
       "interaction": "Main Quest Coupons are adjusted independently. This does not change stash rewards or starting money."
     },
@@ -13822,7 +13822,7 @@
         ]
       },
       "rationale": "How fast you can still move when a Flycatcher grabs you. Vanilla: 50% of normal speed. 100% = no slowdown; 0% = stuck in place.",
-      "logic": "Vanilla applies a -50% velocity change, so 50% of normal movement speed remains. 100% means no movement slowdown; 0% corresponds to a -100% velocity change.",
+      "logic": "Vanilla leaves 50% of your normal movement speed; 100% = no slowdown; 0% = stuck in place.",
       "interaction": "Changes only player movement slowdown inside the Flycatcher. Projectile slowdown, HP/stamina regeneration penalties and turn slowdown remain separate."
     },
     {
@@ -13872,7 +13872,7 @@
         ]
       },
       "rationale": "How fast you can still turn and look around inside a Flycatcher. Vanilla: 30% of normal. 100% = no slowdown.",
-      "logic": "Vanilla applies -0.7 to both yaw and pitch turn-rate effects, leaving 30% of normal turn speed. 100% means no turn slowdown; 0% corresponds to -1.0 on both effects.",
+      "logic": "Vanilla leaves 30% of your normal turn speed (left-right and up-down); 100% = no slowdown; 0% = you can't turn.",
       "interaction": "The same setting is applied to Flycatcher yaw and pitch so horizontal and vertical looking stay synchronized. Movement speed is controlled separately."
     },
     {
@@ -13915,7 +13915,7 @@
         "notes": []
       },
       "rationale": "How much health a Clicker hit takes. Vanilla: 70 base damage. Only the health damage changes; the hit still wears down your gear as usual.",
-      "logic": "Vanilla: 70 base burn damage per hit, before difficulty and your protection. 100% keeps it; 0% removes this health damage.",
+      "logic": "70 is vanilla base burn damage per hit, before difficulty and your protection; 0 removes this health damage.",
       "interaction": "Only the Clicker's hit damage changes. GLOBAL ANOMALY DAMAGE and your protection still apply; its gear corrosion is untouched.",
       "exposeInUi": false
     },
@@ -13965,8 +13965,8 @@
           "Runtime CFG stores low-speed Glass Shards damage as 20-25 and high-speed damage as 100. The slider scales both tiers together and leaves MinSpeed/MaxSpeed thresholds unchanged."
         ]
       },
-      "rationale": "How much health Glass Shards take as you move through them. Vanilla: 100%. Running through still hurts more than walking.",
-      "logic": "100% keeps vanilla Glass Shards damage. 0% removes its health damage; 200% doubles both low-speed and high-speed damage.",
+      "rationale": "How much health Glass Shards take as you move through them. Vanilla: 1×. Running through still hurts more than walking.",
+      "logic": "1× keeps vanilla Glass Shards damage; 0× removes its health damage; 2× doubles both walking and running damage.",
       "interaction": "Glass Shards Bleeding and Glass Shards equipment corrosion remain separate effects. This control does not change the anomaly speed thresholds.",
       "exposeInUi": false
     },
@@ -14016,8 +14016,8 @@
           "Runtime CFG stores Glass Shards bleeding as 20 at the low-speed tier and 60 at the high-speed tier. The slider scales both values together."
         ]
       },
-      "rationale": "How badly Glass Shards make you bleed. Vanilla: 100%. 0% = no bleeding; running through still cuts deeper than walking.",
-      "logic": "100% keeps vanilla Glass Shards bleeding. 0% removes it; 200% doubles it.",
+      "rationale": "How badly Glass Shards make you bleed. Vanilla: 1×. 0× = no bleeding; running through still cuts deeper than walking.",
+      "logic": "1× keeps vanilla Glass Shards bleeding; 0× removes it; 2× doubles it.",
       "interaction": "Glass Shards Health Damage is independent. Movement-speed thresholds and corrosion values remain vanilla."
     },
     {
@@ -14062,7 +14062,7 @@
         ]
       },
       "rationale": "How much health a Soap Bubble's chemical burn takes. Vanilla: 100. 0 removes the health damage only.",
-      "logic": "100% keeps vanilla Soap Bubble health damage. 0% removes it; 200% doubles it.",
+      "logic": "100 keeps vanilla Soap Bubble health damage; 0 removes it; 200 doubles it.",
       "interaction": "Does not change particle behavior, spread, movement or other Soap Bubble effects.",
       "exposeInUi": false
     },
@@ -14108,7 +14108,7 @@
         ]
       },
       "rationale": "How much health a Fireball's burn takes. Vanilla: 100. 0 removes the health damage only.",
-      "logic": "100% keeps vanilla Fireball health damage. 0% removes it; 200% doubles it.",
+      "logic": "100 keeps vanilla Fireball health damage; 0 removes it; 200 doubles it.",
       "interaction": "Does not change Fireball movement, trail, collision or other behavior.",
       "exposeInUi": false
     },
@@ -14155,7 +14155,7 @@
         ]
       },
       "rationale": "How much health a Diamond hit takes. Vanilla: 15. Its bleeding is a separate setting.",
-      "logic": "100% keeps vanilla Diamond health damage. 0% removes it; 200% doubles it.",
+      "logic": "15 keeps vanilla Diamond health damage; 0 removes it; 30 doubles it.",
       "interaction": "Diamond Bleeding is controlled separately.",
       "exposeInUi": false
     },
@@ -14245,8 +14245,8 @@
           "Runtime CFG stores PsyAnomalyIncreaseRegen as DegenPsyPoints with ValueMin/ValueMax = -1.7/-1.7. The UI exposes the magnitude as a positive 0-200% multiplier."
         ]
       },
-      "rationale": "How fast psy anomalies drain your psy meter. Vanilla: 100%. 0% = they stop draining it; 200% = twice as fast.",
-      "logic": "100% keeps vanilla Psy intensity. 0% removes this Psy effect; 200% doubles its strength.",
+      "rationale": "How fast psy anomalies drain your psy meter. Vanilla: 1×. 0× = they stop draining it; 2× = twice as fast.",
+      "logic": "1× keeps vanilla psy drain; 0× removes it; 2× doubles it.",
       "interaction": "Changes the continuous Psy drain only. Other Psy effects and thresholds remain unchanged."
     },
     {
@@ -14291,8 +14291,8 @@
           "SpawnChanceBase (25) and SpawnChanceBonus (15) are both scaled; how the engine applies the bonus is not documented, so both keep their ratio."
         ]
       },
-      "rationale": "Odds that a field actually drops an artifact when it regrows. Vanilla: 25% (+15% bonus). 2× = 50% (+30%); 0× = anomaly fields never grow artifacts.",
-      "logic": "1x keeps the game's 25% / 15%. Each value is multiplied and capped at 100%. 0x removes world anomaly artifacts; quest and unique artifacts stay.",
+      "rationale": "Odds that a field actually drops an artifact when it regrows. Vanilla: 1× (25% + 15% bonus). 2× = 50% (+30%); 0× = anomaly fields never grow artifacts.",
+      "logic": "1× keeps the game's 25% / 15%. Each value is multiplied and capped at 100%. 0× removes world anomaly artifacts; quest and unique artifacts stay.",
       "interaction": "RARE LUCK and PER SPAWN shape what a successful roll gives. When fields refill is the game's own schedule (after emissions)."
     },
     {
@@ -14337,7 +14337,7 @@
           "Vanilla split (Common/Uncommon/Rare/Epic): Newbie 80/20/0/0, Experienced 50/48/1.9/0.1, Veteran 30/59/10/1, Master 10/65/20/5. Newbie areas have no rare artifacts and stay unchanged."
         ]
       },
-      "rationale": "How often a find is rare or epic. Vanilla: 25% in Master zones, 11% in Veteran. 2× roughly doubles that; 0.5× makes a top-tier artifact a real event. Newbie zones never drop rare ones.",
+      "rationale": "How often a find is rare or epic. Vanilla: 1× (25% in Master zones, 11% in Veteran). 2× roughly doubles that; 0.5× makes a top-tier artifact a real event. Newbie zones never drop rare ones.",
       "logic": "Rare and Epic shares are multiplied, then all four shares are scaled back to 100%. Beginner (Newbie) areas never grow rare artifacts in the game and keep that.",
       "interaction": "Changes only which rarity a spawned artifact gets. SPAWN CHANCE and PER SPAWN decide how many artifacts appear."
     },
@@ -15107,8 +15107,8 @@
           "DLC1 uses its own DLCGameData/DLC1/WeaponData/CharacterWeaponSettingsPrototypes.cfg with 11 non-zero player entries."
         ]
       },
-      "rationale": "How fast your guns wear out when you shoot. Vanilla: 100%. 50% = about twice as many shots between repairs; 200% = half as many. A healthier gun also jams less.",
-      "logic": "100% keeps vanilla wear. 50% roughly halves condition loss per shot. 200% roughly doubles it.",
+      "rationale": "How fast your guns wear out when you shoot. Vanilla: 1×. 0.5× = about twice as many shots between repairs; 2× = half as many. A healthier gun also jams less.",
+      "logic": "1× keeps vanilla wear; 0.5× roughly halves condition loss per shot; 2× roughly doubles it.",
       "interaction": "Weapon Jam Rate is separate. Slower wear indirectly delays condition-related jams because your gun stays healthy longer."
     },
     {
@@ -15870,7 +15870,7 @@
       },
       "rationale": "How big human squads can get while you're Experienced. Vanilla cap: 4 stalkers. How often squads show up doesn't change.",
       "logic": "Vanilla Experienced squads cap at 4 NPCs. Lower settings make squads smaller; higher settings allow larger squads.",
-      "interaction": "Each radar point represents one player rank. 1x keeps vanilla squad size; right-click that point or legend name to reset only that rank.",
+      "interaction": "Each radar point represents one player rank. 1× keeps vanilla squad size; right-click that point or legend name to reset only that rank.",
       "exposeInUi": false
     },
     {
@@ -15917,7 +15917,7 @@
       },
       "rationale": "How big human squads can get while you're a Veteran. Vanilla cap: 5 stalkers.",
       "logic": "Vanilla Veteran squads cap at 5 NPCs. Lower settings make squads smaller; higher settings allow larger squads.",
-      "interaction": "Each radar point represents one player rank. 1x keeps vanilla squad size; right-click that point or legend name to reset only that rank.",
+      "interaction": "Each radar point represents one player rank. 1× keeps vanilla squad size; right-click that point or legend name to reset only that rank.",
       "exposeInUi": false
     },
     {
@@ -15964,7 +15964,7 @@
       },
       "rationale": "How big human squads can get while you're a Master. Vanilla cap: 6 stalkers — late-game firefights get crowded.",
       "logic": "Vanilla Master squads cap at 6 NPCs. Lower settings make squads smaller; higher settings allow larger squads.",
-      "interaction": "Each radar point represents one player rank. 1x keeps vanilla squad size; right-click that point or legend name to reset only that rank.",
+      "interaction": "Each radar point represents one player rank. 1× keeps vanilla squad size; right-click that point or legend name to reset only that rank.",
       "exposeInUi": false
     },
     {
@@ -16168,7 +16168,7 @@
       },
       "rationale": "How many blind dogs can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 4 / 6 / 8 / 12. 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 4 / 6 / 8 / 12. Lower settings shrink groups; higher settings allow larger groups.",
-      "interaction": "This radar point changes only Blind Dog group size. 1x keeps vanilla; right-click the point or legend name to reset Blind Dog.",
+      "interaction": "This radar point changes only Blind Dog group size. 1× keeps vanilla; right-click the point or legend name to reset Blind Dog.",
       "exposeInUi": false
     },
     {
@@ -16236,7 +16236,7 @@
       },
       "rationale": "How many fleshs can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 2 / 3 / 5 / 6. 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 2 / 3 / 5 / 6. Lower settings shrink groups; higher settings allow larger groups.",
-      "interaction": "This radar point changes only Flesh group size. 1x keeps vanilla; right-click the point or legend name to reset Flesh.",
+      "interaction": "This radar point changes only Flesh group size. 1× keeps vanilla; right-click the point or legend name to reset Flesh.",
       "exposeInUi": false
     },
     {
@@ -16304,7 +16304,7 @@
       },
       "rationale": "How many controllers can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 0 / 1 / 1 / 1. 2× = up to twice as many per group; how often they spawn doesn't change. A Newbie cap of 0 stays 0.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 0 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
-      "interaction": "This radar point changes only Controller group size. 1x keeps vanilla; right-click the point or legend name to reset Controller.",
+      "interaction": "This radar point changes only Controller group size. 1× keeps vanilla; right-click the point or legend name to reset Controller.",
       "exposeInUi": false
     },
     {
@@ -16372,7 +16372,7 @@
       },
       "rationale": "How many poltergeists can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 1 / 1 / 2 / 2. 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 2 / 2. Lower settings shrink groups; higher settings allow larger groups.",
-      "interaction": "This radar point changes only Poltergeist group size. 1x keeps vanilla; right-click the point or legend name to reset Poltergeist.",
+      "interaction": "This radar point changes only Poltergeist group size. 1× keeps vanilla; right-click the point or legend name to reset Poltergeist.",
       "exposeInUi": false
     },
     {
@@ -16440,7 +16440,7 @@
       },
       "rationale": "How many snorks can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 1 / 3 / 4 / 6. 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 3 / 4 / 6. Lower settings shrink groups; higher settings allow larger groups.",
-      "interaction": "This radar point changes only Snork group size. 1x keeps vanilla; right-click the point or legend name to reset Snork.",
+      "interaction": "This radar point changes only Snork group size. 1× keeps vanilla; right-click the point or legend name to reset Snork.",
       "exposeInUi": false
     },
     {
@@ -16508,7 +16508,7 @@
       },
       "rationale": "How many boars can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 2 / 3 / 5 / 6. 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 2 / 3 / 5 / 6. Lower settings shrink groups; higher settings allow larger groups.",
-      "interaction": "This radar point changes only Boar group size. 1x keeps vanilla; right-click the point or legend name to reset Boar.",
+      "interaction": "This radar point changes only Boar group size. 1× keeps vanilla; right-click the point or legend name to reset Boar.",
       "exposeInUi": false
     },
     {
@@ -16576,7 +16576,7 @@
       },
       "rationale": "How many chimeras can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 1 / 1 / 1 / 1. 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
-      "interaction": "This radar point changes only Chimera group size. 1x keeps vanilla; right-click the point or legend name to reset Chimera.",
+      "interaction": "This radar point changes only Chimera group size. 1× keeps vanilla; right-click the point or legend name to reset Chimera.",
       "exposeInUi": false
     },
     {
@@ -16644,7 +16644,7 @@
       },
       "rationale": "How many bayuns can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 1 / 1 / 1 / 2. 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 2. Lower settings shrink groups; higher settings allow larger groups.",
-      "interaction": "This radar point changes only Bayun group size. 1x keeps vanilla; right-click the point or legend name to reset Bayun.",
+      "interaction": "This radar point changes only Bayun group size. 1× keeps vanilla; right-click the point or legend name to reset Bayun.",
       "exposeInUi": false
     },
     {
@@ -16712,7 +16712,7 @@
       },
       "rationale": "How many tushkans can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 6 / 8 / 12 / 16. 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 6 / 8 / 12 / 16. Lower settings shrink groups; higher settings allow larger groups.",
-      "interaction": "This radar point changes only Tushkan group size. 1x keeps vanilla; right-click the point or legend name to reset Tushkan.",
+      "interaction": "This radar point changes only Tushkan group size. 1× keeps vanilla; right-click the point or legend name to reset Tushkan.",
       "exposeInUi": false
     },
     {
@@ -16780,7 +16780,7 @@
       },
       "rationale": "How many rat swarms can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 1 / 1 / 1 / 1. 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
-      "interaction": "This radar point changes only Rat Swarm group size. 1x keeps vanilla; right-click the point or legend name to reset Rat Swarm.",
+      "interaction": "This radar point changes only Rat Swarm group size. 1× keeps vanilla; right-click the point or legend name to reset Rat Swarm.",
       "exposeInUi": false
     },
     {
@@ -16848,7 +16848,7 @@
       },
       "rationale": "How many burers can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 1 / 1 / 1 / 2. 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 2. Lower settings shrink groups; higher settings allow larger groups.",
-      "interaction": "This radar point changes only Burer group size. 1x keeps vanilla; right-click the point or legend name to reset Burer.",
+      "interaction": "This radar point changes only Burer group size. 1× keeps vanilla; right-click the point or legend name to reset Burer.",
       "exposeInUi": false
     },
     {
@@ -16916,7 +16916,7 @@
       },
       "rationale": "How many pseudodogs can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 1 / 1 / 1 / 1. 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
-      "interaction": "This radar point changes only Pseudodog group size. 1x keeps vanilla; right-click the point or legend name to reset Pseudodog.",
+      "interaction": "This radar point changes only Pseudodog group size. 1× keeps vanilla; right-click the point or legend name to reset Pseudodog.",
       "exposeInUi": false
     },
     {
@@ -16984,7 +16984,7 @@
       },
       "rationale": "How many deers can show up together. Vanilla caps by your rank (Newbie / Experienced / Veteran / Master): 1 / 1 / 1 / 1. 2× = up to twice as many per group; how often they spawn doesn't change.",
       "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
-      "interaction": "This radar point changes only Deer group size. 1x keeps vanilla; right-click the point or legend name to reset Deer.",
+      "interaction": "This radar point changes only Deer group size. 1× keeps vanilla; right-click the point or legend name to reset Deer.",
       "exposeInUi": false
     },
     {

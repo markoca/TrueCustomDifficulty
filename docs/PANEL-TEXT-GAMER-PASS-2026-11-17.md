@@ -38,3 +38,9 @@ The right-hand panel shows four sections for a selected control: **WHAT IT DOES*
 
 15. When a board's drawn name was explicitly approved (e.g. HEALING ITEM EFFICIENCY REDUCTION, STARVATION MECHANICS), the label follows the board, not the other way round.
 16. NPC LOOT card texts follow rules 8–9 too; card texts must not describe retired controls.
+
+## Sixth pass (same day)
+
+17. Texts use the unit the control shows: × for multiplier readouts, % for percent readouts, plain numbers for raw values. A resulting real-world value may follow in brackets (`Vanilla: 1× (45 seconds)`).
+18. Sibling readouts on one board use one unit (SEVERE FATIGUE: all signed %).
+19. Panel texts write multipliers with `×`.
