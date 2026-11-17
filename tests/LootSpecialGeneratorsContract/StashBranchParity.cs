@@ -85,13 +85,14 @@ internal static partial class Program
                     + "changed with rank, tier or difficulty, or leaked into SmartLoot");
                 if (StashEffectiveState.SmartCategoryId(categorySids[0]) is { } smartId)
                 {
+                    // SMART LOOT GIVES checkbox: OFF = 0, ON = 1 (toggle values).
                     var smartOff = NativeState(difficulty, (smartId, 0));
-                    var smartHalf = NativeState(difficulty, (smartId, .5));
+                    var smartOn = NativeState(difficulty, (smartId, 1));
                     Check(categorySids.All(sid =>
                             Math.Abs(smartOff.SmartFactor(sid)) < 1e-9
-                            && Math.Abs(smartHalf.SmartFactor(sid) - .5) < 1e-9
+                            && Math.Abs(smartOn.SmartFactor(sid) - 1) < 1e-9
                             && Math.Abs(smartOff.TierFactor(sid) - 1) < 1e-9),
-                        smartId + ": SMART ODDS cell must own SmartLoot only");
+                        smartId + ": SMART LOOT GIVES checkbox must own SmartLoot only");
                 }
             }
         }
@@ -184,7 +185,7 @@ internal static partial class Program
 
         var smartGrenades = NativeBranch(branches, "StashGrenade_Cheap",
             "ItemGenerators.[0].SmartLootParams.GrenadesParams.[0].Items");
-        var smartOff = NativeState("Easy", ("loot.stashSmartGrenadesOdds", 0));
+        var smartOff = NativeState("Easy", ("loot.stashSmartGrenades", 0));
         Check(smartGrenades.Field == "Weight"
             && smartGrenades.Items.All(item =>
                 smartGrenades.EffectiveCount(Baseline, smartOff, item, "MinCount") == "0"
@@ -242,13 +243,11 @@ internal static partial class Program
                     ["loot.stashMixGrenades"] = 0,
                     ["loot.stashMixCoupons"] = 0
                 }),
-            (Name: "smart-odds-half", Difficulty: "Stalker", Dlc: true,
+            (Name: "smart-need-half", Difficulty: "Stalker", Dlc: true,
                 Changes: new Dictionary<string, double>
                 {
-                    ["loot.stashSmartMedsOdds"] = .5,
-                    ["loot.stashSmartAmmoOdds"] = .5,
-                    ["loot.stashSmartFoodDrinksOdds"] = 0,
-                    ["loot.stashSmartGrenadesOdds"] = .5
+                    ["loot.stashSmartStockedChance"] = 0,
+                    ["loot.stashSmartShortChance"] = .5
                 }),
             (Name: "hard-bonus-medical-dlc", Difficulty: "Veteran", Dlc: true,
                 Changes: new Dictionary<string, double>

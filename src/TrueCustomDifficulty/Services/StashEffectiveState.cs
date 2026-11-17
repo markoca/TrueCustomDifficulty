@@ -437,15 +437,16 @@ public sealed class StashEffectiveState
     /// <summary>Six-colour category of a SmartLoot item (classification only).</summary>
     public static string? SmartItemBiasId(string sid) => ItemBiasId(sid);
 
-    // SMART ODDS (2026-11-17): SmartLoot has its own keep-odds cells on the
-    // STASH SMART LOOT board. The Basic MEDS / FOOD / DRINKS cells and the
-    // hidden legacy ammo/grenade Weights no longer reach SmartLoot.
-    public const string SmartMedsId = "loot.stashSmartMedsOdds";
-    public const string SmartAmmoId = "loot.stashSmartAmmoOdds";
-    public const string SmartFoodDrinksId = "loot.stashSmartFoodDrinksOdds";
-    public const string SmartGrenadesId = "loot.stashSmartGrenadesOdds";
+    // SMART LOOT GIVES (2026-11-17): SmartLoot has its own per-category
+    // checkboxes on the STASH SMART LOOT board (ON = 1, OFF = 0). The Basic
+    // MEDS / FOOD / DRINKS cells and the hidden legacy ammo/grenade Weights
+    // no longer reach SmartLoot.
+    public const string SmartMedsId = "loot.stashSmartMeds";
+    public const string SmartAmmoId = "loot.stashSmartAmmo";
+    public const string SmartFoodDrinksId = "loot.stashSmartFoodDrinks";
+    public const string SmartGrenadesId = "loot.stashSmartGrenades";
 
-    /// <summary>SMART ODDS control of a SmartLoot item (null = no control, factor 1).</summary>
+    /// <summary>SMART LOOT GIVES checkbox of a SmartLoot item (null = no control, factor 1).</summary>
     public static string? SmartCategoryId(string sid) => ItemBiasId(sid) switch
     {
         "loot.stashMixMedical" => SmartMedsId,
@@ -459,7 +460,7 @@ public sealed class StashEffectiveState
         => SmartCategoryId(sid) is { } id ? Math.Max(0.0, Value(id)) : 1.0;
 
     /// <summary>
-    /// SmartLoot Weight factor: SMART ODDS cell × the item's own medical
+    /// SmartLoot Weight factor: SMART LOOT GIVES checkbox (1/0) × the item's own medical
     /// odds (Bandage/Medkit/Army Medkit/Anti-Rad, shared with every tier).
     /// </summary>
     public double SmartFactor(string sid)
@@ -479,7 +480,7 @@ public sealed class StashEffectiveState
         return selectionField switch
         {
             "Weight" => SmartFactor(sid),
-            // Chance rows: the item's medical Chance scale × its SMART ODDS cell.
+            // Chance rows: the item's medical Chance scale × its SMART LOOT GIVES checkbox.
             "Chance" => ChanceFactor(sid) * SmartCategoryFactor(sid),
             _ => throw new InvalidDataException("Unknown stash selection field: " + selectionField)
         };

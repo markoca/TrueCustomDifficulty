@@ -8169,7 +8169,7 @@
       },
       "rationale": "How much of the game's odds for meds you keep in Basic stashes (the Basic MEDS cell). Vanilla: 100%. 50% = half as often, 0% = never. Food and drinks keep their own odds.",
       "logic": "100% keeps the game's meds odds; 50% halves them; 0% removes meds from Basic stashes. Other items are not affected.",
-      "interaction": "Standard and Rare stashes have their own cells in ADJUST ODDS. MEDICAL COMPOSITION multiplies per item on top of this. Smart loot has its own SMART ODDS cell (STASH SMART LOOT).",
+      "interaction": "Standard and Rare stashes have their own cells in ADJUST ODDS. MEDICAL COMPOSITION multiplies per item on top of this. Smart loot has its own SMART LOOT GIVES checkboxes (STASH SMART LOOT).",
       "exposeInUi": true
     },
     {
@@ -8223,7 +8223,7 @@
       },
       "rationale": "How much of the game's odds for food you keep in Basic stashes (the Basic FOOD cell). Vanilla: 100%. 50% = half as often, 0% = never. Meds and drinks keep their own odds.",
       "logic": "100% keeps the game's food odds; 50% halves them; 0% removes food from Basic stashes. Other items are not affected.",
-      "interaction": "Standard and Rare stashes have their own cells in ADJUST ODDS. Stack sizes stay separate. Smart loot has its own SMART ODDS cell (STASH SMART LOOT).",
+      "interaction": "Standard and Rare stashes have their own cells in ADJUST ODDS. Stack sizes stay separate. Smart loot has its own SMART LOOT GIVES checkboxes (STASH SMART LOOT).",
       "exposeInUi": true
     },
     {
@@ -8277,7 +8277,7 @@
       },
       "rationale": "How much of the game's odds for drinks — water, energy drinks, milk and vodka — you keep in Basic stashes (the Basic DRINKS cell). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
       "logic": "100% keeps the game's drinks odds; 50% halves them; 0% removes drinks from Basic stashes. Other items are not affected.",
-      "interaction": "Standard and Rare stashes have their own cells in ADJUST ODDS. Stack sizes stay separate. Smart loot has its own SMART ODDS cell (STASH SMART LOOT).",
+      "interaction": "Standard and Rare stashes have their own cells in ADJUST ODDS. Stack sizes stay separate. Smart loot has its own SMART LOOT GIVES checkboxes (STASH SMART LOOT).",
       "exposeInUi": true
     },
     {
@@ -9092,29 +9092,21 @@
       "requiresToggle": "loot.stashSmartLootEnabled"
     },
     {
-      "id": "loot.stashSmartMedsOdds",
+      "id": "loot.stashSmartMeds",
       "tab": "stashes",
       "group": "Stash Smart Loot",
-      "label": "Smart Meds Odds",
-      "description": "Keeps X% of the game's odds for meds (Bandage, Medkit, Army Medkit, Anti-Rad) in the smart loot sets of ordinary stashes. Basic, Standard and Rare stash lists are not affected.",
-      "control": "slider",
-      "valueKind": "multiplier",
+      "label": "Smart Loot Gives Meds",
+      "description": "Lets the smart loot sets of ordinary stashes give meds (Bandage, Medkit, Army Medkit, Anti-Rad). OFF removes them from smart loot only; Basic, Standard and Rare stash lists are not affected.",
+      "control": "toggle",
+      "valueKind": "boolean",
       "display": {
-        "primary": "percent",
-        "rawFormat": "0.00",
-        "valueLabel": "Kept share of game odds"
+        "valueLabel": "Smart Loot Gives Meds"
       },
       "vanilla": {
-        "All": 1
+        "All": true
       },
       "default": {
         "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0,
-        "max": 1,
-        "step": 0.05,
-        "stepMode": "absolute"
       },
       "targets": [
         {
@@ -9122,47 +9114,39 @@
           "file": "GameData/StashPrototypes.cfg",
           "prototype": "TCD_ clones of StashMedicine_Smart / StashMedicine_Cheap (+ actor redirects, DLC1 when present)",
           "path": "ItemGenerators/[rank]/SmartLootParams/<group>/[n] Items Weight/Chance and spawn endpoints",
-          "operation": "keep X% of game odds (Weight × X with endpoints × kept share; Chance × X)"
+          "operation": "OFF: Weight 0 (spawn endpoints × kept share) / Chance 0 for this category"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "SMART ODDS cell MEDS on the STASH SMART LOOT board.",
-          "Same keep-odds rule as the tier cells: Weight groups scale each Weight and the set's spawn endpoints by the kept share, so every item keeps exactly X of its game odds; Chance rows scale their Chance.",
-          "Item-level medical odds and Medkit/Army Medkit MIN/MAX still apply on top."
+          "Checkbox Meds in SMART LOOT GIVES on the STASH SMART LOOT board.",
+          "OFF zeroes this category inside every ordinary-stash SmartLoot set; Weight groups lose that share of their spawn chance, so the other items keep exactly their game odds.",
+          "Item-level medical odds and Medkit/Army Medkit MIN/MAX still apply while ON."
         ]
       },
-      "rationale": "How often stash smart loot gives meds (Bandage, Medkit, Army Medkit, Anti-Rad). Vanilla: 100% (the game's odds). 50% = about half as often; 0% = never from smart loot.",
-      "logic": "Keeps X% of the game's odds for this category inside every stash smart loot set; the Basic/Standard/Rare cells do not touch smart loot.",
+      "rationale": "Whether stash smart loot can give meds (Bandage, Medkit, Army Medkit, Anti-Rad). Vanilla: ON.",
+      "logic": "OFF removes this category from stash smart loot; ON keeps the game's odds. Basic/Standard/Rare cells never touch smart loot.",
       "interaction": "Smart loot switch, EXTRA LOOT WHEN STOCKED / WHEN LOW and SUPPLY REDUCTION apply on top.",
       "requiresToggle": "loot.stashSmartLootEnabled",
       "exposeInUi": true
     },
     {
-      "id": "loot.stashSmartAmmoOdds",
+      "id": "loot.stashSmartAmmo",
       "tab": "stashes",
       "group": "Stash Smart Loot",
-      "label": "Smart Ammo Odds",
-      "description": "Keeps X% of the game's odds for ammo for the weapons you carry in the smart loot sets of ordinary stashes. Basic, Standard and Rare stash lists are not affected.",
-      "control": "slider",
-      "valueKind": "multiplier",
+      "label": "Smart Loot Gives Ammo",
+      "description": "Lets the smart loot sets of ordinary stashes give ammo for the weapons you carry. OFF removes them from smart loot only; Basic, Standard and Rare stash lists are not affected.",
+      "control": "toggle",
+      "valueKind": "boolean",
       "display": {
-        "primary": "percent",
-        "rawFormat": "0.00",
-        "valueLabel": "Kept share of game odds"
+        "valueLabel": "Smart Loot Gives Ammo"
       },
       "vanilla": {
-        "All": 1
+        "All": true
       },
       "default": {
         "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0,
-        "max": 1,
-        "step": 0.05,
-        "stepMode": "absolute"
       },
       "targets": [
         {
@@ -9170,47 +9154,39 @@
           "file": "GameData/StashPrototypes.cfg",
           "prototype": "TCD_ clones of Stash_Ammo_Smart_* / Stash_AmmoNATO|SNG_Smart* (+ actor redirects, DLC1 when present)",
           "path": "ItemGenerators/[rank]/SmartLootParams/<group>/[n] Items Weight/Chance and spawn endpoints",
-          "operation": "keep X% of game odds (Weight × X with endpoints × kept share; Chance × X)"
+          "operation": "OFF: Weight 0 (spawn endpoints × kept share) / Chance 0 for this category"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "SMART ODDS cell AMMO on the STASH SMART LOOT board.",
-          "Same keep-odds rule as the tier cells: Weight groups scale each Weight and the set's spawn endpoints by the kept share, so every item keeps exactly X of its game odds; Chance rows scale their Chance.",
-          "Item-level medical odds and Medkit/Army Medkit MIN/MAX still apply on top."
+          "Checkbox Ammo in SMART LOOT GIVES on the STASH SMART LOOT board.",
+          "OFF zeroes this category inside every ordinary-stash SmartLoot set; Weight groups lose that share of their spawn chance, so the other items keep exactly their game odds.",
+          "Item-level medical odds and Medkit/Army Medkit MIN/MAX still apply while ON."
         ]
       },
-      "rationale": "How often stash smart loot gives ammo for the weapons you carry. Vanilla: 100% (the game's odds). 50% = about half as often; 0% = never from smart loot.",
-      "logic": "Keeps X% of the game's odds for this category inside every stash smart loot set; the Basic/Standard/Rare cells do not touch smart loot.",
+      "rationale": "Whether stash smart loot can give ammo for the weapons you carry. Vanilla: ON.",
+      "logic": "OFF removes this category from stash smart loot; ON keeps the game's odds. Basic/Standard/Rare cells never touch smart loot.",
       "interaction": "Smart loot switch, EXTRA LOOT WHEN STOCKED / WHEN LOW and SUPPLY REDUCTION apply on top.",
       "requiresToggle": "loot.stashSmartLootEnabled",
       "exposeInUi": true
     },
     {
-      "id": "loot.stashSmartFoodDrinksOdds",
+      "id": "loot.stashSmartFoodDrinks",
       "tab": "stashes",
       "group": "Stash Smart Loot",
-      "label": "Smart Food & Drinks Odds",
-      "description": "Keeps X% of the game's odds for food and drinks in the smart loot sets of ordinary stashes. Basic, Standard and Rare stash lists are not affected.",
-      "control": "slider",
-      "valueKind": "multiplier",
+      "label": "Smart Loot Gives Food & Drinks",
+      "description": "Lets the smart loot sets of ordinary stashes give food and drinks. OFF removes them from smart loot only; Basic, Standard and Rare stash lists are not affected.",
+      "control": "toggle",
+      "valueKind": "boolean",
       "display": {
-        "primary": "percent",
-        "rawFormat": "0.00",
-        "valueLabel": "Kept share of game odds"
+        "valueLabel": "Smart Loot Gives Food & Drinks"
       },
       "vanilla": {
-        "All": 1
+        "All": true
       },
       "default": {
         "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0,
-        "max": 1,
-        "step": 0.05,
-        "stepMode": "absolute"
       },
       "targets": [
         {
@@ -9218,47 +9194,39 @@
           "file": "GameData/StashPrototypes.cfg",
           "prototype": "TCD_ clones of StashFood_Smart / StashFood_Cheap (+ actor redirects, DLC1 when present)",
           "path": "ItemGenerators/[rank]/SmartLootParams/<group>/[n] Items Weight/Chance and spawn endpoints",
-          "operation": "keep X% of game odds (Weight × X with endpoints × kept share; Chance × X)"
+          "operation": "OFF: Weight 0 (spawn endpoints × kept share) / Chance 0 for this category"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "SMART ODDS cell FOOD & DRINKS on the STASH SMART LOOT board.",
-          "Same keep-odds rule as the tier cells: Weight groups scale each Weight and the set's spawn endpoints by the kept share, so every item keeps exactly X of its game odds; Chance rows scale their Chance.",
-          "Item-level medical odds and Medkit/Army Medkit MIN/MAX still apply on top."
+          "Checkbox Food & Drinks in SMART LOOT GIVES on the STASH SMART LOOT board.",
+          "OFF zeroes this category inside every ordinary-stash SmartLoot set; Weight groups lose that share of their spawn chance, so the other items keep exactly their game odds.",
+          "Item-level medical odds and Medkit/Army Medkit MIN/MAX still apply while ON."
         ]
       },
-      "rationale": "How often stash smart loot gives food and drinks. Vanilla: 100% (the game's odds). 50% = about half as often; 0% = never from smart loot.",
-      "logic": "Keeps X% of the game's odds for this category inside every stash smart loot set; the Basic/Standard/Rare cells do not touch smart loot.",
+      "rationale": "Whether stash smart loot can give food and drinks. Vanilla: ON.",
+      "logic": "OFF removes this category from stash smart loot; ON keeps the game's odds. Basic/Standard/Rare cells never touch smart loot.",
       "interaction": "Smart loot switch, EXTRA LOOT WHEN STOCKED / WHEN LOW and SUPPLY REDUCTION apply on top.",
       "requiresToggle": "loot.stashSmartLootEnabled",
       "exposeInUi": true
     },
     {
-      "id": "loot.stashSmartGrenadesOdds",
+      "id": "loot.stashSmartGrenades",
       "tab": "stashes",
       "group": "Stash Smart Loot",
-      "label": "Smart Grenades Odds",
-      "description": "Keeps X% of the game's odds for grenades in the smart loot sets of ordinary stashes. Basic, Standard and Rare stash lists are not affected.",
-      "control": "slider",
-      "valueKind": "multiplier",
+      "label": "Smart Loot Gives Grenades",
+      "description": "Lets the smart loot sets of ordinary stashes give grenades. OFF removes them from smart loot only; Basic, Standard and Rare stash lists are not affected.",
+      "control": "toggle",
+      "valueKind": "boolean",
       "display": {
-        "primary": "percent",
-        "rawFormat": "0.00",
-        "valueLabel": "Kept share of game odds"
+        "valueLabel": "Smart Loot Gives Grenades"
       },
       "vanilla": {
-        "All": 1
+        "All": true
       },
       "default": {
         "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0,
-        "max": 1,
-        "step": 0.05,
-        "stepMode": "absolute"
       },
       "targets": [
         {
@@ -9266,19 +9234,19 @@
           "file": "GameData/StashPrototypes.cfg",
           "prototype": "TCD_ clones of StashGrenade_Smart / StashGrenade_Cheap (+ actor redirects, DLC1 when present)",
           "path": "ItemGenerators/[rank]/SmartLootParams/<group>/[n] Items Weight/Chance and spawn endpoints",
-          "operation": "keep X% of game odds (Weight × X with endpoints × kept share; Chance × X)"
+          "operation": "OFF: Weight 0 (spawn endpoints × kept share) / Chance 0 for this category"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "SMART ODDS cell GRENADES on the STASH SMART LOOT board.",
-          "Same keep-odds rule as the tier cells: Weight groups scale each Weight and the set's spawn endpoints by the kept share, so every item keeps exactly X of its game odds; Chance rows scale their Chance.",
-          "Item-level medical odds and Medkit/Army Medkit MIN/MAX still apply on top."
+          "Checkbox Grenades in SMART LOOT GIVES on the STASH SMART LOOT board.",
+          "OFF zeroes this category inside every ordinary-stash SmartLoot set; Weight groups lose that share of their spawn chance, so the other items keep exactly their game odds.",
+          "Item-level medical odds and Medkit/Army Medkit MIN/MAX still apply while ON."
         ]
       },
-      "rationale": "How often stash smart loot gives grenades. Vanilla: 100% (the game's odds). 50% = about half as often; 0% = never from smart loot.",
-      "logic": "Keeps X% of the game's odds for this category inside every stash smart loot set; the Basic/Standard/Rare cells do not touch smart loot.",
+      "rationale": "Whether stash smart loot can give grenades. Vanilla: ON.",
+      "logic": "OFF removes this category from stash smart loot; ON keeps the game's odds. Basic/Standard/Rare cells never touch smart loot.",
       "interaction": "Smart loot switch, EXTRA LOOT WHEN STOCKED / WHEN LOW and SUPPLY REDUCTION apply on top.",
       "requiresToggle": "loot.stashSmartLootEnabled",
       "exposeInUi": true

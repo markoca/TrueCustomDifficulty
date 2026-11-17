@@ -52,7 +52,7 @@ expected = {
 }
 ids = [p["id"] for p in catalog["parameters"] if p["tab"] == "stashes"]
 assert len(ids) == len(set(ids)) == 49
-assert set(ids) == set(sum(expected.values(), [])) | {"loot.stashSmartStockedChance", "loot.stashSmartShortChance", "loot.stashSmartLootEnabled", "loot.stashSmartMedsOdds", "loot.stashSmartAmmoOdds", "loot.stashSmartFoodDrinksOdds", "loot.stashSmartGrenadesOdds"}
+assert set(ids) == set(sum(expected.values(), [])) | {"loot.stashSmartStockedChance", "loot.stashSmartShortChance", "loot.stashSmartLootEnabled", "loot.stashSmartMeds", "loot.stashSmartAmmo", "loot.stashSmartFoodDrinks", "loot.stashSmartGrenades"}
 family_ids = source.split("private static IReadOnlyList<string> GetFamilyIds(", 1)[1]
 for family, expected_ids in expected.items():
     hit = re.search(r'"' + re.escape(family) + r'"\s*=>\s*new\[\]\s*\{(.*?)\}', family_ids, re.S)

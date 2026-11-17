@@ -29,8 +29,8 @@ NEW_IDS |= {"combat.npcFogVisibility", "combat.npcRainNoise", "combat.npcStormNo
             "health.ecoMedkitHealTime", "loot.looseArtifactsRemoved",
             "loot.medicalBoxArmyMedkitWeight", "loot.stashSmartStockedChance",
             "loot.stashSmartShortChance", "loot.stashSmartLootEnabled",
-            "loot.npcSmartLootEnabled", "loot.stashSmartMedsOdds", "loot.stashSmartAmmoOdds",
-            "loot.stashSmartFoodDrinksOdds", "loot.stashSmartGrenadesOdds"}
+            "loot.npcSmartLootEnabled", "loot.stashSmartMeds", "loot.stashSmartAmmo",
+            "loot.stashSmartFoodDrinks", "loot.stashSmartGrenades"}
 
 presets = sorted((APP / "Presets").glob("*.json"))
 assert len(presets) == 12, len(presets)

@@ -26,8 +26,8 @@ POST_361_IDS = frozenset({
     # 2026-11-17: NPC SMART LOOT master (WriteCorpseSmartLoot).
     "loot.npcSmartLootEnabled",
     # 2026-11-17: SMART ODDS (stash SmartLoot categories).
-    "loot.stashSmartMedsOdds", "loot.stashSmartAmmoOdds",
-    "loot.stashSmartFoodDrinksOdds", "loot.stashSmartGrenadesOdds",
+    "loot.stashSmartMeds", "loot.stashSmartAmmo",
+    "loot.stashSmartFoodDrinks", "loot.stashSmartGrenades",
 })
 
 

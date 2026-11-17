@@ -4437,3 +4437,10 @@ GAME ODDS" right): MEDS, AMMO, FOOD & DRINKS, GRENADES keep-odds cells (same chr
 COMPOSITION cells, 4 across ≥ 520 DIP bank, else 2×2), dimmed while the smart switch is OFF. Basic cells
 no longer move the SMART columns; the SMART columns follow SMART ODDS. Stash Gear sort order shifted to
 331–337. Catalog 415 / 210 visible.
+
+## CURRENT 2026-11-17 — SMART LOOT GIVES CHECKBOXES (supersedes SMART ODDS cells)
+
+The card between the EXTRA LOOT knobs and CHANCE A SET APPEARS is **SMART LOOT GIVES**: four canonical
+`DrawWorldCheckRow` checkboxes — Meds, Ammo, Food & Drinks, Grenades — 4 across at ≥ 520-DIP bank,
+else 2×2; no percentages, no "100% = GAME ODDS" caption. Dimmed while the smart switch is OFF.
+Ids `loot.stashSmartMeds/Ammo/FoodDrinks/Grenades` (toggles, vanilla ON).

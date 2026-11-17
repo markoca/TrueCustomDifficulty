@@ -173,7 +173,7 @@ assert '"Chance" => ChanceFactor(sid) * SmartCategoryFactor(sid)' in _smart_sel
 assert "loot.stashMix" not in _smart_sel
 # ---- 13. Basic AMMO = the Basic stash ammo pick only (CFG: smart stashes are a separate system)
 # (explained in the cell's own panel card; hover tooltips are retired)
-assert "Smart loot ammo has its own SMART ODDS cell (STASH SMART LOOT)." in grid
+assert "Smart loot ammo has its own checkbox (STASH SMART LOOT → SMART LOOT GIVES). " in grid
 assert "ToolTip" not in grid and "StashControlHint" not in grid
 
 # ---- 14. CONTROLS help matches the boards --------------------------------

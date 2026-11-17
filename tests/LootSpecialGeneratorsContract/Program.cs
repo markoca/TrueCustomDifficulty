@@ -227,11 +227,11 @@ internal static partial class Program
             ("smart-bandage-zero", "loot.stashMedicalBandageBias", 0.0,
                 "TCD_StashMedicine_Smart", "ConsumablesParams", "1", "0", "Weight"),
             // SMART ODDS cells own SmartLoot categories (2026-11-17).
-            ("smart-ammo-zero", "loot.stashSmartAmmoOdds", 0.0,
+            ("smart-ammo-zero", "loot.stashSmartAmmo", 0.0,
                 "TCD_Stash_Ammo_Smart_CommonRare", "PrimaryWeaponParams", "0", "0", "Weight"),
-            ("smart-food-zero", "loot.stashSmartFoodDrinksOdds", 0.0,
+            ("smart-food-zero", "loot.stashSmartFoodDrinks", 0.0,
                 "TCD_StashFood_Cheap", "ConsumablesParams", "0", "0", "Weight"),
-            ("smart-grenade-weight-zero", "loot.stashSmartGrenadesOdds", 0.0,
+            ("smart-grenade-weight-zero", "loot.stashSmartGrenades", 0.0,
                 "TCD_StashGrenade_Cheap", "GrenadesParams", "0", "0", "Weight")
         };
         foreach (var (name, id, value, prototype, group, set, item, field) in cases)
@@ -242,7 +242,9 @@ internal static partial class Program
                 var vm = new MainViewModel(Catalog)
                     { SelectedReferenceDifficulty = "Stalker" };
                 var p = vm.AllParameters.Single(x => x.Id == id);
-                p.SnapCurrentNumberToMarker(value);
+                // SMART LOOT GIVES ids are checkboxes (OFF = 0).
+                if (p.IsToggle) p.CurrentBoolean = value > .5;
+                else p.SnapCurrentNumberToMarker(value);
                 Check(p.IsValueModifiedFromReference(), name + ": source did not change");
                 AssertOnlyExpectedNonLootDefault(vm);
                 var edited = vm.AllParameters.Where(q => q.IsControlEnabled
@@ -324,8 +326,8 @@ internal static partial class Program
                     ["loot.stashMixAmmo"] = .5,
                     ["loot.cheapStashGrenadeChance"] = .4,
                     ["loot.expensiveStashMoneyChance"] = .8,
-                    // Tier MEDS 0% no longer reaches SmartLoot; its own cell does.
-                    ["loot.stashSmartMedsOdds"] = .5
+                    // Tier MEDS 0% no longer reaches SmartLoot; the Medkit item odds do.
+                    ["loot.stashMedicalMedkitChanceScale"] = .5
                 })
         };
         foreach (var scenario in samples)

@@ -34,8 +34,8 @@ for pid in IDS:
           and row.get("vanilla") == {"All": 1}
           and row.get("slider") == {"min": 0, "max": 2, "step": 0.05, "stepMode": "absolute"}
           and row.get("support", {}).get("status") == "runtime_test_required", f"catalog {pid}")
-SMART_ODDS = ["loot.stashSmartMedsOdds", "loot.stashSmartAmmoOdds",
-              "loot.stashSmartFoodDrinksOdds", "loot.stashSmartGrenadesOdds"]
+SMART_ODDS = ["loot.stashSmartMeds", "loot.stashSmartAmmo",
+              "loot.stashSmartFoodDrinks", "loot.stashSmartGrenades"]
 check(baseline["special"].get("stashSmartNeed", {}).get("parameterIds")
       == ["loot.stashSmartLootEnabled", *IDS, *SMART_ODDS],
       "baseline special.stashSmartNeed")
@@ -90,14 +90,15 @@ check('"corpseSmartLootNeedBoostEnabled"' not in preset
 check('NeedBoost="{Binding DataContext.CorpseSmartLootNeedBoost' in xaml
       and 'NeedBoostEnabled=' not in xaml, "only NEED BOOST value bound")
 
-# ---- SMART ODDS: SmartLoot owns its category odds ------------------------------
+# ---- SMART LOOT GIVES: SmartLoot owns its categories (checkboxes) -------------
 check(all(catalog.get(i, {}).get("requiresToggle") == "loot.stashSmartLootEnabled"
-          and catalog[i].get("slider") == {"min": 0, "max": 1, "step": 0.05, "stepMode": "absolute"}
-          for i in SMART_ODDS), "SMART ODDS catalog (keep 0-100%, require the switch)")
+          and catalog[i].get("control") == "toggle" and catalog[i].get("vanilla") == {"All": True}
+          for i in SMART_ODDS), "SMART LOOT GIVES catalog (checkboxes, vanilla ON, require the switch)")
 check("public static string? SmartCategoryId(string sid)" in effective
       and '"loot.stashMixFood" or "loot.stashMixDrinks" => SmartFoodDrinksId' in effective
-      and ".Concat(StashSmartOddsParameterIds)" in smart, "SMART ODDS writer/state wiring")
-check('"SMART ODDS"' in board and "DrawStashMedicalCell(dc, P(spec.Id)" in board, "SMART ODDS cells on the board")
+      and ".Concat(StashSmartOddsParameterIds)" in smart, "SMART LOOT GIVES writer/state wiring")
+check('"SMART LOOT GIVES"' in board and "DrawWorldCheckRow(dc, parameter, spec.Label," in board,
+      "SMART LOOT GIVES checkboxes on the board")
 check(not any("smart world" in (catalog[i].get("description","") + catalog[i].get("rationale",""))
               for i in ("loot.stashMixMedical", "loot.stashMixFood", "loot.stashMixDrinks")),
       "Basic cells no longer claim to change smart loot")

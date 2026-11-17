@@ -90,25 +90,27 @@ Min/MaxSpawnChance / ItemSetCount identical (0 diffs). Groups also carry `Priori
 | AMMO AMOUNT, RGD-5 AMOUNT | tier lists | **no** (SmartLoot ammo/grenade counts stay vanilla) |
 | Smart loot switch, EXTRA LOOT WHEN STOCKED / LOW | no | yes |
 
-Resolved for odds by SMART ODDS (below). SmartLoot counts still follow none of the AMOUNT controls.
+Resolved by SMART LOOT GIVES (below). SmartLoot counts still follow none of the AMOUNT controls.
 
-## SMART ODDS — loot and smart loot fully separated (2026-11-17)
+## SMART LOOT GIVES — loot and smart loot fully separated (2026-11-17)
 
-| Cell (STASH SMART LOOT → SMART ODDS) | Id | Items |
+| Checkbox (STASH SMART LOOT → SMART LOOT GIVES) | Id | Items |
 |---|---|---|
-| MEDS | `loot.stashSmartMedsOdds` | Bandage, Medkit, Army Medkit, Eco Medkit, Anti-Rad |
-| AMMO | `loot.stashSmartAmmoOdds` | every `A…` ammo SID (weapon-caliber groups) |
-| FOOD & DRINKS | `loot.stashSmartFoodDrinksOdds` | Bread, Sausage, Canned Food, Water, Vodka, Energetic, Milk, Beer |
-| GRENADES | `loot.stashSmartGrenadesOdds` | RGD-5, F1 |
+| Meds | `loot.stashSmartMeds` | Bandage, Medkit, Army Medkit, Eco Medkit, Anti-Rad |
+| Ammo | `loot.stashSmartAmmo` | every `A…` ammo SID (weapon-caliber groups) |
+| Food & Drinks | `loot.stashSmartFoodDrinks` | Bread, Sausage, Canned Food, Water, Vodka, Energetic, Milk, Beer |
+| Grenades | `loot.stashSmartGrenades` | RGD-5, F1 |
 
-Keep 0–100% of the game's odds (step 5%), vanilla 100%, `requiresToggle` the smart loot switch. Same
-rule as the tier cells: Weight groups scale every Weight by X and the set's spawn endpoints by the kept
-share; Chance rows scale their Chance. `StashEffectiveState.SmartCategoryId` / `SmartFactor` are shared
-by the writer and every preview.
+Toggles, vanilla ON, `requiresToggle` the smart loot switch. OFF uses the keep-odds rule with X = 0:
+Weight groups zero that category's Weights and scale the set's spawn endpoints by the kept share (the
+other items keep exactly their game odds); Chance rows go to 0. `StashEffectiveState.SmartCategoryId` /
+`SmartFactor` (toggle = 1/0) are shared by the writer and every preview. A first version of this card
+used 0–100% sliders (`loot.stashSmart*Odds`, live for minutes on 2026-11-17); the user chose plain
+checkboxes because smart loot gives single items (1 Medkit, 10–15 rounds), so partial odds or amounts
+add little. Those slider ids are retired; presets carrying them simply ignore them.
 
-Now **only** these reach SmartLoot: SMART ODDS, the smart switch, EXTRA LOOT WHEN STOCKED / WHEN LOW,
-SUPPLY REDUCTION, the per-item medical odds (Bandage…Anti-Rad) and Medkit / Army Medkit MIN/MAX. The
-Basic MEDS / FOOD / DRINKS cells and the hidden legacy `stashMixAmmo` / `stashMixGrenades` change only
-the Basic/Standard/Rare lists. A legacy preset that lowered a Basic cell therefore no longer lowers
-smart loot. C# contracts updated (StashBranchParity, GenericLootPreGame, VerifyWorldStashSmartLoot,
-VerifyStashEffectiveParity).
+Now **only** these reach SmartLoot: SMART LOOT GIVES, the smart switch, EXTRA LOOT WHEN STOCKED / WHEN
+LOW, SUPPLY REDUCTION, the per-item medical odds (Bandage…Anti-Rad) and Medkit / Army Medkit MIN/MAX.
+The Basic MEDS / FOOD / DRINKS cells and the hidden legacy `stashMixAmmo` / `stashMixGrenades` change
+only the Basic/Standard/Rare lists. A legacy preset that lowered a Basic cell therefore no longer
+lowers smart loot. No SMART AMOUNT control (decision 2026-11-17).

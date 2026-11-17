@@ -4088,8 +4088,8 @@ elif _global_tab_counts != _global_expected_tabs:
     fail(f"global visible tab counts drifted: {_global_tab_counts}; expected {_global_expected_tabs}")
 elif _global_confirmed != 117 or _global_runtime != 93:
     fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 117/93")
-elif _global_control_counts != {"slider": 190, "toggle": 18, "choiceSlider": 1, "range": 1}:
-    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 190 sliders / 18 toggles / 1 choiceSlider / 1 range")
+elif _global_control_counts != {"slider": 186, "toggle": 22, "choiceSlider": 1, "range": 1}:
+    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 186 sliders / 22 toggles / 1 choiceSlider / 1 range")
 elif _global_duplicate_labels:
     fail(f"duplicate player-facing labels detected: {_global_duplicate_labels}")
 elif _global_out_of_range:

@@ -1089,21 +1089,21 @@
       "kind": "slider",
       "number": 1
     },
-    "loot.stashSmartMedsOdds": {
-      "kind": "slider",
-      "number": 1
+    "loot.stashSmartMeds": {
+      "kind": "toggle",
+      "boolean": true
     },
-    "loot.stashSmartAmmoOdds": {
-      "kind": "slider",
-      "number": 1
+    "loot.stashSmartAmmo": {
+      "kind": "toggle",
+      "boolean": true
     },
-    "loot.stashSmartFoodDrinksOdds": {
-      "kind": "slider",
-      "number": 1
+    "loot.stashSmartFoodDrinks": {
+      "kind": "toggle",
+      "boolean": true
     },
-    "loot.stashSmartGrenadesOdds": {
-      "kind": "slider",
-      "number": 1
+    "loot.stashSmartGrenades": {
+      "kind": "toggle",
+      "boolean": true
     },
     "loot.standardStashChanceScale": {
       "kind": "slider",

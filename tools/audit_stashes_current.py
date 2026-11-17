@@ -98,7 +98,7 @@ for name, expected in families.items():
     assert match, "Missing UI family: " + name
     actual = re.findall(r'"(loot\.[A-Za-z0-9.]+)"', match.group(1))
     assert actual == expected, f"Missing/misordered UI family controls: {name}: {actual}"
-assert set(stash) == set(rewards + mix + medical + bonus + ["loot.genericStashReduction", "loot.stashSmartStockedChance", "loot.stashSmartShortChance", "loot.stashSmartLootEnabled", "loot.stashSmartMedsOdds", "loot.stashSmartAmmoOdds", "loot.stashSmartFoodDrinksOdds", "loot.stashSmartGrenadesOdds"])
+assert set(stash) == set(rewards + mix + medical + bonus + ["loot.genericStashReduction", "loot.stashSmartStockedChance", "loot.stashSmartShortChance", "loot.stashSmartLootEnabled", "loot.stashSmartMeds", "loot.stashSmartAmmo", "loot.stashSmartFoodDrinks", "loot.stashSmartGrenades"])
 # MEDICAL COMPOSITION (2026-11-16) replaced the medical pair/priority board;
 # its cells and odds are checked by audit_stash_presence.py. No tooltips.
 # Hover feedback must align to the actual converted MIN/MAX handle centers,

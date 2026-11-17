@@ -48138,10 +48138,10 @@
         "loot.stashSmartLootEnabled",
         "loot.stashSmartStockedChance",
         "loot.stashSmartShortChance",
-        "loot.stashSmartMedsOdds",
-        "loot.stashSmartAmmoOdds",
-        "loot.stashSmartFoodDrinksOdds",
-        "loot.stashSmartGrenadesOdds"
+        "loot.stashSmartMeds",
+        "loot.stashSmartAmmo",
+        "loot.stashSmartFoodDrinks",
+        "loot.stashSmartGrenades"
       ],
       "source": "GameData/StashPrototypes.cfg",
       "scope": "Existing TCD stash SmartLoot clones (WriteWorldStashSmartLoot)",
