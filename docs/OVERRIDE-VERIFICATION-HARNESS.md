@@ -1,5 +1,7 @@
 # Override Verification — Current Scope
 
+> **Retired 2026-11-17:** `tools/audit_production_integration.py` was a dated snapshot generator (239/244-parameter census). Current gates: `tools/audit_final_cfg_mapping.py` (every catalog ID → production writer route), `tools/audit_project_consistency.py` and `python3 tools/pre_release.py static|cfg-routes|source`.
+
 The historical `v0.2.52` override-planning harness is not part of the current source tree. Its archived scenario totals are not a production release gate. Do not treat older generated reference patches or counts as evidence for the present catalog.
 
 For the current source-backed runtime-pending controls, use the active catalog and `cfg-writer-baseline.json`, along with `tools/audit_ui_cfg_contract.py`, `tools/audit_production_integration.py` and the production C# writer-contract suites listed in [Release Testing](RELEASE-TESTING.md).

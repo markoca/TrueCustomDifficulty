@@ -254,7 +254,9 @@ def main() -> int:
                         node = find_child(root, list(nested))
                         actual = (all_values(node, "PrototypeSID") if prop == "PrototypeSID*"
                                   else [node.values.get(prop, "")])
-                        if expected not in actual:
+                        # Rank-variant families are recorded as "A | B | C | D".
+                        wanted = expected.split(" | ") if prop == "PrototypeSID*" else [expected]
+                        if not all(x in actual for x in wanted):
                             raise ValueError("expected " + expected + ", got " + str(actual))
                         status["exact"] += 1
                     except ValueError as exc:

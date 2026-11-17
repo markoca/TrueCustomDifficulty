@@ -5,8 +5,8 @@ import json
 r=Path(__file__).resolve().parents[1]
 p=json.loads((r/"src/TrueCustomDifficulty/Data/parameters.json").read_text())["parameters"]
 by={v["id"]:v for v in p}
-assert len(p)==len(by)==361
-assert sum(v.get("exposeInUi",True) for v in p)==186
+assert len(p)==len(by)==399
+assert sum(v.get("exposeInUi",True) for v in p)==199
 names={
   "combat.npcHealth": "Human Enemy HP",
   "combat.playerWeaponDamage": "Weapon Damage",
@@ -22,11 +22,11 @@ names={
   "stamina.maxSP": "Max Stamina",
   "stamina.vaultMaxHeight": "Vault Height",
   "stamina.regeneration": "Stamina Regen",
-  "loot.npcCorpseBonus": "Extra Corpse Loot",
-  "loot.npcWeaponAmmoSupply": "Bonus Ammo Drops",
+  "loot.npcCorpseBonus": "Corpse Smart Loot",
+  "loot.npcWeaponAmmoSupply": "Bonus Ammo Amount",
   "loot.destructibleAmmoQuantity": "Ammo per Box",
   "loot.destructibleGrenadeQuantity": "Grenades per Box",
-  "loot.ammoBoxWeight918": "Ammo Type Mix",
+  "loot.ammoBoxWeight918": "9×18 / 9×19 Ammo Mix",
   "loot.stashGearCoveragePercent": "Bonus Gear Coverage",
   "loot.expensiveStashMoneyChance": "Rare Stash Coupon Chance",
   "economy.buyCondition": "Prices Traders Pay",
@@ -46,17 +46,15 @@ names={
 }
 assert len(names)==35
 assert by["economy.traderBuys.general.weapon"]["label"] == "Trader Buys"
-assert by["economy.traderSells.general.weapons"]["label"] == "Trader Sells"
+assert by["economy.traderSells.general.weapons"]["label"] == "Shopkeeper Sells Weapons"
 for pid,label in names.items():assert by[pid]["label"]==label,(pid,by[pid]["label"])
 for old in ("Item Price Scalers","Equipment Wear","Individual Anomaly Damage","Human Group Size"):assert all(x["group"]!=old for x in p),old
 check={
   "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs": [
     "STASH LOOT MIX",
-    "LOOT POOLS",
     "HUMAN ENEMY COMBAT",
     "GEAR WEAR",
     "BONUS GEAR COVERAGE",
-    "BONUS AMMO DROPS",
     "AMMO PER BOX",
     "GRENADES PER BOX",
     "AMMO TYPE MIX",
@@ -64,9 +62,6 @@ check={
     "PRICES YOU PAY",
     "STARVATION ACTION COST",
     "RADIATION STAMINA PENALTY"
-  ],
-  "src/TrueCustomDifficulty/Controls/AggregateVisualControl.StashBranch.cs": [
-    "MIX PREVIEW · "
   ],
   "src/TrueCustomDifficulty/Controls/ItemPriceScalersRadar.cs": [
     "ITEM VALUES"

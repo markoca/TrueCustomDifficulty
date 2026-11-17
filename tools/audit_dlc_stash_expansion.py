@@ -113,8 +113,8 @@ check('DlcSmartLootActorFile = "DLCGameData/DLC1/SpawnActorPrototypes.cfg"' in s
       "SmartLoot wrong DLC file scope")
 check("if (hasDlc1)" in smart_code and "DlcActors.Value" in smart_code,
       "DLC SmartLoot guard removed")
-check("IsApprovedDlcStashTierRedirect" in smart_code and
-      writer.count("!IsApprovedDlcStashTierRedirect") == 3,
+check("private static bool IsApprovedStashTierRedirect(" in smart_code and
+      writer.count("!IsApprovedStashTierRedirect(") == 3,
       "tier redirects not safety-filtered")
 check("WriteDlcCheapNoFreshStashes(" in writer and
       "GetOrAddReferencedRoot(TcdCheapNoFreshSid" in dlc_code and
@@ -130,7 +130,7 @@ check("if (!hasDlc1)" in dlc_code and
 for resource in ["dlc1-stash-eligible-actor-manifest.csv",
                  "cheap-no-fresh-stash-item-entries.csv"]:
     check("Data\\" + resource in project, "resource missing from csproj: " + resource)
-check('or "Beer" => "loot.stashMixDrinks"' in tuning,
+check('or "Beer" => "loot.stashMixDrinks"' in (SERVICES / "StashEffectiveState.cs").read_text(encoding="utf-8"),
       "Beer must use existing Drinks slider")
 check("VerifyDlcStashExpansion" in test and
       "DlcEligibleActorIds" in test,

@@ -1,5 +1,7 @@
 # UI → Real CFG Deep Audit
 
+> **Retired 2026-11-17:** `tools/audit_production_integration.py` was a dated snapshot generator (239/244-parameter census). Current gates: `tools/audit_final_cfg_mapping.py` (every catalog ID → production writer route), `tools/audit_project_consistency.py` and `python3 tools/pre_release.py static|cfg-routes|source`.
+
 > **HISTORICAL SNAPSHOT ONLY — v0.9.26.51.** The counts below (199 catalog / 188 editable) and its PASS apply **only to that earlier snapshot**. They do NOT describe the current source tree. The active catalog is 236 parameters / 223 editable dimensions, and this earlier audit missed six subsequently introduced mutant MaxHP writer routes. See [Deep CFG audit phase 1 (2026-10-09)](DEEP-CFG-AUDIT-2026-10-09.md) for the source-verified correction and current counts. Retained as an archived comparison, not as the current release approval.
 
 

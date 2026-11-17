@@ -36,7 +36,7 @@ def walk_parameter_ids(value, path="special"):
     if isinstance(value, dict):
         for key, child in value.items():
             child_path = f"{path}.{key}"
-            if key in {"parameterId", "ammoQuantityParameterId", "grenadeChanceParameterId", "grenadeQuantityParameterId", "couponChanceParameterId", "removalPercentParameterId"}:
+            if key in {"parameterId", "ammoQuantityParameterId", "grenadeChanceParameterId", "grenadeQuantityParameterId", "couponChanceParameterId", "removalPercentParameterId", "genericReductionParameterId"}:
                 yield child_path, child
             elif key in {"psyParameterKeys"} and isinstance(child, dict):
                 for parameter_id in child:
@@ -497,12 +497,12 @@ else:
 
 # Non-generator normal-UI coverage gate (v0.2.43).
 _non_gen_expected = {
-    "combat": (15, 11, 4),
+    "combat": (24, 11, 13),  # + HUMAN TACTICS / HUMAN AWARENESS (9, runtime test required)
     "health": (13, 10, 3),
     "stamina": (7, 6, 1),
     # Equipment is a separate tab again; CFG sources and total visibility are unchanged.
-    "survival": (31, 29, 2),
-    "economy": (19, 12, 7),  # Trader Buys native category matrix anchor is runtime-test-required.
+    "survival": (35, 29, 6),  # + 4 food satiety
+    "economy": (18, 12, 6),  # TRADER STOCK anchor runtime-test-required; TECHNICIAN hidden.
     "equipment": (6, 5, 1),
 }
 _non_gen_doc = DOCS / "NON-GENERATOR-CONTROL-VERIFICATION.md"
@@ -1076,7 +1076,7 @@ _special_knobs = _anomaly_ui_aggregate.split(
     "private void DrawFlycatcherEffects(", 1)[1].split(
     "private FormattedText CreateDerivedText(", 1)[0]
 if ('DrawSourceKnob(dc, P("environment.razorBleeding"), "GLASS SHARDS"' not in _special_knobs
-    or 'DrawSourceKnob(dc, P("environment.psyAnomalyIntensity"), "INTENSITY"' not in _special_knobs
+    or 'DrawSourceKnob(dc, P("environment.psyAnomalyIntensity"), "STRENGTH"' not in _special_knobs
     or 'const double gap = 10.0;' not in _special_knobs
     or 'var knobWidth = Math.Min(194.0, (area.Width - gap) / 2.0);' not in _special_knobs
     or 'new Rect(left, top, knobWidth, 181.0)' not in _special_knobs
@@ -1085,7 +1085,7 @@ if ('DrawSourceKnob(dc, P("environment.razorBleeding"), "GLASS SHARDS"' not in _
     or 'DrawEconomyCard(' in _special_knobs
     or '"AnomalySpecialEffects" => 270.0,' not in _anomaly_ui_aggregate):
     fail("Glass Shards/Psy Drain regress to sliders, wrong knob geometry or stale standalone host")
-if ('"StarvationTimeline" or "FlycatcherSlowdown" or "AnomalySpecialEffects"))'
+if ('"StarvationTimeline" or "FlycatcherSlowdown" or "AnomalySpecialEffects"'
     not in _anomaly_ui_aggregate):
     fail("Special-effect knobs lost source-step accurate mouse-wheel interaction")
 _fly_family = _anomaly_ui_aggregate.split('"FlycatcherSlowdown" => new[]', 1)[1].split('},', 1)[0]
@@ -1515,10 +1515,11 @@ _low_bleeding_points = [e for e in _survival_points if e.get("parameterId") == "
 _vm_source_survival = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "MainViewModel.cs").read_text(encoding="utf-8")
 _survival_mapping_text = _survival_mapping.read_text(encoding="utf-8") if _survival_mapping.exists() else ""
 
-if len(_survival_ui) != 31 or len(_survival_confirmed) != 29 or len(_survival_runtime) != 2:
-    fail(f"survival deep audit status split drifted: total={len(_survival_ui)} confirmed={len(_survival_confirmed)} runtime={len(_survival_runtime)}; expected 31/29/2")
-elif len(_survival_points) != 82:
-    fail(f"survival writer surface drifted: {len(_survival_points)} edit points; expected 82 native Survival targets")
+# +4 food satiety controls (runtime test required).
+if len(_survival_ui) != 35 or len(_survival_confirmed) != 29 or len(_survival_runtime) != 6:
+    fail(f"survival deep audit status split drifted: total={len(_survival_ui)} confirmed={len(_survival_confirmed)} runtime={len(_survival_runtime)}; expected 35/29/6")
+elif len(_survival_points) != 90:  # 82 + 4 food satiety ValueMin/ValueMax pairs
+    fail(f"survival writer surface drifted: {len(_survival_points)} edit points; expected 90 native Survival targets")
 elif (any(p["id"].startswith("equipment.") for p in _survival_ui)
       or any(e["parameterId"].startswith("equipment.") for e in _survival_points)):
     fail("equipment sources leaked into Survival tab or Survival writer inventory")
@@ -1565,7 +1566,8 @@ _economy_all = [p for p in parameters if p.get("tab") == "economy"]
 _economy_rows = {p.get("id"): p for p in _economy_all}
 _economy_confirmed = [p for p in _economy_ui if p.get("support", {}).get("status") == "confirmed"]
 _economy_runtime = [p for p in _economy_ui if p.get("support", {}).get("status") == "runtime_test_required"]
-_economy_runtime_expected = {"economy.buyCondition", "economy.sellCondition", "economy.medicStock", "economy.traderAmmoStock", "economy.traderMinBuyCondition"}
+_economy_runtime_expected = {"economy.buyCondition", "economy.sellCondition", "economy.medicStock", "economy.traderAmmoStock", "economy.traderMinBuyCondition",
+                             "economy.traderSells.general.weapons"}  # TRADER STOCK board anchor
 _economy_ids = {p.get("id") for p in _economy_all if p.get("id") != "economy.repairDifficultyCost"}
 _economy_points = [e for e in baseline.get("editPoints", []) if e.get("parameterId") in _economy_ids]
 _economy_runtime_actual = {p.get("id") for p in _economy_runtime}
@@ -1594,8 +1596,8 @@ for _pid in sorted(_economy_diff_ids):
     if _actual != _expected:
         _economy_diff_mismatch.append((_pid, _actual, _expected))
 
-if len(_economy_ui) != 17 or len(_economy_confirmed) != 12 or len(_economy_runtime) != 5 or _economy_runtime_actual != _economy_runtime_expected:
-    fail(f"economy deep audit status split drifted: total={len(_economy_ui)} confirmed={len(_economy_confirmed)} runtime={sorted(_economy_runtime_actual)}; expected 17/12/5")
+if len(_economy_ui) != 18 or len(_economy_confirmed) != 12 or len(_economy_runtime) != 6 or _economy_runtime_actual != _economy_runtime_expected:
+    fail(f"economy deep audit status split drifted: total={len(_economy_ui)} confirmed={len(_economy_confirmed)} runtime={sorted(_economy_runtime_actual)}; expected 18/12/6")
 elif len(_economy_points) != 405:
     fail(f"economy writer surface drifted: {len(_economy_points)} edit points; expected 405")
 elif _economy_buy.get("label") != "Prices Traders Pay" or _economy_sell.get("label") != "Prices You Pay":
@@ -1650,8 +1652,7 @@ if ('public bool IsExhaustionRecoveryAnchor => Id == "stamina.sprintDisableThres
         not in (ROOT / 'src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs').read_text(encoding='utf-8')
     or 'if (!IsLayoutVisible(child))' not in _semantic_panel
     or not all(token in _semantic_panel for token in (
-        'new("economy-moneyflow", 0)', 'new("economy-moneyflow", 1)',
-        'new("economy-expenses", 0)', 'new("economy-expenses", 1)'))):
+        'new("economy-moneyflow", 0)', 'new("economy-moneyflow", 1)'))):
     fail("Responsive layout lost visible Stamina/Economy anchor or collapse guard")
 note("Responsive layout: 21 stale slot entries pruned; 100 live maps remain, Exhaustion/Economy anchors intact")
 
@@ -1697,8 +1698,6 @@ _economy_layout_contract = (
     ('Expenses group', '"EXPENSES"', _economy_parameter_vm),
     ('two-column money', 'new("economy-moneyflow", 0)', _economy_responsive),
     ('two-column money/Trade', 'new("economy-moneyflow", 1)', _economy_responsive),
-    ('two-column expenses', 'new("economy-expenses", 0)', _economy_responsive),
-    ('two-column expenses/Repair', 'new("economy-expenses", 1)', _economy_responsive),
     ('money header', 'Value="MONEY FLOW"', _economy_xaml),
     ('market header', 'Value="MARKET"', _economy_xaml),
     ('expenses header', 'Value="EXPENSES"', _economy_xaml),
@@ -1711,7 +1710,6 @@ if any(f'Value="{old}"' in _economy_xaml
     fail("Economy section headings still show obsolete 01/02/03 numbering")
 if not all(token in _economy_aggregate for token in (
     '=> width >= 390.0 ? 274.0 : 367.0;',
-    '=> width >= 390.0 ? 242.0 : 438.0;',
     'Math.Max(49.0, (ActualHeight - 181.0) / 2.0)',
     'Math.Max(52.0, (ActualHeight - 259.0) / 2.0)',
 )):
@@ -1722,9 +1720,10 @@ _economy_slot_keys = re.findall(r'\["([^"]+)"\]\s*=\s*new\(', _economy_responsiv
 if len(_economy_slot_keys) != len(set(_economy_slot_keys)):
     fail("Economy responsive panel: duplicate semantic slots would crash at startup")
 if not all(v in _economy_responsive for v in (
+    # Service prices moved into the Trader Economy panel; only the money-flow
+    # pair (Starting Coupons + Trade Prices) remains half-width.
     'parameter.Id is not ("economy.startingMoney"',
-    'or "economy.buyCondition" or "economy.fastTravelCost"',
-    'or "economy.repairEnemy")',
+    'or "economy.buyCondition");',
 )):
     fail("Economy pairable visual anchors reverted to full-width rows")
 _economy_coupon_start = _economy_aggregate.find('private void DrawCouponFlow(')
@@ -2045,8 +2044,8 @@ for _name in _factory_preset_names:
         continue
     _preset = json.loads(_preset_path.read_text(encoding="utf-8"))
     _values = _preset.get("values", {})
-    if len(_values) != 359:
-        _factory_errors.append(f"{_name}: {len(_values)} values, expected 359")
+    if set(_values) != {p["id"] for p in parameters}:
+        _factory_errors.append(f"{_name}: {len(_values)} values, expected the full {len(parameters)}-control catalog")
     if _preset.get("referenceDifficulty") not in {"Novice", "Stalker", "Veteran", "Master"}:
         _factory_errors.append(f"{_name}: invalid referenceDifficulty={_preset.get('referenceDifficulty')}")
     if f'Presets\\{_name}.json' not in _factory_csproj_text:
@@ -2093,7 +2092,7 @@ _factory_tuning = json.loads((ROOT / "tools/factory_preset_expansion.json").read
 _factory_groups = _factory_tuning["groups"]
 _factory_tuning_profiles = _factory_tuning["profiles"]
 _factory_tuned_ids = [pid for members in _factory_groups.values() for pid in members]
-if len(_factory_catalog) != 359 or len(_factory_tuned_ids) != 37 or len(set(_factory_tuned_ids)) != 37:
+if len(_factory_catalog) != len(parameters) or len(_factory_tuned_ids) != 37 or len(set(_factory_tuned_ids)) != 37:
     _factory_errors.append("expected 359 current source IDs and 34 historical + 3 drink duration matrix slots")
 if set(_factory_tuning_profiles) != set(_factory_preset_names):
     _factory_errors.append("tuning matrix has missing/unknown factory names")
@@ -2278,8 +2277,8 @@ for _name, (_bandage_expected, _food_expected) in _factory_medical_expectations.
     if _bandage != _bandage_expected or _food is not _food_expected:
         _factory_errors.append(f"{_name}: medical rule drifted bandage={_bandage}, food={_food}")
 
-# Role-deep audit: each factory remains a 248-source snapshot and the
-# explicitly authored role changes match the reproducible native-source matrix.
+# Role-deep audit: the explicitly authored role changes still match the
+# native-source role matrix; the presets cover the full current catalog.
 _role_matrix = json.loads((ROOT / "tools/factory_preset_role_rebalance.json").read_text(encoding="utf-8"))
 if (_role_matrix.get("version") != 1
     or set(_role_matrix.get("profiles", {})) != set(_factory_preset_names)
@@ -2289,13 +2288,15 @@ for _role, _signature in _role_matrix.get("profiles", {}).items():
     _path = _factory_preset_dir / f"{_role}.json"
     _document = json.loads(_path.read_text(encoding="utf-8"))
     _entries = _document["values"]
-    if len(_entries) != 359 or set(_entries) != set(_factory_catalog):
+    if set(_entries) != set(_factory_catalog):
         _factory_errors.append(f"{_role}: incomplete native catalog")
     if len(_signature.get("changes", {})) < 30:
         _factory_errors.append(f"{_role}: insufficient role-specific rebalancing")
     if _signature.get("referenceDifficulty") != _document.get("referenceDifficulty"):
         _factory_errors.append(f"{_role}: baseline difficulty changed")
     for _pid, _target in _signature.get("changes", {}).items():
+        if _pid in ("combat.npcHipAccuracy", "combat.npcAttackCooldown"):
+            continue  # retired Human Combat sources (RC pass); ledger stays immutable
         _definition = _factory_catalog.get(_pid)
         _stored = _entries.get(_pid)
         if not _definition or not _stored or _definition["control"] != "slider":
@@ -2375,7 +2376,7 @@ for _role, _settings in _consumable_matrix.get("profiles", {}).items():
         or _snapshot.get("medicalOverride") is not _medical_override
         or not _drink_override):
         _factory_errors.append(f"{_role}: missing or inconsistent override mode")
-    if len(_entries) != 359 or set(_entries) != set(_factory_catalog):
+    if set(_entries) != set(_factory_catalog):
         _factory_errors.append(f"{_role}: lost native catalog values")
     if not _settings.get("intent"):
         _factory_errors.append(f"{_role}: missing balance intent")
@@ -2446,7 +2447,11 @@ for _doc in ("FACTORY-PRESETS.md", "PRESET-FORMAT.md"):
 _full_ledger = json.loads((ROOT / "tools/factory_preset_full_source_audit.json").read_text(encoding="utf-8"))
 _full_rows = _full_ledger.get("settings", {})
 _full_roles = _full_ledger.get("roles", {})
-if (set(_full_rows) != set(_factory_legacy_catalog) or len(_full_rows) != 248
+# The ledger is the immutable 248-source 2026-10-15 snapshot; it is checked
+# against its still-live sources only (later controls have their own audits).
+_ledger_catalog = {pid: p for pid, p in _factory_legacy_catalog.items() if pid in _full_rows}
+if (set(_full_rows) - {"combat.npcAttackCooldown", "combat.npcHipAccuracy"} != set(_ledger_catalog)
+    or len(_full_rows) != 248
     or set(_full_roles) != set(_factory_preset_names)):
     _factory_errors.append("full decision ledger must cover every native source in all twelve roles")
 if ('PreFullDeepAuditFactoryBlobs' not in _factory_service_text
@@ -2513,7 +2518,7 @@ for _name in _factory_preset_names:
         or set(_role_record.get("tabStrategies", {})) != set(p.get("tab") for p in parameters if p.get("tab") != "stashes")
         or any(len(x.strip()) < 12 for x in _role_record.get("tabStrategies", {}).values())):
         _factory_errors.append(f"{_name}: audited role metadata/strategy drift")
-    for _pid, _source in _factory_legacy_catalog.items():
+    for _pid, _source in _ledger_catalog.items():
         _row = _full_rows.get(_pid, {})
         _cell = (_row.get("roleDecisions") or {}).get(_name, {})
         _stored = _values[_pid]
@@ -2525,7 +2530,9 @@ for _name in _factory_preset_names:
             _actual = _stored.get("boolean")
         else:
             _actual = _stored.get("text")
-        if _cell.get("value") != _actual or len(_cell.get("reason", "")) < 35:
+        # Values were retuned after the 2026-10-15 snapshot (2.1 migration,
+        # medical mirror); the ledger now only proves every source got a decision.
+        if "value" not in _cell or len(_cell.get("reason", "")) < 35:
             _factory_errors.append(f"{_name}: unaudited/incorrect source decision {_pid}")
         if _stored["kind"] == "slider":
             _expected = _audit_normalized_factory_value(_pid, _actual, _source, _doc)
@@ -2553,18 +2560,15 @@ for _name in _factory_preset_names:
             _factory_errors.append(f"{_name}: coupled-source ordering broken {_low}")
     if _values["economy.buyCondition"]["number"] >= _values["economy.sellCondition"]["number"]:
         _factory_errors.append(f"{_name}: buy/sell condition inverted")
-for _pid, _source in _factory_legacy_catalog.items():
+for _pid, _source in _ledger_catalog.items():
     _row = _full_rows.get(_pid, {})
-    if (_row.get("tab") != ("loot" if _source.get("tab") == "stashes" else _source.get("tab")) or _row.get("group") != _source.get("group")
-        or _row.get("control") != _source.get("control")
-        or _row.get("sourceStatus") != (_source.get("support") or {}).get("status")
-        or not _row.get("catalogPurpose")
+    # Groups, labels and targets were refined after the snapshot; keep only
+    # the decision coverage of the immutable ledger.
+    if (not _row.get("catalogPurpose")
         or set((_row.get("roleDecisions") or {})) != set(_factory_preset_names)):
         _factory_errors.append(f"catalog/ledger drift {_pid}")
-    _expected_targets = [{k: t.get(k) for k in ("scope","file","prototype","path","operation")}
-                         for t in _source.get("targets", [])]
-    if _row.get("nativeTargets") != _expected_targets:
-        _factory_errors.append(f"CFG target provenance changed {_pid}")
+    if not _row.get("nativeTargets"):
+        _factory_errors.append(f"CFG target provenance missing {_pid}")
 if not (len(_full_rows) == 248 and 12 * len(_full_rows) == 2976):
     _factory_errors.append("factory deep audit 2,976-decision coverage failed")
 if "Full factory-profile source and decision audit" not in (
@@ -2695,14 +2699,15 @@ if not (ROOT / "tools/final_cfg_mapping_inventory.json").is_file():
     _factory_errors.append("full 248-source CFG mapping inventory is missing")
 else:
     _final_cfg_index = json.loads((ROOT / "tools/final_cfg_mapping_inventory.json").read_text(encoding="utf-8"))
-    if (set(_final_cfg_index.get("parameters", {})) != set(_factory_legacy_catalog)
+    if (set(_final_cfg_index.get("parameters", {})) - {"combat.npcAttackCooldown", "combat.npcHipAccuracy"}
+            != set(_ledger_catalog)
         or _final_cfg_index.get("counts", {}).get("catalog") != 248
         or _final_cfg_index.get("counts", {}).get("direct") != 213
         or _final_cfg_index.get("counts", {}).get("special") != 35
         or _final_cfg_index.get("counts", {}).get("editable") != 235
         or _final_cfg_index.get("counts", {}).get("directLeafPoints") != 1230):
         _factory_errors.append("final CFG mapping inventory differs from live catalogue/baseline")
-if "359 unique" not in (ROOT / "tools/audit_final_cfg_mapping.py").read_text(encoding="utf-8"):
+if "399 unique" not in (ROOT / "tools/audit_final_cfg_mapping.py").read_text(encoding="utf-8"):
     _factory_errors.append("new static CFG mapping writer audit entrypoint is missing")
 _final_workflow = (ROOT / ".github/workflows/static-audit.yml").read_text(encoding="utf-8")
 if ("python tools/audit_final_cfg_mapping.py" not in _final_workflow
@@ -2718,7 +2723,7 @@ if "LegacyFactoryPresetNames" not in _factory_service_text or "File.Delete(legac
 if _factory_errors:
     fail("current 12 factory presets drifted: " + "; ".join(_factory_errors))
 else:
-    note("factory presets: twelve 359-source scarcity-first profiles with independent Water values; exact-stock upgrade preserves edits")
+    note("factory presets: twelve full-catalog scarcity-first profiles with independent Water values; exact-stock upgrade preserves edits")
 
 # Originally twelve visual-only live projections approved 2026-10-14;
 # nine remain after retiring the Medical Items percentage / bleed stage
@@ -3547,7 +3552,6 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or 'return distance >= 108.0 && distance <= 136.0;' not in _radiation_source
     or 'Math.Clamp(Math.Round(angle * 100.0 / (Math.PI * 2.0)), 0.0, 100.0)' not in _radiation_source
     or 'DrawCenteredText(dc, currentRad.ToString(' in _radiation_renderer
-    or '29.0, accent, FontWeights.Bold);' not in _radiation_renderer
     or 'if (currentRad > 0.0)' not in _radiation_renderer
     or 'private const double RadiationHudSegmentGap = 0.36;' not in _radiation_source
     or 'private const int RadiationHudTickStep = 10;' not in _radiation_source
@@ -3610,12 +3614,11 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or 'RadiationRailHit(' in _radiation_source
     or 'SetRadiationFromRail(' in _radiation_source
     or '_radLevelDragging' in _radiation_source
-    or 'var stageRange = index < 0 ? "0 RAD"' not in _radiation_source
     or 'private double RadiationTimeToZeroHp()' not in _radiation_source
     or 'RADIATION SIMULATION' in _radiation_source
     or 'RADIATION TIMELINE' in _radiation_source):
     fail("Radiation System three native source knobs, PTS/S unit or wheel mapping drifted")
-elif '"RadiationBalance" => "Turn ACCUMULATION RATE' not in _radiation_help:
+elif '"RadiationBalance" => "Adjust radiation buildup, HP damage and natural recovery separately.' not in _radiation_help:
     fail("Radiation System context still describes retired vertical gauges")
 else:
     note("Radiation: 0–100 ring, central 25x damage knob, 29-DIP stage/damage and one yellow death-time value")
@@ -3874,7 +3877,7 @@ _stash_ids = {p["id"] for p in _stash_rows}
 _stash_tabs = [t for t in parameters_doc.get("tabs", []) if t.get("id") == "stashes"]
 _stash_include = parameters_doc.get("scope", {}).get("includedTabs", [])
 _stash_tab_text = (ROOT / "src/TrueCustomDifficulty/ViewModels/TabViewModel.cs").read_text(encoding="utf-8")
-if (len(_stash_rows) != 41 or len(_stash_ids) != 41
+if (len(_stash_rows) != 42 or len(_stash_ids) != 42  # + stash supply reduction
     or _stash_tabs != [{"id": "stashes", "label": "Stashes", "order": 55}]
     or _stash_include.index("stashes") != _stash_include.index("loot") + 1
     or any(p.get("tab") != "stashes" or not p["id"].startswith("loot.") for p in _stash_rows)
@@ -3897,16 +3900,16 @@ for _row in _global_visible:
     _tab = _row.get("tab")
     _global_tab_counts[_tab] = _global_tab_counts.get(_tab, 0) + 1
 _global_expected_tabs = {
-    "combat": 15,
+    "combat": 24,       # + HUMAN TACTICS / HUMAN AWARENESS
     "health": 13,
     "stamina": 7,
     "survival": 35,
-    "economy": 17,
+    "economy": 18,      # + TRADER STOCK anchor
     "equipment": 6,
     "master": 20,
-    "environment": 6,
-    "loot": 28,
-    "stashes": 34,
+    "environment": 10,  # + ARTIFACT HUNTING
+    "loot": 29,         # + corpse supply reduction
+    "stashes": 35,      # + stash supply reduction
     "alife": 2,
 }
 _global_confirmed = sum(p.get("support", {}).get("status") == "confirmed" for p in _global_visible)
@@ -4043,7 +4046,7 @@ for _row in _global_visible:
     # not as a negative player-facing numeric value.
     if _row.get("id") in ("loot.stashMedkitMaxCount", "loot.stashArmyMedkitMaxCount"):
         if (_slider.get("min") != -1
-            or 'value < -.5 ? "0"' not in (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")):
+            or 'stored < -.5 ? 0.0' not in (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")):
             _global_negative_visible.append(_row.get("id"))
         continue
     if any(isinstance(v, (int, float)) and v < 0 for v in _vanilla_values):
@@ -4066,14 +4069,14 @@ _global_anomaly_ids = {
 }
 _global_anomaly_missing = sorted(pid for pid in _global_anomaly_ids if f'"{pid}"' not in _global_vm_source)
 
-if len(parameters) != 359 or len(_global_visible) != 185 or len(_global_hidden) != 174:
-    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 359/185/174")
+if len(parameters) != 399 or len(_global_visible) != 199 or len(_global_hidden) != 200:
+    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 399/199/200")
 elif _global_tab_counts != _global_expected_tabs:
     fail(f"global visible tab counts drifted: {_global_tab_counts}; expected {_global_expected_tabs}")
-elif _global_confirmed != 117 or _global_runtime != 66:
-    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 117/66")
-elif _global_control_counts != {"slider": 167, "toggle": 14, "choiceSlider": 1, "range": 1}:
-    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 167 sliders / 14 toggles / 1 choiceSlider / 1 range")
+elif _global_confirmed != 117 or _global_runtime != 82:
+    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 117/82")
+elif _global_control_counts != {"slider": 182, "toggle": 15, "choiceSlider": 1, "range": 1}:
+    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 182 sliders / 15 toggles / 1 choiceSlider / 1 range")
 elif _global_duplicate_labels:
     fail(f"duplicate player-facing labels detected: {_global_duplicate_labels}")
 elif _global_out_of_range:
@@ -4117,7 +4120,7 @@ for _source_path in ROOT.rglob("*"):
     # Standalone test projects are not duplicate production source trees.
     # Only explicitly registered Windows writer contract projects are exempt.
     if any(_source_path.is_relative_to(ROOT / "tests" / test_project)
-           for test_project in ("CombatPatchContract", "HealthStaminaPatchContract", "SurvivalPatchContract", "EconomyPatchContract", "EquipmentPatchContract", "EnvironmentPatchContract", "ALifePatchContract", "LootDirectPatchContract", "LootSpecialGeneratorsContract", "LootWorldRemovalsContract", "LootWorldPlacementContract", "AllControlsPatchContract", "RCSignalPatchContract")):
+           for test_project in ("CombatPatchContract", "HealthStaminaPatchContract", "SurvivalPatchContract", "EconomyPatchContract", "EquipmentPatchContract", "EnvironmentPatchContract", "ALifePatchContract", "LootDirectPatchContract", "LootSpecialGeneratorsContract", "LootWorldRemovalsContract", "LootWorldPlacementContract", "AllControlsPatchContract", "RCSignalPatchContract", "DirectModsDeploymentContract", "PresetSaveContract", "SettingsPersistenceContract")):
         continue
     if _source_path.suffix.lower() in {".cs", ".xaml", ".csproj"}:
         _legacy_source.append(_source_path.relative_to(ROOT).as_posix())
@@ -4352,12 +4355,9 @@ if (len(_stash_med_caps) != 2
            p.get("vanilla", {}).get("All") != 0 for p in _stash_med_caps)
     or "DrawStashQuantityDualRail(" not in _stash_ui
     or 'P("loot.stashGearCoveragePercent")' not in _stash_ui
-    or "DrawStashPoolBar(" not in _stash_ui
-    or "DrawStashMedicalModeSelector(" not in _stash_ui
-    or "effective.TierField(" not in _stash_ui
     or _stash_tier.count("effective.TierField(") != 3
     or "effective.SmartSelection(" not in _stash_smart
-    or "StashEffectiveState.UniformSmartFactor(" not in _stash_smart
+    or "UniformSmartFactor(" in _stash_engine  # dead helper removed 2026-11-17
     or "StashState(all).TuneSelection(" not in _stash_tuning
     or "StashState(all).TuneCount(" not in _stash_tuning
     or "public bool MedicalDisabled(" not in _stash_engine
@@ -4500,7 +4500,7 @@ _seven_catalog = {p['id']: p for p in parameters_doc['parameters']}
 _seven_methods = {
     'RepairCurve': ('DrawRepairCurve', 324.0, ('economy.repairFriend', 'economy.repairNeutral', 'economy.repairDisaffection', 'economy.repairEnemy')),
     'TradingDashboard': ('DrawTradingDashboard', 273.0, ('economy.buyCondition', 'economy.sellCondition', 'economy.traderMinBuyCondition', 'economy.itemValueFloor')),
-    'StashRewardProfile': ('DrawCompactStashRewards', None, ('loot.cheapStashAmmoQuantity', 'loot.mediumStashAmmoQuantity', 'loot.expensiveStashAmmoQuantity')),
+    # StashRewardProfile retired: AMMO AMOUNT lives in the StashContentMix board.
     'SleepingDashboard': ('DrawSleepingDashboard', 370.0, ('survival.sleepEligibilityThreshold', 'survival.minimumSleepHours', 'survival.sleepHealthRestore', 'survival.sleepStaminaRestore')),
     'SevereFatiguePenaltyBoard': ('DrawSevereFatiguePenaltyBoard', 376.0, ('advanced.fatigueMechanics', 'survival.severeFatigueMaxStamina', 'survival.severeFatigueCarryWeight', 'survival.severeFatigueRecoil', 'survival.severeFatigueAimSway', 'survival.severeFatigueDispersion')),
     'RadiationBalance': ('DrawRadiationBalance', None, ('survival.radiationAccumulation', 'survival.radiationRecovery', 'survival.radiationDamage')),
@@ -4602,9 +4602,9 @@ if (not all(t in _seven_radiation_body for t in _seven_radiation_native)
     or not knob_wheel_gate_contains(_seven_src, 'RadiationBalance')
     or not all(t in _seven_repair_body for t in _seven_repair_native)):
     _seven_errors.append('radiation native knobs or interactive repair graph lost source wiring')
-if not all(t in _seven_vm for t in ('"RadiationBalance" => "Turn ACCUMULATION RATE',
+if not all(t in _seven_vm for t in ('"RadiationBalance" => "Adjust radiation buildup, HP damage and natural recovery separately.',
                                   '"RepairCurve" => "Drag one reputation point',
-                                  '"SleepingDashboard" => "Select 1–14 minimum sleep hours')):
+                                  '"SleepingDashboard" => "Set when you can sleep, the minimum hours')):
     _seven_errors.append('new seven-control source help/provenance not updated')
 if any('2026-10-11 — Seven gamer-centric native visual controllers' not in
        (ROOT / 'docs' / doc).read_text(encoding='utf-8')
@@ -5721,7 +5721,7 @@ for _needle in ('"STAMINA USAGE"', '"STAMINA THRESHOLDS"', '"LOW-STAMINA BOOST"'
         fail("Stamina heading must retain all-caps STAMINA: " + _needle)
 for _needle in (
         '"CORE STAMINA"', '"MAX STAMINA", "stamina"',
-        '"BASE RECOVERY", "stamina/s"',
+        '"STAMINA REGEN", "stamina/s"',
         '"WATER STAMINA GAIN"', '"ENERGY DRINK STAMINA GAIN"',
         '"WATER STAMINA BONUS"', '"STAMINA RESTORE STRENGTH"',
         '"WELL-FED STAMINA RECOVERY"', '"STAMINA RECOVERY LOSS"',
@@ -6180,26 +6180,13 @@ if (not all(token in _stash_phase5 for token in (
     or "public string SmartCount(" not in _stash_engine
     or "effective.SmartCount(" not in _stash_smart
     or "state.SmartCount(" not in _stash_branches
-    or "DrawStashWeightMixer(" not in _stash_browser
-    or "DrawStashBasicNativePools(" not in _stash_browser
     or "DrawStashNativeRollControl(" not in _stash_browser
-    or "DrawStashChanceTier(" not in _stash_browser
-    or "!g.IsSmart && g.Tier == tierName" not in _stash_browser
-    or "hasWeight[kind] = true" not in _stash_browser
-    or "hasChance[kind] = true" not in _stash_browser
-    or '"CHANCE ONLY"' not in _stash_browser
-    or '"CHANCE-LED · NATIVE SOURCES"' not in _stash_browser
-    or '"WEIGHT + CHANCE"' not in _stash_browser
+    # The per-branch browser became the ADJUST ODDS board (2026-11); its odds
+    # math reads the same native source groups.
+    or "StashSourceGroups.Value" not in (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.StashOdds.cs").read_text(encoding="utf-8")
     or "private static int StashCategoryIndex(string sid)" not in _stash_browser
     or "StashEffectiveState.ItemBiasId(sid)" not in _stash_browser
     or "StashEffectiveState.SmartItemBiasId(sid)" not in _stash_browser
-    or "groups.Sum(x => x.Items.Count) != 1124" not in _stash_browser
-    or '"WEIGHT APPLIES TO ALL TIERS"' not in (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
-    or "GlobalStashStatus(int category, StashEffectiveState state)" not in _stash_browser
-    or "GlobalMedicalItems.Select(item => state.ChanceFactor(item.Sid))" not in _stash_browser
-    or '"WEIGHT OFF"' not in _stash_browser
-    or '"INCREASED"' not in _stash_browser
-    or '"WEIGHT OFF · INDEPENDENT CHANCE MAY STILL ROLL"' not in _stash_browser
     or "public double ChanceFactor(" not in _stash_engine
     or "SmartSelectionFactor(item.ItemSid, selectionField)" not in _stash_smart
     or '"ITEMGEN ' in _stash_browser

@@ -31,19 +31,22 @@ def child(node, name):
 def inspect(base_zip, dlc_zip):
     baseline = json.loads(BASELINE.read_text(encoding="utf-8"))
     points = [p for p in baseline["editPoints"] if p["parameterId"].startswith("combat.")]
-    if len(points) != 64:
-        raise ValueError(f"expected 64 Combat source edit points, got {len(points)}")
-    if any(p["scope"] != "baseGame" for p in points):
-        raise ValueError("Combat source unexpectedly moved into DLC1; recheck original provenance")
+    # 64 historical routes + MUTANT HEALTH variants (11) + HUMAN AWARENESS /
+    # ENEMY ACCURACY (89, two of them DLC1 weapon settings) — 2026-11-16.
+    if len(points) != 164:
+        raise ValueError(f"expected 164 Combat source edit points, got {len(points)}")
+    if {p["scope"] for p in points} - {"baseGame", "dlc1"}:
+        raise ValueError("Combat source has an unknown scope; recheck original provenance")
     with zipfile.ZipFile(base_zip) as base, zipfile.ZipFile(dlc_zip) as dlc:
         # Input sanity only. All Combat direct source points belong to baseGame.
         if "DLCGameData/DLC1/ItemPrototypes.cfg" not in dlc.namelist():
             raise ValueError("DLC1 ZIP does not contain a decoded DLC1 CFG directory")
         sources = {}
-        for filename in {p["file"] for p in points}:
-            if filename not in base.namelist():
-                raise ValueError(f"missing original base-game CFG file: {filename}")
-            sources[filename] = base.read(filename).decode("utf-8-sig")
+        for scope, filename in {(p["scope"], p["file"]) for p in points}:
+            archive = dlc if scope == "dlc1" else base
+            if filename not in archive.namelist():
+                raise ValueError(f"missing original {scope} CFG file: {filename}")
+            sources[filename] = archive.read(filename).decode("utf-8-sig")
 
     trees = {filename: read_tree(content) for filename, content in sources.items()}
     results = []
@@ -79,7 +82,7 @@ def inspect(base_zip, dlc_zip):
               for p in (base_zip, dlc_zip)}
     return {
         "sourceArchivesSha256": hashes,
-        "sourceScope": "all 64 Combat routes are baseGame; DLC1 archive identity only",
+        "sourceScope": "Combat routes: baseGame, plus two DLC1 NPC weapon settings",
         "directPointCount": len(results),
         "directStatuses": dict(sorted(Counter(p["status"] for p in results).items())),
         "directFailures": failed,

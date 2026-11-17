@@ -18,7 +18,7 @@ parameters = json.loads(read(data / "parameters.json"))["parameters"]
 catalog = {p["id"]: p for p in parameters}
 baseline = json.loads(read(data / "cfg-writer-baseline.json"))
 stash = {p["id"]: p for p in parameters if p["tab"] == "stashes"}
-assert len(parameters) == baseline["supportedParameterCount"] == 361
+assert len(parameters) == baseline["supportedParameterCount"] == 399
 assert len(stash) == 42
 assert len(catalog) == len(parameters), "Duplicate parameter ID"
 assert Counter(p["group"] for p in stash.values()) == {
@@ -29,13 +29,13 @@ assert Counter(p["group"] for p in stash.values()) == {
 assert sum(p.get("exposeInUi", True) for p in stash.values()) == 35
 # Three visible native Basic loot-mix knobs use 0.05x; hidden legacy
 # Weight controls retain 0.10x. No new source IDs or extra UI rows.
-for pid in ("loot.stashMixMedical", "loot.stashMixFood", "loot.stashMixDrinks"):
+for pid in ("loot.stashMixMedical", "loot.stashMixFood", "loot.stashMixDrinks", "loot.stashMixCoupons"):
     assert stash[pid]["slider"] == {
         "min": 0, "max": 1, "step": 0.05, "stepMode": "absolute"
     }
 for pid in ("loot.cheapStashAmmoQuantity", "loot.mediumStashAmmoQuantity", "loot.expensiveStashAmmoQuantity"):
     assert stash[pid]["exposeInUi"] is (pid == "loot.cheapStashAmmoQuantity")
-for pid in ("loot.stashMixAmmo", "loot.stashMixGrenades", "loot.stashMixCoupons"):
+for pid in ("loot.stashMixAmmo", "loot.stashMixGrenades"):
     assert stash[pid]["slider"] == {
         "min": 0, "max": 1, "step": 0.1, "stepMode": "absolute"
     }
@@ -96,39 +96,27 @@ for name, expected in families.items():
     actual = re.findall(r'"(loot\.[A-Za-z0-9.]+)"', match.group(1))
     assert actual == expected, f"Missing/misordered UI family controls: {name}: {actual}"
 assert set(stash) == set(rewards + mix + medical + bonus + ["loot.genericStashReduction"])
-# Medical Weight is never a fabricated four-medical-item selection.
-assert 'DrawStashMedicalPairShares(dc,' in ui
+# MEDICAL COMPOSITION (2026-11-16) replaced the medical pair/priority board;
+# its cells and odds are checked by audit_stash_presence.py. No tooltips.
 # Hover feedback must align to the actual converted MIN/MAX handle centers,
 # without projecting an unrelated glow through the two-state Anti-Rad cells.
 assert "ControlHoverGlow.Draw(dc, handle.Position," in ui
 assert "IsStashMedicalMax(source.Id)" in ui
 assert 'source.Id == "loot.stashMedicalAntiRadBias"' in ui
-assert "hovered ? CloneWithOpacity(StashMedicalPalette[3], .10)" in ui
 assert 'IsStashMedicalMax(_dragTarget.Parameter.Id)' in ui
 
 assert '_medicalWeightRankTargets.Add((rect, rank));' not in ui
 assert '_medicalWeightPreviewRank' not in ui
 assert '_medicalWeightHoveredRank' not in ui
-assert ui.count('visualMaximum: 1.0') == 3
-assert 'var group = groups[0];' in ui
-assert 'groups.Length != 1' in ui
-assert '"ANTI-RAD · PRIORITY"' in ui
-assert 'var shareWidth = Math.Max(1.0, innerWidth * .64);' in ui
-assert 'DrawStashAntiRadWeightSwitch(dc,' in ui
 assert '_stashMedicalShowChance' not in ui
-assert '"DROP ROLLS · CHANCE %"' in ui
-assert 'g.Prototype == "StashMedicine_Smart"' in ui
-assert 'g.Field == "Weight" && g.RankIndex == 2' in ui
 assert 'g.RankIndex is 2 or 3' not in ui
-assert 'group.EffectiveSelection(StashPreviewBaseline.Value, state,' in ui
-assert 'AddHorizontalTarget(p, rect, rect, value, value);' in ui
 assert 'target.Parameter.Id == "loot.stashMedicalAntiRadBias"' in ui
-assert '=> width >= 700.0 ? 609.0 : 1050.0;' in ui
 anti = stash["loot.stashMedicalAntiRadBias"]
-assert anti["slider"] == {"min": 0, "max": 3, "step": 0.25, "stepMode": "absolute"}
-assert "OFF excludes" in anti["logic"] and "ON allows" in anti["logic"]
-assert "Chance Modifier" in anti["interaction"]
-assert "Chance" in anti["description"]
+# One MEDICAL COMPOSITION cell per item: Weight mirrors the Chance scale.
+assert anti["slider"] == {"min": 0, "max": 1, "step": 0.05, "stepMode": "absolute"}
+assert "ANTI-RAD cell" in anti["logic"]
+assert "Mirrored" in anti["interaction"]
+assert "mirrors" in anti["description"]
 # Audited native game 2.0.5 groups, not a fabricated 4-item medicine pool.
 with (data / "smartloot-world-source-entries.csv").open(
         newline="", encoding="utf-8") as handle:
@@ -174,7 +162,7 @@ visible_tier_chance = [
 for pid in visible_tier_chance:
     assert stash[pid]["slider"]["min"] == 0, pid
     assert stash[pid]["slider"]["max"] == 1, pid
-    assert stash[pid]["slider"]["step"] == 0.01, pid
+    assert stash[pid]["slider"]["step"] == 0.05, pid  # ADJUST ODDS cells: 5% steps
 for pid in ("loot.standardStashChanceScale", "loot.rareStashChanceScale"):
     assert stash[pid]["slider"]["max"] == 2
     assert not stash[pid]["exposeInUi"]
@@ -183,25 +171,12 @@ assert '"StashRewardProfile" => new[]' not in ui
 assert 'case "StashRewardProfile":' not in ui
 assert 'DrawCompactStashRewards(' not in ui
 assert '"StashRewardProfile"' not in pvm
-assert '=> width >= 700.0 ? 785.0 : 1095.0;' in ui
-assert 'wide ? 122.0 : 200.0' in ui
-assert 'wide ? 571.0 : 803.0' in ui
-assert 'wide ? 200.0 : 278.0' in ui
-assert 'const double pitch = 78.0;' in read(src / "Controls/AggregateVisualControl.StashBranch.cs")
-assert 'new Rect(x, y, cellWidth, 70.0)' in read(src / "Controls/AggregateVisualControl.StashBranch.cs")
 # No visible native Chance label or value expression is permitted in the
 # active tier renderer; this also catches renamed or reinstated labels.
 assert 'CreateText("NATIVE " + currentText' not in read(src / "Controls/AggregateVisualControl.StashBranch.cs")
-assert '_stashChanceTooltipAreas.Add((cell, id == "loot.expensiveStashMoneyChance"))' in read(src / "Controls/AggregateVisualControl.StashBranch.cs")
-assert 'UpdateStashChanceTooltip(point);' in ui
-assert '100% keeps each item\'s original Chance.' in ui
-assert 'per-entry Chance for Rare Coupons' in ui
+assert '_stashChanceTooltipAreas.Add((cell, id == "loot.expensiveStashMoneyChance"))' not in read(src / "Controls/AggregateVisualControl.StashBranch.cs")
+assert 'UpdateStashChanceTooltip(point);' not in ui
 assert 'NATIVE shows actual resulting Chance' not in pvm
-assert 'DrawStashChanceTier(dc, "STANDARD STASH", "Medium", 10,' in ui
-assert 'DrawStashChanceTier(dc, "RARE STASH", "Expensive", 19,' in ui
-content_body = ui.split("private void DrawStashContentMix(", 1)[1].split("private void DrawStashMedicalComposition(", 1)[0]
-tier_body = read(src / "Controls/AggregateVisualControl.StashBranch.cs").split("private void DrawStashChanceTier(", 1)[1]
-assert '"NATIVE' not in tier_body, "Standard/Rare Chance renderer reintroduced a NATIVE label/value"
 assert 'stash_chance_native_row=absent' in read(root / "publish.sh")
 assert 'stash_tier_source_sha256=%s' in read(root / "publish.sh")
 assert 'grep -nF' in read(root / "publish.sh")
@@ -215,14 +190,6 @@ assert '"$EXPECTED_STASH_SHA" != "$ACTUAL_STASH_SHA"' in verified_runner
 assert '"$NATIVE_ROW_STATUS" != "absent"' in verified_runner
 assert 'grep -nF' in verified_runner
 assert 'exec env WINEPREFIX=' in verified_runner
-assert '"loot.cheapStashAmmoQuantity"' in content_body
-assert '"AMMO QUANTITY · ALL TIERS"' in content_body
-basic_mixer = read(src / "Controls/AggregateVisualControl.StashBranch.cs").split(
-    "private void DrawStashWeightMixer(", 1)[1].split(
-    "private void DrawStashBasicNativePools(", 1)[0]
-assert "tierName" not in basic_mixer
-assert "ammoId" not in basic_mixer
-assert 'percentage: false, multiplier: true' in content_body
 # The unified Ammo Quantity rail exposes the Basic source only;
 # Standard/Rare amounts remain routed and synchronized, not separate UI rails.
 for pid in rewards:
@@ -241,18 +208,6 @@ assert 'DrawTogglePill(dc, P("loot.stashGearEnabled")' in ui
 assert 'P("loot.stashGearBonusChance")' in ui
 assert 'P("loot.stashGearCoveragePercent")' in ui
 
-# Renderer computes paint width as host minus 30 DIP. At host width 550
-# it paints two knob rows, so WPF must allocate tall height.
-assert 'Math.Min(630.0, Math.Max(1.0, ActualWidth - 30.0))' in ui
-assert 'var narrowMix = width < 540.0;' in ui
-assert 'DrawText(dc, "PRIORITY SHARE"' in ui
-assert 'var chanceY = narrowMix ? 593.0 : 429.0;' in ui
-assert 'narrowMix ? 390.0 : 224.0' in ui
-assert '=> width < 570.0 ? 670.0 : 502.0;' in ui
-for host in (520, 540, 550, 569, 570, 600, 760):
-    narrow = min(630.0, max(1.0, host - 30.0)) < 540.0
-    assigned_height = 670.0 if host < 570.0 else 502.0
-    assert assigned_height == (670.0 if narrow else 502.0)
 
 for pid in bonus[1:]:
     assert stash[pid]["requiresToggle"] == bonus[0]

@@ -48,13 +48,13 @@ def main() -> None:
 
     enabled = re.search(r"public bool IsControlEnabled\s*=>\s*([^;]+);", VM)
     check(enabled is not None, "Missing IsControlEnabled binding")
-    check(enabled.group(1).strip() == "_dependencyEnabledProvider?.Invoke() ?? true",
+    check(" ".join(enabled.group(1).split()) == "IsAvailableForReferenceDifficulty && (_dependencyEnabledProvider?.Invoke() ?? true)",
           "Aggregate anchor bypasses its requiresToggle dependency")
     visible = VM[VM.index("public bool IsControlVisible"):VM.index("public string ToggleStateLabel")]
     check("IsVisualAggregateAnchor || (_dependencyEnabledProvider?.Invoke() ?? true)" in visible,
           "Disabled Master child anchor must remain visible as the composite panel")
 
-    card = RENDER[RENDER.index("private void DrawMasterNativeCard"):RENDER.index("private void DrawMasterCardBank")]
+    card = RENDER[RENDER.index("private void DrawMasterNativeCard"):RENDER.index("private static string MasterPercent")]
     check("var enabled = parameter.IsControlEnabled;" in card
           and "var changed = enabled && parameter.IsValueModifiedFromReference();" in card,
           "Master card ignores dependency state for accent and labels")
@@ -65,10 +65,10 @@ def main() -> None:
 
     keyboard = RENDER[RENDER.index("protected override void OnKeyDown"):
                       RENDER.index("private void UpdateTarget")]
-    check("if (_selectedParameter is null || !_selectedParameter.IsControlEnabled)" in keyboard,
+    check("if (_selectedParameter is null || !_selectedParameter.IsControlEnabled" in keyboard,
           "A stale selected Master slider remains keyboard-editable while OFF")
-    drag = RENDER[RENDER.index("private void UpdateTarget"):RENDER.index("private void EnforceOrderedTriplet")]
-    check("if (!target.Parameter.IsControlEnabled || target.Kind == HitKind.Toggle)" in drag,
+    drag = RENDER[RENDER.index("private void UpdateTarget"):RENDER.index("private static void EnforceOrderedTriplet")]
+    check("if (!target.Parameter.IsControlEnabled ||" in drag and "|| target.Kind == HitKind.Toggle)" in drag,
           "A captured drag can still edit a disabled Master slider")
 
     check('TestDisabled(id);' in HARNESS
@@ -103,7 +103,7 @@ def main() -> None:
           "Timeline layout no longer shares measured vertical offsets")
     effect_block = RENDER[RENDER.index("var effects = new (string Id, string Label, Func<double, string> Format)[]",
                                      RENDER.index("private void DrawStarvationTimeline")):
-                          RENDER.index("private void DrawRepeatedHitBand")]
+                          RENDER.index("private static readonly (string Label, string Prototype, double SourceDamage)[]")]
     check(effect_block.count('("survival.starvation') == 2
           and '"survival.starvationStaminaDrain"' in effect_block
           and '"survival.starvationHealthRegenPenalty"' in effect_block
@@ -112,7 +112,7 @@ def main() -> None:
     check("StarvationEffectsTop, effectWidth, 80.0" in effect_block
           and "for (var i = 0; i < effects.Length; i++)" in effect_block,
           "The lower two slider cards must share one compact horizontal row")
-    check('or "StarvationTimeline"))' in RENDER[RENDER.index("protected override void OnMouseWheel"):
+    check('or "StarvationTimeline" or' in RENDER[RENDER.index("protected override void OnMouseWheel"):
                                                  RENDER.index("protected override void OnMouseLeftButtonUp")],
           "Starvation source knobs must respond to native-step mouse wheel input")
 

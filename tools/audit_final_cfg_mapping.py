@@ -191,6 +191,12 @@ def method_routes(special):
     add("WriteCrateSpawnRemovals", *(x["parameterId"] for x in special["crateSpawnProduction"]["categories"]))
     add("WriteLooseWorldLootRemovals", special["looseWorldLootProduction"]["parameterId"])
     add("WriteLooseUniqueWeaponShuffle", special["looseUniqueWeaponShuffle"]["parameterId"])
+    # 2026-11-16: MUTANT AGGRESSION family rates; its entrypoint also runs the
+    # one CombatSynchronizer writer (SPECIAL ABILITY RATE + HUMAN TACTICS).
+    # ARTIFACT HUNTING rare luck has its own entrypoint.
+    add("WriteMutantAggression", *special["mutantAggression"]["parameterIds"],
+        special["mutantAggression"]["parameterId"], *special["humanTactics"]["parameterIds"])
+    add("WriteArtifactRareLuck", special["artifactHunting"]["parameterId"])
     return routes
 
 def main():
@@ -207,8 +213,8 @@ def main():
     code += "\n" + (WRITER_PATH.parent / "CfgPatchWriterService.TraderSells.cs").read_text(encoding="utf-8")
     code += "\n" + (WRITER_PATH.parent / "CfgPatchWriterService.GenericLootReduction.cs").read_text(encoding="utf-8")
     definitions = {p["id"]: p for p in catalog["parameters"]}
-    require(len(definitions) == len(catalog["parameters"]) == 361, "361 unique CFG source IDs expected")
-    require(baseline["supportedParameterCount"] == 361, "writer expected coverage drift")
+    require(len(definitions) == len(catalog["parameters"]) == 399, "399 unique CFG source IDs expected")
+    require(baseline["supportedParameterCount"] == 399, "writer expected coverage drift")
     require(not baseline["deferredParameterIds"], "deferred production parameters")
     require(baseline["gameVersion"] == catalog["source"]["gameVersion"] == "2.1", "source/game baseline mismatch")
     require(set(catalog["difficultyProfiles"]) == set(SIDS), "difficulty baseline drift")
@@ -236,15 +242,15 @@ def main():
         if point["operation"] not in ("set", "toggleSourceOrZero"):
             parse_source(point["sourceRaw"])
         direct[pid].append(point)
-    require(len(baseline["editPoints"]) == 2682 and len(direct) == 217,
+    require(len(baseline["editPoints"]) == 2830 and len(direct) == 224,
             "direct writer point count drift")
     special = method_routes(baseline["special"])
-    require(len(special) == 144, "special writer route count drift")
+    require(len(special) == 175, "special writer route count drift")
     require(not set(direct).intersection(special), "direct/special parameter double ownership")
     require(set(direct) | set(special) == set(definitions), "unrouted CFG IDs")
-    require(len(definitions) - len(NON_UI) == 344, "UI dimension count drift")
-    require(len(NON_UI) == 17 and NON_UI.issubset(definitions),
-            "17 non-mounted catalog source IDs required")
+    require(len(definitions) - len(NON_UI) == 376, "UI dimension count drift")
+    require(len(NON_UI) == 23 and NON_UI.issubset(definitions),
+            "23 non-mounted catalog source IDs required")
     for pid in NON_UI:
         require(definitions[pid].get("exposeInUi") is False, "non-UI setting exposed " + pid)
     for pid, p in definitions.items():
@@ -290,6 +296,10 @@ def main():
     extra_writer_files = {
         "WriteStashGearCoverage": DATA.parent / "Services/CfgPatchWriterService.StashGearCoverage.cs",
         "WriteStashAuthoredWeaponRemovals": DATA.parent / "Services/CfgPatchWriterService.StashAuthoredWeapons.cs",
+        "WriteWorldStashSmartLoot": DATA.parent / "Services/CfgPatchWriterService.StashSmartLoot.cs",
+        "WriteNpcBonusSupplyReduction": DATA.parent / "Services/CfgPatchWriterService.GenericLootReduction.cs",
+        "WriteMutantAggression": DATA.parent / "Services/CfgPatchWriterService.MutantAggression.cs",
+        "WriteArtifactRareLuck": DATA.parent / "Services/CfgPatchWriterService.Artifacts.cs",
     }
     for pid, methods in special.items():
         for method in methods:
@@ -336,7 +346,7 @@ def main():
             "declaredTargets": p["targets"],
             "runtimeVerified": False,
         }
-    require(len(direct) == 217,
+    require(len(direct) == 224,
             "direct route inventory mutated while building source report")
     inert = []
     for name in NAMES:

@@ -1,3 +1,50 @@
+## 2026-11-17 — CURRENT: audits match the current project
+
+The automated checks again describe the current tool. Every remaining failure is a real problem, not an outdated count.
+
+* **Gates all pass:**
+  * `pre_release.py static`: 23/23.
+  * `cfg-routes`: 6/6.
+  * `source` with the decoded 2.1 ZIPs: 15/15.
+  * Every Python step of the CI workflow.
+  * `audit_project_consistency.py`: 0 FAIL.
+* **Counts and ranges were updated to the current catalog:**
+  * 399 controls: 199 visible, 200 hidden.
+  * 2830 edit points.
+  * 175 special routes.
+  * Combat 24 / Survival 35 / Economy 18 visible.
+  * Stash cells use 5% steps.
+  * MEDICAL COMPOSITION Weight is 0–100% and mirrors Chance.
+* **Retired UI is no longer required:**
+  * The stash weight mixer, the per-tier Chance browser and the medical pair/priority board.
+  * The radiation stage readout.
+  * The economy expense slots.
+  * The tab summary footer.
+
+  The stash audits now check the ADJUST ODDS, MEDICAL COMPOSITION and STASH GEAR boards, and check that the retired UI stays out.
+* **Historical audits** compare only the slice they describe, via `tools/catalog_epochs.py`, which holds the 361-source slice. The 2026-10-15 factory ledgers only prove that every source got a decision; preset values were retuned after them.
+* **Retired snapshot generators** (historical; superseded by `audit_final_cfg_mapping.py`, `audit_project_consistency.py` and `pre_release.py`):
+  * `audit_rc_final_copy.py` (the 2026-10-19 copy freeze; all copy has been rewritten since).
+  * `audit_production_integration.py`.
+  * `audit_cfg_placement.py`.
+  * `audit_cfg_provenance.py`.
+* **Real fixes found along the way:**
+  * **Catalog targets:**
+    * ENEMY ACCURACY is now split into base + DLC1 targets.
+    * MEMORY is split into scale + inverseScale.
+    * Dropped-weapon condition declares its DLC1 target.
+  * **Source audit:**
+    * Quest armor that inherits Weight via `ArmorPrototypes.cfg` is resolved.
+    * Rank-variant crate families are compared as lists.
+    * Same-value / different-spelling fields (10.0 vs 10, 300.0 vs 300.f) are shown, not failed.
+  * **Broken audit scripts:**
+    * Fixed two syntax-broken scripts (progression weapon recipes, publish contract). The publish contract fixture now includes the Stashes renderer that `publish.sh` fingerprints.
+    * The RC signal fixture is on game 2.1.
+  * **Dead code removed:**
+    * `TabViewModel.TabSummary`.
+    * `StashEffectiveState.UniformSmartFactor`.
+* Naming in code wins over older lock text: the stamina ruler is **STAMINA REGEN**, matching PASSIVE HP REGEN and the catalog label. Earlier "BASE RECOVERY" mentions are historical.
+
 ## 2026-11-17 — CURRENT: factory presets store every control
 
 * All 12 factory presets now contain all 399 controls. The 40 controls added on 2026-11-16 (MUTANT AGGRESSION 25, ARTIFACT HUNTING 4, HUMAN TACTICS / HUMAN AWARENESS 9, corpse/stash SUPPLY REDUCTION 2) are stored at the preset's reference-difficulty vanilla value (Master presets: 2× on the Master-only combat-sync rows), exactly what loading produced while they were missing. Nothing plays differently; thematic tuning of these controls comes later.

@@ -1,5 +1,7 @@
 # CFG Provenance Audit — v0.2.54
 
+> **Retired 2026-11-17:** `tools/audit_cfg_provenance.py` was a dated snapshot generator (v0.2.54). Current gates: `tools/audit_final_cfg_mapping.py` (every catalog ID → production writer route), `tools/audit_project_consistency.py` and `python3 tools/pre_release.py static|cfg-routes|source`.
+
 ## Purpose
 
 This audit closes the static provenance chain behind the CFG writer without introducing any EXE/Wine/runtime verification workflow.

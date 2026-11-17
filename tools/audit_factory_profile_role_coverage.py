@@ -10,7 +10,7 @@ catalog = json.loads((ROOT/"src/TrueCustomDifficulty/Data/parameters.json").read
 sources = {p["id"]:p for p in catalog["parameters"]}
 names = matrix["profiles"]
 assert len(names)==len(set(names))==12
-assert len(sources)==359 and matrix["sourceCount"]==288
+assert len(sources)==399 and matrix["sourceCount"]==288
 # Historical 2026-10-19 role-target ledger covers original 288 IDs; the
 # new 40 Trader Buys cells intentionally start neutral in every preset.
 trader_buys = {p["id"]: p for p in sources.values() if p["id"].startswith("economy.traderBuys.")}
@@ -28,7 +28,8 @@ for index,name in enumerate(names):
     d=json.loads((base/(name+".json")).read_text(encoding="utf-8"))
     hash=matrix["previousFactoryGitBlobs"][name]
     assert re.fullmatch(r"[0-9a-f]{40}",hash) and f'["{name}"] = "{hash}"' in service
-    assert d["profileVersion"]==1 and d["name"]==name and d["gameVersion"]==matrix["gameVersion"]
+    # Presets moved to game 2.1; the matrix records its 2.0.5 authoring baseline.
+    assert d["profileVersion"]==1 and d["name"]==name and d["gameVersion"]==catalog["source"]["gameVersion"]
     assert d["referenceDifficulty"]==matrix["roleResults"][name]["ref"]
     assert d["drinkDurationOverride"] is True and d["medicalOverride"]==(name=="Field Medic")
     assert set(d["values"])==set(sources)
@@ -44,6 +45,9 @@ for index,name in enumerate(names):
         p=sources[id]
         entry=d["values"][id]
         value=values[index]
+        if id.startswith("loot.stashMedical") and id.endswith("Bias"):
+            # 2026-11-16 MEDICAL COMPOSITION: Weight mirrors the Chance cell.
+            value=d["values"][id[:-4]+"ChanceScale"]["number"]
         if p["control"]=="toggle":
             assert entry=={"kind":"toggle","boolean":value},(name,id)
         else:
@@ -68,6 +72,6 @@ for index,name in enumerate(names):
                "loot.expensiveStashDrinksChance","loot.expensiveStashGrenadesChance"):
         assert 0<=get(id)<=1,(name,id)
     assert matrix["roleResults"][name]["newChanges"]>=30,name
-print("PASS: 12 factory roles / 359 catalog sources each (40 neutral Trader Buys + 31 Trader Sells) / 49 curated control dimensions")
+print("PASS: 12 factory roles / 399 catalog sources each (40 neutral Trader Buys + 31 Trader Sells) / 49 curated control dimensions")
 print("PASS: native bounds, absolute snaps, ordered stages, stash chance, exclusive gear/shuffle, pristine-only migration map")
 print("NOT TESTED: WPF publish, actual .NET preset import, BPatch, Wine or UE gameplay.")

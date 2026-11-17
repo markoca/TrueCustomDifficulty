@@ -2,8 +2,8 @@
 import csv,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-slots=list(csv.DictReader(open(ROOT/'Data/world-weapon-shuffle-manifest.csv',encoding='utf8')))
-pool=list(csv.DictReader(open(ROOT/'Data/world-weapon-shuffle-pool.csv',encoding='utf8')))
+slots=list(csv.DictReader(open(ROOT/'src/TrueCustomDifficulty/Data/world-weapon-shuffle-manifest.csv',encoding='utf8')))
+pool=list(csv.DictReader(open(ROOT/'src/TrueCustomDifficulty/Data/world-weapon-shuffle-pool.csv',encoding='utf8')))
 compatible=[]
 for s in slots:
     alts=[p for p in pool if p['tier']==s['progression_tier'] and p['family']==s['family'] and p['item_sid']!=s['item_sid']]
@@ -30,27 +30,12 @@ for s in slots:
 print('[OK] structural contract: manifest cardinality, compatibility cardinality, and node paths locked')
 
 writer=(ROOT/'src/TrueCustomDifficulty/Services/CfgPatchWriterService.cs').read_text(encoding='utf8')
-seed_start=writer.index('private static int BuildWorldWeaponSeed')
-seed_end=writer.index('private static void SelectDeterministicPrefix', seed_start)
-seed_block=writer[seed_start:seed_end]
-assert '.Where(x => x.Id != "loot.worldWeaponShuffle")' in seed_block, 'shuffle amount must be excluded from seed'
-assert 'SelectDeterministicPrefix(compatible, changeCount, rng)' in writer, 'prefix selection contract missing'
-print('[OK] amount-independent seed + deterministic prefix guarantee nested 25/50/100 selection')
-import math
-# C# MidpointRounding.AwayFromZero is exact here because all products are integers.
-expected_counts={0.25:2,0.50:4,1.00:8}
-for fraction, expected in expected_counts.items():
-    actual=int(math.floor(len(compatible)*fraction+0.5))
-    assert actual==expected, f'{fraction:.0%}: {actual} != {expected}'
-print('[OK] amount cardinality: 25%=2 / 50%=4 / 100%=8; prefix nesting locked')
-
-# Writer-shape fixtures are generated from the canonical manifest/pool and must stay reproducible.
-import subprocess
-subprocess.run([sys.executable, str(ROOT/'tools/generate_world_weapon_shuffle_fixtures.py')], check=True, cwd=ROOT)
-for pct, expected in [(25,2),(50,4),(100,8)]:
-    text=(ROOT/f'tests/world-weapon-shuffle-fixtures/world-weapon-shuffle-{pct}.cfg').read_text(encoding='utf8')
-    assert text.count('ItemPrototypeSID = ') == expected, (pct, text.count('ItemPrototypeSID = '))
-    assert text.count('PossibleItems : struct.begin {bpatch}') == expected
-    assert text.count('[0] : struct.begin\n') == expected
-    assert 'Upgrades =' not in text and 'Attaches =' not in text
-print('[OK] rendered fixture shape: replacement nodes are full children; parents are bpatch; no Upgrades/Attaches inherited')
+# Current writer (WriteWorldWeaponDistribution): SHUFFLE toggle + DENSITY over
+# direct actors and these generator slots; the earlier seeded 25/50/100 prefix
+# design and its rendered fixtures are retired.
+block=writer[writer.index('private static (int EditCount, int FileCount) WriteWorldWeaponDistribution('):]
+block=block[:block.index('\n    private static ', 10)]
+for token in ('const string toggleId = "loot.worldWeaponShuffle";', 'const string densityId = "loot.worldWeaponDensity";',
+              'LoadWorldWeaponSlots()', 'LoadWorldWeaponDirectSlots()', 'LoadWorldWeaponPool()'):
+    assert token in block, token
+print('[OK] current writer: SHUFFLE toggle + DENSITY over direct and generator slots')

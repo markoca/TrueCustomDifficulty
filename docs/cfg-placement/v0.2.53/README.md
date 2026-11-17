@@ -1,0 +1,199 @@
+# CFG placement audit — v0.2.53
+
+This audit is deliberately **CFG-only**. It does not launch, build, or verify the EXE.
+It proves that every catalog parameter is routed to an explicit CFG writer location and that
+the catalog target declaration agrees with the canonical writer baseline/special route.
+
+- Catalog parameters: **399**
+- Visible / hidden: **199 / 200**
+- Direct-editPoint parameters: **224**
+- Special-route parameters: **175**
+- Concrete direct CFG edit points: **2830**
+- Direct cross-parameter field collisions: **0**
+- Result: **FAIL**
+
+## Route counts
+
+| Route | Parameters |
+|---|---:|
+| `UNSUPPORTED` | 154 |
+| `cheapStashAmmoCloneRedirect` | 1 |
+| `cheapStashGrenadeCloneRedirect` | 1 |
+| `cheapStashGrenadeQuantityCloneRedirect` | 1 |
+| `destructibleAmmoCloneRedirect` | 1 |
+| `destructibleGrenadeCloneRedirect` | 1 |
+| `directEditPoints` | 224 |
+| `expensiveStashAmmoCloneRedirect` | 1 |
+| `listMembership` | 5 |
+| `mediumStashCloneRedirect` | 1 |
+| `npcMedicalCloneRedirect` | 1 |
+| `psyArray` | 4 |
+| `setList` | 1 |
+| `spawnActorRandomRemoveNode` | 3 |
+
+## Evidence
+
+- `parameter-summary.csv` — one row per parameter and its writer route.
+- `direct-targets.csv` — every concrete ordinary CFG field: file, prototype, node, key and operation.
+- `special-routes.csv` — all special array/list/clone/redirect writer routes and their primary CFG.
+- `cfg-file-summary.csv` — direct edit-point counts per CFG file.
+
+Special clone/redirect writers may additionally patch consumer CFGs named by their locked redirect manifests;
+those are intentional route scaffolding, not a second gameplay control surface.
+
+## Failures
+
+- combat.npcGrenadeRate: no direct editPoints and no known special writer route
+- combat.npcSuppressionRate: no direct editPoints and no known special writer route
+- combat.npcFlankRate: no direct editPoints and no known special writer route
+- combat.npcPushRate: no direct editPoints and no known special writer route
+- combat.npcCamperPunishRate: no direct editPoints and no known special writer route
+- combat.mutantAttackRate.bayun: no direct editPoints and no known special writer route
+- combat.mutantAttackRate.blinddog: no direct editPoints and no known special writer route
+- combat.mutantAttackRate.bloodsucker: no direct editPoints and no known special writer route
+- combat.mutantAttackRate.boar: no direct editPoints and no known special writer route
+- combat.mutantAttackRate.burer: no direct editPoints and no known special writer route
+- combat.mutantAttackRate.chimera: no direct editPoints and no known special writer route
+- combat.mutantAttackRate.controller: no direct editPoints and no known special writer route
+- combat.mutantAttackRate.deer: no direct editPoints and no known special writer route
+- combat.mutantAttackRate.flesh: no direct editPoints and no known special writer route
+- combat.mutantAttackRate.poltergeist: no direct editPoints and no known special writer route
+- combat.mutantAttackRate.pseudodog: no direct editPoints and no known special writer route
+- combat.mutantAttackRate.pseudogiant: no direct editPoints and no known special writer route
+- combat.mutantAttackRate.snork: no direct editPoints and no known special writer route
+- combat.mutantAttackRate.tushkan: no direct editPoints and no known special writer route
+- combat.mutantAbilityRate.bayun: no direct editPoints and no known special writer route
+- combat.mutantAbilityRate.blinddog: no direct editPoints and no known special writer route
+- combat.mutantAbilityRate.bloodsucker: no direct editPoints and no known special writer route
+- combat.mutantAbilityRate.burer: no direct editPoints and no known special writer route
+- combat.mutantAbilityRate.chimera: no direct editPoints and no known special writer route
+- combat.mutantAbilityRate.controller: no direct editPoints and no known special writer route
+- combat.mutantAbilityRate.poltergeist: no direct editPoints and no known special writer route
+- combat.mutantAbilityRate.pseudodog: no direct editPoints and no known special writer route
+- combat.mutantAbilityRate.pseudogiant: no direct editPoints and no known special writer route
+- combat.mutantAbilityRate.snork: no direct editPoints and no known special writer route
+- combat.mutantSpecialAbilityRate: no direct editPoints and no known special writer route
+- loot.genericCorpseReduction: no direct editPoints and no known special writer route
+- loot.npcWeaponAmmoSupply: no direct editPoints and no known special writer route
+- loot.genericStashReduction: no direct editPoints and no known special writer route
+- loot.stashMixAmmo: no direct editPoints and no known special writer route
+- loot.stashMixMedical: no direct editPoints and no known special writer route
+- loot.stashMixFood: no direct editPoints and no known special writer route
+- loot.stashMixDrinks: no direct editPoints and no known special writer route
+- loot.stashMixGrenades: no direct editPoints and no known special writer route
+- loot.stashMixCoupons: no direct editPoints and no known special writer route
+- loot.stashMedicalBandageBias: no direct editPoints and no known special writer route
+- loot.stashMedicalBandageChanceScale: no direct editPoints and no known special writer route
+- loot.stashMedicalMedkitBias: no direct editPoints and no known special writer route
+- loot.stashMedicalMedkitChanceScale: no direct editPoints and no known special writer route
+- loot.stashMedicalArmyMedkitBias: no direct editPoints and no known special writer route
+- loot.stashMedicalArmyMedkitChanceScale: no direct editPoints and no known special writer route
+- loot.stashMedicalAntiRadBias: no direct editPoints and no known special writer route
+- loot.stashMedicalAntiRadChanceScale: no direct editPoints and no known special writer route
+- loot.stashMedkitMinCount: no direct editPoints and no known special writer route
+- loot.stashMedkitMaxCount: no direct editPoints and no known special writer route
+- loot.stashArmyMedkitMinCount: no direct editPoints and no known special writer route
+- loot.stashArmyMedkitMaxCount: no direct editPoints and no known special writer route
+- loot.stashGearEnabled: no direct editPoints and no known special writer route
+- loot.stashGearCoveragePercent: no direct editPoints and no known special writer route
+- loot.stashGearWeaponWeight: no direct editPoints and no known special writer route
+- loot.stashGearArmorWeight: no direct editPoints and no known special writer route
+- loot.stashGearArtifactWeight: no direct editPoints and no known special writer route
+- loot.stashGearAttachmentWeight: no direct editPoints and no known special writer route
+- loot.stashGearBonusChance: no direct editPoints and no known special writer route
+- loot.ammoBoxWeight918: no direct editPoints and no known special writer route
+- loot.ammoBoxWeight045: no direct editPoints and no known special writer route
+- loot.ammoBoxWeight545: no direct editPoints and no known special writer route
+- loot.ammoBoxWeight012: no direct editPoints and no known special writer route
+- loot.standardStashChanceScale: no direct editPoints and no known special writer route
+- loot.rareStashChanceScale: no direct editPoints and no known special writer route
+- loot.mediumStashMedicalChance: no direct editPoints and no known special writer route
+- loot.mediumStashDrinksChance: no direct editPoints and no known special writer route
+- loot.mediumStashCouponsChance: no direct editPoints and no known special writer route
+- loot.expensiveStashAmmoChance: no direct editPoints and no known special writer route
+- loot.expensiveStashMedicalChance: no direct editPoints and no known special writer route
+- loot.expensiveStashFoodChance: no direct editPoints and no known special writer route
+- loot.expensiveStashDrinksChance: no direct editPoints and no known special writer route
+- loot.expensiveStashGrenadesChance: no direct editPoints and no known special writer route
+- economy.traderMinBuyCondition: no direct editPoints and no known special writer route
+- environment.artifactRareLuck: no direct editPoints and no known special writer route
+- loot.worldF1GrenadeBoxes: no direct editPoints and no known special writer route
+- loot.looseWorldLootRemoved: no direct editPoints and no known special writer route
+- loot.looseUniqueWeaponShuffle: no direct editPoints and no known special writer route
+- loot.worldWeaponShuffle: no direct editPoints and no known special writer route
+- loot.worldWeaponDensity: no direct editPoints and no known special writer route
+- loot.worldAttachmentShuffle: no direct editPoints and no known special writer route
+- loot.worldDetectors: no direct editPoints and no known special writer route
+- loot.worldArmorRemoved: no direct editPoints and no known special writer route
+- loot.blueprintShuffle: no direct editPoints and no known special writer route
+- economy.traderBuys.general.weapon: no direct editPoints and no known special writer route
+- economy.traderBuys.general.armor: no direct editPoints and no known special writer route
+- economy.traderBuys.general.attach: no direct editPoints and no known special writer route
+- economy.traderBuys.general.ammo: no direct editPoints and no known special writer route
+- economy.traderBuys.general.grenade: no direct editPoints and no known special writer route
+- economy.traderBuys.general.artifact: no direct editPoints and no known special writer route
+- economy.traderBuys.general.consumable: no direct editPoints and no known special writer route
+- economy.traderBuys.general.mutantLoot: no direct editPoints and no known special writer route
+- economy.traderBuys.medic.weapon: no direct editPoints and no known special writer route
+- economy.traderBuys.medic.armor: no direct editPoints and no known special writer route
+- economy.traderBuys.medic.attach: no direct editPoints and no known special writer route
+- economy.traderBuys.medic.ammo: no direct editPoints and no known special writer route
+- economy.traderBuys.medic.grenade: no direct editPoints and no known special writer route
+- economy.traderBuys.medic.artifact: no direct editPoints and no known special writer route
+- economy.traderBuys.medic.consumable: no direct editPoints and no known special writer route
+- economy.traderBuys.medic.mutantLoot: no direct editPoints and no known special writer route
+- economy.traderBuys.technician.weapon: no direct editPoints and no known special writer route
+- economy.traderBuys.technician.armor: no direct editPoints and no known special writer route
+- economy.traderBuys.technician.attach: no direct editPoints and no known special writer route
+- economy.traderBuys.technician.ammo: no direct editPoints and no known special writer route
+- economy.traderBuys.technician.grenade: no direct editPoints and no known special writer route
+- economy.traderBuys.technician.artifact: no direct editPoints and no known special writer route
+- economy.traderBuys.technician.consumable: no direct editPoints and no known special writer route
+- economy.traderBuys.technician.mutantLoot: no direct editPoints and no known special writer route
+- economy.traderBuys.bartender.weapon: no direct editPoints and no known special writer route
+- economy.traderBuys.bartender.armor: no direct editPoints and no known special writer route
+- economy.traderBuys.bartender.attach: no direct editPoints and no known special writer route
+- economy.traderBuys.bartender.ammo: no direct editPoints and no known special writer route
+- economy.traderBuys.bartender.grenade: no direct editPoints and no known special writer route
+- economy.traderBuys.bartender.artifact: no direct editPoints and no known special writer route
+- economy.traderBuys.bartender.consumable: no direct editPoints and no known special writer route
+- economy.traderBuys.bartender.mutantLoot: no direct editPoints and no known special writer route
+- economy.traderBuys.genericNpc.weapon: no direct editPoints and no known special writer route
+- economy.traderBuys.genericNpc.armor: no direct editPoints and no known special writer route
+- economy.traderBuys.genericNpc.attach: no direct editPoints and no known special writer route
+- economy.traderBuys.genericNpc.ammo: no direct editPoints and no known special writer route
+- economy.traderBuys.genericNpc.grenade: no direct editPoints and no known special writer route
+- economy.traderBuys.genericNpc.artifact: no direct editPoints and no known special writer route
+- economy.traderBuys.genericNpc.consumable: no direct editPoints and no known special writer route
+- economy.traderBuys.genericNpc.mutantLoot: no direct editPoints and no known special writer route
+- economy.traderSells.general.weapons: no direct editPoints and no known special writer route
+- economy.traderSells.general.armor: no direct editPoints and no known special writer route
+- economy.traderSells.general.attachments: no direct editPoints and no known special writer route
+- economy.traderSells.general.ammo: no direct editPoints and no known special writer route
+- economy.traderSells.general.medical: no direct editPoints and no known special writer route
+- economy.traderSells.general.food: no direct editPoints and no known special writer route
+- economy.traderSells.general.drinks: no direct editPoints and no known special writer route
+- economy.traderSells.general.artifacts: no direct editPoints and no known special writer route
+- economy.traderSells.general.detectors: no direct editPoints and no known special writer route
+- economy.traderSells.general.grenades: no direct editPoints and no known special writer route
+- economy.traderSells.medic.medical: no direct editPoints and no known special writer route
+- economy.traderSells.medic.drinks: no direct editPoints and no known special writer route
+- economy.traderSells.medic.artifacts: no direct editPoints and no known special writer route
+- economy.traderSells.medic.detectors: no direct editPoints and no known special writer route
+- economy.traderSells.technician.weapons: no direct editPoints and no known special writer route
+- economy.traderSells.technician.attachments: no direct editPoints and no known special writer route
+- economy.traderSells.technician.ammo: no direct editPoints and no known special writer route
+- economy.traderSells.technician.medical: no direct editPoints and no known special writer route
+- economy.traderSells.technician.food: no direct editPoints and no known special writer route
+- economy.traderSells.technician.drinks: no direct editPoints and no known special writer route
+- economy.traderSells.bartender.weapons: no direct editPoints and no known special writer route
+- economy.traderSells.bartender.ammo: no direct editPoints and no known special writer route
+- economy.traderSells.bartender.food: no direct editPoints and no known special writer route
+- economy.traderSells.bartender.drinks: no direct editPoints and no known special writer route
+- economy.traderSells.bartender.artifacts: no direct editPoints and no known special writer route
+- economy.traderSells.bartender.detectors: no direct editPoints and no known special writer route
+- economy.traderSells.genericNpc.ammo: no direct editPoints and no known special writer route
+- economy.traderSells.genericNpc.medical: no direct editPoints and no known special writer route
+- economy.traderSells.genericNpc.food: no direct editPoints and no known special writer route
+- economy.traderSells.genericNpc.drinks: no direct editPoints and no known special writer route
+- economy.traderSells.genericNpc.grenades: no direct editPoints and no known special writer route

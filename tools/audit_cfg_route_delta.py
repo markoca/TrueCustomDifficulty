@@ -12,6 +12,7 @@ import re
 from pathlib import Path
 
 from audit_final_cfg_mapping import method_routes
+from catalog_epochs import edit_points_361, slice_361
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src" / "TrueCustomDifficulty"
@@ -35,9 +36,11 @@ def main() -> int:
     old = json.loads(read(OLD))
     current = json.loads(read(DATA / "parameters.json"))
     baseline = json.loads(read(DATA / "cfg-writer-baseline.json"))
-    definitions = {p["id"]: p for p in current["parameters"]}
-    direct = {p["parameterId"] for p in baseline["editPoints"]}
-    routed = method_routes(baseline["special"])
+    definitions = {p["id"]: p for p in slice_361(current["parameters"])}
+    edit_points = edit_points_361(baseline["editPoints"])
+    direct = {p["parameterId"] for p in edit_points}
+    routed = {pid: m for pid, m in method_routes(baseline["special"]).items()
+              if pid in definitions}
     previous = set(old["parameters"])
     # This delta contract is the frozen 248→290 historical slice, not the
     # later dedicated trader matrices. Both trader families have independent
@@ -46,11 +49,13 @@ def main() -> int:
         ("economy.traderBuys.", "economy.traderSells."))}
     require(len(trader_ids) == 71, "Trader Buys/Sells source boundary drift")
     added = set(definitions) - previous - trader_ids
+    # Supply-reduction masters came after this delta and have their own audit.
+    added -= {"loot.genericCorpseReduction", "loot.genericStashReduction"}
 
     require(old["counts"]["catalog"] == 248 and len(previous) == 248,
             "Frozen 248-source audited inventory changed")
-    require(len(definitions) == baseline["supportedParameterCount"] == 361,
-            "Current catalog must have 361 registered sources")
+    require(len(definitions) == 361 and baseline["supportedParameterCount"] == len(current["parameters"]),
+            "Historical 361-source slice or writer coverage drifted")
     food = {"survival.breadSatiety", "survival.sausageSatiety",
             "survival.cannedFoodSatiety", "survival.milkSatiety"}
     armor = {"loot.worldArmorRemoved"}
@@ -61,12 +66,18 @@ def main() -> int:
             "Frozen 248 -> 35 Stashes + 4 Food + 1 Armor removal + 2 Equipment Weight source boundary drift")
     require(added & direct == food | weight,
             "Only new food and weight controls may add direct source routes")
-    require(len(direct) == 217 and len(baseline["editPoints"]) == 2682,
+    # Later, separately audited growth of already-owned direct routes:
+    # dropped-weapon condition covers the full weapon roster; MUTANT HEALTH
+    # variants (2026-11-16) add the variant prototypes of five families.
+    grown = {"loot.droppedWeaponCondition": 1476, "combat.mutantHealth.blinddog": 2,
+             "combat.mutantHealth.bloodsucker": 4, "combat.mutantHealth.boar": 3,
+             "combat.mutantHealth.flesh": 2, "combat.mutantHealth.poltergeist": 6}
+    require(len(direct) == 217 and len(edit_points) == 2693,
             "Old direct and new food leaf count drift")
     # Reuse earlier source audit, but prove that the previously verified leaf
     # identities have not drifted. Counts alone can hide silent reassignment.
     direct_by_id = {}
-    for point in baseline["editPoints"]:
+    for point in edit_points:
         direct_by_id.setdefault(point["parameterId"], []).append(point)
     previous_direct = {pid: row for pid, row in old["parameters"].items()
                        if row["writerType"] == "direct"}
@@ -83,14 +94,14 @@ def main() -> int:
             continue
         points = direct_by_id[pid]
         leaf = record["representativeDirectLeaf"]
-        require(len(points) == record["directEditPointCount"],
+        require(len(points) == grown.get(pid, record["directEditPointCount"]),
                 "Previously audited direct leaf count changed: " + pid)
         require(any(all(point[k] == leaf[k] for k in keys) and
                     point.get("nodePath", []) == leaf.get("nodePath", [])
                     for point in points),
                 "Previously audited direct CFG destination/value drift: " + pid)
     for pid in food:
-        points = [p for p in baseline["editPoints"] if p["parameterId"] == pid]
+        points = [p for p in edit_points if p["parameterId"] == pid]
         require(len(points) == 2 and {p["key"] for p in points} == {"ValueMin", "ValueMax"}
                 and all(p["operation"] == "negateSet" and p["file"] == "GameData/EffectPrototypes.cfg"
                         for p in points), "New food signed direct writer pair drift: " + pid)
@@ -100,7 +111,8 @@ def main() -> int:
                 and all(p["key"] == "Weight" and p["operation"] == "scale"
                         and p.get("nodePath", []) == [] and float(p["sourceRaw"]) > 0
                         for p in points), "New item-weight source manifest drift: " + pid)
-    require(len(set(routed) - trader_ids) == 71 and len(set(routed) & trader_ids) == 71
+    # 71 historical special routes + the two supply-reduction masters.
+    require(len(set(routed) - trader_ids) == 73 and len(set(routed) & trader_ids) == 71
             and set(routed) | direct == set(definitions)
             and not set(routed) & direct, "Writer route coverage/ownership drift")
 

@@ -14,7 +14,8 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 PUBLISH_SCRIPT = ROOT / "publish.sh"
 script = PUBLISH_SCRIPT.read_text(encoding="utf-8")
-assert os.access(PUBLISH_SCRIPT, os.X_OK), "publish.sh must be tracked executable; chmod +x must not dirty the checkout"\nassert subprocess.run(
+assert os.access(PUBLISH_SCRIPT, os.X_OK), "publish.sh must be tracked executable; chmod +x must not dirty the checkout"
+assert subprocess.run(
     ["bash", "-n", str(PUBLISH_SCRIPT)], check=False, capture_output=True
 ).returncode == 0, "publish.sh failed bash syntax validation"
 assert 'rm -rf -- "$PUBLISH_DIR"' not in script
@@ -39,6 +40,10 @@ with tempfile.TemporaryDirectory(prefix="tcd-publish-inode-") as tmp:
         encoding="utf-8",
     )
     (project / "Presets/README.md").write_text("SOURCE README\n", encoding="utf-8")
+    # publish.sh fingerprints the Stashes renderer into BUILD-INFO.txt.
+    (project / "Controls").mkdir()
+    (project / "Controls/AggregateVisualControl.StashBranch.cs").write_text(
+        "// fixture renderer\n", encoding="utf-8")
     source_tools = fixture / "tools"
     source_tools.mkdir()
     (source_tools / "README.txt").write_text(

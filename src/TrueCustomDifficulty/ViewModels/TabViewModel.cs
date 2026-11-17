@@ -14,8 +14,6 @@ public sealed class TabViewModel : ObservableObject
     public ObservableCollection<ParameterViewModel> Parameters { get; }
     public ICollectionView ParametersView { get; }
 
-    public string TabSummary => GetTabSummary(Id);
-
     // Master mechanics are not authored for the other Base Difficulty
     // references. Collapse the entire tab rather than leaving empty controls.
     public bool IsVisible => Id != "master"
@@ -78,20 +76,4 @@ public sealed class TabViewModel : ObservableObject
 
         SelectedParameter = Parameters.FirstOrDefault(p => p.IsControlVisible);
     }
-
-    private static string GetTabSummary(string id) => id switch
-    {
-        "combat" => "Enemy toughness and damage, attack pressure, player lethality, mutant danger and explosions.",
-        "survival" => "Hunger, fatigue, sleeping, radiation and bleeding.",
-        "equipment" => "Armor durability, weapon wear and the weight of ammunition and consumables.",
-        "health" => "Player health, recovery and direct medical treatment.",
-        "stamina" => "Stamina pool and recovery, action costs, movement penalties, vaulting and carry capacity.",
-        "loot" => "World pickups, breakable boxes, NPC corpse equipment and mutant parts; stash rewards are in Stashes.",
-        "stashes" => "Basic, Standard and Rare stash rewards: ammo stacks, bonus rolls, content biases, medical amounts and extra gear.",
-        "economy" => "Coupons, what traders buy and sell, prices, item values, services, repair and quest rewards.",
-        "environment" => "Global anomaly damage, 11 individual damage sources, Flycatcher slowdown and three special effects; no weather/emission timing.",
-        "alife" => "Human and mutant encounter group-size caps by player rank; world population and spawn timing are unchanged.",
-        "master" => "Optional Master-only punishment bundles for starvation, severe fatigue, radiation, low health and medical effectiveness.",
-        _ => "Independent controls built from the vanilla configuration."
-    };
 }

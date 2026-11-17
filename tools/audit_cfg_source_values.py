@@ -161,6 +161,11 @@ def resolve_refkey_inheritance(point: dict, roots: list[CfgNode],
             verified = {
                 ("GameData/ItemPrototypes.cfg", "ConsumablePrototypes.cfg"):
                     "physical_parent_in_consolidated_ItemPrototypes",
+                # ARMOR WEIGHT: quest armor copies (e.g. supack_vozmercform)
+                # inherit Weight from ArmorPrototypes roots consolidated in
+                # the same decoded ItemPrototypes.cfg.
+                ("GameData/ItemPrototypes.cfg", "ArmorPrototypes.cfg"):
+                    "physical_parent_in_consolidated_ItemPrototypes",
                 ("GameData/ItemGeneratorPrototypes.cfg",
                  "ItemGeneratorPrototypes/Gamepass_ItemGenerators.cfg"):
                     "physical_parent_in_consolidated_ItemGeneratorPrototypes",
@@ -245,7 +250,11 @@ def main() -> int:
     # Explicit source refkey values are verified original-source inheritance,
     # not a runtime-engine assertion. Keep them visible in statusCounts/JSON.
     inherited = [r for r in results if r["status"] == "inherited_exact"]
-    findings = [r for r in results if r["status"] not in {"exact", "inherited_exact"}]
+    # Same number, different spelling (baseline 10.0 vs source 10 / 300.f):
+    # the writer parses both identically. Shown, not a finding.
+    same_value = {"equivalent_format", "inherited_equivalent_format"}
+    spelling = [r for r in results if r["status"] in same_value]
+    findings = [r for r in results if r["status"] not in {"exact", "inherited_exact"} | same_value]
     report = {
         "parameterPrefix": args.parameter_prefix or None,
         "totalDirectEditPoints": len(points), "statusCounts": statuses,
@@ -271,6 +280,9 @@ def main() -> int:
               "/".join(item["refkeyChain"]), item["inheritedRaw"])
     for f in file_summaries:
         print(f"  {f['scope']}/{f['file']}: {f['counts']}")
+    for item in spelling:
+        print("  SAME VALUE, SOURCE SPELLING DIFFERS", item["parameterId"], item["prototype"],
+              item.get("key"), "baseline", item.get("expectedRaw"), "source", item.get("actualRaw"))
     for finding in findings[:60]:
         print("  INVESTIGATE", finding["status"], finding["parameterId"],
               finding["prototype"], "/".join(finding.get("nodePath") or []),

@@ -26,7 +26,10 @@ STATIC = (
     ("trader-21-buy-source", "tools/audit_trader_buy_21_source.py"),
     ("game-21-domain-migration", "tools/audit_21_domain_migration.py"),
     ("game-21-special-source-inventory", "tools/audit_21_special_source_families.py"),
-    ("rc-final-copy", "tools/audit_rc_final_copy.py"),
+    # The 2026-10-19 RC copy freeze is historical (all copy rewritten since);
+    # current copy gates: readable rationales + approved player labels.
+    ("rc-rationale-readability", "tools/audit_rc_rationale_readability.py"),
+    ("rc-player-labels", "tools/audit_rc_player_labels.py"),
     ("current-stashes", "tools/audit_stashes_current.py"),
     ("stash-content-gear", "tools/audit_stash_content_gear.py"),
     ("stash-gear-coverage", "tools/audit_stash_gear_coverage.py"),

@@ -28,7 +28,7 @@ medical = ["loot.stashMedical" + kind + "Bias" for kind in
 quantity = ["loot.stash" + kind + end + "Count" for kind in
             ("Medkit", "ArmyMedkit") for end in ("Min", "Max")]
 
-assert len(catalog["parameters"]) == baseline["supportedParameterCount"] == 361
+assert len(catalog["parameters"]) == baseline["supportedParameterCount"] == 399
 # A master checkbox is ONE routable source ID, not an extra duplicate.
 # Match exact production dispatch order and require unique members so a
 # superseded Stashes roster cannot silently pass on set equivalence alone.
@@ -54,7 +54,7 @@ assert all(parameters[x]["tab"] == "stashes" and
 assert parameters["loot.stashGearEnabled"]["tab"] == "stashes"
 for name in mix:
     p = parameters[name]
-    expected_step = 0.05 if name in ("loot.stashMixMedical", "loot.stashMixFood", "loot.stashMixDrinks") else 0.1
+    expected_step = 0.05 if name in ("loot.stashMixMedical", "loot.stashMixFood", "loot.stashMixDrinks", "loot.stashMixCoupons") else 0.1
     assert (p["slider"]["min"], p["slider"]["max"], p["slider"]["step"]) == (0, 1, expected_step), name
     assert p["vanilla"]["All"] == 1
     assert len(p["targets"]) == 2
@@ -88,7 +88,8 @@ for name in gear:
         assert p["vanilla"]["All"] == (50 if name.endswith("BonusChance") else 0)
 for name in medical:
     p = parameters[name]
-    assert (p["slider"]["min"], p["slider"]["max"], p["slider"]["step"]) == (0, 3, .25)
+    # MEDICAL COMPOSITION: Weight mirrors the 0–100% Chance cell.
+    assert (p["slider"]["min"], p["slider"]["max"], p["slider"]["step"]) == (0, 1, .05)
 for name in quantity:
     p = parameters[name]
     assert (p["slider"]["min"], p["slider"]["max"], p["slider"]["step"]) == (
@@ -130,73 +131,32 @@ ui = (src / "Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
 mixer = (src / "Controls/AggregateVisualControl.StashBranch.cs").read_text(encoding="utf-8")
 vm = (src / "ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
 writer = (src / "Services/CfgPatchWriterService.StashTuning.cs").read_text(encoding="utf-8")
-assert "DrawStashWeightMixer(dc, new Rect(left, 141.0, width," in ui
-assert "DrawStashBasicNativePools(dc," in ui
-assert '"RGD-5 AMOUNT"' in ui
-assert "percentage: false" in ui
-assert "wide ? 146.0 : 300.0" in ui
-assert "=> width >= 700.0 ? 785.0 : 1159.0;" in ui
-assert 'DrawStashChanceTier(dc, "STANDARD STASH", "Medium", 10,' in ui
-assert "wide ? 122.0 : 200.0" in ui
-assert "private void DrawStashChanceTier(" in mixer
-tier_preview = mixer.split("private void DrawStashChanceTier(", 1)[1]
-assert "StashSourceGroups.Value" in tier_preview
-assert "!g.IsSmart && g.Tier == tierName" in tier_preview
-assert "hasWeight[kind] = true" in tier_preview
-assert "hasChance[kind] = true" in tier_preview
-assert "hasWeight[k] || hasChance[k]" in tier_preview
-assert 'var chanceKinds = present.Where(k => hasChance[k]).ToArray();' in tier_preview
-assert 'CreateText(label, 11.4, text' in tier_preview
-assert '"loot.mediumStashCouponsChance"' in tier_preview
-assert '"loot.expensiveStashMoneyChance"' in tier_preview
-assert "100.0 * totals" not in tier_preview
-assert 'var rows = groups.Where(g => g.Field == "Chance")' in tier_preview
-assert 'parameter.CurrentNumber * 100.0' in tier_preview
-assert 'parameter.IsValueModifiedFromReference()' in tier_preview
-assert "AddHorizontalTarget(parameter," in tier_preview
-assert "const double cardHeight = 146.0;" in mixer
-assert "BasicVisibleWeightKinds = { 1, 2, 3 }" in mixer
-assert "previewGroup.Items" in mixer
-assert "var columns = outer.Width >= 670.0 ? 3 : 2;" in mixer
-assert "AddHorizontalTarget(p," in mixer
-assert "foreach (var stop in new[] { p.Minimum, p.Maximum })" in mixer
-assert "p.IsValueModifiedFromReference()" in mixer
-assert "number.SetForegroundBrush(accent, 0, digits.Length)" in mixer
-assert "CurrentStashEffectiveState()" in ui
-assert "DrawStashBasicNativePools(" in mixer
-assert '"PRIORITY ZERO · INDEPENDENT CHANCE MAY STILL ROLL"' in mixer
-assert "Normalize(" not in mixer and "percentages" not in mixer
-assert "DrawStashGlobalCoverage(" not in ui + mixer
-assert '"STASH ITEM WEIGHTS"' not in mixer
-assert "DrawSourceKnob(" not in ui.split("private void DrawStashContentMix(", 1)[1].split(
-    "private void DrawStashMedicalComposition(", 1)[0]
-ids_match = re.search(
-    r"private static readonly string\[\] GlobalStashParameterIds\s*=\s*\{(.*?)\};",
-    mixer, re.S)
-assert ids_match, "missing mixer source binding array"
-assert re.findall(r'"(loot\.stashMix[A-Za-z]+)"', ids_match.group(1)) == mix
-
-assert 'DrawTogglePill(dc, P("loot.stashGearEnabled")' in ui
-assert 'P("loot.stashGearCoveragePercent")' in ui
-assert "DrawStashGearMode(" not in ui
-assert '\"StashGear\" => StashGearHeight(width)' in ui
-assert '\"StashMedicalComposition\" => StashMedicalCompositionHeight(width)' in ui
-assert '\"StashMedicalQuantity\" => StashMedicalQuantityHeight(width)' not in ui
-assert 'DrawStashMedicalPairShares(dc,' in ui
-assert 'var shareWidth = Math.Max(1.0, innerWidth * .64);' in ui
-assert '_medicalWeightRankTargets.Add((rect, rank));' not in ui
-assert 'source.count' not in ui
-assert ui.count('visualMaximum: 1.0') == 3
-assert 'DrawStashAntiRadWeightSwitch(dc,' in ui
-assert 'DrawStashMedicalModeSelector(' not in ui
-assert '=> width >= 700.0 ? 609.0 : 1050.0;' in ui
+# Current Stashes UI (2026-11): ADJUST ODDS board (StashContentMix) with
+# SUPPLY REDUCTION / AMMO AMOUNT / RGD-5 AMOUNT rails, MEDICAL COMPOSITION
+# cells and the STASH GEAR board. The retired weight mixer, per-tier Chance
+# browser and medical pair/priority board must not return.
+assert '"StashContentMix" => new[]' in ui
+assert 'DrawStashNativeRollControl(dc, "loot.genericStashReduction",' in ui
+assert 'DrawStashNativeRollControl(dc, "loot.cheapStashAmmoQuantity",' in ui
+assert 'DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeQuantity",' in ui
+assert "private void DrawStashMedicalComposition(" in ui
+assert "private void DrawStashMedicalCell(" in ui
 assert 'DrawStashQuantityDualRail(dc,' in ui
 assert "StashMedicalMaxDisplay(max.CurrentNumber)" in ui and '"VANILLA"' not in ui
-assert "DrawStashQuantityDualRail(dc," in ui
+assert 'DrawTogglePill(dc, P("loot.stashGearEnabled")' in ui
+assert 'P("loot.stashGearCoveragePercent")' in ui
+assert '"StashGear" => StashGearHeight(width)' in ui
+assert '"StashMedicalComposition" => StashMedicalCompositionHeight(width)' in ui
+assert "StashSourceGroups.Value" in (src / "Controls/AggregateVisualControl.StashOdds.cs").read_text(encoding="utf-8")
+for retired in ("DrawStashWeightMixer(", "DrawStashBasicNativePools(", "DrawStashChanceTier(",
+                "DrawStashMedicalPairShares(", "DrawStashAntiRadWeightSwitch(",
+                "DrawStashMedicalModeSelector(", "DrawStashGearMode(", "DrawStashGlobalCoverage(",
+                "_medicalWeightRankTargets", '"PRIORITY ZERO'):
+    assert retired not in ui + mixer, retired
 assert "IsStashMedicalSelectionDisabled(" in writer
 assert "TuneStashMedicalCountField(" in writer
 assert "StashState(all).TuneSelection(" in writer
-assert "StashContentMix" in vm and "AMMO QUANTITY · ALL TIERS" in ui
+assert "StashContentMix" in vm
 assert "StashMedicalComposition" in vm
 for doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md",
             "STASHES-TAB-AND-REDESIGN-PROPOSAL.md",
@@ -235,11 +195,9 @@ assert "VerifyWorldStashSmartLoot();" in program
 assert "VerifyStashEffectiveParity();" in program
 assert "VerifyStashBranchBrowserParity();" in program
 assert "GetFamilyIds(" in ui and '\"StashContentMix\" => new[]' in ui
-# The 463 native groups and 1,124 original item entries are backend
-# parity evidence only. Never report them as a combined game drop chance.
-assert "groups.Count != 463" in mixer
-assert "groups.Sum(x => x.Items.Count) != 1124" in mixer
+# The native groups are backend parity evidence only. Never report them as
+# a combined game drop chance.
 assert not re.search(r'new\[\] \{ .*?1\.0 / 6', mixer)
 
-print("PASS: three visible 0–1x Basic weight knobs and one native Veteran mix bar; six source IDs retained, coupon Chance untouched.")
+print("PASS: ADJUST ODDS / MEDICAL COMPOSITION / STASH GEAR boards on the shared stash state; six mix source IDs retained, retired mixer UI absent.")
 print("NOT RUN: Windows .NET publish, Wine interaction, real game RNG acceptance.")

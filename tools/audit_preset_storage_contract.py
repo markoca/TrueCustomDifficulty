@@ -9,7 +9,7 @@ storage_path = ROOT / "src/TrueCustomDifficulty/Services/UserPresetStorageServic
 
 assert "_userPresetStorage" not in vm, "LocalAppData user-preset storage returned to MainViewModel"
 assert "UserPresetStorageService" not in vm, "LocalAppData user-preset service returned to MainViewModel"
-assert vm.count("InitialDirectory = _presetDirectoryService.Ensure()") == 2,     "Save and Load dialogs must both default to the portable Presets directory"
+assert vm.count("InitialDirectory = _presetDirectoryService.Ensure()") == 1 and "presetDirectory = _presetDirectoryService.EnsureWritable();" in vm and "InitialDirectory = presetDirectory" in vm,     "Save and Load dialogs must both default to the portable Presets directory"
 assert "var items = _presetDirectoryService.List();" in vm,     "Preset picker must read the same portable Presets directory"
 assert not storage_path.exists(), "Obsolete LocalAppData preset service still exists"
 

@@ -62,10 +62,11 @@ def main() -> None:
                 'Exactly one visible CONTROLS heading must exist')
     heading = XAML.index('Text="CONTROLS"')
     help_binding = XAML.index('Text="{Binding SelectedParameter.PanelControlHelp}"')
-    muted_footer = XAML.index('Text="{Binding TabSummary}"')
     assert_that(XAML.index('Text="{Binding SelectedParameter.PanelRationale}"') < heading
-                < help_binding < muted_footer,
-                'CONTROLS must follow gameplay meaning and precede muted contextual footer')
+                < help_binding,
+                'CONTROLS must follow gameplay meaning')
+    assert_that('Text="{Binding TabSummary}"' not in XAML,
+                'Redundant per-tab summary footer returned')
     assert_that('Text="{Binding SliderGuide}"' not in XAML
                 and 'public string SliderGuide' not in TABS,
                 'Redundant per-tab mouse/keyboard instruction footer is still visible')

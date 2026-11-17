@@ -609,9 +609,16 @@
       },
       "targets": [
         {
-          "scope": "baseGame+DLC1",
-          "file": "GameData/WeaponData/CharacterWeaponSettingsPrototypes.cfg + DLCGameData/DLC1/WeaponData/CharacterWeaponSettingsPrototypes.cfg",
-          "prototype": "77 *_NPC weapon settings",
+          "scope": "baseGame",
+          "file": "GameData/WeaponData/CharacterWeaponSettingsPrototypes.cfg",
+          "prototype": "75 *_NPC weapon settings",
+          "path": "DispersionRadius",
+          "operation": "inverseScale"
+        },
+        {
+          "scope": "dlc1",
+          "file": "DLCGameData/DLC1/WeaponData/CharacterWeaponSettingsPrototypes.cfg",
+          "prototype": "2 *_NPC weapon settings",
           "path": "DispersionRadius",
           "operation": "inverseScale"
         }
@@ -746,8 +753,15 @@
           "scope": "baseGame",
           "file": "GameData/AIPrototypes/ThreatPrototypes.cfg",
           "prototype": "[1] DefaultNPC",
-          "path": "DefaultThreatValueFreezeTimeSeconds|DefaultThreatValueLossPerSecond|Actions[3].ThreatValueFreezeTimeSeconds|ThreatValueLossPerSecond",
-          "operation": "scale / inverseScale"
+          "path": "DefaultThreatValueFreezeTimeSeconds|Actions[3].ThreatValueFreezeTimeSeconds",
+          "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/AIPrototypes/ThreatPrototypes.cfg",
+          "prototype": "[1] DefaultNPC",
+          "path": "DefaultThreatValueLossPerSecond|Actions[3].ThreatValueLossPerSecond",
+          "operation": "inverseScale"
         }
       ],
       "support": {
@@ -7605,7 +7619,14 @@
         {
           "scope": "baseGame",
           "file": "GameData/ItemGeneratorPrototypes.cfg",
-          "prototype": "92 audited ordinary-human loadout generators (88 base + 4 DLC1)",
+          "prototype": "88 audited ordinary-human loadout generators",
+          "path": "738 direct weapon rows MinDurability/MaxDurability",
+          "operation": "setRangeBound"
+        },
+        {
+          "scope": "dlc1",
+          "file": "DLCGameData/DLC1/ItemGeneratorPrototypes.cfg",
+          "prototype": "4 audited ordinary-human loadout generators",
           "path": "738 direct weapon rows MinDurability/MaxDurability",
           "operation": "setRangeBound"
         }

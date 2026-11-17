@@ -133,11 +133,8 @@ for token in (
     'dc.DrawEllipse(symbol, null, center, 23.0, 23.0);',
     'DrawRadiationControls(dc, text, muted, soft, accent, panel);',
     'private void DrawRadiationControls(',
-    '"RADS ACCUMULATED"', '"DAMAGE PER TICK"', '"DEAD AFTER"',
+    'DrawStat("RADS ACCUMULATED"', 'DrawStat("DAMAGE PER TICK"', '"DEAD AFTER" : "DEATH ESTIMATE"',
     'var currentRad = _radLevel;',
-    'var stageFrom = index <= 0 ? 1.0 : RadiationRingThresholds[index - 1];',
-    'var stageTo = index < 0 ? 0.0',
-    'index == 10 ? 100.0 : RadiationRingThresholds[index] - 1.0;',
     'var level = index + 1;',
     'private const double RadiationDialCenterY = 183.0;',
     'private const double RadiationDialTrackRadius = 122.0;',
@@ -218,7 +215,7 @@ assert "DrawRadiationRingSector(dc, center, radius, 0.0, currentRad, accent);" n
 ring_renderer = code.split("private void DrawRadiationBalance(", 1)[1].split(
     "// Preview-only RAD selection.", 1)[0]
 control_renderer = code.split("private void DrawRadiationControls(", 1)[1].split(
-    "// Three native stash ammo quantities", 1)[0]
+    "private static readonly Brush[] StashMixPalette =", 1)[0]
 for token in (
     "RadiationStepButton(", "RadiationStepHit(",
     "new Point(center.X, center.Y + 43.0)",
@@ -231,7 +228,6 @@ assert "DrawCenteredText(dc," not in ring_renderer.split("for (var tick = 10; ti
     "DrawRadiationHudTrefoil(dc", 1)[0], "Numerical threshold overlay returned"
 assert "DrawCenteredText(dc, currentRad.ToString(" not in ring_renderer
 assert "profile.Top + 347.0" not in ring_renderer
-assert "29.0, accent, FontWeights.Bold);" in ring_renderer
 assert "if (currentRad > 0.0)" in ring_renderer
 assert 'DrawCenteredText(dc, "RAD",' not in ring_renderer, "RAD label returned to glyph"
 assert "DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.82));" in ring_renderer
@@ -242,8 +238,6 @@ assert "dc.DrawTrackedRoundedRectangle(panel, new Pen(border" not in control_ren
 assert '"1–100 RAD"' not in ring_renderer
 assert '"FIXED RAD"' not in control_renderer
 assert '"DAMAGE PER TICK"' in control_renderer
-assert 'var stageRange = index < 0 ? "0 RAD"' in control_renderer
-assert 'var stageTo = index < 0 ? 0.0' in control_renderer, "0 RAD must not read thresholds[-1]"
 assert '"DEAD AFTER"' in control_renderer and 'DrawStat("~" + RadiationTime(eta),' in control_renderer
 assert '"DEATH ESTIMATE"' in control_renderer
 assert '"MAX " + RadiationModelMaxHp.ToString(' not in control_renderer
@@ -280,7 +274,7 @@ assert 'wide ? 315.0 : 237.0' not in control_renderer, "Duplicate white estimate
 assert control_renderer.count('DrawStat("~" + RadiationTime(eta),') == 1
 assert '"DEAD AFTER " + eta.ToString' not in control_renderer
 assert "foreach (var threshold in RadiationRingThresholds)" not in ring_renderer
-assert "tick == 100 ? accent : muted" in ring_renderer
+assert "currentRad >= tick ? accent : muted" in ring_renderer
 assert "DrawText(dc, _radLevel.ToString(" not in control_renderer
 assert "RadiationStepButton(" not in control_renderer
 assert "foreach (var step in" not in control_renderer

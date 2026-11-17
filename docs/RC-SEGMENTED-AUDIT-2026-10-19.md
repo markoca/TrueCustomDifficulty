@@ -66,7 +66,7 @@ git pull
 git rev-parse HEAD
 python3 tools/pre_release.py static --output audit/pre-release/rc-static
 python3 tools/audit_final_cfg_mapping.py --out audit/final-cfg-mapping
-python3 tools/audit_rc_final_copy.py
+python3 tools/audit_rc_rationale_readability.py  # audit_rc_final_copy.py retired 2026-11-17 (historical copy freeze)
 dotnet build tests/LootSpecialGeneratorsContract/LootSpecialGeneratorsContract.csproj -c Release -r win-x64
 WINEPREFIX="$HOME/.wine-s2" WINEDEBUG=-all ./tests/run-wine.sh LootSpecialGeneratorsContract
 ```
