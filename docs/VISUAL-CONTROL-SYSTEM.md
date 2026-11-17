@@ -1,3 +1,9 @@
+## 2026-11-17 — CURRENT: panel titles for board anchors, master hints, board/label names
+
+* **Own panel title for board anchors** (`ParameterViewModel.OwnPanelTitle`): a control whose catalog label doubles as its board name shows its own name in the panel — Bandage Healing, Sprint Stamina Cost, Consumable Cost, Electro Base Damage, Blind Dog Part Chance, Newbie Human Group Size, Bloodsucker Spawn. Catalog labels (board names) unchanged.
+* **Every control that needs a master switch says so** in WHAT IT DOES: `Only works while X is ON.` added to 23 texts (STASH SMART LOOT knobs and checkboxes, EXTRA STASH GEAR rails, NPC SMART LOOT ammo pack, Master starvation / severe fatigue / radiation penalties), same sentence as Master Low-HP Regen Loss already had.
+* **Board token = panel title**: CORE HEALTH `REGEN STRENGTH` (was *RECOVERY MULTIPLIER*), SEVERE FATIGUE `STAMINA LOSS` / `CARRY LOSS` (was *LOST*); labels `Severe Fatigue Shot Spread` (was *Bullet Spread*, board SHOT SPREAD) and `Max HP` (was *Max Health*, board MAX HP). CORE HEALTH help names the tracks as drawn.
+
 ## 2026-11-17 — CURRENT: one Vanilla format, one paragraph, no file/engine names
 
 * **WHAT IT DOES is one paragraph** for every control (24 combat / survival texts had a second paragraph).

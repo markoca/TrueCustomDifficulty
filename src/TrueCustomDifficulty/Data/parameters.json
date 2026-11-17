@@ -5591,7 +5591,7 @@
       "id": "health.maxHP",
       "tab": "health",
       "group": "Core Health",
-      "label": "Max Health",
+      "label": "Max HP",
       "description": "Changes your maximum health. The game's full-health feedback stays in sync with the new maximum.",
       "control": "slider",
       "valueKind": "raw",
@@ -7960,7 +7960,7 @@
           "Actual in-game corpse drop result and source-derived clone inheritance require a Wine build and runtime test."
         ]
       },
-      "rationale": "How many rounds the bonus Ammo package gives when it drops. Vanilla: 1×. Only matters while the Ammo package is on; the ammo loaded in their guns stays the same.",
+      "rationale": "How many rounds the bonus Ammo package gives when it drops. Vanilla: 1×. Only matters while the Ammo package is on; the ammo loaded in their guns stays the same. Only works while NPC SMART LOOT is ON.",
       "logic": "0–3× the size of the bonus ammo stacks; 0 removes them. Your rank still decides which calibers can show up.",
       "interaction": "Works only while the Ammo pack in BONUS PACKS is on; otherwise the value stays saved but does nothing.",
       "requiresToggle": "loot.npcSmartLootEnabled"
@@ -9038,7 +9038,7 @@
           "Corpse smart loot is separate (BONUS PACKS / NEED BOOST)."
         ]
       },
-      "rationale": "How often stashes still hand you supplies you already have plenty of. Vanilla: 1× (about 10% per set). 0 = smart loot only helps when you are short; 2× = twice as generous.",
+      "rationale": "How often stashes still hand you supplies you already have plenty of. Vanilla: 1× (about 10% per set). 0 = smart loot only helps when you are short; 2× = twice as generous. Only works while STASH SMART LOOT is ON.",
       "logic": "Scales the 'when stocked' chance of every smart loot set, after odds and SUPPLY REDUCTION; never above its 'when low' chance.",
       "interaction": "EXTRA LOOT WHEN LOW sets the other end. SUPPLY REDUCTION and the Basic MEDS/FOOD/DRINKS odds cells still apply first.",
       "exposeInUi": true,
@@ -9085,7 +9085,7 @@
           "Lowering it removes the game's help when you run low; raising it (capped at 100%) makes stashes reliably top you up."
         ]
       },
-      "rationale": "How strongly stashes help when you run low. Vanilla: 1× (about 70–80% per set). Lower = the Zone stops topping you up; 0 = no smart loot at all.",
+      "rationale": "How strongly stashes help when you run low. Vanilla: 1× (about 70–80% per set). Lower = the Zone stops topping you up; 0 = no smart loot at all. Only works while STASH SMART LOOT is ON.",
       "logic": "Scales the 'when low' chance of every smart loot set, after odds and SUPPLY REDUCTION; capped at 100%.",
       "interaction": "EXTRA LOOT WHEN STOCKED sets the other end and never exceeds this one.",
       "exposeInUi": true,
@@ -9125,7 +9125,7 @@
           "Item-level medical odds and Medkit/Army Medkit MIN/MAX still apply while ON."
         ]
       },
-      "rationale": "Whether stash smart loot can give meds (Bandage, Medkit, Army Medkit, Anti-Rad). Vanilla: ON.",
+      "rationale": "Whether stash smart loot can give meds (Bandage, Medkit, Army Medkit, Anti-Rad). Vanilla: ON. Only works while STASH SMART LOOT is ON.",
       "logic": "OFF removes this category from stash smart loot; ON keeps vanilla odds. Basic/Standard/Rare cells never touch smart loot.",
       "interaction": "Smart loot switch, EXTRA LOOT WHEN STOCKED / WHEN LOW and SUPPLY REDUCTION apply on top.",
       "requiresToggle": "loot.stashSmartLootEnabled",
@@ -9165,7 +9165,7 @@
           "Item-level medical odds and Medkit/Army Medkit MIN/MAX still apply while ON."
         ]
       },
-      "rationale": "Whether stash smart loot can give ammo for the weapons you carry. Vanilla: ON.",
+      "rationale": "Whether stash smart loot can give ammo for the weapons you carry. Vanilla: ON. Only works while STASH SMART LOOT is ON.",
       "logic": "OFF removes this category from stash smart loot; ON keeps vanilla odds. Basic/Standard/Rare cells never touch smart loot.",
       "interaction": "Smart loot switch, EXTRA LOOT WHEN STOCKED / WHEN LOW and SUPPLY REDUCTION apply on top.",
       "requiresToggle": "loot.stashSmartLootEnabled",
@@ -9205,7 +9205,7 @@
           "Item-level medical odds and Medkit/Army Medkit MIN/MAX still apply while ON."
         ]
       },
-      "rationale": "Whether stash smart loot can give food and drinks. Vanilla: ON.",
+      "rationale": "Whether stash smart loot can give food and drinks. Vanilla: ON. Only works while STASH SMART LOOT is ON.",
       "logic": "OFF removes this category from stash smart loot; ON keeps vanilla odds. Basic/Standard/Rare cells never touch smart loot.",
       "interaction": "Smart loot switch, EXTRA LOOT WHEN STOCKED / WHEN LOW and SUPPLY REDUCTION apply on top.",
       "requiresToggle": "loot.stashSmartLootEnabled",
@@ -9245,7 +9245,7 @@
           "Item-level medical odds and Medkit/Army Medkit MIN/MAX still apply while ON."
         ]
       },
-      "rationale": "Whether stash smart loot can give grenades. Vanilla: ON.",
+      "rationale": "Whether stash smart loot can give grenades. Vanilla: ON. Only works while STASH SMART LOOT is ON.",
       "logic": "OFF removes this category from stash smart loot; ON keeps vanilla odds. Basic/Standard/Rare cells never touch smart loot.",
       "interaction": "Smart loot switch, EXTRA LOOT WHEN STOCKED / WHEN LOW and SUPPLY REDUCTION apply on top.",
       "requiresToggle": "loot.stashSmartLootEnabled",
@@ -9361,7 +9361,7 @@
           "Rank tiers and 142-item rank-scoped SID catalog originate from gear-progression-ranks.csv."
         ]
       },
-      "rationale": "How many regular stashes get a shot at bonus gear. Vanilla: 0%. 50% = about half of them. Each picked stash still rolls the Bonus Chance.",
+      "rationale": "How many regular stashes get a shot at bonus gear. Vanilla: 0%. 50% = about half of them. Each picked stash still rolls the Bonus Chance. Only works while EXTRA STASH GEAR is ON.",
       "logic": "Higher covers more eligible stashes; zero covers none. Full coverage still does not guarantee an item.",
       "interaction": "Bonus Chance controls each offered item's roll; category priorities choose which gear can be offered.",
       "requiresToggle": "loot.stashGearEnabled",
@@ -9416,7 +9416,7 @@
           "Quest/Weird/special/unique items are excluded. If all three weights are zero, no extra generators are emitted."
         ]
       },
-      "rationale": "How often bonus gear is a weapon. Vanilla: 1×. 0 = never a weapon.",
+      "rationale": "How often bonus gear is a weapon. Vanilla: 1×. 0 = never a weapon. Only works while EXTRA STASH GEAR is ON.",
       "logic": "Higher priority favors weapons when a supported stash chooses its bonus gear types. Zero excludes this category.",
       "interaction": "Coverage decides which stashes participate; Bonus Chance checks each offered item. Rank limits still apply.",
       "requiresToggle": "loot.stashGearEnabled",
@@ -9471,7 +9471,7 @@
           "Quest/Weird/special/unique items are excluded. If all three weights are zero, no extra generators are emitted."
         ]
       },
-      "rationale": "How often bonus gear is armor. Vanilla: 1×. 0 = never armor.",
+      "rationale": "How often bonus gear is armor. Vanilla: 1×. 0 = never armor. Only works while EXTRA STASH GEAR is ON.",
       "logic": "Higher priority favors armor when a supported stash chooses its bonus gear types. Zero excludes this category.",
       "interaction": "Coverage decides which stashes participate; Bonus Chance checks each offered item. Rank limits still apply.",
       "requiresToggle": "loot.stashGearEnabled",
@@ -9526,7 +9526,7 @@
           "Quest/Weird/special/unique items are excluded. If all three weights are zero, no extra generators are emitted."
         ]
       },
-      "rationale": "How often bonus gear is an artifact. Vanilla: 1×. 0 = never an artifact.",
+      "rationale": "How often bonus gear is an artifact. Vanilla: 1×. 0 = never an artifact. Only works while EXTRA STASH GEAR is ON.",
       "logic": "Higher priority favors artifacts when a supported stash chooses its bonus gear types. Zero excludes this category.",
       "interaction": "Coverage decides which stashes participate; Bonus Chance checks each offered item. Rank limits still apply.",
       "requiresToggle": "loot.stashGearEnabled",
@@ -9583,7 +9583,7 @@
           "Default weight 0x preserves existing three-category presets."
         ]
       },
-      "rationale": "How often bonus gear is a weapon attachment, matched to the area's progression. Vanilla: 0 — off. Raise it to find scopes and other attachments in stashes.",
+      "rationale": "How often bonus gear is a weapon attachment, matched to the area's progression. Vanilla: 0 — off. Raise it to find scopes and other attachments in stashes. Only works while EXTRA STASH GEAR is ON.",
       "logic": "Higher priority favors attachments when a supported stash chooses its bonus gear types. Zero excludes this category.",
       "interaction": "Coverage decides which stashes participate; Bonus Chance checks each offered item. Rank limits still apply.",
       "requiresToggle": "loot.stashGearEnabled",
@@ -9640,7 +9640,7 @@
           "Existing presets missing this new key inherit 50% to preserve the prior authored Chance 0.5. Master OFF disables the editor."
         ]
       },
-      "rationale": "The roll for each bonus gear item in a picked stash. Vanilla: 50%. Even 100% isn't a guarantee in every stash — Coverage decides which stashes get a roll at all.",
+      "rationale": "The roll for each bonus gear item in a picked stash. Vanilla: 50%. Even 100% isn't a guarantee in every stash — Coverage decides which stashes get a roll at all. Only works while EXTRA STASH GEAR is ON.",
       "logic": "Higher improves the odds for each offered bonus item. Even 100% still needs an eligible stash and item candidate.",
       "interaction": "BONUS GEAR COVERAGE sets how many stashes qualify; the PRIORITY bars set which kinds of gear are offered.",
       "requiresToggle": "loot.stashGearEnabled",
@@ -12513,7 +12513,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much more stamina actions cost while you're starving under Master rules. Vanilla: +200% — three times the normal cost. 0 removes the extra.",
+      "rationale": "How much more stamina actions cost while you're starving under Master rules. Vanilla: +200% — three times the normal cost. 0 removes the extra. Only works while Master Starvation Penalties is ON.",
       "logic": "100% means +100% extra stamina cost, not normal cost. 0% removes this extra starvation cost.",
       "interaction": "Severe hunger also slows stamina recovery. This changes the extra cost of actions, not an ongoing drain.",
       "requiresToggle": "advanced.starvationMechanics"
@@ -12557,7 +12557,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Health lost each time starvation hits under Master rules. Vanilla: 4 HP. 0 = starving no longer hurts directly.",
+      "rationale": "Health lost each time starvation hits under Master rules. Vanilla: 4 HP. 0 = starving no longer hurts directly. Only works while Master Starvation Penalties is ON.",
       "logic": "Higher values increase each starvation-damage charge; zero retains the bundle but removes direct HP damage from this component.",
       "interaction": "Starvation Damage Interval controls how often the charge repeats, while Starvation Penalty Delay controls when this effect begins after activation.",
       "requiresToggle": "advanced.starvationMechanics"
@@ -12601,7 +12601,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Seconds between starvation hits. Vanilla: 10. Lower = the same damage comes faster.",
+      "rationale": "Seconds between starvation hits. Vanilla: 10. Lower = the same damage comes faster. Only works while Master Starvation Penalties is ON.",
       "logic": "Lower values make the same damage arrive more frequently; higher values spread the damage out over a longer interval.",
       "interaction": "Practical starvation pressure depends on both this interval and Starvation Damage.",
       "requiresToggle": "advanced.starvationMechanics"
@@ -12700,7 +12700,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much starving blocks your healing under Master rules. Vanilla: 100% — no healing at all. 0 removes it.",
+      "rationale": "How much starving blocks your healing under Master rules. Vanilla: 100% — no healing at all. 0 removes it. Only works while Master Starvation Penalties is ON.",
       "logic": "Higher values suppress health regeneration more strongly; zero removes this component.",
       "interaction": "This acts on regeneration rather than direct damage, so it combines with Starvation Damage and the Health tab regeneration settings.",
       "requiresToggle": "advanced.starvationMechanics"
@@ -13031,7 +13031,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much of your stamina bar you lose while exhausted under Master rules. Vanilla: 20%. 0 removes it.",
+      "rationale": "How much of your stamina bar you lose while exhausted under Master rules. Vanilla: 20%. 0 removes it. Only works while Master Severe Fatigue Penalties is ON.",
       "logic": "Higher values reduce the available stamina pool further; zero removes this component.",
       "interaction": "Max Stamina defines your normal pool; this loss applies only during Master severe fatigue.",
       "requiresToggle": "advanced.fatigueMechanics"
@@ -13080,7 +13080,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much carry capacity you lose while exhausted under Master rules. Vanilla: 20%. 0 removes it.",
+      "rationale": "How much carry capacity you lose while exhausted under Master rules. Vanilla: 20%. 0 removes it. Only works while Master Severe Fatigue Penalties is ON.",
       "logic": "Higher values make fatigue reduce carrying capability more strongly; zero removes both carry-related components together.",
       "interaction": "Your normal carrying limit and equipment carry bonuses remain separate.",
       "requiresToggle": "advanced.fatigueMechanics"
@@ -13122,7 +13122,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much harder your guns kick while exhausted under Master rules. Vanilla: +55% recoil. 0 removes it.",
+      "rationale": "How much harder your guns kick while exhausted under Master rules. Vanilla: +55% recoil. 0 removes it. Only works while Master Severe Fatigue Penalties is ON.",
       "logic": "",
       "interaction": "This stacks with other recoil sources but does not change reload or aim-time penalties.",
       "requiresToggle": "advanced.fatigueMechanics"
@@ -13171,7 +13171,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much more your sights wobble while exhausted under Master rules. Vanilla: +40%. 0 removes it.",
+      "rationale": "How much more your sights wobble while exhausted under Master rules. Vanilla: +40%. 0 removes it. Only works while Master Severe Fatigue Penalties is ON.",
       "logic": "",
       "interaction": "Recoil and bullet spread are separate penalties in the same Master fatigue bundle.",
       "requiresToggle": "advanced.fatigueMechanics"
@@ -13180,7 +13180,7 @@
       "id": "survival.severeFatigueDispersion",
       "tab": "master",
       "group": "Severe Fatigue",
-      "label": "Severe Fatigue Bullet Spread",
+      "label": "Severe Fatigue Shot Spread",
       "description": "Changes how much severe fatigue increases weapon spread.",
       "control": "slider",
       "valueKind": "raw",
@@ -13213,7 +13213,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much wider your shots spread while exhausted under Master rules. Vanilla: +50%. 0 removes it.",
+      "rationale": "How much wider your shots spread while exhausted under Master rules. Vanilla: +50%. 0 removes it. Only works while Master Severe Fatigue Penalties is ON.",
       "logic": "",
       "interaction": "Recoil and aim sway are separate penalties in the same Master fatigue bundle.",
       "requiresToggle": "advanced.fatigueMechanics"
@@ -13255,7 +13255,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much more stamina actions cost while heavily irradiated under Master rules. Vanilla: +50%. 0 removes it.",
+      "rationale": "How much more stamina actions cost while heavily irradiated under Master rules. Vanilla: +50%. 0 removes it. Only works while Radiation Stamina Penalty is ON.",
       "logic": "50% means +50% extra stamina cost. 0% removes this extra radiation cost.",
       "interaction": "",
       "requiresToggle": "advanced.radiationMechanics"

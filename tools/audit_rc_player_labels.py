@@ -18,7 +18,7 @@ names={
   "survival.hungerRate": "Hunger Rate",
   "survival.sleepinessRate": "Fatigue Rate",
   "survival.sleepEligibilityThreshold": "Sleep Threshold",
-  "health.maxHP": "Max Health",
+  "health.maxHP": "Max HP",
   "health.baseRegen": "Passive HP Regen",
   "health.regenDelay": "Regen Delay",
   "stamina.maxSP": "Max Stamina",

@@ -125,7 +125,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "StarvationTimeline" => "Set when starvation penalties start, how often damage strikes and how strong each penalty is. The timeline is only a preview.",
                     "ConsumableMixer" => "Set Water and Energy Drink instant stamina gains, lasting buffs and effect durations separately. OVERRIDE LIMITS allows longer durations.",
                     "SleepingDashboard" => "Set when you can sleep, the minimum hours and how much HP and stamina you regain when you wake up.",
-                    "CoreHealthDashboard" => "Set Max HP and Passive HP Regen at the top. Recovery delay, recovery strength and low-HP recovery use separate tracks.",
+                    "CoreHealthDashboard" => "Set MAX HP and PASSIVE HP REGEN at the top. REGEN DELAY, REGEN STRENGTH and LOW-HP RECOVERY RATE use separate tracks.",
                     "StaminaCore" => "Set Max Stamina and Stamina Regen at the top. The tracks below change vault height and carry weight independently.",
                     "WaterStaminaPressure" => "Drag the MEDIUM WATER or DEEP WATER track separately.",
                     "SevereFatiguePenaltyBoard" => "Enable severe-fatigue mechanics, then drag each of the five vertical penalty equalizer bars independently.",
@@ -231,7 +231,21 @@ public sealed class ParameterViewModel : ObservableObject
             RaisePanelChanged();
         }
     }
-    public string PanelTitle => _panelCard?.Title ?? Label;
+    public string PanelTitle => _panelCard?.Title ?? OwnPanelTitle ?? Label;
+
+    // Board anchors carry the board name as their catalog label; the panel
+    // names the control that was actually clicked, like its siblings.
+    private string? OwnPanelTitle => Id switch
+    {
+        "health.bandageHealing" => "Bandage Healing",
+        "stamina.sprintCost" => "Sprint Stamina Cost",
+        "economy.consumableCost" => "Consumable Cost",
+        "environment.electroAnomalyDamage" => "Electro Base Damage",
+        "loot.mutant.blindDogChance" => "Blind Dog Part Chance",
+        "alife.humanGroupSize.newbie" => "Newbie Human Group Size",
+        "alife.mutantSpawn.bloodsucker" => "Bloodsucker Spawn",
+        _ => null
+    };
     public string PanelRationale => _panelCard?.Text ?? RationaleDisplay;
     public string PanelControlHelp => _panelCard?.Controls ?? ControlHelp;
     public bool PanelHasValueMeaning => _panelCard is null && HasValueMeaning;

@@ -27,3 +27,9 @@ The right-hand panel shows four sections for a selected control: **WHAT IT DOES*
 9. `Vanilla:` format: `Vanilla: X.` if equal on all difficulties; otherwise `Vanilla: Novice a, Stalker b, Veteran c, Master d.` with equal neighbours merged (`Novice–Veteran`, `Novice and Stalker`).
 10. No game file names, effect IDs, CFG fields or dev notes in any panel section.
 11. Stage names follow the boards: LOW / MEDIUM / SEVERE.
+
+## Fourth pass (same day)
+
+12. A control that only works behind a master switch ends WHAT IT DOES with `Only works while X is ON.`
+13. The panel title names the clicked control, even when its catalog label is the board name (`OwnPanelTitle`).
+14. Board tokens and labels use the same words (REGEN STRENGTH, STAMINA LOSS, CARRY LOSS, SHOT SPREAD, MAX HP); short contextual tokens (NEWBIE, ELECTRO, WEAPONS) are fine when the board gives the context.

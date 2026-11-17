@@ -3039,8 +3039,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         var sources = new (string Id, string Label, Func<double, string> Format)[]
         {
-            ("survival.severeFatigueMaxStamina", "STAMINA LOST", MasterNegativePercent),
-            ("survival.severeFatigueCarryWeight", "CARRY LOST", MasterNegativePercent),
+            ("survival.severeFatigueMaxStamina", "STAMINA LOSS", MasterNegativePercent),
+            ("survival.severeFatigueCarryWeight", "CARRY LOSS", MasterNegativePercent),
             ("survival.severeFatigueRecoil", "RECOIL", MasterPositivePercent),
             ("survival.severeFatigueAimSway", "AIM SWAY", MasterScalar),
             ("survival.severeFatigueDispersion", "SHOT SPREAD", MasterScalar)
@@ -3089,7 +3089,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var sources = new (string Id, string Label)[]
         {
             ("health.regenDelay", "REGEN DELAY"),
-            ("health.regenerationScalar", "RECOVERY MULTIPLIER"),
+            ("health.regenerationScalar", "REGEN STRENGTH"),
             ("health.lowHealthRegen", "LOW-HP RECOVERY RATE")
         };
         var columns = ActualWidth >= 700.0 ? 3 : 2;
