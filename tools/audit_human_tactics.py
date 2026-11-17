@@ -80,7 +80,8 @@ check("writtenParameters.Add(MutantAggressionPolicy.SpecialAbilityRateId)" not i
 
 # ---- accuracy / awareness direct points ----------------------------------------------
 pts = [p for p in baseline["editPoints"] if p["parameterId"] in
-       ("combat.npcAccuracy", "combat.npcSightRange", "combat.npcHearingRange", "combat.npcAlertMemory")]
+       ("combat.npcAccuracy", "combat.npcSightRange", "combat.npcHearingRange", "combat.npcAlertMemory",
+        "combat.npcFogVisibility")]
 acc = [p for p in pts if p["parameterId"] == "combat.npcAccuracy"]
 check(len(acc) == 77 and all(p["key"] == "DispersionRadius" and p["operation"] == "inverseScale"
                              and p["prototype"].endswith("_NPC") for p in acc), "accuracy: 77 NPC DispersionRadius inverseScale")
@@ -96,6 +97,30 @@ mem = {(tuple(p["nodePath"]), p["key"], p["operation"]) for p in pts if p["param
 check(mem == {((), "DefaultThreatValueFreezeTimeSeconds", "scale"), ((), "DefaultThreatValueLossPerSecond", "inverseScale"),
               (("Actions", "[3]"), "ThreatValueFreezeTimeSeconds", "scale"),
               (("Actions", "[3]"), "ThreatValueLossPerSecond", "inverseScale")}, "memory: freeze x m, loss / m")
+fog_points = [p for p in pts if p["parameterId"] == "combat.npcFogVisibility"]
+fog_expected = {
+    "parameterId": "combat.npcFogVisibility", "scope": "baseGame", "file": "GameData/AIGlobals.cfg",
+    "prototype": "AISettings", "nodePath": ["WeatherSettings", "[2]"], "key": "VisibilityCoef",
+    "sourceRaw": "0.7", "operation": "set", "role": "human-awareness", "difficultySid": ""
+}
+check(fog_points == [fog_expected], "fog: one source-exact 2.1 Fogy visibility coefficient only")
+fog_catalog = catalog.get("combat.npcFogVisibility", {})
+fog_slider = fog_catalog.get("slider", {})
+check(fog_catalog.get("vanilla") == {"All": 0.7}
+      and fog_catalog.get("group") == "Human Awareness"
+      and fog_catalog.get("support", {}).get("status") == "runtime_test_required",
+      "fog: 70% reference, Human Awareness family, runtime-test-required")
+check(fog_slider.get("min") == 0.2 and fog_slider.get("max") == 1
+      and fog_slider.get("step") == 0.05 and fog_slider.get("stepMode") == "absolute",
+      "fog: native 20–100% coefficient with 5% absolute steps")
+check('"combat.npcFogVisibility"' in pvm, "fog: assigned to HumanAwareness visual family")
+check("FogVisibilityId" in policy and "AlertMemoryId, FogVisibilityId" in policy,
+      "fog: registered in policy, board ids and reset/modified state")
+check("HumanCombatPolicy.FogVisibilityId" in pvm, "fog: accurate panel display")
+check("GetOutputPath(outputRoot, pair.Key)" in main_writer
+      and 'return Path.Combine(root, f"{fileName}.cfg_patch_' not in main_writer
+      and "return Path.Combine(root, $" in main_writer,
+      "fog: existing global CFG patch writer path is reachable")
 for pid in ("combat.npcAccuracy", "combat.npcSightRange", "combat.npcHearingRange", "combat.npcAlertMemory"):
     row = catalog.get(pid, {})
     check(row.get("vanilla") == {"All": 1} and row.get("support", {}).get("status") == "runtime_test_required",
@@ -142,9 +167,6 @@ check('var wide = width >= 750.0;' in
       read("Controls/AggregateVisualControl.HumanAwareness.cs"),
       "awareness responsive legend breakpoint")
 
-if failures:
-    print(f"\n{len(failures)} failure(s)")
-    sys.exit(1)
 radar = (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.HumanAwareness.cs").read_text(encoding="utf-8")
 for token in ("AwarenessSightMeters = 80.0", "AwarenessSideMeters = 25.0", "AwarenessHearingMeters = 12.0",
               "AwarenessMemorySeconds = 30.0", "AwarenessHalfAngle = 85.0", "HitKind.RadarRadius", "HitKind.RadarArc",
@@ -174,4 +196,15 @@ check("AwarenessSightDragMeters(" not in radar
 check("CurrentNumber = value.Number.Value;" in pvm
       and "var clamped = Math.Clamp(value, Minimum, Maximum);" in pvm,
       "older 3x SIGHT presets clamp to the updated catalog maximum on load")
+# FOG is a compact, source-bound native knob, not a fake sight-distance overlay.
+for token in ("DrawAwarenessFogKnob(", "HumanCombatPolicy.FogVisibilityId",
+              "AwarenessFogRowHeight = 72.0", "HitKind.Knob",
+              "fog.Minimum, fog.Maximum", "DrawKnobArc(",
+              "KnobPoint(", "ReadoutInk.Numbers(accent, text)"):
+    check(token in radar, f"fog compact knob contract: {token}")
+check("HearingDistanceCoef" not in radar and "FlairCoef" not in radar,
+      "fog UI does not edit other AI weather senses")
+if failures:
+    print(f"\n{len(failures)} failure(s)")
+    sys.exit(1)
 print("\nHUMAN TACTICS / HUMAN AWARENESS contract OK")

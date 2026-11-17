@@ -80,3 +80,13 @@ The radar's visual distance maximum is 200 m rather than 240 m. The 200 m labell
 ### HUMAN AWARENESS source maximum corrected to 200 m (2026-11-17)
 
 Current behavior supersedes the earlier display-only cap. SIGHT is really limited to **2.5× = 200 m ahead / 62.5 m peripheral**, using source 80/25 m, while minimum 0.25× and 0.05× step remain. The editor, source catalog, CFG output and drawn 200 m radar all share this limit. Legacy user presets containing 3× SIGHT are clamped to 2.5× on load by existing ParameterViewModel logic. Removed obsolete 240 m overshoot and drag-offset path. HEARING and MEMORY are unchanged.
+
+### FOG VISIBILITY — weather perception coefficient (2026-11-17)
+
+- Source: STALKER 2.1 `GameData/AIGlobals.cfg` > `AISettings` > `WeatherSettings` > `[2]` with `WeatherSID = Fogy`.
+- Only `VisibilityCoef` changes, default/source `0.7`; `HearingDistanceCoef = 0.7`, `FlairCoef = 0.7`, and the independent Fogy luminance coefficient `0.6f` stay untouched. This is **not** a calibrated detection range in metres and its AI-class scope is uncertain (global weather setting).
+- Catalog: `combat.npcFogVisibility` (Human Awareness), raw percent 0.20–1.00, absolute step 0.05, source/Vanilla 0.70; `runtime_test_required` until an in-game 2.1 check.
+- The small 270° fog knob sits under the three radar legends. It uses native source tick marks, source reference position, hover glow, right-click reset, keyboard control and R group reset. The 200 m SIGHT range remains independent and unchanged.
+- Writer: exactly one direct edit point, root `AISettings`, node path `WeatherSettings/[2]`, key `VisibilityCoef`, raw source `0.7`, operation `set`, global CFG patch output. All other weather and luminance entries stay vanilla.
+- Acceptance plan: compare Fogy 0.70 / 0.40 / 1.00 under constant conditions, watch human detection, hearing and mutant behavior, and verify the generated singleton patch is accepted by the game. Source structure and code audit are confirmed; runtime behavior is not.
+

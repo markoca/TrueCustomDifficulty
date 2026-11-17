@@ -179,3 +179,8 @@ DLC1 targets are written only when the detected game installation contains the D
 ## 2.1-only writer target (2026-11-14)
 
 Both embedded catalog and CFG writer baseline require gameVersion 2.1. The writer fails closed if either claims obsolete 2.0.5. Trader Sells uses the SHA-pinned 2.1 runtime manifest exclusively. Historical 2.0.5 source-value documentation does not constitute a runtime fallback. The two 2.1 audit scripts distinguish source inventory from exact original-ZIP validation; neither replaces in-game BPatch and gameplay acceptance.
+
+## HUMAN AWARENESS FOG VISIBILITY (2026-11-17)
+
+A new direct source mapping for `combat.npcFogVisibility` targets the original 2.1 `GameData/AIGlobals.cfg` singleton root `AISettings`, child `WeatherSettings/[2]` (`WeatherSID=Fogy`), leaf `VisibilityCoef=0.7`. Native 20–100% coefficient slider rendered as a small knob; `set` operation only. The generic writer emits a `GameData/AIGlobals.cfg_patch_TrueCustomDifficulty` file with a nested BPatch assignment and never copies the whole original CFG. No hearing, flair, luminance, or other-weather fields are written. Source and writer mapping audited; game-runtime acceptance pending.
+

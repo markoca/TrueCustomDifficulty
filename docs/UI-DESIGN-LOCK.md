@@ -1,3 +1,12 @@
+## 2026-11-17 — CURRENT: HUMAN AWARENESS FOG VISIBILITY native coefficient knob
+
+* FOG VISIBILITY is a fourth independent Human Awareness control, displayed as a **small 270° knob** in the legend column directly below SIGHT / HEARING / MEMORY. It does **not** add a fourth radar ring or expand the 200 m SIGHT distance. The wide two-column radar retains its current height; the narrow stacked legend is increased by only 72 DIP to accommodate the knob.
+* Source: **STALKER 2.1** original `GameData/AIGlobals.cfg` → `AISettings` → `WeatherSettings` → `[2]` where `WeatherSID = Fogy` and `VisibilityCoef = 0.7`. Exact value is edited, 20–100% in 5% increments; source/Vanilla is 70%; modified numbers are gold, unchanged readouts white.
+* Writer: one new direct baseline edit point with operation `set`. Emits only `AISettings.WeatherSettings[2].VisibilityCoef` in `GameData/AIGlobals.cfg_patch_TrueCustomDifficulty`. Nested BPatch/CFG patch grammar is the same as existing direct writer routes. Other weather records, `HearingDistanceCoef`, `FlairCoef` and `LuminanceSettings` remain untouched.
+* All source IDs and board memberships use `combat.npcFogVisibility`. The knob uses existing `HitKind.Knob` 270° drag, thumb hover glow, reference tick, source-aligned steps, right click to reset one setting, keyboard arrows/Home/End and R to reset the whole Awareness board; changed numeric tokens only are highlighted. It serializes in presets without additional sidecar state.
+* Fog visibility coefficient is **not** a confirmed linear range multiplier and its AI-class scope is not proven human-only. This control is marked `runtime_test_required`. Smoke tests should compare Fogy 0.70, 0.40 and 1.00 on identical NPC routes at a consistent time of day, and check HEARING, mutant AI, and no-fog weather.
+* Source baseline supported parameter count 399 → 400, direct edit points +1. The audit `tools/audit_human_tactics.py` validates the exact target, 70% reference, numeric range, knob/board binding and source exclusions.
+
 ## 2026-11-17 — CURRENT: actual HUMAN AWARENESS SIGHT maximum is 200 m
 
 * Changed `combat.npcSightRange` native catalog maximum from **3× to 2.5×**; source baseline 80 m ahead and 25 m periphery means actual maximum **200 m central / 62.5 m peripheral**. Minimum 0.25× and step 0.05× unchanged.

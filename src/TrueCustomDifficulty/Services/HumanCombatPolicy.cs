@@ -18,6 +18,8 @@ namespace TrueCustomDifficulty.Services;
 /// ACCURACY divides <c>DispersionRadius</c> of all 77 NPC weapon settings;
 /// SIGHT / HEARING / MEMORY scale the human vision scanner, the base hearing
 /// sensor and the DefaultNPC threat memory (direct edit points).
+/// FOG VISIBILITY changes only the global Fogy weather VisibilityCoef in AIGlobals.cfg.
+/// Affects all AI consumers of that global weather setting; runtime validation pending.
 /// </summary>
 public static class HumanCombatPolicy
 {
@@ -30,6 +32,7 @@ public static class HumanCombatPolicy
     public const string SightRangeId = "combat.npcSightRange";
     public const string HearingRangeId = "combat.npcHearingRange";
     public const string AlertMemoryId = "combat.npcAlertMemory";
+    public const string FogVisibilityId = "combat.npcFogVisibility";
 
     /// <param name="Groups">FilterGroups index and its AllowedTags[0] (guarded on load).</param>
     /// <param name="DefaultSeconds">Newbie-rank Default pause (display).</param>
@@ -63,7 +66,7 @@ public static class HumanCombatPolicy
     public static IReadOnlyList<string> TacticIds { get; } = Tactics.Select(t => t.Id).ToArray();
 
     public static IReadOnlyList<string> AwarenessIds { get; } =
-        new[] { SightRangeId, HearingRangeId, AlertMemoryId };
+        new[] { SightRangeId, HearingRangeId, AlertMemoryId, FogVisibilityId };
 
     /// <summary>Board order of the HUMAN TACTICS cards (tactics, then accuracy).</summary>
     public static IReadOnlyList<string> TacticsBoardIds { get; } = TacticIds.Append(AccuracyId).ToArray();
@@ -101,6 +104,7 @@ public static class HumanCombatPolicy
             SightRangeId => SightDisplay(value),
             HearingRangeId => HearingDisplay(value),
             AlertMemoryId => MemoryDisplay(value),
+            FogVisibilityId => FogVisibilityDisplay(value),
             _ when Tactics.FirstOrDefault(t => t.Id == id) is { } tactic => TacticDisplay(tactic, value, reference),
             _ => null
         };
@@ -127,4 +131,7 @@ public static class HumanCombatPolicy
 
     public static string MemoryDisplay(double factor)
         => string.Create(CultureInfo.InvariantCulture, $"{factor:0.##}x · searches for {30.0 * factor:0} s");
+
+    public static string FogVisibilityDisplay(double coefficient)
+        => string.Create(CultureInfo.InvariantCulture, $"fog visibility {coefficient * 100.0:0}%");
 }

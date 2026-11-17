@@ -775,6 +775,52 @@
       "interaction": "SIGHT, HEARING and MEMORY are independent; together they decide how easy stealth is. Mutants use their own senses and are not changed."
     },
     {
+      "id": "combat.npcFogVisibility",
+      "tab": "combat",
+      "group": "Human Awareness",
+      "label": "Fog Visibility",
+      "description": "Changes the Fogy weather VisibilityCoef in AISettings. This is the actual weather coefficient (0.70 vanilla), not a guaranteed NPC sight range. Other weather, hearing, flair and luminance are untouched.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Fog Visibility"
+      },
+      "vanilla": {
+        "All": 0.7
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.2,
+        "max": 1,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/AIGlobals.cfg",
+          "prototype": "AISettings",
+          "path": "WeatherSettings[2].VisibilityCoef",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "STALKER 2 2.1 GameData/AIGlobals.cfg: AISettings > WeatherSettings > [2] has WeatherSID = Fogy, VisibilityCoef = 0.7, HearingDistanceCoef = 0.7 and FlairCoef = 0.7.",
+          "Runtime behavior and affected AI agent classes are unverified: this is a global weather AI coefficient, not proven human-only.",
+          "Do not change the separate fog luminance value (0.6f), hearing or flair."
+        ]
+      },
+      "rationale": "Changes how much fog reduces AI visibility. Vanilla Fogy is 70% of the clear-weather visibility coefficient. Lower numbers mean a stronger weather penalty; 100% removes only this fog-specific coefficient penalty. Actual detection distance is affected by other AI/light systems and is not a direct metres conversion.",
+      "logic": "Writes only AISettings.WeatherSettings[2].VisibilityCoef in GameData/AIGlobals.cfg (Fogy), preserving all other weather, hearing, flair and luminance values.",
+      "interaction": "Independent of SIGHT (always-on scanner range). This coefficient may apply to any AI using the global weather setting; needs an in-game 2.1 acceptance test."
+    },
+    {
       "id": "combat.playerWeaponDamage",
       "tab": "combat",
       "group": "Your Weapons",

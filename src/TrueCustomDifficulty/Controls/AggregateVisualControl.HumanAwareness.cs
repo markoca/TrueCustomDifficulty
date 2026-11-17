@@ -18,6 +18,7 @@ namespace TrueCustomDifficulty.Controls;
 /// (2.5x of the source 80 m ahead) on a square-root visual scale.
 /// The 200 m circle is the outermost distance ring; no radial overshoot or
 /// display-only clipping is needed. Hearing and memory keep their own ranges.
+/// The separate FOG VISIBILITY knob edits only the Fogy weather coefficient.
 /// </summary>
 public sealed partial class AggregateVisualControl
 {
@@ -29,6 +30,7 @@ public sealed partial class AggregateVisualControl
     private const double AwarenessHalfAngle = 85.0;       // HorizontalVisionHalvedAngleDegrees
     private const double AwarenessMemoryGap = 18.0;       // ring outside the radar
     private const double AwarenessLegendRow = 46.0;
+    private const double AwarenessFogRowHeight = 72.0;
 
     private readonly record struct AwarenessLayout(Point Center, double Radius, Rect Legend, bool Wide, double Height);
 
@@ -36,6 +38,7 @@ public sealed partial class AggregateVisualControl
     {
         var wide = width >= 750.0;
         // Side margins leave room for the MEMORY caption outside the ring.
+        var legendHeight = AwarenessLegendRow * 3.0 + AwarenessFogRowHeight;
         var radius = wide
             ? Math.Clamp((width - 420.0) / 2.0, 90.0, 150.0)
             : Math.Clamp((width - 170.0) / 2.0, 70.0, 140.0);
@@ -48,12 +51,12 @@ public sealed partial class AggregateVisualControl
         {
             var left = center.X + radius + AwarenessMemoryGap + 70.0;
             legend = new Rect(left, center.Y - AwarenessLegendRow * 1.5,
-                Math.Max(1.0, width - left - 16.0), AwarenessLegendRow * 3.0);
+                Math.Max(1.0, width - left - 16.0), legendHeight);
             height = radarBottom;
         }
         else
         {
-            legend = new Rect(16.0, radarBottom, Math.Max(1.0, width - 32.0), AwarenessLegendRow * 3.0);
+            legend = new Rect(16.0, radarBottom, Math.Max(1.0, width - 32.0), legendHeight);
             height = legend.Bottom + 8.0;
         }
         return new AwarenessLayout(center, radius, legend, wide, height);
@@ -88,6 +91,7 @@ public sealed partial class AggregateVisualControl
         var sight = P(HumanCombatPolicy.SightRangeId);
         var hearing = P(HumanCombatPolicy.HearingRangeId);
         var memory = P(HumanCombatPolicy.AlertMemoryId);
+        var fog = P(HumanCombatPolicy.FogVisibilityId);
 
         // Distance rings with true metres (square-root scale). Labels sit on
         // the 6 o'clock axis behind the enemy, where nothing else is drawn.
@@ -218,6 +222,76 @@ public sealed partial class AggregateVisualControl
                     Math.Max(1.0, layout.Legend.Width - 18.0)),
                 new Point(layout.Legend.Left + 18.0, top + 19.0));
         }
+
+        // Fog changes the weather-specific visibility coefficient, NOT the radar radius.
+        if (fog is not null)
+            DrawAwarenessFogKnob(dc, fog,
+                new Rect(layout.Legend.Left,
+                    layout.Legend.Top + AwarenessLegendRow * 3.0,
+                    layout.Legend.Width, AwarenessFogRowHeight),
+                text, muted, border, accent, panel);
+    }
+
+    private void DrawAwarenessFogKnob(DrawingContext dc, ParameterViewModel fog,
+        Rect row, Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        var center = new Point(row.Left + 39.0, row.Top + 37.0);
+        const double radius = 27.0;
+        var editable = fog.IsControlEnabled;
+        var ink = editable ? accent : muted;
+        var ratio = Math.Clamp((fog.CurrentNumber - fog.Minimum)
+            / Math.Max(0.000001, fog.Maximum - fog.Minimum), 0.0, 1.0);
+        var referenceRatio = Math.Clamp((fog.ReferenceNumber - fog.Minimum)
+            / Math.Max(0.000001, fog.Maximum - fog.Minimum), 0.0, 1.0);
+        var start = WeaponKnobStartAngle;
+        var sweep = WeaponKnobSweepAngle;
+
+        dc.DrawEllipse(CloneWithOpacity(panel, 0.96), null,
+            center, radius - 9.0, radius - 9.0);
+        DrawKnobArc(dc, center, radius, start, sweep,
+            new Pen(CloneWithOpacity(border, 0.95), 4.0));
+        // Source-native 5% steps (20–100%): spaced by ~8 DIP on this dial.
+        for (var tick = 0; tick <= 16; tick++)
+        {
+            var angle = start + tick / 16.0 * sweep;
+            var major = tick % 4 == 0;
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, major ? 0.72 : 0.38),
+                    major ? 1.3 : 0.85),
+                KnobPoint(center, radius + 4.0, angle),
+                KnobPoint(center, radius + (major ? 9.0 : 7.0), angle));
+        }
+        if (ratio > 0.001)
+            DrawKnobArc(dc, center, radius, start, ratio * sweep,
+                new Pen(CloneWithOpacity(ink, 0.92), 4.0));
+        var referenceAngle = start + referenceRatio * sweep;
+        dc.DrawLine(new Pen(muted, 1.7),
+            KnobPoint(center, radius - 7.0, referenceAngle),
+            KnobPoint(center, radius + 6.0, referenceAngle));
+        var handle = KnobPoint(center, radius, start + ratio * sweep);
+        var hovered = _hoverTarget?.Kind == HitKind.Knob
+            && ReferenceEquals(_hoverTarget.Parameter, fog);
+        ControlHoverGlow.Draw(dc, handle, accent, editable && hovered);
+        dc.DrawEllipse(panel,
+            new Pen(ink, hovered || IsSelected(fog) ? 2.4 : 1.5),
+            handle, 5.0, 5.0);
+        dc.DrawEllipse(ink, null, handle, 2.1, 2.1);
+
+        var labelX = row.Left + 87.0;
+        DrawText(dc, "FOG VISIBILITY", new Point(labelX, row.Top + 16.0),
+            10.3, editable ? text : muted, FontWeights.Bold);
+        DrawText(dc,
+            string.Create(CultureInfo.InvariantCulture, $"{fog.CurrentNumber * 100.0:0}%"),
+            new Point(labelX, row.Top + 35.0),
+            15.0, fog.IsValueModifiedFromReference()
+                ? ReadoutInk.Numbers(accent, text) : editable ? text : muted,
+            FontWeights.Bold);
+
+        if (!editable)
+            return;
+        var hit = new Rect(center.X - radius - 7.0, center.Y - radius - 7.0,
+            2.0 * (radius + 7.0), 2.0 * (radius + 7.0));
+        _hitTargets.Add(new HitTarget(fog, hit, hit, HitKind.Knob,
+            fog.Minimum, fog.Maximum, false));
     }
 
     private void DrawAwarenessHandle(DrawingContext dc, ParameterViewModel parameter, Point position,

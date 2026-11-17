@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.1",
-  "supportedParameterCount": 399,
+  "supportedParameterCount": 400,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -43918,6 +43918,21 @@
       "sourceRaw": "20",
       "operation": "inverseScale",
       "role": "human-combat",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "combat.npcFogVisibility",
+      "scope": "baseGame",
+      "file": "GameData/AIGlobals.cfg",
+      "prototype": "AISettings",
+      "nodePath": [
+        "WeatherSettings",
+        "[2]"
+      ],
+      "key": "VisibilityCoef",
+      "sourceRaw": "0.7",
+      "operation": "set",
+      "role": "human-awareness",
       "difficultySid": ""
     }
   ],
