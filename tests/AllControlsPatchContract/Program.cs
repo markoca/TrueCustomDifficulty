@@ -243,6 +243,26 @@ internal static partial class Program
                 $"Human Awareness vertical weather dials overlap radar/legend or clip at {width} DIP.");
         }
 
+        // A source-knob number must fit inside its own dial, while each
+        // NEXT caption stays outside the previous knob's outer tick perimeter.
+        var weatherType = typeof(TrueCustomDifficulty.Controls.AggregateVisualControl);
+        static double WeatherMetric(Type t, string fieldName)
+            => (double)(t.GetField(fieldName,
+                System.Reflection.BindingFlags.NonPublic
+                | System.Reflection.BindingFlags.Static)?.GetRawConstantValue()
+                ?? throw new InvalidOperationException("Missing weather layout metric " + fieldName));
+        var rowHeight = WeatherMetric(weatherType, "AwarenessWeatherRowHeight");
+        var centerOffset = WeatherMetric(weatherType, "AwarenessWeatherKnobCenterOffset");
+        var knobRadius = WeatherMetric(weatherType, "AwarenessWeatherKnobRadius");
+        var labelOffset = WeatherMetric(weatherType, "AwarenessWeatherLabelTopOffset");
+        const double outerTickExtension = 9.0;
+        const double conservativeLabelHeight = 15.0;
+        Check(centerOffset - (knobRadius + outerTickExtension)
+                  - (labelOffset + conservativeLabelHeight) >= 8.0
+              && rowHeight + labelOffset
+                  - (centerOffset + knobRadius + outerTickExtension) >= 24.0,
+            "A weather caption touches its own dial or the previous weather knob.");
+
         // Narrow fallback retains the right-hand vertical column below the radar.
         var narrow = layoutMethod!.Invoke(null, new object[] { 620.0 })!;
         var type = narrow.GetType();

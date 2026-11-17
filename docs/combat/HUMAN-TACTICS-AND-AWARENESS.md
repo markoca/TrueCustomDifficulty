@@ -117,3 +117,11 @@ Current behavior supersedes the earlier display-only cap. SIGHT is really limite
 * The radar size adapts to leave at least ~260 DIP for the legend before the 148-DIP knob column at common widths; its 200 m distance scale and source range do not change. Below 700 DIP, the radar moves above a two-column area: legend left, three **vertical** weather knobs right, without clipping/overlap. A layout regression check probes wide widths 700/750/850/1024 and narrow fallback 620 DIP.
 * Knob values, inverted NOISE percentage semantics (30% / 40% native), modifier coloring, hover, right-click, keyboard and R reset, preset storage and CFG writer are **unchanged**. No duplicate individual weather sliders.
 
+
+
+## 2026-11-17 — CURRENT: centered weather-knob values and unambiguous vertical labels
+
+* **FOG VISIBILITY**, **RAIN NOISE** and **THUNDER NOISE** retain the right-hand vertical column with 32-DIP-radius industrial 270° knobs. Each knob's current percentage is **centered inside its own dial**, using the matching native-knob readout typography (only modified numbers highlighted). There is **no numeric readout below the knob**.
+* Each knob's **caption sits above its own dial**; the vertical cell pitch is now **132 DIP** (formerly 118 DIP). The 9-DIP outer tick extension plus the 15-DIP conservative caption-height contract leave **at least 24 DIP** from the previous knob's last tick to the following knob's caption. The caption itself clears its own outer dial by at least 8 DIP. No borders, connector lines, secondary labels, or duplicated sliders are added.
+* Both narrow and wide responsive layouts derive board height from the same cell pitch, so no weather control is clipped. Source-native percent/rain-masking semantics, readout color, 5% steps, pointer hit area, hover glow, reset, keyboard operations, saved presets and CFG patch outputs remain unchanged. `AllControlsPatchContract` validates the caption-to-knob gutter.
+

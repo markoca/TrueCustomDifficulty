@@ -18,7 +18,8 @@ namespace TrueCustomDifficulty.Controls;
 /// (2.5x of the source 80 m ahead) on a square-root visual scale.
 /// The 200 m circle is the outermost distance ring; no radial overshoot or
 /// display-only clipping is needed. Hearing and memory keep their own ranges.
-/// The separate FOG VISIBILITY knob edits only the Fogy weather coefficient.
+/// Three independent weather knobs edit FOG VISIBILITY, RAIN NOISE and
+/// THUNDER NOISE in the right column. Their values are centered inside the dials.
 /// </summary>
 public sealed partial class AggregateVisualControl
 {
@@ -30,7 +31,12 @@ public sealed partial class AggregateVisualControl
     private const double AwarenessHalfAngle = 85.0;       // HorizontalVisionHalvedAngleDegrees
     private const double AwarenessMemoryGap = 18.0;       // ring outside the radar
     private const double AwarenessLegendRow = 46.0;
-    private const double AwarenessWeatherRowHeight = 118.0;
+    // Put the knob's number inside its dial and its label above that dial.
+    // Leave a clear gutter from the previous knob to the next label.
+    private const double AwarenessWeatherRowHeight = 132.0;
+    private const double AwarenessWeatherKnobCenterOffset = 71.0;
+    private const double AwarenessWeatherKnobRadius = 32.0;
+    private const double AwarenessWeatherLabelTopOffset = 6.0;
     private const double AwarenessWeatherColumnWidth = 148.0;
     private const double AwarenessWeatherRightMargin = 14.0;
     private const double AwarenessWeatherTop = 40.0;
@@ -264,8 +270,9 @@ public sealed partial class AggregateVisualControl
     private void DrawAwarenessWeatherKnob(DrawingContext dc, ParameterViewModel parameter,
         string caption, Rect cell, Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
-        var center = new Point(cell.Left + cell.Width / 2.0, cell.Top + 39.0);
-        const double radius = 32.0;
+        var center = new Point(cell.Left + cell.Width / 2.0,
+            cell.Top + AwarenessWeatherKnobCenterOffset);
+        const double radius = AwarenessWeatherKnobRadius;
         var editable = parameter.IsControlEnabled;
         var ink = editable ? accent : muted;
         // NOISE is masking (1 - native HearingDistanceCoef).
@@ -302,15 +309,23 @@ public sealed partial class AggregateVisualControl
         dc.DrawEllipse(panel, new Pen(ink, hovered || IsSelected(parameter) ? 2.5 : 1.5),
             handle, 5.5, 5.5);
         dc.DrawEllipse(ink, null, handle, 2.2, 2.2);
+        // Match the other mechanical knobs: the current number belongs at
+        // the dial center, while the caption sits ABOVE its own ring.
+        // No second readout beneath the ring to collide with the next knob.
         var label = CreateText(caption, 10.2, editable ? text : muted,
             FontWeights.Bold, Math.Max(1.0, cell.Width - 8.0));
-        dc.DrawText(label, new Point(cell.Left + (cell.Width - label.Width) / 2.0, cell.Top + 83.0));
+        dc.DrawText(label, new Point(
+            cell.Left + (cell.Width - label.WidthIncludingTrailingWhitespace) / 2.0,
+            cell.Top + AwarenessWeatherLabelTopOffset));
         var value = CreateText(
             string.Create(CultureInfo.InvariantCulture,
                 $"{(noise ? HumanCombatPolicy.NoiseMaskingPercent(parameter.CurrentNumber) : parameter.CurrentNumber * 100.0):0}%"),
-            15.5, parameter.IsValueModifiedFromReference()
-                ? ReadoutInk.Numbers(accent, text) : editable ? text : muted, FontWeights.Bold);
-        dc.DrawText(value, new Point(cell.Left + (cell.Width - value.Width) / 2.0, cell.Top + 99.0));
+            16.0, parameter.IsValueModifiedFromReference()
+                ? ReadoutInk.Numbers(accent, text) : editable ? text : muted,
+            FontWeights.Bold, 2.0 * radius - 10.0);
+        dc.DrawText(value, new Point(
+            center.X - value.WidthIncludingTrailingWhitespace / 2.0,
+            center.Y - value.Height / 2.0));
         if (!editable)
             return;
         var hit = new Rect(center.X - radius - 9.0, center.Y - radius - 9.0,

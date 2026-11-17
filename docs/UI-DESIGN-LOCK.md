@@ -1,3 +1,10 @@
+
+## 2026-11-17 — CURRENT: centered weather-knob values and unambiguous vertical labels
+
+* **FOG VISIBILITY**, **RAIN NOISE** and **THUNDER NOISE** retain the right-hand vertical column with 32-DIP-radius industrial 270° knobs. Each knob's current percentage is **centered inside its own dial**, using the matching native-knob readout typography (only modified numbers highlighted). There is **no numeric readout below the knob**.
+* Each knob's **caption sits above its own dial**; the vertical cell pitch is now **132 DIP** (formerly 118 DIP). The 9-DIP outer tick extension plus the 15-DIP conservative caption-height contract leave **at least 24 DIP** from the previous knob's last tick to the following knob's caption. The caption itself clears its own outer dial by at least 8 DIP. No borders, connector lines, secondary labels, or duplicated sliders are added.
+* Both narrow and wide responsive layouts derive board height from the same cell pitch, so no weather control is clipped. Source-native percent/rain-masking semantics, readout color, 5% steps, pointer hit area, hover glow, reset, keyboard operations, saved presets and CFG patch outputs remain unchanged. `AllControlsPatchContract` validates the caption-to-knob gutter.
+
 ## 2026-11-17 — CURRENT: enlarged vertical weather knobs at the right of HUMAN AWARENESS
 
 * HUMAN AWARENESS is a **three-zone board** at 700 DIP and wider: the existing SIGHT/HEARING/MEMORY radar is left, its concise three-row legend is in the middle, and exactly **three larger 270° weather knobs stack vertically on the far right** (FOG VISIBILITY, RAIN NOISE, THUNDER NOISE). The previous three-knob horizontal strip below the legend is retired. A 148-DIP weather column uses a 118-DIP cell per knob: radius **32 DIP** (previously 21), larger handle/readout, native 5%-point ticks, clear caption and value spacing, expanded hover/hit region. Board height stays approximately 406 DIP at common 820–850 DIP widths.
