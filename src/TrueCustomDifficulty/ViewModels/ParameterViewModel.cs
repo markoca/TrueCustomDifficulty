@@ -358,6 +358,7 @@ public sealed class ParameterViewModel : ObservableObject
         "health.armyMedkitHealing",
         "health.ecoMedkitHealing",
         "health.foodHealing",
+        "health.healTime",
         // Each bleeding source is a directly editable right-hand sub-bar
         // within the same Medical Items visual, not a second top-level card.
         "health.bandageBleeding",
