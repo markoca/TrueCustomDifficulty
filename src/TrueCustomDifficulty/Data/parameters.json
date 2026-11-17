@@ -15320,14 +15320,14 @@
       "id": "loot.worldWeaponDensity",
       "tab": "loot",
       "group": "World Loot",
-      "label": "World Weapon Density",
-      "description": "Controls how many compatible world-weapon locations stay populated. As density rises, the tool guarantees more copies of every one of the 36 regular weapon models.",
+      "label": "Guns to Find",
+      "description": "How many loose guns are left to find in the Zone after shuffling. 100% fills every compatible weapon spot; lower values leave fewer guns lying around. Even at 0%, every one of the 36 regular weapon models appears at least once.",
       "control": "slider",
       "valueKind": "probability",
       "display": {
         "primary": "percent",
         "rawFormat": "0.00",
-        "valueLabel": "World Weapon Density"
+        "valueLabel": "Guns to Find"
       },
       "vanilla": {
         "All": 1
@@ -15369,9 +15369,9 @@
           "The layout is freshly randomized on every Build."
         ]
       },
-      "rationale": "How many of the world weapon spots actually have a gun. Vanilla: 100% — every spot is filled. Lower it for a scarcer Zone; every one of the 36 regular models still shows up.",
-      "logic": "Higher density leaves more world weapon locations populated; lower density makes found weapons scarcer. Every regular weapon model is still kept in the pool.",
-      "interaction": "Only shuffled regular weapons use this density; quest and unique weapon placements remain separate."
+      "rationale": "How many loose guns you'll find out in the Zone after shuffling. 100% fills all safe weapon spots. Turn it down for fewer guns lying around — even 0% leaves at least one of each regular model. Quest, unique and NPC weapons are unaffected.",
+      "logic": "Higher values leave more compatible loose-weapon spots filled; lower values make found guns scarcer. Even 0% guarantees at least one of every regular model.",
+      "interaction": "Only affects loose regular weapons when Shuffle Loose Weapons is ON; quest, unique and NPC guns are untouched."
     },
     {
       "id": "loot.worldAttachmentShuffle",

@@ -26,9 +26,17 @@ The compatibility audit proves that the safe topology can guarantee:
 
 The writer verifies the guarantee using an exact max-flow allocation before emitting any files.
 
-## World Weapon Density
+## Guns to Find — World Weapon Density
 
-The slider remains 0-100% in 5% steps.
+The compact slider under **Shuffle Loose Weapons** is displayed as **GUNS TO FIND**.
+It decides how many loose guns stay available to discover around the Zone after
+the shuffle. Slide toward 100% for more guns lying around; lower it for a
+scarcer Zone. **0% is not no guns** — the writer still places every one of the
+36 regular weapon models at least once. Quest, unique and NPC guns are
+unaffected. Only the player-facing label and explanation change; the
+`loot.worldWeaponDensity` ID, behavior and source routing stay the same.
+
+The slider remains 0–100% in 5% steps.
 
 Occupied locations:
 

@@ -2096,9 +2096,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             WorldListRow));
     }
 
-    // Dependent density: indented under Shuffle Weapons, label left, single
-    // value right, one native rail with reference tick. Muted (but saved)
-    // whenever the shuffle source disables it.
+    // GUNS TO FIND is the player-facing name for the source-backed weapon
+    // density. It controls occupied compatible shuffle spots, not all guns in
+    // the game; 0% still guarantees one of every regular model. Native 0–100%
+    // slider, reference tick and dependent disable behavior are unchanged.
     private void DrawWorldDensityRow(
         DrawingContext dc, ParameterViewModel parameter, Rect card, double rowTop,
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
@@ -2107,7 +2108,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var hovered = enabled && ReferenceEquals(_hoverTarget?.Parameter, parameter);
         var left = card.Left + 11.0 + BooleanCheckboxChrome.Size + 8.0;
         var right = card.Right - 12.0;
-        DrawText(dc, "Density", new Point(left, rowTop + 2.0),
+        DrawText(dc, "GUNS TO FIND", new Point(left, rowTop + 2.0),
             9.6, muted, FontWeights.SemiBold);
         var value = FriendlyValue(parameter);
         var valueText = CreateText(value, 10.6, enabled ? text : muted,

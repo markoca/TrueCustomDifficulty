@@ -1,4 +1,9 @@
 
+## 2026-11-17 — CURRENT: Gamer-facing description for Shuffle Loose Weapons supply
+
+* In **WORLD ITEM SPAWNS → WEAPONS**, the dependent `loot.worldWeaponDensity` slider directly beneath **Shuffle Loose Weapons** now reads **GUNS TO FIND** instead of **Density**. Keep its compact Stamina Usage-style label-left, value-right, single-rail layout, native 0–100%/5% steps, original reference tick and muted/locked behavior when shuffle is disabled.
+* The parameter's rationale/description clarifies the gameplay: more means more compatible loose-gun locations remain populated, lower means fewer guns to discover, 100% fills all eligible locations, and 0% still preserves one of each of the 36 regular models. Quest, unique and NPC guns are not changed. No new copy, baseline/Vanilla labels or extra panels were added to the card; CFG ID/writer/presets remain unchanged.
+
 ## 2026-11-17 — CURRENT: STASH SMART LOOT top-left master and borderless knobs
 
 * Master `loot.stashSmartLootEnabled` checkbox and **STASH SMART LOOT** caption occupy the upper-left corner (12-DIP local title-row origin, canonical `DrawWorldCheckRow` checkbox chrome and caption-wide click target). They are no longer centered above the knobs.

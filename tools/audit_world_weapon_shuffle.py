@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import csv,sys
+import csv,sys,json
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 slots=list(csv.DictReader(open(ROOT/'src/TrueCustomDifficulty/Data/world-weapon-shuffle-manifest.csv',encoding='utf8')))
@@ -39,3 +39,18 @@ for token in ('const string toggleId = "loot.worldWeaponShuffle";', 'const strin
               'LoadWorldWeaponSlots()', 'LoadWorldWeaponDirectSlots()', 'LoadWorldWeaponPool()'):
     assert token in block, token
 print('[OK] current writer: SHUFFLE toggle + DENSITY over direct and generator slots')
+
+# Gamer-facing text contract: rename the presentation, not the source setting.
+ui=(ROOT/'src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs').read_text(encoding='utf8')
+params=json.loads((ROOT/'src/TrueCustomDifficulty/Data/parameters.json').read_text(encoding='utf8'))['parameters']
+guns=[p for p in params if p['id']=='loot.worldWeaponDensity']
+assert len(guns)==1
+setting=guns[0]
+assert setting['label']=='Guns to Find' and setting['display']['valueLabel']=='Guns to Find'
+assert setting['requiresToggle']=='loot.worldWeaponShuffle'
+assert setting['slider']=={'min': 0, 'max': 1, 'step': 0.05, 'stepMode': 'absolute'}
+assert 'Even at 0%' in setting['description']
+assert 'Quest, unique and NPC weapons are unaffected' in setting['rationale']
+assert 'DrawText(dc, "GUNS TO FIND", new Point(left, rowTop + 2.0)' in ui
+assert 'DrawText(dc, "Density", new Point(left, rowTop + 2.0)' not in ui
+print('[OK] world gun supply UI: gamer copy and native density contract retained')
