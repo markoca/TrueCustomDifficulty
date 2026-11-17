@@ -76,3 +76,7 @@ Each action has **one native-rate slider** covering its complete source range. T
 ### HUMAN AWARENESS 200 m display limit (2026-11-17)
 
 The radar's visual distance maximum is 200 m rather than 240 m. The 200 m labelled ring is now the outer distance circumference, making the 10 / 25 / 50 / 100 m central rings ~9.5% larger without increasing the physical board footprint. SIGHT's underlying 0.25–3× source still permits 240 m; the drawn sector clamps at 200 m only, while the real legend says 240 m. To keep the 200–240 m portion of the source usable, the SIGHT rim handle accepts a small drag overshoot outside the drawn border and carries a per-drag offset so clicking a capped 3× handle does not rewrite the value to 2.5×. HEARING is on the same 200 m scale; MEMORY remains a separate external time ring. Source files, CFG mappings, keyboard resets and presets are unchanged.
+
+### HUMAN AWARENESS source maximum corrected to 200 m (2026-11-17)
+
+Current behavior supersedes the earlier display-only cap. SIGHT is really limited to **2.5× = 200 m ahead / 62.5 m peripheral**, using source 80/25 m, while minimum 0.25× and 0.05× step remain. The editor, source catalog, CFG output and drawn 200 m radar all share this limit. Legacy user presets containing 3× SIGHT are clamped to 2.5× on load by existing ParameterViewModel logic. Removed obsolete 240 m overshoot and drag-offset path. HEARING and MEMORY are unchanged.

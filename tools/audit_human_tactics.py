@@ -151,17 +151,27 @@ for token in ("AwarenessSightMeters = 80.0", "AwarenessSideMeters = 25.0", "Awar
               "CardValue(parameter, parameter.CurrentNumber)", "ReadoutInk.Numbers(accent, text)"):
     check(token in radar, f"radar token {token}")
 
-# HUMAN AWARENESS radar visual bounds are independent of source max 3x.
+# HUMAN AWARENESS 200 m is a native source cap, not a visual-only cutoff.
+sight_definition = catalog["combat.npcSightRange"]
+sight_slider = sight_definition["slider"]
+check(sight_slider["min"] == 0.25 and sight_slider["max"] == 2.5
+      and sight_slider["step"] == 0.05 and sight_slider["stepMode"] == "absolute",
+      "SIGHT source catalog max 2.5x = 200 m")
+check(80.0 * sight_slider["max"] == 200.0
+      and 25.0 * sight_slider["max"] == 62.5,
+      "SIGHT central/peripheral ranges terminate at 200 m / 62.5 m")
 check("AwarenessDisplayMaxMeters = 200.0" in radar,
-      "awareness radar uses a 200 m display maximum")
+      "awareness radar uses the matching 200 m source display maximum")
 check("10.0, 25.0, 50.0, 100.0, AwarenessDisplayMaxMeters" in radar,
       "200 m is the outermost distance ring")
-check("Math.Clamp(meters, 0.0, AwarenessDisplayMaxMeters)" in radar,
-      "visible sight cone clamps at the 200 m border")
-check("AwarenessSightDragMeters(distance, map.Width / 2.0)" in radar
-      and "_awarenessSightDragOffsetMeters" in radar,
-      "full 3x/240 m SIGHT remains editable with drag offset")
-check("BeginAwarenessSightDrag(target, point);" in ui
-      and "EndAwarenessSightDrag();" in ui,
-      "radar drag preserves source value on mouse down and clears on release")
+check("Math.Clamp(meters, 0.0, AwarenessDisplayMaxMeters)" in radar
+      and "return AwarenessDisplayMaxMeters * ratio * ratio;" in radar,
+      "visual scaling and drag clamp at 200 m")
+check("AwarenessSightDragMeters(" not in radar
+      and "_awarenessSightDragOffsetMeters" not in radar
+      and "BeginAwarenessSightDrag" not in ui and "EndAwarenessSightDrag" not in ui,
+      "removed obsolete visual-only 240 m overshoot code")
+check("CurrentNumber = value.Number.Value;" in pvm
+      and "var clamped = Math.Clamp(value, Minimum, Maximum);" in pvm,
+      "older 3x SIGHT presets clamp to the updated catalog maximum on load")
 print("\nHUMAN TACTICS / HUMAN AWARENESS contract OK")

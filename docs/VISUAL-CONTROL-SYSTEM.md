@@ -1,3 +1,10 @@
+## 2026-11-17 — CURRENT: actual HUMAN AWARENESS SIGHT maximum is 200 m
+
+* Changed `combat.npcSightRange` native catalog maximum from **3× to 2.5×**; source baseline 80 m ahead and 25 m periphery means actual maximum **200 m central / 62.5 m peripheral**. Minimum 0.25× and step 0.05× unchanged.
+* This is a genuine source editor/output limit, not just the radar rendering cap. Legacy presets containing 3× SIGHT load as 2.5× through the existing slider normalizer; built-in factory presets are all 1×.
+* The radar's 200 m outer ring and expanded inner scale remain; removed old 240 m overshoot, drag offset and input hooks. Rim drag now ends exactly at 200 m, matching the source and legend.
+* HEARING and MEMORY retain their independent ranges; no writer changes. Source catalog, two UI catalogs, combat doc, help and audit are aligned.
+
 ## 2026-11-17 — CURRENT: HUMAN AWARENESS 200 m visual radar (without CFG change)
 
 * SIGHT visual distance scale is now bounded to **200 m**, with the 200 m labelled ring placed exactly on the radar perimeter. The previous unused ring margin from the 240 m canvas is removed; 10 / 25 / 50 / 100 m all gain ~9.5% in displayed radius, making the central radar more readable while retaining the compact layout.

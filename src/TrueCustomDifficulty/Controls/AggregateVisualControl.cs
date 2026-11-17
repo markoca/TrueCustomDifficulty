@@ -6684,7 +6684,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
 
         _dragTarget = target;
-        BeginAwarenessSightDrag(target, point);
         CaptureMouse();
         UpdateTarget(target, point);
         e.Handled = true;
@@ -6927,7 +6926,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             return;
 
         _dragTarget = null;
-        EndAwarenessSightDrag();
         ReleaseMouseCapture();
         InvalidateVisual();
         e.Handled = true;

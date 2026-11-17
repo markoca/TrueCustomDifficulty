@@ -14,15 +14,14 @@ namespace TrueCustomDifficulty.Controls;
 /// The shape between the two source distances is drawn as a straight blend;
 /// the game's own angle curve is an asset, not CFG. HEARING = footstep circle
 /// (12 m). MEMORY = search timer ring around the radar (30 s), clockwise from
-/// the top. Distance rings now fill the visual radar from 0 to 200 m on a
-/// square-root scale. The actual SIGHT source still reaches 240 m at 3x:
-/// above 200 m the sector is clipped only visually, and the truthful metres
-/// remain in the legend. Dragging the rim tip can overshoot the graphic to
-/// access the full underlying range. All sources, presets and writer stay intact.
+/// the top. Distance rings and the SIGHT source now both end at 200 m
+/// (2.5x of the source 80 m ahead) on a square-root visual scale.
+/// The 200 m circle is the outermost distance ring; no radial overshoot or
+/// display-only clipping is needed. Hearing and memory keep their own ranges.
 /// </summary>
 public sealed partial class AggregateVisualControl
 {
-    private const double AwarenessDisplayMaxMeters = 200.0; // visual scale only; SIGHT at 3x remains 240 m
+    private const double AwarenessDisplayMaxMeters = 200.0; // physical SIGHT maximum: 80 m × 2.5x
     private const double AwarenessSightMeters = 80.0;     // CentralVisionDistance
     private const double AwarenessSideMeters = 25.0;      // PeripheralVisionDistance
     private const double AwarenessHearingMeters = 12.0;   // footsteps
@@ -30,11 +29,6 @@ public sealed partial class AggregateVisualControl
     private const double AwarenessHalfAngle = 85.0;       // HorizontalVisionHalvedAngleDegrees
     private const double AwarenessMemoryGap = 18.0;       // ring outside the radar
     private const double AwarenessLegendRow = 46.0;
-
-    // A sight value >200 m shares the outer 200 m marker. Preserve the
-    // grabbed source value across the first pointer update; never collapse a
-    // 3x (240 m) preset to 2.5x just because its handle is at the rim.
-    private double _awarenessSightDragOffsetMeters;
 
     private readonly record struct AwarenessLayout(Point Center, double Radius, Rect Legend, bool Wide, double Height);
 
@@ -73,14 +67,6 @@ public sealed partial class AggregateVisualControl
     private static double AwarenessMeters(double pixels, double radius)
     {
         var ratio = Math.Clamp(pixels / Math.Max(1.0, radius), 0.0, 1.0);
-        return AwarenessDisplayMaxMeters * ratio * ratio;
-    }
-
-    // SIGHT pointer travel may extend slightly outside the drawn 200 m rim.
-    // This keeps 2.5x–3x editable without drawing a misleading 240 m ring.
-    private static double AwarenessSightDragMeters(double pixels, double radius)
-    {
-        var ratio = Math.Max(0.0, pixels / Math.Max(1.0, radius));
         return AwarenessDisplayMaxMeters * ratio * ratio;
     }
 
@@ -271,24 +257,6 @@ public sealed partial class AggregateVisualControl
             kind, baseMeters, 0.0, false));
     }
 
-    private void BeginAwarenessSightDrag(HitTarget target, Point point)
-    {
-        _awarenessSightDragOffsetMeters = 0.0;
-        if (target.Kind != HitKind.RadarRadius
-            || target.Parameter.Id != HumanCombatPolicy.SightRangeId)
-            return;
-
-        var map = target.MapRect;
-        var center = new Point(map.Left + map.Width / 2.0, map.Top + map.Height / 2.0);
-        var distance = (point - center).Length;
-        var actualMeters = AwarenessSightMeters * target.Parameter.CurrentNumber;
-        _awarenessSightDragOffsetMeters =
-            actualMeters - AwarenessSightDragMeters(distance, map.Width / 2.0);
-    }
-
-    private void EndAwarenessSightDrag()
-        => _awarenessSightDragOffsetMeters = 0.0;
-
     private void UpdateAwarenessTarget(HitTarget target, Point point)
     {
         var map = target.MapRect;
@@ -304,11 +272,7 @@ public sealed partial class AggregateVisualControl
         }
         else
         {
-            var distance = Math.Sqrt(dx * dx + dy * dy);
-            var meters = parameter.Id == HumanCombatPolicy.SightRangeId
-                ? AwarenessSightDragMeters(distance, map.Width / 2.0)
-                    + _awarenessSightDragOffsetMeters
-                : AwarenessMeters(distance, map.Width / 2.0);
+            var meters = AwarenessMeters(Math.Sqrt(dx * dx + dy * dy), map.Width / 2.0);
             value = meters / Math.Max(0.0001, target.VisualMinimum);
         }
         parameter.CurrentNumber = Snap(parameter, Math.Clamp(value, parameter.Minimum, parameter.Maximum));
