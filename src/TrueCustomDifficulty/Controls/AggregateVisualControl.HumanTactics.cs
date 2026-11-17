@@ -9,34 +9,22 @@ using TrueCustomDifficulty.ViewModels;
 namespace TrueCustomDifficulty.Controls;
 
 /// <summary>
-/// HUMAN TACTICS: five native full-range rate sliders below source-accurate
-/// cooldown interval previews on a shared seconds ruler, plus a shot-spread
-/// reticle. No new gameplay fields. Intervals remain linked through the source
-/// rate scalar; all editing snaps to the existing catalog step.
+/// HUMAN TACTICS: five full-range native-rate sliders with real cooldown
+/// readouts, plus a shot-spread reticle. One visual rail per source value.
+/// All editing snaps to the existing catalog step.
 /// </summary>
 public sealed partial class AggregateVisualControl
 {
-    private const double TacticsMinimumSeconds = 0.5;
-    private const double TacticsMaximumSeconds = 160.0;
-    private const double TacticsLaneTop = 86.0;
+    private const double TacticsLaneTop = 76.0;
     private const double TacticsLanePitch = 49.0;
     private const double TacticsSpreadMinimum = 50.0;
     private const double TacticsSpreadMaximum = 400.0;
 
     private static bool HumanTacticsWide(double width) => width >= 600.0;
     private static double HumanTacticsHeight(double width)
-        => HumanTacticsWide(width) ? 360.0 : 550.0;
+        => HumanTacticsWide(width) ? 340.0 : 530.0;
 
-    private static double TacticsTimeX(double seconds, Rect track)
-    {
-        var secondsClamped = Math.Clamp(seconds, TacticsMinimumSeconds, TacticsMaximumSeconds);
-        var ratio = Math.Log(secondsClamped / TacticsMinimumSeconds)
-            / Math.Log(TacticsMaximumSeconds / TacticsMinimumSeconds);
-        return track.Left + ratio * track.Width;
-    }
-
-    // Editing uses the FULL native rate range, independently of the visual
-    // seconds ruler: every handle reaches both ends of its own lane.
+    // Editing uses the FULL native rate range along one visible rail.
     private static double TacticsRateAt(Point point, Rect track, ParameterViewModel parameter)
     {
         var ratio = Math.Clamp((point.X - track.Left) / Math.Max(1.0, track.Width), 0.0, 1.0);
@@ -69,15 +57,6 @@ public sealed partial class AggregateVisualControl
         DrawText(dc, "TACTICAL COOLDOWNS",
             new Point(laneLeft + 10.0, 46.0), 10.2, text, FontWeights.Bold);
 
-        var common = new Rect(laneLeft + 9.0, 0.0,
-            Math.Max(1.0, laneWidth - 18.0), 8.0);
-        foreach (var seconds in new[] { 1.0, 5.0, 20.0, 80.0 })
-        {
-            var tickX = TacticsTimeX(seconds, common);
-            DrawCenteredText(dc, $"{seconds:0}s", new Point(tickX, 69.0),
-                9.0, muted, FontWeights.Normal);
-        }
-
         for (var i = 0; i < HumanCombatPolicy.Tactics.Count; i++)
         {
             var tactic = HumanCombatPolicy.Tactics[i];
@@ -90,7 +69,7 @@ public sealed partial class AggregateVisualControl
         var spreadLeft = wide ? bankLeft + laneWidth + gap
             : (ActualWidth - spreadColumn) / 2.0;
         DrawHumanTacticsSpread(dc, spread,
-            new Rect(spreadLeft, wide ? 60.0 : 352.0,
+            new Rect(spreadLeft, wide ? 60.0 : 334.0,
                 spreadColumn, wide ? 264.0 : 176.0),
             wide, text, muted, border, accent, panel);
     }
@@ -107,8 +86,6 @@ public sealed partial class AggregateVisualControl
 
         var (lo, hi) = HumanCombatPolicy.CooldownSeconds(
             tactic, parameter.CurrentNumber, parameter.ReferenceNumber);
-        var (referenceLo, referenceHi) = HumanCombatPolicy.CooldownSeconds(
-            tactic, parameter.ReferenceNumber, parameter.ReferenceNumber);
         var changed = parameter.IsControlEnabled && parameter.IsValueModifiedFromReference();
         var readout = string.Create(CultureInfo.InvariantCulture, $"{lo:0.#}–{hi:0.#} s");
         DrawRightAlignedText(dc, readout,
@@ -117,31 +94,9 @@ public sealed partial class AggregateVisualControl
             changed ? ReadoutInk.Numbers(accent, text) : parameter.IsControlEnabled ? text : muted,
             FontWeights.Bold);
 
-        // Upper lane: literal min/max cooldown interval on the shared
-        // logarithmic seconds ruler. It is a preview, not a partial slider.
-        var secondsTrack = new Rect(row.Left + 9.0, row.Top + 19.0,
-            Math.Max(1.0, row.Width - 18.0), 8.0);
-        var secondsY = secondsTrack.Top + secondsTrack.Height / 2.0;
-        foreach (var seconds in new[] { 1.0, 5.0, 20.0, 80.0 })
-        {
-            var x = TacticsTimeX(seconds, secondsTrack);
-            dc.DrawLine(new Pen(CloneWithOpacity(muted, 0.45), 0.85),
-                new Point(x, secondsY - 4.0), new Point(x, secondsY + 4.0));
-        }
-        dc.DrawLine(new Pen(CloneWithOpacity(muted, 0.8), 1.4) { DashStyle = DashStyles.Dash },
-            new Point(TacticsTimeX(referenceLo, secondsTrack), secondsY - 4.0),
-            new Point(TacticsTimeX(referenceHi, secondsTrack), secondsY - 4.0));
-        var x1 = TacticsTimeX(lo, secondsTrack);
-        var x2 = TacticsTimeX(hi, secondsTrack);
+        // One full-range rate slider, with cooldown shown above as text.
         var ink = parameter.IsControlEnabled ? accent : muted;
-        dc.DrawLine(new Pen(CloneWithOpacity(ink, 0.9), 3.2),
-            new Point(x1, secondsY + 1.0), new Point(x2, secondsY + 1.0));
-        dc.DrawEllipse(ink, null, new Point(x1, secondsY + 1.0), 2.0, 2.0);
-        dc.DrawEllipse(ink, null, new Point(x2, secondsY + 1.0), 2.0, 2.0);
-
-        // Lower lane: real native-rate slider over the entire rail.
-        // Unlike the time preview, this always reaches both source endpoints.
-        var track = new Rect(row.Left + 9.0, row.Top + 33.0,
+        var track = new Rect(row.Left + 9.0, row.Top + 28.0,
             Math.Max(1.0, row.Width - 18.0), 8.0);
         var y = track.Top + track.Height / 2.0;
         var currentX = ValueToX(parameter.CurrentNumber,

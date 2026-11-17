@@ -68,3 +68,7 @@ The ENEMY ACCURACY reticle visualises relative DispersionRadius (100 / factor %)
 ### HUMAN TACTICS full-range sliders (2026-11-17 correction)
 
 Each lane now has two distinct graphs: a thin noninteractive source-accurate cooldown min–max preview on the common seconds ruler, and a separate lower native-rate slider using the **entire** 0.25×–3× range. The rate handle always reaches both ends, independent of how narrow the seconds interval is. The reference-rate tick and all reset/keyboard interactions are preserved. No CFG, preset, or value range changes.
+
+### 2026-11-17 — Simplified Human Tactics lanes
+
+Each action has **one native-rate slider** covering its complete source range. The extra gold min–max cooldown strip, dotted reference interval and 1/5/20/80-second ruler above the slider were removed as redundant. The actual cooldown min–max remains in the right-aligned seconds readout; the native-rate reference tick remains on the active slider. Board heights are now 340/530 DIP. Existing gameplay/CFG mappings, presets, snapping and reset interactions are unchanged.

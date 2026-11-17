@@ -1,3 +1,10 @@
+## 2026-11-17 — CURRENT: removed redundant HUMAN TACTICS line above sliders
+
+* HUMAN TACTICS now shows **one** full-width native-rate slider per action. The separate gold min–max seconds preview, grey dashed reference seconds line and 1 / 5 / 20 / 80 s ruler labels/ticks are removed.
+* The actual cooldown range remains visible in the right-aligned numeric text beside each tactic. Only the rate slider has a muted **rate reference tick**, so no misleading second scale remains.
+* Reclaimed space by moving the first lane up 10 DIP and sliders up 5 DIP: the measured board height is 340 DIP when side-by-side and 530 DIP when stacked. The ENEMY ACCURACY reticle is unchanged.
+* Native 0.25×–3× full rail mapping, snapping, right-click default, R reset, keyboard navigation, presets, CFG writer and combat behavior are unchanged. Audit rejects accidental reintroduction of the seconds overlay.
+
 ## 2026-11-17 — CURRENT: HUMAN TACTICS sliders now use the entire rate rail
 
 * Fixed the cooldown handles stopping part-way along the ruler. The upper thin gold line remains a **read-only actual min–max cooldown interval** on the shared logarithmic seconds scale. A distinct lower handle edits the **complete native 0.25×–3× rate range**, so 0.25× sits at the left end and 3× at the right end for every tactical action, including Master reference 2×. The two scales are no longer conflated.

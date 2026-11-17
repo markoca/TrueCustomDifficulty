@@ -130,8 +130,10 @@ for token in ("HumanTacticsHeight(double width)", "DrawHumanTacticsBoard(",
               "TacticsRateAt(point, target.MapRect, parameter)",
               "ValueToX(parameter.CurrentNumber,",
               "parameter.Minimum, parameter.Maximum, track, reverse: false)",
-              "secondsTrack = new Rect(", "HitKind.TacticalCooldown, parameter.Minimum, parameter.Maximum"):
+              "HitKind.TacticalCooldown, parameter.Minimum, parameter.Maximum"):
     check(token in tactics_ui, f"tactics editor token {token}")
+for retired in ("TacticsTimeX(", "secondsTrack", 'DrawCenteredText(dc, $"{seconds:0}s"'):
+    check(retired not in tactics_ui, f"redundant tactic seconds overlay removed: {retired}")
 for token in ("HitKind.TacticalCooldown", "HitKind.TacticalSpread",
               "UpdateHumanTacticsTarget(target, point)",
               '"HumanTactics" => HumanTacticsHeight(width)'):
