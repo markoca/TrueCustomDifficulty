@@ -7911,7 +7911,7 @@
           "92 ordinary-human SubItemGenerator links (88 base + 4 DLC1 NORD; roaming GeneralNPC_* and settlement GuardNPC_*) are redirected to TCD-owned pool clones; disabled Prologue edges, named MIK, unspawned No_Armor roots, zombies (which re-declare their own link) and the shared vanilla pools themselves remain vanilla."
         ]
       },
-      "rationale": "How often ordinary human enemies carry their usual meds. Vanilla: 1×. 0 = they never carry meds; 2× = twice as likely.",
+      "rationale": "How often ordinary human enemies carry their usual meds. Vanilla: 1×. 0× = they never carry meds; 2× = twice as likely.",
       "logic": "0–2× the game's own chance for every med on ordinary corpses.",
       "interaction": "Always editable, even when BONUS PACKS is Water or None; zombies, quests, traders and stashes are untouched."
     },
