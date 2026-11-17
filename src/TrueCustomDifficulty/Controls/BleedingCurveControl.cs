@@ -258,7 +258,7 @@ public sealed class BleedingCurveControl : FrameworkElement
             parameter.CurrentDisplay,
             new Point(rect.Right - 10, rect.Top + 6),
             parameter.IsValueModifiedFromReference() ? 12.8 : 11.6,
-            parameter.IsValueModifiedFromReference() ? accent : text,
+            parameter.IsValueModifiedFromReference() ? ReadoutInk.Numbers(accent, text) : text,
             FontWeights.Bold);
 
         var trackLeft = rect.Left + 12.0;
@@ -958,14 +958,18 @@ public sealed class BleedingCurveControl : FrameworkElement
     }
 
     private FormattedText CreateText(string value, double size, Brush brush, FontWeight weight)
-        => new(
+    {
+        var (ink, numberInk) = ReadoutInk.Resolve(brush);
+        FormattedText formatted = new(
             value,
             CultureInfo.InvariantCulture,
             FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
             Math.Max(9.0, size),
-            brush,
+            ink,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
+        return ReadoutInk.Highlight(formatted, value, numberInk);
+    }
 
     private void DrawText(DrawingContext dc, string value, Point point, double size, Brush brush, FontWeight weight)
         => dc.DrawText(CreateText(value, size, brush, weight), point);

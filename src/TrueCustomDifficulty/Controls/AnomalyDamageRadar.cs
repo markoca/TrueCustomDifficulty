@@ -220,14 +220,14 @@ public sealed class AnomalyDamageRadar : FrameworkElement
                 muted, FontWeights.SemiBold);
             DrawCenteredText(dc, effectiveText, new Point(center, 268), 11.2,
                 parameter.IsValueModifiedFromReference()
-                    || _globalDamage?.IsValueModifiedFromReference() == true ? accent : text,
+                    || _globalDamage?.IsValueModifiedFromReference() == true ? ReadoutInk.Numbers(accent, text) : text,
                 FontWeights.Bold);
             var nativeText = Anomalies[i].IsMultiplier
                 ? $"{parameter.CurrentNumber:0.##}x" : $"{parameter.CurrentNumber:0.#}";
             DrawCenteredText(dc, "BASE", new Point(center, 283), 7.8,
                 muted, FontWeights.SemiBold);
             DrawCenteredText(dc, nativeText, new Point(center, 295), 10.2,
-                parameter.IsValueModifiedFromReference() ? accent : muted,
+                parameter.IsValueModifiedFromReference() ? ReadoutInk.Numbers(accent, muted) : muted,
                 FontWeights.SemiBold);
             var words = Anomalies[i].Label.Split(' ');
             if (words.Length == 1)
@@ -342,7 +342,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         // center directly rather than applying the generic top-edge offset.
         DrawCenteredText(dc, $"{p.CurrentNumber:0.##}x", new Point(center.X, center.Y),
             p.IsValueModifiedFromReference() ? 16.2 : 15.0,
-            active && p.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
+            active && p.IsValueModifiedFromReference() ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
         DrawCenteredText(dc, $"{p.Minimum:0.##}x",
             new Point(center.X - KnobRadius * .8, card.Bottom - KnobTypography.EndpointInsetFromBottom),
             KnobTypography.EndpointSize, Brushes.White, FontWeights.SemiBold);
@@ -652,13 +652,14 @@ public sealed class AnomalyDamageRadar : FrameworkElement
 
     private FormattedText CreateText(string value, double size, Brush brush, FontWeight weight)
     {
+        var (ink, numberInk) = ReadoutInk.Resolve(brush);
         var formatted = new FormattedText(
             value,
             CultureInfo.CurrentUICulture,
             FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
             Math.Max(9.0, size),
-            brush,
+            ink,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
         var separatorBrush = FindBrush("AccentBrush", Brushes.Goldenrod);
@@ -667,6 +668,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             if (value[i] == '|')
                 formatted.SetForegroundBrush(separatorBrush, i, 1);
         }
+        ReadoutInk.Highlight(formatted, value, numberInk);
 
         return formatted;
     }

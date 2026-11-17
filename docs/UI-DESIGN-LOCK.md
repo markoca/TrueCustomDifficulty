@@ -1,3 +1,13 @@
+## 2026-11-17 — CURRENT: changed values gold only their numbers (everywhere)
+
+* Rule, enforced in one place: when a value differs from the selected Base Preset, **only its numeric tokens** turn gold. Words and units stay in the normal ink: `x`, `%`, `s`, `m`, `HP`, `NPC`, `HOURS`, `ahead`, `side`, `every`, `steps`, `search`, move names. Examples: `1.4x · ahead 112 m · side 35 m` (gold 1.4, 112, 35); `gore every 5 s` (gold 5); `75%` (gold 75); `12,000` (one gold token).
+* `Controls/ReadoutInk.cs`:
+  * Call sites pass `ReadoutInk.Numbers(accent, baseInk)` instead of `accent`.
+  * Every control's `CreateText` / `Text` resolves that token and colours only the digits.
+  * The slightly larger changed-value font size is unchanged.
+* Converted: all card, rail, knob, gauge and bar readouts that previously painted the whole changed value gold. This covers the economy-style card boards (HUMAN TACTICS / AWARENESS, ARTIFACT HUNTING, …), Master cards, mixers, knobs, Flycatcher axes, NPC condition range, ammo samples, sleep hours, coupons, stash odds bars, anomaly, mutant, A-Life, price, world-loot, trader-stock, bleeding and drunkenness readouts.
+* `tools/audit_readout_ink.py` fails if a text factory ignores ReadoutInk or if a readout paints its whole changed value in accent again.
+
 ## 2026-11-17 — CURRENT: build fix (MUTANT help string)
 
 * The MUTANT CONTROLS help example `"gore every 10 s"` is now escaped inside the C# string. This fixes CS1002 at `ParameterViewModel.cs:201`. The text is unchanged.

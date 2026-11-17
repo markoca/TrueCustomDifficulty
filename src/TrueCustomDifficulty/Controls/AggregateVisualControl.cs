@@ -703,7 +703,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             coupons.CurrentNumber.ToString("N0", CultureInfo.InvariantCulture),
             new Point(card.Right - 13.0, card.Top + 5.0),
             changed ? 16.2 : 15.0,
-            changed ? accent : coupons.IsControlEnabled ? text : muted,
+            changed ? ReadoutInk.Numbers(accent, text) : coupons.IsControlEnabled ? text : muted,
             FontWeights.Bold);
 
         var track = new Rect(card.Left + 18.0, card.Top + 45.0,
@@ -800,7 +800,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var modified = parameter.IsValueModifiedFromReference();
         var value = CardReadout(parameter);
         var readout = CreateText(value, modified ? 13.0 : 11.8,
-            modified ? accent : text, FontWeights.Bold);
+            modified ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
         // Reserve the measured readout width, not an arbitrary 95-DIP lane.
         // At minimum window width titles cannot overwrite the live value.
         var labelWidth = Math.Max(1.0, card.Width - 36.0
@@ -1036,7 +1036,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var xCaption = CreateText("MOVEMENT SPEED", 10.5, text, FontWeights.Bold);
         var xChanged = movement.IsValueModifiedFromReference();
         var xValue = CreateText($"{movement.CurrentNumber * 100.0:0.#}%",
-            xChanged ? 14.2 : 13.0, xChanged ? accent : text, FontWeights.Bold);
+            xChanged ? 14.2 : 13.0, xChanged ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
         var xStart = plot.Left + plot.Width / 2.0 -
             (xCaption.WidthIncludingTrailingWhitespace + axisGap +
              xValue.WidthIncludingTrailingWhitespace) / 2.0;
@@ -1049,7 +1049,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var yCaption = CreateText("TURN SPEED", 10.5, text, FontWeights.Bold);
         var yChanged = turning.IsValueModifiedFromReference();
         var yValue = CreateText($"{turning.CurrentNumber * 100.0:0.#}%",
-            yChanged ? 14.2 : 13.0, yChanged ? accent : text, FontWeights.Bold);
+            yChanged ? 14.2 : 13.0, yChanged ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
         var yAnchor = plot.Left - 46.0;
         var yStart = yAnchor -
             (yCaption.WidthIncludingTrailingWhitespace + axisGap +
@@ -1708,7 +1708,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             };
             var countsModified = ammoActive && ammo.IsValueModifiedFromReference();
             var sampleLabelInk = ammoActive ? muted : CloneWithOpacity(muted, 0.55);
-            var sampleValueInk = countsModified ? accent
+            var sampleValueInk = countsModified ? ReadoutInk.Numbers(accent, text)
                 : ammoActive ? text : CloneWithOpacity(muted, 0.7);
             dc.DrawLine(new Pen(CloneWithOpacity(border, 0.55), 0.8),
                 new Point(ammoCard.Left + 12.0, ammoCard.Top + 70.0),
@@ -1765,11 +1765,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawCenteredText(dc, $"{condition.CurrentMinNumber * 100.0:0}%",
             new Point(minReadoutX, rangeCard.Top + 64.0),
             minModified ? 14.2 : 13.0,
-            minModified ? accent : text, FontWeights.SemiBold);
+            minModified ? ReadoutInk.Numbers(accent, text) : text, FontWeights.SemiBold);
         DrawCenteredText(dc, $"{condition.CurrentMaxNumber * 100.0:0}%",
             new Point(maxReadoutX, rangeCard.Top + 64.0),
             maxModified ? 14.2 : 13.0,
-            maxModified ? accent : text, FontWeights.SemiBold);
+            maxModified ? ReadoutInk.Numbers(accent, text) : text, FontWeights.SemiBold);
         dc.DrawLine(new Pen(CloneWithOpacity(border, 0.60), 0.8),
             new Point(center, rangeCard.Top + 49.0),
             new Point(center, rangeCard.Top + 82.0));
@@ -2643,7 +2643,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var disabledInk = MasterDisabledInk(text);
         var display = CreateText(valueText(parameter.CurrentNumber),
             changed ? 13.0 : 11.8,
-            enabled ? changed ? accent : text : disabledInk, FontWeights.Bold);
+            enabled ? changed ? ReadoutInk.Numbers(accent, text) : text : disabledInk, FontWeights.Bold);
         var labelWidth = Math.Max(1.0, card.Width - 36.0 -
             display.WidthIncludingTrailingWhitespace - 9.0);
         dc.DrawText(CreateText(title, 10.1, enabled ? text : disabledInk,
@@ -2899,7 +2899,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawMixerCentered(dc, format(parameter.CurrentNumber),
             new Point(center, card.Top + 30.0),
             Math.Max(30.0, card.Width - 10.0), modified ? 13.3 : 12.1,
-            !enabled ? disabledInk : modified ? accent : text, FontWeights.Bold);
+            !enabled ? disabledInk : modified ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
         DrawMixerCentered(dc, format(parameter.Maximum),
             new Point(center, card.Top + 53.0),
             Math.Max(30.0, card.Width - 10.0), 8.7, muted, FontWeights.Normal);
@@ -3322,7 +3322,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         {
             DrawCenteredText(dc, currentLabel, new Point(center.X, currentTop),
                 prominent ? (modified ? 18.2 : 17.0) : (modified ? 16.2 : 15.0),
-                active ? modified ? accent : text : muted, FontWeights.Bold);
+                active ? modified ? ReadoutInk.Numbers(accent, text) : text : muted, FontWeights.Bold);
         }
         if (secondaryReadout is not null)
             DrawKnobSecondaryReadout(dc, secondaryReadout,
@@ -3646,7 +3646,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 new Point(x, plot.Bottom + 37.0),
                 plot.Width / 4.0 - 10.0,
                 parameter.IsValueModifiedFromReference() ? 12.3 : 11.1,
-                parameter.IsValueModifiedFromReference() ? accent : text,
+                parameter.IsValueModifiedFromReference() ? ReadoutInk.Numbers(accent, text) : text,
                 FontWeights.Bold);
             // Actual repair-price layers multiply: Base Repair times this
             // reputation factor; show the combined factor but edit only the
@@ -3925,7 +3925,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             DrawRightAlignedText(dc,
                 $"{durations[i] * parameter.CurrentNumber:0.#}s",
                 new Point(preview.Right - 12.0, y - 9.0),
-                modified ? 12.2 : 11.0, modified ? accent : text,
+                modified ? 12.2 : 11.0, modified ? ReadoutInk.Numbers(accent, text) : text,
                 FontWeights.Bold);
 
             // Keep native source snapping and right-click/R reset. The hit
@@ -3993,7 +3993,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             DrawRightAlignedText(dc, $"{source.CurrentNumber:0}s",
                 new Point(preview.Right - 12.0, y - 9.0),
                 modified ? 12.2 : 11.0,
-                modified ? accent : text, FontWeights.Bold);
+                modified ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
             AddHorizontalTarget(source,
                 new Rect(track.Left - 6.0, y - 10.0,
                     track.Width + 12.0, 20.0),
@@ -4173,7 +4173,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var modified = minimumHours.IsValueModifiedFromReference();
         DrawRightAlignedText(dc, $"{minimumHours.CurrentNumber:0} HOURS",
             new Point(selector.Right - 11, 152.0),
-            modified ? 13.0 : 11.8, modified ? accent : text,
+            modified ? 13.0 : 11.8, modified ? ReadoutInk.Numbers(accent, text) : text,
             FontWeights.Bold);
 
         const int hoursCount = 14;
@@ -4202,7 +4202,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             DrawMixerCentered(dc, hour.ToString(CultureInfo.InvariantCulture),
                 new Point(cell.Left + cell.Width / 2, cell.Top + 9.0),
                 chipWidth - 4.0, 10.7,
-                selected && modified ? accent : text, FontWeights.Bold);
+                selected && modified ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
             if (vanilla)
                 dc.DrawLine(new Pen(muted, 2.0),
                     new Point(cell.Left + 5.0, cell.Bottom - 3.0),
@@ -4250,7 +4250,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var changed = parameter.IsValueModifiedFromReference();
         DrawRightAlignedText(dc, $"{parameter.CurrentNumber:0.##}x",
             new Point(card.Right - 12, card.Top + 8),
-            changed ? 13.3 : 12.1, changed ? accent : text, FontWeights.Bold);
+            changed ? 13.3 : 12.1, changed ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
         var track = new Rect(card.Left + 18, card.Top + 49,
             card.Width - 36, 12.0);
         var now = ValueToX(parameter.CurrentNumber,
@@ -5221,7 +5221,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             11.5, muted, FontWeights.SemiBold);
         DrawStat(damage.ToString("0.###", CultureInfo.InvariantCulture),
             wide ? 192.0 : 140.0, 29.0,
-            modified ? accent : text, FontWeights.Bold);
+            modified ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
 
         // Only show estimated elapsed time under DEAD AFTER.
         // One charge/second is a preview assumption, not verified gameplay.
@@ -5416,7 +5416,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         vanilla = Math.Clamp(vanilla, 0.0, 1.0);
         var changed = Math.Abs(value - vanilla) > 0.005;
         var number = CreateText($"{value * 100.0:0}%", 10.0,
-            changed ? accent : value <= Epsilon ? muted : text, FontWeights.Bold);
+            changed ? ReadoutInk.Numbers(accent, text) : value <= Epsilon ? muted : text, FontWeights.Bold);
         const double numberWidth = 38.0;
         var bar = new Rect(x, y + 5.0, Math.Max(1.0, columnWidth - numberWidth - 6.0), 7.0);
         dc.DrawRectangle(CloneWithOpacity(border, .30), null, bar);
@@ -5961,7 +5961,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 DrawCenteredText(dc, $"{low}–{high}",
                     new Point(tile.Left + tile.Width / 2.0, tile.Top + 17.0),
                     countsModified ? 12.8 : 11.6,
-                    countsModified ? accent : eligible ? text : muted,
+                    countsModified ? ReadoutInk.Numbers(accent, eligible ? text : muted) : eligible ? text : muted,
                     FontWeights.SemiBold);
             }
         }
@@ -7766,13 +7766,14 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         value = System.Text.RegularExpressions.Regex.Replace(value,
             @"\s*(?:\||/)\s*BASE\s+1(?:\.0+)?x\b|\bBASE\s+1(?:\.0+)?x\b",
             "", System.Text.RegularExpressions.RegexOptions.IgnoreCase).TrimEnd();
+        var (ink, numberInk) = ReadoutInk.Resolve(brush);
         var formatted = new FormattedText(
             value,
             CultureInfo.InvariantCulture,
             FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
             Math.Max(9.0, size),
-            brush,
+            ink,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
         if (!double.IsInfinity(maxWidth))
@@ -7783,6 +7784,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             formatted.MaxLineCount = 1;
             formatted.Trimming = TextTrimming.CharacterEllipsis;
         }
+        ReadoutInk.Highlight(formatted, value, numberInk);
 
         return formatted;
     }

@@ -238,7 +238,7 @@ public sealed class MutantDropRadar : FrameworkElement
             $"{chance * 100:0}%",
             new Point(card.Right - 9.0, card.Top + 6.0),
             modified ? 13.8 : 12.6,
-            modified ? accent : text,
+            modified ? ReadoutInk.Numbers(accent, text) : text,
             FontWeights.Bold);
         var track = new Rect(card.Left + 11.0, card.Top + 32.0, card.Width - 22.0, 12.0);
         var y = track.Top + track.Height / 2.0;
@@ -443,13 +443,14 @@ public sealed class MutantDropRadar : FrameworkElement
 
     private FormattedText CreateText(string value, double size, Brush brush, FontWeight weight)
     {
+        var (ink, numberInk) = ReadoutInk.Resolve(brush);
         var formatted = new FormattedText(
             value,
             CultureInfo.CurrentUICulture,
             FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
             Math.Max(9.0, size),
-            brush,
+            ink,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
         var separatorBrush = FindBrush("AccentBrush", Brushes.Goldenrod);
@@ -458,6 +459,7 @@ public sealed class MutantDropRadar : FrameworkElement
             if (value[i] == '|')
                 formatted.SetForegroundBrush(separatorBrush, i, 1);
         }
+        ReadoutInk.Highlight(formatted, value, numberInk);
 
         return formatted;
     }

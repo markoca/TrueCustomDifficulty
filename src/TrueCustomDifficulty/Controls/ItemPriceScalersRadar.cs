@@ -163,7 +163,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
             VerticalBarHandleChrome.Draw(dc, new Point(center, y),
                 barWidth, enabled ? accent : muted, enabled && _hoverIndex == i);
             Center(dc, $"{p.CurrentNumber:0.##}x", center, 84, 11.3,
-                enabled && p.IsValueModifiedFromReference() ? accent : text,
+                enabled && p.IsValueModifiedFromReference() ? ReadoutInk.Numbers(accent, text) : text,
                 FontWeights.Bold);
             var words = Items[i].Label.Split(' ');
             if (words.Length == 1)
@@ -310,11 +310,15 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
         dc.DrawText(formatted, new Point(x - formatted.Width / 2, y - formatted.Height / 2));
     }
 
-    private FormattedText Text(string value, double size, Brush brush, FontWeight weight) =>
-        new(value, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight,
+    private FormattedText Text(string value, double size, Brush brush, FontWeight weight)
+    {
+        var (ink, numberInk) = ReadoutInk.Resolve(brush);
+        FormattedText formatted = new(value, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal,
-                weight, FontStretches.Normal), size, brush,
+                weight, FontStretches.Normal), size, ink,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
+        return ReadoutInk.Highlight(formatted, value, numberInk);
+    }
 
     private sealed record HitTarget(int Index, Rect Bounds, double Top, double Bottom);
 }

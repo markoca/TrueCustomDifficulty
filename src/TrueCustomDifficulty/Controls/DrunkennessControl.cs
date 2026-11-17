@@ -271,7 +271,7 @@ public sealed class DrunkennessControl : FrameworkElement
         var currentText = CreateText(
             strength.ToString("0", CultureInfo.InvariantCulture),
             changed ? 14.5 : 13.3,
-            changed ? accent : text,
+            changed ? ReadoutInk.Numbers(accent, text) : text,
             FontWeights.Bold);
         dc.DrawText(currentText, new Point(valueX, rect.Top + 25));
 
@@ -750,14 +750,18 @@ public sealed class DrunkennessControl : FrameworkElement
     }
 
     private FormattedText CreateText(string value, double size, Brush brush, FontWeight weight)
-        => new(
+    {
+        var (ink, numberInk) = ReadoutInk.Resolve(brush);
+        FormattedText formatted = new(
             value,
             CultureInfo.InvariantCulture,
             FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
             Math.Max(9.0, size),
-            brush,
+            ink,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
+        return ReadoutInk.Highlight(formatted, value, numberInk);
+    }
 
     private enum ActiveSlider
     {

@@ -230,7 +230,7 @@ public sealed class MutantHealthRadar : FrameworkElement
         dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0, parameter);
         DrawText(dc, title, new Point(card.Left + 11.0, card.Top + 7.0), VisualControlTypography.CardTitle, text, FontWeights.Bold);
         var value = CreateText(valueLabel, 11.0,
-            parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
+            parameter.IsValueModifiedFromReference() ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
         dc.DrawText(value, new Point(card.Right - 11.0 - value.Width, card.Top + 7.0));
         var rail = new Rect(card.Left + 14.0, card.Top + 34.0, card.Width - 28.0, 9.0);
         var y = rail.Top + rail.Height / 2.0;
@@ -338,14 +338,9 @@ public sealed class MutantHealthRadar : FrameworkElement
         // the panel. Groups without moves show the plain rate.
         var label = MutantAggressionPolicy.CooldownDisplay(family, group, rate.CurrentNumber, rate.ReferenceNumber)
             ?? MutantAggressionPolicy.RateDisplay(family, group, rate.CurrentNumber, rate.ReferenceNumber);
-        var value = CreateText(label, 11.0, text, FontWeights.Bold);
-        if (rate.IsValueModifiedFromReference())
-        {
-            // Only the numbers turn gold; words and units stay neutral.
-            foreach (System.Text.RegularExpressions.Match number in
-                System.Text.RegularExpressions.Regex.Matches(label, @"\d+(?:\.\d+)?"))
-                value.SetForegroundBrush(accent, number.Index, number.Length);
-        }
+        // Only the numbers turn gold; words and units stay neutral.
+        var value = CreateText(label, 11.0,
+            rate.IsValueModifiedFromReference() ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
         dc.DrawText(value, new Point(area.Right - value.WidthIncludingTrailingWhitespace, area.Top + 1.0));
         DrawSpeciesTrack(dc, rate, row, new Rect(area.Left, area.Top + 24.0, area.Width, 10.0),
             muted, border, accent, panel);
@@ -614,14 +609,16 @@ public sealed class MutantHealthRadar : FrameworkElement
 
     private FormattedText CreateText(string value, double size, Brush brush, FontWeight weight)
     {
+        var (ink, numberInk) = ReadoutInk.Resolve(brush);
         var formatted = new FormattedText(
             value,
             CultureInfo.CurrentUICulture,
             FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
             Math.Max(9.0, size),
-            brush,
+            ink,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
+        ReadoutInk.Highlight(formatted, value, numberInk);
 
         return formatted;
     }

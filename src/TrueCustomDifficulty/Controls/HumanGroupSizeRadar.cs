@@ -189,7 +189,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
                 barWidth, accent, _hoverRow == i);
             var cap = ALifeIntegerCapSteps.EffectiveCaps(parameter.Id, value)[0];
             DrawCenteredText(dc, $"{cap:0} NPC", new Point(center, 82.0), 12.8,
-                parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
+                parameter.IsValueModifiedFromReference() ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
             DrawCenteredText(dc, $"{value:0.##}x", new Point(center, 100.0), 10.3,
                 muted, FontWeights.SemiBold);
             DrawCenteredText(dc, Ranks[i].Label, new Point(center, 307.0),
@@ -376,13 +376,14 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
 
     private FormattedText CreateText(string value, double size, Brush brush, FontWeight weight)
     {
+        var (ink, numberInk) = ReadoutInk.Resolve(brush);
         var formatted = new FormattedText(
             value,
             CultureInfo.CurrentUICulture,
             FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
             Math.Max(9.0, size),
-            brush,
+            ink,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
         var separatorBrush = FindBrush("AccentBrush", Brushes.Goldenrod);
@@ -391,6 +392,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
             if (value[i] == '|')
                 formatted.SetForegroundBrush(separatorBrush, i, 1);
         }
+        ReadoutInk.Highlight(formatted, value, numberInk);
 
         return formatted;
     }

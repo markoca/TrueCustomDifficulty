@@ -846,14 +846,16 @@ public sealed class ActionCostsRadar : FrameworkElement
 
     private FormattedText CreateText(string value, double size, Brush brush, FontWeight weight)
     {
+        var (ink, numberInk) = ReadoutInk.Resolve(brush);
         var formatted = new FormattedText(
             value,
             CultureInfo.CurrentUICulture,
             FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
             Math.Max(9.0, size),
-            brush,
+            ink,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
+        ReadoutInk.Highlight(formatted, value, numberInk);
 
         return formatted;
     }
