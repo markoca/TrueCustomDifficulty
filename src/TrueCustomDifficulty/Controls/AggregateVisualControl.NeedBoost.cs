@@ -8,8 +8,10 @@ namespace TrueCustomDifficulty.Controls;
 /// <summary>
 /// NEED BOOST: one compact 270-degree knob beside BONUS PACKS. It
 /// stretches the need-driven span of the selected corpse SmartLoot packages
-/// (MinSpawnChance 10% → MaxSpawnChance): 0x = off (flat 10%), 1x = vanilla,
-/// 2x = doubled span. A preset sidecar, not a catalog parameter.
+/// (MinSpawnChance 10% → MaxSpawnChance): 0x = flat 10% (no need scaling),
+/// 1x = vanilla, 2x = doubled span. The checkbox switches the whole boost
+/// ON/OFF: OFF = vanilla span, the knob value stays saved and dimmed.
+/// Preset sidecars, not catalog parameters.
 /// </summary>
 public sealed partial class AggregateVisualControl
 {
@@ -34,6 +36,25 @@ public sealed partial class AggregateVisualControl
         set => SetCurrentValue(NeedBoostProperty, SnapNeedBoost(value));
     }
 
+    public static readonly DependencyProperty NeedBoostEnabledProperty =
+        DependencyProperty.Register(nameof(NeedBoostEnabled), typeof(bool),
+            typeof(AggregateVisualControl),
+            new FrameworkPropertyMetadata(true,
+                FrameworkPropertyMetadataOptions.AffectsRender
+                | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+    public bool NeedBoostEnabled
+    {
+        get => (bool)GetValue(NeedBoostEnabledProperty);
+        set => SetCurrentValue(NeedBoostEnabledProperty, value);
+    }
+
+    private Rect _npcBoostCheckbox = Rect.Empty;
+    private bool _npcBoostHoverCheckbox;
+
+    // The knob edits only while the boost is ON (checkbox) and editable.
+    private bool NpcNeedBoostKnobActive() => NpcNeedBoostEditable() && NeedBoostEnabled;
+
     private static double SnapNeedBoost(double value)
         => Math.Round(Math.Clamp(double.IsFinite(value) ? value : 1.0, 0.0, NeedBoostMaximum)
             / NeedBoostStep, MidpointRounding.AwayFromZero) * NeedBoostStep;
@@ -48,14 +69,20 @@ public sealed partial class AggregateVisualControl
         DrawingContext dc, Rect card, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
-        var enabled = NpcNeedBoostEditable();
+        var editable = NpcNeedBoostEditable();
+        var enabled = editable && NeedBoostEnabled;
         var boost = SnapNeedBoost(NeedBoost);
         var value = boost.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) + "×";
         DrawNpcCompactDial(dc, card, "NEED BOOST", value,
-            "OFF", "2×", 0.0, NeedBoostMaximum, boost, 1.0, NeedBoostStep,
+            "FLAT", "2×", 0.0, NeedBoostMaximum, boost, 1.0, NeedBoostStep,
             enabled, enabled && Math.Abs(boost - 1.0) > Epsilon,
             enabled && _npcBoostHover,
-            text, muted, border, accent, panel);
+            text, muted, border, accent, panel,
+            captionInset: 29.0);
+        // Same checkbox chrome and position as MOD LOOT SCARCITY.
+        _npcBoostCheckbox = new Rect(card.Left + 9.0, card.Top + 10.0, 16.0, 16.0);
+        BooleanCheckboxChrome.Draw(dc, _npcBoostCheckbox, NeedBoostEnabled,
+            editable, editable && _npcBoostHoverCheckbox, panel, border, accent);
         _npcBoostKnobHit = NpcCompactDialHit(card);
     }
 
@@ -90,12 +117,20 @@ public sealed partial class AggregateVisualControl
 
     private bool NpcNeedBoostMouseDown(Point point)
     {
+        if (NpcNeedBoostEditable() && _npcBoostCheckbox.Contains(point))
+        {
+            SelectNpcNeedBoost();
+            NeedBoostEnabled = !NeedBoostEnabled;
+            return true;
+        }
         if (!NpcNeedBoostEditable() || !_npcBoostKnobHit.Contains(point))
         {
             _npcBoostFocused = false;
             return false;
         }
         SelectNpcNeedBoost();
+        if (!NeedBoostEnabled)
+            return true;
         _npcBoostDragging = true;
         CaptureMouse();
         UpdateNpcNeedBoost(point);
@@ -111,13 +146,15 @@ public sealed partial class AggregateVisualControl
             UpdateNpcNeedBoost(point);
             return true;
         }
-        var hover = NpcNeedBoostEditable() && _npcBoostKnobHit.Contains(point);
-        if (hover != _npcBoostHover)
+        var hoverBox = NpcNeedBoostEditable() && _npcBoostCheckbox.Contains(point);
+        var hover = NpcNeedBoostKnobActive() && _npcBoostKnobHit.Contains(point);
+        if (hover != _npcBoostHover || hoverBox != _npcBoostHoverCheckbox)
         {
             _npcBoostHover = hover;
+            _npcBoostHoverCheckbox = hoverBox;
             InvalidateVisual();
         }
-        if (!hover)
+        if (!hover && !hoverBox)
             return false;
         SetHoverTarget(null);
         Cursor = Cursors.Hand;
@@ -137,15 +174,16 @@ public sealed partial class AggregateVisualControl
 
     private void NpcNeedBoostMouseLeave()
     {
-        if (!_npcBoostHover)
+        if (!_npcBoostHover && !_npcBoostHoverCheckbox)
             return;
         _npcBoostHover = false;
+        _npcBoostHoverCheckbox = false;
         InvalidateVisual();
     }
 
     private bool NpcNeedBoostWheel(Point point, int delta)
     {
-        if (!NpcNeedBoostEditable() || !_npcBoostKnobHit.Contains(point))
+        if (!NpcNeedBoostKnobActive() || !_npcBoostKnobHit.Contains(point))
             return false;
         var direction = Math.Sign(delta);
         if (direction == 0)
@@ -159,7 +197,7 @@ public sealed partial class AggregateVisualControl
     // Right-click restores vanilla 1x (the reference), not OFF.
     private bool NpcNeedBoostRightClick(Point point)
     {
-        if (!NpcNeedBoostEditable() || !_npcBoostKnobHit.Contains(point))
+        if (!NpcNeedBoostKnobActive() || !_npcBoostKnobHit.Contains(point))
             return false;
         SelectNpcNeedBoost();
         NeedBoost = 1.0;
@@ -170,11 +208,19 @@ public sealed partial class AggregateVisualControl
     {
         if (!_npcBoostFocused || !NpcNeedBoostEditable())
             return false;
+        if (key == Key.Space)
+        {
+            NeedBoostEnabled = !NeedBoostEnabled;
+            return true;
+        }
         if (key == Key.R)
         {
             NeedBoost = 1.0;
+            NeedBoostEnabled = true;
             return true;
         }
+        if (!NeedBoostEnabled)
+            return false;
         var step = key switch
         {
             Key.Right or Key.Up or Key.Add or Key.OemPlus => 1,

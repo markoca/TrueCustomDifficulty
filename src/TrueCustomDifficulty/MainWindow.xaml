@@ -373,6 +373,7 @@
                                                                                                  ModItemsEditorAvailable="{Binding DataContext.IsBuildIdle, RelativeSource={RelativeSource AncestorType=Window}}"
                                                                                                  ModItemsRemoval="{Binding DataContext.CorpseModItemsRemoval, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Window}}"
                                                                                                  NeedBoost="{Binding DataContext.CorpseSmartLootNeedBoost, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                                                 NeedBoostEnabled="{Binding DataContext.CorpseSmartLootNeedBoostEnabled, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Window}}"
                                                                                                  StashPresence="{Binding DataContext.StashPresence, RelativeSource={RelativeSource AncestorType=Window}}" />
 
                                                                 <controls:BleedingCurveControl x:Name="BleedingCurveControl"

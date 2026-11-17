@@ -37,9 +37,10 @@ public static class NpcLootCards
             new(NeedBoost, Anchor, "NEED BOOST", "Need Boost",
                 "How hard the bonus packs react to what you are missing. "
                 + "With full pockets a pack rolls about 10% of the time; when you are out of that item it climbs to 70–90%.\n\n"
-                + "OFF keeps a flat 10% no matter what you carry. 1× is vanilla. 2× makes the packs step in much harder when you are short.\n\n"
+                + "FLAT keeps a flat 10% no matter what you carry. 1× is vanilla. 2× makes the packs step in much harder when you are short.\n\n"
+                + "The checkbox switches the boost off: the packs then react like vanilla and your dial setting is kept for later.\n\n"
                 + "Needs at least one bonus pack switched on.",
-                "Drag the dial or use the mouse wheel. ←/→ change it in small steps, Home = OFF, End = 2×. Right-click or R resets to 1×."),
+                "Click the checkbox (or Space) to switch it ON/OFF. Drag the dial or use the mouse wheel; ←/→ change it in small steps, Home = FLAT, End = 2×. Right-click or R resets to 1× and ON."),
             new(Scarcity, "loot.genericCorpseReduction", "SCARCITY", "Scarcity",
                 "Makes the Zone stingier with supplies on dead stalkers. "
                 + "It cuts the chance of food, drinks and meds on every ordinary NPC, and the bonus packs too.\n\n"

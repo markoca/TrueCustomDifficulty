@@ -57,6 +57,10 @@ public sealed class PresetFile
     [JsonPropertyName("corpseSmartLootNeedBoost")]
     public double? CorpseSmartLootNeedBoost { get; set; }
 
+    // NEED BOOST ON/OFF; saved only when OFF (null = ON).
+    [JsonPropertyName("corpseSmartLootNeedBoostEnabled")]
+    public bool? CorpseSmartLootNeedBoostEnabled { get; set; }
+
     // STASH LOOT MIX presence sidecars (0–1, 0.05 steps); only changed ids.
     [JsonPropertyName("stashPresence")]
     public Dictionary<string, double>? StashPresence { get; set; }

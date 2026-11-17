@@ -36,3 +36,9 @@ average effective range of the MEDS and AMMO (main weapon) sets with vanilla tic
 
 Examples: hardcore "no hand-outs" = WHEN SHORT 0.5×; "only helps when you need it" = WHEN STOCKED 0×.
 Corpse smart loot is separate (Loot → NPC LOOT, NEED BOOST). Checks: `tools/audit_stash_smart_need.py`.
+
+## Corpse NEED BOOST switch
+
+Loot → NPC LOOT → NEED BOOST now has an ON/OFF checkbox. OFF writes the vanilla corpse SmartLoot span
+(knob value kept for later); 0× is labelled FLAT (flat 10%). Preset field
+`corpseSmartLootNeedBoostEnabled` is stored only when OFF.

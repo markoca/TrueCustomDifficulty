@@ -4054,3 +4054,10 @@ is removed from code; selecting GLOBAL shows the DAMAGE BY ANOMALY help.
   (0–2×, in-dial "N% A SET"), then CHANCE A SET APPEARS with MEDS and AMMO range bars. Mouse wheel works
   on its knobs (and on ARTIFACT HUNTING knobs). Catalog 409 / 204 visible.
 * See docs/STASH-SMART-LOOT-NEED.md.
+
+## CURRENT 2026-11-17 — NEED BOOST ON/OFF
+
+The NPC LOOT NEED BOOST card gets the MOD LOOT SCARCITY checkbox chrome (top-left, caption inset 29).
+OFF = the corpse SmartLoot need span stays vanilla; the dial value is kept (dimmed) and returns when ON.
+The 0× end label reads FLAT (flat 10%), so "OFF" only means the switch. Space toggles, R resets to 1×
+and ON. Preset sidecar `corpseSmartLootNeedBoostEnabled` (written only when OFF; missing = ON).

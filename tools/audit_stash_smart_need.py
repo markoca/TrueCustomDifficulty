@@ -64,6 +64,20 @@ pvm = read("ViewModels/ParameterViewModel.cs")
 check('["StashSmartLoot"] = "loot.stashSmartStockedChance"' in pvm
       and all(f'["{pid}"] = "StashSmartLoot"' in pvm for pid in IDS), "family map and anchor")
 
+# ---- corpse NEED BOOST ON/OFF switch ------------------------------------------
+boost = read("Controls/AggregateVisualControl.NeedBoost.cs")
+vm = read("ViewModels/MainViewModel.cs")
+preset = read("Models/PresetFile.cs")
+writer = read("Services/CfgPatchWriterService.cs")
+xaml = read("MainWindow.xaml")
+check("NeedBoostEnabledProperty" in boost and "_npcBoostCheckbox" in boost
+      and '"FLAT", "2×"' in boost and "NpcNeedBoostKnobActive()" in boost, "NEED BOOST checkbox + FLAT label")
+check("CorpseSmartLootNeedBoostEnabled ? CorpseSmartLootNeedBoost : 1.0" in vm
+      and "vm.EffectiveCorpseSmartLootNeedBoost" in writer, "OFF writes vanilla, knob value kept")
+check('"corpseSmartLootNeedBoostEnabled"' in preset
+      and "preset.CorpseSmartLootNeedBoostEnabled ?? true" in vm, "preset sidecar (null = ON)")
+check('NeedBoostEnabled="{Binding DataContext.CorpseSmartLootNeedBoostEnabled' in xaml, "XAML binding")
+
 if failures:
     print(f"\n{len(failures)} failure(s)")
     sys.exit(1)
