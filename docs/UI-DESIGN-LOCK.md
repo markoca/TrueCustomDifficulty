@@ -1,3 +1,16 @@
+## 2026-11-17 — CURRENT: HUMAN AWARENESS review pass
+
+* **MEMORY timer ring:**
+  * It now sits a full gap (18 DIP) outside the 200 m ring, so at maximum SIGHT its handle no longer overlaps the SIGHT tip.
+  * Dragging past 12 o'clock no longer jumps between the ends: from an almost full ring it stays full (3×), from an almost empty ring it stays at the minimum.
+  * The caption sits 12 DIP outside the ring.
+* **Layout:**
+  * The wide-layout radar starts 68 DIP after the memory gap, so the MEMORY caption no longer leaves the board when the arc ends on the left half (it previously could, with the radar at x = radius + 24).
+  * Radius is (width − 600) / 2, clamped to 90–150 DIP.
+  * When the legend column is narrower than 250 DIP (700–760 DIP boards), its values are 1.5 pt smaller, so `spots you 80 m ahead, 25 m aside` stays on one line instead of being cut with "…".
+* **Copy:** the FOG / RAIN / THUNDER rationales use the player voice ("How much rain covers your noise. Vanilla: 30% — in rain enemies hear you at 70% of the normal range…"). The CONTROLS help describes the radar handles and what the weather dials mean.
+* Ranges, writer routes and presets are unchanged.
+
 ## 2026-11-17 — CURRENT: medical HEAL TIME check against the 2.1 source
 
 * **Source confirmed (2.1 dump):** `GameData/EffectPrototypes.cfg` gives Duration = 1.0 and Charges = 4 for `BandageHealing2`, `MedkitHealing3`, `ArmyMedkitHealing4` and `EcoMedkitHealing4`.

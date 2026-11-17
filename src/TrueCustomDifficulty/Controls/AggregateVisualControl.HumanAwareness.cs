@@ -51,10 +51,12 @@ public sealed partial class AggregateVisualControl
         var wide = width >= 700.0;
         // Keep the right-column legend readable without reducing the weather knobs.
         // At the usual ~850-DIP board width the radar remains 150 DIP in radius.
+        // The left margin keeps the MEMORY caption (outside the timer ring)
+        // inside the board when the arc ends on the left half.
         var radius = wide
-            ? Math.Clamp((width - 520.0) / 2.0, 90.0, 150.0)
+            ? Math.Clamp((width - 600.0) / 2.0, 90.0, 150.0)
             : Math.Clamp((width - 170.0) / 2.0, 70.0, 140.0);
-        var centerX = wide ? radius + 24.0 : width / 2.0;
+        var centerX = wide ? radius + AwarenessMemoryGap + 68.0 : width / 2.0;
         var center = new Point(centerX, 48.0 + AwarenessMemoryGap + radius + 8.0);
         var radarBottom = center.Y + radius + AwarenessMemoryGap + 14.0;
         var weatherLeft = Math.Max(16.0,
@@ -195,7 +197,9 @@ public sealed partial class AggregateVisualControl
         // MEMORY: search timer ring, clockwise from the top.
         if (memory is not null)
         {
-            var ringRadius = radius + AwarenessMemoryGap * 0.6;
+            // A full gap outside the 200 m ring, so the timer handle never
+            // sits on the SIGHT tip at maximum sight.
+            var ringRadius = radius + AwarenessMemoryGap;
             dc.DrawEllipse(null, new Pen(CloneWithOpacity(border, 0.6), 1.2), center, ringRadius, ringRadius);
             var maximum = Math.Max(0.0001, memory.Maximum);
             var sweep = Math.Clamp(memory.CurrentNumber / maximum, 0.0, 1.0) * 359.9;
@@ -209,7 +213,7 @@ public sealed partial class AggregateVisualControl
             var handle = AwarenessPolar(center, ringRadius, sweep);
             DrawAwarenessHandle(dc, memory, handle, accent, panel);
             var caption = CreateText("MEMORY", 9.5, text, FontWeights.Bold);
-            var outward = AwarenessPolar(center, ringRadius + 16.0, sweep);
+            var outward = AwarenessPolar(center, ringRadius + 12.0, sweep);
             dc.DrawText(caption, new Point(
                 Math.Sin(sweep * Math.PI / 180.0) >= 0 ? outward.X : outward.X - caption.Width,
                 outward.Y - caption.Height / 2.0));
@@ -244,7 +248,10 @@ public sealed partial class AggregateVisualControl
             }
             DrawText(dc, rows[i].Caption, new Point(layout.Legend.Left + 18.0, top + 3.0), 10.5, text, FontWeights.Bold);
             var value = CardValue(parameter, parameter.CurrentNumber);
-            dc.DrawText(CreateText(value, modified ? 14.0 : 13.0,
+            // Narrow legend column (700–760 DIP boards): one size smaller so
+            // "spots you 80 m ahead, 25 m aside" stays on one line.
+            var compact = layout.Legend.Width < 250.0;
+            dc.DrawText(CreateText(value, (modified ? 14.0 : 13.0) - (compact ? 1.5 : 0.0),
                     modified ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold,
                     Math.Max(1.0, layout.Legend.Width - 18.0)),
                 new Point(layout.Legend.Left + 18.0, top + 19.0));
@@ -385,6 +392,14 @@ public sealed partial class AggregateVisualControl
         {
             var angle = (Math.Atan2(dx, -dy) * 180.0 / Math.PI + 360.0) % 360.0;
             value = angle / 360.0 * parameter.Maximum;
+            // Crossing 12 o'clock must not jump between the ends of the
+            // timer: past the top from a full ring stays full, and back
+            // past the top from an empty ring stays empty.
+            var current = parameter.CurrentNumber / Math.Max(0.0001, parameter.Maximum);
+            if (current > 0.75 && angle < 90.0)
+                value = parameter.Maximum;
+            else if (current < 0.25 && angle > 270.0)
+                value = parameter.Minimum;
         }
         else
         {

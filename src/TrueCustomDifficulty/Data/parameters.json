@@ -816,7 +816,7 @@
           "Do not change the separate fog luminance value (0.6f), hearing or flair."
         ]
       },
-      "rationale": "Changes how much fog reduces AI visibility. Vanilla Fogy is 70% of the clear-weather visibility coefficient. Lower numbers mean a stronger weather penalty; 100% removes only this fog-specific coefficient penalty. Actual detection distance is affected by other AI/light systems and is not a direct metres conversion.",
+      "rationale": "How well human enemies see through fog. Vanilla: 70% of their clear-weather sight. Lower = fog hides you better; 100% = fog gives you no cover. Real spotting range also depends on light and cover.",
       "logic": "Writes only AISettings.WeatherSettings[2].VisibilityCoef in GameData/AIGlobals.cfg (Fogy), preserving all other weather, hearing, flair and luminance values.",
       "interaction": "Independent of SIGHT (always-on scanner range). This coefficient may apply to any AI using the global weather setting; needs an in-game 2.1 acceptance test."
     },
@@ -868,7 +868,7 @@
           "Global AI weather coefficient; effects and AI-class scope still need an in-game test."
         ]
       },
-      "rationale": "30% RAIN NOISE means AI keeps 70% of its native hearing-distance coefficient in light or regular rain. Higher noise gives stronger masking; 0% means no weather hearing penalty. Actual detection range still needs in-game validation.",
+      "rationale": "How much rain covers your noise. Vanilla: 30% — in rain enemies hear you at 70% of the normal range. Higher = sneak closer while it pours; 0% = rain gives you no cover.",
       "logic": "Displayed masking percent = (1 - HearingDistanceCoef) x 100. Presets and writer keep native coefficient and write only WeatherSettings[3] and [4].HearingDistanceCoef.",
       "interaction": "Only active during light or regular rain; independent of general HEARING. UI masking range is 0-90%, 5% steps."
     },
@@ -913,7 +913,7 @@
           "Global AI weather coefficient; effects and AI-class scope still need an in-game test."
         ]
       },
-      "rationale": "40% THUNDER NOISE means AI keeps 60% of its native hearing-distance coefficient during thunderstorms. Higher noise gives stronger masking; 0% means no weather hearing penalty. Actual detection range still needs in-game validation.",
+      "rationale": "How much a thunderstorm covers your noise. Vanilla: 40% — enemies hear you at 60% of the normal range. Higher = thunder hides your steps and shots better; 0% = no cover.",
       "logic": "Displayed masking percent = (1 - HearingDistanceCoef) x 100. Presets and writer keep native coefficient and write only WeatherSettings[5].HearingDistanceCoef.",
       "interaction": "Only active during thunder; independent of general HEARING. UI masking range is 0-90%, 5% steps."
     },
