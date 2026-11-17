@@ -251,7 +251,7 @@ public sealed partial class AggregateVisualControl
                 "How often a Basic stash gives ammo. In the game every Basic stash picks one ammo stack "
                 + "(9×18, 9×19 or 12 gauge); lower this and that pick comes up empty that share of the time.\n\n"
                 + "100% = the game's odds, 50% = ammo in about half as many Basic stashes, 0% = never.\n\n"
-                + "Smart world ammo stashes are a separate game system and keep their own odds. "
+                + "Smart loot ammo has its own SMART ODDS cell (STASH SMART LOOT). "
                 + "How much ammo you get is AMMO AMOUNT.",
                 "Drag the rail. ←/→ change it by 5%, Home = 0%, End = 100%. Right-click resets to 100%; R resets the whole board."),
             [StashPresenceViewModel.MediumAmmoId] = new(StashPresenceViewModel.MediumAmmoId,
@@ -259,7 +259,7 @@ public sealed partial class AggregateVisualControl
                 "How often a Standard stash gives ammo. In the game every Standard stash picks one ammo stack "
                 + "from a caliber list that grows with your rank; lower this and that pick comes up empty that share of the time.\n\n"
                 + "100% = the game's odds, 50% = ammo in about half as many Standard stashes, 0% = never.\n\n"
-                + "Smart world ammo stashes keep their own odds. How much ammo you get is AMMO AMOUNT.",
+                + "Smart loot ammo has its own SMART ODDS cell. How much ammo you get is AMMO AMOUNT.",
                 "Drag the rail. ←/→ change it by 5%, Home = 0%, End = 100%. Right-click resets to 100%; R resets the whole board.")
         };
 

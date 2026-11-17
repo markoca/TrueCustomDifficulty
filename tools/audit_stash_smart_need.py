@@ -34,7 +34,10 @@ for pid in IDS:
           and row.get("vanilla") == {"All": 1}
           and row.get("slider") == {"min": 0, "max": 2, "step": 0.05, "stepMode": "absolute"}
           and row.get("support", {}).get("status") == "runtime_test_required", f"catalog {pid}")
-check(baseline["special"].get("stashSmartNeed", {}).get("parameterIds") == ["loot.stashSmartLootEnabled", *IDS],
+SMART_ODDS = ["loot.stashSmartMedsOdds", "loot.stashSmartAmmoOdds",
+              "loot.stashSmartFoodDrinksOdds", "loot.stashSmartGrenadesOdds"]
+check(baseline["special"].get("stashSmartNeed", {}).get("parameterIds")
+      == ["loot.stashSmartLootEnabled", *IDS, *SMART_ODDS],
       "baseline special.stashSmartNeed")
 check(not any(p["parameterId"] in IDS for p in baseline["editPoints"]), "no direct points")
 
@@ -86,6 +89,18 @@ check('"corpseSmartLootNeedBoostEnabled"' not in preset
       "no redundant NEED BOOST preset toggle")
 check('NeedBoost="{Binding DataContext.CorpseSmartLootNeedBoost' in xaml
       and 'NeedBoostEnabled=' not in xaml, "only NEED BOOST value bound")
+
+# ---- SMART ODDS: SmartLoot owns its category odds ------------------------------
+check(all(catalog.get(i, {}).get("requiresToggle") == "loot.stashSmartLootEnabled"
+          and catalog[i].get("slider") == {"min": 0, "max": 1, "step": 0.05, "stepMode": "absolute"}
+          for i in SMART_ODDS), "SMART ODDS catalog (keep 0-100%, require the switch)")
+check("public static string? SmartCategoryId(string sid)" in effective
+      and '"loot.stashMixFood" or "loot.stashMixDrinks" => SmartFoodDrinksId' in effective
+      and ".Concat(StashSmartOddsParameterIds)" in smart, "SMART ODDS writer/state wiring")
+check('"SMART ODDS"' in board and "DrawStashMedicalCell(dc, P(spec.Id)" in board, "SMART ODDS cells on the board")
+check(not any("smart world" in (catalog[i].get("description","") + catalog[i].get("rationale",""))
+              for i in ("loot.stashMixMedical", "loot.stashMixFood", "loot.stashMixDrinks")),
+      "Basic cells no longer claim to change smart loot")
 
 # ---- SMART LOOT IN STASHES master switch ---------------------------------------
 sw = catalog.get("loot.stashSmartLootEnabled", {})

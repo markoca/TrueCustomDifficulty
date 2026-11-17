@@ -4121,3 +4121,11 @@ dim while it is OFF (requiresToggle). OFF zeroes every stash SmartLoot set. Cata
 * `loot.npcSmartLootEnabled` is integrated everywhere: all 12 presets (ON), stock-upgrade hashes,
   baseline special `npcSmartLoot` (WriteCorpseSmartLoot), census 411 / 206 visible, audits.
 * Review matrix: docs/STASH-SMART-LOOT-NEED.md → "Consistency review".
+
+## CURRENT 2026-11-17 — STASH SMART LOOT: SMART ODDS CELLS
+
+Between the two EXTRA LOOT knobs and CHANCE A SET APPEARS sits an outlined **SMART ODDS** card ("100% =
+GAME ODDS" right): MEDS, AMMO, FOOD & DRINKS, GRENADES keep-odds cells (same chrome as MEDICAL
+COMPOSITION cells, 4 across ≥ 520 DIP bank, else 2×2), dimmed while the smart switch is OFF. Basic cells
+no longer move the SMART columns; the SMART columns follow SMART ODDS. Stash Gear sort order shifted to
+331–337. Catalog 415 / 210 visible.

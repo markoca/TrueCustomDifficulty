@@ -25,8 +25,29 @@ public sealed partial class AggregateVisualControl
         ("AMMO", StashSmartAmmoPrototype, "PrimaryWeaponParams")
     };
 
-    private static double StashSmartLootHeight
+    // SMART ODDS: one keep-odds cell per kind of smart loot item.
+    private static readonly (string Id, string Label, int Palette)[] StashSmartOddsCells =
+    {
+        (StashEffectiveState.SmartMedsId, "MEDS", 1),
+        (StashEffectiveState.SmartAmmoId, "AMMO", 0),
+        (StashEffectiveState.SmartFoodDrinksId, "FOOD & DRINKS", 2),
+        (StashEffectiveState.SmartGrenadesId, "GRENADES", 4)
+    };
+
+    private static int StashSmartOddsColumns(double bankWidth) => bankWidth >= 520.0 ? 4 : 2;
+
+    private static double StashSmartOddsHeight(double bankWidth)
+    {
+        var rows = (StashSmartOddsCells.Length + StashSmartOddsColumns(bankWidth) - 1)
+            / StashSmartOddsColumns(bankWidth);
+        return 30.0 + rows * StashMedicalCellHeight + (rows - 1) * 6.0 + 10.0;
+    }
+
+    private static double StashSmartBankWidth(double width) => Math.Max(1.0, Math.Min(620.0, width - 36.0));
+
+    private static double StashSmartLootHeight(double width)
         => StashSmartKnobTop + StashSmartKnobHeight + StashSmartGap
+            + StashSmartOddsHeight(StashSmartBankWidth(width)) + StashSmartGap
             + 30.0 + StashSmartRows.Length * StashSmartRowPitch + 10.0 + 14.0;
 
     /// <summary>Average effective (low, high) spawn chance of one set kind over its groups.</summary>
@@ -48,7 +69,7 @@ public sealed partial class AggregateVisualControl
     private void DrawStashSmartLoot(DrawingContext dc, Brush text, Brush muted,
         Brush border, Brush accent, Brush panel)
     {
-        var bankWidth = Math.Max(1.0, Math.Min(620.0, ActualWidth - 36.0));
+        var bankWidth = StashSmartBankWidth(ActualWidth);
         var left = (ActualWidth - bankWidth) / 2.0;
         var cellWidth = (bankWidth - StashSmartGap) / 2.0;
 
@@ -78,7 +99,28 @@ public sealed partial class AggregateVisualControl
                 secondaryModified: parameter?.IsValueModifiedFromReference() == true);
         }
 
-        var table = new Rect(left, StashSmartKnobTop + StashSmartKnobHeight + StashSmartGap,
+        // ---- SMART ODDS: keep X% of the game's odds inside smart loot only.
+        var oddsCard = new Rect(left, StashSmartKnobTop + StashSmartKnobHeight + StashSmartGap,
+            bankWidth, StashSmartOddsHeight(bankWidth));
+        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9), oddsCard, 4.0, 4.0);
+        DrawText(dc, "SMART ODDS", new Point(oddsCard.Left + 12.0, oddsCard.Top + 8.0),
+            10.0, text, FontWeights.Bold);
+        DrawRightAlignedText(dc, "100% = GAME ODDS",
+            new Point(oddsCard.Right - 12.0, oddsCard.Top + 9.0), 9.0, muted, FontWeights.SemiBold);
+        var columns = StashSmartOddsColumns(bankWidth);
+        const double oddsGap = 8.0;
+        var oddsCellWidth = (oddsCard.Width - 24.0 - (columns - 1) * oddsGap) / columns;
+        for (var k = 0; k < StashSmartOddsCells.Length; k++)
+        {
+            var spec = StashSmartOddsCells[k];
+            var cell = new Rect(oddsCard.Left + 12.0 + (k % columns) * (oddsCellWidth + oddsGap),
+                oddsCard.Top + 30.0 + (k / columns) * (StashMedicalCellHeight + 6.0),
+                oddsCellWidth, StashMedicalCellHeight);
+            DrawStashMedicalCell(dc, P(spec.Id), spec.Label, StashMixPalette[spec.Palette],
+                cell, text, muted, border, accent, panel);
+        }
+
+        var table = new Rect(left, oddsCard.Bottom + StashSmartGap,
             bankWidth, 30.0 + StashSmartRows.Length * StashSmartRowPitch + 10.0);
         dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9), table, 4.0, 4.0);
         DrawText(dc, "CHANCE A SET APPEARS", new Point(table.Left + 12.0, table.Top + 8.0),

@@ -434,29 +434,55 @@ public sealed class StashEffectiveState
     }
 
     // One item-type mapping shared by tier and SmartLoot source families.
+    /// <summary>Six-colour category of a SmartLoot item (classification only).</summary>
     public static string? SmartItemBiasId(string sid) => ItemBiasId(sid);
 
+    // SMART ODDS (2026-11-17): SmartLoot has its own keep-odds cells on the
+    // STASH SMART LOOT board. The Basic MEDS / FOOD / DRINKS cells and the
+    // hidden legacy ammo/grenade Weights no longer reach SmartLoot.
+    public const string SmartMedsId = "loot.stashSmartMedsOdds";
+    public const string SmartAmmoId = "loot.stashSmartAmmoOdds";
+    public const string SmartFoodDrinksId = "loot.stashSmartFoodDrinksOdds";
+    public const string SmartGrenadesId = "loot.stashSmartGrenadesOdds";
+
+    /// <summary>SMART ODDS control of a SmartLoot item (null = no control, factor 1).</summary>
+    public static string? SmartCategoryId(string sid) => ItemBiasId(sid) switch
+    {
+        "loot.stashMixMedical" => SmartMedsId,
+        "loot.stashMixAmmo" => SmartAmmoId,
+        "loot.stashMixFood" or "loot.stashMixDrinks" => SmartFoodDrinksId,
+        "loot.stashMixGrenades" => SmartGrenadesId,
+        _ => null
+    };
+
+    private double SmartCategoryFactor(string sid)
+        => SmartCategoryId(sid) is { } id ? Math.Max(0.0, Value(id)) : 1.0;
+
+    /// <summary>
+    /// SmartLoot Weight factor: SMART ODDS cell × the item's own medical
+    /// odds (Bandage/Medkit/Army Medkit/Anti-Rad, shared with every tier).
+    /// </summary>
     public double SmartFactor(string sid)
     {
         if (SmartItemBiasId(sid) is null)
             throw new InvalidDataException("Unclassified SmartLoot item: " + sid);
-        return TierFactor(sid);
+        if (MedicalDisabled(sid)) return 0.0;
+        var factor = SmartCategoryFactor(sid);
+        if (MedicalDetailId(sid) is { } detail) factor *= Value(detail);
+        return factor;
     }
 
     public double SmartSelectionFactor(string sid, string selectionField)
     {
         if (SmartItemBiasId(sid) is null)
             throw new InvalidDataException("Unclassified SmartLoot item: " + sid);
-        var factor = SelectionFactor(sid, selectionField);
-        // Smart Chance groups (e.g. StashFood_Smart food/drink rolls): the
-        // Basic MEDS / FOOD / DRINKS / COUPONS cells keep X% of these odds
-        // too, exactly like their Weight groups. Hidden legacy ammo/grenade
-        // factors stay Weight-only.
-        if (selectionField == "Chance" && ItemBiasId(sid) is
-                "loot.stashMixMedical" or "loot.stashMixFood"
-                or "loot.stashMixDrinks" or "loot.stashMixCoupons")
-            factor *= Math.Max(0.0, Value(ItemBiasId(sid)!));
-        return factor;
+        return selectionField switch
+        {
+            "Weight" => SmartFactor(sid),
+            // Chance rows: the item's medical Chance scale × its SMART ODDS cell.
+            "Chance" => ChanceFactor(sid) * SmartCategoryFactor(sid),
+            _ => throw new InvalidDataException("Unknown stash selection field: " + selectionField)
+        };
     }
 
     public string SmartSelection(string sid, string field, string raw)

@@ -73,15 +73,26 @@ internal static partial class Program
                 var off = NativeState(difficulty, (categoryId, 0));
                 var half = NativeState(difficulty, (categoryId, .5));
                 var original = NativeState(difficulty, (categoryId, 1));
+                // Tier cells never reach SmartLoot (SMART ODDS, 2026-11-17).
                 Check(categorySids.All(sid =>
                         Math.Abs(off.TierFactor(sid)) < 1e-9
-                        && Math.Abs(off.SmartFactor(sid)) < 1e-9
+                        && Math.Abs(off.SmartFactor(sid) - 1) < 1e-9
                         && Math.Abs(half.TierFactor(sid) - .5) < 1e-9
-                        && Math.Abs(half.SmartFactor(sid) - .5) < 1e-9
+                        && Math.Abs(half.SmartFactor(sid) - 1) < 1e-9
                         && Math.Abs(original.TierFactor(sid) - 1) < 1e-9
                         && Math.Abs(original.SmartFactor(sid) - 1) < 1e-9),
                     categoryId + ": global OFF / REDUCED / ORIGINAL state "
-                    + "changed with rank, tier or difficulty");
+                    + "changed with rank, tier or difficulty, or leaked into SmartLoot");
+                if (StashEffectiveState.SmartCategoryId(categorySids[0]) is { } smartId)
+                {
+                    var smartOff = NativeState(difficulty, (smartId, 0));
+                    var smartHalf = NativeState(difficulty, (smartId, .5));
+                    Check(categorySids.All(sid =>
+                            Math.Abs(smartOff.SmartFactor(sid)) < 1e-9
+                            && Math.Abs(smartHalf.SmartFactor(sid) - .5) < 1e-9
+                            && Math.Abs(smartOff.TierFactor(sid) - 1) < 1e-9),
+                        smartId + ": SMART ODDS cell must own SmartLoot only");
+                }
             }
         }
 
@@ -173,7 +184,7 @@ internal static partial class Program
 
         var smartGrenades = NativeBranch(branches, "StashGrenade_Cheap",
             "ItemGenerators.[0].SmartLootParams.GrenadesParams.[0].Items");
-        var smartOff = NativeState("Easy", ("loot.stashMixGrenades", 0));
+        var smartOff = NativeState("Easy", ("loot.stashSmartGrenadesOdds", 0));
         Check(smartGrenades.Field == "Weight"
             && smartGrenades.Items.All(item =>
                 smartGrenades.EffectiveCount(Baseline, smartOff, item, "MinCount") == "0"
@@ -182,16 +193,17 @@ internal static partial class Program
             "SmartLoot zero-factor count and ItemSetCount must be disabled together.");
 
         // Chance rows: a Basic cell (stashMix*) owns the Basic tier Chance
-        // rows of MEDS / FOOD / DRINKS and the smart Chance rows of MEDS /
-        // FOOD / DRINKS / COUPONS (keep X% of game odds); every other Chance
-        // row (Standard / Rare tiers, legacy ammo / grenade factors) ignores it.
+        // rows of MEDS / FOOD / DRINKS; a SMART ODDS cell owns every smart
+        // Chance row of its category (keep X% of game odds, 2026-11-17);
+        // every other Chance row (Standard / Rare tiers) ignores both.
         foreach (var chanceBranch in branches.Where(g => g.Field == "Chance"))
         {
             var sid = chanceBranch.Items[0].ItemSid;
-            var id = StashEffectiveState.ItemBiasId(sid)!;
+            var id = chanceBranch.IsSmart
+                ? StashEffectiveState.SmartCategoryId(sid) ?? StashEffectiveState.ItemBiasId(sid)!
+                : StashEffectiveState.ItemBiasId(sid)!;
             var owned = chanceBranch.IsSmart
-                ? id is "loot.stashMixMedical" or "loot.stashMixFood"
-                    or "loot.stashMixDrinks" or "loot.stashMixCoupons"
+                ? StashEffectiveState.SmartCategoryId(sid) is not null
                 : chanceBranch.Tier == "Cheap"
                     && id is "loot.stashMixMedical" or "loot.stashMixFood" or "loot.stashMixDrinks";
             var weightedOff = NativeState("Easy", (id, 0));
@@ -229,6 +241,14 @@ internal static partial class Program
                     ["loot.stashMixDrinks"] = 0,
                     ["loot.stashMixGrenades"] = 0,
                     ["loot.stashMixCoupons"] = 0
+                }),
+            (Name: "smart-odds-half", Difficulty: "Stalker", Dlc: true,
+                Changes: new Dictionary<string, double>
+                {
+                    ["loot.stashSmartMedsOdds"] = .5,
+                    ["loot.stashSmartAmmoOdds"] = .5,
+                    ["loot.stashSmartFoodDrinksOdds"] = 0,
+                    ["loot.stashSmartGrenadesOdds"] = .5
                 }),
             (Name: "hard-bonus-medical-dlc", Difficulty: "Veteran", Dlc: true,
                 Changes: new Dictionary<string, double>
@@ -297,10 +317,15 @@ internal static partial class Program
             new CfgPatchWriterService().Write(vm, Catalog,
                 hasDlc ? new GameInstallInfo { HasDlc1 = true } : null, dir);
             var generated = ReadOutput(dir);
-            Check(generated.TryGetValue("GameData/ItemGeneratorPrototypes.cfg",
-                    out var tiers), name + ": native tier clones missing");
+            // SmartLoot-only fixtures (SMART ODDS) emit no tier clone.
+            var smartOnly = changes.Keys.All(id => id.StartsWith("loot.stashSmart", StringComparison.Ordinal));
+            if (!generated.TryGetValue("GameData/ItemGeneratorPrototypes.cfg", out var tiers))
+            {
+                Check(smartOnly, name + ": native tier clones missing");
+                tiers = new Dictionary<string, string>(StringComparer.Ordinal);
+            }
             var checkedTierFields = 0;
-            foreach (var group in branches.Where(b => !b.IsSmart))
+            foreach (var group in branches.Where(b => !b.IsSmart && !smartOnly))
             {
                 var root = "TCD_" + group.Prototype + "/" +
                     group.GroupPath.Replace(".", "/");
@@ -328,8 +353,9 @@ internal static partial class Program
 
             var checkedSmartFields = 0;
             var checkedSmartGroups = 0;
-            Check(generated.TryGetValue("GameData/StashPrototypes.cfg", out var smart),
-                name + ": affected SmartLoot clone missing");
+            // Tier-only fixtures (e.g. food-half) emit no SmartLoot clone at all.
+            if (!generated.TryGetValue("GameData/StashPrototypes.cfg", out var smart))
+                smart = new Dictionary<string, string>(StringComparer.Ordinal);
             foreach (var group in branches.Where(b => b.IsSmart))
             {
                 var root = "TCD_" + group.Prototype + "/" +
@@ -392,9 +418,19 @@ internal static partial class Program
                     checkedSmartFields++;
                 }
             }
-            Check(checkedTierFields >= 300 && checkedSmartFields > 0
-                && checkedSmartGroups > 0,
-                name + ": insufficient emitted CFG coverage");
+            // Only SmartLoot-owned inputs reach SmartLoot: SMART ODDS / switch /
+            // need, the per-item medical odds and counts, and SUPPLY REDUCTION.
+            var touchesSmart = changes.Keys.Any(id =>
+                id.StartsWith("loot.stashSmart", StringComparison.Ordinal)
+                || id.StartsWith("loot.stashMedical", StringComparison.Ordinal)
+                || id is "loot.genericStashReduction" or "loot.stashMedkitMinCount"
+                    or "loot.stashMedkitMaxCount" or "loot.stashArmyMedkitMinCount"
+                    or "loot.stashArmyMedkitMaxCount");
+            Check((smartOnly || checkedTierFields >= 300)
+                && (touchesSmart
+                    ? checkedSmartFields > 0 && checkedSmartGroups > 0
+                    : !generated.ContainsKey("GameData/StashPrototypes.cfg")),
+                name + ": insufficient emitted CFG coverage or tier cell leaked into SmartLoot");
             AssertProtectedBaseStashesUntouched(generated, name);
             if (!hasDlc)
                 Check(!generated.ContainsKey("DLCGameData/DLC1/SpawnActorPrototypes.cfg"),

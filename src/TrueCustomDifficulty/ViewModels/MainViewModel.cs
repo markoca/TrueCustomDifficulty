@@ -891,7 +891,11 @@ public sealed class MainViewModel : ObservableObject
             StashEffectiveState.SmartStockedId,
             StashEffectiveState.SmartEnabledId,
             StashEffectiveState.SmartStockedId,
-            StashEffectiveState.SmartShortId);
+            StashEffectiveState.SmartShortId,
+            StashEffectiveState.SmartMedsId,
+            StashEffectiveState.SmartAmmoId,
+            StashEffectiveState.SmartFoodDrinksId,
+            StashEffectiveState.SmartGrenadesId);
 
         WireVisualAggregate(
             "loot.stashGearEnabled",
@@ -2625,14 +2629,18 @@ public sealed class MainViewModel : ObservableObject
                 "loot.stashSmartLootEnabled" => 324,
                 "loot.stashSmartStockedChance" => 325,
                 "loot.stashSmartShortChance" => 326,
+                "loot.stashSmartMedsOdds" => 327,
+                "loot.stashSmartAmmoOdds" => 328,
+                "loot.stashSmartFoodDrinksOdds" => 329,
+                "loot.stashSmartGrenadesOdds" => 330,
                 // Additional weapons/armor are a separate final section.
-                "loot.stashGearEnabled" => 330,
-                "loot.stashGearCoveragePercent" => 331,
-                "loot.stashGearWeaponWeight" => 332,
-                "loot.stashGearArmorWeight" => 333,
-                "loot.stashGearArtifactWeight" => 334,
-                "loot.stashGearAttachmentWeight" => 335,
-                "loot.stashGearBonusChance" => 336,
+                "loot.stashGearEnabled" => 331,
+                "loot.stashGearCoveragePercent" => 332,
+                "loot.stashGearWeaponWeight" => 333,
+                "loot.stashGearArmorWeight" => 334,
+                "loot.stashGearArtifactWeight" => 335,
+                "loot.stashGearAttachmentWeight" => 336,
+                "loot.stashGearBonusChance" => 337,
 
                 // Three native stash tier ammo quantities; RGD-5 Chance/Amount and
                 // Rare Coupon Chance are members of StashContentMix.

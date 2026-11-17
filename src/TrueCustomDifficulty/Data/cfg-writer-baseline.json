@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.1",
-  "supportedParameterCount": 411,
+  "supportedParameterCount": 415,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -48137,11 +48137,15 @@
       "parameterIds": [
         "loot.stashSmartLootEnabled",
         "loot.stashSmartStockedChance",
-        "loot.stashSmartShortChance"
+        "loot.stashSmartShortChance",
+        "loot.stashSmartMedsOdds",
+        "loot.stashSmartAmmoOdds",
+        "loot.stashSmartFoodDrinksOdds",
+        "loot.stashSmartGrenadesOdds"
       ],
       "source": "GameData/StashPrototypes.cfg",
       "scope": "Existing TCD stash SmartLoot clones (WriteWorldStashSmartLoot)",
-      "notes": "MinSpawnChance x stocked, MaxSpawnChance x short, after kept-share and supply reduction; clamped 0..1, min never above max. OFF toggle: Min/MaxSpawnChance and ItemSetCount 0 for every group."
+      "notes": "MinSpawnChance x stocked, MaxSpawnChance x short, after kept-share and supply reduction; clamped 0..1, min never above max. OFF toggle: Min/MaxSpawnChance and ItemSetCount 0 for every group. SMART ODDS cells keep X% of the game's odds per category inside SmartLoot sets (Basic cells no longer reach SmartLoot, 2026-11-17)."
     },
     "npcSmartLoot": {
       "parameterId": "loot.npcSmartLootEnabled",

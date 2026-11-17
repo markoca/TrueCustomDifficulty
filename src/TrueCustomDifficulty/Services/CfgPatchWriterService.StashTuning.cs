@@ -44,6 +44,13 @@ public sealed partial class CfgPatchWriterService
         StashEffectiveState.SmartStockedId, StashEffectiveState.SmartShortId
     };
 
+    // SMART ODDS: keep-odds cells for SmartLoot only (tier lists unaffected).
+    private static readonly string[] StashSmartOddsParameterIds =
+    {
+        StashEffectiveState.SmartMedsId, StashEffectiveState.SmartAmmoId,
+        StashEffectiveState.SmartFoodDrinksId, StashEffectiveState.SmartGrenadesId
+    };
+
     private static readonly string[] StashGearParameterIds =
     {
         "loot.stashGearEnabled", "loot.stashGearCoveragePercent",

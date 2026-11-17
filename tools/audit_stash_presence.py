@@ -167,11 +167,13 @@ assert 'effective.TierField(baseline, "Cheap", category, item, field)' in dlc
 assert "StashSupplyReductionId" in dlc and "StashPresenceViewModel.CheapAmmoId" in dlc
 assert "WriteStashPresenceEmpty(possible, category, empty)" in dlc
 assert "vm.StashPresence.Values," in writer
-# ---- 12. Smart Chance groups follow the Basic cells ------------------------
-assert '"loot.stashMixMedical" or "loot.stashMixFood"' in state.split("public double SmartSelectionFactor(", 1)[1].split("public string SmartSelection(", 1)[0]
+# ---- 12. SmartLoot has its own SMART ODDS cells (2026-11-17) ---------------
+_smart_sel = state.split("public double SmartSelectionFactor(", 1)[1].split("public string SmartSelection(", 1)[0]
+assert '"Chance" => ChanceFactor(sid) * SmartCategoryFactor(sid)' in _smart_sel
+assert "loot.stashMix" not in _smart_sel
 # ---- 13. Basic AMMO = the Basic stash ammo pick only (CFG: smart stashes are a separate system)
 # (explained in the cell's own panel card; hover tooltips are retired)
-assert "Smart world ammo stashes are a separate game system" in grid
+assert "Smart loot ammo has its own SMART ODDS cell (STASH SMART LOOT)." in grid
 assert "ToolTip" not in grid and "StashControlHint" not in grid
 
 # ---- 14. CONTROLS help matches the boards --------------------------------

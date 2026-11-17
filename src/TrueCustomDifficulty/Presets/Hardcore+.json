@@ -1089,6 +1089,22 @@
       "kind": "slider",
       "number": 1
     },
+    "loot.stashSmartMedsOdds": {
+      "kind": "slider",
+      "number": 1
+    },
+    "loot.stashSmartAmmoOdds": {
+      "kind": "slider",
+      "number": 1
+    },
+    "loot.stashSmartFoodDrinksOdds": {
+      "kind": "slider",
+      "number": 1
+    },
+    "loot.stashSmartGrenadesOdds": {
+      "kind": "slider",
+      "number": 1
+    },
     "loot.standardStashChanceScale": {
       "kind": "slider",
       "number": 1

@@ -372,47 +372,9 @@ internal static partial class Program
             return;
         }
 
-        Check(output.TryGetValue("GameData/StashPrototypes.cfg", out var smart),
-            name + ": parallel generic SmartLoot layer not emitted");
-        var weightRows = branches.Where(g => g.IsSmart && g.Field == "Weight")
-            .SelectMany(g => g.Items
-                .Where(item => StashEffectiveState.SmartItemBiasId(item.ItemSid) == control)
-                .Select(item => (Group: g, Item: item))).ToArray();
-        Check(weightRows.Length > 0,
-            name + ": no native SmartLoot Weight rows for " + expectedSource);
-        foreach (var (group, item) in weightRows)
-        {
-            var path = "TCD_" + group.Prototype + "/"
-                + group.GroupPath.Replace(".", "/") + "/["
-                + item.Index + "]/";
-            Check(smart!.TryGetValue(path + "Weight", out var weight)
-                && Math.Abs(Num(weight!)) < 1e-7,
-                name + ": native SmartLoot Weight not zeroed " + path);
-            foreach (var (field, raw) in new[]
-                { ("MinCount", item.MinCount), ("MaxCount", item.MaxCount) })
-            {
-                if (raw.Length == 0) continue;
-                Check(smart.TryGetValue(path + field, out var count)
-                    && Math.Abs(Num(count!)) < 1e-7,
-                    name + ": native SmartLoot disabled count not zero " + path + field);
-            }
-        }
-        // A native Chance-only SmartLoot row is independent of a global
-        // category Weight=0: the writer must not fabricate its Chance
-        // override, and must not suppress its original quantity.
-        var chanceRows = branches.Where(g => g.IsSmart && g.Field == "Chance")
-            .SelectMany(g => g.Items
-                .Where(item => StashEffectiveState.SmartItemBiasId(item.ItemSid) == control)
-                .Select(item => (Group: g, Item: item))).ToArray();
-        foreach (var (group, item) in chanceRows)
-        {
-            var path = "TCD_" + group.Prototype + "/"
-                + group.GroupPath.Replace(".", "/") + "/["
-                + item.Index + "]/";
-            Check(!smart!.ContainsKey(path + "Chance")
-                  && !smart.ContainsKey(path + "MinCount")
-                  && !smart.ContainsKey(path + "MaxCount"),
-                name + ": Weight-only knob rewrote native Chance-only SmartLoot " + path);
-        }
+        // Basic/tier category cells no longer reach SmartLoot: SmartLoot has
+        // its own SMART ODDS cells (2026-11-17), so no StashPrototypes clone.
+        Check(!output.ContainsKey("GameData/StashPrototypes.cfg"),
+            name + ": tier category cell leaked into world SmartLoot");
     }
 }

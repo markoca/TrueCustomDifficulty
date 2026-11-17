@@ -51,8 +51,8 @@ expected = {
                   "loot.stashGearBonusChance"],
 }
 ids = [p["id"] for p in catalog["parameters"] if p["tab"] == "stashes"]
-assert len(ids) == len(set(ids)) == 45
-assert set(ids) == set(sum(expected.values(), [])) | {"loot.stashSmartStockedChance", "loot.stashSmartShortChance", "loot.stashSmartLootEnabled"}
+assert len(ids) == len(set(ids)) == 49
+assert set(ids) == set(sum(expected.values(), [])) | {"loot.stashSmartStockedChance", "loot.stashSmartShortChance", "loot.stashSmartLootEnabled", "loot.stashSmartMedsOdds", "loot.stashSmartAmmoOdds", "loot.stashSmartFoodDrinksOdds", "loot.stashSmartGrenadesOdds"}
 family_ids = source.split("private static IReadOnlyList<string> GetFamilyIds(", 1)[1]
 for family, expected_ids in expected.items():
     hit = re.search(r'"' + re.escape(family) + r'"\s*=>\s*new\[\]\s*\{(.*?)\}', family_ids, re.S)
@@ -664,13 +664,14 @@ smart_selection = effective.split("public double SmartSelectionFactor(", 1)[1].s
     "public string SmartSelection(", 1)[0]
 assert "if (SmartItemBiasId(sid) is null)" in smart_selection
 assert 'throw new InvalidDataException("Unclassified SmartLoot item: " + sid)' in smart_selection
-assert "var factor = SelectionFactor(sid, selectionField);" in smart_selection
-# Smart Chance groups follow the visible Basic MEDS / FOOD / DRINKS / COUPONS cells.
-assert 'if (selectionField == "Chance" && ItemBiasId(sid) is' in smart_selection
+# 2026-11-17: SmartLoot owns SMART ODDS cells; tier (Basic) cells no longer reach it.
+assert '"Weight" => SmartFactor(sid),' in smart_selection
+assert '"Chance" => ChanceFactor(sid) * SmartCategoryFactor(sid),' in smart_selection
 smart_factor = effective.split("public double SmartFactor(", 1)[1].split(
     "public double SmartSelectionFactor(", 1)[0]
 assert "if (SmartItemBiasId(sid) is null)" in smart_factor
-assert "return TierFactor(sid);" in smart_factor
+assert "var factor = SmartCategoryFactor(sid);" in smart_factor
+assert "TierFactor" not in smart_factor
 assert "StashMixParameterIds.Any(modified.ContainsKey)" in tuning
 assert "StashMixParameterIds.Concat(StashMedicalParameterIds)" in smart
 assert "StashMixParameterIds.Concat(StashMedicalParameterIds)" in (

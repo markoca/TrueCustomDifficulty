@@ -21,15 +21,15 @@ catalog = {p["id"]: p for p in parameters}
 baseline = json.loads(read(data / "cfg-writer-baseline.json"))
 stash = {p["id"]: p for p in parameters if p["tab"] == "stashes"}
 assert len(parameters) == baseline["supportedParameterCount"] == CATALOG
-assert len(stash) == 45
+assert len(stash) == 49
 assert len(catalog) == len(parameters), "Duplicate parameter ID"
 assert Counter(p["group"] for p in stash.values()) == {
     "Stash Content": 23,
     "Stash Medical Composition": 12,
     "Stash Gear": 7,
-    "Stash Smart Loot": 3,
+    "Stash Smart Loot": 7,
 }
-assert sum(p.get("exposeInUi", True) for p in stash.values()) == 38
+assert sum(p.get("exposeInUi", True) for p in stash.values()) == 42
 # Three visible native Basic loot-mix knobs use 0.05x; hidden legacy
 # Weight controls retain 0.10x. No new source IDs or extra UI rows.
 for pid in ("loot.stashMixMedical", "loot.stashMixFood", "loot.stashMixDrinks", "loot.stashMixCoupons"):
@@ -98,7 +98,7 @@ for name, expected in families.items():
     assert match, "Missing UI family: " + name
     actual = re.findall(r'"(loot\.[A-Za-z0-9.]+)"', match.group(1))
     assert actual == expected, f"Missing/misordered UI family controls: {name}: {actual}"
-assert set(stash) == set(rewards + mix + medical + bonus + ["loot.genericStashReduction", "loot.stashSmartStockedChance", "loot.stashSmartShortChance", "loot.stashSmartLootEnabled"])
+assert set(stash) == set(rewards + mix + medical + bonus + ["loot.genericStashReduction", "loot.stashSmartStockedChance", "loot.stashSmartShortChance", "loot.stashSmartLootEnabled", "loot.stashSmartMedsOdds", "loot.stashSmartAmmoOdds", "loot.stashSmartFoodDrinksOdds", "loot.stashSmartGrenadesOdds"])
 # MEDICAL COMPOSITION (2026-11-16) replaced the medical pair/priority board;
 # its cells and odds are checked by audit_stash_presence.py. No tooltips.
 # Hover feedback must align to the actual converted MIN/MAX handle centers,
@@ -296,7 +296,7 @@ assert t1_attachments == {
 assert not set(r["ActorSID"] for r in removals) & set(r["ActorSID"] for r in protection)
 assert all(r["ProgressionTier"] in ("T2", "T3", "T4") for r in attachments)
 
-print("PASS: Stashes 45 catalog parameters / 4 exact catalog groups / 7 bonus controls")
+print("PASS: Stashes 49 catalog parameters / 4 exact catalog groups / 7 bonus controls")
 print("PASS: responsive 4-to-2 knob layout, all writer routes, 12 complete presets")
 print("PASS: 13 original regular removals exclude protected actors; 19 audit-backed attachments")
 print("LIMIT: static contract; no .NET/Wine/native RNG or unopened-stash validation")

@@ -226,11 +226,12 @@ internal static partial class Program
                 "TCD_StashMedicine_Smart", "ConsumablesParams", "0", "0", "Weight"),
             ("smart-bandage-zero", "loot.stashMedicalBandageBias", 0.0,
                 "TCD_StashMedicine_Smart", "ConsumablesParams", "1", "0", "Weight"),
-            ("smart-ammo-zero", "loot.stashMixAmmo", 0.0,
+            // SMART ODDS cells own SmartLoot categories (2026-11-17).
+            ("smart-ammo-zero", "loot.stashSmartAmmoOdds", 0.0,
                 "TCD_Stash_Ammo_Smart_CommonRare", "PrimaryWeaponParams", "0", "0", "Weight"),
-            ("smart-food-zero", "loot.stashMixFood", 0.0,
+            ("smart-food-zero", "loot.stashSmartFoodDrinksOdds", 0.0,
                 "TCD_StashFood_Cheap", "ConsumablesParams", "0", "0", "Weight"),
-            ("smart-grenade-weight-zero", "loot.stashMixGrenades", 0.0,
+            ("smart-grenade-weight-zero", "loot.stashSmartGrenadesOdds", 0.0,
                 "TCD_StashGrenade_Cheap", "GrenadesParams", "0", "0", "Weight")
         };
         foreach (var (name, id, value, prototype, group, set, item, field) in cases)
@@ -322,7 +323,9 @@ internal static partial class Program
                     ["loot.stashMixFood"] = .5,
                     ["loot.stashMixAmmo"] = .5,
                     ["loot.cheapStashGrenadeChance"] = .4,
-                    ["loot.expensiveStashMoneyChance"] = .8
+                    ["loot.expensiveStashMoneyChance"] = .8,
+                    // Tier MEDS 0% no longer reaches SmartLoot; its own cell does.
+                    ["loot.stashSmartMedsOdds"] = .5
                 })
         };
         foreach (var scenario in samples)

@@ -248,9 +248,12 @@ public sealed partial class CfgPatchWriterService
         ISet<string> written)
     {
         // Leave original world SmartLoot and all actors untouched at VANILLA.
+        // StashMixParameterIds stay listed only so a legacy preset still
+        // records them as handled; they no longer change SmartLoot output.
         var relevant = StashMixParameterIds.Concat(StashMedicalParameterIds)
             .Append(StashSupplyReductionId)
             .Concat(StashSmartNeedParameterIds)
+            .Concat(StashSmartOddsParameterIds)
             .Where(modified.ContainsKey).ToArray();
         if (relevant.Length == 0)
             return 0;

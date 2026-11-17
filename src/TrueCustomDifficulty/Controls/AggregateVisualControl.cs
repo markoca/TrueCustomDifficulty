@@ -244,13 +244,16 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 "loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount",
                 "loot.cheapStashGrenadeQuantity",
                 StashEffectiveState.SmartEnabledId,
-                StashEffectiveState.SmartStockedId, StashEffectiveState.SmartShortId
+                StashEffectiveState.SmartStockedId, StashEffectiveState.SmartShortId,
+                StashEffectiveState.SmartMedsId, StashEffectiveState.SmartAmmoId,
+                StashEffectiveState.SmartFoodDrinksId, StashEffectiveState.SmartGrenadesId
             },
             "StashMedicalComposition" => new[]
             {
                 "loot.stashMixMedical", "loot.genericStashReduction",
                 StashEffectiveState.SmartEnabledId,
-                StashEffectiveState.SmartStockedId, StashEffectiveState.SmartShortId
+                StashEffectiveState.SmartStockedId, StashEffectiveState.SmartShortId,
+                StashEffectiveState.SmartMedsId
             },
             // The set-chance bars follow every input of the stash SmartLoot endpoints.
             "StashSmartLoot" => new[]
@@ -8122,7 +8125,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "StashContentMix" => StashContentMixHeight(width),
             "StashMedicalComposition" => StashMedicalCompositionHeight(width),
             "StashGear" => StashGearHeight(width),
-            "StashSmartLoot" => StashSmartLootHeight,
+            "StashSmartLoot" => StashSmartLootHeight(width),
             "StaminaCore" => 323.0,
             "WaterStaminaPressure" => 171.0,
             "FatigueCurve" => CompactFatigueHeight(width),
@@ -8268,7 +8271,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "StashSmartLoot" => new[]
             {
                 StashEffectiveState.SmartEnabledId,
-                StashEffectiveState.SmartStockedId, StashEffectiveState.SmartShortId
+                StashEffectiveState.SmartStockedId, StashEffectiveState.SmartShortId,
+                StashEffectiveState.SmartMedsId, StashEffectiveState.SmartAmmoId,
+                StashEffectiveState.SmartFoodDrinksId, StashEffectiveState.SmartGrenadesId
             },
             "StashGear" => new[]
             {

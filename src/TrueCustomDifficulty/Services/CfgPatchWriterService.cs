@@ -529,6 +529,7 @@ public sealed partial class CfgPatchWriterService
         supported.UnionWith(StashMixParameterIds);
         supported.UnionWith(StashMedicalParameterIds);
         supported.UnionWith(StashSmartNeedParameterIds);
+        supported.UnionWith(StashSmartOddsParameterIds);
         supported.UnionWith(StashGearParameterIds);
         // An exact manifest-backed special route, not a fictional direct CFG leaf.
         var uniqueShuffleRoute = baseline.Special.LooseUniqueWeaponShuffle;
