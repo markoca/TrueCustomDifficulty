@@ -292,7 +292,10 @@ public sealed class MainViewModel : ObservableObject
             "health.armyMedkitHealing",
             "health.ecoMedkitHealing",
             "health.foodHealing",
-            "health.healTime",
+            "health.bandageHealTime",
+            "health.medkitHealTime",
+            "health.armyMedkitHealTime",
+            "health.ecoMedkitHealTime",
             "health.bandageBleeding",
             "health.medkitBleeding",
             "health.armyMedkitBleeding",
@@ -2019,6 +2022,25 @@ public sealed class MainViewModel : ObservableObject
                     else
                     {
                         parameter.ApplyPresetValue(pair.Value);
+                    }
+                }
+                // The retired shared 1x Heal Time parameter used a 1-second reference.
+                // Old presets fan out to the four new item durations only when a
+                // modern per-item value is absent, preserving explicit item edits.
+                if (preset.Values.TryGetValue("health.healTime", out var oldHeal)
+                    && oldHeal.Number is double legacyValue)
+                {
+                    var seconds = Math.Clamp(
+                        Math.Round(legacyValue, MidpointRounding.AwayFromZero), 1.0, 10.0);
+                    foreach (var id in new[]
+                    {
+                        "health.bandageHealTime", "health.medkitHealTime",
+                        "health.armyMedkitHealTime", "health.ecoMedkitHealTime"
+                    })
+                    {
+                        if (!preset.Values.ContainsKey(id)
+                            && parametersById.TryGetValue(id, out var duration))
+                            duration.CurrentNumber = seconds;
                     }
                 }
                 foreach (var sync in _afterPresetLoadSyncs)

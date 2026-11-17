@@ -5937,16 +5937,17 @@
       "exposeInUi": true
     },
     {
-      "id": "health.healTime",
+      "id": "health.bandageHealTime",
       "tab": "health",
       "group": "Healing Amount",
-      "label": "Heal Time",
-      "description": "Scales the time required for HP restoration from medical items without changing total HP.",
+      "label": "Bandage Heal Time",
+      "description": "Time in seconds over which this item restores HP.",
       "control": "slider",
-      "valueKind": "multiplier",
+      "valueKind": "raw",
       "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
+        "primary": "raw",
+        "rawFormat": "0",
+        "unit": "s",
         "valueLabel": "Heal Time"
       },
       "vanilla": {
@@ -5956,9 +5957,10 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.25,
-        "max": 8,
-        "step": 0.25
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "stepMode": "absolute"
       },
       "targets": [
         {
@@ -5966,40 +5968,164 @@
           "file": "GameData/EffectPrototypes.cfg",
           "prototype": "BandageHealing2",
           "path": "Duration",
-          "operation": "scale"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/EffectPrototypes.cfg",
-          "prototype": "MedkitHealing3",
-          "path": "Duration",
-          "operation": "scale"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/EffectPrototypes.cfg",
-          "prototype": "ArmyMedkitHealing4",
-          "path": "Duration",
-          "operation": "scale"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/EffectPrototypes.cfg",
-          "prototype": "EcoMedkitHealing4",
-          "path": "Duration",
-          "operation": "scale"
+          "operation": "set"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "Scales each medical healing effect's native Duration; HP doses remain unchanged.",
-          "In-game effect timing requires verification under STALKER 2.1."
+          "Each medical healing prototype owns a separate Duration field in seconds.",
+          "A published game baseline lists the medkit HP effect as 1 second; the original 2.1 source and in-game healing pace still require confirmation.",
+          "Only healing time is edited; healing HP, bleeding, radiation and food effects stay independent."
         ]
       },
-      "rationale": "Time needed to restore HP. More time heals more slowly; total HP restored does not change.",
-      "logic": "1x keeps original healing time; 2x takes twice as long; 0.5x takes half as long.",
-      "interaction": "Shared by Bandage, Medkit, Army Medkit and Scientific Medkit. Right-click to reset.",
+      "rationale": "Bandage: how many seconds HP restoration lasts. Longer time means slower healing without changing total HP.",
+      "logic": "1 s retains the one-second reference; 10 s spreads this item's recovery across ten seconds.",
+      "interaction": "Drag this item's TIME column; right-click resets only this duration.",
+      "exposeInUi": false
+    },
+    {
+      "id": "health.medkitHealTime",
+      "tab": "health",
+      "group": "Healing Amount",
+      "label": "Medkit Heal Time",
+      "description": "Time in seconds over which this item restores HP.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0",
+        "unit": "s",
+        "valueLabel": "Heal Time"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "MedkitHealing3",
+          "path": "Duration",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Each medical healing prototype owns a separate Duration field in seconds.",
+          "A published game baseline lists the medkit HP effect as 1 second; the original 2.1 source and in-game healing pace still require confirmation.",
+          "Only healing time is edited; healing HP, bleeding, radiation and food effects stay independent."
+        ]
+      },
+      "rationale": "Medkit: how many seconds HP restoration lasts. Longer time means slower healing without changing total HP.",
+      "logic": "1 s retains the one-second reference; 10 s spreads this item's recovery across ten seconds.",
+      "interaction": "Drag this item's TIME column; right-click resets only this duration.",
+      "exposeInUi": false
+    },
+    {
+      "id": "health.armyMedkitHealTime",
+      "tab": "health",
+      "group": "Healing Amount",
+      "label": "Army Medkit Heal Time",
+      "description": "Time in seconds over which this item restores HP.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0",
+        "unit": "s",
+        "valueLabel": "Heal Time"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "ArmyMedkitHealing4",
+          "path": "Duration",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Each medical healing prototype owns a separate Duration field in seconds.",
+          "A published game baseline lists the medkit HP effect as 1 second; the original 2.1 source and in-game healing pace still require confirmation.",
+          "Only healing time is edited; healing HP, bleeding, radiation and food effects stay independent."
+        ]
+      },
+      "rationale": "Army Medkit: how many seconds HP restoration lasts. Longer time means slower healing without changing total HP.",
+      "logic": "1 s retains the one-second reference; 10 s spreads this item's recovery across ten seconds.",
+      "interaction": "Drag this item's TIME column; right-click resets only this duration.",
+      "exposeInUi": false
+    },
+    {
+      "id": "health.ecoMedkitHealTime",
+      "tab": "health",
+      "group": "Healing Amount",
+      "label": "Scientific Medkit Heal Time",
+      "description": "Time in seconds over which this item restores HP.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0",
+        "unit": "s",
+        "valueLabel": "Heal Time"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "EcoMedkitHealing4",
+          "path": "Duration",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Each medical healing prototype owns a separate Duration field in seconds.",
+          "A published game baseline lists the medkit HP effect as 1 second; the original 2.1 source and in-game healing pace still require confirmation.",
+          "Only healing time is edited; healing HP, bleeding, radiation and food effects stay independent."
+        ]
+      },
+      "rationale": "Scientific Medkit: how many seconds HP restoration lasts. Longer time means slower healing without changing total HP.",
+      "logic": "1 s retains the one-second reference; 10 s spreads this item's recovery across ten seconds.",
+      "interaction": "Drag this item's TIME column; right-click resets only this duration.",
       "exposeInUi": false
     },
     {

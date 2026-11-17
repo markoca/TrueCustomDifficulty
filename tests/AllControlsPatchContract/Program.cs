@@ -34,6 +34,39 @@ internal static partial class Program
         "economy.traderSells.technician.food", "economy.traderSells.technician.drinks"
     };
 
+    private static void VerifyMedicalHealTimeRoutes()
+    {
+        var routes = new[]
+        {
+            ("health.bandageHealTime", "BandageHealing2"),
+            ("health.medkitHealTime", "MedkitHealing3"),
+            ("health.armyMedkitHealTime", "ArmyMedkitHealing4"),
+            ("health.ecoMedkitHealTime", "EcoMedkitHealing4")
+        };
+        foreach (var (id, prototype) in routes)
+        {
+            var source = Catalog.Parameters.Single(p => p.Id == id);
+            Check(source.ValueKind == "raw"
+                && source.Slider is { Min: 1, Max: 10, Step: 1, StepMode: "absolute" }
+                && source.Vanilla["All"].GetDouble() == 1
+                && source.Targets.Count == 1
+                && source.Targets[0].Prototype == prototype
+                && source.Targets[0].Path == "Duration"
+                && source.Targets[0].Operation == "set",
+                $"Medical HEAL TIME source mapping: {id}");
+
+            var points = Baseline.EditPoints.Where(p => p.ParameterId == id).ToArray();
+            Check(points.Length == 1
+                && points[0].Prototype == prototype
+                && points[0].Key == "Duration"
+                && points[0].Operation == "set"
+                && points[0].SourceRaw == "1",
+                $"Medical HEAL TIME writer mapping: {id}");
+        }
+        Check(!Catalog.Parameters.Any(p => p.Id == "health.healTime"),
+            "Retired shared HEAL TIME is absent");
+    }
+
     [STAThread]
     private static int Main(string[] args)
     {
@@ -44,12 +77,13 @@ internal static partial class Program
 
             var ids = Catalog.Parameters.Select(p => p.Id).ToHashSet(StringComparer.Ordinal);
             var tested = ids.Except(NonUi, StringComparer.Ordinal).OrderBy(x => x, StringComparer.Ordinal).ToArray();
-            Check(ids.Count == 402 && NonUi.IsSubsetOf(ids) && tested.Length == 379,
-                "Expected 402 catalog sources and 379 mounted editable writer probes");
+            Check(ids.Count == 406 && NonUi.IsSubsetOf(ids) && tested.Length == 383,
+                "Expected 406 catalog sources and 383 mounted editable writer probes");
 
             // The ordinary Master/Stalker corpse package contains no bonus
             // NPC_Ammo_Smart, so that source must be explicitly probed where
             // the real native ammo package is active (Novice).
+            VerifyMedicalHealTimeRoutes();
             VerifyHumanAwarenessWeatherKnobs();
             VerifyHumanAwarenessWeatherLayout();
             VerifyWeatherNoiseMaskingSemantics();

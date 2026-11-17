@@ -1,10 +1,11 @@
 
-## 2026-11-17 — CURRENT: shared medical heal time
+## 2026-11-17 — CURRENT: per-item medical HEAL TIME in seconds
 
-* MEDICAL ITEMS adds one compact **HEAL TIME** horizontal track centered above the existing HEAL/BLEED bars. It stays in the original medical card, with no extra top-level control; values highlight only when changed. Drag/click and keyboard steps adjust the single control, right-click resets it and R resets the entire medical card.
-* Source-backed `health.healTime` scales the native `Duration` in `GameData/EffectPrototypes.cfg` for `BandageHealing2`, `MedkitHealing3`, `ArmyMedkitHealing4` and `EcoMedkitHealing4`. 1× = unchanged, 2× = half-speed healing, 0.5× = double-speed healing. Editable 0.25–8× in 0.25× steps.
-* HP `ValueMin`/`ValueMax`, bleeding, radiation and food healing are untouched; the aggregate modified state and preset storage include this member. Game 2.1 runtime pacing remains to be tested.
-
+* MEDICAL ITEMS has **four item cards** (BANDAGE, MEDKIT, ARMY MEDKIT, SCIENTIFIC MEDKIT), each with exactly **three independently adjustable vertical bars** on its original chart lane: **HEAL** in HP, **BLEED** in points, **TIME** in seconds. The bars are narrow and evenly spaced, with non-overlapping pointer hit regions and alternating numeric-caption y positions to prevent collisions even at the 820-DIP minimum width. There is **no shared HEAL TIME horizontal track**, no additional top-level card and no duplicated baseline captions.
+* The four direct-second IDs `health.bandageHealTime`, `health.medkitHealTime`, `health.armyMedkitHealTime`, `health.ecoMedkitHealTime` each edit `Duration` in `GameData/EffectPrototypes.cfg` at their corresponding `BandageHealing2`, `MedkitHealing3`, `ArmyMedkitHealing4`, `EcoMedkitHealing4` source. Each has **1–10 s**, steps of **1 s**, and a separately persisted value. The writer baseline maps each to a concrete `set` BPatch edit point with original reference `1`. The 1-second original-medkit reference comes from published earlier game-source observations; confirm exact native 2.1 timings and effectiveness during a local game test.
+* Each bar supports click/drag and focused arrow keys, and **right click resets that bar alone**. **R** resets all HEAL/BLEED/TIME/RAD bars in the medical board. Modified numeric values use the canonical yellow; neutral values stay unaccented. This control does **not** change item use animation time, total HP `ValueMin`/`ValueMax`, bleeding removal, radiation removal, food healing or unrelated medical buffs.
+* Older saved presets with shared `health.healTime` values migrate to the four new individual seconds if none of their per-item values are present; any explicit new per-item value wins. Preset migration clamps to 1–10 s. The old shared control is retired from the embedded catalog and no longer contributes to CFG output.
+* The embedded writer baseline supported-source count increases from 400 to 404; the existing two source-locked weather routes remain outside the baseline. `AllControlsPatchContract` asserts four per-prototype Duration routes, complete 1–10 s contracts and updated 406 catalog/383 mounted-control counts.
 
 ## 2026-11-17 — CURRENT: centered weather-knob values and unambiguous vertical labels
 

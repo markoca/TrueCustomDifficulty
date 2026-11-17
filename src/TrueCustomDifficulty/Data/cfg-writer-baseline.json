@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.1",
-  "supportedParameterCount": 400,
+  "supportedParameterCount": 404,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -1348,6 +1348,54 @@
       "sourceRaw": "20",
       "operation": "set",
       "role": "max",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "health.bandageHealTime",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "BandageHealing2",
+      "nodePath": [],
+      "key": "Duration",
+      "sourceRaw": "1",
+      "operation": "set",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "health.medkitHealTime",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "MedkitHealing3",
+      "nodePath": [],
+      "key": "Duration",
+      "sourceRaw": "1",
+      "operation": "set",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "health.armyMedkitHealTime",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "ArmyMedkitHealing4",
+      "nodePath": [],
+      "key": "Duration",
+      "sourceRaw": "1",
+      "operation": "set",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "health.ecoMedkitHealTime",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "EcoMedkitHealing4",
+      "nodePath": [],
+      "key": "Duration",
+      "sourceRaw": "1",
+      "operation": "set",
+      "role": "",
       "difficultySid": ""
     },
     {

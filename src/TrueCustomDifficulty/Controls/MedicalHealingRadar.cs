@@ -9,9 +9,9 @@ using TrueCustomDifficulty.ViewModels;
 namespace TrueCustomDifficulty.Controls;
 
 /// <summary>
-/// Four paired HEAL/BLEED source controls and four RAD-removal columns,
+/// Four HEAL/BLEED/TIME source clusters and four RAD-removal columns,
 /// including Beer and Vodka, in one compact horizontal row.
-/// Food Healing remains its own switch; all thirteen CFG source controls
+/// Food Healing remains its own switch; all sixteen native source controls
 /// share one medical card and the existing WPF visual anchor.
 /// </summary>
 public sealed class MedicalHealingRadar : FrameworkElement
@@ -41,8 +41,13 @@ public sealed class MedicalHealingRadar : FrameworkElement
         new SolidColorBrush(Color.FromRgb(102, 174, 155));
     private const double RadiationRulerPts = 200.0;
     private const string FoodHealingId = "health.foodHealing";
-    private const string HealTimeId = "health.healTime";
-    private const double HealTimeTrackWidth = 222.0;
+    private static readonly string[] HealTimeIds =
+    {
+        "health.bandageHealTime", "health.medkitHealTime",
+        "health.armyMedkitHealTime", "health.ecoMedkitHealTime"
+    };
+    private static readonly Brush TimeAccent =
+        new SolidColorBrush(Color.FromRgb(147, 173, 201));
 
     private static readonly (string Id, string Label)[] Items =
     {
@@ -70,8 +75,7 @@ public sealed class MedicalHealingRadar : FrameworkElement
     private readonly ParameterViewModel?[] _bleeding = new ParameterViewModel?[4];
     private readonly ParameterViewModel?[] _radiation = new ParameterViewModel?[4];
     private ParameterViewModel? _foodHealing;
-    private ParameterViewModel? _healTime;
-    private bool _dragTime;
+    private readonly ParameterViewModel?[] _healTimes = new ParameterViewModel?[4];
     private readonly List<HitArea> _hits = new();
     private int _selected = 0;
     private int _dragRow = -1;
@@ -114,18 +118,16 @@ public sealed class MedicalHealingRadar : FrameworkElement
 
     private void RebindParameters()
     {
-        foreach (var p in _medical.Concat(_bleeding).Concat(_radiation))
+        foreach (var p in _medical.Concat(_bleeding).Concat(_healTimes).Concat(_radiation))
             if (p is not null) p.PropertyChanged -= ParameterChanged;
         if (_foodHealing is not null)
             _foodHealing.PropertyChanged -= ParameterChanged;
-        if (_healTime is not null)
-            _healTime.PropertyChanged -= ParameterChanged;
 
         Array.Clear(_medical, 0, _medical.Length);
         Array.Clear(_bleeding, 0, _bleeding.Length);
+        Array.Clear(_healTimes, 0, _healTimes.Length);
         Array.Clear(_radiation, 0, _radiation.Length);
         _foodHealing = null;
-        _healTime = null;
 
         var byId = Parameters?.OfType<ParameterViewModel>()
             .ToDictionary(p => p.Id, StringComparer.Ordinal);
@@ -135,19 +137,17 @@ public sealed class MedicalHealingRadar : FrameworkElement
             {
                 byId.TryGetValue(Items[i].Id, out _medical[i]);
                 byId.TryGetValue(BleedingIds[i], out _bleeding[i]);
+                byId.TryGetValue(HealTimeIds[i], out _healTimes[i]);
             }
             for (var i = 0; i < RadiationItems.Length; i++)
                 byId.TryGetValue(RadiationItems[i].Id, out _radiation[i]);
             byId.TryGetValue(FoodHealingId, out _foodHealing);
-            byId.TryGetValue(HealTimeId, out _healTime);
         }
 
-        foreach (var p in _medical.Concat(_bleeding).Concat(_radiation))
+        foreach (var p in _medical.Concat(_bleeding).Concat(_healTimes).Concat(_radiation))
             if (p is not null) p.PropertyChanged += ParameterChanged;
         if (_foodHealing is not null)
             _foodHealing.PropertyChanged += ParameterChanged;
-        if (_healTime is not null)
-            _healTime.PropertyChanged += ParameterChanged;
         InvalidateVisual();
     }
 
@@ -217,34 +217,6 @@ public sealed class MedicalHealingRadar : FrameworkElement
             overrideLabel.Width + BooleanCheckboxChrome.Size + 17.0, 26.0),
             -1, HitAction.Override));
 
-        // One compact shared time track, separate from native HP doses.
-        if (_healTime is { } time)
-        {
-            var center = ActualWidth / 2.0;
-            var rail = new Rect(center - HealTimeTrackWidth / 2.0, 76.0,
-                HealTimeTrackWidth, 4.0);
-            var fraction = Math.Clamp((time.CurrentNumber - time.Minimum) /
-                Math.Max(Epsilon, time.Maximum - time.Minimum), 0.0, 1.0);
-            DrawRightAlignedText(dc, "HEAL TIME",
-                new Point(center - 8.0, 48.0),
-                HealthTypography.Label, text, FontWeights.Bold);
-            DrawText(dc, $"{time.CurrentNumber:0.##}×",
-                new Point(center + 2.0, 48.0),
-                HealthTypography.Label,
-                time.IsValueModifiedFromReference() ? accent : text,
-                FontWeights.Bold);
-            dc.DrawRoundedRectangle(CloneWithOpacity(border, .8), null,
-                rail, 2.0, 2.0);
-            dc.DrawRoundedRectangle(accent, null,
-                new Rect(rail.Left, rail.Top, rail.Width * fraction, rail.Height),
-                2.0, 2.0);
-            dc.DrawEllipse(time.IsControlEnabled ? accent : muted, null,
-                new Point(rail.Left + rail.Width * fraction, rail.Top + 2.0),
-                6.0, 6.0);
-            _hits.Add(new HitArea(new Rect(rail.Left - 5.0, rail.Top - 9.0,
-                rail.Width + 10.0, 23.0), -1, HitAction.HealTime));
-        }
-
         // Native HEAL / BLEED doses are independently editable and display
         // their actual HP / PTS amounts without unrelated derived readouts.
         // Compress the four HEAL/BLEED clusters to reserve the right-hand
@@ -294,17 +266,18 @@ public sealed class MedicalHealingRadar : FrameworkElement
                 new Pen(CloneWithOpacity(border, .60), .8),
                 new Rect(left + 3.0, 88.0, laneWidth - 6.0, 265.0), 4.0, 4.0);
 
-            // HEAL owns the wider gold bar; BLEED is a narrower copper
-            // sub-control immediately to its right, both on this same row.
-            // Tighter HEAL/BLEED pair: preserve space between the item
-            // clusters and readable independent numeric headers.
-            var spread = Math.Min(23.0, laneWidth * .22);
+            // Three independent bars within each item card: HP, bleed, seconds.
+            // Alternate the readout y-positions so narrow cards stay readable.
+            var spread = Math.Min(29.0, laneWidth * .295);
             DrawColumn(dc, row, HitAction.Healing, _medical[row],
-                center - spread, Math.Min(39.0, laneWidth * .31),
+                center - spread, Math.Min(25.0, laneWidth * .25),
                 HealingRulerHp, chart, text, muted, border, accent);
             DrawColumn(dc, row, HitAction.Bleeding, _bleeding[row],
-                center + spread, Math.Min(27.0, laneWidth * .21),
+                center, Math.Min(22.0, laneWidth * .22),
                 BleedingRulerPts, chart, text, muted, border, BleedingAccent);
+            DrawColumn(dc, row, HitAction.HealTime, _healTimes[row],
+                center + spread, Math.Min(22.0, laneWidth * .22),
+                10.0, chart, text, muted, border, TimeAccent);
             var name = Items[row].Label.Split(' ');
             if (name.Length == 1)
                 DrawCenteredText(dc, name[0], new Point(center, 338.0),
@@ -378,12 +351,17 @@ public sealed class MedicalHealingRadar : FrameworkElement
     {
         if (parameter is null)
             return;
-        var current = Math.Clamp(parameter.CurrentNumber, 0.0, rulerMaximum);
-        var currentY = chart.Bottom - PlotHeight * current / rulerMaximum;
+        // TIME maps 1..10 s consistently for handle, ticks, and pointer drag.
+        var min = action == HitAction.HealTime ? parameter.Minimum : 0.0;
+        var range = action == HitAction.HealTime
+            ? Math.Max(Epsilon, parameter.Maximum - parameter.Minimum)
+            : rulerMaximum;
+        var currentY = chart.Bottom - PlotHeight *
+            Math.Clamp((parameter.CurrentNumber - min) / range, 0.0, 1.0);
         var referenceY = chart.Bottom - PlotHeight *
-            Math.Clamp(parameter.ReferenceNumber / rulerMaximum, 0.0, 1.0);
+            Math.Clamp((parameter.ReferenceNumber - min) / range, 0.0, 1.0);
         var nativeTop = chart.Bottom - PlotHeight *
-            Math.Clamp(parameter.Maximum / rulerMaximum, 0.0, 1.0);
+            Math.Clamp((parameter.Maximum - min) / range, 0.0, 1.0);
         var barLeft = centerX - barWidth / 2.0;
         var enabled = parameter.IsControlEnabled;
         var color = enabled ? barAccent : muted;
@@ -411,26 +389,32 @@ public sealed class MedicalHealingRadar : FrameworkElement
         {
             HitAction.Healing => $"{parameter.CurrentNumber:0.#} HP",
             HitAction.Radiation => $"{parameter.CurrentNumber:0.#} RAD",
+            HitAction.HealTime => $"{parameter.CurrentNumber:0} s",
             _ => $"{parameter.CurrentNumber:0.#} PTS"
         };
         var label = CreateText(numeric, 10.8,
             enabled && parameter.IsValueModifiedFromReference()
-                ? barAccent : text, FontWeights.Bold);
+                ? FindBrush("AccentBrush", Brushes.Goldenrod) : text, FontWeights.Bold);
         var labelY = action == HitAction.Radiation ? 114.0
-            : chart.Width / Items.Length < 95.0 && action == HitAction.Bleeding
-                ? 114.0 : 103.0;
+            : action == HitAction.Bleeding ? 121.0 : 103.0;
         dc.DrawText(label, new Point(centerX - label.Width / 2.0, labelY));
         if (action != HitAction.Radiation)
-            DrawCenteredText(dc, action == HitAction.Healing ? "HEAL" : "BLEED",
+            DrawCenteredText(dc, action switch
+                {
+                    HitAction.Healing => "HEAL",
+                    HitAction.Bleeding => "BLEED",
+                    _ => "TIME"
+                },
                 new Point(centerX, 312.0), 9.3,
-                action == HitAction.Healing ? barAccent : BleedingAccent,
+                action == HitAction.Bleeding ? BleedingAccent : barAccent,
                 FontWeights.SemiBold);
 
-        // Click/drag only the concrete source's native 0..Maximum height;
-        // the paired visual axis must never expand its actual CFG range.
-        var hit = new Rect(centerX - Math.Max(16.0, barWidth / 2.0 + 6.0),
-            nativeTop, Math.Max(32.0, barWidth + 12.0),
-            Math.Max(1.0, chart.Bottom - nativeTop));
+        // Narrow adjacent hit zones never steal the neighboring handle.
+        var hitWidth = action == HitAction.Radiation
+            ? Math.Max(32.0, barWidth + 12.0)
+            : Math.Min(26.0, chart.Width / Items.Length / 3.0 - 4.0);
+        var hit = new Rect(centerX - hitWidth / 2.0,
+            nativeTop, hitWidth, Math.Max(1.0, chart.Bottom - nativeTop));
         _hits.Add(new HitArea(hit, row, action));
     }
 
@@ -452,6 +436,7 @@ public sealed class MedicalHealingRadar : FrameworkElement
             {
                 HitAction.Healing when hit.Row >= 0 && hit.Row < _medical.Length => _medical[hit.Row],
                 HitAction.Bleeding when hit.Row >= 0 && hit.Row < _bleeding.Length => _bleeding[hit.Row],
+                HitAction.HealTime when hit.Row >= 0 && hit.Row < _healTimes.Length => _healTimes[hit.Row],
                 HitAction.Radiation when hit.Row >= 0 && hit.Row < _radiation.Length => _radiation[hit.Row],
                 _ => null
             };
@@ -481,16 +466,8 @@ public sealed class MedicalHealingRadar : FrameworkElement
             _selected = hit.Row;
             _selectedAction = hit.Action;
         }
-        if (hit.Action == HitAction.HealTime)
-        {
-            _selectedAction = HitAction.HealTime;
-            if (_healTime is not null)
-                ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(_healTime));
-            _dragTime = true;
-            CaptureMouse();
-            UpdateHealTime(e.GetPosition(this).X);
-        }
-        else if (hit.Action is HitAction.Healing or HitAction.Bleeding or HitAction.Radiation)
+        if (hit.Action is HitAction.Healing or HitAction.Bleeding
+            or HitAction.HealTime or HitAction.Radiation)
         {
             _dragRow = hit.Row;
             _dragAction = hit.Action;
@@ -512,7 +489,6 @@ public sealed class MedicalHealingRadar : FrameworkElement
         {
             if (_medical[0] is not null) _medical[0]!.MedicalOverrideEnabled = false;
         }
-        else if (hit.Action == HitAction.HealTime) _healTime?.ResetToReference();
         else if (hit.Row == -1) _foodHealing?.ResetToReference();
         else
         {
@@ -531,11 +507,9 @@ public sealed class MedicalHealingRadar : FrameworkElement
         var point = e.GetPosition(this);
         // Keep the active source highlighted while dragging across adjacent
         // columns; otherwise the neighboring BLEED/HEAL bar steals the hover.
-        var hit = _dragTime && e.LeftButton == MouseButtonState.Pressed
-            ? new HitArea(Rect.Empty, -1, HitAction.HealTime)
-            : _dragRow >= 0 && e.LeftButton == MouseButtonState.Pressed
-                ? new HitArea(Rect.Empty, _dragRow, _dragAction)
-                : FindHit(point);
+        var hit = _dragRow >= 0 && e.LeftButton == MouseButtonState.Pressed
+            ? new HitArea(Rect.Empty, _dragRow, _dragAction)
+            : FindHit(point);
         var row = hit?.Row ?? -2;
         var action = hit?.Action ?? HitAction.Select;
         var foodCheckHover = _foodHealing?.IsControlEnabled == true
@@ -554,17 +528,12 @@ public sealed class MedicalHealingRadar : FrameworkElement
         }
         Cursor = hit is not null ? action switch
         {
-            HitAction.Healing or HitAction.Bleeding or HitAction.Radiation => Cursors.SizeNS,
-            HitAction.HealTime => Cursors.SizeWE,
+            HitAction.Healing or HitAction.Bleeding or HitAction.HealTime
+                or HitAction.Radiation => Cursors.SizeNS,
             HitAction.Food or HitAction.Override => Cursors.Hand,
             _ => Cursors.Arrow
         } : Cursors.Arrow;
-        if (_dragTime && e.LeftButton == MouseButtonState.Pressed)
-        {
-            UpdateHealTime(point.X);
-            e.Handled = true;
-        }
-        else if (_dragRow >= 0 && e.LeftButton == MouseButtonState.Pressed)
+        if (_dragRow >= 0 && e.LeftButton == MouseButtonState.Pressed)
         {
             UpdateSlider(_dragRow, _dragAction, e.GetPosition(this).Y);
             e.Handled = true;
@@ -574,9 +543,8 @@ public sealed class MedicalHealingRadar : FrameworkElement
     protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonUp(e);
-        if (_dragRow < 0 && !_dragTime) return;
+        if (_dragRow < 0) return;
         _dragRow = -1;
-        _dragTime = false;
         ReleaseMouseCapture();
         e.Handled = true;
     }
@@ -598,10 +566,9 @@ public sealed class MedicalHealingRadar : FrameworkElement
         base.OnKeyDown(e);
         if (e.Key == Key.R)
         {
-            foreach (var medicalItem in _medical.Concat(_bleeding).Concat(_radiation))
+            foreach (var medicalItem in _medical.Concat(_bleeding).Concat(_healTimes).Concat(_radiation))
                 medicalItem?.ResetToReference();
             _foodHealing?.ResetToReference();
-            _healTime?.ResetToReference();
             if (_medical[0] is not null) _medical[0]!.MedicalOverrideEnabled = false;
             InvalidateVisual();
             e.Handled = true;
@@ -625,11 +592,12 @@ public sealed class MedicalHealingRadar : FrameworkElement
 
     private ParameterViewModel? ParameterAt(int row, HitAction action)
     {
-        if (action == HitAction.HealTime) return _healTime;
         if (row < 0)
             return null;
         if (action == HitAction.Radiation)
             return row < _radiation.Length ? _radiation[row] : null;
+        if (action == HitAction.HealTime)
+            return row < _healTimes.Length ? _healTimes[row] : null;
         return row < Items.Length
             ? action == HitAction.Bleeding ? _bleeding[row] : _medical[row]
             : null;
@@ -643,15 +611,6 @@ public sealed class MedicalHealingRadar : FrameworkElement
         else if (hit.Action == HitAction.Override
             && _medical[0] is { IsControlEnabled: true } medical)
             medical.MedicalOverrideEnabled = !medical.MedicalOverrideEnabled;
-        InvalidateVisual();
-    }
-
-    private void UpdateHealTime(double x)
-    {
-        if (_healTime is not { IsControlEnabled: true } time) return;
-        var left = ActualWidth / 2.0 - HealTimeTrackWidth / 2.0;
-        var fraction = Math.Clamp((x - left) / HealTimeTrackWidth, 0, 1);
-        SetSnapped(time, time.Minimum + fraction * (time.Maximum - time.Minimum));
         InvalidateVisual();
     }
 
