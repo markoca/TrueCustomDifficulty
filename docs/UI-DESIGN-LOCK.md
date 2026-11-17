@@ -1,3 +1,9 @@
+## 2026-11-17 — CURRENT: HUMAN TACTICS sliders now use the entire rate rail
+
+* Fixed the cooldown handles stopping part-way along the ruler. The upper thin gold line remains a **read-only actual min–max cooldown interval** on the shared logarithmic seconds scale. A distinct lower handle edits the **complete native 0.25×–3× rate range**, so 0.25× sits at the left end and 3× at the right end for every tactical action, including Master reference 2×. The two scales are no longer conflated.
+* The lower rail has a muted reference tick, source-accurate snapped values, right-click source reset, R board reset and keyboard handling. Live seconds remain in the right-aligned readout; no duplicate factor labels or additional explanatory UI text. Layout heights and the accuracy reticle are unchanged.
+* Regression audit validates the full-native-range mapping and that the displayed cooldown interval remains on a separate seconds ruler.
+
 ## 2026-11-17 — CURRENT: HUMAN TACTICS intervals and reticle
 
 * HUMAN TACTICS is no longer six slider cards: it uses a bounded, two-part custom editor in Controls/AggregateVisualControl.HumanTactics.cs.

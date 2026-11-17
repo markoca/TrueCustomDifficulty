@@ -9,10 +9,10 @@ using TrueCustomDifficulty.ViewModels;
 namespace TrueCustomDifficulty.Controls;
 
 /// <summary>
-/// HUMAN TACTICS: five independent, source-accurate cooldown intervals on a
-/// shared log-seconds ruler plus a radial shot-spread editor. No new gameplay fields.
-/// Every cooldown interval moves as ONE scalar: min/max are not independent CFG
-/// sources. All input snaps to the existing catalog step.
+/// HUMAN TACTICS: five native full-range rate sliders below source-accurate
+/// cooldown interval previews on a shared seconds ruler, plus a shot-spread
+/// reticle. No new gameplay fields. Intervals remain linked through the source
+/// rate scalar; all editing snaps to the existing catalog step.
 /// </summary>
 public sealed partial class AggregateVisualControl
 {
@@ -35,11 +35,12 @@ public sealed partial class AggregateVisualControl
         return track.Left + ratio * track.Width;
     }
 
-    private static double TacticsTimeAt(Point point, Rect track)
+    // Editing uses the FULL native rate range, independently of the visual
+    // seconds ruler: every handle reaches both ends of its own lane.
+    private static double TacticsRateAt(Point point, Rect track, ParameterViewModel parameter)
     {
         var ratio = Math.Clamp((point.X - track.Left) / Math.Max(1.0, track.Width), 0.0, 1.0);
-        return TacticsMinimumSeconds
-            * Math.Exp(ratio * Math.Log(TacticsMaximumSeconds / TacticsMinimumSeconds));
+        return parameter.Minimum + ratio * (parameter.Maximum - parameter.Minimum);
     }
 
     private static double TacticsSpreadRadius(double factor)
@@ -116,31 +117,44 @@ public sealed partial class AggregateVisualControl
             changed ? ReadoutInk.Numbers(accent, text) : parameter.IsControlEnabled ? text : muted,
             FontWeights.Bold);
 
-        var track = new Rect(row.Left + 9.0, row.Top + 27.0,
+        // Upper lane: literal min/max cooldown interval on the shared
+        // logarithmic seconds ruler. It is a preview, not a partial slider.
+        var secondsTrack = new Rect(row.Left + 9.0, row.Top + 19.0,
             Math.Max(1.0, row.Width - 18.0), 8.0);
-        var y = track.Top + track.Height / 2.0;
-        dc.DrawLine(new Pen(CloneWithOpacity(border, 0.85), 1.1),
-            new Point(track.Left, y), new Point(track.Right, y));
+        var secondsY = secondsTrack.Top + secondsTrack.Height / 2.0;
         foreach (var seconds in new[] { 1.0, 5.0, 20.0, 80.0 })
         {
-            var x = TacticsTimeX(seconds, track);
-            dc.DrawLine(new Pen(CloneWithOpacity(muted, 0.50), 0.85),
-                new Point(x, y - 4.0), new Point(x, y + 4.0));
+            var x = TacticsTimeX(seconds, secondsTrack);
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, 0.45), 0.85),
+                new Point(x, secondsY - 4.0), new Point(x, secondsY + 4.0));
         }
-        // The reference range sits just above the active interval.
-        dc.DrawLine(new Pen(CloneWithOpacity(muted, 0.8), 1.6) { DashStyle = DashStyles.Dash },
-            new Point(TacticsTimeX(referenceLo, track), y - 7.0),
-            new Point(TacticsTimeX(referenceHi, track), y - 7.0));
-        var x1 = TacticsTimeX(lo, track);
-        var x2 = TacticsTimeX(hi, track);
+        dc.DrawLine(new Pen(CloneWithOpacity(muted, 0.8), 1.4) { DashStyle = DashStyles.Dash },
+            new Point(TacticsTimeX(referenceLo, secondsTrack), secondsY - 4.0),
+            new Point(TacticsTimeX(referenceHi, secondsTrack), secondsY - 4.0));
+        var x1 = TacticsTimeX(lo, secondsTrack);
+        var x2 = TacticsTimeX(hi, secondsTrack);
         var ink = parameter.IsControlEnabled ? accent : muted;
-        dc.DrawLine(new Pen(CloneWithOpacity(ink, 0.9), 4.0),
-            new Point(x1, y), new Point(x2, y));
-        dc.DrawEllipse(ink, null, new Point(x1, y), 2.3, 2.3);
-        dc.DrawEllipse(ink, null, new Point(x2, y), 2.3, 2.3);
+        dc.DrawLine(new Pen(CloneWithOpacity(ink, 0.9), 3.2),
+            new Point(x1, secondsY + 1.0), new Point(x2, secondsY + 1.0));
+        dc.DrawEllipse(ink, null, new Point(x1, secondsY + 1.0), 2.0, 2.0);
+        dc.DrawEllipse(ink, null, new Point(x2, secondsY + 1.0), 2.0, 2.0);
 
-        // The geometric midpoint remains precisely under the cursor on a log axis.
-        var handle = new Point(TacticsTimeX(Math.Sqrt(lo * hi), track), y);
+        // Lower lane: real native-rate slider over the entire rail.
+        // Unlike the time preview, this always reaches both source endpoints.
+        var track = new Rect(row.Left + 9.0, row.Top + 33.0,
+            Math.Max(1.0, row.Width - 18.0), 8.0);
+        var y = track.Top + track.Height / 2.0;
+        var currentX = ValueToX(parameter.CurrentNumber,
+            parameter.Minimum, parameter.Maximum, track, reverse: false);
+        var referenceX = ValueToX(parameter.ReferenceNumber,
+            parameter.Minimum, parameter.Maximum, track, reverse: false);
+        dc.DrawLine(new Pen(CloneWithOpacity(border, 0.85), 1.3),
+            new Point(track.Left, y), new Point(track.Right, y));
+        dc.DrawLine(new Pen(CloneWithOpacity(ink, 0.5), 2.0),
+            new Point(track.Left, y), new Point(currentX, y));
+        dc.DrawLine(new Pen(muted, 1.8),
+            new Point(referenceX, y - 5.0), new Point(referenceX, y + 5.0));
+        var handle = new Point(currentX, y);
         var hovered = _hoverTarget?.Kind == HitKind.TacticalCooldown
             && ReferenceEquals(_hoverTarget.Parameter, parameter);
         ControlHoverGlow.Draw(dc, handle, accent, hovered && parameter.IsControlEnabled);
@@ -149,8 +163,8 @@ public sealed partial class AggregateVisualControl
         dc.DrawEllipse(ink, null, handle, 2.3, 2.3);
         if (parameter.IsControlEnabled)
             _hitTargets.Add(new HitTarget(parameter,
-                new Rect(track.Left, track.Top - 12.0, track.Width, 31.0),
-                track, HitKind.TacticalCooldown, 0.0, 0.0, false));
+                new Rect(track.Left - 6.0, track.Top - 7.0, track.Width + 12.0, 23.0),
+                track, HitKind.TacticalCooldown, parameter.Minimum, parameter.Maximum, false));
     }
 
     private void DrawHumanTacticsSpread(DrawingContext dc,
@@ -211,13 +225,7 @@ public sealed partial class AggregateVisualControl
         var parameter = target.Parameter;
         if (target.Kind == HitKind.TacticalCooldown)
         {
-            var tactic = HumanCombatPolicy.Tactics.FirstOrDefault(t => t.Id == parameter.Id);
-            if (tactic is null)
-                return;
-            var seconds = TacticsTimeAt(point, target.MapRect);
-            var (min, max) = HumanCombatPolicy.CooldownSeconds(tactic,
-                parameter.ReferenceNumber, parameter.ReferenceNumber);
-            var rate = parameter.ReferenceNumber * Math.Sqrt(min * max) / seconds;
+            var rate = TacticsRateAt(point, target.MapRect, parameter);
             parameter.CurrentNumber = Snap(parameter,
                 Math.Clamp(rate, parameter.Minimum, parameter.Maximum));
         }

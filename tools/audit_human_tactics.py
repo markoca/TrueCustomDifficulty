@@ -126,7 +126,11 @@ for token in ("HumanTacticsHeight(double width)", "DrawHumanTacticsBoard(",
               "HumanCombatPolicy.Tactics", "HumanCombatPolicy.CooldownSeconds(",
               "HitKind.TacticalCooldown", "HitKind.TacticalSpread",
               "ReadoutInk.Numbers(accent, text)", "ControlHoverGlow.Draw(",
-              "Snap(parameter,", "Math.Log(", "Math.Exp("):
+              "Snap(parameter,", "Math.Log(", "Math.Exp(",
+              "TacticsRateAt(point, target.MapRect, parameter)",
+              "ValueToX(parameter.CurrentNumber,",
+              "parameter.Minimum, parameter.Maximum, track, reverse: false)",
+              "secondsTrack = new Rect(", "HitKind.TacticalCooldown, parameter.Minimum, parameter.Maximum"):
     check(token in tactics_ui, f"tactics editor token {token}")
 for token in ("HitKind.TacticalCooldown", "HitKind.TacticalSpread",
               "UpdateHumanTacticsTarget(target, point)",

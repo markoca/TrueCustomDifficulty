@@ -64,3 +64,7 @@ points (exact), `audit_combat_contract.py`.
 The six slider cards have become five interactive cooldown intervals and a circular accuracy spread editor (AggregateVisualControl.HumanTactics.cs). A common logarithmic ruler (0.5–160 seconds) shows each native min–max cooldown on one linked draggable interval; only the underlying single scalar rate changes. Readouts respect the selected reference difficulty's Default or Master combat-sync table. Pauses are not guaranteed action cadence.
 
 The ENEMY ACCURACY reticle visualises relative DispersionRadius (100 / factor %) on a compact logarithmic ring scale (50–400%), never simulated bullet hits or chance. The source is unchanged. Right click resets a parameter; R resets all six; source step snapping and keyboard navigation remain. Layout is side-by-side at 600 DIP and stacked below that. Awareness legend stacks below the radar until 750 DIP. See UI-DESIGN-LOCK.md and VISUAL-CONTROL-SYSTEM.md for visual details.
+
+### HUMAN TACTICS full-range sliders (2026-11-17 correction)
+
+Each lane now has two distinct graphs: a thin noninteractive source-accurate cooldown min–max preview on the common seconds ruler, and a separate lower native-rate slider using the **entire** 0.25×–3× range. The rate handle always reaches both ends, independent of how narrow the seconds interval is. The reference-rate tick and all reset/keyboard interactions are preserved. No CFG, preset, or value range changes.
