@@ -1,6 +1,8 @@
 ## 2026-10-19 — Current food-satiety extension
 
-Current cross-domain census is **287 catalog IDs, 182 exposed definitions, 105 hidden**. Four independent `survival.*Satiety` food hunger-relief controls add four visible Survival sliders (Survival 35 visible, previous 31) and eight original `GameData/EffectPrototypes.cfg` direct writer leaves. Existing locked snapshots below describe the historical census and must not be read as an updated implementation inventory. Audit status remains **117 confirmed / 65 runtime-test-required** among 182 exposed settings. No claim of .NET/Wine/in-game verification.
+> **Counts here are a dated snapshot.** The live census is `tools/catalog_census.py` (2026-11-17: 406 catalog IDs, 202 visible, 204 hidden, 2,819 direct edit points).
+
+The 2026-10 cross-domain census was **287 catalog IDs, 182 exposed definitions, 105 hidden**. Four independent `survival.*Satiety` food hunger-relief controls add four visible Survival sliders (Survival 35 visible, previous 31) and eight original `GameData/EffectPrototypes.cfg` direct writer leaves. Existing locked snapshots below describe the historical census and must not be read as an updated implementation inventory. Audit status remains **117 confirmed / 65 runtime-test-required** among 182 exposed settings. No claim of .NET/Wine/in-game verification.
 
 # Global Cross-Domain Control Audit — v0.2.50
 

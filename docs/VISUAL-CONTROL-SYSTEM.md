@@ -4328,3 +4328,11 @@ segment is omitted; a zero-weight caliber has no segment. Supersedes the 96-DIP 
 
 The caliber card below the AMMO TYPE MIX knobs is titled **AMMO BOX CONTENT DISTRIBUTION**
 (formerly AMMO MIX PER BOX). Layout and caliber segments unchanged.
+
+## CURRENT 2026-11-17 — CONSISTENCY PASS
+
+* World Loot catalog labels match the board: Remove Loose Detectors / Remove Loose Armor / Remove Loose
+  Artifacts; removal lanes all read "<X> Removed"; World Weapon Density title-cased.
+* The Global Anomaly Damage knob is titled GLOBAL MULTIPLIER, the same name as in Damage by Anomaly.
+* Stash medical MIN/MAX readouts use the accent marker (ReadoutInk), not hard-coded yellow.
+* Help: ARTIFACT HUNTING says "Turn a knob"; AMMO help names AMMO BOX CONTENT DISTRIBUTION.

@@ -1,5 +1,7 @@
 ## 2026-11-16 — HUMAN TACTICS / HUMAN AWARENESS in-game checks (runtime_test_required)
 
+> **Counts here are a dated snapshot.** The live census is `tools/catalog_census.py` (2026-11-17: 406 catalog IDs, 202 visible, 204 hidden, 2,819 direct edit points).
+
 * GRENADES 3× on Veteran (card `grenade every 6.7–11.7 s`) vs 0.25×: grenade frequency from a bandit squad clearly differs. Same idea for SUPPRESSION, FLANKING and PUSH. Change only one at a time.
 * ENEMY ACCURACY 0.5× vs 2× at 30–50 m: hits per magazine clearly differ.
 * SIGHT 0.5×: crouch-approach a camp in daylight; you get much closer before being noticed. HEARING 0.5×: sprinting / reloading near them goes unnoticed longer. MEMORY 3×: after breaking line of sight they search ~90 s.
@@ -48,7 +50,7 @@ The **RC - CFG Signal** diagnostic is no longer shipped, embedded or auto-create
 
 ## 2026-10-19 — Current RC Wine contract inventory
 
-The current source catalog has **287 IDs**; `loot.*` spans **76** across Loot (35) and Stashes (41). The full writer suite probes **270 active, mounted sources** and keeps 17 non-active or legacy IDs under source-level catalog checks. The Environment contract has **17 source IDs but 15 active UI controls**, intentionally excluding the two unverified Diamond hazard settings; **78 live** test cases are expected. The drink duration contract requires each short Water/Energy child maximum to equal its **current parent duration** in both Override Limits modes, not to jump unconditionally to 270 seconds. These changes update stale tests without modifying source CFG targets, gameplay defaults or user controls. In-game and executable PASS still require a post-change run.
+The 2026-10 source catalog had **287 IDs**; `loot.*` spans **76** across Loot (35) and Stashes (41). The full writer suite probes **270 active, mounted sources** and keeps 17 non-active or legacy IDs under source-level catalog checks. The Environment contract has **17 source IDs but 15 active UI controls**, intentionally excluding the two unverified Diamond hazard settings; **78 live** test cases are expected. The drink duration contract requires each short Water/Energy child maximum to equal its **current parent duration** in both Override Limits modes, not to jump unconditionally to 270 seconds. These changes update stale tests without modifying source CFG targets, gameplay defaults or user controls. In-game and executable PASS still require a post-change run.
 
 
 ## 2026-10-19 — Historical RC diagnostic fixture and Sleep HP tool default
@@ -229,7 +231,7 @@ Finally save/reload all four different weights, export BPatch, confirm only the 
 
 ### Global Anomaly Damage single rotary knob — acceptance (2026-10-11)
 
-In Anomalies, verify **GLOBAL ANOMALY DAMAGE** shows exactly one centered 270° **OVERALL DAMAGE MULTIPLIER** knob, not the previous long horizontal slider. It must use the existing Your Weapons dark face, yellow arc/notch, muted source reference tick, center current multiplier, and neutral 0x/2.5x endpoints. The inner card is 194×181 DIP, frame 242 DIP. Check standard-width and minimum-width WPF/Wine layouts for centering and absence of clipping.
+In Anomalies, verify **GLOBAL ANOMALY DAMAGE** shows exactly one centered 270° **GLOBAL MULTIPLIER** knob, not the previous long horizontal slider. It must use the existing Your Weapons dark face, yellow arc/notch, muted source reference tick, center current multiplier, and neutral 0x/2.5x endpoints. The inner card is 194×181 DIP, frame 242 DIP. Check standard-width and minimum-width WPF/Wine layouts for centering and absence of clipping.
 
 The only backing parameter is `environment.anomalyDamage`, 0–2.5x at 0.01x steps. For each vanilla difficulty confirm the grey reference marker matches **Novice 0.30x, Stalker 1x, Veteran 1.45x, Master 1.75x**. Test clockwise and counterclockwise knob clicks/drags across minimum, mid and maximum, the 90° bottom gap clamping, scroll wheel at 0.01x, arrows, Page Up/Down, Home/End, right-click single reset, and panel R reset. Clicking the center selects the source without changing it. Only changed current values get accent gold; baseline tick remains grey. The right rationale should still describe the global setting.
 

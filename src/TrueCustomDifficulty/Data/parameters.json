@@ -391,7 +391,7 @@
       },
       "rationale": "How often human enemies throw grenades at you. Vanilla: every 20–35 s per squad; Master halves it (10–17 s). 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (throws a grenade every 20–35 s at 1×).",
       "logic": "1× keeps the selected difficulty's own pauses. The rate divides the pause of every enemy rank; who may act still depends on the game's tactics.",
-      "interaction": "Other tactics, ENEMY ACCURACY and HUMAN AWARENESS are independent. Enemy gun damage is HUMAN ENEMIES."
+      "interaction": "Other tactics, ENEMY ACCURACY and HUMAN AWARENESS are independent. Enemy gun damage is in HUMAN ENEMY COMBAT."
     },
     {
       "id": "combat.npcSuppressionRate",
@@ -439,7 +439,7 @@
       },
       "rationale": "How often human enemies pin you down with suppressive fire. Vanilla: every 15–25 s; Master about every 7–12 s. 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (pins you down every 15–25 s at 1×).",
       "logic": "1× keeps the selected difficulty's own pauses. The rate divides the pause of every enemy rank; who may act still depends on the game's tactics.",
-      "interaction": "Other tactics, ENEMY ACCURACY and HUMAN AWARENESS are independent. Enemy gun damage is HUMAN ENEMIES."
+      "interaction": "Other tactics, ENEMY ACCURACY and HUMAN AWARENESS are independent. Enemy gun damage is in HUMAN ENEMY COMBAT."
     },
     {
       "id": "combat.npcFlankRate",
@@ -487,7 +487,7 @@
       },
       "rationale": "How often human enemies try to flank you. Vanilla: every 10–20 s; Master 5–10 s. 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (flanks you every 10–20 s at 1×).",
       "logic": "1× keeps the selected difficulty's own pauses. The rate divides the pause of every enemy rank; who may act still depends on the game's tactics.",
-      "interaction": "Other tactics, ENEMY ACCURACY and HUMAN AWARENESS are independent. Enemy gun damage is HUMAN ENEMIES."
+      "interaction": "Other tactics, ENEMY ACCURACY and HUMAN AWARENESS are independent. Enemy gun damage is in HUMAN ENEMY COMBAT."
     },
     {
       "id": "combat.npcPushRate",
@@ -535,7 +535,7 @@
       },
       "rationale": "How often human enemies rush and close in on your cover. Vanilla: advance every 12–25 s, approach every 25–40 s; Master about twice as often. 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (rushes your cover every 12–25 s at 1×).",
       "logic": "1× keeps the selected difficulty's own pauses. The rate divides the pause of every enemy rank; who may act still depends on the game's tactics.",
-      "interaction": "Other tactics, ENEMY ACCURACY and HUMAN AWARENESS are independent. Enemy gun damage is HUMAN ENEMIES."
+      "interaction": "Other tactics, ENEMY ACCURACY and HUMAN AWARENESS are independent. Enemy gun damage is in HUMAN ENEMY COMBAT."
     },
     {
       "id": "combat.npcCamperPunishRate",
@@ -580,7 +580,7 @@
       },
       "rationale": "How often human enemies punish you for staying in one spot. Vanilla: every 2–5 s on every difficulty. 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (flushes you out every 2–5 s at 1×).",
       "logic": "1× keeps the selected difficulty's own pauses. The rate divides the pause of every enemy rank; who may act still depends on the game's tactics.",
-      "interaction": "Other tactics, ENEMY ACCURACY and HUMAN AWARENESS are independent. Enemy gun damage is HUMAN ENEMIES."
+      "interaction": "Other tactics, ENEMY ACCURACY and HUMAN AWARENESS are independent. Enemy gun damage is in HUMAN ENEMY COMBAT."
     },
     {
       "id": "combat.npcAccuracy",
@@ -7873,7 +7873,7 @@
         ]
       },
       "rationale": "How often ordinary human enemies carry their usual meds. Vanilla: 1× (the game's own chances). 0 = they never carry meds; 2× = twice as likely.",
-      "logic": "A relative 0–200% scaler of source Chance. A checked item-specific multiplier (0–3x of native Chance) replaces this global standard-medical scaler for that item.",
+      "logic": "A relative 0–200% scaler of each native consumable-generator medical Chance.",
       "interaction": "Always editable, including when Corpse Smart Loot is Water or None; does not affect zombies, quests, traders or stashes."
     },
     {
@@ -13911,7 +13911,7 @@
       },
       "rationale": "Odds that a field actually drops an artifact when it regrows. Vanilla: 25% (+15% bonus). 2× = 50% (+30%); 0× = anomaly fields never grow artifacts.",
       "logic": "1x keeps the game's 25% / 15%. Each value is multiplied and capped at 100%. 0x removes world anomaly artifacts; quest and unique artifacts stay.",
-      "interaction": "RESPAWN RATE sets how often fields roll; RARE LUCK and ARTIFACTS PER SPAWN shape what a successful roll gives."
+      "interaction": "RARE LUCK and PER SPAWN shape what a successful roll gives. When fields refill is the game's own schedule (after emissions)."
     },
     {
       "id": "environment.artifactRareLuck",
@@ -13957,7 +13957,7 @@
       },
       "rationale": "How often a find is rare or epic. Vanilla: 25% in Master zones, 11% in Veteran. 2× roughly doubles that; 0.5× makes a top-tier artifact a real event. Newbie zones never drop rare ones.",
       "logic": "Rare and Epic shares are multiplied, then all four shares are scaled back to 100%. Beginner (Newbie) areas never grow rare artifacts in the game and keep that.",
-      "interaction": "Changes only which rarity a spawned artifact gets. SPAWN CHANCE and RESPAWN RATE decide how many artifacts appear."
+      "interaction": "Changes only which rarity a spawned artifact gets. SPAWN CHANCE and PER SPAWN decide how many artifacts appear."
     },
     {
       "id": "environment.artifactCount",
@@ -14003,7 +14003,7 @@
       },
       "rationale": "How many artifacts drop at once when a field spawns. Vanilla: 1. 2–3 turn a well-searched field into a jackpot.",
       "logic": "1 keeps the game's single artifact per spawn. 2 or 3 sets the spawner Count directly.",
-      "interaction": "Multiplies every successful roll; SPAWN CHANCE and RESPAWN RATE decide how often that happens."
+      "interaction": "Multiplies every successful roll; SPAWN CHANCE decides how often that happens."
     },
     {
       "id": "loot.mutant.blindDogChance",
@@ -14787,7 +14787,7 @@
       "id": "loot.worldF1GrenadeBoxes",
       "tab": "loot",
       "group": "World Loot",
-      "label": "F1 Grenade Boxes",
+      "label": "F1 Grenade Boxes Removed",
       "description": "Choose how many dedicated F1 grenade boxes are removed from the world. This is an independent physical population from the ordinary ammo/RGD box axis.",
       "control": "slider",
       "valueKind": "ratio",
@@ -14845,7 +14845,7 @@
       "id": "loot.worldFoodDrinkCratesRemoved",
       "tab": "loot",
       "group": "World Loot",
-      "label": "World Food & Drink Boxes",
+      "label": "Food & Drink Boxes Removed",
       "description": "Choose how many world food and drink boxes are removed. 0% keeps the vanilla world; higher values make food and drinks less abundant in exploration.",
       "control": "slider",
       "valueKind": "ratio",
@@ -14899,7 +14899,7 @@
       "id": "loot.worldMedicalCratesRemoved",
       "tab": "loot",
       "group": "World Loot",
-      "label": "World Medical Boxes",
+      "label": "Medical Boxes Removed",
       "description": "Choose how many world medical boxes are removed. 0% keeps the vanilla world; higher values make easy medical supplies less common while exploring.",
       "control": "slider",
       "valueKind": "ratio",
@@ -14953,14 +14953,14 @@
       "id": "loot.looseWorldLootRemoved",
       "tab": "loot",
       "group": "World Loot",
-      "label": "Loose World Loot",
+      "label": "Loose World Loot Removed",
       "description": "Choose how much ordinary loose loot is removed from the world. This covers eligible ammo, consumables and grenades found lying around; 0% keeps vanilla placement.",
       "control": "slider",
       "valueKind": "ratio",
       "display": {
         "primary": "percent",
         "rawFormat": "0.00",
-        "valueLabel": "Loose Loot Removed"
+        "valueLabel": "Loose World Loot Removed"
       },
       "vanilla": {
         "All": 0
@@ -15106,7 +15106,7 @@
       "display": {
         "primary": "percent",
         "rawFormat": "0.00",
-        "valueLabel": "Weapon density"
+        "valueLabel": "World Weapon Density"
       },
       "vanilla": {
         "All": 1
@@ -15206,12 +15206,12 @@
       "id": "loot.worldDetectors",
       "tab": "loot",
       "group": "World Loot",
-      "label": "Remove World Detectors",
+      "label": "Remove Loose Detectors",
       "description": "Remove the proven non-quest detector pickups placed directly in the world and in safe stashes.",
       "control": "toggle",
       "valueKind": "boolean",
       "display": {
-        "valueLabel": "Remove World Detectors"
+        "valueLabel": "Remove Loose Detectors"
       },
       "vanilla": {
         "All": false
@@ -15260,12 +15260,12 @@
       "id": "loot.worldArmorRemoved",
       "tab": "loot",
       "group": "World Loot",
-      "label": "Remove World Armor",
+      "label": "Remove Loose Armor",
       "description": "Remove ordinary non-quest suits and helmets placed in the world and regular stashes. Scripted equipment, NPC loadouts, merchants and quest rewards remain.",
       "control": "toggle",
       "valueKind": "boolean",
       "display": {
-        "valueLabel": "Remove World Armor"
+        "valueLabel": "Remove Loose Armor"
       },
       "vanilla": {
         "All": false

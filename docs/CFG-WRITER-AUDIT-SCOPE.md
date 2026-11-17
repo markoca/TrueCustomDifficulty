@@ -1,5 +1,7 @@
 # CFG writer audit — current acceptance scope
 
+> **Counts here are a dated snapshot.** The live census is `tools/catalog_census.py` (2026-11-17: 406 catalog IDs, 202 visible, 204 hidden, 2,819 direct edit points).
+
 ## Verified CFG writer execution — 2026-10-20
 
 **Automated writer acceptance: 13/13 PASS (0 FAIL)** on `f7f190fee560e651045489f200784ee8f7dd3a28`. This was independently executed on Linux/CachyOS through `tests/run-wine.sh` using `python3 tools/pre_release.py writer --wine --output audit/pre-release/cfg-writer-output`. The user-provided audit receipt is `summary(20261020-093645).json`, run **2026-10-20 09:32:59–09:35:50 UTC**, with exit code **0** for each of:
@@ -25,7 +27,7 @@ The audit checks whether TrueCustomDifficulty **writes the intended CFG changes*
    ```bash
    python3 tools/pre_release.py cfg-routes --output audit/pre-release/cfg-routes
    ```
-   This runs the current 287-ID mapping, incremental CFG destinations, Stash Content/Extra Gear, World Shuffle field isolation and world physical ActorSID protection checks. It writes `summary.json`, `mapping/mapping.json`, `mapping/mapping.csv` and `incremental-stash-routes.csv`. **PASS here does not prove that the C# writer ran or produced actual patch files.**
+   This runs the full catalog mapping, incremental CFG destinations, Stash Content/Extra Gear, World Shuffle field isolation and world physical ActorSID protection checks. It writes `summary.json`, `mapping/mapping.json`, `mapping/mapping.csv` and `incremental-stash-routes.csv`. **PASS here does not prove that the C# writer ran or produced actual patch files.**
 
 2. **Actual generated-output checks (only when outputs from the Windows writer are available):** inspect the **staged** `GameData/*_patch_TrueCustomDifficulty.cfg` and singleton `*.cfg_patch_TrueCustomDifficulty` outputs, comparing emitted roots, paths, values, removals, clones, exact physical file counts and changed parameter receipts with the frozen original CFG source and selected preset. Windows-native .NET writer-contract tests can be used for this step, but do **not** require or ask for Wine, app GUI screenshots, game launch or GitHub Actions. Without emitted files or executed writer fixtures, report **NOT RUN**, not PASS.
 

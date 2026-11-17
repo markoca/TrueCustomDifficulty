@@ -1007,7 +1007,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // This single knob stays centered and bounded within its full-width group.
         const double knobCardWidth = 194.0;
         DrawSourceKnob(dc, P("environment.anomalyDamage"),
-            "OVERALL DAMAGE MULTIPLIER",
+            "GLOBAL MULTIPLIER",
             new Rect((ActualWidth - knobCardWidth) / 2.0, 49.0,
                 knobCardWidth, 181.0), text, muted, border, accent, panel);
     }
@@ -5567,13 +5567,13 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             new Point(minReadoutX, card.Top + 43.0),
             min.IsValueModifiedFromReference() ? 14.2 : 13.0,
             !min.IsControlEnabled ? muted :
-                min.IsValueModifiedFromReference() ? Brushes.Yellow : text,
+                min.IsValueModifiedFromReference() ? ReadoutInk.Numbers(FindBrush("AccentBrush", Brushes.Goldenrod), text) : text,
             FontWeights.SemiBold);
         DrawCenteredText(dc, maxValue.ToString(CultureInfo.InvariantCulture),
             new Point(maxReadoutX, card.Top + 43.0),
             max.IsValueModifiedFromReference() ? 14.2 : 13.0,
             !max.IsControlEnabled ? muted :
-                max.IsValueModifiedFromReference() ? Brushes.Yellow : text,
+                max.IsValueModifiedFromReference() ? ReadoutInk.Numbers(FindBrush("AccentBrush", Brushes.Goldenrod), text) : text,
             FontWeights.SemiBold);
         dc.DrawLine(new Pen(CloneWithOpacity(border, .60), .8),
             new Point(center, card.Top + 28.0),

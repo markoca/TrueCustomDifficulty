@@ -2544,11 +2544,11 @@ public sealed class MainViewModel : ObservableObject
                 "loot.worldWeaponShuffle" => 100,
                 "loot.worldWeaponDensity" => 101,
                 "loot.looseUniqueWeaponShuffle" => 102,
-                "loot.worldAttachmentShuffle" => 102,
-                "loot.worldDetectors" => 103,
-                "loot.worldArmorRemoved" => 104,
-                "loot.looseArtifactsRemoved" => 104,
-                "loot.blueprintShuffle" => 105,
+                "loot.worldAttachmentShuffle" => 103,
+                "loot.blueprintShuffle" => 104,
+                "loot.worldDetectors" => 105,
+                "loot.worldArmorRemoved" => 106,
+                "loot.looseArtifactsRemoved" => 107,
 
                 // NPC loot and equipment
                 "loot.npcCorpseBonus" => 200,

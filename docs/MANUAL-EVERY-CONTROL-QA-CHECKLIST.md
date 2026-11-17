@@ -1,8 +1,10 @@
 # True Custom Difficulty — kompletna ručna QA checklista
 
+> **Counts here are a dated snapshot.** The live census is `tools/catalog_census.py` (2026-11-17: 406 catalog IDs, 202 visible, 204 hidden, 2,819 direct edit points).
+
 ## CURRENT 2026-10-16 — 8 new medical stash source controls
 
-**Current catalog snapshot:** 268 parameter definitions, 168 visible exposed source IDs, 100 hidden definitions, 255 player-editable source IDs (13 audit-only). Historical sections below preserve their original date-scoped counts. These eight sources must each pass V (visual), I (interaction), P (preset), B (CFG), G (gameplay/pending).
+**2026-10 catalog snapshot:** 268 parameter definitions, 168 visible exposed source IDs, 100 hidden definitions, 255 player-editable source IDs (13 audit-only). Historical sections below preserve their original date-scoped counts. These eight sources must each pass V (visual), I (interaction), P (preset), B (CFG), G (gameplay/pending).
 
 **MEDICAL LOOT COMPOSITION** (0–3x, 0.25x, 1x neutral):
 - [ ] Bandages `loot.stashMedicalBandageBias`: V[ ] I[ ] P[ ] B[ ] G[ ]
