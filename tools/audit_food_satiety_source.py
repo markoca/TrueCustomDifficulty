@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import sys as _sys; _sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parent))
+from catalog_census import CATALOG, VISIBLE, HIDDEN, EDIT_POINTS, DIRECT_IDS
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src" / "TrueCustomDifficulty"
@@ -38,10 +40,10 @@ def main() -> int:
     survival_test = read(ROOT / "tests" / "SurvivalPatchContract" / "Program.cs")
     factory_files = list((SRC / "Presets").glob("*.json"))
 
-    require(len(catalog["parameters"]) == len(params) == 399, "source count / duplicate IDs")
-    require(sum(p.get("exposeInUi", True) for p in params.values()) == 199,
+    require(len(catalog["parameters"]) == len(params) == CATALOG, "source count / duplicate IDs")
+    require(sum(p.get("exposeInUi", True) for p in params.values()) == VISIBLE,
             "current visible-source census")
-    require(baseline["supportedParameterCount"] == 399 and len(edit_points) == 2830,
+    require(baseline["supportedParameterCount"] == CATALOG and len(edit_points) == EDIT_POINTS,
             "current full direct CFG-writer census")
     require("MaxHungerPoints = 100" in read(DOCS / "SURVIVAL-MAPPING.md"),
             "source documented hunger ceiling must remain 100")

@@ -3,6 +3,8 @@
 not a shipped/seeding preset. This does not run the game."""
 import json
 from pathlib import Path
+import sys as _sys; _sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parent))
+from catalog_census import CATALOG as CENSUS_CATALOG
 
 ROOT = Path(__file__).resolve().parents[1]
 QA = ROOT / "tests/RCSignalPatchContract/Fixtures/RC-CFG-Signal.json"
@@ -35,7 +37,7 @@ assert (data["profileVersion"] == 1 and data["referenceDifficulty"] == "Stalker"
         and data["name"] == PROFILE_NAME and data["gameVersion"] == catalog["source"]["gameVersion"]
         and not data.get("drinkDurationOverride") and not data.get("medicalOverride"))
 assert set(data["values"]) == ids and len(ids) == 13
-assert len(by_id) == 399
+assert len(by_id) == CENSUS_CATALOG
 for id, target in EXPECTED.items():
     definition = by_id[id]
     entry = data["values"][id]

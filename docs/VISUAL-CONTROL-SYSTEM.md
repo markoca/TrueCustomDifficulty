@@ -1,11 +1,29 @@
+## 2026-11-17 — CURRENT: medical HEAL TIME check against the 2.1 source
+
+* **Source confirmed (2.1 dump):** `GameData/EffectPrototypes.cfg` gives Duration = 1.0 and Charges = 4 for `BandageHealing2`, `MedkitHealing3`, `ArmyMedkitHealing4` and `EcoMedkitHealing4`.
+  * Each item uses exactly one of these prototypes.
+  * DLC1 does not redefine them.
+  * The earlier "published observation" caveat is resolved: 1 s is the native value.
+  * Writer `sourceRaw` is now the exact source spelling `1.0`.
+  * HEAL TIME changes only Duration. The 4 charges and the total HP stay; the heal is spread over more seconds. Runtime pacing is still marked runtime_test_required.
+* **TIME bar from 0 s:** the TIME bar is drawn from 0 s, like HEAL and BLEED are drawn from 0. Before, the scale ran 1–10 s, so the vanilla 1 s showed an empty bar. Drag mapping matches (0–10 s over the bar; snap clamps to 1 s).
+* **Readouts:** HEAL / BLEED / TIME / RAD readouts gold only their digits (ReadoutInk); `s`, `HP`, `PTS`, `RAD` stay neutral. `MedicalHealingRadar.CreateText` now resolves ReadoutInk. `audit_readout_ink.py` also catches the multi-line `IsValueModifiedFromReference()\n ? FindBrush("AccentBrush")` pattern.
+* **Copy:** the four rationales use the medical voice ("Vanilla: 1 s — almost instant. Longer spreads the same 70 HP over more seconds…"). Logic and support notes cite the 2.1 source.
+* **Factory presets:** all 12 store the 4 HEAL TIME seconds (1 s) and the weather FOG / RAIN / THUNDER coefficients at their source values (406/406). `PreWeatherHealTimeFactoryBlobs` upgrades untouched stock copies.
+* **Writer census:** RAIN / THUNDER NOISE are listed in `special.weatherHearing` and counted in `supportedParameterCount` (406). The "+2 outside the baseline" exception in `CfgPatchWriterService` is removed.
+* **Audits:**
+  * Pinned catalog counts live in one place, `tools/catalog_census.py`.
+  * The source parser accepts the 2.1 `AISettings : struct.begin:` header.
+  * All gates pass: static 23/23, cfg-routes 6/6, source 15/15, project consistency 0 FAIL.
+
 
 ## 2026-11-17 — CURRENT: per-item medical HEAL TIME in seconds
 
 * MEDICAL ITEMS has **four item cards** (BANDAGE, MEDKIT, ARMY MEDKIT, SCIENTIFIC MEDKIT), each with exactly **three independently adjustable vertical bars** on its original chart lane: **HEAL** in HP, **BLEED** in points, **TIME** in seconds. The bars are narrow and evenly spaced, with non-overlapping pointer hit regions and alternating numeric-caption y positions to prevent collisions even at the 820-DIP minimum width. There is **no shared HEAL TIME horizontal track**, no additional top-level card and no duplicated baseline captions.
-* The four direct-second IDs `health.bandageHealTime`, `health.medkitHealTime`, `health.armyMedkitHealTime`, `health.ecoMedkitHealTime` each edit `Duration` in `GameData/EffectPrototypes.cfg` at their corresponding `BandageHealing2`, `MedkitHealing3`, `ArmyMedkitHealing4`, `EcoMedkitHealing4` source. Each has **1–10 s**, steps of **1 s**, and a separately persisted value. The writer baseline maps each to a concrete `set` BPatch edit point with original reference `1`. The 1-second original-medkit reference comes from published earlier game-source observations; confirm exact native 2.1 timings and effectiveness during a local game test.
+* The four direct-second IDs `health.bandageHealTime`, `health.medkitHealTime`, `health.armyMedkitHealTime`, `health.ecoMedkitHealTime` each edit `Duration` in `GameData/EffectPrototypes.cfg` at their corresponding `BandageHealing2`, `MedkitHealing3`, `ArmyMedkitHealing4`, `EcoMedkitHealing4` source. Each has **1–10 s**, steps of **1 s**, and a separately persisted value. The writer baseline maps each to a concrete `set` BPatch edit point with original reference `1`. The 1-second reference is the native 2.1 source value (Duration = 1.0, Charges = 4); in-game pacing still needs a local game test.
 * Each bar supports click/drag and focused arrow keys, and **right click resets that bar alone**. **R** resets all HEAL/BLEED/TIME/RAD bars in the medical board. Modified numeric values use the canonical yellow; neutral values stay unaccented. This control does **not** change item use animation time, total HP `ValueMin`/`ValueMax`, bleeding removal, radiation removal, food healing or unrelated medical buffs.
 * Older saved presets with shared `health.healTime` values migrate to the four new individual seconds if none of their per-item values are present; any explicit new per-item value wins. Preset migration clamps to 1–10 s. The old shared control is retired from the embedded catalog and no longer contributes to CFG output.
-* The embedded writer baseline supported-source count increases from 400 to 404; the existing two source-locked weather routes remain outside the baseline. `AllControlsPatchContract` asserts four per-prototype Duration routes, complete 1–10 s contracts and updated 406 catalog/383 mounted-control counts.
+* The embedded writer baseline supported-source count is 406 (weather-hearing routes listed in special.weatherHearing since the same day). `AllControlsPatchContract` asserts four per-prototype Duration routes, complete 1–10 s contracts and updated 406 catalog/383 mounted-control counts.
 
 ## 2026-11-17 — CURRENT: centered weather-knob values and unambiguous vertical labels
 

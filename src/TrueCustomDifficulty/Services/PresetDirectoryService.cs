@@ -649,6 +649,26 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "98fd063277744c7b995fb60340f339ae9c6bc342",
     };
 
+    // Exact stock files before the factory presets stored the weather AI
+    // coefficients (fog / rain / thunder) and the four medical HEAL TIME
+    // seconds at their source values (2026-11-17).
+    private static readonly Dictionary<string, string> PreWeatherHealTimeFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "79a0c881ec8c171aa23e9ff5540416de2b0daa28",
+        ["Field Medic"] = "e29faee84bf3a09ba0aedcf2c49f67779b48f9f0",
+        ["Hardcore+"] = "ffd0ab09aa7efa72dd5cbc24c4cb45f213bc9b2b",
+        ["Hardcore"] = "fd0ce0316e01c632ed3ba9278075795361e79f95",
+        ["Immersive"] = "db3bd4fdc55d9f0402ebf181fcc9b231959d05f5",
+        ["Mercenary"] = "24e02854df9a7d55ec05316769d998d3f6890901",
+        ["Mutant Hunter"] = "cbf5ad545c125eb60d335b3f2febe47f01e81def",
+        ["Outcast"] = "bfb1a60f499e9d38efa9b0e9759f6bf98b1f9232",
+        ["Scavenger"] = "ff1dd0956e21742b1676e72bf9b21d285e2197ab",
+        ["Smuggler"] = "761f79813ee07a1cb7a4ac00a612bdd03a7f59e8",
+        ["Tactical"] = "2ccd9193569f9a343baebb953e2195aed3edcb3c",
+        ["Wanderer"] = "934e6744f451424fa540fd1dd61b264ec6bd86da",
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -672,7 +692,8 @@ public sealed class PresetDirectoryService
             && !PreWeaponArmorWeightFactoryBlobs.TryGetValue(name, out knownHash)
             && !Pre21FactoryBlobs.TryGetValue(name, out knownHash)
             && !PreMedicalMirrorFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreNewControlsFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreNewControlsFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreWeatherHealTimeFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -728,7 +749,9 @@ public sealed class PresetDirectoryService
                 || (PreMedicalMirrorFactoryBlobs.TryGetValue(name, out var preMirrorHash)
                     && actual.Equals(preMirrorHash, StringComparison.OrdinalIgnoreCase))
                 || (PreNewControlsFactoryBlobs.TryGetValue(name, out var preNewControlsHash)
-                    && actual.Equals(preNewControlsHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preNewControlsHash, StringComparison.OrdinalIgnoreCase))
+                || (PreWeatherHealTimeFactoryBlobs.TryGetValue(name, out var preWeatherHealTimeHash)
+                    && actual.Equals(preWeatherHealTimeHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

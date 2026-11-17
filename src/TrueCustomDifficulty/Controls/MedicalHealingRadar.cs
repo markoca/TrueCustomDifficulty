@@ -351,10 +351,11 @@ public sealed class MedicalHealingRadar : FrameworkElement
     {
         if (parameter is null)
             return;
-        // TIME maps 1..10 s consistently for handle, ticks, and pointer drag.
-        var min = action == HitAction.HealTime ? parameter.Minimum : 0.0;
+        // TIME maps 0..10 s like HEAL/BLEED map from 0, so the vanilla 1 s
+        // still shows a short bar; handle, ticks and pointer drag agree.
+        var min = 0.0;
         var range = action == HitAction.HealTime
-            ? Math.Max(Epsilon, parameter.Maximum - parameter.Minimum)
+            ? Math.Max(Epsilon, parameter.Maximum)
             : rulerMaximum;
         var currentY = chart.Bottom - PlotHeight *
             Math.Clamp((parameter.CurrentNumber - min) / range, 0.0, 1.0);
@@ -392,9 +393,10 @@ public sealed class MedicalHealingRadar : FrameworkElement
             HitAction.HealTime => $"{parameter.CurrentNumber:0} s",
             _ => $"{parameter.CurrentNumber:0.#} PTS"
         };
+        // Only the digits turn gold when changed (ReadoutInk); units stay neutral.
         var label = CreateText(numeric, 10.8,
             enabled && parameter.IsValueModifiedFromReference()
-                ? FindBrush("AccentBrush", Brushes.Goldenrod) : text, FontWeights.Bold);
+                ? ReadoutInk.Numbers(FindBrush("AccentBrush", Brushes.Goldenrod), text) : text, FontWeights.Bold);
         var labelY = action == HitAction.Radiation ? 114.0
             : action == HitAction.Bleeding ? 121.0 : 103.0;
         dc.DrawText(label, new Point(centerX - label.Width / 2.0, labelY));
@@ -626,8 +628,9 @@ public sealed class MedicalHealingRadar : FrameworkElement
 
         var ratio = Math.Clamp(1.0 -
             (y - hit.Bounds.Top) / Math.Max(1.0, hit.Bounds.Height), 0, 1);
-        SetSnapped(parameter, parameter.Minimum +
-            ratio * (parameter.Maximum - parameter.Minimum));
+        // TIME bars are drawn from 0 s (see DrawColumn); Snap clamps to 1 s.
+        var floor = action == HitAction.HealTime ? 0.0 : parameter.Minimum;
+        SetSnapped(parameter, floor + ratio * (parameter.Maximum - floor));
         InvalidateVisual();
     }
 
@@ -682,10 +685,14 @@ public sealed class MedicalHealingRadar : FrameworkElement
 
     private FormattedText CreateText(string value, double size,
         Brush brush, FontWeight weight)
-        => new(value, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight,
+    {
+        var (ink, numberInk) = ReadoutInk.Resolve(brush);
+        FormattedText formatted = new(value, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal,
-                weight, FontStretches.Normal), Math.Max(9, size), brush,
+                weight, FontStretches.Normal), Math.Max(9, size), ink,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
+        return ReadoutInk.Highlight(formatted, value, numberInk);
+    }
 
     private sealed record HitArea(Rect Bounds, int Row, HitAction Action);
 

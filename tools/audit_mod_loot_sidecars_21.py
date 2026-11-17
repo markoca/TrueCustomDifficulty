@@ -3,6 +3,8 @@
 from pathlib import Path
 import json
 import re
+import sys as _sys; _sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parent))
+from catalog_census import CATALOG, VISIBLE, HIDDEN, EDIT_POINTS, DIRECT_IDS
 
 ROOT = Path(__file__).resolve().parents[1]
 def read(p): return (ROOT / p).read_text(encoding="utf-8")
@@ -10,7 +12,7 @@ def required(source, needle, msg):
     assert needle in source, msg + ": " + needle
 
 catalog = json.loads(read("src/TrueCustomDifficulty/Data/parameters.json"))
-assert len(catalog["parameters"]) == 399, "Mod-only sidecars must not become native source IDs"
+assert len(catalog["parameters"]) == CATALOG, "Mod-only sidecars must not become native source IDs"
 native_ids = {p["id"] for p in catalog["parameters"]}
 assert not any("ModItemsRemoval" in x or "ModItemsBlocked" in x for x in native_ids)
 writer = read("src/TrueCustomDifficulty/Services/CfgPatchWriterService.ModItems.cs")

@@ -8,6 +8,8 @@ import json
 import re
 import sys
 from pathlib import Path
+import sys as _sys; _sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parent))
+from catalog_census import CATALOG, VISIBLE, HIDDEN, EDIT_POINTS, DIRECT_IDS
 
 root = Path(__file__).resolve().parents[1]
 src = root / "src/TrueCustomDifficulty"
@@ -28,7 +30,7 @@ medical = ["loot.stashMedical" + kind + "Bias" for kind in
 quantity = ["loot.stash" + kind + end + "Count" for kind in
             ("Medkit", "ArmyMedkit") for end in ("Min", "Max")]
 
-assert len(catalog["parameters"]) == baseline["supportedParameterCount"] == 399
+assert len(catalog["parameters"]) == baseline["supportedParameterCount"] == CATALOG
 # A master checkbox is ONE routable source ID, not an extra duplicate.
 # Match exact production dispatch order and require unique members so a
 # superseded Stashes roster cannot silently pass on set equivalence alone.

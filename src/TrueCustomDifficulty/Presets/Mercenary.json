@@ -1604,6 +1604,34 @@
     "environment.artifactCount": {
       "kind": "slider",
       "number": 1
+    },
+    "combat.npcFogVisibility": {
+      "kind": "slider",
+      "number": 0.7
+    },
+    "combat.npcRainNoise": {
+      "kind": "slider",
+      "number": 0.7
+    },
+    "combat.npcStormNoise": {
+      "kind": "slider",
+      "number": 0.6
+    },
+    "health.bandageHealTime": {
+      "kind": "slider",
+      "number": 1
+    },
+    "health.medkitHealTime": {
+      "kind": "slider",
+      "number": 1
+    },
+    "health.armyMedkitHealTime": {
+      "kind": "slider",
+      "number": 1
+    },
+    "health.ecoMedkitHealTime": {
+      "kind": "slider",
+      "number": 1
     }
   }
 }

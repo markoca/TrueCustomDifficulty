@@ -3,13 +3,15 @@
 import json
 import re
 from pathlib import Path
+import sys as _sys; _sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parent))
+from catalog_census import CATALOG, VISIBLE, HIDDEN, EDIT_POINTS, DIRECT_IDS
 
 ROOT = Path(__file__).resolve().parents[1]
 src = ROOT / "src/TrueCustomDifficulty"
 catalog = json.loads((src / "Data/parameters.json").read_text(encoding="utf-8"))
 rows = catalog["parameters"]
 visible = {p["id"]: p for p in rows if p.get("exposeInUi", True)}
-assert len(rows) == 399 and len(visible) == 199, "Catalog census changed"
+assert len(rows) == CATALOG and len(visible) == VISIBLE, "Catalog census changed"
 banned = ("CFG", "ActorSID", "SmartLoot", "ItemGenerator", "SHA256",
           "per-entry", "source-native", "native Weight", "authored", "prototype",
           "backend")
@@ -54,5 +56,5 @@ for key in ('"StashContentMix" => "ADJUST ODDS: each cell keeps',
 for f in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
     assert "CURRENT RC rationale readability lock (180 visible)" in (
         ROOT / "docs" / f).read_text(encoding="utf-8"), f
-print("PASS: 199 readable player rationales, 8 new stash descriptions, 25 help families and source distinctions")
+print(f"PASS: {VISIBLE} readable player rationales, 8 new stash descriptions, 25 help families and source distinctions")
 print("NOT RUN: .NET build, Wine visual inspection or gameplay tests")

@@ -25,7 +25,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 BASELINE = ROOT / "src" / "TrueCustomDifficulty" / "Data" / "cfg-writer-baseline.json"
-START = re.compile(r"^\s*(.*?)\s*:\s*struct\.begin(?:\s|$)")
+# 2.1 AIGlobals.cfg opens with "AISettings : struct.begin:" (stray colon).
+START = re.compile(r"^\s*(.*?)\s*:\s*struct\.begin(?::|\s|$)")
 END = re.compile(r"^\s*struct\.end\s*$")
 FIELD = re.compile(r"^\s*([^=]+?)\s*=\s*(.*)$")
 NUMBER = re.compile(r"^([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)(%|[fF])?$")

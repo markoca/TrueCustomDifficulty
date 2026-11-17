@@ -2,11 +2,13 @@
 """Release candidate: approved player-facing labels and WPF renderers."""
 from pathlib import Path
 import json
+import sys as _sys; _sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parent))
+from catalog_census import CATALOG, VISIBLE, HIDDEN, EDIT_POINTS, DIRECT_IDS
 r=Path(__file__).resolve().parents[1]
 p=json.loads((r/"src/TrueCustomDifficulty/Data/parameters.json").read_text())["parameters"]
 by={v["id"]:v for v in p}
-assert len(p)==len(by)==399
-assert sum(v.get("exposeInUi",True) for v in p)==199
+assert len(p)==len(by)==CATALOG
+assert sum(v.get("exposeInUi",True) for v in p)==VISIBLE
 names={
   "combat.npcHealth": "Human Enemy HP",
   "combat.playerWeaponDamage": "Weapon Damage",

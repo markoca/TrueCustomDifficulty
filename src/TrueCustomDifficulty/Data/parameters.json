@@ -5974,13 +5974,13 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "Each medical healing prototype owns a separate Duration field in seconds.",
-          "A published game baseline lists the medkit HP effect as 1 second; the original 2.1 source and in-game healing pace still require confirmation.",
-          "Only healing time is edited; healing HP, bleeding, radiation and food effects stay independent."
+          "Original STALKER 2.1 GameData/EffectPrototypes.cfg: BandageHealing2 has Duration = 1.0 and Charges = 4 (DLC1 does not redefine it).",
+          "Only Duration is edited; total HP (ValueMin/ValueMax), bleeding, radiation and food effects stay independent.",
+          "In-game pacing of the 4 charges over a longer Duration still needs a runtime test."
         ]
       },
-      "rationale": "Bandage: how many seconds HP restoration lasts. Longer time means slower healing without changing total HP.",
-      "logic": "1 s retains the one-second reference; 10 s spreads this item's recovery across ten seconds.",
+      "rationale": "How long the bandage's HP restore takes. Vanilla: 1 s — almost instant. Longer spreads the same 20 HP over more seconds, so you can't top up mid-fight.",
+      "logic": "Sets Duration of BandageHealing2; the effect keeps its 4 charges and its total HP. 1 s = vanilla, 10 s = the same heal over ten seconds.",
       "interaction": "Drag this item's TIME column; right-click resets only this duration.",
       "exposeInUi": false
     },
@@ -6022,13 +6022,13 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "Each medical healing prototype owns a separate Duration field in seconds.",
-          "A published game baseline lists the medkit HP effect as 1 second; the original 2.1 source and in-game healing pace still require confirmation.",
-          "Only healing time is edited; healing HP, bleeding, radiation and food effects stay independent."
+          "Original STALKER 2.1 GameData/EffectPrototypes.cfg: MedkitHealing3 has Duration = 1.0 and Charges = 4 (DLC1 does not redefine it).",
+          "Only Duration is edited; total HP (ValueMin/ValueMax), bleeding, radiation and food effects stay independent.",
+          "In-game pacing of the 4 charges over a longer Duration still needs a runtime test."
         ]
       },
-      "rationale": "Medkit: how many seconds HP restoration lasts. Longer time means slower healing without changing total HP.",
-      "logic": "1 s retains the one-second reference; 10 s spreads this item's recovery across ten seconds.",
+      "rationale": "How long the medkit's HP restore takes. Vanilla: 1 s — almost instant. Longer spreads the same 70 HP over more seconds, so you can't top up mid-fight.",
+      "logic": "Sets Duration of MedkitHealing3; the effect keeps its 4 charges and its total HP. 1 s = vanilla, 10 s = the same heal over ten seconds.",
       "interaction": "Drag this item's TIME column; right-click resets only this duration.",
       "exposeInUi": false
     },
@@ -6070,13 +6070,13 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "Each medical healing prototype owns a separate Duration field in seconds.",
-          "A published game baseline lists the medkit HP effect as 1 second; the original 2.1 source and in-game healing pace still require confirmation.",
-          "Only healing time is edited; healing HP, bleeding, radiation and food effects stay independent."
+          "Original STALKER 2.1 GameData/EffectPrototypes.cfg: ArmyMedkitHealing4 has Duration = 1.0 and Charges = 4 (DLC1 does not redefine it).",
+          "Only Duration is edited; total HP (ValueMin/ValueMax), bleeding, radiation and food effects stay independent.",
+          "In-game pacing of the 4 charges over a longer Duration still needs a runtime test."
         ]
       },
-      "rationale": "Army Medkit: how many seconds HP restoration lasts. Longer time means slower healing without changing total HP.",
-      "logic": "1 s retains the one-second reference; 10 s spreads this item's recovery across ten seconds.",
+      "rationale": "How long the army medkit's HP restore takes. Vanilla: 1 s — almost instant. Longer spreads the same 85 HP over more seconds, so you can't top up mid-fight.",
+      "logic": "Sets Duration of ArmyMedkitHealing4; the effect keeps its 4 charges and its total HP. 1 s = vanilla, 10 s = the same heal over ten seconds.",
       "interaction": "Drag this item's TIME column; right-click resets only this duration.",
       "exposeInUi": false
     },
@@ -6118,13 +6118,13 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "Each medical healing prototype owns a separate Duration field in seconds.",
-          "A published game baseline lists the medkit HP effect as 1 second; the original 2.1 source and in-game healing pace still require confirmation.",
-          "Only healing time is edited; healing HP, bleeding, radiation and food effects stay independent."
+          "Original STALKER 2.1 GameData/EffectPrototypes.cfg: EcoMedkitHealing4 has Duration = 1.0 and Charges = 4 (DLC1 does not redefine it).",
+          "Only Duration is edited; total HP (ValueMin/ValueMax), bleeding, radiation and food effects stay independent.",
+          "In-game pacing of the 4 charges over a longer Duration still needs a runtime test."
         ]
       },
-      "rationale": "Scientific Medkit: how many seconds HP restoration lasts. Longer time means slower healing without changing total HP.",
-      "logic": "1 s retains the one-second reference; 10 s spreads this item's recovery across ten seconds.",
+      "rationale": "How long the scientific medkit's HP restore takes. Vanilla: 1 s — almost instant. Longer spreads the same 100 HP over more seconds, so you can't top up mid-fight.",
+      "logic": "Sets Duration of EcoMedkitHealing4; the effect keeps its 4 charges and its total HP. 1 s = vanilla, 10 s = the same heal over ten seconds.",
       "interaction": "Drag this item's TIME column; right-click resets only this duration.",
       "exposeInUi": false
     },

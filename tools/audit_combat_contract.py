@@ -25,18 +25,22 @@ def verify() -> None:
     for point in points:
         grouped[point["parameterId"]].append(point)
 
-    # +25 MUTANT AGGRESSION, +9 HUMAN TACTICS / HUMAN AWARENESS (2026-11-16)
-    assert len(combat) == 62, f"Combat catalog changed: {len(combat)}"
-    human_direct = {"combat.npcAccuracy", "combat.npcSightRange", "combat.npcHearingRange", "combat.npcAlertMemory"}
+    # +25 MUTANT AGGRESSION, +9 HUMAN TACTICS / HUMAN AWARENESS (2026-11-16),
+    # +3 weather AI coefficients FOG / RAIN / THUNDER (2026-11-17)
+    assert len(combat) == 65, f"Combat catalog changed: {len(combat)}"
+    human_direct = {"combat.npcAccuracy", "combat.npcSightRange", "combat.npcHearingRange", "combat.npcAlertMemory",
+                    "combat.npcFogVisibility"}
+    weather_hearing = {"combat.npcRainNoise", "combat.npcStormNoise"}
     human_tactics = {"combat.npcGrenadeRate", "combat.npcSuppressionRate", "combat.npcFlankRate",
                      "combat.npcPushRate", "combat.npcCamperPunishRate"}
     assert human_direct | human_tactics <= set(combat)
-    assert len(grouped) == 28, f"Direct Combat parameter count changed: {len(grouped)}"
-    assert len(points) == 164, f"Concrete direct Combat route count changed: {len(points)}"
+    # FOG is a direct point; RAIN / THUNDER are the inline weather-hearing writer.
+    assert len(grouped) == 29, f"Direct Combat parameter count changed: {len(grouped)}"
+    assert len(points) == 165, f"Concrete direct Combat route count changed: {len(points)}"
     assert sum(e["file"] == "GameData/DifficultyPrototypes.cfg" for e in points) == 40
     assert sum(e["file"] == "GameData/ObjPrototypes.cfg" for e in points) == 27
     assert sum(e["parameterId"] == "combat.npcAccuracy" for e in points) == 77
-    assert sum(e["parameterId"] in human_direct for e in points) == 97
+    assert sum(e["parameterId"] in human_direct for e in points) == 98
 
     # Retired systems are not represented by oversimplified single-source controls.
     retired = {"combat.npcAttackCooldown", "combat.npcHipAccuracy"}
@@ -55,9 +59,11 @@ def verify() -> None:
         )
 
     direct_ids = set(grouped) - human_direct
-    special_ids = set(combat) - set(grouped) - human_tactics
+    special_ids = set(combat) - set(grouped) - human_tactics - weather_hearing
+    assert weather_hearing <= set(combat)
+    assert set(writer["special"]["weatherHearing"]["parameterIds"]) == weather_hearing
     assert all(combat[pid]["support"]["status"] == "runtime_test_required"
-               for pid in human_direct | human_tactics)
+               for pid in human_direct | human_tactics | weather_hearing)
     aggression_ids = {pid for pid in special_ids
                       if pid.startswith(("combat.mutantAttackRate.", "combat.mutantAbilityRate."))
                       or pid == "combat.mutantSpecialAbilityRate"}

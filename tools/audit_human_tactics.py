@@ -163,7 +163,7 @@ for token in ("HitKind.TacticalCooldown", "HitKind.TacticalSpread",
               "UpdateHumanTacticsTarget(target, point)",
               '"HumanTactics" => HumanTacticsHeight(width)'):
     check(token in ui, f"tactics input/measure token {token}")
-check('var wide = width >= 750.0;' in
+check('var wide = width >= 700.0;' in
       read("Controls/AggregateVisualControl.HumanAwareness.cs"),
       "awareness responsive legend breakpoint")
 
@@ -196,14 +196,13 @@ check("AwarenessSightDragMeters(" not in radar
 check("CurrentNumber = value.Number.Value;" in pvm
       and "var clamped = Math.Clamp(value, Minimum, Maximum);" in pvm,
       "older 3x SIGHT presets clamp to the updated catalog maximum on load")
-# FOG is a compact, source-bound native knob, not a fake sight-distance overlay.
-for token in ("DrawAwarenessFogKnob(", "HumanCombatPolicy.FogVisibilityId",
-              "AwarenessFogRowHeight = 72.0", "HitKind.Knob",
-              "fog.Minimum, fog.Maximum", "DrawKnobArc(",
-              "KnobPoint(", "ReadoutInk.Numbers(accent, text)"):
-    check(token in radar, f"fog compact knob contract: {token}")
-check("HearingDistanceCoef" not in radar and "FlairCoef" not in radar,
-      "fog UI does not edit other AI weather senses")
+# FOG / RAIN / THUNDER: one compact source-bound knob column beside the
+# radar (weather AI coefficients), not a fake sight-distance overlay.
+for token in ("DrawAwarenessWeatherKnob(", "HumanCombatPolicy.FogVisibilityId",
+              "AwarenessWeatherRowHeight = 132.0", "HitKind.Knob",
+              "DrawKnobArc(", "KnobPoint(", "ReadoutInk.Numbers(accent, text)"):
+    check(token in radar, f"weather knob contract: {token}")
+check("FlairCoef" not in radar, "weather UI does not edit AI smell (FlairCoef)")
 if failures:
     print(f"\n{len(failures)} failure(s)")
     sys.exit(1)

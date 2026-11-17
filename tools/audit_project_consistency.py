@@ -53,6 +53,8 @@ def walk_parameter_ids(value, path="special"):
         for i, child in enumerate(value):
             yield from walk_parameter_ids(child, f"{path}[{i}]")
 
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))
 parameters_doc = json.loads((DATA / "parameters.json").read_text(encoding="utf-8"))
 baseline = json.loads((DATA / "cfg-writer-baseline.json").read_text(encoding="utf-8"))
 parameters = parameters_doc.get("parameters", [])
@@ -497,7 +499,7 @@ else:
 
 # Non-generator normal-UI coverage gate (v0.2.43).
 _non_gen_expected = {
-    "combat": (24, 11, 13),  # + HUMAN TACTICS / HUMAN AWARENESS (9, runtime test required)
+    "combat": (27, 11, 16),  # + HUMAN TACTICS / HUMAN AWARENESS (9) + weather FOG / RAIN / THUNDER (3)
     "health": (13, 10, 3),
     "stamina": (7, 6, 1),
     # Equipment is a separate tab again; CFG sources and total visibility are unchanged.
@@ -543,11 +545,13 @@ _combat_runtime_expected = {
     "combat.npcGrenadeRate", "combat.npcSuppressionRate", "combat.npcFlankRate", "combat.npcPushRate",
     "combat.npcCamperPunishRate", "combat.npcAccuracy", "combat.npcSightRange", "combat.npcHearingRange",
     "combat.npcAlertMemory",
+    # Weather AI coefficients FOG / RAIN / THUNDER (2026-11-17)
+    "combat.npcFogVisibility", "combat.npcRainNoise", "combat.npcStormNoise",
 }
 _combat_runtime_actual = {pid for pid, row in _combat_rows.items() if row.get("support", {}).get("status") == "runtime_test_required"}
 _headshot = _combat_rows.get("combat.playerHeadshotMultiplier", {})
 _repeated = next((c for c in parameters_doc.get("sliderConstraints", []) if c.get("id") == "repeatedHitProtectionRange"), {})
-if len(_combat_rows) != 24 or _combat_runtime_actual != _combat_runtime_expected:
+if len(_combat_rows) != 27 or _combat_runtime_actual != _combat_runtime_expected:
     fail(f"combat source-catalog exposed entries drifted: entries={len(_combat_rows)}, runtime={sorted(_combat_runtime_actual)}")
 elif _repeated.get("order") != "nondecreasing" or _repeated.get("parameterIds") != ["combat.accumulatedDamageWeightMin", "combat.accumulatedDamageWeightMax"]:
     fail("repeated-hit Min<=Max CFG-value constraint drifted")
@@ -1428,8 +1432,8 @@ _treatment_catalog = [p for p in _health_ui if p.get("id") in _treatment_ids]
 _vm_source = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "MainViewModel.cs").read_text(encoding="utf-8")
 if len(_health_ui) != 13 or len(_health_confirmed) != 10 or len(_health_runtime) != 3:
     fail(f"health deep audit status split drifted: total={len(_health_ui)} confirmed={len(_health_confirmed)} runtime={len(_health_runtime)}; expected 13/10/3")
-elif len(_health_points) != 42:
-    fail(f"health writer surface drifted: {len(_health_points)} edit points; expected 42")
+elif len(_health_points) != 46:  # + 4 per-item HEAL TIME Duration points
+    fail(f"health writer surface drifted: {len(_health_points)} edit points; expected 46")
 elif len(_treatment_points) != 12 or any(e.get("operation") != "negateSet" for e in _treatment_points):
     fail("health treatment signed-delta boundary drifted: expected 12 negateSet edit points")
 elif len(_treatment_catalog) != 6 or any((p.get("slider") or {}).get("min") != 0.0 for p in _treatment_catalog) or any(next(iter((p.get("vanilla") or {}).values())) <= 0 for p in _treatment_catalog):
@@ -2707,7 +2711,7 @@ else:
         or _final_cfg_index.get("counts", {}).get("editable") != 235
         or _final_cfg_index.get("counts", {}).get("directLeafPoints") != 1230):
         _factory_errors.append("final CFG mapping inventory differs from live catalogue/baseline")
-if "399 unique" not in (ROOT / "tools/audit_final_cfg_mapping.py").read_text(encoding="utf-8"):
+if "unique CFG source IDs expected" not in (ROOT / "tools/audit_final_cfg_mapping.py").read_text(encoding="utf-8"):
     _factory_errors.append("new static CFG mapping writer audit entrypoint is missing")
 _final_workflow = (ROOT / ".github/workflows/static-audit.yml").read_text(encoding="utf-8")
 if ("python tools/audit_final_cfg_mapping.py" not in _final_workflow
@@ -3004,10 +3008,13 @@ _required_pairs = (
     'DrawColumn(dc, row, HitAction.Healing, _medical[row]',
     'DrawColumn(dc, row, HitAction.Bleeding, _bleeding[row]',
     'VerticalBarHandleChrome.Draw(dc, new Point(centerX, currentY)',
-    'new Rect(centerX - Math.Max(16.0, barWidth / 2.0 + 6.0)',
+    'var hit = new Rect(centerX - hitWidth / 2.0,',
+    # Per-item HEAL TIME (2026-11-17): third bar per item card, drawn from 0 s.
+    'DrawColumn(dc, row, HitAction.HealTime, _healTimes[row]',
+    'var floor = action == HitAction.HealTime ? 0.0 : parameter.Minimum;',
     'HitAction.Healing or HitAction.Bleeding',
     'ParameterAt(hit.Row, hit.Action)?.ResetToReference();',
-    'foreach (var medicalItem in _medical.Concat(_bleeding).Concat(_radiation))',
+    'foreach (var medicalItem in _medical.Concat(_bleeding).Concat(_healTimes).Concat(_radiation))',
     'ParameterAt(_selected, _selectedAction)',
     'BooleanCheckboxChrome.Draw(dc, _foodCheckboxRect,',
 )
@@ -3115,8 +3122,8 @@ _rad_medical_tokens = (
     "VerticalBarHandleChrome.Draw(dc, new Point(centerX, currentY)",
     "if (action == HitAction.Radiation)",
     "row < _radiation.Length ? _radiation[row] : null",
-    "_medical.Concat(_bleeding).Concat(_radiation)",
-    "action == HitAction.Healing ? barAccent : BleedingAccent",
+    "_medical.Concat(_bleeding).Concat(_healTimes).Concat(_radiation)",
+    "action == HitAction.Bleeding ? BleedingAccent : barAccent",
 )
 if any(token not in _medical_source for token in _rad_medical_tokens):
     fail("Medical Items RAD bank or gold HEAL caption implementation drifted")
@@ -3191,7 +3198,7 @@ else:
 # Medical Items final polish: compact pair spacing, subdued ceiling/reference
 # ticks and stronger OFF checkbox edge, without changing canonical checkbox chrome.
 _medical_polish_required = (
-    'var spread = Math.Min(23.0, laneWidth * .22);',
+    'var spread = Math.Min(29.0, laneWidth * .295);',
     'CloneWithOpacity(muted, .38), .8',
     'CloneWithOpacity(muted, .68), 1.35',
     'var checkboxEdge = CloneWithOpacity(muted, .75);',
@@ -3900,7 +3907,7 @@ for _row in _global_visible:
     _tab = _row.get("tab")
     _global_tab_counts[_tab] = _global_tab_counts.get(_tab, 0) + 1
 _global_expected_tabs = {
-    "combat": 24,       # + HUMAN TACTICS / HUMAN AWARENESS
+    "combat": 27,       # + HUMAN TACTICS / HUMAN AWARENESS + weather knobs
     "health": 13,
     "stamina": 7,
     "survival": 35,
@@ -4069,14 +4076,16 @@ _global_anomaly_ids = {
 }
 _global_anomaly_missing = sorted(pid for pid in _global_anomaly_ids if f'"{pid}"' not in _global_vm_source)
 
-if len(parameters) != 399 or len(_global_visible) != 199 or len(_global_hidden) != 200:
-    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 399/199/200")
+from catalog_census import CATALOG as _CENSUS_CATALOG, VISIBLE as _CENSUS_VISIBLE, HIDDEN as _CENSUS_HIDDEN
+if (len(parameters) != _CENSUS_CATALOG or len(_global_visible) != _CENSUS_VISIBLE
+        or len(_global_hidden) != _CENSUS_HIDDEN):
+    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected {_CENSUS_CATALOG}/{_CENSUS_VISIBLE}/{_CENSUS_HIDDEN}")
 elif _global_tab_counts != _global_expected_tabs:
     fail(f"global visible tab counts drifted: {_global_tab_counts}; expected {_global_expected_tabs}")
-elif _global_confirmed != 117 or _global_runtime != 82:
-    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 117/82")
-elif _global_control_counts != {"slider": 182, "toggle": 15, "choiceSlider": 1, "range": 1}:
-    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 182 sliders / 15 toggles / 1 choiceSlider / 1 range")
+elif _global_confirmed != 117 or _global_runtime != 85:
+    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 117/85")
+elif _global_control_counts != {"slider": 185, "toggle": 15, "choiceSlider": 1, "range": 1}:
+    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 185 sliders / 15 toggles / 1 choiceSlider / 1 range")
 elif _global_duplicate_labels:
     fail(f"duplicate player-facing labels detected: {_global_duplicate_labels}")
 elif _global_out_of_range:

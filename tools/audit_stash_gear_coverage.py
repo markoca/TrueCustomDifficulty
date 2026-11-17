@@ -10,6 +10,8 @@ import json
 import re
 from collections import Counter
 from pathlib import Path
+import sys as _sys; _sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parent))
+from catalog_census import CATALOG, VISIBLE, HIDDEN, EDIT_POINTS, DIRECT_IDS
 
 root = Path(__file__).resolve().parents[1]
 data = root / "src/TrueCustomDifficulty/Data"
@@ -89,7 +91,7 @@ for scope, num in (("base", 800), ("dlc1", 108)):
         previous = current
 cfg = json.loads((data / "parameters.json").read_text(encoding="utf-8"))
 ids = {x["id"]: x for x in cfg["parameters"]}
-assert len(cfg["parameters"]) == 399
+assert len(cfg["parameters"]) == CATALOG
 assert ids["loot.stashGearEnabled"]["control"] == "toggle"
 assert ids["loot.stashGearCoveragePercent"]["slider"] == {
     "min": 0, "max": 100, "step": 1, "stepMode": "absolute"}
@@ -98,7 +100,7 @@ assert not any(x in ids for x in ("loot.stashGearCheapWeapon", "loot.stashGearCh
     "loot.stashGearMediumWeapon", "loot.stashGearMediumArmor",
     "loot.stashGearExpensiveWeapon", "loot.stashGearExpensiveArmor"))
 baseline = json.loads((data / "cfg-writer-baseline.json").read_text(encoding="utf-8"))
-assert baseline["supportedParameterCount"] == 399
+assert baseline["supportedParameterCount"] == CATALOG
 ui = (root / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
 writer = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashGearCoverage.cs").read_text(encoding="utf-8")
 main_writer = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.cs").read_text(encoding="utf-8")
@@ -213,4 +215,4 @@ for candidate in attachment_rows:
         and r["entry_node_path"] == "ItemGenerator/[0]/PossibleItems/[0]"
         for r in originals)
 assert all("WeaponSID" not in candidate for candidate in attachment_rows)
-print("PASS: 399 sources; 800 base + 108 DLC gear actors; 44 shared attachment actors / 51 safe native redirect rows; 19 attachment sources; shared Bonus Chance stable")
+print(f"PASS: {CATALOG} sources; 800 base + 108 DLC gear actors; 44 shared attachment actors / 51 safe native redirect rows; 19 attachment sources; shared Bonus Chance stable")

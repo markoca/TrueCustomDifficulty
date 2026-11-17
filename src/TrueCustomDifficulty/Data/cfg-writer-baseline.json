@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.1",
-  "supportedParameterCount": 404,
+  "supportedParameterCount": 406,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -1357,7 +1357,7 @@
       "prototype": "BandageHealing2",
       "nodePath": [],
       "key": "Duration",
-      "sourceRaw": "1",
+      "sourceRaw": "1.0",
       "operation": "set",
       "role": "",
       "difficultySid": ""
@@ -1369,7 +1369,7 @@
       "prototype": "MedkitHealing3",
       "nodePath": [],
       "key": "Duration",
-      "sourceRaw": "1",
+      "sourceRaw": "1.0",
       "operation": "set",
       "role": "",
       "difficultySid": ""
@@ -1381,7 +1381,7 @@
       "prototype": "ArmyMedkitHealing4",
       "nodePath": [],
       "key": "Duration",
-      "sourceRaw": "1",
+      "sourceRaw": "1.0",
       "operation": "set",
       "role": "",
       "difficultySid": ""
@@ -1393,7 +1393,7 @@
       "prototype": "EcoMedkitHealing4",
       "nodePath": [],
       "key": "Duration",
-      "sourceRaw": "1",
+      "sourceRaw": "1.0",
       "operation": "set",
       "role": "",
       "difficultySid": ""
@@ -48448,6 +48448,13 @@
       ],
       "synchronizationFile": "GameData/CombatSynchronizationPrototypes.cfg",
       "synchronizationResource": "TrueCustomDifficulty.Data.combat-synchronization-2.1.json"
+    },
+    "weatherHearing": {
+      "note": "RAIN / THUNDER NOISE set AISettings WeatherSettings[3]/[4] (Rainy, LightRainy, source 0.7) and [5] (Thundery, source 0.6) HearingDistanceCoef in GameData/AIGlobals.cfg.",
+      "parameterIds": [
+        "combat.npcRainNoise",
+        "combat.npcStormNoise"
+      ]
     }
   }
 }

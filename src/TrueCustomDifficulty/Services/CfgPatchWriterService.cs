@@ -597,8 +597,9 @@ public sealed partial class CfgPatchWriterService
         if (uncovered.Count > 0)
             throw new InvalidDataException("CFG writer baseline has no status for parameter IDs: " + string.Join(", ", uncovered));
 
-        // Two source-locked weather routes are added outside the frozen baseline file.
-        if (supported.Count != baseline.SupportedParameterCount + 2)
+        // The weather-hearing routes are listed in special.weatherHearing and
+        // counted in supportedParameterCount like every other special writer.
+        if (supported.Count != baseline.SupportedParameterCount)
         {
             throw new InvalidDataException(
                 $"CFG writer baseline supported-parameter count is {baseline.SupportedParameterCount}, but {supported.Count} unique writer mappings were loaded.");

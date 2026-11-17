@@ -32,9 +32,10 @@ def inspect(base_zip, dlc_zip):
     baseline = json.loads(BASELINE.read_text(encoding="utf-8"))
     points = [p for p in baseline["editPoints"] if p["parameterId"].startswith("combat.")]
     # 64 historical routes + MUTANT HEALTH variants (11) + HUMAN AWARENESS /
-    # ENEMY ACCURACY (89, two of them DLC1 weapon settings) — 2026-11-16.
-    if len(points) != 164:
-        raise ValueError(f"expected 164 Combat source edit points, got {len(points)}")
+    # ENEMY ACCURACY (89, two of them DLC1 weapon settings) — 2026-11-16;
+    # + FOG visibility (AIGlobals WeatherSettings[2]) — 2026-11-17.
+    if len(points) != 165:
+        raise ValueError(f"expected 165 Combat source edit points, got {len(points)}")
     if {p["scope"] for p in points} - {"baseGame", "dlc1"}:
         raise ValueError("Combat source has an unknown scope; recheck original provenance")
     with zipfile.ZipFile(base_zip) as base, zipfile.ZipFile(dlc_zip) as dlc:

@@ -8,6 +8,8 @@ import json
 import re
 from collections import Counter
 from pathlib import Path
+import sys as _sys; _sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parent))
+from catalog_census import CATALOG, VISIBLE, HIDDEN, EDIT_POINTS, DIRECT_IDS
 
 root = Path(__file__).resolve().parents[1]
 src = root / "src/TrueCustomDifficulty"
@@ -18,7 +20,7 @@ parameters = json.loads(read(data / "parameters.json"))["parameters"]
 catalog = {p["id"]: p for p in parameters}
 baseline = json.loads(read(data / "cfg-writer-baseline.json"))
 stash = {p["id"]: p for p in parameters if p["tab"] == "stashes"}
-assert len(parameters) == baseline["supportedParameterCount"] == 399
+assert len(parameters) == baseline["supportedParameterCount"] == CATALOG
 assert len(stash) == 42
 assert len(catalog) == len(parameters), "Duplicate parameter ID"
 assert Counter(p["group"] for p in stash.values()) == {

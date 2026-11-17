@@ -13,6 +13,10 @@ POST_361_IDS = frozenset({
     "combat.npcGrenadeRate", "combat.npcSuppressionRate", "combat.npcFlankRate",
     "combat.npcPushRate", "combat.npcCamperPunishRate", "combat.npcAccuracy",
     "combat.npcSightRange", "combat.npcHearingRange", "combat.npcAlertMemory",
+    # 2026-11-17: weather AI coefficients and per-item medical HEAL TIME.
+    "combat.npcFogVisibility", "combat.npcRainNoise", "combat.npcStormNoise",
+    "health.bandageHealTime", "health.medkitHealTime", "health.armyMedkitHealTime",
+    "health.ecoMedkitHealTime",
 })
 
 

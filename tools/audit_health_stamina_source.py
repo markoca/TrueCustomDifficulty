@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Validate 69 Health/Stamina direct CFG source routes against original ZIPs.
 
-Provenance-only: exactly 72 directly authored fields plus one value inherited
+Provenance-only: exactly 76 directly authored fields plus one value inherited
 through Player : struct.begin {refkey=[0]}. Not a UE runtime/BPatch test.
 """
 from __future__ import annotations
@@ -29,7 +29,8 @@ def run(base_zip: Path, dlc_zip: Path) -> dict:
         if p["parameterId"].startswith(("health.", "stamina."))
     ]
     by_domain = Counter(p["parameterId"].split(".")[0] for p in points)
-    if dict(by_domain) != {"health": 47, "stamina": 26}:  # foodHealing covers 4 food items x 2
+    # foodHealing covers 4 food items x 2; + 4 per-item HEAL TIME Duration points.
+    if dict(by_domain) != {"health": 51, "stamina": 26}:
         raise ValueError(f"Health/Stamina direct inventory drifted: {dict(by_domain)}")
     if any(p["scope"] != "baseGame" for p in points):
         raise ValueError("Health/Stamina direct CFG source scope drifted from baseGame")
@@ -71,9 +72,9 @@ def run(base_zip: Path, dlc_zip: Path) -> dict:
             "parameterId": "stamina.vaultMaxHeight",
             "reason": "Player VaultingParams must be physically traced to [0]"
         })
-    if totals.get("exact") != 72 or totals.get("inherited_exact") != 1:
+    if totals.get("exact") != 76 or totals.get("inherited_exact") != 1:
         failures.append({
-            "reason": "Expected 72 direct authored matches + 1 inherited exact",
+            "reason": "Expected 76 direct authored matches + 1 inherited exact",
             "observedStatuses": dict(totals)
         })
 
@@ -124,7 +125,7 @@ def main() -> int:
     if report["findings"]:
         print("FAIL: original CFG sources require triage")
         return 1
-    print("PASS: 72 original direct matches; VaultingParams inherited from [0]")
+    print("PASS: 76 original direct matches; VaultingParams inherited from [0]")
     print("NOT RUN: in-game VaultingParams BPatch merge and gameplay acceptance")
     return 0
 

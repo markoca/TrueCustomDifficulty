@@ -2,6 +2,8 @@
 """Fail-closed source and UI guard for category-only trader stock editor."""
 from pathlib import Path
 import json
+import sys as _sys; _sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parent))
+from catalog_census import CATALOG, VISIBLE, HIDDEN, EDIT_POINTS, DIRECT_IDS
 
 root = Path(__file__).resolve().parents[1]
 src = root / "src/TrueCustomDifficulty"
@@ -9,9 +11,9 @@ catalog = json.loads((src / "Data/parameters.json").read_text(encoding="utf-8"))
 baseline = json.loads((src / "Data/cfg-writer-baseline.json").read_text(encoding="utf-8"))
 rows = catalog["parameters"]
 by = {p["id"]: p for p in rows}
-assert len(by) == len(rows) == baseline["supportedParameterCount"] == 399
-assert sum(p.get("exposeInUi", True) for p in rows) == 199
-assert sum(p.get("exposeInUi") is False for p in rows) == 200
+assert len(by) == len(rows) == baseline["supportedParameterCount"] == CATALOG
+assert sum(p.get("exposeInUi", True) for p in rows) == VISIBLE
+assert sum(p.get("exposeInUi") is False for p in rows) == HIDDEN
 buys = {p["id"] for p in rows if p["id"].startswith("economy.traderBuys.")}
 sells = {p["id"] for p in rows if p["id"].startswith("economy.traderSells.")}
 assert len(buys) == 40 and len(sells) == 31
@@ -99,4 +101,4 @@ assert 'roleItemKeys.Contains(TraderOffersPolicy.Key(role.Id, r.ItemSid))' in wr
 assert 'roleChanges.Select(c => c.Category.Label)' in writer
 assert 'Dlc1OnlyParameterIds' in policy
 assert 'trader-sells-2.1-runtime.csv' in (src / "TrueCustomDifficulty.csproj").read_text(encoding="utf-8")
-print("PASS: 399 source IDs, 40 legacy BUY flags, 31 source-backed SELL category toggles; category-only trader UI")
+print(f"PASS: {CATALOG} source IDs, 40 legacy BUY flags, 31 source-backed SELL category toggles; category-only trader UI")

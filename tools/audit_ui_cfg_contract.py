@@ -4,6 +4,8 @@ import csv
 import json
 from collections import Counter, defaultdict
 from pathlib import Path
+import sys as _sys; _sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parent))
+from catalog_census import CATALOG, VISIBLE, HIDDEN, EDIT_POINTS, DIRECT_IDS
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src" / "TrueCustomDifficulty"
@@ -146,8 +148,8 @@ def main():
     # These are the CURRENT catalog invariants, not v0.9.26.51's 199/188
     # obsolete snapshot. The core must route every parameter, even hidden
     # aggregate backings; 13 independent source IDs are audit-only.
-    if len(parameters) != 399:
-        fail(f"catalog count drifted: {len(parameters)} != 399")
+    if len(parameters) != CATALOG:
+        fail(f"catalog count drifted: {len(parameters)} != {CATALOG}")
     if len(all_ids) != len(parameters):
         fail("duplicate catalog parameter IDs")
 
@@ -158,11 +160,12 @@ def main():
     hidden_non_ui = all_ids - effective_ui_ids
     backing_ids = hidden_ids - EXPECTED_HIDDEN_NON_UI
 
-    if len(visible_ids) != 199 or len(hidden_ids) != 200:
-        fail(f"live visible/hidden catalog drift: {len(visible_ids)}/{len(hidden_ids)} != 199/200")
+    if len(visible_ids) != VISIBLE or len(hidden_ids) != HIDDEN:
+        fail(f"live visible/hidden catalog drift: {len(visible_ids)}/{len(hidden_ids)} != {VISIBLE}/{HIDDEN}")
     if not EXPECTED_HIDDEN_NON_UI.issubset(hidden_ids):
         fail(f"declared non-UI controls became visible or vanished: {sorted(EXPECTED_HIDDEN_NON_UI-hidden_ids)}")
-    if len(effective_ui_ids) != 382 or len(backing_ids) != 183:
+    # +3 weather knobs and +4 per-item HEAL TIME bars (2026-11-17).
+    if len(effective_ui_ids) != 389 or len(backing_ids) != 187:
         fail(f"active source dimension count drifted: {len(effective_ui_ids)} / {len(backing_ids)} backing")
 
     # Named legacy aggregate cohorts are evidence, not the complete editor

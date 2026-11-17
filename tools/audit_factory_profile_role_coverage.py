@@ -3,6 +3,8 @@
 import json
 import re
 from pathlib import Path
+import sys as _sys; _sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parent))
+from catalog_census import CATALOG, VISIBLE, HIDDEN, EDIT_POINTS, DIRECT_IDS
 
 ROOT = Path(__file__).resolve().parents[1]
 matrix = json.loads((ROOT/"tools/factory_profile_role_coverage_2026_10_19.json").read_text(encoding="utf-8"))
@@ -10,7 +12,7 @@ catalog = json.loads((ROOT/"src/TrueCustomDifficulty/Data/parameters.json").read
 sources = {p["id"]:p for p in catalog["parameters"]}
 names = matrix["profiles"]
 assert len(names)==len(set(names))==12
-assert len(sources)==399 and matrix["sourceCount"]==288
+assert len(sources)==CATALOG and matrix["sourceCount"]==288
 # Historical 2026-10-19 role-target ledger covers original 288 IDs; the
 # new 40 Trader Buys cells intentionally start neutral in every preset.
 trader_buys = {p["id"]: p for p in sources.values() if p["id"].startswith("economy.traderBuys.")}
@@ -72,6 +74,6 @@ for index,name in enumerate(names):
                "loot.expensiveStashDrinksChance","loot.expensiveStashGrenadesChance"):
         assert 0<=get(id)<=1,(name,id)
     assert matrix["roleResults"][name]["newChanges"]>=30,name
-print("PASS: 12 factory roles / 399 catalog sources each (40 neutral Trader Buys + 31 Trader Sells) / 49 curated control dimensions")
+print(f"PASS: 12 factory roles / {CATALOG} catalog sources each (40 neutral Trader Buys + 31 Trader Sells) / 49 curated control dimensions")
 print("PASS: native bounds, absolute snaps, ordered stages, stash chance, exclusive gear/shuffle, pristine-only migration map")
 print("NOT TESTED: WPF publish, actual .NET preset import, BPatch, Wine or UE gameplay.")

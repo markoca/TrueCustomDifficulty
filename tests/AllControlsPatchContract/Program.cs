@@ -60,7 +60,7 @@ internal static partial class Program
                 && points[0].Prototype == prototype
                 && points[0].Key == "Duration"
                 && points[0].Operation == "set"
-                && points[0].SourceRaw == "1",
+                && points[0].SourceRaw == "1.0", // exact 2.1 source spelling
                 $"Medical HEAL TIME writer mapping: {id}");
         }
         Check(!Catalog.Parameters.Any(p => p.Id == "health.healTime"),
