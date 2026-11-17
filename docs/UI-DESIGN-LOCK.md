@@ -1,3 +1,9 @@
+## 2026-11-18 — CURRENT: SMART LOOT texts in player words
+
+* One idea everywhere: smart loot is **the Zone's helping hand** — stashes and bodies slip in what you are running low on. STASH SMART LOOT: `The Zone's helping hand: stashes slip in extra meds, ammo for your guns, food and grenades when you're running low. Vanilla: ON. OFF = stashes hold only their normal loot.` NPC SMART LOOT: `The same helping hand on bodies: dead stalkers may carry a bonus pack of meds, ammo or water you're short on.`
+* EXTRA LOOT WHEN STOCKED / WHEN LOW, the four SMART LOOT GIVES checkboxes, BONUS PACKS and the BONUS PACKS card are rewritten short and in the same voice (no *spawn chances*, *roll count*, *zeroes*, *sets of every ordinary (non-quest) stash*).
+* Fixed a wrong claim: WHEN STOCKED said the Basic MEDS / FOOD / DRINKS odds cells still apply to smart loot — they don't (since SMART LOOT GIVES); only SUPPLY REDUCTION does.
+
 ## 2026-11-18 — CURRENT: CONTROLS help — one reset sentence, no stale descriptions
 
 * Reset hints follow one pattern: `Right-click one <bar | track | column | handle | marker | species | rank | category> to reset it; R resets <the whole board | all N>.` (was *Press R with the panel focused to reset the group*, *right-click to reset one source, or press R to reset this card*, *restore its starting setting*, *reset the selection*, *the price group*, *five physical categories*).

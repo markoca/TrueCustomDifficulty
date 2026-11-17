@@ -7824,9 +7824,9 @@
           "Normal NPC consumables, ordinary gear and the independent stash SmartLoot switch are unaffected."
         ]
       },
-      "rationale": "Smart loot on bodies: the bonus packs that react to what you are missing. Vanilla: ON. OFF = ordinary bodies never carry the Medicine, Ammo and Water packs; their regular loot stays.",
-      "logic": "OFF: ordinary corpses never get bonus packs. ON: the packs picked on this board can appear.",
-      "interaction": "The three package chips, NEED BOOST and bonus ammo controls stay saved but are inactive when OFF.",
+      "rationale": "The same helping hand on bodies: dead stalkers may carry a bonus pack of meds, ammo or water you're short on. Vanilla: ON. OFF = bodies carry only their normal loot.",
+      "logic": "OFF removes the bonus packs; BONUS PACKS, NEED BOOST and AMMO PACK SIZE keep their values.",
+      "interaction": "Stash SMART LOOT is a separate switch.",
       "exposeInUi": true
     },
     {
@@ -7864,9 +7864,9 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Bonus packs ordinary human bodies can carry: Medicine, Ammo and Water, in any combination. Vanilla: Novice Medicine + Ammo, Stalker Water, Veteran and Master none.",
-      "logic": "Each chip adds one bonus pack (Medicine, Ammo or Water) to ordinary corpses. Vanilla: Medicine + Ammo on Novice, Water on Stalker, none on Veteran and Master.",
-      "interaction": "Bonus ammo quantity applies whenever the Ammo package is on. Standard medical items are not switched off by any package choice."
+      "rationale": "Which bonus packs bodies can carry: MED, AMMO and WATER, in any mix. Vanilla: Novice MED + AMMO, Stalker WATER, Veteran and Master none.",
+      "logic": "Each chip adds one pack; a pack shows up more often when you're short of that item.",
+      "interaction": "AMMO PACK SIZE sets how big the ammo pack is; MED DROPS is separate."
     },
     {
       "id": "loot.npcMedicalChance",
@@ -8991,9 +8991,9 @@
           "Corpse smart loot is switched off separately: Loot → NPC LOOT → BONUS PACKS with no pack selected."
         ]
       },
-      "rationale": "Smart loot is the part of a stash that reacts to what you are missing. Vanilla: ON. OFF = stashes never top you up; you get only their normal contents.",
-      "logic": "OFF zeroes the smart loot sets of every ordinary (non-quest) stash: spawn chances and roll count. EXTRA LOOT WHEN STOCKED / WHEN LOW are then inactive but keep their values.",
-      "interaction": "SUPPLY REDUCTION and ODDS still shape the normal contents. Corpse bonus packs are separate.",
+      "rationale": "The Zone's helping hand: stashes slip in extra meds, ammo for your guns, food and grenades when you're running low. Vanilla: ON. OFF = stashes hold only their normal loot.",
+      "logic": "OFF removes the extra sets from every ordinary stash; the knobs and checkboxes below keep their values.",
+      "interaction": "SUPPLY REDUCTION and ADJUST ODDS shape the normal loot. Bodies have their own SMART LOOT.",
       "exposeInUi": true
     },
     {
@@ -9038,9 +9038,9 @@
           "Corpse smart loot is separate (BONUS PACKS / NEED BOOST)."
         ]
       },
-      "rationale": "How often stashes still hand you supplies you already have plenty of. Vanilla: 1× (about 10% per set). 0× = smart loot only helps when you are short; 2× = twice as generous. Only works while STASH SMART LOOT is ON.",
-      "logic": "Scales the 'when stocked' chance of every smart loot set, after odds and SUPPLY REDUCTION; never above its 'when low' chance.",
-      "interaction": "EXTRA LOOT WHEN LOW sets the other end. SUPPLY REDUCTION and the Basic MEDS/FOOD/DRINKS odds cells still apply first.",
+      "rationale": "How often stashes still add extras when your pockets are full. Vanilla: 1× (about 10% per set). 0× = help only when you're short. Only works while STASH SMART LOOT is ON.",
+      "logic": "Higher = more freebies even when stocked; never above EXTRA LOOT WHEN LOW.",
+      "interaction": "EXTRA LOOT WHEN LOW sets the other end. SUPPLY REDUCTION still applies.",
       "exposeInUi": true,
       "requiresToggle": "loot.stashSmartLootEnabled"
     },
@@ -9085,9 +9085,9 @@
           "Lowering it removes the game's help when you run low; raising it (capped at 100%) makes stashes reliably top you up."
         ]
       },
-      "rationale": "How strongly stashes help when you run low. Vanilla: 1× (about 70–80% per set). Lower = the Zone stops topping you up; 0× = no smart loot at all. Only works while STASH SMART LOOT is ON.",
-      "logic": "Scales the 'when low' chance of every smart loot set, after odds and SUPPLY REDUCTION; capped at 100%.",
-      "interaction": "EXTRA LOOT WHEN STOCKED sets the other end and never exceeds this one.",
+      "rationale": "How reliably stashes bail you out when you're running low. Vanilla: 1× (about 70–80% per set). 0× = no help at all. Only works while STASH SMART LOOT is ON.",
+      "logic": "Higher = the Zone almost always tops you up (max 100%); lower = you're on your own.",
+      "interaction": "EXTRA LOOT WHEN STOCKED sets the other end and never goes above this. SUPPLY REDUCTION still applies.",
       "exposeInUi": true,
       "requiresToggle": "loot.stashSmartLootEnabled"
     },
@@ -9125,9 +9125,9 @@
           "Item-level medical odds and Medkit/Army Medkit MIN/MAX still apply while ON."
         ]
       },
-      "rationale": "Whether stash smart loot can give meds (Bandage, Medkit, Army Medkit, Anti-Rad). Vanilla: ON. Only works while STASH SMART LOOT is ON.",
-      "logic": "OFF removes this category from stash smart loot; ON keeps vanilla odds. Basic/Standard/Rare cells never touch smart loot.",
-      "interaction": "Smart loot switch, EXTRA LOOT WHEN STOCKED / WHEN LOW and SUPPLY REDUCTION apply on top.",
+      "rationale": "Lets the stash helping hand give meds (bandages, medkits, army medkits, anti-rad). Vanilla: ON. Only works while STASH SMART LOOT is ON.",
+      "logic": "OFF = it never hands out meds; ON = vanilla odds.",
+      "interaction": "EXTRA LOOT WHEN STOCKED / WHEN LOW and SUPPLY REDUCTION still apply.",
       "requiresToggle": "loot.stashSmartLootEnabled",
       "exposeInUi": true
     },
@@ -9165,9 +9165,9 @@
           "Item-level medical odds and Medkit/Army Medkit MIN/MAX still apply while ON."
         ]
       },
-      "rationale": "Whether stash smart loot can give ammo for the weapons you carry. Vanilla: ON. Only works while STASH SMART LOOT is ON.",
-      "logic": "OFF removes this category from stash smart loot; ON keeps vanilla odds. Basic/Standard/Rare cells never touch smart loot.",
-      "interaction": "Smart loot switch, EXTRA LOOT WHEN STOCKED / WHEN LOW and SUPPLY REDUCTION apply on top.",
+      "rationale": "Lets the stash helping hand give ammo for the guns you carry. Vanilla: ON. Only works while STASH SMART LOOT is ON.",
+      "logic": "OFF = it never hands out ammo; ON = vanilla odds.",
+      "interaction": "EXTRA LOOT WHEN STOCKED / WHEN LOW and SUPPLY REDUCTION still apply.",
       "requiresToggle": "loot.stashSmartLootEnabled",
       "exposeInUi": true
     },
@@ -9205,9 +9205,9 @@
           "Item-level medical odds and Medkit/Army Medkit MIN/MAX still apply while ON."
         ]
       },
-      "rationale": "Whether stash smart loot can give food and drinks. Vanilla: ON. Only works while STASH SMART LOOT is ON.",
-      "logic": "OFF removes this category from stash smart loot; ON keeps vanilla odds. Basic/Standard/Rare cells never touch smart loot.",
-      "interaction": "Smart loot switch, EXTRA LOOT WHEN STOCKED / WHEN LOW and SUPPLY REDUCTION apply on top.",
+      "rationale": "Lets the stash helping hand give food and drinks. Vanilla: ON. Only works while STASH SMART LOOT is ON.",
+      "logic": "OFF = it never hands out food and drinks; ON = vanilla odds.",
+      "interaction": "EXTRA LOOT WHEN STOCKED / WHEN LOW and SUPPLY REDUCTION still apply.",
       "requiresToggle": "loot.stashSmartLootEnabled",
       "exposeInUi": true
     },
@@ -9245,9 +9245,9 @@
           "Item-level medical odds and Medkit/Army Medkit MIN/MAX still apply while ON."
         ]
       },
-      "rationale": "Whether stash smart loot can give grenades. Vanilla: ON. Only works while STASH SMART LOOT is ON.",
-      "logic": "OFF removes this category from stash smart loot; ON keeps vanilla odds. Basic/Standard/Rare cells never touch smart loot.",
-      "interaction": "Smart loot switch, EXTRA LOOT WHEN STOCKED / WHEN LOW and SUPPLY REDUCTION apply on top.",
+      "rationale": "Lets the stash helping hand give grenades. Vanilla: ON. Only works while STASH SMART LOOT is ON.",
+      "logic": "OFF = it never hands out grenades; ON = vanilla odds.",
+      "interaction": "EXTRA LOOT WHEN STOCKED / WHEN LOW and SUPPLY REDUCTION still apply.",
       "requiresToggle": "loot.stashSmartLootEnabled",
       "exposeInUi": true
     },

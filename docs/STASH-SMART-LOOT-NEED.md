@@ -114,3 +114,7 @@ LOW, SUPPLY REDUCTION, the per-item medical odds (Bandage…Anti-Rad) and Medkit
 The Basic MEDS / FOOD / DRINKS cells and the hidden legacy `stashMixAmmo` / `stashMixGrenades` change
 only the Basic/Standard/Rare lists. A legacy preset that lowered a Basic cell therefore no longer
 lowers smart loot. No SMART AMOUNT control (decision 2026-11-17).
+
+## 2026-11-18 — panel texts
+
+Player-facing explanation used by every SMART LOOT text: *the Zone's helping hand — stashes (and bodies) slip in what you are running low on.* Only SUPPLY REDUCTION, EXTRA LOOT WHEN STOCKED / WHEN LOW and the SMART LOOT GIVES checkboxes reach stash smart loot; the Basic odds cells do not.
