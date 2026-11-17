@@ -378,12 +378,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 }, text, muted, border, accent, panel);
                 break;
             case "HumanAwareness":
-                DrawCardBoard(dc, "HUMAN AWARENESS", new (string, string)[]
-                {
-                    (HumanCombatPolicy.SightRangeId, "SIGHT"),
-                    (HumanCombatPolicy.HearingRangeId, "HEARING"),
-                    (HumanCombatPolicy.AlertMemoryId, "MEMORY")
-                }, text, muted, border, accent, panel);
+                DrawHumanAwarenessRadar(dc, text, muted, border, accent, panel);
                 break;
             case "AnomalyGlobalDamage":
                 DrawAnomalyGlobalDamage(dc, text, muted, border, accent, panel);
@@ -492,7 +487,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // All three Equipment rings draw their own matching Combat-style halo.
         // The generic map-center glow would be in the wrong position here.
         if (Family is "EquipmentWearBalance" or "FlycatcherSlowdown"
-            or "AnomalyGlobalDamage" or "AnomalySpecialEffects" or "PlayerWeaponProfile")
+            or "AnomalyGlobalDamage" or "AnomalySpecialEffects" or "PlayerWeaponProfile"
+            or "HumanAwareness")
             return;
         if (Family == "HumanCombatProfile" && target.Kind == HitKind.Knob)
             return;
@@ -6798,7 +6794,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             HitKind.Horizontal or HitKind.RangeMin or HitKind.RangeMax => Cursors.SizeWE,
             HitKind.Vertical => Cursors.SizeNS,
             HitKind.Knob => Cursors.Hand,
-            HitKind.HumanJoint or HitKind.HungerJoint or HitKind.FatigueJoint or HitKind.FatigueReloadJoint => Cursors.SizeAll,
+            HitKind.HumanJoint or HitKind.HungerJoint or HitKind.FatigueJoint or HitKind.FatigueReloadJoint
+                or HitKind.RadarRadius or HitKind.RadarArc => Cursors.SizeAll,
             HitKind.Toggle or HitKind.DrinkDurationOverride or HitKind.Choice => Cursors.Hand,
             _ => Cursors.Arrow
         };
@@ -7350,6 +7347,12 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 Math.Clamp(-signedEffect / 100.0, effect.Minimum, effect.Maximum));
             EnforceFamilyConstraints(threshold);
             InvalidateVisual();
+            return;
+        }
+
+        if (target.Kind is HitKind.RadarRadius or HitKind.RadarArc)
+        {
+            UpdateAwarenessTarget(target, point);
             return;
         }
 
@@ -7921,7 +7924,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "ItemWeightBoard" => EconomyBoardHeight(width, 4),
             "ArtifactHunting" => ArtifactHuntingHeight(width),
             "HumanTactics" => EconomyBoardHeight(width, 6),
-            "HumanAwareness" => EconomyBoardHeight(width, 3),
+            "HumanAwareness" => HumanAwarenessHeight(width),
             "AnomalyGlobalDamage" => 242.0,
             "FlycatcherSlowdown" => FlycatcherBoardHeight(width),
             "AnomalySpecialEffects" => 270.0,
@@ -8243,7 +8246,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         Toggle,
         Choice,
         RangeMin,
-        RangeMax
+        RangeMax,
+        RadarRadius,
+        RadarArc
     }
 
     private sealed record HitTarget(

@@ -1,3 +1,22 @@
+## 2026-11-17 — CURRENT: HUMAN AWARENESS detection radar
+
+HUMAN AWARENESS is no longer three slider cards. It is a top-down **detection radar** with the enemy in the centre, facing up (`Controls/AggregateVisualControl.HumanAwareness.cs`).
+
+* **SIGHT:** the vision field.
+  * It reaches 80 m straight ahead (`CentralVisionDistance`) and 25 m at the 85° edge (`PeripheralVisionDistance`, `HorizontalVisionHalvedAngleDegrees`).
+  * The outline between the two source distances is a straight blend. The game's angle curve is a UE asset, not CFG.
+  * Drag the cone tip along the dashed axis. A muted tick marks the Base Preset distance.
+* **HEARING:** the footstep circle (12 m). Drag the handle at the lower right. The dashed circle is the Base Preset.
+* **MEMORY:** the timer ring outside the radar, filled clockwise from the top up to the slider maximum (3× = 90 s). Drag the end of the arc. A tick marks the Base Preset.
+* **Scale:** distances use a square-root scale, so 3 m and 240 m (SIGHT at 3×) stay readable. Rings at 10 / 25 / 50 / 100 / 200 m show true metres.
+* **Legend:** SIGHT / HEARING / MEMORY with the same player texts as the panel (`spots you 80 m ahead, 25 m aside`, `hears steps at 12 m`, `searches for 30 s`). Only the numbers turn gold.
+  * At 600 DIP or wider the legend sits right of the radar.
+  * Below that it sits under the radar.
+* **Interaction:** new hit kinds `RadarRadius` / `RadarArc` (pointer distance / angle → slider value, snapped to the catalog step).
+  * Hover glow sits on the handle itself.
+  * Right-click reset, R group reset and arrow keys work as on every board.
+* Catalog ids, ranges, writer and presets are unchanged. The CONTROLS help describes the radar.
+
 ## 2026-11-17 — CURRENT: ARTIFACT HUNTING in player terms
 
 The cards no longer show a bare factor.

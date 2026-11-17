@@ -103,7 +103,8 @@ for pid in ("combat.npcAccuracy", "combat.npcSightRange", "combat.npcHearingRang
 
 # ---- UI ----------------------------------------------------------------------------------
 for token in ('case "HumanTactics":', 'case "HumanAwareness":', 'DrawCardBoard(dc, "HUMAN TACTICS"',
-              'DrawCardBoard(dc, "HUMAN AWARENESS"', '"HumanTactics" => HumanCombatPolicy.TacticsBoardIds',
+              'DrawHumanAwarenessRadar(dc, text, muted, border, accent, panel)',
+              '"HumanAwareness" => HumanAwarenessHeight(width)', '"HumanTactics" => HumanCombatPolicy.TacticsBoardIds',
               '"HumanAwareness" => HumanCombatPolicy.AwarenessIds', "private static string CardReadout("):
     check(token in ui, f"UI token {token}")
 check('["HumanTactics"] = "combat.npcGrenadeRate"' in pvm and '["HumanAwareness"] = "combat.npcSightRange"' in pvm,
@@ -122,4 +123,9 @@ if dump:
 if failures:
     print(f"\n{len(failures)} failure(s)")
     sys.exit(1)
+radar = (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.HumanAwareness.cs").read_text(encoding="utf-8")
+for token in ("AwarenessSightMeters = 80.0", "AwarenessSideMeters = 25.0", "AwarenessHearingMeters = 12.0",
+              "AwarenessMemorySeconds = 30.0", "AwarenessHalfAngle = 85.0", "HitKind.RadarRadius", "HitKind.RadarArc",
+              "CardValue(parameter, parameter.CurrentNumber)", "ReadoutInk.Numbers(accent, text)"):
+    check(token in radar, f"radar token {token}")
 print("\nHUMAN TACTICS / HUMAN AWARENESS contract OK")
