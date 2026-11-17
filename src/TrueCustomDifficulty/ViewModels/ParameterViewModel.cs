@@ -68,13 +68,12 @@ public sealed class ParameterViewModel : ObservableObject
             : string.Empty)
         + (Id == "loot.npcMedicalChance"
             ? Environment.NewLine + Environment.NewLine
-              + "STANDARD NPC MEDICAL CHANCE\n"
               + "Checked Bandage, Medkit, Army Medkit and Anti-Rad rows replace this "
               + "slider for that item; the two never stack. Unchecked items follow this slider."
             : string.Empty)
         + (Id == "loot.worldAmmoCratesRemoved"
             ? Environment.NewLine + Environment.NewLine
-              + "MOD ITEM REMOVAL — WORLD\n"
+              + "MOD ITEMS — WORLD\n"
               + "Affected mods: ZoneWatch; Point of No Return — Backpacks Pack; "
               + "Point of No Return — Repair System; Point of No Return — AR Goggles Pack.\n"
               + "Removes that share of the mod items added to world stashes and containers: "
@@ -93,7 +92,7 @@ public sealed class ParameterViewModel : ObservableObject
                   + "drinks have no global slider; checked meds replace only their own part "
                   + "of MED DROPS. Water is in the bonus packs. Named NPCs, zombies and "
                   + "stashes are never touched.\n"
-                  + "MOD ITEM REMOVAL — CORPSE\n"
+                  + "MOD LOOT SCARCITY — CORPSE\n"
                   + "Affected mods: Point of No Return — Backpacks Pack; "
                   + "Point of No Return — Repair System.\n"
                   + "Removes that share of the mod items added to human corpses: 0% leaves "

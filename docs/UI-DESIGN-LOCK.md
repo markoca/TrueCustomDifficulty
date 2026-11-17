@@ -1,3 +1,9 @@
+## 2026-11-17 — CURRENT: Master toggles, medicine labels, NPC LOOT cards
+
+* **Master boards:** panel titles now read what the toggle draws — `Starvation Mechanics`, `Severe Fatigue Mechanics`, `Low Health Mechanics`, `Healing Item Efficiency Reduction` (was *Master … Penalties* / *Master Consumable Effect Penalties*); every text that referred to them uses the drawn name (`Only works while STARVATION MECHANICS is ON.`, `… while HEALING ITEM EFFICIENCY REDUCTION is ON`).
+* **Consumable labels = board tokens:** `Energy Drink Regen` (board ENERGY DRINK REGEN), `Psi Block Protection` (PSI BLOCK PROTECTION), `Vinca Bleed Regen` (VINCA BLEED REGEN). SLEEPING board track `HP RESTORE` (was *HEALTH RESTORED*, label Sleep HP Restore). The three short-drink duration labels stay as locked.
+* **NPC LOOT cards** (`NpcLootCards`): each card text is one paragraph with the shared `Vanilla:` sentence; NEED BOOST no longer describes the retired checkbox (needs SMART LOOT ON and one bonus pack; R resets to 1×). Appendix headings name the drawn controls (MOD ITEMS — WORLD, MOD LOOT SCARCITY — CORPSE); the MED DROPS appendix drops its heading (the panel title already says it). DROPPED WEAPON CONDITION rationale states `Vanilla: 25–50%`.
+
 ## 2026-11-17 — CURRENT: panel titles for board anchors, master hints, board/label names
 
 * **Own panel title for board anchors** (`ParameterViewModel.OwnPanelTitle`): a control whose catalog label doubles as its board name shows its own name in the panel — Bandage Healing, Sprint Stamina Cost, Consumable Cost, Electro Base Damage, Blind Dog Part Chance, Newbie Human Group Size, Bloodsucker Spawn. Catalog labels (board names) unchanged.

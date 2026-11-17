@@ -4314,7 +4314,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         const double gap = 12.0;
         var column = (width - gap) / 2.0;
         var maxHealth = Math.Max(1.0, Linked("health.maxHP")?.CurrentNumber ?? 100.0);
-        DrawCompactTrack(dc, healthRestore, "HEALTH RESTORED",
+        DrawCompactTrack(dc, healthRestore, "HP RESTORE",
             $"+{healthRestore.CurrentNumber:0.#} HP · {100.0 * healthRestore.CurrentNumber / maxHealth:0.#}%",
             $"{healthRestore.Minimum:0} HP", $"{healthRestore.Maximum:0} HP",
             new Rect(left, 274.0, column, 82.0),

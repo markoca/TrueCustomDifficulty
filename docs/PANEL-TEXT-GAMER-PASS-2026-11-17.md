@@ -33,3 +33,8 @@ The right-hand panel shows four sections for a selected control: **WHAT IT DOES*
 12. A control that only works behind a master switch ends WHAT IT DOES with `Only works while X is ON.`
 13. The panel title names the clicked control, even when its catalog label is the board name (`OwnPanelTitle`).
 14. Board tokens and labels use the same words (REGEN STRENGTH, STAMINA LOSS, CARRY LOSS, SHOT SPREAD, MAX HP); short contextual tokens (NEWBIE, ELECTRO, WEAPONS) are fine when the board gives the context.
+
+## Fifth pass (same day)
+
+15. When a board's drawn name was explicitly approved (e.g. HEALING ITEM EFFICIENCY REDUCTION, STARVATION MECHANICS), the label follows the board, not the other way round.
+16. NPC LOOT card texts follow rules 8–9 too; card texts must not describe retired controls.
