@@ -41,3 +41,5 @@ All four are `runtime_test_required` and independent of the selected difficulty.
 * `tools/audit_artifact_hunting.py` (with `TCD_BASE_DUMP=<dump>/base` also compares the dump).
 * `tools/audit_cfg_source_values.py --parameter-prefix environment.artifact` → 40/40 exact.
 * Factory presets do not store these ids yet; they load at 1x.
+
+**Card texts (2026-11-17):** `fields regrow at game pace` / `2× faster` / `4× slower`; `artifact chance 25% (+15% bonus)` (`0% · fields stay empty` at 0); `25% rare finds in Master zones`; `1 artifact per spawn`. Track ends show the figure at each slider limit.

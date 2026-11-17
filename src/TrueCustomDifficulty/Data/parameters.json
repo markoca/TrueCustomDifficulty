@@ -13574,7 +13574,7 @@
           "The cooldown unit is not documented in the CFG; the control is a pure rate (2x = half the wait), not a time."
         ]
       },
-      "rationale": "How fast anomaly fields grow new artifacts. Vanilla: 1×. 2× = twice as often, so revisiting a field pays off sooner; 0.5× = artifacts stay rare finds.",
+      "rationale": "How fast anomaly fields grow new artifacts after you loot them. Vanilla: game pace. 2× = fields refill twice as fast, so your favourite loop pays off sooner; 0.5× = every artifact is a hard-won find.",
       "logic": "1x keeps the game's cooldown. 2x halves it, 0.25x makes it four times longer. Whether an artifact actually appears is ARTIFACT SPAWN CHANCE.",
       "interaction": "SPAWN CHANCE decides each attempt, RARE LUCK what kind of artifact appears, ARTIFACTS PER SPAWN how many."
     },
@@ -13620,7 +13620,7 @@
           "SpawnChanceBase (25) and SpawnChanceBonus (15) are both scaled; how the engine applies the bonus is not documented, so both keep their ratio."
         ]
       },
-      "rationale": "How likely an anomaly field is to hold an artifact when it rolls. Vanilla: 25% base +15% bonus. 2× = 50% +30%; 0× = anomaly fields never grow artifacts.",
+      "rationale": "Odds that a field actually drops an artifact when it regrows. Vanilla: 25% (+15% bonus). 2× = 50% (+30%); 0× = anomaly fields never grow artifacts.",
       "logic": "1x keeps the game's 25% / 15%. Each value is multiplied and capped at 100%. 0x removes world anomaly artifacts; quest and unique artifacts stay.",
       "interaction": "RESPAWN RATE sets how often fields roll; RARE LUCK and ARTIFACTS PER SPAWN shape what a successful roll gives."
     },
@@ -13666,7 +13666,7 @@
           "Vanilla split (Common/Uncommon/Rare/Epic): Newbie 80/20/0/0, Experienced 50/48/1.9/0.1, Veteran 30/59/10/1, Master 10/65/20/5. Newbie areas have no rare artifacts and stay unchanged."
         ]
       },
-      "rationale": "How often a found artifact is rare or epic. Vanilla: 1× (Master areas 25% rare or better, Veteran 11%). 2× roughly doubles those odds; 0.5× makes top artifacts a real event.",
+      "rationale": "How often a find is rare or epic. Vanilla: 25% in Master zones, 11% in Veteran. 2× roughly doubles that; 0.5× makes a top-tier artifact a real event. Newbie zones never drop rare ones.",
       "logic": "Rare and Epic shares are multiplied, then all four shares are scaled back to 100%. Beginner (Newbie) areas never grow rare artifacts in the game and keep that.",
       "interaction": "Changes only which rarity a spawned artifact gets. SPAWN CHANCE and RESPAWN RATE decide how many artifacts appear."
     },
@@ -13712,7 +13712,7 @@
           "Count is 1 in every world spawner; whether the engine places several artifacts per spawn needs an in-game check."
         ]
       },
-      "rationale": "How many artifacts one successful spawn puts into an anomaly field. Vanilla: 1. 2-3 make well-searched fields richer.",
+      "rationale": "How many artifacts drop at once when a field spawns. Vanilla: 1. 2–3 turn a well-searched field into a jackpot.",
       "logic": "1 keeps the game's single artifact per spawn. 2 or 3 sets the spawner Count directly.",
       "interaction": "Multiplies every successful roll; SPAWN CHANCE and RESPAWN RATE decide how often that happens."
     },

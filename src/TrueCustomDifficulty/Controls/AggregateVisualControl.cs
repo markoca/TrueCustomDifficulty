@@ -624,16 +624,19 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
     private static string CardValue(ParameterViewModel parameter, double value)
         => HumanCombatPolicy.CardText(parameter.Id, value, parameter.ReferenceNumber)
+            ?? ArtifactSpawnPolicy.CardText(parameter.Id, value)
             ?? EconomyValue(parameter, value);
 
-    // Track ends: the first concrete figure only ("80–140 s", "20 m", "400%"),
+    // Track ends: the first concrete figure only ("80–140 s", "20 m", "400%",
+    // "4× slower", "3 artifacts"),
     // so both ends fit under narrow cards.
     private static readonly System.Text.RegularExpressions.Regex EndpointFigure =
-        new(@"\d+(?:\.\d+)?(?:–\d+(?:\.\d+)?)?\s?(?:%|s\b|m\b)");
+        new(@"\d+(?:\.\d+)?(?:–\d+(?:\.\d+)?)?\s?(?:%|s\b|m\b|× (?:faster|slower)|artifacts?\b)");
 
     private static string CardEndpoint(ParameterViewModel parameter, double value)
     {
-        if (HumanCombatPolicy.CardText(parameter.Id, value, parameter.ReferenceNumber) is not { } concrete)
+        if ((HumanCombatPolicy.CardText(parameter.Id, value, parameter.ReferenceNumber)
+                ?? ArtifactSpawnPolicy.CardText(parameter.Id, value)) is not { } concrete)
             return EconomyValue(parameter, value);
         var figure = EndpointFigure.Match(concrete);
         return figure.Success ? figure.Value : concrete;
@@ -665,8 +668,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "economy.startingMoney" => value.ToString("N0", CultureInfo.InvariantCulture),
             "economy.repairCostBase" or "economy.traderMinBuyCondition" or "economy.itemValueFloor"
                 or "environment.flycatcherMovementSpeed" or "environment.flycatcherTurnSpeed" => $"{value * 100.0:0.#}%",
-            ArtifactSpawnPolicy.SpawnChanceId => ParameterViewModel.ArtifactSpawnChanceDisplay(value),
-            ArtifactSpawnPolicy.CountId => $"{value:0}",
             _ => $"{value:0.##}x"
         };
 

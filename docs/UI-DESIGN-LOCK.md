@@ -1,3 +1,18 @@
+## 2026-11-17 — CURRENT: ARTIFACT HUNTING in player terms
+
+The cards no longer show a bare factor.
+
+| Card | At 1× | Changed examples | Track ends |
+|---|---|---|---|
+| RESPAWN RATE | `fields regrow at game pace` | `fields regrow 2× faster` / `… 4× slower` | `4× slower` … `4× faster` |
+| SPAWN CHANCE | `artifact chance 25% (+15% bonus)` | at 0: `0% · fields stay empty` | `0%` … `100%` |
+| RARE LUCK | `25% rare finds in Master zones` | | Master rare+ share at the slider limits |
+| PER SPAWN | `1 artifact per spawn` | `3 artifacts per spawn` | `1 artifact` … `3 artifacts` |
+
+* The cooldown unit is still not documented in the CFG, so RESPAWN RATE stays relative to the game pace and never shows a time.
+* The panel shows the same text (`ArtifactSpawnPolicy.CardText`). The retired `ArtifactSpawnChanceDisplay` is removed.
+* The four rationales and the CONTROLS help are rewritten in the same voice. RARITY BY ZONE is unchanged.
+
 ## 2026-11-17 — CURRENT: descriptive combat card texts
 
 The combat cards read as short sentences about the enemy. The panel adds the factor in front (`1x · …`).

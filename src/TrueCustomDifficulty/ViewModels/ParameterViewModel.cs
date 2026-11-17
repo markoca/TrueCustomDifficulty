@@ -150,7 +150,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "ItemWeightBoard" => "Adjust ammunition, food and medicine, weapons or armor weight independently.",
                     "HumanTactics" => "Drag a card's track: GRENADES, SUPPRESSION, FLANKING, PUSH and CAMPING PENALTY set how often a squad may start that action (2x = twice as often, the card shows the resulting pause); ENEMY ACCURACY tightens or widens their bullet spread.",
                     "HumanAwareness" => "Drag SIGHT, HEARING or MEMORY: how far human enemies see and hear you and how long they keep searching. SIGHT shows two distances: AHEAD is straight in front of an enemy, SIDE is the edge of his view. Mutants are not changed.",
-                    "ArtifactHunting" => "Drag a card's track: RESPAWN RATE (how often fields roll), SPAWN CHANCE (each roll), RARE LUCK (rarity split, shown per zone below) and PER SPAWN (artifacts per success). Quest and unique artifacts are not changed.",
+                    "ArtifactHunting" => "Drag a card's track: RESPAWN RATE (how fast anomaly fields regrow artifacts), SPAWN CHANCE (odds each regrow actually drops one), RARE LUCK (how often a find is rare or epic, shown per zone below) and PER SPAWN (how many drop at once). Quest and unique artifacts are not changed.",
                     "AnomalyGlobalDamage" => "GLOBAL MULTIPLIER affects all supported anomaly damage. Each anomaly also has its own damage setting; EFFECTIVE includes both before protection.",
                     "AnomalySpecialEffects" => "Adjust Glass Shards bleeding and Psy drain independently. Their other damage effects remain separate.",
                     "NpcLootLoadout" => "SCARCITY scales eligible ordinary NPC consumable Chance and optional corpse SmartLoot activation, not weapons. Other controls select packages, bonus stacks, medical Chance and condition. R also resets NEED BOOST and the item rows; MOD LOOT SCARCITY resets on its own (R with it focused).",
@@ -1283,12 +1283,9 @@ public sealed class ParameterViewModel : ObservableObject
             HumanCombatPolicy.AlertMemoryId => HumanCombatPolicy.MemoryDisplay(CurrentNumber),
             _ when HumanCombatPolicy.Tactics.FirstOrDefault(t => t.Id == Id) is { } tactic
                 => HumanCombatPolicy.TacticDisplay(tactic, CurrentNumber, ReferenceNumber),
-            ArtifactSpawnPolicy.RespawnRateId => Times(CurrentNumber, "respawn"),
-            ArtifactSpawnPolicy.SpawnChanceId => ArtifactSpawnChanceDisplay(CurrentNumber),
-            ArtifactSpawnPolicy.RareLuckId => $"{CurrentNumber:0.##}x · Master zones "
-                + $"{ArtifactSpawnPolicy.RarePlusShare(3, CurrentNumber):0.#}% rare+",
-            ArtifactSpawnPolicy.CountId => CurrentNumber >= 1.5
-                ? $"{CurrentNumber:0} artifacts" : "1 artifact",
+            ArtifactSpawnPolicy.RespawnRateId or ArtifactSpawnPolicy.SpawnChanceId
+                or ArtifactSpawnPolicy.RareLuckId or ArtifactSpawnPolicy.CountId
+                => ArtifactSpawnPolicy.CardText(Id, CurrentNumber)!,
 
             // Medicine strengths are concrete bonuses shown in the game,
             // not x-vanilla multipliers and not speculative rates per second.
@@ -1332,12 +1329,6 @@ public sealed class ParameterViewModel : ObservableObject
     }
 
     // Board and panel: the resulting base + bonus spawn chance.
-    public static string ArtifactSpawnChanceDisplay(double factor)
-    {
-        var (chance, bonus) = ArtifactSpawnPolicy.SpawnChance(factor);
-        return $"{chance:0.#}% +{bonus:0.#}%";
-    }
-
     private static string SignedPercent(double value, string meaning)
     {
         var percent = value * 100.0;

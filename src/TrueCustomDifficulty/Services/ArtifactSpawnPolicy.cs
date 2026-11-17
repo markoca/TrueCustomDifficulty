@@ -84,6 +84,42 @@ public static class ArtifactSpawnPolicy
         return shares[2] + shares[3];
     }
 
+    /// <summary>
+    /// Card text in player terms (no bare factor): "fields regrow 2× faster",
+    /// "artifact chance 25% (+15% bonus)", "25% rare finds in Master zones",
+    /// "1 artifact per spawn". Null for other ids.
+    /// </summary>
+    public static string? CardText(string id, double value) => id switch
+    {
+        RespawnRateId => RespawnText(value),
+        SpawnChanceId => SpawnChanceText(value),
+        RareLuckId => string.Create(System.Globalization.CultureInfo.InvariantCulture,
+            $"{RarePlusShare(3, value):0.#}% rare finds in Master zones"),
+        CountId => value >= 1.5
+            ? string.Create(System.Globalization.CultureInfo.InvariantCulture, $"{value:0} artifacts per spawn")
+            : "1 artifact per spawn",
+        _ => null
+    };
+
+    private static string RespawnText(double rate)
+    {
+        var c = System.Globalization.CultureInfo.InvariantCulture;
+        if (Math.Abs(rate - 1.0) < 0.0000001)
+            return "fields regrow at game pace";
+        return rate > 1.0
+            ? string.Create(c, $"fields regrow {rate:0.##}× faster")
+            : string.Create(c, $"fields regrow {1.0 / rate:0.##}× slower");
+    }
+
+    private static string SpawnChanceText(double factor)
+    {
+        var (chance, bonus) = SpawnChance(factor);
+        return chance <= 0.0
+            ? "0% · fields stay empty"
+            : string.Create(System.Globalization.CultureInfo.InvariantCulture,
+                $"artifact chance {chance:0.#}% (+{bonus:0.#}% bonus)");
+    }
+
     /// <summary>Base and bonus spawn chance (percent, capped at 100).</summary>
     public static (double Base, double Bonus) SpawnChance(double factor)
         => (Math.Min(100.0, VanillaSpawnChanceBase * factor),

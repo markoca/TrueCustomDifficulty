@@ -104,7 +104,7 @@ check("vanilla[2] + vanilla[3] <= 0.0" in special and "ArtifactSpawnPolicy.Rarit
 # ---- UI ------------------------------------------------------------------------------
 for token in ('case "ArtifactHunting":', 'DrawArtifactHunting(', '"ARTIFACT HUNTING"', '"RARITY BY ZONE"',
               '"ArtifactHunting" => ArtifactHuntingHeight(width)', '"ArtifactHunting" => ArtifactSpawnPolicy.ParameterIds',
-              'ParameterViewModel.ArtifactSpawnChanceDisplay(value)'):
+              'ArtifactSpawnPolicy.CardText(parameter.Id, value)'):
     check(token in ui, f"UI token {token}")
 check(all(f'["{pid}"] = "ArtifactHunting"' in pvm for pid in IDS)
       and '["ArtifactHunting"] = "environment.artifactRespawnRate"' in pvm
