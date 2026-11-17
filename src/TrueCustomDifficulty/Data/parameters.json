@@ -7969,14 +7969,14 @@
       "id": "loot.droppedWeaponCondition",
       "tab": "loot",
       "group": "NPC Loot & Equipment",
-      "label": "NPC Weapon Condition",
+      "label": "Dropped Weapon Condition",
       "description": "Sets the actual minimum and maximum condition of weapons carried by ordinary repeatable human NPC loadouts. Vanilla is left untouched until this control is changed.",
       "control": "range",
       "valueKind": "durabilityAbsoluteRange",
       "display": {
         "primary": "percent",
         "rawFormat": "0.00",
-        "valueLabel": "NPC weapon condition"
+        "valueLabel": "Dropped weapon condition"
       },
       "vanilla": {
         "All": 1

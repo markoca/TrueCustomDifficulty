@@ -1,4 +1,10 @@
 
+## 2026-11-17 — CURRENT: DROPPED WEAPON CONDITION aligned with corpse knobs
+
+* **NPC LOOT & EQUIPMENT:** the condition editor is titled **DROPPED WEAPON CONDITION**, matching its actual `loot.droppedWeaponCondition` source. The selected card title and catalog display label use the same wording (no implication that inventory/world weapons are affected). No numeric parameter, preset key, CFG writer, trader floor semantics or linked source changes.
+* On the ≥600-DIP two-column NPC layout, **SCARCITY**, **MED DROPS**, **MOD LOOT SCARCITY**, and **DROPPED WEAPON CONDITION** share the same top and bottom edges: the range card uses the existing 88-DIP compact dial row height rather than the former 139-DIP ammo preview height. The narrow stacked fallback likewise uses an 88-DIP condition row. The next section follows the compact row with its existing 12-DIP gap.
+* Inside the shorter condition panel, the title and read-only **TRADER ACCEPTS** threshold fit the top caption row, MIN/MAX and current percentages sit above the shared rail, and the 0–100% endpoints remain inside the bottom edge. Keep two native independently draggable handles, reference band, trader threshold dash, hover, keyboard and right-click reset. No extra labels or vertical empty space.
+
 ## 2026-11-17 — CURRENT: Source-gated COUPONS cells in STASH LOOT MIX
 
 * The pinned STALKER 2.1 baseline has Basic (`GamePass_Stash_ItemGenerator_Cheap`) coupon **Weight** rows and Standard (`GamePass_Stash_ItemGenerator_Common_Var1`) coupon **Chance=0.1** rows only under native `EGameDifficulty::Easy, EGameDifficulty::Medium`; ranks Experienced/Veteran/Master are eligible, Newbie is not. Native `Hard/Stalker` has **no Basic/Standard coupon rows**. Rare contains coupon Chance rows for all four native difficulties (0.2 Easy/Medium, 0.1 Hard/Stalker).

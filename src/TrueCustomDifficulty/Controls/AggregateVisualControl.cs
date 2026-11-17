@@ -1491,15 +1491,15 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             ammo = new Rect(boost.Right + gap, contentTop,
                 smart.Right - 10.0 - (boost.Right + gap), middleHeight);
 
-            // Ordinary corpse modifiers share the left half of the next row;
-            // condition occupies its right half without creating a third row.
+            // Ordinary corpse modifiers and the dropped-weapon range
+            // occupy one equal-height row, aligned at both edges.
             top = smart.Bottom + gap;
             var half = (contentWidth - gap) / 2.0;
             var knobWidth = (half - 2.0 * gap) / 3.0;
             supply = new Rect(left, top, knobWidth, scalarHeight);
             medical = new Rect(supply.Right + gap, top, knobWidth, scalarHeight);
             mod = new Rect(medical.Right + gap, top, knobWidth, scalarHeight);
-            condition = new Rect(left + half + gap, top, half, middleHeight);
+            condition = new Rect(left + half + gap, top, half, scalarHeight);
             top = condition.Bottom;
         }
         else
@@ -1520,7 +1520,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             supply = new Rect(left, top, knobWidth, scalarHeight);
             medical = new Rect(supply.Right + gap, top, knobWidth, scalarHeight);
             mod = new Rect(medical.Right + gap, top, knobWidth, scalarHeight);
-            condition = new Rect(left, supply.Bottom + gap, contentWidth, middleHeight);
+            condition = new Rect(left, supply.Bottom + gap, contentWidth, scalarHeight);
             top = condition.Bottom;
         }
 
@@ -1819,18 +1819,18 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawNpcModItemsCard(dc, layout.Mod, text, muted, border, accent, panel);
 
         var rangeCard = layout.Condition;
-        // This is a dual-ended native RANGE, not two normal slider
-        // headers. Show the two editable figures together in the middle
-        // of the card, immediately above their shared physical rail.
+        // Equal-height companion to the three compact corpse knobs.
+        // Preserve the two native range handles, the trader floor marker
+        // and a single physical rail without a tall, misaligned panel.
         dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 1.0),
             rangeCard, 4.0, 4.0);
-        DrawText(dc, "WEAPON CONDITION",
-            new Point(rangeCard.Left + 11.0, rangeCard.Top + 8.0),
+        DrawText(dc, "DROPPED WEAPON CONDITION",
+            new Point(rangeCard.Left + 11.0, rangeCard.Top + 7.0),
             VisualControlTypography.CardTitle, text, FontWeights.Bold);
         var accepted = Linked("economy.traderMinBuyCondition");
         if (accepted is not null)
             DrawDerivedRight(dc, $"TRADER ACCEPTS ≥ {accepted.CurrentNumber * 100.0:0}%",
-                new Point(rangeCard.Right - 11.0, rangeCard.Top + 29.0),
+                new Point(rangeCard.Right - 11.0, rangeCard.Top + 8.0),
                 8.8, muted, accent, FontWeights.SemiBold);
 
         var minModified = Math.Abs(condition.CurrentMinNumber - 0.25) > Epsilon;
@@ -1842,25 +1842,25 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // Fixed central readouts never collide, even at MIN == MAX,
         // unlike labels following handles to the same X coordinate.
         DrawCenteredText(dc, "MIN",
-            new Point(minReadoutX, rangeCard.Top + 48.0),
+            new Point(minReadoutX, rangeCard.Top + 23.0),
             9.6, muted, FontWeights.Bold);
         DrawCenteredText(dc, "MAX",
-            new Point(maxReadoutX, rangeCard.Top + 48.0),
+            new Point(maxReadoutX, rangeCard.Top + 23.0),
             9.6, muted, FontWeights.Bold);
         DrawCenteredText(dc, $"{condition.CurrentMinNumber * 100.0:0}%",
-            new Point(minReadoutX, rangeCard.Top + 64.0),
+            new Point(minReadoutX, rangeCard.Top + 37.0),
             minModified ? 14.2 : 13.0,
             minModified ? ReadoutInk.Numbers(accent, text) : text, FontWeights.SemiBold);
         DrawCenteredText(dc, $"{condition.CurrentMaxNumber * 100.0:0}%",
-            new Point(maxReadoutX, rangeCard.Top + 64.0),
+            new Point(maxReadoutX, rangeCard.Top + 37.0),
             maxModified ? 14.2 : 13.0,
             maxModified ? ReadoutInk.Numbers(accent, text) : text, FontWeights.SemiBold);
         dc.DrawLine(new Pen(CloneWithOpacity(border, 0.60), 0.8),
-            new Point(center, rangeCard.Top + 49.0),
-            new Point(center, rangeCard.Top + 82.0));
+            new Point(center, rangeCard.Top + 24.0),
+            new Point(center, rangeCard.Top + 52.0));
 
-        var rail = new Rect(rangeCard.Left + 20.0, rangeCard.Top + 95.0,
-            Math.Max(1.0, rangeCard.Width - 40.0), 12.0);
+        var rail = new Rect(rangeCard.Left + 20.0, rangeCard.Top + 56.0,
+            Math.Max(1.0, rangeCard.Width - 40.0), 10.0);
         var y = rail.Top + rail.Height / 2.0;
         var xMin = ValueToX(condition.CurrentMinNumber, 0.0, 1.0, rail, false);
         var xMax = ValueToX(condition.CurrentMaxNumber, 0.0, 1.0, rail, false);
@@ -1870,7 +1870,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             // in the surviving range is sold at a given price.
             var acceptedX = ValueToX(accepted.CurrentNumber, 0.0, 1.0, rail, false);
             dc.DrawLine(new Pen(muted, 1.6) { DashStyle = DashStyles.Dash },
-                new Point(acceptedX, y - 16.0), new Point(acceptedX, y + 16.0));
+                new Point(acceptedX, y - 12.0), new Point(acceptedX, y + 12.0));
         }
 
         var backPen = new Pen(CloneWithOpacity(border, 0.85), 3.5)
@@ -1929,10 +1929,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         AddRangeTarget(condition, fullHit, rail, HitKind.RangeMin);
         AddRangeTarget(condition, fullHit, rail, HitKind.RangeMax);
 
-        DrawText(dc, "0%", new Point(rail.Left, rangeCard.Bottom - 19.0),
+        DrawText(dc, "0%", new Point(rail.Left, rangeCard.Bottom - 16.0),
             9.5, muted, FontWeights.Normal);
         DrawRightAlignedText(dc, "100%",
-            new Point(rail.Right, rangeCard.Bottom - 19.0),
+            new Point(rail.Right, rangeCard.Bottom - 16.0),
             9.5, muted, FontWeights.Normal);
 
         DrawNpcConsumables(dc, text, muted, border, accent, panel);

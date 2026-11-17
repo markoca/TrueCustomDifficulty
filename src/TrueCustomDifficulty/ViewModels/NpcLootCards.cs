@@ -57,7 +57,7 @@ public static class NpcLootCards
                 + "Cuts how often their extra items show up on bodies.\n\n"
                 + "0% keeps them as the mod intended, 100% removes them completely. Vanilla loot is never touched.",
                 "Tick the box to use it, then drag the dial or use the mouse wheel. Right-click or R resets to 0%."),
-            new(WeaponCondition, "loot.droppedWeaponCondition", "WEAPON CONDITION", "Weapon Condition",
+            new(WeaponCondition, "loot.droppedWeaponCondition", "DROPPED WEAPON CONDITION", "Dropped Weapon Condition",
                 "The condition of guns you pick up from dead NPCs. "
                 + "Vanilla is 25–50%, which is why most looted weapons are close to junk.\n\n"
                 + "Set your own MIN and MAX. The dashed line shows the lowest condition traders still buy.\n\n"
