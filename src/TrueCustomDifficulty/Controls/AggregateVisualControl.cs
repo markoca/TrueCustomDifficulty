@@ -2529,7 +2529,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var thresholds = new[] { low, medium, severe };
         var aims = new[] { lowAim, mediumAim, severeAim };
         var reloads = new[] { mediumReload, severeReload };
-        DrawCenteredText(dc, "FATIGUE POINTS (0-100)",
+        DrawCenteredText(dc, "FATIGUE POINTS (0–100)",
             new Point(area.Left + area.Width / 2, top + 25), 10.2, text, FontWeights.Bold);
         var left = new Point(area.Left - 55, area.Top + area.Height / 2);
         dc.PushTransform(new RotateTransform(-90, left.X, left.Y));
@@ -3943,7 +3943,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             dc.DrawLine(new Pen(border, 1.0) { DashStyle = DashStyles.Dot },
                 new Point(x, timeline.Top - 11.0),
                 new Point(x, timeline.Top + 111.0));
-            DrawCenteredText(dc, $"{seconds:0}s",
+            DrawCenteredText(dc, $"{seconds:0} s",
                 new Point(x, timeline.Top - 20.0),
                 9.6, muted, FontWeights.SemiBold);
         }
@@ -4019,7 +4019,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
             var modified = parameter.IsValueModifiedFromReference();
             DrawRightAlignedText(dc,
-                $"{durations[i] * parameter.CurrentNumber:0.#}s",
+                $"{durations[i] * parameter.CurrentNumber:0.#} s",
                 new Point(preview.Right - 12.0, y - 9.0),
                 modified ? 12.2 : 11.0, modified ? ReadoutInk.Numbers(accent, text) : text,
                 FontWeights.Bold);
@@ -4046,7 +4046,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             dc.DrawLine(new Pen(border, 1.0) { DashStyle = DashStyles.Dot },
                 new Point(x, medicineFirstY - 10.0),
                 new Point(x, medicineFirstY + 2.0 * 23.0 + 9.0));
-            DrawCenteredText(dc, $"{seconds:0}s",
+            DrawCenteredText(dc, $"{seconds:0} s",
                 new Point(x, medicineAxisY),
                 9.6, muted, FontWeights.SemiBold);
         }
@@ -4086,7 +4086,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
 
             var modified = source.IsValueModifiedFromReference();
-            DrawRightAlignedText(dc, $"{source.CurrentNumber:0}s",
+            DrawRightAlignedText(dc, $"{source.CurrentNumber:0} s",
                 new Point(preview.Right - 12.0, y - 9.0),
                 modified ? 12.2 : 11.0,
                 modified ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
@@ -4167,8 +4167,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             energyCellWidth, ConsumableMiniKnobHeight);
 
         DrawMiniConsumableKnob(dc, waterRegenTime, "WATER BONUS DURATION",
-            $"{waterRegenTime.CurrentNumber:0.#}s",
-            $"{waterRegenTime.Minimum:0.#}s", $"{waterRegenTime.Maximum:0.#}s",
+            $"{waterRegenTime.CurrentNumber:0.#} s",
+            $"{waterRegenTime.Minimum:0.#} s", $"{waterRegenTime.Maximum:0.#} s",
             WaterCell(0), text, muted, border, accent, panel, WaterEffectLineBrush);
         // The native source scales -10% SPDrain. Show that signed player
         // effect directly instead of a positive percentage + LESS suffix.
@@ -4183,12 +4183,12 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "0%", "50%", WaterCell(2),
             text, muted, border, accent, panel, WaterCostCutLineBrush);
         DrawMiniConsumableKnob(dc, energyFullCostTime, "NO COST DURATION",
-            $"{energyFullCostTime.CurrentNumber:0.#}s",
-            $"{energyFullCostTime.Minimum:0.#}s", $"{energyFullCostTime.Maximum:0.#}s",
+            $"{energyFullCostTime.CurrentNumber:0.#} s",
+            $"{energyFullCostTime.Minimum:0.#} s", $"{energyFullCostTime.Maximum:0.#} s",
             EnergyCell(0), text, muted, border, accent, panel, EnergyDrinkEffectLineBrush);
         DrawMiniConsumableKnob(dc, energyPartialCostTime, "-30% COST DURATION",
-            $"{energyPartialCostTime.CurrentNumber:0.#}s",
-            $"{energyPartialCostTime.Minimum:0.#}s", $"{energyPartialCostTime.Maximum:0.#}s",
+            $"{energyPartialCostTime.CurrentNumber:0.#} s",
+            $"{energyPartialCostTime.Minimum:0.#} s", $"{energyPartialCostTime.Maximum:0.#} s",
             EnergyCell(1), text, muted, border, accent, panel,
             EnergyDrinkPartialCostLineBrush);
 
@@ -4733,7 +4733,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private static string StageOnsetEstimate(double threshold, double pointsPerSecond)
     {
         if (threshold <= Epsilon)
-            return "0s";
+            return "0 s";
         if (pointsPerSecond <= Epsilon)
             return "NEVER";
 
@@ -4752,7 +4752,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private static string StarvationElapsed(double seconds)
     {
         if (seconds < 60.0)
-            return $"{seconds:0.#}s";
+            return $"{seconds:0.#} s";
         var hours = (int)(seconds / 3600.0);
         var minutes = (int)((seconds % 3600.0) / 60.0);
         var remaining = seconds % 60.0;
@@ -4875,13 +4875,13 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 // Suppress closely packed intermediate timestamp captions;
                 // the native controls still show the exact interval.
                 if (tick == previewTicks || tickGap >= 45.0)
-                    DrawCenteredText(dc, $"{seconds:0.#}s",
+                    DrawCenteredText(dc, $"{seconds:0.#} s",
                         new Point(x, preview.Top + 91.0),
                         9.2, muted, FontWeights.Normal);
             }
-            DrawText(dc, "0s", new Point(axis.Left, preview.Top + 110.0),
+            DrawText(dc, "0 s", new Point(axis.Left, preview.Top + 110.0),
                 9.0, muted, FontWeights.Normal);
-            DrawCenteredText(dc, $"START {startSeconds:0.#}s",
+            DrawCenteredText(dc, $"START {startSeconds:0.#} s",
                 new Point(Math.Clamp(startX, axis.Left + 65.0, axis.Right - 55.0),
                     preview.Top + 110.0),
                 9.0, muted, FontWeights.SemiBold);

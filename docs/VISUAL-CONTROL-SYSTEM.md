@@ -1,3 +1,9 @@
+## 2026-11-18 — CURRENT: seconds, axis captions, separators
+
+* Single time readouts put a space before the unit like HUMAN TACTICS and the panel texts: `45 s`, `0 s`, `START 3 s` on the consumable / drink timelines, water and energy-drink duration knobs and hunger/fatigue timers (compound clocks such as `~1h05m` keep their compact form).
+* Meter axis captions share one form: `HUNGER POINTS (0–100)`, `FATIGUE POINTS (0–100)`, `BLEEDING POINTS (0–100)` (was `0-100` / `BLEEDING POINTS  /  0-100`).
+* Row-card value lines and practical examples use ` · ` as separator, `→` for vanilla → current and en dashes for ranges (`Example · Bandage: 40% vanilla → 20% current`, `Vanilla: Novice … · Stalker …`), instead of ` - ` and `->`.
+
 ## 2026-11-18 — CURRENT: × everywhere; typography pass
 
 * **Multiplier sign is `×` in every readout**, not the letter `x`: board values, axis ticks, min/max captions, panel CURRENT values, MUTANT AGGRESSION / HUMAN TACTICS / AWARENESS readouts (`1.4× · …`), TRADER STOCK supply, ALife radars, item price radar, anomaly dials, unit `×` on the water / fatigue-relief rulers, and the build-error / preset-error messages. `HumanCombatPolicy.WithoutFactor` strips a leading `… ×` factor. Catalog strings follow (44). ReadoutInk is unchanged (only digits turn gold; `×` stays in the unit colour).

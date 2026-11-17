@@ -215,7 +215,7 @@ public sealed class BleedingCurveControl : FrameworkElement
 
         DrawText(dc, "BLEEDING DAMAGE PROFILE", new Point(16, 142),
             11.4, accent, FontWeights.Bold);
-        DrawCenteredText(dc, "BLEEDING POINTS  /  0-100",
+        DrawCenteredText(dc, "BLEEDING POINTS (0–100)",
             new Point(ActualWidth / 2.0 + 14, 160), 10.2, text, FontWeights.Bold);
         // Rotate the Y-axis caption like the other profile charts; keep
         // the vertical tick numerals and plot bounds where they are.

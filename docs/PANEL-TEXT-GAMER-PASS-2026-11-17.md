@@ -67,3 +67,8 @@ The right-hand panel shows four sections for a selected control: **WHAT IT DOES*
 
 26. The multiplier sign is `×` everywhere — readouts, ticks, panel texts, messages. Never the letter `x`.
 27. Numeric ranges use an en dash (`9–12`).
+
+## Twelfth pass (2026-11-18)
+
+28. Units follow the number after a space (`45 s`, `12 m`, `40 kg`); compact clocks (`1h05m`) are the exception.
+29. Separators: ` · ` between parts, `→` for before → after, en dash for ranges.

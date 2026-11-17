@@ -3339,7 +3339,7 @@ for _rate, _threshold, _seconds in (
 ):
     if int(_threshold / _rate) != _seconds:
         fail(f'Hunger onset calculation changed: {_threshold} / {_rate}')
-if not all(x in _hunger_source for x in ('return "0s";', 'return "NEVER";')):
+if not all(x in _hunger_source for x in ('return "0 s";', 'return "NEVER";')):
     fail('Hunger zero-threshold/rate guards absent')
 else:
     note('Hunger: three merged stage/PTS/AFTER/RECOVERY summaries, no extra sliders')
