@@ -44,12 +44,13 @@ internal static partial class Program
 
             var ids = Catalog.Parameters.Select(p => p.Id).ToHashSet(StringComparer.Ordinal);
             var tested = ids.Except(NonUi, StringComparer.Ordinal).OrderBy(x => x, StringComparer.Ordinal).ToArray();
-            Check(ids.Count == 399 && NonUi.IsSubsetOf(ids) && tested.Length == 376,
-                "Expected 399 catalog sources and 376 mounted editable writer probes");
+            Check(ids.Count == 402 && NonUi.IsSubsetOf(ids) && tested.Length == 379,
+                "Expected 402 catalog sources and 379 mounted editable writer probes");
 
             // The ordinary Master/Stalker corpse package contains no bonus
             // NPC_Ammo_Smart, so that source must be explicitly probed where
             // the real native ammo package is active (Novice).
+            VerifyHumanAwarenessWeatherKnobs();
             VerifyReferenceDifficultyVisibility();
             VerifyDormantNpcAmmoNotCounted();
             VerifySingletonCfgPatchAndFileAccounting();
@@ -215,6 +216,31 @@ internal static partial class Program
     // the preset, but must NOT contribute to the writer's applied count or
     // produce an NPC_Ammo_Smart clone. Native sleep recovery is unchanged:
     // this probe should produce no files at all.
+    private static void VerifyHumanAwarenessWeatherKnobs()
+    {
+        var vm = new MainViewModel(Catalog);
+        var anchor = vm.AllParameters.Single(p => p.Id == HumanCombatPolicy.SightRangeId);
+        Check(anchor.IsVisualAggregateAnchor && anchor.IsControlVisible,
+            "The Human Awareness radar must remain the only visible aggregate anchor.");
+
+        foreach (var id in new[]
+        {
+            HumanCombatPolicy.FogVisibilityId,
+            HumanCombatPolicy.RainNoiseId,
+            HumanCombatPolicy.StormNoiseId
+        })
+        {
+            var parameter = vm.AllParameters.Single(p => p.Id == id);
+            Check(HumanCombatPolicy.AwarenessIds.Contains(id)
+                  && parameter.VisualAggregateFamily == "HumanAwareness"
+                  && parameter.IsVisualAggregateMember
+                  && !parameter.IsVisualAggregateAnchor
+                  && !parameter.IsControlVisible
+                  && parameter.IsControlEnabled,
+                $"{id} must stay editable on the Human Awareness board without a duplicate slider card.");
+        }
+    }
+
     private static void VerifyDormantNpcAmmoNotCounted()
     {
         var dir = Path.Combine(Path.GetTempPath(),

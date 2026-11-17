@@ -97,3 +97,9 @@ Current behavior supersedes the earlier display-only cap. SIGHT is really limite
 * RAIN NOISE (`combat.npcRainNoise`) changes both Rainy [3] and LightRainy [4] `HearingDistanceCoef` in `AISettings.WeatherSettings`, from the verified 2.1 source coefficient 0.7. THUNDER NOISE (`combat.npcStormNoise`) changes Thundery [5], source 0.6. Each knob ranges 10–100% with 5% steps.
 * The native 2.1 source is `GameData/AIGlobals.cfg`. Both controls write only hearing values in the singleton cfg_patch and leave visibility, flair, audio, graphics and weather occurrence unchanged. The two direct routes are accounted for separately from the frozen writer-baseline blob; AI-class scope and effective metres require in-game testing.
 
+
+## 2026-11-17 — CURRENT: no duplicate weather sliders below Human Awareness
+
+* `combat.npcRainNoise` and `combat.npcStormNoise` are registered as **HumanAwareness visual-aggregate members** in `ParameterViewModel.VisualAggregateFamilyByParameterId`, like `combat.npcFogVisibility`. The single visible anchor remains `combat.npcSightRange`; the board contains exactly three weather knobs (FOG VISIBILITY, RAIN NOISE, THUNDER NOISE), with **no individual slider cards below it**.
+* Both hearing parameters remain live in `MainViewModel.AllParameters` and the Human Awareness `AwarenessIds`; clicking the knobs still selects the parameter and shows its contextual panel. Preset values, the 2.1 CFG writer destinations, 5%-step snapping, right-click single reset, R group reset and hover/reference coloring are untouched. The AllControlsPatchContract now verifies the board-only visibility for all three weather knobs.
+

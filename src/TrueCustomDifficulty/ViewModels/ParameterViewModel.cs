@@ -149,7 +149,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "ServiceCostsBoard" => "Adjust guide travel, upgrades and repairs separately. Discounts and reputation may still affect final prices.",
                     "ItemWeightBoard" => "Adjust ammunition, food and medicine, weapons or armor weight independently.",
                     "HumanTactics" => "Drag a card's track: GRENADES, SUPPRESSION, FLANKING, PUSH and CAMPING PENALTY set how often a squad may start that action (2x = twice as often, the card shows the resulting pause); ENEMY ACCURACY tightens or widens their bullet spread.",
-                    "HumanAwareness" => "Drag SIGHT (up to 200 m ahead), HEARING (footsteps), or MEMORY (outer timer ring). FOG VISIBILITY is a separate knob for the fog-weather AI visibility coefficient, not a distance. Right-click each control to reset; other weather coefficients are untouched.",
+                    "HumanAwareness" => "Drag SIGHT (up to 200 m ahead), HEARING (footsteps), or MEMORY (outer timer ring). The FOG VISIBILITY, RAIN NOISE and THUNDER NOISE knobs adjust their own weather perception coefficients.",
                     "ArtifactHunting" => "Drag a card's track: RESPAWN RATE (how fast anomaly fields regrow artifacts), SPAWN CHANCE (odds each regrow actually drops one), RARE LUCK (how often a find is rare or epic, shown per zone below) and PER SPAWN (how many drop at once). Quest and unique artifacts are not changed.",
                     "AnomalyGlobalDamage" => "GLOBAL MULTIPLIER affects all supported anomaly damage. Each anomaly also has its own damage setting; EFFECTIVE includes both before protection.",
                     "AnomalySpecialEffects" => "Adjust Glass Shards bleeding and Psy drain independently. Their other damage effects remain separate.",
@@ -615,6 +615,9 @@ public sealed class ParameterViewModel : ObservableObject
         ["combat.npcHearingRange"] = "HumanAwareness",
         ["combat.npcAlertMemory"] = "HumanAwareness",
         ["combat.npcFogVisibility"] = "HumanAwareness",
+        // Weather hearing is edited on this same board; no duplicate slider cards.
+        ["combat.npcRainNoise"] = "HumanAwareness",
+        ["combat.npcStormNoise"] = "HumanAwareness",
         ["environment.artifactRespawnRate"] = "ArtifactHunting",
         ["environment.artifactSpawnChance"] = "ArtifactHunting",
         ["environment.artifactRareLuck"] = "ArtifactHunting",

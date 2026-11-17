@@ -1,3 +1,8 @@
+## 2026-11-17 — CURRENT: no duplicate weather sliders below Human Awareness
+
+* `combat.npcRainNoise` and `combat.npcStormNoise` are registered as **HumanAwareness visual-aggregate members** in `ParameterViewModel.VisualAggregateFamilyByParameterId`, like `combat.npcFogVisibility`. The single visible anchor remains `combat.npcSightRange`; the board contains exactly three weather knobs (FOG VISIBILITY, RAIN NOISE, THUNDER NOISE), with **no individual slider cards below it**.
+* Both hearing parameters remain live in `MainViewModel.AllParameters` and the Human Awareness `AwarenessIds`; clicking the knobs still selects the parameter and shows its contextual panel. Preset values, the 2.1 CFG writer destinations, 5%-step snapping, right-click single reset, R group reset and hover/reference coloring are untouched. The AllControlsPatchContract now verifies the board-only visibility for all three weather knobs.
+
 ## 2026-11-17 — CURRENT: weather hearing (RAIN NOISE / THUNDER NOISE)
 
 * Three small 270-degree knobs are grouped side by side under the SIGHT / HEARING / MEMORY legend: FOG VISIBILITY, RAIN NOISE, THUNDER NOISE. The existing radar is unchanged. Small ticks, hover glow, reference marks, right-click reset, keyboard control, R group reset and only-changed-number accent match the catalog.
