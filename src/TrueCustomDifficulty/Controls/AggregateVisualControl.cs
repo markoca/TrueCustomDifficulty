@@ -2097,9 +2097,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     }
 
     // GUNS TO FIND is the player-facing name for the source-backed weapon
-    // density. It controls occupied compatible shuffle spots, not all guns in
-    // the game; 0% still guarantees one of every regular model. Native 0–100%
-    // slider, reference tick and dependent disable behavior are unchanged.
+    // density. The right-hand "N% OF POSSIBLE SPAWNS" readout is split into
+    // two short lines so it stays legible in the narrow WEAPONS card.
+    // 0% still guarantees one of every regular model; native 0–100% range,
+    // reference tick and dependent shuffle toggle are unchanged.
     private void DrawWorldDensityRow(
         DrawingContext dc, ParameterViewModel parameter, Rect card, double rowTop,
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
@@ -2110,7 +2111,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var right = card.Right - 12.0;
         DrawText(dc, "GUNS TO FIND", new Point(left, rowTop + 2.0),
             9.6, muted, FontWeights.SemiBold);
-        var value = FriendlyValue(parameter);
+        // The full friendly value is "N% of possible spawns". Keep the
+        // numeric percentage in the existing top-right position and the
+        // clarifying qualifier beneath it, not stretched across the label.
+        var value = $"{parameter.CurrentNumber * 100.0:0.#}%";
         var valueText = CreateText(value, 10.6, enabled ? text : muted,
             FontWeights.SemiBold, Math.Max(1.0, right - left));
         if (enabled && parameter.IsValueModifiedFromReference())
@@ -2122,6 +2126,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             }
         dc.DrawText(valueText, new Point(
             right - valueText.WidthIncludingTrailingWhitespace, rowTop + 1.0));
+        DrawRightAlignedText(dc, "OF POSSIBLE SPAWNS",
+            new Point(right, rowTop + 12.0), 7.4,
+            enabled ? muted : CloneWithOpacity(muted, .65), FontWeights.SemiBold);
 
         var track = new Rect(left + 2.0, rowTop + 22.0,
             Math.Max(1.0, right - left - 4.0), 12.0);

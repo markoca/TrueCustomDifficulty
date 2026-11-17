@@ -29,6 +29,12 @@ The writer verifies the guarantee using an exact max-flow allocation before emit
 ## Guns to Find — World Weapon Density
 
 The compact slider under **Shuffle Loose Weapons** is displayed as **GUNS TO FIND**.
+Its right-hand readout says **N% OF POSSIBLE SPAWNS**: the percentage stays on
+the first line and **OF POSSIBLE SPAWNS** is a small second line so it cannot
+crowd the left-hand title in the narrow WEAPONS card. The native rail remains
+in the same position. This is player-facing shorthand for the slider's
+share of optional compatible slots after the 36 mandatory copies are placed;
+0% does **not** mean no weapons spawn.
 It decides how many loose guns stay available to discover around the Zone after
 the shuffle. Slide toward 100% for more guns lying around; lower it for a
 scarcer Zone. **0% is not no guns** — the writer still places every one of the

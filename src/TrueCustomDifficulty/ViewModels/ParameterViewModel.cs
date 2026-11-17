@@ -153,7 +153,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "ArtifactHunting" => "Turn a knob: SPAWN CHANCE (odds a field actually grows an artifact when it refills), RARE LUCK (how often a find is rare or epic, shown per zone below) and PER SPAWN (how many drop at once). Quest and unique artifacts are not changed.",
                     "AnomalySpecialEffects" => "Adjust Glass Shards bleeding and Psy drain independently. Their other damage effects remain separate.",
                     "NpcLootLoadout" => "SCARCITY scales eligible ordinary NPC consumable Chance and optional corpse SmartLoot activation, not weapons. Other controls select packages, bonus stacks, medical Chance and condition. R also resets NEED BOOST and the item rows; MOD LOOT SCARCITY resets on its own (R with it focused).",
-                    "WorldLootLayout" => "Shuffle weapons, attachments and blueprints separately. Remove loose armor, loose detectors or the fixed loose artifacts (Weird Kettle/Nut/Flower/Ball, DLC Water Drip) independently; quest rewards and anomaly fields stay. Weapon density only affects weapon shuffle.",
+                    "WorldLootLayout" => "Shuffle weapons, attachments and blueprints separately. Remove loose armor, loose detectors or the fixed loose artifacts (Weird Kettle/Nut/Flower/Ball, DLC Water Drip) independently; quest rewards and anomaly fields stay. GUNS TO FIND controls possible loose-weapon spawns when weapon shuffle is on; 0% still keeps one of every regular weapon model.",
                     "StashContentMix" => "ADJUST ODDS: each cell keeps X% of the game's odds for that kind of loot in that stash tier (100% = game odds, 0% = never); cells tagged CHANCE set the real chance. ODDS PER STASH shows the result. SUPPLY REDUCTION lowers the odds of all supplies; AMMO AMOUNT and RGD-5 AMOUNT change how much you get.",
                     "StashMedicalComposition" => "ADJUST ODDS: each item keeps X% of the game's odds in every stash (100% = game odds, 0% = never); ODDS PER STASH · MEDS shows the result per tier. QUANTITY sets Medkit and Army Medkit MIN/MAX stack sizes.",
                     "StashSmartLoot" => "The checkbox switches stash smart loot off completely (stashes then hold only their normal contents). Smart loot rolls between two chances: WHEN STOCKED (you already carry enough of that supply) and WHEN SHORT (you are low on it). Turn either knob; the bars show the chance a set appears in a stash, grey ticks = vanilla. The SMART columns in the odds tables follow.",
@@ -1261,7 +1261,7 @@ public sealed class ParameterViewModel : ObservableObject
             "loot.destructibleAmmoQuantity" => Times(CurrentNumber, "ammo"),
             "loot.destructibleGrenadeQuantity" => Times(CurrentNumber, "grenades"),
             "loot.expensiveStashMoneyChance" => $"{CurrentNumber * 100:0.#}% chance",
-            "loot.worldWeaponDensity" => $"{CurrentNumber * 100:0.#}% density",
+            "loot.worldWeaponDensity" => $"{CurrentNumber * 100:0.#}% of possible spawns",
 
             // Economy: say whether the scalar changes payout, prices, stock or rewards.
             "economy.startingMoney" => Count(CurrentNumber, "coupon"),

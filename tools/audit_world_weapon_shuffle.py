@@ -53,4 +53,10 @@ assert 'Even at 0%' in setting['description']
 assert 'Quest, unique and NPC weapons are unaffected' in setting['rationale']
 assert 'DrawText(dc, "GUNS TO FIND", new Point(left, rowTop + 2.0)' in ui
 assert 'DrawText(dc, "Density", new Point(left, rowTop + 2.0)' not in ui
-print('[OK] world gun supply UI: gamer copy and native density contract retained')
+vm=(ROOT/'src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs').read_text(encoding='utf8')
+assert '"loot.worldWeaponDensity" => $"{CurrentNumber * 100:0.#}% of possible spawns"' in vm
+assert 'DrawRightAlignedText(dc, "OF POSSIBLE SPAWNS"' in ui
+assert 'new Point(right, rowTop + 12.0), 7.4,' in ui
+assert 'var value = $"{parameter.CurrentNumber * 100.0:0.#}%";' in ui
+assert 'var track = new Rect(left + 2.0, rowTop + 22.0,' in ui
+print('[OK] world gun supply UI: possible-spawns wording and compact native rail retained')

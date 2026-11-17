@@ -1,4 +1,9 @@
 
+## 2026-11-17 — CURRENT: GUNS TO FIND displays possible-spawn coverage
+
+* WORLD ITEM SPAWNS → WEAPONS: the numeric right readout for `loot.worldWeaponDensity` is **N% OF POSSIBLE SPAWNS**, not **N% density**. In the compact source-backed slider row, place **N%** at the top-right and **OF POSSIBLE SPAWNS** in smaller muted text directly beneath it; **GUNS TO FIND** stays left aligned. Preserve the existing 22-DIP rail offset, full rail width and reference tick; do not widen the card, introduce another frame, or move the controls below it.
+* The formatted parameter value and the World Loot help text use the same gamer-facing meaning. This is shorthand for how many additional compatible weapon locations the density distribution fills after guaranteeing one of each of the 36 regular models; 0% still places 36 guns. The CFG ID, 0–100%/5% stepping, normal shuffle enable dependency, preset value and writer logic are unchanged.
+
 ## 2026-11-17 — CURRENT: DROPPED WEAPON CONDITION aligned with corpse knobs
 
 * **NPC LOOT & EQUIPMENT:** the condition editor is titled **DROPPED WEAPON CONDITION**, matching its actual `loot.droppedWeaponCondition` source. The selected card title and catalog display label use the same wording (no implication that inventory/world weapons are affected). No numeric parameter, preset key, CFG writer, trader floor semantics or linked source changes.
