@@ -42,3 +42,12 @@ Corpse smart loot is separate (Loot → NPC LOOT, NEED BOOST). Checks: `tools/au
 Loot → NPC LOOT → NEED BOOST now has an ON/OFF checkbox. OFF writes the vanilla corpse SmartLoot span
 (knob value kept for later); 0× is labelled FLAT (flat 10%). Preset field
 `corpseSmartLootNeedBoostEnabled` is stored only when OFF.
+
+## SMART LOOT IN STASHES (master switch)
+
+`loot.stashSmartLootEnabled` (toggle, vanilla ON, checkbox at the top of the STASH SMART LOOT board).
+OFF sets `MinSpawnChance`, `MaxSpawnChance` and (where present) `ItemSetCount` of every stash SmartLoot
+group to 0 in the TCD clones, so stashes hold only their normal Basic/Standard/Rare contents and
+hand-placed items. WHEN STOCKED / WHEN SHORT `requiresToggle` it: dimmed, values kept. The SMART
+columns drop to "—". Corpse smart loot is switched off separately: Loot → NPC LOOT → BONUS PACKS with no
+pack selected (NEED BOOST then has nothing to shape).

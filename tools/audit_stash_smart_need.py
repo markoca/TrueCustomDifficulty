@@ -34,7 +34,7 @@ for pid in IDS:
           and row.get("vanilla") == {"All": 1}
           and row.get("slider") == {"min": 0, "max": 2, "step": 0.05, "stepMode": "absolute"}
           and row.get("support", {}).get("status") == "runtime_test_required", f"catalog {pid}")
-check(baseline["special"].get("stashSmartNeed", {}).get("parameterIds") == list(IDS),
+check(baseline["special"].get("stashSmartNeed", {}).get("parameterIds") == ["loot.stashSmartLootEnabled", *IDS],
       "baseline special.stashSmartNeed")
 check(not any(p["parameterId"] in IDS for p in baseline["editPoints"]), "no direct points")
 
@@ -54,7 +54,7 @@ ui = read("Controls/AggregateVisualControl.cs")
 board = read("Controls/AggregateVisualControl.StashSmartLoot.cs")
 odds = read("Controls/AggregateVisualControl.StashOdds.cs")
 check('case "StashSmartLoot":' in ui and '"StashSmartLoot" => StashSmartLootHeight' in ui
-      and '"SMART LOOT NEED"' in board and '"WHEN STOCKED"' in board and '"WHEN SHORT"' in board
+      and '"STASH SMART LOOT"' in board and '"WHEN STOCKED"' in board and '"WHEN SHORT"' in board
       and '"CHANCE A SET APPEARS"' in board, "SMART LOOT NEED board")
 check('"SMART"' in odds and "StashSmartCategoryOdds(current)" in odds
       and 'StashSmartOdds(state, StashCategoryIndex' in odds
@@ -77,6 +77,17 @@ check("CorpseSmartLootNeedBoostEnabled ? CorpseSmartLootNeedBoost : 1.0" in vm
 check('"corpseSmartLootNeedBoostEnabled"' in preset
       and "preset.CorpseSmartLootNeedBoostEnabled ?? true" in vm, "preset sidecar (null = ON)")
 check('NeedBoostEnabled="{Binding DataContext.CorpseSmartLootNeedBoostEnabled' in xaml, "XAML binding")
+
+# ---- SMART LOOT IN STASHES master switch ---------------------------------------
+sw = catalog.get("loot.stashSmartLootEnabled", {})
+check(sw.get("control") == "toggle" and sw.get("vanilla") == {"All": True}
+      and all(catalog[i].get("requiresToggle") == "loot.stashSmartLootEnabled" for i in IDS),
+      "switch: vanilla ON, knobs require it")
+check("var smartOff = !effective.SmartLootEnabled;" in smart
+      and "var endpointFactor = smartOff ? 0.0 : groupFactor * remaining;" in smart,
+      "writer: OFF zeroes every group (0 / 0 / ItemSetCount 0)")
+check("* (state.SmartLootEnabled ? 1.0 : 0.0)" in preview, "previews follow the switch")
+check('DrawWorldCheckRow(dc, enabled, "Smart loot in stashes"' in board, "board checkbox")
 
 if failures:
     print(f"\n{len(failures)} failure(s)")

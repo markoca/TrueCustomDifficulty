@@ -3886,7 +3886,7 @@ _stash_ids = {p["id"] for p in _stash_rows}
 _stash_tabs = [t for t in parameters_doc.get("tabs", []) if t.get("id") == "stashes"]
 _stash_include = parameters_doc.get("scope", {}).get("includedTabs", [])
 _stash_tab_text = (ROOT / "src/TrueCustomDifficulty/ViewModels/TabViewModel.cs").read_text(encoding="utf-8")
-if (len(_stash_rows) != 44 or len(_stash_ids) != 44  # + supply reduction, SMART LOOT NEED
+if (len(_stash_rows) != 45 or len(_stash_ids) != 45  # + supply reduction, SMART LOOT NEED
     or _stash_tabs != [{"id": "stashes", "label": "Stashes", "order": 55}]
     or _stash_include.index("stashes") != _stash_include.index("loot") + 1
     or any(p.get("tab") != "stashes" or not p["id"].startswith("loot.") for p in _stash_rows)
@@ -3918,7 +3918,7 @@ _global_expected_tabs = {
     "master": 20,
     "environment": 9,  # ARTIFACT HUNTING (3 after RESPAWN RATE retired)
     "loot": 30,         # + corpse supply reduction, loose artifacts
-    "stashes": 37,      # + stash supply reduction
+    "stashes": 38,      # + stash supply reduction
     "alife": 2,
 }
 _global_confirmed = sum(p.get("support", {}).get("status") == "confirmed" for p in _global_visible)
@@ -4012,6 +4012,7 @@ _global_dependency_expected = {
     "advanced.masterEffectModifierMechanics": 3,
     "loot.worldWeaponShuffle": 1,
     "loot.stashGearEnabled": 6,
+    "loot.stashSmartLootEnabled": 2,  # WHEN STOCKED / WHEN SHORT
 }
 _global_dependency_actual = {}
 _global_dependency_bad = []
@@ -4084,10 +4085,10 @@ if (len(parameters) != _CENSUS_CATALOG or len(_global_visible) != _CENSUS_VISIBL
     fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected {_CENSUS_CATALOG}/{_CENSUS_VISIBLE}/{_CENSUS_HIDDEN}")
 elif _global_tab_counts != _global_expected_tabs:
     fail(f"global visible tab counts drifted: {_global_tab_counts}; expected {_global_expected_tabs}")
-elif _global_confirmed != 117 or _global_runtime != 87:
-    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 117/87")
-elif _global_control_counts != {"slider": 186, "toggle": 16, "choiceSlider": 1, "range": 1}:
-    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 186 sliders / 16 toggles / 1 choiceSlider / 1 range")
+elif _global_confirmed != 117 or _global_runtime != 88:
+    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 117/88")
+elif _global_control_counts != {"slider": 186, "toggle": 17, "choiceSlider": 1, "range": 1}:
+    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 186 sliders / 17 toggles / 1 choiceSlider / 1 range")
 elif _global_duplicate_labels:
     fail(f"duplicate player-facing labels detected: {_global_duplicate_labels}")
 elif _global_out_of_range:

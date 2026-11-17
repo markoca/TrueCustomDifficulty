@@ -22,7 +22,7 @@ POST_361_IDS = frozenset({
     # 2026-11-17: ARMY MEDKIT MIX in breakable medical boxes (own audit).
     "loot.medicalBoxArmyMedkitWeight",
     # 2026-11-17: SMART LOOT NEED (own audit).
-    "loot.stashSmartStockedChance", "loot.stashSmartShortChance",
+    "loot.stashSmartStockedChance", "loot.stashSmartShortChance", "loot.stashSmartLootEnabled",
 })
 
 

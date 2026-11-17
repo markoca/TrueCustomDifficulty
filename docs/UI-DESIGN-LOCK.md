@@ -4061,3 +4061,9 @@ The NPC LOOT NEED BOOST card gets the MOD LOOT SCARCITY checkbox chrome (top-lef
 OFF = the corpse SmartLoot need span stays vanilla; the dial value is kept (dimmed) and returns when ON.
 The 0× end label reads FLAT (flat 10%), so "OFF" only means the switch. Space toggles, R resets to 1×
 and ON. Preset sidecar `corpseSmartLootNeedBoostEnabled` (written only when OFF; missing = ON).
+
+## CURRENT 2026-11-17 — STASH SMART LOOT: ON/OFF
+
+The SMART LOOT NEED board is titled **STASH SMART LOOT** and starts with the universal checkbox row
+"Smart loot in stashes" (`loot.stashSmartLootEnabled`, vanilla ON); the two knobs move down 28 DIP and
+dim while it is OFF (requiresToggle). OFF zeroes every stash SmartLoot set. Catalog 410 / 205 visible.

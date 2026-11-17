@@ -24,7 +24,9 @@ public sealed class StashEffectiveState
         IEnumerable<string> modifiedIds,
         string difficultySid)
         : this(parameters.GroupBy(p => p.Id, StringComparer.Ordinal)
-            .ToDictionary(g => g.Key, g => g.First().CurrentNumber,
+            // Toggles enter as 1 (ON) / 0 (OFF); sliders as their value.
+            .ToDictionary(g => g.Key, g => g.First().IsToggle
+                    ? (g.First().CurrentBoolean ? 1.0 : 0.0) : g.First().CurrentNumber,
                 StringComparer.Ordinal),
             modifiedIds, difficultySid)
     {
@@ -522,6 +524,12 @@ public sealed class StashEffectiveState
     public const string SmartStockedId = "loot.stashSmartStockedChance";
     /// <summary>SMART LOOT NEED: MaxSpawnChance multiplier ("when short").</summary>
     public const string SmartShortId = "loot.stashSmartShortChance";
+
+    /// <summary>SMART LOOT IN STASHES toggle (vanilla ON). OFF zeroes every stash SmartLoot set.</summary>
+    public const string SmartEnabledId = "loot.stashSmartLootEnabled";
+
+    /// <summary>True unless the SMART LOOT IN STASHES toggle is OFF (missing = ON).</summary>
+    public bool SmartLootEnabled => Value(SmartEnabledId, 1.0) >= 0.5;
 
     /// <summary>The two stash SmartLoot need multipliers (vanilla 1, never negative).</summary>
     public (double Stocked, double Short) SmartNeedFactors()

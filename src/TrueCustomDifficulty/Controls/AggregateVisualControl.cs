@@ -243,11 +243,13 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 "loot.stashMedkitMinCount", "loot.stashMedkitMaxCount",
                 "loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount",
                 "loot.cheapStashGrenadeQuantity",
+                StashEffectiveState.SmartEnabledId,
                 StashEffectiveState.SmartStockedId, StashEffectiveState.SmartShortId
             },
             "StashMedicalComposition" => new[]
             {
                 "loot.stashMixMedical", "loot.genericStashReduction",
+                StashEffectiveState.SmartEnabledId,
                 StashEffectiveState.SmartStockedId, StashEffectiveState.SmartShortId
             },
             // The set-chance bars follow every input of the stash SmartLoot endpoints.
@@ -8189,6 +8191,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             },
             "StashSmartLoot" => new[]
             {
+                StashEffectiveState.SmartEnabledId,
                 StashEffectiveState.SmartStockedId, StashEffectiveState.SmartShortId
             },
             "StashGear" => new[]

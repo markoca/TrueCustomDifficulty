@@ -1073,6 +1073,10 @@
       "kind": "slider",
       "number": 1
     },
+    "loot.stashSmartLootEnabled": {
+      "kind": "toggle",
+      "boolean": true
+    },
     "loot.stashSmartStockedChance": {
       "kind": "slider",
       "number": 1

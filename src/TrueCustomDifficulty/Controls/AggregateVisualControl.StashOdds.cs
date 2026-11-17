@@ -40,7 +40,9 @@ public sealed partial class AggregateVisualControl
     // Untouched reference values: the vanilla tick on every odds bar.
     private StashEffectiveState ReferenceStashEffectiveState()
     {
+        // Toggles are left out: missing = their vanilla ON default.
         var values = _parameters.Values.Concat(_linkedSources.Values)
+            .Where(p => !p.IsToggle)
             .GroupBy(p => p.Id, StringComparer.Ordinal)
             .ToDictionary(g => g.Key, g => g.First().ReferenceNumber, StringComparer.Ordinal);
         return new StashEffectiveState(values, Array.Empty<string>(), StashDifficultySid());

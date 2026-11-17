@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.1",
-  "supportedParameterCount": 409,
+  "supportedParameterCount": 410,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -48135,12 +48135,13 @@
     },
     "stashSmartNeed": {
       "parameterIds": [
+        "loot.stashSmartLootEnabled",
         "loot.stashSmartStockedChance",
         "loot.stashSmartShortChance"
       ],
       "source": "GameData/StashPrototypes.cfg",
       "scope": "Existing TCD stash SmartLoot clones (WriteWorldStashSmartLoot)",
-      "notes": "MinSpawnChance x stocked, MaxSpawnChance x short, after kept-share and supply reduction; clamped 0..1, min never above max."
+      "notes": "MinSpawnChance x stocked, MaxSpawnChance x short, after kept-share and supply reduction; clamped 0..1, min never above max. OFF toggle: Min/MaxSpawnChance and ItemSetCount 0 for every group."
     },
     "worldArmorRemoved": {
       "parameterId": "loot.worldArmorRemoved",

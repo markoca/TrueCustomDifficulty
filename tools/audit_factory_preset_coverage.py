@@ -28,7 +28,7 @@ NEW_IDS |= {"combat.npcFogVisibility", "combat.npcRainNoise", "combat.npcStormNo
             "health.bandageHealTime", "health.medkitHealTime", "health.armyMedkitHealTime",
             "health.ecoMedkitHealTime", "loot.looseArtifactsRemoved",
             "loot.medicalBoxArmyMedkitWeight", "loot.stashSmartStockedChance",
-            "loot.stashSmartShortChance"}
+            "loot.stashSmartShortChance", "loot.stashSmartLootEnabled"}
 
 presets = sorted((APP / "Presets").glob("*.json"))
 assert len(presets) == 12, len(presets)
@@ -54,6 +54,7 @@ pds = (APP / "Services/PresetDirectoryService.cs").read_text(encoding="utf-8")
 assert pds.count("PreNewControlsFactoryBlobs") == 3 and pds.count("PreWeatherHealTimeFactoryBlobs") == 3
 assert pds.count("PreRespawnRetirementFactoryBlobs") == 3 and pds.count("PreLooseArtifactFactoryBlobs") == 3
 assert pds.count("PreMedicalBoxFactoryBlobs") == 3 and pds.count("PreSmartLootNeedFactoryBlobs") == 3
+assert pds.count("PreSmartLootSwitchFactoryBlobs") == 3
 assert len(pds.split("PreNewControlsFactoryBlobs =", 1)[1].split("};", 1)[0].split('"] = "')) == 13
 
-print(f"PASS: 12 factory presets store all {len(by_id)} controls; the 50 newest at reference vanilla; stock upgrade hashes kept")
+print(f"PASS: 12 factory presets store all {len(by_id)} controls; the 51 newest at reference vanilla; stock upgrade hashes kept")

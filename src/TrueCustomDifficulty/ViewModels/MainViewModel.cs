@@ -891,6 +891,7 @@ public sealed class MainViewModel : ObservableObject
 
         WireVisualAggregate(
             StashEffectiveState.SmartStockedId,
+            StashEffectiveState.SmartEnabledId,
             StashEffectiveState.SmartStockedId,
             StashEffectiveState.SmartShortId);
 
@@ -2627,6 +2628,7 @@ public sealed class MainViewModel : ObservableObject
                 "loot.stashArmyMedkitMinCount" => 322,
                 "loot.stashArmyMedkitMaxCount" => 323,
                 // SMART LOOT NEED (stash SmartLoot spawn endpoints).
+                "loot.stashSmartLootEnabled" => 324,
                 "loot.stashSmartStockedChance" => 325,
                 "loot.stashSmartShortChance" => 326,
                 // Additional weapons/armor are a separate final section.

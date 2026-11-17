@@ -260,6 +260,8 @@ public sealed partial class CfgPatchWriterService
         // SMART LOOT NEED reshapes every group's spawn endpoints.
         var (stocked, shortFactor) = effective.SmartNeedFactors();
         var needChanged = StashSmartNeedParameterIds.Any(modified.ContainsKey);
+        // SMART LOOT IN STASHES OFF: every group gets 0 / 0 / ItemSetCount 0.
+        var smartOff = !effective.SmartLootEnabled;
         var remaining = GenericSupplyRemaining(all, StashSupplyReductionId);
         var source = LoadSmartStashItems();
         var actors = LoadSmartStashActors();
@@ -306,7 +308,7 @@ public sealed partial class CfgPatchWriterService
                     selectionField, items.Select(item => item.Weight).ToArray(), biases);
                 // Apply the master once, AFTER the source correction. Never
                 // multiply two separately emitted endpoint assignments.
-                var endpointFactor = groupFactor * remaining;
+                var endpointFactor = smartOff ? 0.0 : groupFactor * remaining;
                 if (Math.Abs(endpointFactor - 1.0) > 0.0000001
                     || Math.Abs(stocked - 1.0) > 0.0000001
                     || Math.Abs(shortFactor - 1.0) > 0.0000001)

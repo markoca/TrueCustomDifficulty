@@ -40,6 +40,7 @@ public sealed partial class CfgPatchWriterService
     // SMART LOOT NEED: stash SmartLoot spawn endpoint multipliers.
     private static readonly string[] StashSmartNeedParameterIds =
     {
+        StashEffectiveState.SmartEnabledId,
         StashEffectiveState.SmartStockedId, StashEffectiveState.SmartShortId
     };
 

@@ -77,7 +77,8 @@ public sealed record StashBranchPreview(
         var factor = StashEffectiveState.SmartGroupEndpointFactor(Field,
             Items.Select(i => i.SourceRaw).ToArray(),
             Items.Select(i => state.SmartSelectionFactor(i.ItemSid, Field)).ToArray())
-            * state.SupplyRemaining();
+            * state.SupplyRemaining()
+            * (state.SmartLootEnabled ? 1.0 : 0.0);
         // Same endpoint rule as the writer, including SMART LOOT NEED.
         var (stocked, shortFactor) = state.SmartNeedFactors();
         if (Math.Abs(factor - 1.0) > 0.0000001
