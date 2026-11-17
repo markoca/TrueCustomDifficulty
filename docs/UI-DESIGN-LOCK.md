@@ -1,3 +1,9 @@
+## 2026-11-17 — CURRENT: NOISE is the sound-masking percentage
+
+* **RAIN NOISE** and **THUNDER NOISE** display the percentage of hearing masked, rather than remaining hearing. Game-native `HearingDistanceCoef = 0.70` is displayed as **30% RAIN NOISE**; `0.60` as **40% THUNDER NOISE**. Higher knob values mean stronger masking. 0% noise means no weather hearing penalty; the existing minimum coefficient of 0.10 means maximum 90% masking, in 5% steps. FOG VISIBILITY is unchanged (remaining visibility).
+* The 270-degree dial orientation, thumb and grey source tick reverse for the two noise knobs. Pointer drag and keyboard Up/Right/End increase masking, Down/Left/Home decrease it; right click and R reset work as before. No redundant sliders or extra UI.
+* Native catalog defaults, saved preset numbers, loading and CFG writer assignments remain unchanged. The player-facing readouts, reference label and rationale use `(1 - HearingDistanceCoef) × 100`. Rainy/LightRainy still share one source value; Thundery remains separate. Gameplay effect remains pending in-game validation.
+
 ## 2026-11-17 — CURRENT: no duplicate weather sliders below Human Awareness
 
 * `combat.npcRainNoise` and `combat.npcStormNoise` are registered as **HumanAwareness visual-aggregate members** in `ParameterViewModel.VisualAggregateFamilyByParameterId`, like `combat.npcFogVisibility`. The single visible anchor remains `combat.npcSightRange`; the board contains exactly three weather knobs (FOG VISIBILITY, RAIN NOISE, THUNDER NOISE), with **no individual slider cards below it**.

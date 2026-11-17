@@ -248,10 +248,13 @@ public sealed partial class AggregateVisualControl
         const double radius = 21.0;
         var editable = parameter.IsControlEnabled;
         var ink = editable ? accent : muted;
-        var ratio = Math.Clamp((parameter.CurrentNumber - parameter.Minimum)
-            / Math.Max(0.000001, parameter.Maximum - parameter.Minimum), 0.0, 1.0);
-        var referenceRatio = Math.Clamp((parameter.ReferenceNumber - parameter.Minimum)
-            / Math.Max(0.000001, parameter.Maximum - parameter.Minimum), 0.0, 1.0);
+        // NOISE is masking (1 - native HearingDistanceCoef).
+        var noise = HumanCombatPolicy.IsWeatherNoise(parameter.Id);
+        var range = Math.Max(0.000001, parameter.Maximum - parameter.Minimum);
+        var ratio = Math.Clamp((noise ? parameter.Maximum - parameter.CurrentNumber
+            : parameter.CurrentNumber - parameter.Minimum) / range, 0.0, 1.0);
+        var referenceRatio = Math.Clamp((noise ? parameter.Maximum - parameter.ReferenceNumber
+            : parameter.ReferenceNumber - parameter.Minimum) / range, 0.0, 1.0);
         var start = WeaponKnobStartAngle;
         var sweep = WeaponKnobSweepAngle;
         dc.DrawEllipse(CloneWithOpacity(panel, 0.96), null, center, radius - 7.0, radius - 7.0);
@@ -283,7 +286,8 @@ public sealed partial class AggregateVisualControl
             FontWeights.Bold, Math.Max(1.0, cell.Width - 4.0));
         dc.DrawText(label, new Point(cell.Left + (cell.Width - label.Width) / 2.0, cell.Top + 59.0));
         var value = CreateText(
-            string.Create(CultureInfo.InvariantCulture, $"{parameter.CurrentNumber * 100.0:0}%"),
+            string.Create(CultureInfo.InvariantCulture,
+                $"{(noise ? HumanCombatPolicy.NoiseMaskingPercent(parameter.CurrentNumber) : parameter.CurrentNumber * 100.0):0}%"),
             14.0, parameter.IsValueModifiedFromReference()
                 ? ReadoutInk.Numbers(accent, text) : editable ? text : muted, FontWeights.Bold);
         dc.DrawText(value, new Point(cell.Left + (cell.Width - value.Width) / 2.0, cell.Top + 75.0));
@@ -291,8 +295,10 @@ public sealed partial class AggregateVisualControl
             return;
         var hit = new Rect(center.X - radius - 6.0, center.Y - radius - 6.0,
             2.0 * (radius + 6.0), 2.0 * (radius + 6.0));
+        // Reverse visual input endpoints for NOISE without altering saved values.
         _hitTargets.Add(new HitTarget(parameter, hit, hit, HitKind.Knob,
-            parameter.Minimum, parameter.Maximum, false));
+            noise ? parameter.Maximum : parameter.Minimum,
+            noise ? parameter.Minimum : parameter.Maximum, false));
     }
 
     private void DrawAwarenessHandle(DrawingContext dc, ParameterViewModel parameter, Point position,

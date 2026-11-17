@@ -107,8 +107,8 @@ public static class HumanCombatPolicy
             HearingRangeId => HearingDisplay(value),
             AlertMemoryId => MemoryDisplay(value),
             FogVisibilityId => FogVisibilityDisplay(value),
-            RainNoiseId => WeatherHearingDisplay("rain", value),
-            StormNoiseId => WeatherHearingDisplay("storm", value),
+            RainNoiseId => WeatherNoiseDisplay("rain", value),
+            StormNoiseId => WeatherNoiseDisplay("thunder", value),
             _ when Tactics.FirstOrDefault(t => t.Id == id) is { } tactic => TacticDisplay(tactic, value, reference),
             _ => null
         };
@@ -136,8 +136,15 @@ public static class HumanCombatPolicy
     public static string MemoryDisplay(double factor)
         => string.Create(CultureInfo.InvariantCulture, $"{factor:0.##}x · searches for {30.0 * factor:0} s");
 
-    public static string WeatherHearingDisplay(string weather, double coefficient)
-        => string.Create(CultureInfo.InvariantCulture, $"{weather} hearing {coefficient * 100.0:0}%");
+    // Persist native hearing coefficients; display their complementary masking.
+    public static bool IsWeatherNoise(string id) => id is RainNoiseId or StormNoiseId;
+
+    public static double NoiseMaskingPercent(double hearingCoefficient)
+        => Math.Clamp((1.0 - hearingCoefficient) * 100.0, 0.0, 100.0);
+
+    public static string WeatherNoiseDisplay(string weather, double hearingCoefficient)
+        => string.Create(CultureInfo.InvariantCulture,
+            $"{weather} noise {NoiseMaskingPercent(hearingCoefficient):0}%");
 
     public static string FogVisibilityDisplay(double coefficient)
         => string.Create(CultureInfo.InvariantCulture, $"fog visibility {coefficient * 100.0:0}%");

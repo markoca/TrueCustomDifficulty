@@ -7230,6 +7230,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 return;
             }
         }
+        var weatherNoiseKeyboard = Family == "HumanAwareness"
+            && HumanCombatPolicy.IsWeatherNoise(_selectedParameter.Id);
         var stepCount = e.Key switch
         {
             Key.Up or Key.Right or Key.Add or Key.OemPlus => 1,
@@ -7258,12 +7260,13 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             ConsumableDurationStep(_selectedParameter);
 
         double next;
+        // UP/RIGHT and END increase masking; HOME removes masking.
         if (e.Key == Key.Home)
-            next = minimum;
+            next = weatherNoiseKeyboard ? maximum : minimum;
         else if (e.Key == Key.End)
-            next = maximum;
+            next = weatherNoiseKeyboard ? minimum : maximum;
         else if (stepCount != 0)
-            next = current + stepCount * step;
+            next = current + (weatherNoiseKeyboard ? -stepCount : stepCount) * step;
         else
             return;
 

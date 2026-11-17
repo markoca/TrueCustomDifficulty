@@ -51,6 +51,7 @@ internal static partial class Program
             // NPC_Ammo_Smart, so that source must be explicitly probed where
             // the real native ammo package is active (Novice).
             VerifyHumanAwarenessWeatherKnobs();
+            VerifyWeatherNoiseMaskingSemantics();
             VerifyReferenceDifficultyVisibility();
             VerifyDormantNpcAmmoNotCounted();
             VerifySingletonCfgPatchAndFileAccounting();
@@ -239,6 +240,28 @@ internal static partial class Program
                   && parameter.IsControlEnabled,
                 $"{id} must stay editable on the Human Awareness board without a duplicate slider card.");
         }
+    }
+
+    private static void VerifyWeatherNoiseMaskingSemantics()
+    {
+        var vm = new MainViewModel(Catalog);
+        var rain = vm.AllParameters.Single(p => p.Id == HumanCombatPolicy.RainNoiseId);
+        var thunder = vm.AllParameters.Single(p => p.Id == HumanCombatPolicy.StormNoiseId);
+        Check(rain.CurrentDisplay == "30%" && thunder.CurrentDisplay == "40%",
+            "Rain/thunder noise must show masked sound rather than remaining hearing.");
+        Check(rain.VanillaReferenceText.Contains("30%", StringComparison.Ordinal)
+              && thunder.VanillaReferenceText.Contains("40%", StringComparison.Ordinal),
+            "Weather noise reference readouts must use masking semantics.");
+        Check(HumanCombatPolicy.CardText(HumanCombatPolicy.RainNoiseId, 0.7, 0.7) == "rain noise 30%"
+              && HumanCombatPolicy.CardText(HumanCombatPolicy.StormNoiseId, 0.6, 0.6) == "thunder noise 40%",
+            "Awareness readouts must use the complemented percentages.");
+        Check(Math.Abs(rain.ToPresetValue().Number.GetValueOrDefault() - 0.7) < 0.000001
+              && Math.Abs(thunder.ToPresetValue().Number.GetValueOrDefault() - 0.6) < 0.000001,
+            "Existing presets must retain original source coefficients.");
+        rain.SnapCurrentNumberToMarker(0.4);
+        Check(rain.CurrentDisplay == "60%"
+              && Math.Abs(rain.ToPresetValue().Number.GetValueOrDefault() - 0.4) < 0.000001,
+            "Editing noise must only invert its display, not the preset.");
     }
 
     private static void VerifyDormantNpcAmmoNotCounted()

@@ -825,7 +825,7 @@
       "tab": "combat",
       "group": "Human Awareness",
       "label": "Rain Noise",
-      "description": "Adjusts weather-specific AI hearing distance for Rainy and LightRainy. Does not alter weather intensity, audio, or visual effects.",
+      "description": "How much light or regular rain masks sounds from AI. Higher noise means less enemy hearing.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -868,16 +868,16 @@
           "Global AI weather coefficient; effects and AI-class scope still need an in-game test."
         ]
       },
-      "rationale": "Lower values mask player sounds more in Rainy and LightRainy; 100% removes this weather-specific hearing reduction. Actual detection distance is not guaranteed to scale linearly.",
-      "logic": "Writes only HearingDistanceCoef in WeatherSettings entries 3 and 4.",
-      "interaction": "Independent of SIGHT, general HEARING and FOG VISIBILITY; the weather must be active."
+      "rationale": "30% RAIN NOISE means AI keeps 70% of its native hearing-distance coefficient in light or regular rain. Higher noise gives stronger masking; 0% means no weather hearing penalty. Actual detection range still needs in-game validation.",
+      "logic": "Displayed masking percent = (1 - HearingDistanceCoef) x 100. Presets and writer keep native coefficient and write only WeatherSettings[3] and [4].HearingDistanceCoef.",
+      "interaction": "Only active during light or regular rain; independent of general HEARING. UI masking range is 0-90%, 5% steps."
     },
     {
       "id": "combat.npcStormNoise",
       "tab": "combat",
       "group": "Human Awareness",
       "label": "Thunder Noise",
-      "description": "Adjusts weather-specific AI hearing distance for Thundery. Does not alter weather intensity, audio, or visual effects.",
+      "description": "How much thunder masks sounds from AI. Higher noise means less enemy hearing.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -913,9 +913,9 @@
           "Global AI weather coefficient; effects and AI-class scope still need an in-game test."
         ]
       },
-      "rationale": "Lower values mask player sounds more in Thundery; 100% removes this weather-specific hearing reduction. Actual detection distance is not guaranteed to scale linearly.",
-      "logic": "Writes only HearingDistanceCoef in WeatherSettings entries 5.",
-      "interaction": "Independent of SIGHT, general HEARING and FOG VISIBILITY; the weather must be active."
+      "rationale": "40% THUNDER NOISE means AI keeps 60% of its native hearing-distance coefficient during thunderstorms. Higher noise gives stronger masking; 0% means no weather hearing penalty. Actual detection range still needs in-game validation.",
+      "logic": "Displayed masking percent = (1 - HearingDistanceCoef) x 100. Presets and writer keep native coefficient and write only WeatherSettings[5].HearingDistanceCoef.",
+      "interaction": "Only active during thunder; independent of general HEARING. UI masking range is 0-90%, 5% steps."
     },
     {
       "id": "combat.playerWeaponDamage",
