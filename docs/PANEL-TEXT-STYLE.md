@@ -25,7 +25,7 @@ How often <thing happens to you>. Vanilla: <value>. Higher = <feel>; lower = <fe
 
 * **Vanilla**: `Vanilla: X.` when equal on every difficulty; otherwise `Vanilla: Novice a, Stalker b, Veteran c, Master d.` with equal neighbours merged (`Novice–Veteran 1×, Master 2×`). Stated once — never repeated in HIGHER / LOWER.
 * **Units = the control's readout**: `×` for multipliers (never the letter x), `%` for percentages, plain numbers for raw values; a real-world amount may follow in brackets — `Vanilla: 1× (500 HP)`. Endpoints carry the unit too: `0% removes it`, `0× = never`.
-* Space before units: `45 s`, `12 m`, `0.015 pts/s`, `1 HP/s`.
+* Space before units: `45 s`, `12 m`, `0.015 pts/s`, `1 HP/s`. Captions abbreviate without a dot: `MIN`, `MAX`.
 * Ranges with an en dash `9–12`; before → after with `→`; separators ` · `.
 * Other controls are always named in **CAPS**, exactly as drawn: GLOBAL ANOMALY DAMAGE, SMART LOOT, RGD-5 AMOUNT.
 * Call a control what it is: bar, knob, slider, rail, checkbox, chip, marker.
@@ -34,7 +34,7 @@ How often <thing happens to you>. Vanilla: <value>. Higher = <feel>; lower = <fe
 
 | Don't write | Write |
 |---|---|
-| CFG, SID, prototype, generator, entry, pool, native, authored, baseline | *the game*, *vanilla*, the item's name, *loot*, *offer*, *spot* |
+| CFG, SID, prototype, generator, entry, pool, native, authored, baseline, original | *the game*, *vanilla*, the item's name, *loot*, *offer*, *spot* |
 | roll, weighted picks, spawn chance, MinCount/MaxCount | *chance*, *turns up*, *how often*, *stack size* |
 | state, bundle, layer, component, actor-level, configured | *while you're severely tired*, *these penalties*, *on top*, *you* |
 | coefficient, parameter, value stored / backing | *strength*, *setting*, *saved* |

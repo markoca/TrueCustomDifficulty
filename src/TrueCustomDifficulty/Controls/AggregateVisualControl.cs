@@ -4401,7 +4401,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawText(dc, "TRADE ACCEPTANCE", new Point(left, 158),
             10.2, muted, FontWeights.Bold);
         DrawEconomyCard(dc, P("economy.traderMinBuyCondition"),
-            "MIN. SELLABLE CONDITION",
+            "MIN SELLABLE CONDITION",
             new Rect(left, 180.0, cell, 80.0),
             text, muted, border, accent, panel);
         DrawEconomyCard(dc, P("economy.itemValueFloor"),

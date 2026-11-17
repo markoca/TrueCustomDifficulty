@@ -64,7 +64,7 @@ public partial class MainWindow : Window
         catch (Exception ex)
         {
             MessageBox.Show(
-                $"The application could not load its parameter catalog.\n\n{ex.Message}",
+                $"The application could not load its settings list.\n\n{ex.Message}",
                 "True Custom Difficulty",
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);

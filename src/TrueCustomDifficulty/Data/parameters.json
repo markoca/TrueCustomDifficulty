@@ -4350,7 +4350,7 @@
         ]
       },
       "rationale": "How much radiation one bottle of vodka flushes out. Vanilla: 50 — the classic stalker remedy. You still get drunk as usual.",
-      "logic": "Original Vodka removes 50 radiation points.",
+      "logic": "Vanilla vodka removes 50 rad pts.",
       "interaction": "Does not alter intoxication, drink duration or the other alcohol.",
       "exposeInUi": false
     },
@@ -4859,7 +4859,7 @@
         ]
       },
       "rationale": "How long Vinca's bleeding recovery lasts. Vanilla: 180 seconds.",
-      "logic": "Original effect duration 180s; edits real seconds.",
+      "logic": "Set in real seconds.",
       "interaction": "OVERRIDE LIMITS OFF caps it at the game's own maximum; ON allows up to 30 minutes. Strength and the other medicines stay separate.",
       "exposeInUi": false
     },
@@ -4968,7 +4968,7 @@
         ]
       },
       "rationale": "How long a Hercules pill keeps you stronger. Vanilla: 300 seconds (5 minutes).",
-      "logic": "Original effect duration 300s; edits real seconds.",
+      "logic": "Set in real seconds.",
       "interaction": "OVERRIDE LIMITS OFF caps it at the game's own maximum; ON allows up to 30 minutes. Strength and the other medicines stay separate.",
       "exposeInUi": false
     },
@@ -5061,7 +5061,7 @@
         ]
       },
       "rationale": "How long a Psi Block pill lasts. Vanilla: 60 seconds.",
-      "logic": "Original effect duration 60s; edits real seconds.",
+      "logic": "Set in real seconds.",
       "interaction": "OVERRIDE LIMITS OFF caps it at the game's own maximum; ON allows up to 30 minutes. Strength and the other medicines stay separate.",
       "exposeInUi": false
     },
@@ -5680,7 +5680,7 @@
           "Field and vanilla value are confirmed; exact tick semantics and interaction with effect-based regeneration require runtime validation."
         ]
       },
-      "rationale": "Slow healing over time without using anything. Vanilla: 0 — in the original game you never heal just by waiting. Even a small value makes minor wounds close up on their own.",
+      "rationale": "Slow healing over time without using anything. Vanilla: 0 — in vanilla you never heal just by waiting. Even a small value makes minor wounds close up on their own.",
       "logic": "Zero keeps vanilla behavior. Raising it adds passive healing over time.",
       "interaction": "REGEN DELAY decides when recovery can begin. Low-health recovery and medkits stay separate."
     },
@@ -8808,7 +8808,7 @@
         ]
       },
       "rationale": "The minimum medkit stack a stash can give when it has medkits. Vanilla: 0 = the game's own minimum. Raise it so a medkit find is always worth the trip. It doesn't make medkits appear more often.",
-      "logic": "Raises or lowers the minimum Medkit stack size. Zero keeps the original minimum where the item is eligible.",
+      "logic": "Raises or lowers the minimum Medkit stack size. 0 keeps the vanilla minimum wherever the item can appear.",
       "interaction": "Only stack size changes; chance checks and which stashes may contain this item stay separate.",
       "exposeInUi": true
     },
@@ -8856,7 +8856,7 @@
         ]
       },
       "rationale": "The maximum medkit stack a stash can give. Vanilla: 5 = the game's own cap. Lower it to stop finding piles of medkits; 0 takes medkits out of these stacks.",
-      "logic": "Caps the Medkit stack size. Zero excludes it from eligible stacks; five preserves the original supported maximum.",
+      "logic": "Caps the Medkit stack size. 0 means stashes never give it; 5 keeps the vanilla maximum.",
       "interaction": "Only stack size changes; chance checks and which stashes may contain this item stay separate.",
       "exposeInUi": true
     },
@@ -8904,7 +8904,7 @@
         ]
       },
       "rationale": "The minimum army medkit stack a stash can give when it has them. Vanilla: 0 = the game's own minimum. It doesn't make them appear more often.",
-      "logic": "Raises or lowers the minimum Army Medkit stack size. Zero keeps the original minimum where the item is eligible.",
+      "logic": "Raises or lowers the minimum Army Medkit stack size. 0 keeps the vanilla minimum wherever the item can appear.",
       "interaction": "Only stack size changes; chance checks and which stashes may contain this item stay separate.",
       "exposeInUi": true
     },
@@ -8952,7 +8952,7 @@
         ]
       },
       "rationale": "The maximum army medkit stack a stash can give. Vanilla: 5 = the game's own cap. 0 takes army medkits out of these stacks.",
-      "logic": "Caps the Army Medkit stack size. Zero excludes it from eligible stacks; five preserves the original supported maximum.",
+      "logic": "Caps the Army Medkit stack size. 0 means stashes never give it; 5 keeps the vanilla maximum.",
       "interaction": "Only stack size changes; chance checks and which stashes may contain this item stay separate.",
       "exposeInUi": true
     },
@@ -12229,8 +12229,8 @@
         ]
       },
       "rationale": "How heavy weapons are in your backpack. Vanilla: 1×. Lower it to carry a spare rifle without being slowed down; damage and handling don't change.",
-      "logic": "1× keeps the original weight. 0× makes mapped items weightless; 2× doubles their original weight.",
-      "interaction": "Preserves original weight differences between items. Does not change maximum carry weight or any equipment protection statistics."
+      "logic": "1× keeps vanilla weight. 0× makes them weightless; 2× doubles their weight.",
+      "interaction": "Items keep their weight differences. Does not change maximum carry weight or any equipment protection statistics."
     },
     {
       "id": "equipment.armorWeight",
@@ -12281,8 +12281,8 @@
         ]
       },
       "rationale": "How heavy suits and helmets are. Vanilla: 1×. Lower it to wear heavy armor without the weight penalty; protection doesn't change.",
-      "logic": "1× keeps the original weight. 0× makes mapped items weightless; 2× doubles their original weight.",
-      "interaction": "Preserves original weight differences between items. Does not change maximum carry weight or any equipment protection statistics."
+      "logic": "1× keeps vanilla weight. 0× makes them weightless; 2× doubles their weight.",
+      "interaction": "Items keep their weight differences. Does not change maximum carry weight or any equipment protection statistics."
     },
     {
       "id": "environment.anomalyDamage",
@@ -12950,7 +12950,7 @@
         "notes": []
       },
       "rationale": "How much health a full night's sleep gives back. Vanilla: 300 HP. 0 makes sleep stop healing you; up to 600 HP turns a night in a safe bed into a full patch-up.",
-      "logic": "The original effect restores 300 HP on waking. Set 0 HP to disable this recovery or up to 600 HP to increase it; reset returns to 300 HP.",
+      "logic": "Higher = sleep heals more; 0 HP means sleep doesn't heal at all.",
       "interaction": "Medkits and passive HP regeneration remain separate."
     },
     {
@@ -17020,8 +17020,8 @@
         ]
       },
       "rationale": "Which kinds of loot each type of trader will buy from you. Each switch is one trader type and one item kind; untouched switches keep the game's own rules. This one: whether shopkeepers buy weapons from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys weapons when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys weapons when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -17057,8 +17057,8 @@
         ]
       },
       "rationale": "Whether shopkeepers buy armor from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys armor when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys armor when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -17094,8 +17094,8 @@
         ]
       },
       "rationale": "Whether shopkeepers buy attachments from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys attachments when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys attachments when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -17131,8 +17131,8 @@
         ]
       },
       "rationale": "Whether shopkeepers buy ammo from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys ammo when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys ammo when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -17168,8 +17168,8 @@
         ]
       },
       "rationale": "Whether shopkeepers buy grenades from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys grenades when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys grenades when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -17205,8 +17205,8 @@
         ]
       },
       "rationale": "Whether shopkeepers buy artifacts from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys artifacts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys artifacts when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -17242,7 +17242,7 @@
         ]
       },
       "rationale": "Whether shopkeepers buy food, drinks and meds from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys consumables when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "logic": "CHECKED buys consumables when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Food, drinks and medical supplies are one native item type.",
       "exposeInUi": false
     },
@@ -17279,8 +17279,8 @@
         ]
       },
       "rationale": "Whether shopkeepers buy mutant parts from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys mutant parts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys mutant parts when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -17316,8 +17316,8 @@
         ]
       },
       "rationale": "Whether medics buy weapons from you. Vanilla: OFF. Turn it ON to sell them more places.",
-      "logic": "CHECKED buys weapons when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys weapons when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -17353,8 +17353,8 @@
         ]
       },
       "rationale": "Whether medics buy armor from you. Vanilla: OFF. Turn it ON to sell them more places.",
-      "logic": "CHECKED buys armor when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys armor when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -17390,8 +17390,8 @@
         ]
       },
       "rationale": "Whether medics buy attachments from you. Vanilla: OFF. Turn it ON to sell them more places.",
-      "logic": "CHECKED buys attachments when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys attachments when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -17427,8 +17427,8 @@
         ]
       },
       "rationale": "Whether medics buy ammo from you. Vanilla: OFF. Turn it ON to sell them more places.",
-      "logic": "CHECKED buys ammo when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys ammo when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -17464,8 +17464,8 @@
         ]
       },
       "rationale": "Whether medics buy grenades from you. Vanilla: OFF. Turn it ON to sell them more places.",
-      "logic": "CHECKED buys grenades when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys grenades when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -17501,8 +17501,8 @@
         ]
       },
       "rationale": "Whether medics buy artifacts from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys artifacts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys artifacts when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -17538,7 +17538,7 @@
         ]
       },
       "rationale": "Whether medics buy food, drinks and meds from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys consumables when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "logic": "CHECKED buys consumables when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Food, drinks and medical supplies are one native item type.",
       "exposeInUi": false
     },
@@ -17575,8 +17575,8 @@
         ]
       },
       "rationale": "Whether medics buy mutant parts from you. Vanilla: OFF. Turn it ON to sell them more places.",
-      "logic": "CHECKED buys mutant parts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys mutant parts when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -17612,8 +17612,8 @@
         ]
       },
       "rationale": "Whether technicians buy weapons from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys weapons when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys weapons when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -17649,8 +17649,8 @@
         ]
       },
       "rationale": "Whether technicians buy armor from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys armor when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys armor when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -17686,8 +17686,8 @@
         ]
       },
       "rationale": "Whether technicians buy attachments from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys attachments when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys attachments when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -17723,8 +17723,8 @@
         ]
       },
       "rationale": "Whether technicians buy ammo from you. Vanilla: OFF. Turn it ON to sell them more places.",
-      "logic": "CHECKED buys ammo when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys ammo when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -17760,8 +17760,8 @@
         ]
       },
       "rationale": "Whether technicians buy grenades from you. Vanilla: OFF. Turn it ON to sell them more places.",
-      "logic": "CHECKED buys grenades when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys grenades when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -17797,8 +17797,8 @@
         ]
       },
       "rationale": "Whether technicians buy artifacts from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys artifacts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys artifacts when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -17834,7 +17834,7 @@
         ]
       },
       "rationale": "Whether technicians buy food, drinks and meds from you. Vanilla: OFF. Turn it ON to sell them more places.",
-      "logic": "CHECKED buys consumables when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "logic": "CHECKED buys consumables when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Food, drinks and medical supplies are one native item type.",
       "exposeInUi": false
     },
@@ -17871,8 +17871,8 @@
         ]
       },
       "rationale": "Whether technicians buy mutant parts from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys mutant parts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys mutant parts when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -17908,8 +17908,8 @@
         ]
       },
       "rationale": "Whether bartenders buy weapons from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys weapons when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys weapons when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -17945,8 +17945,8 @@
         ]
       },
       "rationale": "Whether bartenders buy armor from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys armor when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys armor when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -17982,8 +17982,8 @@
         ]
       },
       "rationale": "Whether bartenders buy attachments from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys attachments when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys attachments when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -18019,8 +18019,8 @@
         ]
       },
       "rationale": "Whether bartenders buy ammo from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys ammo when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys ammo when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -18056,8 +18056,8 @@
         ]
       },
       "rationale": "Whether bartenders buy grenades from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys grenades when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys grenades when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -18093,8 +18093,8 @@
         ]
       },
       "rationale": "Whether bartenders buy artifacts from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys artifacts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys artifacts when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -18130,7 +18130,7 @@
         ]
       },
       "rationale": "Whether bartenders buy food, drinks and meds from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys consumables when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "logic": "CHECKED buys consumables when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Food, drinks and medical supplies are one native item type.",
       "exposeInUi": false
     },
@@ -18167,8 +18167,8 @@
         ]
       },
       "rationale": "Whether bartenders buy mutant parts from you. Vanilla: OFF. Turn it ON to sell them more places.",
-      "logic": "CHECKED buys mutant parts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys mutant parts when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -18204,8 +18204,8 @@
         ]
       },
       "rationale": "Whether ordinary stalkers you can trade with buy weapons from you. Vanilla: OFF. Turn it ON to sell them more places.",
-      "logic": "CHECKED buys weapons when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys weapons when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -18241,8 +18241,8 @@
         ]
       },
       "rationale": "Whether ordinary stalkers you can trade with buy armor from you. Vanilla: OFF. Turn it ON to sell them more places.",
-      "logic": "CHECKED buys armor when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys armor when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -18278,8 +18278,8 @@
         ]
       },
       "rationale": "Whether ordinary stalkers you can trade with buy attachments from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys attachments when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys attachments when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -18315,8 +18315,8 @@
         ]
       },
       "rationale": "Whether ordinary stalkers you can trade with buy ammo from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys ammo when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys ammo when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -18352,8 +18352,8 @@
         ]
       },
       "rationale": "Whether ordinary stalkers you can trade with buy grenades from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys grenades when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys grenades when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -18389,8 +18389,8 @@
         ]
       },
       "rationale": "Whether ordinary stalkers you can trade with buy artifacts from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys artifacts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys artifacts when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {
@@ -18426,7 +18426,7 @@
         ]
       },
       "rationale": "Whether ordinary stalkers you can trade with buy food, drinks and meds from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
-      "logic": "CHECKED buys consumables when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
+      "logic": "CHECKED buys consumables when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Food, drinks and medical supplies are one native item type.",
       "exposeInUi": false
     },
@@ -18463,8 +18463,8 @@
         ]
       },
       "rationale": "Whether ordinary stalkers you can trade with buy mutant parts from you. Vanilla: OFF. Turn it ON to sell them more places.",
-      "logic": "CHECKED buys mutant parts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
-      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
+      "logic": "CHECKED buys mutant parts when overridden. UNCHECKED rejects them. Untouched cells keep vanilla merchant rules.",
+      "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Vanilla condition, price and story restrictions still apply.",
       "exposeInUi": false
     },
     {

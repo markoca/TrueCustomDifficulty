@@ -56,6 +56,7 @@ TECH = {
     r"\bstate\b": "while you're … / when …",
     r"\bSmartLoot\b|\bSmart_": "SMART LOOT",
     r"\b(?:verified|audited|acceptance test|TODO|not supported yet|not individually adjustable yet)\b": "drop the dev note",
+    r"\b[Oo]riginal\b(?! spots)": "vanilla",
     r"\b[a-z]+[A-Z][A-Za-z]+\d*\b": "internal identifier",
 }
 # ---- 2. Format rules (§2)
@@ -63,6 +64,7 @@ FORMAT = [
     (r"(?<![\w.])\d+(?:\.\d+)?x\b", "multiplier sign is ×"),
     (r"\b\d+(?:\.\d+)?-\d+(?:\.\d+)?\b", "numeric range uses an en dash"),
     (r"->", "use →"),
+    (r"(?<![\w\-])\d+(?:\.\d+)?s\b", "space before the unit: 45 s"),
     (r"\n", "WHAT IT DOES is one paragraph"),
     (r"[Vv]anilla[^.]*\bon (?:every|all) difficult", "Vanilla: X. (no 'on every difficulty')"),
     (r"the game's odds|GAME ODDS", "say vanilla"),

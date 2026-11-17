@@ -1713,7 +1713,7 @@ public sealed class ParameterViewModel : ObservableObject
                            "100% / 100% keeps every vanilla condition range unchanged.";
 
                 return $"MIN {RangeMinDisplay} changes the smallest vanilla stack; MAX {RangeMaxDisplay} changes the largest. " +
-                       "100% / 100% keeps the original ranges, including differences between difficulty and Progression Rank.";
+                       "100% / 100% keeps the vanilla ranges, including differences between difficulty and your rank.";
             }
 
             if (Id.StartsWith("loot.mutant.", StringComparison.Ordinal))
@@ -1726,7 +1726,7 @@ public sealed class ParameterViewModel : ObservableObject
 
             if (Definition.Display?.Primary == "percentOfVanilla")
             {
-                return "This scales each original item chance rather than setting a flat drop rate. For example, 50% turns an original 20% chance into 10%.";
+                return "This scales each vanilla item chance rather than setting a flat drop rate: 50% turns a vanilla 20% chance into 10%.";
             }
 
             return string.Empty;

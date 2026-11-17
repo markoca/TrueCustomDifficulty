@@ -1,3 +1,9 @@
+## 2026-11-18 — CURRENT: "vanilla" everywhere, MIN without a dot
+
+* Panel texts say **vanilla**, never *original* (vodka radiation, Vinca / Hercules / Psi-block durations, medkit MIN / MAX, weapon / armor weight, Passive HP Regen, sleep healing, BUY restriction rows, stash odds / range meanings): e.g. `1× keeps vanilla weight. 0× makes them weightless; 2× doubles their weight.`, `0 means stashes never give it; 5 keeps the vanilla maximum.` HIGHER / LOWER of medicine durations and sleep healing no longer repeat the vanilla value (`Set in real seconds.`, `Higher = sleep heals more; 0 HP means sleep doesn't heal at all.`).
+* Board caption `MIN SELLABLE CONDITION` (was `MIN.`), like MIN / MAX HP / MAX STAMINA; startup error *could not load its settings list* (was *parameter catalog*).
+* Style gate adds two rules: *original* → vanilla (except *original spots* of shuffles) and a space before seconds (`45 s`).
+
 ## 2026-11-18 — CURRENT: style gate covers every on-screen string
 
 * `tools/audit_panel_text_style.py` now also scans every string literal in `Controls/`, `ViewModels/` and `PresetService` (boards, panel blocks, dialogs, preset load errors), with interpolations blanked; only the modder-facing build summary (*BPatch CFG files / CFG edits*) is allowed.
