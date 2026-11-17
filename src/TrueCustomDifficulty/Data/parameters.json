@@ -876,14 +876,14 @@
       "id": "combat.npcStormNoise",
       "tab": "combat",
       "group": "Human Awareness",
-      "label": "Storm Noise",
+      "label": "Thunder Noise",
       "description": "Adjusts weather-specific AI hearing distance for Thundery. Does not alter weather intensity, audio, or visual effects.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
         "primary": "percent",
         "rawFormat": "0%",
-        "valueLabel": "Storm Noise"
+        "valueLabel": "Thunder Noise"
       },
       "vanilla": {
         "All": 0.6

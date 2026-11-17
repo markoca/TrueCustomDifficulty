@@ -230,7 +230,7 @@ public sealed partial class AggregateVisualControl
         {
             (fog, "FOG VISIBILITY"),
             (rain, "RAIN NOISE"),
-            (storm, "STORM NOISE")
+            (storm, "THUNDER NOISE")
         };
         var weatherTop = layout.Legend.Top + AwarenessLegendRow * 3.0;
         var cellWidth = layout.Legend.Width / weather.Length;

@@ -91,9 +91,9 @@ Current behavior supersedes the earlier display-only cap. SIGHT is really limite
 - Acceptance plan: compare Fogy 0.70 / 0.40 / 1.00 under constant conditions, watch human detection, hearing and mutant behavior, and verify the generated singleton patch is accepted by the game. Source structure and code audit are confirmed; runtime behavior is not.
 
 
-## 2026-11-17 — CURRENT: weather hearing (RAIN NOISE / STORM NOISE)
+## 2026-11-17 — CURRENT: weather hearing (RAIN NOISE / THUNDER NOISE)
 
-* Three small 270-degree knobs are grouped side by side under the SIGHT / HEARING / MEMORY legend: FOG VISIBILITY, RAIN NOISE, STORM NOISE. The existing radar is unchanged. Small ticks, hover glow, reference marks, right-click reset, keyboard control, R group reset and only-changed-number accent match the catalog.
-* RAIN NOISE (`combat.npcRainNoise`) changes both Rainy [3] and LightRainy [4] `HearingDistanceCoef` in `AISettings.WeatherSettings`, from the verified 2.1 source coefficient 0.7. STORM NOISE (`combat.npcStormNoise`) changes Thundery [5], source 0.6. Each knob ranges 10–100% with 5% steps.
+* Three small 270-degree knobs are grouped side by side under the SIGHT / HEARING / MEMORY legend: FOG VISIBILITY, RAIN NOISE, THUNDER NOISE. The existing radar is unchanged. Small ticks, hover glow, reference marks, right-click reset, keyboard control, R group reset and only-changed-number accent match the catalog.
+* RAIN NOISE (`combat.npcRainNoise`) changes both Rainy [3] and LightRainy [4] `HearingDistanceCoef` in `AISettings.WeatherSettings`, from the verified 2.1 source coefficient 0.7. THUNDER NOISE (`combat.npcStormNoise`) changes Thundery [5], source 0.6. Each knob ranges 10–100% with 5% steps.
 * The native 2.1 source is `GameData/AIGlobals.cfg`. Both controls write only hearing values in the singleton cfg_patch and leave visibility, flair, audio, graphics and weather occurrence unchanged. The two direct routes are accounted for separately from the frozen writer-baseline blob; AI-class scope and effective metres require in-game testing.
 
