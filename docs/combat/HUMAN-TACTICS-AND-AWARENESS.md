@@ -36,7 +36,7 @@ The distance curve and the zombie addend are unchanged. The game does not change
 
 | Card | Id | CFG | Vanilla |
 |---|---|---|---|
-| SIGHT | `combat.npcSightRange` 0.25–3× | `AIPrototypes/VisionScannerPrototypes.cfg` DefaultNPC Central / PeripheralVisionDistance | 8000 / 2500 (ahead 80 m / side 25 m; card: `1x · ahead 80 m · side 25 m`) |
+| SIGHT | `combat.npcSightRange` 0.25–3× | `AIPrototypes/VisionScannerPrototypes.cfg` DefaultNPC Central / PeripheralVisionDistance | 8000 / 2500 (ahead 80 m / side 25 m; card: `ahead 80 m · side 25 m`; panel adds the factor) |
 | HEARING | `combat.npcHearingRange` 0.25–3× | `AIPrototypes/HearingSensorPrototypes.cfg` BaseHearingSensor SoundEvents[*].HearingDistance (14 non-zero) | shots 46 m, steps 12 m, voice 30 m … |
 | MEMORY | `combat.npcAlertMemory` 0.25–3× (0.05 steps, like SIGHT / HEARING) | `AIPrototypes/ThreatPrototypes.cfg` [1] DefaultNPC: freeze 30 s × m, loss 30/s ÷ m; Actions[3] SearchEnemy freeze 30 s × m, loss 20/s ÷ m | ~30 s |
 
@@ -52,3 +52,5 @@ save rules (out of scope).
 
 `tools/audit_human_tactics.py` (with `TCD_BASE_DUMP=<dump>/base`), `audit_cfg_source_values.py` for the 97 direct
 points (exact), `audit_combat_contract.py`.
+
+**Cards (2026-11-17):** concrete results only (`grenade every 20–35 s`, `steps 12 m`, `search 30 s`, `spread 100%`); track ends show the figures at the slider limits; the factor stays in the selected-control panel.

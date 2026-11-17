@@ -81,6 +81,33 @@ public static class HumanCombatPolicy
             $"{rate:0.##}x · {control.Verb} every {min * factor:0.#}–{max * factor:0.#} s");
     }
 
+    /// <summary>
+    /// Card text without the slider factor: the concrete result only
+    /// ("grenade every 20–35 s", "ahead 80 m · side 25 m"). The factor is not a
+    /// game value by itself; the selected-control panel still shows it.
+    /// Null for ids outside HUMAN TACTICS / HUMAN AWARENESS.
+    /// </summary>
+    public static string? CardText(string id, double value, double reference)
+    {
+        var full = id switch
+        {
+            AccuracyId => AccuracyDisplay(value),
+            SightRangeId => SightDisplay(value),
+            HearingRangeId => HearingDisplay(value),
+            AlertMemoryId => MemoryDisplay(value),
+            _ when Tactics.FirstOrDefault(t => t.Id == id) is { } tactic => TacticDisplay(tactic, value, reference),
+            _ => null
+        };
+        return full is null ? null : WithoutFactor(full);
+    }
+
+    /// <summary>Drops a leading "1.4x · " factor from a readout.</summary>
+    public static string WithoutFactor(string display)
+    {
+        var dot = display.IndexOf(" · ", StringComparison.Ordinal);
+        return dot > 0 && display[..dot].EndsWith('x') ? display[(dot + 3)..] : display;
+    }
+
     // ---- display helpers for HUMAN AWARENESS / ACCURACY ------------------------
     public static string AccuracyDisplay(double factor)
         => string.Create(CultureInfo.InvariantCulture, $"{factor:0.##}x · spread {100.0 / factor:0}%");

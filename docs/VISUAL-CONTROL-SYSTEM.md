@@ -1,3 +1,24 @@
+## 2026-11-17 — CURRENT: Combat cards show the real values, not the slider factor
+
+* The HUMAN TACTICS, HUMAN AWARENESS and MUTANT SPECIAL ABILITY RATE cards no longer show the `1.4x · ` prefix. The factor is not a game value by itself. The card shows only the concrete result:
+
+  | Card | Before | After |
+  |---|---|---|
+  | GRENADES | `1x · grenade every 20–35 s` | `grenade every 20–35 s` |
+  | SIGHT | `1.4x · ahead 112 m · side 35 m` | `ahead 112 m · side 35 m` |
+  | HEARING | `1x · steps 12 m` | `steps 12 m` |
+  | MEMORY | `1x · search 30 s` | `search 30 s` |
+  | ENEMY ACCURACY | `1x · spread 100%` | `spread 100%` |
+  | SPECIAL ABILITY RATE | `1x · pause 8–12 s` | `pause 8–12 s` |
+
+* The track ends of these cards show the first concrete figure at the slider limits instead of `0.25x` / `3x`. Examples: GRENADES `80–140 s` … `6.7–11.7 s`; SIGHT `20 m` … `240 m`.
+* The selected-control panel keeps the factor, e.g. `1.4x · ahead 112 m · side 35 m`, as for mutant ATTACKS / ABILITIES.
+* MUTANT HIT DAMAGE is a real damage multiplier and keeps `1x hit dmg`.
+* Code:
+  * `HumanCombatPolicy.CardText` / `WithoutFactor`.
+  * `AggregateVisualControl.CardValue` / `CardEndpoint`.
+  * Writer, presets and ranges are unchanged.
+
 ## 2026-11-17 — CURRENT: changed values gold only their numbers (everywhere)
 
 * Rule, enforced in one place: when a value differs from the selected Base Preset, **only its numeric tokens** turn gold. Words and units stay in the normal ink: `x`, `%`, `s`, `m`, `HP`, `NPC`, `HOURS`, `ahead`, `side`, `every`, `steps`, `search`, move names. Examples: `1.4x · ahead 112 m · side 35 m` (gold 1.4, 112, 35); `gore every 5 s` (gold 5); `75%` (gold 75); `12,000` (one gold token).

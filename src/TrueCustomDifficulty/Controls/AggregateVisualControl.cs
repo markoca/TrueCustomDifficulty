@@ -617,14 +617,26 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
     // Card readout: the current value, or a derived line (seconds, metres)
     // for the human tactics / awareness cards; rail ends stay EconomyValue.
+    // Combat cards show the concrete result only (seconds, metres, spread);
+    // the slider factor is not a game value by itself and stays in the panel.
     private static string CardReadout(ParameterViewModel parameter)
-        => parameter.Id switch
-        {
-            HumanCombatPolicy.AccuracyId or HumanCombatPolicy.SightRangeId
-                or HumanCombatPolicy.HearingRangeId or HumanCombatPolicy.AlertMemoryId => parameter.CurrentDisplay,
-            _ when HumanCombatPolicy.TacticIds.Contains(parameter.Id) => parameter.CurrentDisplay,
-            _ => EconomyValue(parameter, parameter.CurrentNumber)
-        };
+        => CardValue(parameter, parameter.CurrentNumber);
+
+    private static string CardValue(ParameterViewModel parameter, double value)
+        => HumanCombatPolicy.CardText(parameter.Id, value, parameter.ReferenceNumber)
+            ?? EconomyValue(parameter, value);
+
+    // Track ends: the first concrete figure only ("80–140 s", "20 m", "400%"),
+    // so both ends fit under narrow cards.
+    private static string CardEndpoint(ParameterViewModel parameter, double value)
+    {
+        if (HumanCombatPolicy.CardText(parameter.Id, value, parameter.ReferenceNumber) is not { } concrete)
+            return EconomyValue(parameter, value);
+        var first = concrete.IndexOfAny("0123456789".ToCharArray());
+        var figure = first < 0 ? concrete : concrete[first..];
+        var dot = figure.IndexOf(" · ", StringComparison.Ordinal);
+        return dot > 0 ? figure[..dot] : figure;
+    }
 
     // Generic compact board of economy-style cards (two columns when wide).
     private void DrawCardBoard(DrawingContext dc, string title, (string Id, string Label)[] controls,
@@ -853,10 +865,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 track.Width + 12.0, track.Height + 12.0),
             track, parameter.Minimum, parameter.Maximum);
 
-        DrawText(dc, EconomyValue(parameter, parameter.Minimum),
+        DrawText(dc, CardEndpoint(parameter, parameter.Minimum),
             new Point(track.Left, card.Top + 60.0),
             9.0, muted, FontWeights.Normal);
-        DrawRightAlignedText(dc, EconomyValue(parameter, parameter.Maximum),
+        DrawRightAlignedText(dc, CardEndpoint(parameter, parameter.Maximum),
             new Point(track.Right, card.Top + 60.0),
             9.0, muted, FontWeights.Normal);
     }
