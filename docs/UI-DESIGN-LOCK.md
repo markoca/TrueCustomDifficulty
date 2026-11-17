@@ -1,3 +1,8 @@
+## 2026-11-18 — CURRENT: HIGHER / LOWER opens with the direction
+
+* Every HIGHER / LOWER text now opens with `Higher = …` / `Lower = …` or with the value that sets it (`0 = …`, `1× keeps …`, `100% = …`, `OFF …`) — ~60 rewritten: fatigue aim / reload penalties, Master healing cuts, water drains, Passive HP Regen, trader prices, satiety, drunkenness, heal times, vault height, sprint / aim regen, dropped weapon condition, medkit MIN / MAX, EXTRA STASH GEAR rows, repair-by-reputation, raw anomaly damages, artifact luck / count, human and mutant group sizes (*Higher = bigger groups can show up*; the vanilla caps stay in WHAT IT DOES), NPC sight / alert memory.
+* `tools/audit_panel_text_style.py` enforces the opener (`LOGIC_OPENERS`); `alife.mutantSpawn.generic` (not used, no control) joins the skip list.
+
 ## 2026-11-18 — CURRENT: "vanilla" everywhere, MIN without a dot
 
 * Panel texts say **vanilla**, never *original* (vodka radiation, Vinca / Hercules / Psi-block durations, medkit MIN / MAX, weapon / armor weight, Passive HP Regen, sleep healing, BUY restriction rows, stash odds / range meanings): e.g. `1× keeps vanilla weight. 0× makes them weightless; 2× doubles their weight.`, `0 means stashes never give it; 5 keeps the vanilla maximum.` HIGHER / LOWER of medicine durations and sleep healing no longer repeat the vanilla value (`Set in real seconds.`, `Higher = sleep heals more; 0 HP means sleep doesn't heal at all.`).

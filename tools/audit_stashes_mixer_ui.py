@@ -215,7 +215,7 @@ for key in ("Weapon", "Armor", "Artifact", "Attachment"):
                if p["id"] == "loot.stashGear" + key + "Weight")
     assert row["slider"] == {"min": 0, "max": 3, "step": 0.1, "stepMode": "absolute"}
     assert "Coverage decides" in row["interaction"] and "BONUS CHANCE" in row["interaction"]
-    assert "priority" in row["logic"].lower() and "Zero excludes" in row["logic"]
+    assert row["logic"].startswith("Higher = bonus gear is more often") and "0 = never" in row["logic"]
 assert "Bonus Mix" in lock and "three" in system
 assert "DrawStashBiasPreview" not in source
 assert "DrawStashCountKnob" not in source

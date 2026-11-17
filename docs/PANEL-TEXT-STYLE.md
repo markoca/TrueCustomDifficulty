@@ -11,7 +11,7 @@ The right-hand panel is read by a **player**, not by a modder. Every text answer
 |---|---|---|---|
 | Panel title | `label` (or `OwnPanelTitle` for board anchors) | The name the board draws. | — |
 | **WHAT IT DOES** | `rationale` | One paragraph: **① what it changes in play** (one sentence, starts with *How …* / *Whether …* / *Which …* when it fits) → **② `Vanilla: …`** → **③ what higher / lower feels like** (optional) → **④ `Only works while X is ON.`** if it has a master switch. | 300 chars |
-| **HIGHER / LOWER** | `logic` | Direction only: `Higher = …; lower = …` or `0 = …; 2× = …`. No vanilla values (they live in ①–②). | 200 chars |
+| **HIGHER / LOWER** | `logic` | Direction only, opening with it: `Higher = …; lower = …` (or the value that sets it: `0 = …`, `1× keeps …`, `100% = …`, `OFF …`). No vanilla values (they live in ①–②). | 200 chars |
 | **WORKS WITH** | `interaction` | Which other controls stack, override or stay separate — named in CAPS. | 220 chars |
 | **CONTROLS** | `ControlHelp` / NPC LOOT card help | What the hands do, then one reset sentence: `Right-click one <part> to reset it; R resets <scope>.` | — |
 

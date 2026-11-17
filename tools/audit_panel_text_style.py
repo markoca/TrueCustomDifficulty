@@ -25,6 +25,7 @@ LEGACY = {
     "loot.standardStashChanceScale", "loot.rareStashChanceScale",
     "loot.mediumStashAmmoQuantity", "loot.expensiveStashAmmoQuantity",
     "survival.drunknessThresholdScale", "economy.repairDifficultyCost",
+    "alife.mutantSpawn.generic",  # not used: per-species limits only
 }
 SKIP_GROUPS = {"Trader Buys"}  # legacy BUY restrictions: CLEAR notice only
 
@@ -69,6 +70,8 @@ FORMAT = [
     (r"[Vv]anilla[^.]*\bon (?:every|all) difficult", "Vanilla: X. (no 'on every difficulty')"),
     (r"the game's odds|GAME ODDS", "say vanilla"),
 ]
+# HIGHER / LOWER opens with the direction or the value that sets it (§1).
+LOGIC_OPENERS = (r"^(Higher|Lower) = |^Higher MIN|^[0-9.]+(?:×|%| HP| s|–|\b)|^OFF|^ON|^Follows|^Each |^EFFECTIVE|^Keep |^Only |^Set |^From |^Every |^Shown |^While |^Once |^100% |^More negative|^Negative|^Range")
 LIMITS = {"rationale": 300, "logic": 200, "interaction": 220}
 
 
@@ -100,6 +103,9 @@ for p in CATALOG:
     r = p.get("rationale") or ""
     if r and not re.search(r"\bVanilla\b", r):
         hits.append((p["id"], "rationale", "missing 'Vanilla:'"))
+    logic = p.get("logic") or ""
+    if logic and not re.match(LOGIC_OPENERS, logic):
+        hits.append((p["id"], "logic", "HIGHER / LOWER must open with a direction (Higher = / Lower = / a value / OFF / ON)"))
     master = p.get("requiresToggle")
     if master and master in by_id and "Only works while" not in r:
         hits.append((p["id"], "rationale", "missing 'Only works while … is ON.'"))

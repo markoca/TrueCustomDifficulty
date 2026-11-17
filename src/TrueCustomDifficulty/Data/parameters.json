@@ -676,7 +676,7 @@
         ]
       },
       "rationale": "How far human enemies can spot you. Vanilla: 80 m straight ahead, 25 m at the edge of vision. 0.5× = sneak much closer; 1.5× = they notice you from further away. Maximum 2.5× = 200 m ahead, 62.5 m at the sides.",
-      "logic": "Both vision distances are multiplied. Darkness, flashlights and night vision still change what they see.",
+      "logic": "Higher = they spot you from further away, ahead and to the side; darkness, flashlights and night vision still matter.",
       "interaction": "SIGHT, HEARING and MEMORY are independent; together they decide how easy stealth is. Mutants use their own senses and are not changed."
     },
     {
@@ -771,7 +771,7 @@
         ]
       },
       "rationale": "How long human enemies keep searching after they lose you. Vanilla: they hold their alert about 30 s. 2× = they hunt you twice as long; 0.5× = they give up quickly.",
-      "logic": "Freeze times are multiplied and the threat loss per second divided, so the whole alert lasts m times as long.",
+      "logic": "Higher = they stay alert and keep searching longer; lower = they calm down sooner.",
       "interaction": "SIGHT, HEARING and MEMORY are independent; together they decide how easy stealth is. Mutants use their own senses and are not changed."
     },
     {
@@ -3168,7 +3168,7 @@
         ]
       },
       "rationale": "How often mutants in a fight get to use their special and knockdown moves — growls, shields, knockdown leaps and charges. Vanilla: Novice–Veteran 1× (8–12 s pause after each one), Master 2× (4–6 s). Higher = one special move after another; lower = more time to recover.",
-      "logic": "After a mutant uses a special or knockdown move, every mutant in the fight waits a random 8–12 s before the next one (divided by this rate).",
+      "logic": "Higher = shorter pauses between special moves (8–12 s at 1×); lower = more time to recover.",
       "interaction": "Each mutant's own ATTACK RATE still decides how soon that mutant can repeat its attacks.",
       "exposeInUi": false
     },
@@ -3463,7 +3463,7 @@
         ]
       },
       "rationale": "How filling one piece of bread is. Vanilla: 20 hunger points out of 100 — a quick snack, not a meal.",
-      "logic": "Higher means more hunger removed by that item. At zero it gives no normal hunger relief.",
+      "logic": "Higher = it fills you more; 0 = no hunger relief.",
       "interaction": "HUNGER RATE controls how quickly hunger returns; food healing and special effects stay separate.",
       "exposeInUi": true
     },
@@ -3510,7 +3510,7 @@
         ]
       },
       "rationale": "How filling one sausage is. Vanilla: 30 hunger points out of 100.",
-      "logic": "Higher means more hunger removed by that item. At zero it gives no normal hunger relief.",
+      "logic": "Higher = it fills you more; 0 = no hunger relief.",
       "interaction": "HUNGER RATE controls how quickly hunger returns; food healing and special effects stay separate.",
       "exposeInUi": true
     },
@@ -3557,7 +3557,7 @@
         ]
       },
       "rationale": "How filling one can of food is. Vanilla: 50 hunger points — half the meter in one go.",
-      "logic": "Higher means more hunger removed by that item. At zero it gives no normal hunger relief.",
+      "logic": "Higher = it fills you more; 0 = no hunger relief.",
       "interaction": "HUNGER RATE controls how quickly hunger returns; food healing and special effects stay separate.",
       "exposeInUi": true
     },
@@ -3605,7 +3605,7 @@
         ]
       },
       "rationale": "How filling a tin of condensed milk is. Vanilla: 100, it clears the whole hunger meter. Lower it to stop milk being the only food worth carrying.",
-      "logic": "At zero, condensed milk stops relieving hunger. Higher settings remove more hunger until the 100-point meter is cleared.",
+      "logic": "Higher = it fills you more; 0 = no hunger relief.",
       "interaction": "Normal HP healing and Weird Kettle alternative effects stay separate.",
       "exposeInUi": true
     },
@@ -4350,7 +4350,7 @@
         ]
       },
       "rationale": "How much radiation one bottle of vodka flushes out. Vanilla: 50 — the classic stalker remedy. You still get drunk as usual.",
-      "logic": "Vanilla vodka removes 50 rad pts.",
+      "logic": "Higher = each vodka clears more radiation; 0 = none.",
       "interaction": "Does not alter intoxication, drink duration or the other alcohol.",
       "exposeInUi": false
     },
@@ -5163,7 +5163,7 @@
         ]
       },
       "rationale": "How much one beer gets you drunk. Vanilla: 15 — tipsy on the 2nd beer, properly drunk by the 6th in a row. The chart shows exactly when each stage hits.",
-      "logic": "Vanilla: 15 drunkenness per beer. With tipsy at 30 and drunk at 80, back-to-back beers make you tipsy on the 2nd and drunk on the 6th.",
+      "logic": "Higher = you get drunk faster. At vanilla strength, back-to-back beers make you tipsy on the 2nd and drunk on the 6th.",
       "interaction": "Sits beside VODKA STRENGTH; the preview shows right away how many beers make you tipsy and drunk."
     },
     {
@@ -5210,7 +5210,7 @@
         ]
       },
       "rationale": "How much one vodka gets you drunk. Vanilla: 30 — tipsy after the 1st bottle, drunk by the 3rd in a row.",
-      "logic": "Vanilla: 30 drunkenness per vodka. With tipsy at 30 and drunk at 80, the 1st vodka makes you tipsy and the 3rd drunk.",
+      "logic": "Higher = you get drunk faster. At vanilla strength the 1st vodka makes you tipsy and the 3rd drunk.",
       "interaction": "Sits beside BEER STRENGTH; the preview shows right away how many vodkas make you tipsy and drunk."
     },
     {
@@ -5681,7 +5681,7 @@
         ]
       },
       "rationale": "Slow healing over time without using anything. Vanilla: 0 — in vanilla you never heal just by waiting. Even a small value makes minor wounds close up on their own.",
-      "logic": "Zero keeps vanilla behavior. Raising it adds passive healing over time.",
+      "logic": "0 = vanilla, no passive healing; higher = you slowly heal over time.",
       "interaction": "REGEN DELAY decides when recovery can begin. Low-health recovery and medkits stay separate."
     },
     {
@@ -5980,7 +5980,7 @@
         ]
       },
       "rationale": "How long the bandage's HP restore takes. Vanilla: 1 s — almost instant. Longer spreads the same 20 HP over more seconds, so you can't top up mid-fight.",
-      "logic": "Spreads the bandage's heal over this many seconds; the total HP stays the same. 1 s = vanilla, 10 s = the same heal over ten seconds.",
+      "logic": "Higher = the bandage's heal is spread over more seconds; the total HP stays the same.",
       "interaction": "Drag this item's TIME column; right-click resets only this duration.",
       "exposeInUi": false
     },
@@ -6028,7 +6028,7 @@
         ]
       },
       "rationale": "How long the medkit's HP restore takes. Vanilla: 1 s — almost instant. Longer spreads the same 70 HP over more seconds, so you can't top up mid-fight.",
-      "logic": "Spreads the medkit's heal over this many seconds; the total HP stays the same. 1 s = vanilla, 10 s = the same heal over ten seconds.",
+      "logic": "Higher = the medkit's heal is spread over more seconds; the total HP stays the same.",
       "interaction": "Drag this item's TIME column; right-click resets only this duration.",
       "exposeInUi": false
     },
@@ -6076,7 +6076,7 @@
         ]
       },
       "rationale": "How long the army medkit's HP restore takes. Vanilla: 1 s — almost instant. Longer spreads the same 85 HP over more seconds, so you can't top up mid-fight.",
-      "logic": "Spreads the army medkit's heal over this many seconds; the total HP stays the same. 1 s = vanilla, 10 s = the same heal over ten seconds.",
+      "logic": "Higher = the army medkit's heal is spread over more seconds; the total HP stays the same.",
       "interaction": "Drag this item's TIME column; right-click resets only this duration.",
       "exposeInUi": false
     },
@@ -6124,7 +6124,7 @@
         ]
       },
       "rationale": "How long the scientific medkit's HP restore takes. Vanilla: 1 s — almost instant. Longer spreads the same 100 HP over more seconds, so you can't top up mid-fight.",
-      "logic": "Spreads the scientific medkit's heal over this many seconds; the total HP stays the same. 1 s = vanilla, 10 s = the same heal over ten seconds.",
+      "logic": "Higher = the scientific medkit's heal is spread over more seconds; the total HP stays the same.",
       "interaction": "Drag this item's TIME column; right-click resets only this duration.",
       "exposeInUi": false
     },
@@ -6351,7 +6351,7 @@
         "notes": []
       },
       "rationale": "How much of a bandage's heal you keep under Master's weaker meds. Vanilla: 25% — about 5 HP from a 20 HP bandage. 100% = no cut. Only works while HEALING ITEM EFFICIENCY REDUCTION is ON.",
-      "logic": "100% means no Master healing cut; lower values make the Bandage heal less.",
+      "logic": "100% = no Master healing cut; lower = the bandage heals less.",
       "interaction": "The base heal and this Master cut multiply, so changing both stacks up.",
       "requiresToggle": "advanced.masterEffectModifierMechanics"
     },
@@ -6393,7 +6393,7 @@
         "notes": []
       },
       "rationale": "How much of a medkit's heal you keep under Master's weaker meds. Vanilla: 71% — about 50 HP from a 70 HP medkit. 100% = no cut. Only works while HEALING ITEM EFFICIENCY REDUCTION is ON.",
-      "logic": "100% means no Master healing cut; lower values make the Medkit heal less.",
+      "logic": "100% = no Master healing cut; lower = the medkit heals less.",
       "interaction": "The base heal and this Master cut multiply, so changing both stacks up.",
       "requiresToggle": "advanced.masterEffectModifierMechanics"
     },
@@ -6435,7 +6435,7 @@
         "notes": []
       },
       "rationale": "How much of an army medkit's heal you keep under Master's weaker meds. Vanilla: 82% — about 70 HP from an 85 HP army medkit. 100% = no cut. Only works while HEALING ITEM EFFICIENCY REDUCTION is ON.",
-      "logic": "100% means no Master healing cut; lower values make the Army Medkit heal less.",
+      "logic": "100% = no Master healing cut; lower = the army medkit heals less.",
       "interaction": "The base heal and this Master cut multiply, so changing both stacks up.",
       "requiresToggle": "advanced.masterEffectModifierMechanics"
     },
@@ -7106,7 +7106,7 @@
       "label": "Vault Height",
       "description": "Changes the tallest obstacle you can vault over. The WAIST / EYES / ABOVE EYES markers are simple player-friendly height references.",
       "rationale": "The tallest obstacle you can climb over. Vanilla: 130 — the WAIST / EYES markers show what that means in-game. Raise it to vault fences and crates that used to block you.",
-      "logic": "Higher lets you vault taller obstacles; lower restricts vaulting. This changes height reach, not jump distance.",
+      "logic": "Higher = you can climb taller obstacles; lower = fewer things to climb. Jump distance doesn't change.",
       "interaction": "Vault stamina cost, landing rules and collision checks remain independent.",
       "control": "slider",
       "valueKind": "raw",
@@ -7165,7 +7165,7 @@
       "label": "Medium-Water Stamina Drain",
       "description": "Changes the extra stamina drain while moving through medium-depth water.",
       "rationale": "Extra stamina lost while wading through waist-deep water. Vanilla: 1. 0 makes wading free.",
-      "logic": "Higher percentages make movement actions consume more stamina while moderately immersed; lower values soften the water penalty.",
+      "logic": "Higher = wading costs more stamina; lower = it's easier; 0 = free.",
       "interaction": "This changes penalty strength only. Water immersion thresholds remain unchanged.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -7215,7 +7215,7 @@
       "label": "Deep-Water Stamina Drain",
       "description": "Changes the extra stamina drain while moving through deep water.",
       "rationale": "Extra stamina lost while pushing through deep water. Vanilla: 2 — deep water wears you out fast.",
-      "logic": "Higher percentages make deep-water movement substantially more expensive; lower values reduce that stamina pressure.",
+      "logic": "Higher = deep water wears you out faster; lower = it's easier; 0 = free.",
       "interaction": "This does not change the water-depth thresholds or the separate deadly-water instant-death effect.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -7606,7 +7606,7 @@
         ]
       },
       "rationale": "How hard full sprinting drains you. Vanilla: −1.4 (a strong drain). Closer to 0 = you can sprint much longer.",
-      "logic": "Lower recovery makes sustained sprinting more exhausting. 0 adds no sprint-specific recovery change; higher recovery lets stamina come back faster.",
+      "logic": "Lower = sprinting drains you harder; 0 = no extra effect; higher = stamina comes back even while sprinting.",
       "interaction": "Stacks with STAMINA REGEN. Sprinting while slowed (heavy load, injury) uses its own setting.",
       "exposeInUi": false
     },
@@ -7696,7 +7696,7 @@
         ]
       },
       "rationale": "How much slower stamina refills while you aim down sights. Vanilla: −25%. 0 lets you catch your breath at full speed while aiming.",
-      "logic": "Higher settings slow stamina recovery more while aiming. 0 removes the aiming recovery penalty.",
+      "logic": "Higher = stamina recovers slower while aiming; 0 removes the penalty.",
       "interaction": "A steady recovery penalty while aiming, not a one-time cost. STAMINA REGEN sets the base rate; sprint, jump, vault and melee costs stay separate.",
       "exposeInUi": false
     },
@@ -7787,7 +7787,7 @@
         ]
       },
       "rationale": "Makes ordinary human bodies carry less food, drinks and meds. Vanilla: 0% — no change. Higher = leaner pickings, so you rely more on stashes and traders. Weapons, their loaded ammo, armor and quest/special NPCs are never touched.",
-      "logic": "Regular corpse supplies and the SMART LOOT bonus packs both thin out. 0% keeps vanilla; 100% leaves ordinary bodies without food, drinks and meds.",
+      "logic": "Higher = leaner bodies: supplies and SMART LOOT bonus packs both thin out; 100% = no food, drinks or meds on ordinary bodies.",
       "interaction": "Doesn't change which SMART LOOT packs are picked, AMMO PACK SIZE, MOD ITEMS or the per-item chances on this board."
     },
     {
@@ -8016,7 +8016,7 @@
         ]
       },
       "rationale": "How worn the guns you pick up from ordinary human enemies are. Vanilla: 25–50%. Push it down to make looted guns repair projects; up to make them worth keeping.",
-      "logic": "Higher MIN improves the worst condition you can find. Higher MAX allows better-condition weapons; MIN cannot exceed MAX.",
+      "logic": "Higher MIN = no more junk guns; higher MAX = some come in good shape. MIN can't go above MAX.",
       "interaction": "Only weapons dropped by ordinary human enemies change — not their ammo, health, traders, zombies or story characters."
     },
     {
@@ -8808,7 +8808,7 @@
         ]
       },
       "rationale": "The minimum medkit stack a stash can give when it has medkits. Vanilla: 0 = the game's own minimum. Raise it so a medkit find is always worth the trip. It doesn't make medkits appear more often.",
-      "logic": "Raises or lowers the minimum Medkit stack size. 0 keeps the vanilla minimum wherever the item can appear.",
+      "logic": "Higher = bigger medkit stacks at least; 0 keeps the vanilla minimum.",
       "interaction": "Only stack size changes; chance checks and which stashes may contain this item stay separate.",
       "exposeInUi": true
     },
@@ -8856,7 +8856,7 @@
         ]
       },
       "rationale": "The maximum medkit stack a stash can give. Vanilla: 5 = the game's own cap. Lower it to stop finding piles of medkits; 0 takes medkits out of these stacks.",
-      "logic": "Caps the Medkit stack size. 0 means stashes never give it; 5 keeps the vanilla maximum.",
+      "logic": "Lower = smaller medkit stacks; 0 means stashes never give it; 5 keeps the vanilla maximum.",
       "interaction": "Only stack size changes; chance checks and which stashes may contain this item stay separate.",
       "exposeInUi": true
     },
@@ -8904,7 +8904,7 @@
         ]
       },
       "rationale": "The minimum army medkit stack a stash can give when it has them. Vanilla: 0 = the game's own minimum. It doesn't make them appear more often.",
-      "logic": "Raises or lowers the minimum Army Medkit stack size. 0 keeps the vanilla minimum wherever the item can appear.",
+      "logic": "Higher = bigger army medkit stacks at least; 0 keeps the vanilla minimum.",
       "interaction": "Only stack size changes; chance checks and which stashes may contain this item stay separate.",
       "exposeInUi": true
     },
@@ -8952,7 +8952,7 @@
         ]
       },
       "rationale": "The maximum army medkit stack a stash can give. Vanilla: 5 = the game's own cap. 0 takes army medkits out of these stacks.",
-      "logic": "Caps the Army Medkit stack size. 0 means stashes never give it; 5 keeps the vanilla maximum.",
+      "logic": "Lower = smaller army medkit stacks; 0 means stashes never give it; 5 keeps the vanilla maximum.",
       "interaction": "Only stack size changes; chance checks and which stashes may contain this item stay separate.",
       "exposeInUi": true
     },
@@ -9362,7 +9362,7 @@
         ]
       },
       "rationale": "How many regular stashes get a shot at bonus gear. Vanilla: 0%. 50% = about half of them. Each of those still needs to pass BONUS CHANCE. Only works while EXTRA STASH GEAR is ON.",
-      "logic": "Higher covers more eligible stashes; zero covers none. Full coverage still does not guarantee an item.",
+      "logic": "Higher = more stashes can hide bonus gear; 0 = none. Even 100% doesn't guarantee an item.",
       "interaction": "BONUS CHANCE decides each bonus item; the PRIORITY bars decide which kinds of gear are offered.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
@@ -9417,7 +9417,7 @@
         ]
       },
       "rationale": "How often bonus gear is a weapon. Vanilla: 1×. 0× = never a weapon. Only works while EXTRA STASH GEAR is ON.",
-      "logic": "Higher priority favors weapons when a supported stash chooses its bonus gear types. Zero excludes this category.",
+      "logic": "Higher = bonus gear is more often weapons; 0 = never weapons.",
       "interaction": "Coverage decides which stashes participate; BONUS CHANCE checks each offered item. Rank limits still apply.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
@@ -9472,7 +9472,7 @@
         ]
       },
       "rationale": "How often bonus gear is armor. Vanilla: 1×. 0× = never armor. Only works while EXTRA STASH GEAR is ON.",
-      "logic": "Higher priority favors armor when a supported stash chooses its bonus gear types. Zero excludes this category.",
+      "logic": "Higher = bonus gear is more often armor; 0 = never armor.",
       "interaction": "Coverage decides which stashes participate; BONUS CHANCE checks each offered item. Rank limits still apply.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
@@ -9527,7 +9527,7 @@
         ]
       },
       "rationale": "How often bonus gear is an artifact. Vanilla: 1×. 0× = never an artifact. Only works while EXTRA STASH GEAR is ON.",
-      "logic": "Higher priority favors artifacts when a supported stash chooses its bonus gear types. Zero excludes this category.",
+      "logic": "Higher = bonus gear is more often artifacts; 0 = never artifacts.",
       "interaction": "Coverage decides which stashes participate; BONUS CHANCE checks each offered item. Rank limits still apply.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
@@ -9584,7 +9584,7 @@
         ]
       },
       "rationale": "How often bonus gear is a weapon attachment, matched to the area's progression. Vanilla: 0 — off. Raise it to find scopes and other attachments in stashes. Only works while EXTRA STASH GEAR is ON.",
-      "logic": "Higher priority favors attachments when a supported stash chooses its bonus gear types. Zero excludes this category.",
+      "logic": "Higher = bonus gear is more often attachments; 0 = never attachments.",
       "interaction": "Coverage decides which stashes participate; BONUS CHANCE checks each offered item. Rank limits still apply.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
@@ -9641,7 +9641,7 @@
         ]
       },
       "rationale": "The chance for each bonus gear item in a stash that qualifies. Vanilla: 50%. Even 100% isn't a guarantee everywhere — BONUS GEAR COVERAGE decides which stashes qualify. Only works while EXTRA STASH GEAR is ON.",
-      "logic": "Higher improves the odds for each offered bonus item. Even 100% still needs an eligible stash and item candidate.",
+      "logic": "Higher = each bonus item is more likely. Even 100% only works in stashes that qualify.",
       "interaction": "BONUS GEAR COVERAGE sets how many stashes qualify; the PRIORITY bars set which kinds of gear are offered.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
@@ -9762,7 +9762,7 @@
         ]
       },
       "rationale": "Chance a Basic stash has an RGD-5 grenade in it. Vanilla: 10%.",
-      "logic": "The real chance a Basic stash has an RGD-5: 10% is vanilla, 0% never, 100% every Basic stash that can carry one.",
+      "logic": "Higher = more Basic stashes have an RGD-5; 0% = never; 100% = every Basic stash that can carry one.",
       "interaction": "RGD-5 AMOUNT decides how many. Six DLC1 Basic stashes that always have one in vanilla follow the same ratio (5% = half as often).",
       "lootHint": {
         "kind": "absoluteChancePer100",
@@ -9814,7 +9814,7 @@
         ]
       },
       "rationale": "How many RGD-5s you get when a Basic stash has grenades. Vanilla: 1.",
-      "logic": "Exactly 0–4 grenades when the stash has its grenade. Vanilla: 1.",
+      "logic": "Higher = more grenades when the stash has one; 0 = none.",
       "interaction": "BASIC GRENADES CHANCE and RGD-5 AMOUNT are separate: at 0% chance no grenade appears; RGD-5 AMOUNT decides how many when it does.",
       "lootHint": {
         "kind": "exactCount",
@@ -11019,7 +11019,7 @@
         "notes": []
       },
       "rationale": "How much traders pay you when you sell. Vanilla: Novice and Stalker 1×, Veteran 0.65×, Master 0.55×. Lower = selling loot earns less.",
-      "logic": "Higher raises what traders offer when you sell; lower reduces it. This is a price modifier, not an exact payout.",
+      "logic": "Higher = traders pay more when you sell; lower = less. Each trader still adds their own markup.",
       "interaction": "BROKEN GEAR VALUE and item condition also affect what you can sell and for how much."
     },
     {
@@ -11063,7 +11063,7 @@
         "notes": []
       },
       "rationale": "How much traders charge you when you buy. Vanilla: Novice and Stalker 1×, Veteran 1.25×, Master 1.65×. Higher = everything in the shop costs more.",
-      "logic": "Higher makes buying more expensive; lower makes it cheaper. Each trader still applies their own pricing rules.",
+      "logic": "Higher = buying costs more; lower = cheaper. Each trader still adds their own markup.",
       "interaction": "ITEM VALUES changes underlying prices; PRICES TRADERS PAY applies when you sell instead."
     },
     {
@@ -11152,7 +11152,7 @@
         "notes": []
       },
       "rationale": "What a completely broken item is still worth. Vanilla: 10% of its price. Higher = wrecked gear still sells for something.",
-      "logic": "At 10%, completely broken gear is still worth 10% of its price; higher = wrecked gear sells for more.",
+      "logic": "Higher = wrecked gear still sells for more; 0% = worthless when fully broken.",
       "interaction": "Trader markups still apply; this only changes how much wear lowers the price."
     },
     {
@@ -11198,7 +11198,7 @@
         ]
       },
       "rationale": "How much ammo every trader has on the shelf — shopkeepers, bartenders, stalkers you can trade with and DLC traders alike. Vanilla: 1×. Lower = smaller stacks, and where a stack is already 1 the offer turns up less often; higher = bigger stacks. Doesn't add new calibers.",
-      "logic": "Below 1× stacks shrink (never below 1), then the offer turns up less often. Above 1× only stacks grow.",
+      "logic": "Lower = smaller stacks (never below 1), then the offer turns up less often; higher = only bigger stacks.",
       "interaction": "Doesn't add calibers, skip rank unlocks or change restock timing. The AMMO rail of each trader type sets how often ammo is offered."
     },
     {
@@ -11243,7 +11243,7 @@
         ]
       },
       "rationale": "How many meds every trader has for sale — medics, shopkeepers and stalkers you can trade with alike. Vanilla: 1×. Lower = smaller stacks, and single meds turn up less often, so you can't restock everything in one visit; higher = bigger stacks.",
-      "logic": "Below 1× stacks shrink (never below 1), then the offer turns up less often — most meds sell one or two at a time. Above 1× only stacks grow.",
+      "logic": "Lower = smaller stacks (never below 1), then the offer turns up less often — most meds sell one or two at a time; higher = only bigger stacks.",
       "interaction": "Rank unlocks and restock timing stay vanilla. The MEDICAL rail of each trader type sets how often meds are offered."
     },
     {
@@ -11827,7 +11827,7 @@
         "notes": []
       },
       "rationale": "Repair price when the technician's faction is hostile to you. Vanilla: 2× — double the bill.",
-      "logic": "Higher means more expensive repairs from hostile technicians; lower means cheaper repairs at this reputation level.",
+      "logic": "Higher = hostile technicians charge more for repairs; lower = cheaper.",
       "interaction": "BASE REPAIR COST and the faction's current attitude both affect the final price."
     },
     {
@@ -11868,7 +11868,7 @@
         "notes": []
       },
       "rationale": "Repair price when the technician's faction dislikes you. Vanilla: 1.5×.",
-      "logic": "Higher means more expensive repairs from disliked technicians; lower means cheaper repairs at this reputation level.",
+      "logic": "Higher = unfriendly technicians charge more for repairs; lower = cheaper.",
       "interaction": "BASE REPAIR COST and the faction's current attitude both affect the final price."
     },
     {
@@ -11909,7 +11909,7 @@
         "notes": []
       },
       "rationale": "Repair price when you're neutral with the technician's faction. Vanilla: 1×.",
-      "logic": "Higher means more expensive repairs from neutral technicians; lower means cheaper repairs at this reputation level.",
+      "logic": "Higher = neutral technicians charge more for repairs; lower = cheaper.",
       "interaction": "BASE REPAIR COST and the faction's current attitude both affect the final price."
     },
     {
@@ -11950,7 +11950,7 @@
         "notes": []
       },
       "rationale": "Repair price when the technician's faction likes you. Vanilla: 0.75× — a friend's discount.",
-      "logic": "Higher means more expensive repairs from friendly technicians; lower means cheaper repairs at this reputation level.",
+      "logic": "Higher = friendly technicians charge more for repairs; lower = cheaper.",
       "interaction": "BASE REPAIR COST and the faction's current attitude both affect the final price."
     },
     {
@@ -12743,7 +12743,7 @@
         "notes": []
       },
       "rationale": "How much light tiredness slows your aiming. Vanilla: +15% time to aim.",
-      "logic": "Higher values make aiming settle more slowly once the low-fatigue threshold is crossed; zero removes this standard low-fatigue aiming penalty.",
+      "logic": "Higher = aiming settles more slowly while slightly tired; 0 removes this penalty.",
       "interaction": "Applies whenever you're slightly tired."
     },
     {
@@ -12866,7 +12866,7 @@
         "notes": []
       },
       "rationale": "How much moderate tiredness slows your reloads. Vanilla: +15% reload time.",
-      "logic": "Higher values lengthen reloads more while medium fatigue is active; zero removes this penalty.",
+      "logic": "Higher = slower reloads while moderately tired; 0 removes this penalty.",
       "interaction": "Applies whenever you're moderately tired; the aim delay is separate."
     },
     {
@@ -12907,7 +12907,7 @@
         "notes": []
       },
       "rationale": "How much severe tiredness slows your reloads. Vanilla: +18.75% reload time. Master fatigue can add more.",
-      "logic": "Higher values make reloads slower while severely fatigued. Zero removes this reload penalty.",
+      "logic": "Higher = slower reloads while severely tired; 0 removes this penalty.",
       "interaction": "Applies whenever you're severely tired. SEVERE FATIGUE MECHANICS can add more on top."
     },
     {
@@ -13081,7 +13081,7 @@
         "notes": []
       },
       "rationale": "How much carry capacity you lose while exhausted under Master rules. Vanilla: 20%. 0% removes it. Only works while SEVERE FATIGUE MECHANICS is ON.",
-      "logic": "Higher values make fatigue reduce carrying capability more strongly; zero removes both carry-related components together.",
+      "logic": "Higher = you can carry even less while severely tired; 0% removes this penalty.",
       "interaction": "Your normal carrying limit and equipment carry bonuses remain separate.",
       "requiresToggle": "advanced.fatigueMechanics"
     },
@@ -13822,7 +13822,7 @@
         ]
       },
       "rationale": "How fast you can still move when a Flycatcher grabs you. Vanilla: 50% of normal speed. 100% = no slowdown; 0% = stuck in place.",
-      "logic": "Vanilla leaves 50% of your normal movement speed; 100% = no slowdown; 0% = stuck in place.",
+      "logic": "Higher = you move more freely inside it; 100% = no slowdown; 0% = stuck in place.",
       "interaction": "Changes only player movement slowdown inside the Flycatcher. Projectile slowdown, HP/stamina regeneration penalties and turn slowdown remain separate."
     },
     {
@@ -13872,7 +13872,7 @@
         ]
       },
       "rationale": "How fast you can still turn and look around inside a Flycatcher. Vanilla: 30% of normal. 100% = no slowdown.",
-      "logic": "Vanilla leaves 30% of your normal turn speed (left-right and up-down); 100% = no slowdown; 0% = you can't turn.",
+      "logic": "Higher = you turn more freely inside it; 100% = no slowdown; 0% = you can't turn.",
       "interaction": "The same setting is applied to Flycatcher yaw and pitch so horizontal and vertical looking stay synchronized. Movement speed is controlled separately."
     },
     {
@@ -13915,7 +13915,7 @@
         "notes": []
       },
       "rationale": "How much health a Clicker hit takes. Vanilla: 70 base damage. Only the health damage changes; the hit still wears down your gear as usual.",
-      "logic": "70 is vanilla base burn damage per hit, before difficulty and your protection; 0 removes this health damage.",
+      "logic": "Higher = each Clicker burn hurts more, before difficulty and your protection; 0 removes this health damage.",
       "interaction": "Only the Clicker's hit damage changes. GLOBAL ANOMALY DAMAGE and your protection still apply; its gear corrosion is untouched.",
       "exposeInUi": false
     },
@@ -14062,7 +14062,7 @@
         ]
       },
       "rationale": "How much health a Soap Bubble's chemical burn takes. Vanilla: 100. 0 removes the health damage only.",
-      "logic": "100 keeps vanilla Soap Bubble health damage; 0 removes it; 200 doubles it.",
+      "logic": "Higher = Soap Bubble hurts more; 0 removes its health damage.",
       "interaction": "Does not change particle behavior, spread, movement or other Soap Bubble effects.",
       "exposeInUi": false
     },
@@ -14108,7 +14108,7 @@
         ]
       },
       "rationale": "How much health a Fireball's burn takes. Vanilla: 100. 0 removes the health damage only.",
-      "logic": "100 keeps vanilla Fireball health damage; 0 removes it; 200 doubles it.",
+      "logic": "Higher = Fireball hurts more; 0 removes its health damage.",
       "interaction": "Does not change Fireball movement, trail, collision or other behavior.",
       "exposeInUi": false
     },
@@ -14155,7 +14155,7 @@
         ]
       },
       "rationale": "How much health a Diamond hit takes. Vanilla: 15. Its bleeding is a separate setting.",
-      "logic": "15 keeps vanilla Diamond health damage; 0 removes it; 30 doubles it.",
+      "logic": "Higher = Diamond hurts more; 0 removes its health damage.",
       "interaction": "DIAMOND BLEEDING is controlled separately.",
       "exposeInUi": false
     },
@@ -14202,7 +14202,7 @@
         ]
       },
       "rationale": "How badly a Diamond hit makes you bleed. Vanilla: 10 bleed pts. 0 = no bleeding from it.",
-      "logic": "10 is vanilla; the range is 0–20.",
+      "logic": "Higher = Diamond cuts make you bleed more; 0 = no bleeding.",
       "interaction": "DIAMOND HEALTH DAMAGE is a separate setting.",
       "exposeInUi": false
     },
@@ -14338,7 +14338,7 @@
         ]
       },
       "rationale": "How often a find is rare or epic. Vanilla: 1× (25% in Master zones, 11% in Veteran). 2× roughly doubles that; 0.5× makes a top-tier artifact a real event. Newbie zones never drop rare ones.",
-      "logic": "Rare and Epic shares are multiplied, then all four shares are scaled back to 100%. Beginner (Newbie) areas never grow rare artifacts in the game and keep that.",
+      "logic": "Higher = more Rare and Epic artifacts, fewer common ones. Newbie areas never grow rare artifacts, and still don't.",
       "interaction": "Changes only which rarity a spawned artifact gets. SPAWN CHANCE and PER SPAWN decide how many artifacts appear."
     },
     {
@@ -14384,7 +14384,7 @@
         ]
       },
       "rationale": "How many artifacts drop at once when a field spawns. Vanilla: 1. 2–3 turn a well-searched field into a jackpot.",
-      "logic": "1 keeps the game's single artifact per spawn. 2 or 3 sets the spawner Count directly.",
+      "logic": "1 = vanilla, one artifact per spawn; 2 or 3 = that many.",
       "interaction": "Multiplies every artifact that spawns; SPAWN CHANCE decides how often that happens."
     },
     {
@@ -15822,7 +15822,7 @@
         ]
       },
       "rationale": "How big human squads can get while you're a Newbie. Vanilla: 1× (3 NPC). 2× = up to twice as many per squad. How often squads show up doesn't change. Each rank has its own bar.",
-      "logic": "",
+      "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "",
       "exposeInUi": true
     },
@@ -15869,7 +15869,7 @@
         ]
       },
       "rationale": "How big human squads can get while you're Experienced. Vanilla: 1× (4 NPC). How often squads show up doesn't change.",
-      "logic": "Vanilla Experienced squads cap at 4 NPCs. Lower settings make squads smaller; higher settings allow larger squads.",
+      "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "Each radar point represents one player rank. 1× keeps vanilla squad size; right-click that point or legend name to reset only that rank.",
       "exposeInUi": false
     },
@@ -15916,7 +15916,7 @@
         ]
       },
       "rationale": "How big human squads can get while you're a Veteran. Vanilla: 1× (5 NPC).",
-      "logic": "Vanilla Veteran squads cap at 5 NPCs. Lower settings make squads smaller; higher settings allow larger squads.",
+      "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "Each radar point represents one player rank. 1× keeps vanilla squad size; right-click that point or legend name to reset only that rank.",
       "exposeInUi": false
     },
@@ -15963,7 +15963,7 @@
         ]
       },
       "rationale": "How big human squads can get while you're a Master. Vanilla: 1× (6 NPC) — late-game firefights get crowded.",
-      "logic": "Vanilla Master squads cap at 6 NPCs. Lower settings make squads smaller; higher settings allow larger squads.",
+      "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "Each radar point represents one player rank. 1× keeps vanilla squad size; right-click that point or legend name to reset only that rank.",
       "exposeInUi": false
     },
@@ -16031,7 +16031,7 @@
         ]
       },
       "rationale": "Not used: the game limits each mutant species separately, so there's no single mutant slider that works. Vanilla: 1×. Use the per-species bars instead.",
-      "logic": "The game has separate per-species group limits, so this hidden setting is not used to scale them.",
+      "logic": "Not used: each mutant species has its own group limit.",
       "interaction": "Not shown in the normal UI. Use the species-specific MUTANT GROUP SIZE radar instead.",
       "exposeInUi": false
     },
@@ -16099,7 +16099,7 @@
         ]
       },
       "rationale": "How many bloodsuckers can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 0 / 1 / 1 / 1). 2× = up to twice as many per group; how often they spawn doesn't change. Each species has its own bar. A Newbie cap of 0 stays 0.",
-      "logic": "",
+      "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "",
       "exposeInUi": true
     },
@@ -16167,7 +16167,7 @@
         ]
       },
       "rationale": "How many blind dogs can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 4 / 6 / 8 / 12). 2× = up to twice as many per group; how often they spawn doesn't change.",
-      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 4 / 6 / 8 / 12. Lower settings shrink groups; higher settings allow larger groups.",
+      "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "This radar point changes only Blind Dog group size. 1× keeps vanilla; right-click the point or legend name to reset Blind Dog.",
       "exposeInUi": false
     },
@@ -16235,7 +16235,7 @@
         ]
       },
       "rationale": "How many fleshs can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 2 / 3 / 5 / 6). 2× = up to twice as many per group; how often they spawn doesn't change.",
-      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 2 / 3 / 5 / 6. Lower settings shrink groups; higher settings allow larger groups.",
+      "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "This radar point changes only Flesh group size. 1× keeps vanilla; right-click the point or legend name to reset Flesh.",
       "exposeInUi": false
     },
@@ -16303,7 +16303,7 @@
         ]
       },
       "rationale": "How many controllers can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 0 / 1 / 1 / 1). 2× = up to twice as many per group; how often they spawn doesn't change. A Newbie cap of 0 stays 0.",
-      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 0 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
+      "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "This radar point changes only Controller group size. 1× keeps vanilla; right-click the point or legend name to reset Controller.",
       "exposeInUi": false
     },
@@ -16371,7 +16371,7 @@
         ]
       },
       "rationale": "How many poltergeists can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 1 / 1 / 2 / 2). 2× = up to twice as many per group; how often they spawn doesn't change.",
-      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 2 / 2. Lower settings shrink groups; higher settings allow larger groups.",
+      "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "This radar point changes only Poltergeist group size. 1× keeps vanilla; right-click the point or legend name to reset Poltergeist.",
       "exposeInUi": false
     },
@@ -16439,7 +16439,7 @@
         ]
       },
       "rationale": "How many snorks can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 1 / 3 / 4 / 6). 2× = up to twice as many per group; how often they spawn doesn't change.",
-      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 3 / 4 / 6. Lower settings shrink groups; higher settings allow larger groups.",
+      "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "This radar point changes only Snork group size. 1× keeps vanilla; right-click the point or legend name to reset Snork.",
       "exposeInUi": false
     },
@@ -16507,7 +16507,7 @@
         ]
       },
       "rationale": "How many boars can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 2 / 3 / 5 / 6). 2× = up to twice as many per group; how often they spawn doesn't change.",
-      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 2 / 3 / 5 / 6. Lower settings shrink groups; higher settings allow larger groups.",
+      "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "This radar point changes only Boar group size. 1× keeps vanilla; right-click the point or legend name to reset Boar.",
       "exposeInUi": false
     },
@@ -16575,7 +16575,7 @@
         ]
       },
       "rationale": "How many chimeras can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 1). 2× = up to twice as many per group; how often they spawn doesn't change.",
-      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
+      "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "This radar point changes only Chimera group size. 1× keeps vanilla; right-click the point or legend name to reset Chimera.",
       "exposeInUi": false
     },
@@ -16643,7 +16643,7 @@
         ]
       },
       "rationale": "How many bayuns can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 2). 2× = up to twice as many per group; how often they spawn doesn't change.",
-      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 2. Lower settings shrink groups; higher settings allow larger groups.",
+      "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "This radar point changes only Bayun group size. 1× keeps vanilla; right-click the point or legend name to reset Bayun.",
       "exposeInUi": false
     },
@@ -16711,7 +16711,7 @@
         ]
       },
       "rationale": "How many tushkans can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 6 / 8 / 12 / 16). 2× = up to twice as many per group; how often they spawn doesn't change.",
-      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 6 / 8 / 12 / 16. Lower settings shrink groups; higher settings allow larger groups.",
+      "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "This radar point changes only Tushkan group size. 1× keeps vanilla; right-click the point or legend name to reset Tushkan.",
       "exposeInUi": false
     },
@@ -16779,7 +16779,7 @@
         ]
       },
       "rationale": "How many rat swarms can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 1). 2× = up to twice as many per group; how often they spawn doesn't change.",
-      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
+      "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "This radar point changes only Rat Swarm group size. 1× keeps vanilla; right-click the point or legend name to reset Rat Swarm.",
       "exposeInUi": false
     },
@@ -16847,7 +16847,7 @@
         ]
       },
       "rationale": "How many burers can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 2). 2× = up to twice as many per group; how often they spawn doesn't change.",
-      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 2. Lower settings shrink groups; higher settings allow larger groups.",
+      "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "This radar point changes only Burer group size. 1× keeps vanilla; right-click the point or legend name to reset Burer.",
       "exposeInUi": false
     },
@@ -16915,7 +16915,7 @@
         ]
       },
       "rationale": "How many pseudodogs can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 1). 2× = up to twice as many per group; how often they spawn doesn't change.",
-      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
+      "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "This radar point changes only Pseudodog group size. 1× keeps vanilla; right-click the point or legend name to reset Pseudodog.",
       "exposeInUi": false
     },
@@ -16983,7 +16983,7 @@
         ]
       },
       "rationale": "How many deers can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 1). 2× = up to twice as many per group; how often they spawn doesn't change.",
-      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
+      "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "This radar point changes only Deer group size. 1× keeps vanilla; right-click the point or legend name to reset Deer.",
       "exposeInUi": false
     },
