@@ -99,7 +99,7 @@ public sealed partial class CfgPatchWriterService
             && shuffle.CurrentBoolean)
         {
             throw new InvalidDataException(
-                "Extra Stash Gear and World Weapon Shuffle cannot both be enabled. " +
+                "Extra Stash Gear and Shuffle Loose Weapons cannot both be enabled. " +
                 "They edit the same authored weapon stash slots. Turn off one to build safely.");
         }
 

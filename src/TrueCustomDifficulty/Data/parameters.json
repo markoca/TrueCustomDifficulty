@@ -631,7 +631,7 @@
         ]
       },
       "rationale": "How accurately human enemies shoot. Vanilla: 1×. 2× = half the spread, so more bullets find you at range; 0.5× = twice the spread. Damage per hit is ENEMY GUN DAMAGE.",
-      "logic": "2× halves the spread of every enemy gun; 0.5× doubles it. 1× keeps the game's spread.",
+      "logic": "2× halves the spread of every enemy gun; 0.5× doubles it. 1× keeps vanilla spread.",
       "interaction": "Independent of the tactics; ENEMY GUN DAMAGE sets how much each hit hurts."
     },
     {
@@ -1995,7 +1995,7 @@
         ]
       },
       "rationale": "How often Bayuns use their attacks — claw swipes, leaps, pounces and dodges (collar and quest variants included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 5 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. Its abilities (growls and blink teleports) are ABILITIES.",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (growls and blink teleports) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2042,7 +2042,7 @@
         ]
       },
       "rationale": "How often Blind Dogs use their attacks — bites and running bites (collar and moldy variants included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (bite every 5 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. Its abilities (the pack's shield) are ABILITIES.",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (the pack's shield) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2092,7 +2092,7 @@
         ]
       },
       "rationale": "How often Bloodsuckers use their attacks — claw slashes, running attacks, leaps and bites (Mist, Ashy, collar and prologue variants included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 6 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. Its abilities (roars and anomaly spawning) are ABILITIES.",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (roars and anomaly spawning) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2139,7 +2139,7 @@
         ]
       },
       "rationale": "How often Boars use their attacks — gores, running rams and charges (helmed and porcupine variants included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (gore every 10 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. It has no special abilities.",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. It has no special abilities.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2189,7 +2189,7 @@
         ]
       },
       "rationale": "How often Burers use their attacks — claw swipes (shooting variant included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 8 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. Its abilities (shields, telekinetic throws, grenade throws and weapon pulls) are ABILITIES.",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (shields, telekinetic throws, grenade throws and weapon pulls) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2239,7 +2239,7 @@
         ]
       },
       "rationale": "How often Chimeras use their attacks — claws, short and long leaps, runs, fly-through attacks and dodges. Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (leap every 8 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. Its abilities (growls) are ABILITIES.",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (growls) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2289,7 +2289,7 @@
         ]
       },
       "rationale": "How often Controllers use their attacks — claw swipes (collar and deer variants included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 10 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. Its abilities (psy attacks, roars, raising the dead and zombifying) are ABILITIES.",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (psy attacks, roars, raising the dead and zombifying) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2339,7 +2339,7 @@
         ]
       },
       "rationale": "How often Deer use their attacks — claws, leaps, runs and charges. Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 4 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. It has no special abilities.",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. It has no special abilities.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2386,7 +2386,7 @@
         ]
       },
       "rationale": "How often Fleshes use their attacks — bites and leaps (boggy variant included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 3 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. It has no special abilities.",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. It has no special abilities.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2433,7 +2433,7 @@
         ]
       },
       "rationale": "How often Poltergeists use their attacks — area bursts (electro, toxic, fire and explosive variants included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (burst every 3 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. Its abilities (telekinetic throws, anomaly activation and shields) are ABILITIES.",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (telekinetic throws, anomaly activation and shields) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2483,7 +2483,7 @@
         ]
       },
       "rationale": "How often Pseudodogs use their attacks — bites and running bites (its phantom copies included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (bite every 7 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. Its abilities (psi shockwaves) are ABILITIES.",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (psi shockwaves) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2533,7 +2533,7 @@
         ]
       },
       "rationale": "How often Pseudogiants use their attacks — stomps, runs and charges (collar variant included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (stomp every 5 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. Its abilities (shockwaves, roars and throws) are ABILITIES.",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (shockwaves, roars and throws) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2580,7 +2580,7 @@
         ]
       },
       "rationale": "How often Snorks use their attacks — claws, kicks, leaps, fly-through attacks and dodges (collar variant included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (kick every 7 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. Its abilities (growls) are ABILITIES.",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (growls) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2627,7 +2627,7 @@
         ]
       },
       "rationale": "How often Tushkans use their attacks — bites and leaps. Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 3 s at 1×).",
-      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps the game's timing. It has no special abilities.",
+      "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. It has no special abilities.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2677,7 +2677,7 @@
         ]
       },
       "rationale": "How often Bayuns use their abilities — growls and blink teleports (collar and quest variants included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (teleport every 12 s at 1×).",
-      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps the game's timing. Its basic attacks (claw swipes, leaps, pounces and dodges) are ATTACKS.",
+      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (claw swipes, leaps, pounces and dodges) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2724,7 +2724,7 @@
         ]
       },
       "rationale": "How often Blind Dogs use their abilities — the pack's shield (collar and moldy variants included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (shield every 25 s at 1×).",
-      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps the game's timing. Its basic attacks (bites and running bites) are ATTACKS.",
+      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (bites and running bites) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2774,7 +2774,7 @@
         ]
       },
       "rationale": "How often Bloodsuckers use their abilities — roars and anomaly spawning (Mist, Ashy, collar and prologue variants included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (anomaly every 3 s at 1×).",
-      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps the game's timing. Its basic attacks (claw slashes, running attacks, leaps and bites) are ATTACKS.",
+      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (claw slashes, running attacks, leaps and bites) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2824,7 +2824,7 @@
         ]
       },
       "rationale": "How often Burers use their abilities — shields, telekinetic throws, grenade throws and weapon pulls (shooting variant included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (shield every 17 s at 1×).",
-      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps the game's timing. Its basic attacks (claw swipes) are ATTACKS.",
+      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (claw swipes) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2874,7 +2874,7 @@
         ]
       },
       "rationale": "How often Chimeras use their abilities — growls. Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (growl every 30 s at 1×).",
-      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps the game's timing. Its basic attacks (claws, short and long leaps, runs, fly-through attacks and dodges) are ATTACKS.",
+      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (claws, short and long leaps, runs, fly-through attacks and dodges) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2924,7 +2924,7 @@
         ]
       },
       "rationale": "How often Controllers use their abilities — psy attacks, roars, raising the dead and zombifying (collar and deer variants included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (psy every 12 s at 1×).",
-      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps the game's timing. Its basic attacks (claw swipes) are ATTACKS.",
+      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (claw swipes) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2971,7 +2971,7 @@
         ]
       },
       "rationale": "How often Poltergeists use their abilities — telekinetic throws, anomaly activation and shields (electro, toxic, fire and explosive variants included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (shield every 20 s at 1×).",
-      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps the game's timing. Its basic attacks (area bursts) are ATTACKS.",
+      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (area bursts) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -3021,7 +3021,7 @@
         ]
       },
       "rationale": "How often Pseudodogs use their abilities — psi shockwaves (its phantom copies included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait.",
-      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps the game's timing. Its basic attacks (bites and running bites) are ATTACKS.",
+      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (bites and running bites) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -3071,7 +3071,7 @@
         ]
       },
       "rationale": "How often Pseudogiants use their abilities — shockwaves, roars and throws (collar variant included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (shockwave every 8 s at 1×).",
-      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps the game's timing. Its basic attacks (stomps, runs and charges) are ATTACKS.",
+      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (stomps, runs and charges) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -3118,7 +3118,7 @@
         ]
       },
       "rationale": "How often Snorks use their abilities — growls (collar variant included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (growl every 20 s at 1×).",
-      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps the game's timing. Its basic attacks (claws, kicks, leaps, fly-through attacks and dodges) are ATTACKS.",
+      "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (claws, kicks, leaps, fly-through attacks and dodges) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -7747,7 +7747,7 @@
       "id": "loot.genericCorpseReduction",
       "tab": "loot",
       "group": "NPC Loot & Equipment",
-      "label": "Corpse Supply Reduction",
+      "label": "Corpse Scarcity",
       "description": "Reduces optional Food, Drinks and Medical source Chance on the 92 ordinary-human loadout generators (roaming GeneralNPC_* and settlement GuardNPC_*), plus native bonus Corpse SmartLoot group spawn endpoints. This is not a percentage of corpses that will be empty.",
       "control": "slider",
       "valueKind": "probability",
@@ -7833,7 +7833,7 @@
       "id": "loot.npcCorpseBonus",
       "tab": "loot",
       "group": "NPC Loot & Equipment",
-      "label": "Corpse Smart Loot",
+      "label": "Bonus Packs",
       "description": "Toggles the three authored extra corpse SmartLoot packages (Medicine, Ammo, Water) independently; any combination, including none, is a valid native list. Standard NPC consumables and carried weapon loot remain independent.",
       "control": "choiceSlider",
       "valueKind": "smartLootPreset",
@@ -7872,7 +7872,7 @@
       "id": "loot.npcMedicalChance",
       "tab": "loot",
       "group": "NPC Loot & Equipment",
-      "label": "Standard NPC Medical",
+      "label": "Med Drops",
       "description": "Changes standard human consumable-generator medical Chance relative to each native CFG entry. This is independent of the optional corpse SmartLoot medicine package and does not modify stack quantities.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -7913,13 +7913,13 @@
       },
       "rationale": "How often ordinary human enemies carry their usual meds. Vanilla: 1× (the game's own chances). 0 = they never carry meds; 2× = twice as likely.",
       "logic": "0–2× the game's own chance for every med on ordinary corpses.",
-      "interaction": "Always editable, including when Corpse Smart Loot is Water or None; does not affect zombies, quests, traders or stashes."
+      "interaction": "Always editable, even when BONUS PACKS is Water or None; zombies, quests, traders and stashes are untouched."
     },
     {
       "id": "loot.npcWeaponAmmoSupply",
       "tab": "loot",
       "group": "NPC Loot & Equipment",
-      "label": "Bonus Ammo Amount",
+      "label": "Ammo Pack Size",
       "description": "Changes MinCount/MaxCount in additional NPC_Ammo_Smart corpse ammo stacks, only when the Ammo SmartLoot package is on. This is ammo quantity, not item drop Chance, loaded-magazine ammo or breakable-box loot.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -7962,7 +7962,7 @@
       },
       "rationale": "How many rounds the bonus Ammo package gives when it drops. Vanilla: 1×. Only matters while the Ammo package is on; the ammo loaded in their guns stays the same.",
       "logic": "0–3× the size of the bonus ammo stacks; 0 removes them. Your rank still decides which calibers can show up.",
-      "interaction": "Active only when the Ammo package of Corpse Smart Loot is on; otherwise this value stays saved but inactive.",
+      "interaction": "Works only while the Ammo pack in BONUS PACKS is on; otherwise the value stays saved but does nothing.",
       "requiresToggle": "loot.npcSmartLootEnabled"
     },
     {
@@ -8061,7 +8061,7 @@
         ]
       },
       "rationale": "Makes ordinary stashes come up empty more often. Vanilla: 0% — no change. 50% = every supply item turns up half as often (food, meds, drinks, ammo, coupons alike); the amount you get when it does stays the same. Quest and special stashes are never touched.",
-      "logic": "0% keeps the game's odds; 50% halves the odds of every supply item; 100% leaves these stashes without optional supplies. Same rule for every list type.",
+      "logic": "0% keeps vanilla odds; 50% halves the odds of every supply item; 100% leaves these stashes without optional supplies. Same rule for every list type.",
       "interaction": "Multiplies with every ADJUST ODDS cell and MEDICAL COMPOSITION; AMMO AMOUNT (stack sizes) and Extra Stash Gear stay separate. Test with unopened ordinary containers."
     },
     {
@@ -8122,14 +8122,14 @@
       "id": "loot.stashMixMedical",
       "tab": "stashes",
       "group": "Stash Content",
-      "label": "Basic Medical Odds",
-      "description": "Keeps X% of the game's odds for meds (Bandage, Medkit, Army Medkit, Anti-Rad) in Basic stashes. In Basic Weight lists the removed Weight goes to an appended native Empty pick and scales its native Chance rows there (e.g. Bandage/Medkit/Vodka on Novice–Veteran) so the item keeps exactly X% of its odds. The six DLC1 CheapNoFresh Basic stashes follow the same rule. Other kinds keep their own odds. 100% = vanilla, 0% = never from these lists.",
+      "label": "Basic Meds Odds",
+      "description": "Keeps X% of the vanilla odds for meds (Bandage, Medkit, Army Medkit, Anti-Rad) in Basic stashes. In Basic Weight lists the removed Weight goes to an appended native Empty pick and scales its native Chance rows there (e.g. Bandage/Medkit/Vodka on Novice–Veteran) so the item keeps exactly X% of its odds. The six DLC1 CheapNoFresh Basic stashes follow the same rule. Other kinds keep their own odds. 100% = vanilla, 0% = never from these lists.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "percent",
         "rawFormat": "0.00",
-        "valueLabel": "Kept share of game odds"
+        "valueLabel": "Kept share of vanilla odds"
       },
       "vanilla": {
         "All": 1
@@ -8167,8 +8167,8 @@
           "Quest, unique, DLC1 regular and Cabin/direct rows are outside this rule."
         ]
       },
-      "rationale": "How much of the game's odds for meds you keep in Basic stashes (the Basic MEDS cell). Vanilla: 100%. 50% = half as often, 0% = never. Food and drinks keep their own odds.",
-      "logic": "100% keeps the game's meds odds; 50% halves them; 0% removes meds from Basic stashes. Other items are not affected.",
+      "rationale": "How much of the vanilla odds for meds you keep in Basic stashes (the Basic MEDS cell). Vanilla: 100%. 50% = half as often, 0% = never. Food and drinks keep their own odds.",
+      "logic": "100% keeps vanilla meds odds; 50% halves them; 0% removes meds from Basic stashes. Other items are not affected.",
       "interaction": "Standard and Rare stashes have their own cells in ADJUST ODDS. MEDICAL COMPOSITION multiplies per item on top of this. Smart loot has its own SMART LOOT GIVES checkboxes (STASH SMART LOOT).",
       "exposeInUi": true
     },
@@ -8177,13 +8177,13 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Basic Food Odds",
-      "description": "Keeps X% of the game's odds for food (Bread, Sausage, Canned Food) in Basic stashes. In Basic Weight lists the removed Weight goes to an appended native Empty pick and scales its native Chance rows there (e.g. Bandage/Medkit/Vodka on Novice–Veteran) so the item keeps exactly X% of its odds. The six DLC1 CheapNoFresh Basic stashes follow the same rule. Other kinds keep their own odds. 100% = vanilla, 0% = never from these lists.",
+      "description": "Keeps X% of the vanilla odds for food (Bread, Sausage, Canned Food) in Basic stashes. In Basic Weight lists the removed Weight goes to an appended native Empty pick and scales its native Chance rows there (e.g. Bandage/Medkit/Vodka on Novice–Veteran) so the item keeps exactly X% of its odds. The six DLC1 CheapNoFresh Basic stashes follow the same rule. Other kinds keep their own odds. 100% = vanilla, 0% = never from these lists.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "percent",
         "rawFormat": "0.00",
-        "valueLabel": "Kept share of game odds"
+        "valueLabel": "Kept share of vanilla odds"
       },
       "vanilla": {
         "All": 1
@@ -8221,8 +8221,8 @@
           "Quest, unique, DLC1 regular and Cabin/direct rows are outside this rule."
         ]
       },
-      "rationale": "How much of the game's odds for food you keep in Basic stashes (the Basic FOOD cell). Vanilla: 100%. 50% = half as often, 0% = never. Meds and drinks keep their own odds.",
-      "logic": "100% keeps the game's food odds; 50% halves them; 0% removes food from Basic stashes. Other items are not affected.",
+      "rationale": "How much of the vanilla odds for food you keep in Basic stashes (the Basic FOOD cell). Vanilla: 100%. 50% = half as often, 0% = never. Meds and drinks keep their own odds.",
+      "logic": "100% keeps vanilla food odds; 50% halves them; 0% removes food from Basic stashes. Other items are not affected.",
       "interaction": "Standard and Rare stashes have their own cells in ADJUST ODDS. Stack sizes stay separate. Smart loot has its own SMART LOOT GIVES checkboxes (STASH SMART LOOT).",
       "exposeInUi": true
     },
@@ -8231,13 +8231,13 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Basic Drinks Odds",
-      "description": "Keeps X% of the game's odds for drinks (Water, Energy drink, Milk, Vodka, Beer) in Basic stashes. In Basic Weight lists the removed Weight goes to an appended native Empty pick and scales its native Chance rows there (e.g. Bandage/Medkit/Vodka on Novice–Veteran) so the item keeps exactly X% of its odds. The six DLC1 CheapNoFresh Basic stashes follow the same rule. Other kinds keep their own odds. 100% = vanilla, 0% = never from these lists.",
+      "description": "Keeps X% of the vanilla odds for drinks (Water, Energy drink, Milk, Vodka, Beer) in Basic stashes. In Basic Weight lists the removed Weight goes to an appended native Empty pick and scales its native Chance rows there (e.g. Bandage/Medkit/Vodka on Novice–Veteran) so the item keeps exactly X% of its odds. The six DLC1 CheapNoFresh Basic stashes follow the same rule. Other kinds keep their own odds. 100% = vanilla, 0% = never from these lists.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "percent",
         "rawFormat": "0.00",
-        "valueLabel": "Kept share of game odds"
+        "valueLabel": "Kept share of vanilla odds"
       },
       "vanilla": {
         "All": 1
@@ -8275,8 +8275,8 @@
           "Quest, unique, DLC1 regular and Cabin/direct rows are outside this rule."
         ]
       },
-      "rationale": "How much of the game's odds for drinks — water, energy drinks, milk and vodka — you keep in Basic stashes (the Basic DRINKS cell). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
-      "logic": "100% keeps the game's drinks odds; 50% halves them; 0% removes drinks from Basic stashes. Other items are not affected.",
+      "rationale": "How much of the vanilla odds for drinks — water, energy drinks, milk and vodka — you keep in Basic stashes (the Basic DRINKS cell). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
+      "logic": "100% keeps vanilla drinks odds; 50% halves them; 0% removes drinks from Basic stashes. Other items are not affected.",
       "interaction": "Standard and Rare stashes have their own cells in ADJUST ODDS. Stack sizes stay separate. Smart loot has its own SMART LOOT GIVES checkboxes (STASH SMART LOOT).",
       "exposeInUi": true
     },
@@ -8345,7 +8345,7 @@
       "display": {
         "primary": "percent",
         "rawFormat": "0.00",
-        "valueLabel": "Kept share of game odds"
+        "valueLabel": "Kept share of vanilla odds"
       },
       "vanilla": {
         "All": 1
@@ -8383,8 +8383,8 @@
           "Quest, unique, DLC1 regular and Cabin/direct rows are outside this rule."
         ]
       },
-      "rationale": "How often Basic stashes give coupons (Novice and Stalker only). Vanilla: 100% = the game's odds. 0% = no coupons from Basic stashes. Veteran and Master have none to begin with.",
-      "logic": "100% keeps the game's coupons odds; 50% halves them; 0% removes coupons from these Basic and smart stash lists. Other items are not affected.",
+      "rationale": "How often Basic stashes give coupons (Novice and Stalker only). Vanilla: 100%. 0% = no coupons from Basic stashes. Veteran and Master have none to begin with.",
+      "logic": "100% keeps vanilla coupons odds; 50% halves them; 0% removes coupons from these Basic and smart stash lists. Other items are not affected.",
       "interaction": "Standard and Rare stashes have their own cells in ADJUST ODDS. Stack sizes stay separate.",
       "exposeInUi": false
     },
@@ -8393,13 +8393,13 @@
       "tab": "stashes",
       "group": "Stash Medical Composition",
       "label": "Bandage Odds (weighted picks)",
-      "description": "Weighted-pick half of the BANDAGES cell: keeps X% of the game's odds for Bandage in the shared Basic pick and smart world stashes. Always mirrors Bandage Odds (one visible control per item); the removed share never goes to other items.",
+      "description": "Weighted-pick half of the BANDAGES cell: keeps X% of the vanilla odds for Bandage in the shared Basic pick and smart world stashes. Always mirrors Bandage Odds (one visible control per item); the removed share never goes to other items.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "percent",
         "rawFormat": "0.00",
-        "valueLabel": "Kept share of game odds (mirrors the cell)"
+        "valueLabel": "Kept share of vanilla odds (mirrors the cell)"
       },
       "vanilla": {
         "All": 1
@@ -8430,8 +8430,8 @@
           "Older presets above 100% are clamped to 100% on load."
         ]
       },
-      "rationale": "Follows the BANDAGES cell automatically: the same \"keep X% of the game's odds\" for bandage in the shared Basic pick and smart world stashes. Vanilla: 100%.",
-      "logic": "Follows the BANDAGES cell: 100% keeps the game's odds, 0% removes Bandage from the weighted picks.",
+      "rationale": "Follows the BANDAGES cell automatically: the same \"keep X% of the vanilla odds\" for bandage in the shared Basic pick and smart world stashes. Vanilla: 100%.",
+      "logic": "Follows the BANDAGES cell: 100% keeps vanilla odds, 0% removes Bandage from the weighted picks.",
       "interaction": "Mirrored both ways with Bandage Odds; the last change (cell, preset or reset) wins.",
       "exposeInUi": true
     },
@@ -8440,13 +8440,13 @@
       "tab": "stashes",
       "group": "Stash Medical Composition",
       "label": "Bandage Odds",
-      "description": "Keeps X% of the game's odds for Bandage in regular Basic, Standard and Rare stashes and smart world stashes (the BANDAGES cell). Scales each authored Chance row and, through the mirrored weighted-pick value, every Weight pick. Other items keep their own odds.",
+      "description": "Keeps X% of the vanilla odds for Bandage in regular Basic, Standard and Rare stashes and smart world stashes (the BANDAGES cell). Scales each authored Chance row and, through the mirrored weighted-pick value, every Weight pick. Other items keep their own odds.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "percent",
         "rawFormat": "0.00",
-        "valueLabel": "Kept share of game odds"
+        "valueLabel": "Kept share of vanilla odds"
       },
       "vanilla": {
         "All": 1
@@ -8477,7 +8477,7 @@
           "Native chance rows can differ by tier/difficulty; this is a percentage-of-native control, not a single absolute drop chance."
         ]
       },
-      "rationale": "How much of the game's odds for bandages you keep in stashes (the BANDAGES cell in MEDICAL COMPOSITION). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
+      "rationale": "How much of the vanilla odds for bandages you keep in stashes (the BANDAGES cell in MEDICAL COMPOSITION). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
       "logic": "100% keeps the game's Bandage odds; 50% halves them; 0% = never from these stashes.",
       "interaction": "Multiplies with the tier's MEDS cell in STASH LOOT MIX. Stack size (QUANTITY) stays separate.",
       "exposeInUi": true
@@ -8487,13 +8487,13 @@
       "tab": "stashes",
       "group": "Stash Medical Composition",
       "label": "Medkit Odds (weighted picks)",
-      "description": "Weighted-pick half of the MEDKITS cell: keeps X% of the game's odds for Medkit in smart world stashes. Always mirrors Medkit Odds (one visible control per item); the removed share never goes to other items.",
+      "description": "Weighted-pick half of the MEDKITS cell: keeps X% of the vanilla odds for Medkit in smart world stashes. Always mirrors Medkit Odds (one visible control per item); the removed share never goes to other items.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "percent",
         "rawFormat": "0.00",
-        "valueLabel": "Kept share of game odds (mirrors the cell)"
+        "valueLabel": "Kept share of vanilla odds (mirrors the cell)"
       },
       "vanilla": {
         "All": 1
@@ -8524,8 +8524,8 @@
           "Older presets above 100% are clamped to 100% on load."
         ]
       },
-      "rationale": "Follows the MEDKITS cell automatically: the same \"keep X% of the game's odds\" for medkit in smart world stashes. Vanilla: 100%.",
-      "logic": "Follows the MEDKITS cell: 100% keeps the game's odds, 0% removes Medkit from the weighted picks.",
+      "rationale": "Follows the MEDKITS cell automatically: the same \"keep X% of the vanilla odds\" for medkit in smart world stashes. Vanilla: 100%.",
+      "logic": "Follows the MEDKITS cell: 100% keeps vanilla odds, 0% removes Medkit from the weighted picks.",
       "interaction": "Mirrored both ways with Medkit Odds; the last change (cell, preset or reset) wins.",
       "exposeInUi": true
     },
@@ -8534,13 +8534,13 @@
       "tab": "stashes",
       "group": "Stash Medical Composition",
       "label": "Medkit Odds",
-      "description": "Keeps X% of the game's odds for Medkit in regular Basic, Standard and Rare stashes and smart world stashes (the MEDKITS cell). Scales each authored Chance row and, through the mirrored weighted-pick value, every Weight pick. Other items keep their own odds.",
+      "description": "Keeps X% of the vanilla odds for Medkit in regular Basic, Standard and Rare stashes and smart world stashes (the MEDKITS cell). Scales each authored Chance row and, through the mirrored weighted-pick value, every Weight pick. Other items keep their own odds.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "percent",
         "rawFormat": "0.00",
-        "valueLabel": "Kept share of game odds"
+        "valueLabel": "Kept share of vanilla odds"
       },
       "vanilla": {
         "All": 1
@@ -8571,7 +8571,7 @@
           "Native chance rows can differ by tier/difficulty; this is a percentage-of-native control, not a single absolute drop chance."
         ]
       },
-      "rationale": "How much of the game's odds for medkits you keep in stashes (the MEDKITS cell in MEDICAL COMPOSITION). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
+      "rationale": "How much of the vanilla odds for medkits you keep in stashes (the MEDKITS cell in MEDICAL COMPOSITION). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
       "logic": "100% keeps the game's Medkit odds; 50% halves them; 0% = never from these stashes.",
       "interaction": "Multiplies with the tier's MEDS cell in STASH LOOT MIX. Stack size (QUANTITY) stays separate.",
       "exposeInUi": true
@@ -8581,13 +8581,13 @@
       "tab": "stashes",
       "group": "Stash Medical Composition",
       "label": "Army Medkit Odds (weighted picks)",
-      "description": "Weighted-pick half of the ARMY MEDKITS cell: keeps X% of the game's odds for Army Medkit in smart world stashes. Always mirrors Army Medkit Odds (one visible control per item); the removed share never goes to other items.",
+      "description": "Weighted-pick half of the ARMY MEDKITS cell: keeps X% of the vanilla odds for Army Medkit in smart world stashes. Always mirrors Army Medkit Odds (one visible control per item); the removed share never goes to other items.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "percent",
         "rawFormat": "0.00",
-        "valueLabel": "Kept share of game odds (mirrors the cell)"
+        "valueLabel": "Kept share of vanilla odds (mirrors the cell)"
       },
       "vanilla": {
         "All": 1
@@ -8618,8 +8618,8 @@
           "Older presets above 100% are clamped to 100% on load."
         ]
       },
-      "rationale": "Follows the ARMY MEDKITS cell automatically: the same \"keep X% of the game's odds\" for army medkit in smart world stashes. Vanilla: 100%.",
-      "logic": "Follows the ARMY MEDKITS cell: 100% keeps the game's odds, 0% removes Army Medkit from the weighted picks.",
+      "rationale": "Follows the ARMY MEDKITS cell automatically: the same \"keep X% of the vanilla odds\" for army medkit in smart world stashes. Vanilla: 100%.",
+      "logic": "Follows the ARMY MEDKITS cell: 100% keeps vanilla odds, 0% removes Army Medkit from the weighted picks.",
       "interaction": "Mirrored both ways with Army Medkit Odds; the last change (cell, preset or reset) wins.",
       "exposeInUi": true
     },
@@ -8628,13 +8628,13 @@
       "tab": "stashes",
       "group": "Stash Medical Composition",
       "label": "Army Medkit Odds",
-      "description": "Keeps X% of the game's odds for Army Medkit in regular Basic, Standard and Rare stashes and smart world stashes (the ARMY MEDKITS cell). Scales each authored Chance row and, through the mirrored weighted-pick value, every Weight pick. Other items keep their own odds.",
+      "description": "Keeps X% of the vanilla odds for Army Medkit in regular Basic, Standard and Rare stashes and smart world stashes (the ARMY MEDKITS cell). Scales each authored Chance row and, through the mirrored weighted-pick value, every Weight pick. Other items keep their own odds.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "percent",
         "rawFormat": "0.00",
-        "valueLabel": "Kept share of game odds"
+        "valueLabel": "Kept share of vanilla odds"
       },
       "vanilla": {
         "All": 1
@@ -8665,7 +8665,7 @@
           "Native chance rows can differ by tier/difficulty; this is a percentage-of-native control, not a single absolute drop chance."
         ]
       },
-      "rationale": "How much of the game's odds for army medkits you keep in stashes (the ARMY MEDKITS cell in MEDICAL COMPOSITION). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
+      "rationale": "How much of the vanilla odds for army medkits you keep in stashes (the ARMY MEDKITS cell in MEDICAL COMPOSITION). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
       "logic": "100% keeps the game's Army Medkit odds; 50% halves them; 0% = never from these stashes.",
       "interaction": "Multiplies with the tier's MEDS cell in STASH LOOT MIX. Stack size (QUANTITY) stays separate.",
       "exposeInUi": true
@@ -8675,13 +8675,13 @@
       "tab": "stashes",
       "group": "Stash Medical Composition",
       "label": "Anti-Rad Odds (weighted picks)",
-      "description": "Weighted-pick half of the ANTI-RAD cell: keeps X% of the game's odds for Anti-Rad in smart world stashes. Always mirrors Anti-Rad Odds (one visible control per item); the removed share never goes to other items.",
+      "description": "Weighted-pick half of the ANTI-RAD cell: keeps X% of the vanilla odds for Anti-Rad in smart world stashes. Always mirrors Anti-Rad Odds (one visible control per item); the removed share never goes to other items.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "percent",
         "rawFormat": "0.00",
-        "valueLabel": "Kept share of game odds (mirrors the cell)"
+        "valueLabel": "Kept share of vanilla odds (mirrors the cell)"
       },
       "vanilla": {
         "All": 1
@@ -8712,8 +8712,8 @@
           "Older presets above 100% are clamped to 100% on load."
         ]
       },
-      "rationale": "Follows the ANTI-RAD cell automatically: the same \"keep X% of the game's odds\" for anti-rads in smart world stashes. Vanilla: 100%.",
-      "logic": "Follows the ANTI-RAD cell: 100% keeps the game's odds, 0% removes Anti-Rad from the weighted picks.",
+      "rationale": "Follows the ANTI-RAD cell automatically: the same \"keep X% of the vanilla odds\" for anti-rads in smart world stashes. Vanilla: 100%.",
+      "logic": "Follows the ANTI-RAD cell: 100% keeps vanilla odds, 0% removes Anti-Rad from the weighted picks.",
       "interaction": "Mirrored both ways with Anti-Rad Odds; the last change (cell, preset or reset) wins.",
       "exposeInUi": true
     },
@@ -8722,13 +8722,13 @@
       "tab": "stashes",
       "group": "Stash Medical Composition",
       "label": "Anti-Rad Odds",
-      "description": "Keeps X% of the game's odds for Anti-Rad in regular Basic, Standard and Rare stashes and smart world stashes (the ANTI-RAD cell). Scales each authored Chance row and, through the mirrored weighted-pick value, every Weight pick. Other items keep their own odds.",
+      "description": "Keeps X% of the vanilla odds for Anti-Rad in regular Basic, Standard and Rare stashes and smart world stashes (the ANTI-RAD cell). Scales each authored Chance row and, through the mirrored weighted-pick value, every Weight pick. Other items keep their own odds.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "percent",
         "rawFormat": "0.00",
-        "valueLabel": "Kept share of game odds"
+        "valueLabel": "Kept share of vanilla odds"
       },
       "vanilla": {
         "All": 1
@@ -8759,7 +8759,7 @@
           "Native chance rows can differ by tier/difficulty; this is a percentage-of-native control, not a single absolute drop chance."
         ]
       },
-      "rationale": "How much of the game's odds for anti-rads you keep in stashes (the ANTI-RAD cell in MEDICAL COMPOSITION). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
+      "rationale": "How much of the vanilla odds for anti-rads you keep in stashes (the ANTI-RAD cell in MEDICAL COMPOSITION). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
       "logic": "100% keeps the game's Anti-Rad odds; 50% halves them; 0% = never from these stashes.",
       "interaction": "Multiplies with the tier's MEDS cell in STASH LOOT MIX. Stack size (QUANTITY) stays separate.",
       "exposeInUi": true
@@ -9035,7 +9035,7 @@
         "notes": [
           "Smart loot rolls between MinSpawnChance (you are well stocked) and MaxSpawnChance (you are short); the game decides where you are.",
           "Applies to the SmartLoot sets of the 803 ordinary base and 112 ordinary DLC1 stashes (817 medicine / 766 ammo sets, a few food/grenade sets) through the existing TCD stash SmartLoot clones.",
-          "Corpse smart loot is separate (Corpse Smart Loot / NEED BOOST)."
+          "Corpse smart loot is separate (BONUS PACKS / NEED BOOST)."
         ]
       },
       "rationale": "How often stashes still hand you supplies you already have plenty of. Vanilla: 1× (about 10% per set). 0 = smart loot only helps when you are short; 2× = twice as generous.",
@@ -9126,7 +9126,7 @@
         ]
       },
       "rationale": "Whether stash smart loot can give meds (Bandage, Medkit, Army Medkit, Anti-Rad). Vanilla: ON.",
-      "logic": "OFF removes this category from stash smart loot; ON keeps the game's odds. Basic/Standard/Rare cells never touch smart loot.",
+      "logic": "OFF removes this category from stash smart loot; ON keeps vanilla odds. Basic/Standard/Rare cells never touch smart loot.",
       "interaction": "Smart loot switch, EXTRA LOOT WHEN STOCKED / WHEN LOW and SUPPLY REDUCTION apply on top.",
       "requiresToggle": "loot.stashSmartLootEnabled",
       "exposeInUi": true
@@ -9166,7 +9166,7 @@
         ]
       },
       "rationale": "Whether stash smart loot can give ammo for the weapons you carry. Vanilla: ON.",
-      "logic": "OFF removes this category from stash smart loot; ON keeps the game's odds. Basic/Standard/Rare cells never touch smart loot.",
+      "logic": "OFF removes this category from stash smart loot; ON keeps vanilla odds. Basic/Standard/Rare cells never touch smart loot.",
       "interaction": "Smart loot switch, EXTRA LOOT WHEN STOCKED / WHEN LOW and SUPPLY REDUCTION apply on top.",
       "requiresToggle": "loot.stashSmartLootEnabled",
       "exposeInUi": true
@@ -9206,7 +9206,7 @@
         ]
       },
       "rationale": "Whether stash smart loot can give food and drinks. Vanilla: ON.",
-      "logic": "OFF removes this category from stash smart loot; ON keeps the game's odds. Basic/Standard/Rare cells never touch smart loot.",
+      "logic": "OFF removes this category from stash smart loot; ON keeps vanilla odds. Basic/Standard/Rare cells never touch smart loot.",
       "interaction": "Smart loot switch, EXTRA LOOT WHEN STOCKED / WHEN LOW and SUPPLY REDUCTION apply on top.",
       "requiresToggle": "loot.stashSmartLootEnabled",
       "exposeInUi": true
@@ -9246,7 +9246,7 @@
         ]
       },
       "rationale": "Whether stash smart loot can give grenades. Vanilla: ON.",
-      "logic": "OFF removes this category from stash smart loot; ON keeps the game's odds. Basic/Standard/Rare cells never touch smart loot.",
+      "logic": "OFF removes this category from stash smart loot; ON keeps vanilla odds. Basic/Standard/Rare cells never touch smart loot.",
       "interaction": "Smart loot switch, EXTRA LOOT WHEN STOCKED / WHEN LOW and SUPPLY REDUCTION apply on top.",
       "requiresToggle": "loot.stashSmartLootEnabled",
       "exposeInUi": true
@@ -9301,7 +9301,7 @@
           "Coverage slider chooses an exact rounded percentage of source-approved physical actor IDs at build time (separately for base and installed DLC1); selection is deterministic per actor, not a fabricated runtime Chance.",
           "0% adds no equipment; master ON still removes the 13 specifically approved original authored weapon item nodes. Master OFF changes no ordinary authored weapons or extra gear.",
           "A selected physical stash receives one native 0.5-Chance candidate from the audited 34 weapons, 39 suits and 69 normal artifacts; mixer weights assign the class at build time. Each native rank branch receives its own actor-unique generator; never alters shared vanilla gear pools.",
-          "The source player rank gate controls the maximum equipment tier. Existing master toggle keeps World Weapon Shuffle mutually exclusive, avoiding overlapping original weapon source edits.",
+          "The source player rank gate controls the maximum equipment tier. Existing master toggle keeps Shuffle Loose Weapons mutually exclusive, avoiding overlapping original weapon source edits.",
           "Quest, unique, special, no-generator, ambiguous rank and separately reserved Trophy weapon actors are never selected.",
           "Final native engine generation and existing-save behavior require in-game validation."
         ]
@@ -9650,7 +9650,7 @@
       "id": "loot.cheapStashAmmoQuantity",
       "tab": "stashes",
       "group": "Stash Content",
-      "label": "Stash Ammo Amount",
+      "label": "Ammo Amount",
       "description": "Scales ammo stack counts in Basic, Standard and Rare stashes (the AMMO AMOUNT slider). It drives the Standard and Rare amount values too, so all three tiers always match.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -9723,14 +9723,14 @@
       "id": "loot.cheapStashGrenadeChance",
       "tab": "stashes",
       "group": "Stash Content",
-      "label": "Basic Stash RGD-5 Grenade Chance",
+      "label": "Basic Grenades Chance",
       "description": "Changes how likely a Basic stash is to contain its RGD-5 grenade reward. This does not change how many grenades you get when the roll succeeds.",
       "control": "slider",
       "valueKind": "probability",
       "display": {
         "primary": "percent",
         "rawFormat": "0.00",
-        "valueLabel": "Basic Stash RGD-5 Grenade Chance"
+        "valueLabel": "RGD-5 chance per Basic stash"
       },
       "vanilla": {
         "All": 0.1
@@ -9763,7 +9763,7 @@
       },
       "rationale": "Chance a Basic stash has an RGD-5 grenade in it. Vanilla: 10%.",
       "logic": "The real chance a Basic stash has an RGD-5: 10% is vanilla, 0% never, 100% every Basic stash that can carry one.",
-      "interaction": "Pair it with Basic Stash RGD-5 Grenade Amount: Chance decides whether the grenade appears; Amount decides how many you get. The six DLC1 CheapNoFresh stashes roll their RGD-5 at 100% in vanilla; there the same setting keeps its ratio to the Basic 10% (e.g. 5% = half as often).",
+      "interaction": "Pair it with RGD-5 AMOUNT: Chance decides whether the grenade appears; Amount decides how many you get. The six DLC1 CheapNoFresh stashes roll their RGD-5 at 100% in vanilla; there the same setting keeps its ratio to the Basic 10% (e.g. 5% = half as often).",
       "lootHint": {
         "kind": "absoluteChancePer100",
         "label": "RGD-5 chance",
@@ -9774,7 +9774,7 @@
       "id": "loot.cheapStashGrenadeQuantity",
       "tab": "stashes",
       "group": "Stash Content",
-      "label": "Basic Stash RGD-5 Grenade Amount",
+      "label": "RGD-5 Amount",
       "description": "Changes how many RGD-5 grenades you receive when a Basic stash successfully rolls its grenade reward. The chance to receive grenades is controlled separately.",
       "control": "slider",
       "valueKind": "raw",
@@ -10205,7 +10205,7 @@
       "id": "loot.medicalBoxArmyMedkitWeight",
       "tab": "loot",
       "group": "Breakable Containers",
-      "label": "Army Medkit Mix (Medical Boxes)",
+      "label": "Army Medkit Mix",
       "description": "Changes how often breakable medical boxes give an Army Medkit instead of a Medkit or Eco Medkit (player rank Experienced and up).",
       "control": "slider",
       "valueKind": "multiplier",
@@ -10522,7 +10522,7 @@
       "display": {
         "primary": "percentOfVanilla",
         "rawFormat": "0.##%",
-        "valueLabel": "Percent of authored per-item native Chance"
+        "valueLabel": "Kept share of vanilla odds"
       },
       "vanilla": {
         "All": 1
@@ -10538,7 +10538,7 @@
         ]
       },
       "exposeInUi": true,
-      "label": "Standard Medical Chance",
+      "label": "Standard Meds Odds",
       "description": "Source-native Bandage and Medkit source Chance entries, originally 40%/100% across branches. Its ADJUST ODDS cell keeps X% of these authored chances; ODDS PER STASH shows the result. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
@@ -10568,7 +10568,7 @@
       "display": {
         "primary": "percentOfVanilla",
         "rawFormat": "0.##%",
-        "valueLabel": "Percent of authored per-item native Chance"
+        "valueLabel": "Kept share of vanilla odds"
       },
       "vanilla": {
         "All": 1
@@ -10584,7 +10584,7 @@
         ]
       },
       "exposeInUi": true,
-      "label": "Standard Drinks Chance",
+      "label": "Standard Drinks Odds",
       "description": "Source-native Vodka and Energetic source Chance entries, originally 50%/100%. Its ADJUST ODDS cell keeps X% of these authored chances; ODDS PER STASH shows the result. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
@@ -10614,7 +10614,7 @@
       "display": {
         "primary": "percentOfVanilla",
         "rawFormat": "0.##%",
-        "valueLabel": "Percent of authored per-item native Chance"
+        "valueLabel": "Kept share of vanilla odds"
       },
       "vanilla": {
         "All": 1
@@ -10630,7 +10630,7 @@
         ]
       },
       "exposeInUi": true,
-      "label": "Standard Coupon Chance",
+      "label": "Standard Coupons Odds",
       "description": "Keeps X% of the native 10% coupon Chance roll in eligible Standard stash generators. Standard coupons are authored only on Novice/Stalker (native Easy/Medium) for Experienced, Veteran and Master player ranks. On Veteran/Master difficulty, Standard coupons have no source and their UI cell is unavailable. 100% preserves the 10% source Chance; 0% disables those eligible rolls.",
       "slider": {
         "min": 0,
@@ -10660,7 +10660,7 @@
       "display": {
         "primary": "percentOfVanilla",
         "rawFormat": "0.##%",
-        "valueLabel": "Percent of authored per-item native Chance"
+        "valueLabel": "Kept share of vanilla odds"
       },
       "vanilla": {
         "All": 1
@@ -10676,8 +10676,8 @@
         ]
       },
       "exposeInUi": true,
-      "label": "Rare Ammo Chance",
-      "description": "Rare AMMO cell: keeps X% of the game's odds for ammo in Rare stashes. Scales the early-game (Newbie) ammo Chance rows, originally 50%/100%, and thins the Weight-picked ammo lists of the other ranks with an appended native Empty pick. ODDS PER STASH shows the result.",
+      "label": "Rare Ammo Odds",
+      "description": "Rare AMMO cell: keeps X% of the vanilla odds for ammo in Rare stashes. Scales the early-game (Newbie) ammo Chance rows, originally 50%/100%, and thins the Weight-picked ammo lists of the other ranks with an appended native Empty pick. ODDS PER STASH shows the result.",
       "slider": {
         "min": 0,
         "max": 1,
@@ -10695,7 +10695,7 @@
       ],
       "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
       "interaction": "Affects Rare stash ammo only. Ammo amount (AMMO AMOUNT) stays separate.",
-      "rationale": "How often Rare stashes have ammo. Vanilla: 100% = the game's odds. Lower = more Rare stashes without ammo; 0% = none at all."
+      "rationale": "How often Rare stashes have ammo. Vanilla: 100%. Lower = more Rare stashes without ammo; 0% = none at all."
     },
     {
       "id": "loot.expensiveStashMedicalChance",
@@ -10706,7 +10706,7 @@
       "display": {
         "primary": "percentOfVanilla",
         "rawFormat": "0.##%",
-        "valueLabel": "Percent of authored per-item native Chance"
+        "valueLabel": "Kept share of vanilla odds"
       },
       "vanilla": {
         "All": 1
@@ -10722,7 +10722,7 @@
         ]
       },
       "exposeInUi": true,
-      "label": "Rare Medical Chance",
+      "label": "Rare Meds Odds",
       "description": "Source-native Bandage, Medkit, AntiRad and ArmyMedkit source Chance entries, originally 100%. Its ADJUST ODDS cell keeps X% of these authored chances; ODDS PER STASH shows the result. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
@@ -10752,7 +10752,7 @@
       "display": {
         "primary": "percentOfVanilla",
         "rawFormat": "0.##%",
-        "valueLabel": "Percent of authored per-item native Chance"
+        "valueLabel": "Kept share of vanilla odds"
       },
       "vanilla": {
         "All": 1
@@ -10768,7 +10768,7 @@
         ]
       },
       "exposeInUi": true,
-      "label": "Rare Food Chance",
+      "label": "Rare Food Odds",
       "description": "Source-native CannedFood source Chance, originally 100%. Its ADJUST ODDS cell keeps X% of these authored chances; ODDS PER STASH shows the result. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
@@ -10798,7 +10798,7 @@
       "display": {
         "primary": "percentOfVanilla",
         "rawFormat": "0.##%",
-        "valueLabel": "Percent of authored per-item native Chance"
+        "valueLabel": "Kept share of vanilla odds"
       },
       "vanilla": {
         "All": 1
@@ -10814,7 +10814,7 @@
         ]
       },
       "exposeInUi": true,
-      "label": "Rare Drinks Chance",
+      "label": "Rare Drinks Odds",
       "description": "Source-native Energetic source Chance, originally 100%. Its ADJUST ODDS cell keeps X% of these authored chances; ODDS PER STASH shows the result. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
@@ -10844,7 +10844,7 @@
       "display": {
         "primary": "percentOfVanilla",
         "rawFormat": "0.##%",
-        "valueLabel": "Percent of authored per-item native Chance"
+        "valueLabel": "Kept share of vanilla odds"
       },
       "vanilla": {
         "All": 1
@@ -10860,7 +10860,7 @@
         ]
       },
       "exposeInUi": true,
-      "label": "Rare Grenade Chance",
+      "label": "Rare Grenades Odds",
       "description": "Source-native RGD-5 source Chance, originally 100%. Its ADJUST ODDS cell keeps X% of these authored chances; ODDS PER STASH shows the result. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
@@ -10885,7 +10885,7 @@
       "id": "loot.expensiveStashMoneyChance",
       "tab": "stashes",
       "group": "Stash Content",
-      "label": "Rare Stash Coupon Chance",
+      "label": "Rare Coupons Chance",
       "description": "Changes how likely an eligible Rare stash is to contain coupon rewards. The game still chooses the reward tier from vanilla progression.",
       "control": "slider",
       "valueKind": "probability",
@@ -15383,7 +15383,7 @@
       },
       "rationale": "Share of ammo, consumables and grenades lying around loose that disappears. Vanilla: 0%. Stashes, boxes, NPC loot, traders, weapons, armor and quest rewards are not affected.",
       "logic": "0% keeps vanilla loose world loot. Higher settings remove more eligible loose pickups from the world.",
-      "interaction": "Independent of World Ammo/Food/Medical Boxes and World Weapon Shuffle. Surviving PackOfItems keep their vanilla item pools.",
+      "interaction": "Separate from the AMMO / FOOD & DRINK / MEDICAL BOXES bars and Shuffle Loose Weapons. Loot bundles that stay keep their vanilla contents.",
       "exposeInUi": false
     },
     {
@@ -15420,7 +15420,7 @@
           "Swaps SpawnedPrototypeSID, ItemSID, MeshPath, Durability and DisablePhysicsAndCollision as an original weapon tuple; location coordinates and Actor SID stay unchanged.",
           "These nine have no literal Actor SID or ItemSID references in base/DLC1 QuestNodePrototypes.cfg. Broader script dependence and gameplay behavior are not yet proven.",
           "Never touches quest/scripted/deferred actor populations, ordinary weapon locations, trader stock, stashes, NPC items or DLC1 weapon variants.",
-          "This toggle is independent from regular World Weapon Shuffle and Weapon Density."
+          "This toggle is independent from regular Shuffle Loose Weapons and GUNS TO FIND."
         ]
       },
       "rationale": "Moves nine loose unique weapons to each other's spots, so you can't walk straight to a guide location. Vanilla: OFF. All nine are still out there, once each.",
@@ -15432,12 +15432,12 @@
       "id": "loot.worldWeaponShuffle",
       "tab": "loot",
       "group": "World Loot",
-      "label": "World Weapon Shuffle",
+      "label": "Shuffle Loose Weapons",
       "description": "Redistributes regular world weapons across compatible locations whenever you build the mod. Pistols stay in pistol spots, primary weapons stay in primary spots, and progression stays broadly similar.",
       "control": "toggle",
       "valueKind": "boolean",
       "display": {
-        "valueLabel": "World Weapon Shuffle"
+        "valueLabel": "Shuffle Loose Weapons"
       },
       "vanilla": {
         "All": false
@@ -15538,12 +15538,12 @@
       "id": "loot.worldAttachmentShuffle",
       "tab": "loot",
       "group": "World Loot",
-      "label": "World Attachment Shuffle",
+      "label": "Shuffle Attachments",
       "description": "Redistribute safe-world attachments across compatible locations each time you build.",
       "control": "toggle",
       "valueKind": "boolean",
       "display": {
-        "valueLabel": "World Attachment Shuffle"
+        "valueLabel": "Shuffle Attachments"
       },
       "vanilla": {
         "All": false
@@ -15745,12 +15745,12 @@
       "id": "loot.blueprintShuffle",
       "tab": "loot",
       "group": "World Loot",
-      "label": "Blueprint Shuffle",
+      "label": "Shuffle Blueprints",
       "description": "Shuffle eligible world blueprint placements each time you build. OFF keeps vanilla placement; ON creates a fresh one-to-one shuffle while preserving the same blueprint set and the same number of blueprint locations.",
       "control": "toggle",
       "valueKind": "boolean",
       "display": {
-        "valueLabel": "Blueprint Shuffle"
+        "valueLabel": "Shuffle Blueprints"
       },
       "vanilla": {
         "All": false
@@ -18472,7 +18472,7 @@
       "tab": "economy",
       "group": "Traders",
       "label": "Shopkeeper Sells Weapons",
-      "description": "Keeps X% of the game's odds for weapons offered by shopkeepers; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for weapons offered by shopkeepers; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -18501,8 +18501,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often shopkeepers offer weapons. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = shopkeepers never sell weapons, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every weapons offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often shopkeepers offer weapons. Vanilla: 100%. 50% = those offers turn up half as often; 0% = shopkeepers never sell weapons, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every weapons offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": true
     },
@@ -18511,7 +18511,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Shopkeeper Sells Armor",
-      "description": "Keeps X% of the game's odds for armor offered by shopkeepers; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for armor offered by shopkeepers; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -18540,8 +18540,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often shopkeepers offer armor. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = shopkeepers never sell armor, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every armor offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often shopkeepers offer armor. Vanilla: 100%. 50% = those offers turn up half as often; 0% = shopkeepers never sell armor, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every armor offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -18550,7 +18550,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Shopkeeper Sells Attachments",
-      "description": "Keeps X% of the game's odds for attachments offered by shopkeepers; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for attachments offered by shopkeepers; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -18579,8 +18579,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often shopkeepers offer attachments. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = shopkeepers never sell attachments, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every attachments offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often shopkeepers offer attachments. Vanilla: 100%. 50% = those offers turn up half as often; 0% = shopkeepers never sell attachments, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every attachments offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -18589,7 +18589,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Shopkeeper Sells Ammo",
-      "description": "Keeps X% of the game's odds for ammo offered by shopkeepers; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for ammo offered by shopkeepers; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -18618,8 +18618,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often shopkeepers offer ammo. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = shopkeepers never sell ammo, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every ammo offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often shopkeepers offer ammo. Vanilla: 100%. 50% = those offers turn up half as often; 0% = shopkeepers never sell ammo, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every ammo offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -18628,7 +18628,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Shopkeeper Sells Medical",
-      "description": "Keeps X% of the game's odds for meds offered by shopkeepers; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for meds offered by shopkeepers; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -18657,8 +18657,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often shopkeepers offer meds. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = shopkeepers never sell meds, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every meds offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often shopkeepers offer meds. Vanilla: 100%. 50% = those offers turn up half as often; 0% = shopkeepers never sell meds, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every meds offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -18667,7 +18667,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Shopkeeper Sells Food",
-      "description": "Keeps X% of the game's odds for food offered by shopkeepers; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for food offered by shopkeepers; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -18696,8 +18696,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often shopkeepers offer food. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = shopkeepers never sell food, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every food offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often shopkeepers offer food. Vanilla: 100%. 50% = those offers turn up half as often; 0% = shopkeepers never sell food, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every food offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -18706,7 +18706,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Shopkeeper Sells Drinks",
-      "description": "Keeps X% of the game's odds for drinks offered by shopkeepers; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for drinks offered by shopkeepers; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -18735,8 +18735,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often shopkeepers offer drinks. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = shopkeepers never sell drinks, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every drinks offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often shopkeepers offer drinks. Vanilla: 100%. 50% = those offers turn up half as often; 0% = shopkeepers never sell drinks, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every drinks offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -18745,7 +18745,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Shopkeeper Sells Artifacts",
-      "description": "Keeps X% of the game's odds for artifacts offered by shopkeepers; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for artifacts offered by shopkeepers; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -18774,8 +18774,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often shopkeepers offer artifacts. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = shopkeepers never sell artifacts, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every artifacts offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often shopkeepers offer artifacts. Vanilla: 100%. 50% = those offers turn up half as often; 0% = shopkeepers never sell artifacts, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every artifacts offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -18784,7 +18784,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Shopkeeper Sells Detectors",
-      "description": "Keeps X% of the game's odds for detectors offered by shopkeepers; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for detectors offered by shopkeepers; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -18813,8 +18813,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often shopkeepers offer detectors. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = shopkeepers never sell detectors, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every detectors offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often shopkeepers offer detectors. Vanilla: 100%. 50% = those offers turn up half as often; 0% = shopkeepers never sell detectors, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every detectors offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -18823,7 +18823,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Shopkeeper Sells Grenades",
-      "description": "Keeps X% of the game's odds for grenades offered by shopkeepers; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for grenades offered by shopkeepers; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -18852,8 +18852,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often shopkeepers offer grenades. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = shopkeepers never sell grenades, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every grenades offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often shopkeepers offer grenades. Vanilla: 100%. 50% = those offers turn up half as often; 0% = shopkeepers never sell grenades, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every grenades offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -18862,7 +18862,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Medic Sells Medical",
-      "description": "Keeps X% of the game's odds for meds offered by medics; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for meds offered by medics; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -18891,8 +18891,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often medics offer meds. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = medics never sell meds, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every meds offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often medics offer meds. Vanilla: 100%. 50% = those offers turn up half as often; 0% = medics never sell meds, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every meds offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -18901,7 +18901,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Medic Sells Drinks",
-      "description": "Keeps X% of the game's odds for drinks offered by medics; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for drinks offered by medics; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -18930,8 +18930,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often medics offer drinks. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = medics never sell drinks, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every drinks offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often medics offer drinks. Vanilla: 100%. 50% = those offers turn up half as often; 0% = medics never sell drinks, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every drinks offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -18940,7 +18940,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Medic Sells Artifacts",
-      "description": "Keeps X% of the game's odds for artifacts offered by medics; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for artifacts offered by medics; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -18969,8 +18969,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often medics offer artifacts. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = medics never sell artifacts, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every artifacts offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often medics offer artifacts. Vanilla: 100%. 50% = those offers turn up half as often; 0% = medics never sell artifacts, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every artifacts offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -18979,7 +18979,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Medic Sells Detectors",
-      "description": "Keeps X% of the game's odds for detectors offered by medics; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for detectors offered by medics; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -19008,8 +19008,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often medics offer detectors. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = medics never sell detectors, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every detectors offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often medics offer detectors. Vanilla: 100%. 50% = those offers turn up half as often; 0% = medics never sell detectors, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every detectors offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -19018,7 +19018,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Technician Sells Weapons",
-      "description": "Keeps X% of the game's odds for weapons offered by technicians; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for weapons offered by technicians; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -19048,8 +19048,8 @@
           "Not edited since 2026-11-16: only one technician (Bolshak, DLC1) sells items. No rail; a saved value is kept for preset compatibility but never written."
         ]
       },
-      "rationale": "How often technicians offer weapons. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = technicians never sell weapons, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every weapons offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often technicians offer weapons. Vanilla: 100%. 50% = those offers turn up half as often; 0% = technicians never sell weapons, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every weapons offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -19058,7 +19058,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Technician Sells Attachments",
-      "description": "Keeps X% of the game's odds for attachments offered by technicians; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for attachments offered by technicians; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -19088,8 +19088,8 @@
           "Not edited since 2026-11-16: only one technician (Bolshak, DLC1) sells items. No rail; a saved value is kept for preset compatibility but never written."
         ]
       },
-      "rationale": "How often technicians offer attachments. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = technicians never sell attachments, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every attachments offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often technicians offer attachments. Vanilla: 100%. 50% = those offers turn up half as often; 0% = technicians never sell attachments, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every attachments offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -19098,7 +19098,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Technician Sells Ammo",
-      "description": "Keeps X% of the game's odds for ammo offered by technicians; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for ammo offered by technicians; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -19128,8 +19128,8 @@
           "Not edited since 2026-11-16: only one technician (Bolshak, DLC1) sells items. No rail; a saved value is kept for preset compatibility but never written."
         ]
       },
-      "rationale": "How often technicians offer ammo. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = technicians never sell ammo, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every ammo offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often technicians offer ammo. Vanilla: 100%. 50% = those offers turn up half as often; 0% = technicians never sell ammo, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every ammo offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -19138,7 +19138,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Technician Sells Medical",
-      "description": "Keeps X% of the game's odds for meds offered by technicians; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for meds offered by technicians; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -19168,8 +19168,8 @@
           "Not edited since 2026-11-16: only one technician (Bolshak, DLC1) sells items. No rail; a saved value is kept for preset compatibility but never written."
         ]
       },
-      "rationale": "How often technicians offer meds. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = technicians never sell meds, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every meds offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often technicians offer meds. Vanilla: 100%. 50% = those offers turn up half as often; 0% = technicians never sell meds, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every meds offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -19178,7 +19178,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Technician Sells Food",
-      "description": "Keeps X% of the game's odds for food offered by technicians; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for food offered by technicians; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -19208,8 +19208,8 @@
           "Not edited since 2026-11-16: only one technician (Bolshak, DLC1) sells items. No rail; a saved value is kept for preset compatibility but never written."
         ]
       },
-      "rationale": "How often technicians offer food. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = technicians never sell food, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every food offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often technicians offer food. Vanilla: 100%. 50% = those offers turn up half as often; 0% = technicians never sell food, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every food offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -19218,7 +19218,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Technician Sells Drinks",
-      "description": "Keeps X% of the game's odds for drinks offered by technicians; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for drinks offered by technicians; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -19248,8 +19248,8 @@
           "Not edited since 2026-11-16: only one technician (Bolshak, DLC1) sells items. No rail; a saved value is kept for preset compatibility but never written."
         ]
       },
-      "rationale": "How often technicians offer drinks. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = technicians never sell drinks, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every drinks offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often technicians offer drinks. Vanilla: 100%. 50% = those offers turn up half as often; 0% = technicians never sell drinks, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every drinks offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -19258,7 +19258,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Bartender Sells Weapons",
-      "description": "Keeps X% of the game's odds for weapons offered by bartenders; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for weapons offered by bartenders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -19287,8 +19287,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often bartenders offer weapons. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = bartenders never sell weapons, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every weapons offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often bartenders offer weapons. Vanilla: 100%. 50% = those offers turn up half as often; 0% = bartenders never sell weapons, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every weapons offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -19297,7 +19297,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Bartender Sells Ammo",
-      "description": "Keeps X% of the game's odds for ammo offered by bartenders; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for ammo offered by bartenders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -19326,8 +19326,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often bartenders offer ammo. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = bartenders never sell ammo, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every ammo offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often bartenders offer ammo. Vanilla: 100%. 50% = those offers turn up half as often; 0% = bartenders never sell ammo, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every ammo offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -19336,7 +19336,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Bartender Sells Food",
-      "description": "Keeps X% of the game's odds for food offered by bartenders; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for food offered by bartenders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -19365,8 +19365,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often bartenders offer food. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = bartenders never sell food, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every food offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often bartenders offer food. Vanilla: 100%. 50% = those offers turn up half as often; 0% = bartenders never sell food, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every food offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -19375,7 +19375,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Bartender Sells Drinks",
-      "description": "Keeps X% of the game's odds for drinks offered by bartenders; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for drinks offered by bartenders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -19404,8 +19404,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often bartenders offer drinks. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = bartenders never sell drinks, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every drinks offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often bartenders offer drinks. Vanilla: 100%. 50% = those offers turn up half as often; 0% = bartenders never sell drinks, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every drinks offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -19414,7 +19414,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Bartender Sells Artifacts",
-      "description": "Keeps X% of the game's odds for artifacts offered by bartenders; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for artifacts offered by bartenders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -19443,8 +19443,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often bartenders offer artifacts. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = bartenders never sell artifacts, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every artifacts offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often bartenders offer artifacts. Vanilla: 100%. 50% = those offers turn up half as often; 0% = bartenders never sell artifacts, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every artifacts offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -19453,7 +19453,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Bartender Sells Detectors",
-      "description": "Keeps X% of the game's odds for detectors offered by bartenders; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for detectors offered by bartenders; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -19482,8 +19482,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often bartenders offer detectors. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = bartenders never sell detectors, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every detectors offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often bartenders offer detectors. Vanilla: 100%. 50% = those offers turn up half as often; 0% = bartenders never sell detectors, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every detectors offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -19492,7 +19492,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Stalker Sells Ammo",
-      "description": "Keeps X% of the game's odds for ammo offered by stalkers you can trade with; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for ammo offered by stalkers you can trade with; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -19521,8 +19521,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often ordinary stalkers you can trade with offer ammo. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = ordinary stalkers you can trade with never sell ammo, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every ammo offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often ordinary stalkers you can trade with offer ammo. Vanilla: 100%. 50% = those offers turn up half as often; 0% = ordinary stalkers you can trade with never sell ammo, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every ammo offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -19531,7 +19531,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Stalker Sells Medical",
-      "description": "Keeps X% of the game's odds for meds offered by stalkers you can trade with; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for meds offered by stalkers you can trade with; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -19560,8 +19560,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often ordinary stalkers you can trade with offer meds. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = ordinary stalkers you can trade with never sell meds, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every meds offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often ordinary stalkers you can trade with offer meds. Vanilla: 100%. 50% = those offers turn up half as often; 0% = ordinary stalkers you can trade with never sell meds, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every meds offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -19570,7 +19570,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Stalker Sells Food",
-      "description": "Keeps X% of the game's odds for food offered by stalkers you can trade with; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for food offered by stalkers you can trade with; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -19599,8 +19599,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often ordinary stalkers you can trade with offer food. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = ordinary stalkers you can trade with never sell food, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every food offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often ordinary stalkers you can trade with offer food. Vanilla: 100%. 50% = those offers turn up half as often; 0% = ordinary stalkers you can trade with never sell food, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every food offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -19609,7 +19609,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Stalker Sells Drinks",
-      "description": "Keeps X% of the game's odds for drinks offered by stalkers you can trade with; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for drinks offered by stalkers you can trade with; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -19638,8 +19638,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often ordinary stalkers you can trade with offer drinks. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = ordinary stalkers you can trade with never sell drinks, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every drinks offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often ordinary stalkers you can trade with offer drinks. Vanilla: 100%. 50% = those offers turn up half as often; 0% = ordinary stalkers you can trade with never sell drinks, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every drinks offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     },
@@ -19648,7 +19648,7 @@
       "tab": "economy",
       "group": "Trader Sells",
       "label": "Stalker Sells Grenades",
-      "description": "Keeps X% of the game's odds for grenades offered by stalkers you can trade with; 0% removes them. What they buy from you is unchanged.",
+      "description": "Keeps X% of the vanilla odds for grenades offered by stalkers you can trade with; 0% removes them. What they buy from you is unchanged.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -19677,8 +19677,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often ordinary stalkers you can trade with offer grenades. Vanilla: 100% = the game's odds. 50% = those offers turn up half as often; 0% = ordinary stalkers you can trade with never sell grenades, so you have to find them in the Zone.",
-      "logic": "100% keeps the game's odds; 5–95% makes every grenades offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often ordinary stalkers you can trade with offer grenades. Vanilla: 100%. 50% = those offers turn up half as often; 0% = ordinary stalkers you can trade with never sell grenades, so you have to find them in the Zone.",
+      "logic": "100% keeps vanilla odds; 5–95% makes every grenades offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
       "interaction": "How much a trader carries is separate: AMMO SUPPLY and MEDICAL SUPPLY. Prices, what traders buy from you, item condition and refresh timing stay unchanged.",
       "exposeInUi": false
     }

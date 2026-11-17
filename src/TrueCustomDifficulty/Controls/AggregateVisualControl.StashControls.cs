@@ -11,7 +11,7 @@ namespace TrueCustomDifficulty.Controls;
 // STASH LOOT MIX controls laid out exactly like ODDS PER STASH: one row per
 // category, one column per tier. Each cell holds the single control that moves
 // that odds cell (catalog parameter or presence sidecar); "—" where the game
-// has no such loot in that tier. Every cell keeps X% of the game's odds except
+// has no such loot in that tier. Every cell keeps X% of the vanilla odds except
 // the two absolute chance cells (Basic RGD-5, Rare coupons), which are the real
 // per-stash chance. All cells move in 5% steps.
 public sealed partial class AggregateVisualControl
@@ -72,7 +72,7 @@ public sealed partial class AggregateVisualControl
             new Pen(CloneWithOpacity(border, .61), .9), outer, 4.0, 4.0);
         dc.DrawText(CreateText("ADJUST ODDS", 11.4, text, FontWeights.Bold),
             new Point(outer.Left + 12.0, outer.Top + 8.0));
-        DrawRightAlignedText(dc, "100% = GAME ODDS",
+        DrawRightAlignedText(dc, "100% = VANILLA",
             new Point(outer.Right - 12.0, outer.Top + 9.0),
             9.4, muted, FontWeights.SemiBold);
 
@@ -238,7 +238,7 @@ public sealed partial class AggregateVisualControl
                 "loot.stashMixMedical", "BASIC AMMO", "Basic Ammo Odds",
                 "How often a Basic stash gives ammo. In the game every Basic stash picks one ammo stack "
                 + "(9×18, 9×19 or 12 gauge); lower this and that pick comes up empty that share of the time.\n\n"
-                + "100% = the game's odds, 50% = ammo in about half as many Basic stashes, 0% = never.\n\n"
+                + "100% = vanilla, 50% = ammo in about half as many Basic stashes, 0% = never.\n\n"
                 + "Smart loot ammo has its own checkbox (STASH SMART LOOT → SMART LOOT GIVES). "
                 + "How much ammo you get is AMMO AMOUNT.",
                 "Drag the rail. ←/→ change it by 5%, Home = 0%, End = 100%. Right-click resets to 100%; R resets the whole board."),
@@ -246,7 +246,7 @@ public sealed partial class AggregateVisualControl
                 "loot.stashMixMedical", "STANDARD AMMO", "Standard Ammo Odds",
                 "How often a Standard stash gives ammo. In the game every Standard stash picks one ammo stack "
                 + "from a caliber list that grows with your rank; lower this and that pick comes up empty that share of the time.\n\n"
-                + "100% = the game's odds, 50% = ammo in about half as many Standard stashes, 0% = never.\n\n"
+                + "100% = vanilla, 50% = ammo in about half as many Standard stashes, 0% = never.\n\n"
                 + "Smart loot ammo has its own checkbox (SMART LOOT GIVES). How much ammo you get is AMMO AMOUNT.",
                 "Drag the rail. ←/→ change it by 5%, Home = 0%, End = 100%. Right-click resets to 100%; R resets the whole board.")
         };

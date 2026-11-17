@@ -54,7 +54,7 @@ public sealed partial class CfgPatchWriterService
             && allById.TryGetValue("loot.worldWeaponShuffle", out var worldShuffle)
             && worldShuffle.CurrentBoolean)
             throw new InvalidDataException(
-                "Extra Stash Gear and World Weapon Shuffle cannot both be enabled. " +
+                "Extra Stash Gear and Shuffle Loose Weapons cannot both be enabled. " +
                 "They edit the same authored weapon stash slots. Turn off one to build safely.");
 
         // At zero coverage no private gear generators exist, so modified bonus

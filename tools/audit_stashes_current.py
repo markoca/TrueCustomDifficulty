@@ -61,7 +61,7 @@ assert "extraGear.CurrentBoolean && weaponShuffle.CurrentBoolean" in vm
 assert "extraGear.CurrentBoolean = false;" in vm
 assert "weaponShuffle.CurrentBoolean = false;" in vm
 assert "if (gear.CurrentBoolean && shuffle.CurrentBoolean)" in vm
-assert "Extra Stash Gear and World Weapon Shuffle cannot both be enabled." in writer
+assert "Extra Stash Gear and Shuffle Loose Weapons cannot both be enabled." in writer
 rewards = ["loot.cheapStashAmmoQuantity", "loot.mediumStashAmmoQuantity", "loot.expensiveStashAmmoQuantity"]
 mix = [
     "loot.stashMixAmmo", "loot.stashMixMedical", "loot.stashMixFood",

@@ -298,7 +298,7 @@ for pid in ("loot.stashMixMedical", "loot.stashMixFood", "loot.stashMixDrinks"):
     assert source_entry["slider"] == {
         "min": 0, "max": 1, "step": 0.05, "stepMode": "absolute"
     }
-    assert "Keeps X% of the game's odds" in source_entry["description"]
+    assert "Keeps X% of the vanilla odds" in source_entry["description"]
     assert source_entry["display"]["primary"] == "percent"
     assert "Relative item Weight" not in json.dumps(source_entry)
 # All 21 native 0.05x stops are on the same source grid used for knob

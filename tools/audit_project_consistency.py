@@ -5302,7 +5302,7 @@ if _loot_param is None or _loot_param.get("label") != "Ammo Boxes Removed":
     fail("Loot world-ammo parameter must not display redundant World Loot Removal label")
 _npc_preview_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs").read_text(encoding="utf-8")
 _npc_ammo_def = next((p for p in parameters if p.get("id") == "loot.npcWeaponAmmoSupply"), None)
-if _npc_ammo_def is None or _npc_ammo_def.get("label") != "Bonus Ammo Amount":
+if _npc_ammo_def is None or _npc_ammo_def.get("label") != "Ammo Pack Size":
     fail("NPC ammo drops source label changed")
 if any(_tok not in _npc_preview_source for _tok in (
     'private static NpcLootGeometry LayoutNpcLoot(double hostWidth, bool showBonusAmmo)',

@@ -224,7 +224,7 @@ public sealed class TraderBuysMatrix : FrameworkElement
 
         Center(dc, "TRADER STOCK", ActualWidth / 2.0, 21.0,
             VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
-        Center(dc, "100% = GAME ODDS · 0% = REMOVED", ActualWidth / 2.0, 38.0,
+        Center(dc, "100% = VANILLA · 0% = REMOVED", ActualWidth / 2.0, 38.0,
             9.0, muted, FontWeights.SemiBold);
 
         var left = 12.0;

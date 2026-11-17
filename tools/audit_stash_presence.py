@@ -147,7 +147,7 @@ for c in easy:
 assert vanilla_none == 0.0  # Novice: Basic meds are certain from Chance rows alone
 
 # ---- 9. ADJUST ODDS: one 5% grid, no CHANCE tag (2026-11-17) --------------
-assert '"100% = GAME ODDS"' in grid and "CHANCE = REAL %" not in grid
+assert '"100% = VANILLA"' in grid and "CHANCE = REAL %" not in grid
 assert 'CreateText("CHANCE"' not in grid
 catalog = {p["id"]: p for p in json.loads(read("Data/parameters.json"))["parameters"]}
 import re as _re

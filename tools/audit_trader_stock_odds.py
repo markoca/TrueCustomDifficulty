@@ -75,7 +75,7 @@ assert '[JsonPropertyName("traderSellOdds")]' in preset_file
 assert "Unknown trader stock category" in preset_service
 assert "public static IReadOnlyCollection<string> Ids" in sidecar
 assert 'SellOdds="{Binding DataContext.TraderSellOdds' in xaml
-assert '"100% = GAME ODDS · 0% = REMOVED"' in ui
+assert '"100% = VANILLA · 0% = REMOVED"' in ui
 assert 'private void ResetBoard()' in ui and 'if (e.Key == Key.R)' in ui
 assert '"AMMO SUPPLY"' in ui and '"MEDICAL SUPPLY"' in ui
 

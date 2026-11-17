@@ -59,7 +59,7 @@ assert approved == weapon_slots - {
 assert len(approved & weapon_slots) == 13
 writer = (ROOT / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.cs").read_text(
     encoding="utf-8")
-assert "Extra Stash Gear and World Weapon Shuffle cannot both be enabled." in writer
+assert "Extra Stash Gear and Shuffle Loose Weapons cannot both be enabled." in writer
 
 print("PASS: weapon/attachment share one generator but zero CFG leaves; "
       "77 blueprints and one detector root stay separate; "

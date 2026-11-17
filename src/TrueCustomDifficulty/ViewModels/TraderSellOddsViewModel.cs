@@ -8,7 +8,7 @@ namespace TrueCustomDifficulty.ViewModels;
 
 /// <summary>
 /// TRADER STOCK partial odds sidecar (not catalog parameters): per trader
-/// role × category, "keep X% of the game's odds" for that category's offers
+/// role × category, "keep X% of the vanilla odds" for that category's offers
 /// (0.05 steps). 100% = vanilla. 0% is NOT stored here: it is the existing
 /// catalog SELL toggle unchecked (category removed). Keys are the SELL
 /// parameter ids, e.g. "economy.traderSells.general.weapons".

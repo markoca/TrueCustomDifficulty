@@ -1,3 +1,9 @@
+## 2026-11-17 — CURRENT: VANILLA instead of GAME ODDS; panel titles = board names
+
+* Board captions read `100% = VANILLA` (ADJUST ODDS, MEDICAL COMPOSITION) and `100% = VANILLA · 0% = REMOVED` (TRADER STOCK); was *GAME ODDS*. Panel texts follow: `Vanilla: 100%` (no *= the game's odds* tail), *keeps vanilla odds*, *X% of the vanilla odds*, *1× keeps vanilla timing / spread*.
+* Panel titles (catalog labels) now match what the board draws: Shuffle Loose Weapons / Shuffle Attachments / Shuffle Blueprints; NPC LOOT knobs Corpse Scarcity, Med Drops, Ammo Pack Size, Bonus Packs; Army Medkit Mix; ADJUST ODDS cells `{Tier} {Category} Odds` with the grid's category names (Meds, Food, Drinks, Ammo, Grenades, Coupons) and the two real-chance cells `Basic Grenades Chance` / `Rare Coupons Chance`; RGD-5 Amount; Ammo Amount. IDs unchanged.
+* Every text that pointed to an old name now uses the new one (BONUS PACKS, RGD-5 AMOUNT, Shuffle Loose Weapons, GUNS TO FIND), including the build error when EXTRA STASH GEAR and Shuffle Loose Weapons are both on.
+
 ## 2026-11-17 — CURRENT: gamer-facing panel texts (WHAT IT DOES, HIGHER / LOWER, WITH OTHER SETTINGS, CONTROLS)
 
 * Every panel section is player-facing, so engine words are gone from the texts a selected control shows: no *native*, *CFG*, *writer*, *SID*, *MinCount/MaxCount*, *DispersionRadius*, *HearingDistanceCoef*, *authored*, *SmartLoot package / generator branch* (≈70 texts, 31 of them the TRADER STOCK category lines).

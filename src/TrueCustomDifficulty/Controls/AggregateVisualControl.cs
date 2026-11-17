@@ -5495,7 +5495,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             new Pen(CloneWithOpacity(border, .61), .9), adjust, 4.0, 4.0);
         dc.DrawText(CreateText("ADJUST ODDS", 11.4, text, FontWeights.Bold),
             new Point(left + 12.0, adjust.Top + 8.0));
-        DrawRightAlignedText(dc, "100% = GAME ODDS",
+        DrawRightAlignedText(dc, "100% = VANILLA",
             new Point(adjust.Right - 12.0, adjust.Top + 9.0), 9.4, muted, FontWeights.SemiBold);
         const double cellGap = 8.0;
         var cellWidth = (width - 24.0 - (columns - 1) * cellGap) / columns;

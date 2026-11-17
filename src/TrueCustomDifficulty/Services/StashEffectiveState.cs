@@ -95,7 +95,7 @@ public sealed class StashEffectiveState
     /// <summary>
     /// The one rule for a native Weight list (verified: a Weight list always
     /// yields exactly ONE entry, picked by Weight; Chance and Weight never mix
-    /// in one list). To make a control mean "keep X% of the game's odds" for
+    /// in one list). To make a control mean "keep X% of the vanilla odds" for
     /// its own items WITHOUT handing that share to the other items, the
     /// removed Weight goes to an appended native <c>Empty</c> entry, so the
     /// list total stays the source total. Presence scales the whole list.
@@ -251,7 +251,7 @@ public sealed class StashEffectiveState
     // per-category slider scales those probabilities, never averaging them.
     // Basic MEDS / FOOD / DRINKS cells (loot.stashMix*) also own the Basic
     // Chance rows (Bandage/Medkit/Vodka on Easy/Medium/Hard), so one cell
-    // keeps X% of the game's odds in BOTH Basic list types. Basic RGD-5 is an
+    // keeps X% of the vanilla odds in BOTH Basic list types. Basic RGD-5 is an
     // absolute chance with its own control and is not scaled here.
     public static string? TierChanceParameterId(string tier, string sid)
     {

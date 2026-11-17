@@ -15,3 +15,8 @@ The right-hand panel shows four sections for a selected control: **WHAT IT DOES*
 * Scan of rationale / logic / interaction for engine words (all ids except legacy Trader Buys and compatibility-only rows).
 * Scan of capitalized control references against catalog labels and drawn UI tokens; every stale name was replaced by the current one.
 * `tools/pre_release.py` and every static audit stay green.
+
+## Second pass (same day)
+
+6. Say **vanilla**, not *the game's odds* / *GAME ODDS*: board captions `100% = VANILLA`, texts `Vanilla: 100%`, *keeps vanilla odds*.
+7. The panel title is the catalog label, so the label must be the name the board draws (Shuffle Loose Weapons, Med Drops, Ammo Pack Size, Bonus Packs, Corpse Scarcity, `{Tier} {Category} Odds`, Basic Grenades Chance, Rare Coupons Chance, RGD-5 Amount, Ammo Amount, Army Medkit Mix).
