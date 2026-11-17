@@ -5937,6 +5937,72 @@
       "exposeInUi": true
     },
     {
+      "id": "health.healTime",
+      "tab": "health",
+      "group": "Healing Amount",
+      "label": "Heal Time",
+      "description": "Scales the time required for HP restoration from medical items without changing total HP.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Heal Time"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 8,
+        "step": 0.25
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "BandageHealing2",
+          "path": "Duration",
+          "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "MedkitHealing3",
+          "path": "Duration",
+          "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "ArmyMedkitHealing4",
+          "path": "Duration",
+          "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "EcoMedkitHealing4",
+          "path": "Duration",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Scales each medical healing effect's native Duration; HP doses remain unchanged.",
+          "In-game effect timing requires verification under STALKER 2.1."
+        ]
+      },
+      "rationale": "Time needed to restore HP. More time heals more slowly; total HP restored does not change.",
+      "logic": "1x keeps original healing time; 2x takes twice as long; 0.5x takes half as long.",
+      "interaction": "Shared by Bandage, Medkit, Army Medkit and Scientific Medkit. Right-click to reset.",
+      "exposeInUi": false
+    },
+    {
       "id": "health.medkitHealing",
       "tab": "health",
       "group": "Healing Amount",
