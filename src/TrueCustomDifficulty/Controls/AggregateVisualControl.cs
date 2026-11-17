@@ -7327,7 +7327,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             if (Family == "NpcLootLoadout")
             {
                 NeedBoost = 1.0;
-                NeedBoostEnabled = true;
                 if (NpcConsumables is not null)
                     foreach (var item in NpcConsumables.OfType<NpcConsumableItemViewModel>())
                         item.Reset();

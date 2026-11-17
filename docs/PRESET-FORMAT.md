@@ -134,5 +134,6 @@ Preset files keep their original `toolVersion` so player-facing semantic migrati
 
 These migrations change the stored UI representation, not the intended gameplay output. Newly saved presets use the current application version and already store the current semantics.
 
-* `corpseSmartLootNeedBoostEnabled` (bool, optional, 2026-11-17): `false` = NEED BOOST switched OFF
-  (vanilla corpse SmartLoot span, `corpseSmartLootNeedBoost` kept). Missing = ON.
+* Legacy `corpseSmartLootNeedBoostEnabled` (bool, retired 2026-11-17) is ignored on load
+  and omitted on save. The native `loot.npcSmartLootEnabled` master is the only switch;
+  `corpseSmartLootNeedBoost` retains its 0–2× multiplier and remains neutral while the master is OFF.

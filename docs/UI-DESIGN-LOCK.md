@@ -1,7 +1,12 @@
 
+## 2026-11-17 — CURRENT: Single NPC SMART LOOT master for NEED BOOST
+
+* NPC **SMART LOOT** has one master ON/OFF checkbox in its title row. Its **NEED BOOST** knob has no checkbox or reserved checkbox-caption spacing; it keeps the existing 0–2× / 0.05× dial, FLAT endpoint, drag, wheel, keyboard and right-click reset. Master OFF dims and locks all Smart Loot-only controls, retaining the boost value for re-enable.
+* Removed obsolete `NeedBoostEnabled` UI flag and the redundant preset sidecar `corpseSmartLootNeedBoostEnabled`. Loading an older preset ignores that retired flag; `corpseSmartLootNeedBoost` continues to save normally. Regular corpse SCARCITY, MED DROPS and independent MOD ITEMS controls are unaffected. Historical ON/OFF notes farther below are superseded.
+
 ## 2026-11-17 — CURRENT: Smart Loot cards own their ON/OFF master and all exclusive controls
 
-* **NPC LOOT & EQUIPMENT:** one centered compact **SMART LOOT** sub-card now contains the master ON/OFF checkbox at the very top, all three independent Medicine/Ammo/Water bonus-package chips, the existing NEED BOOST control and its optional switch, and the **AMMO PACK SIZE** slider with its original native caliber samples. These are the NPC SmartLoot-only inputs; they are not duplicated elsewhere. A single native source-backed `loot.npcSmartLootEnabled` (default ON) owns this scope. OFF replaces the selected difficulty's `EconomyDifficulty.CorpseSmartLoot` subtree with a blank assignment (no Medicine/Ammo/Water bonus packages), while keeping selected chips, NEED BOOST and ammo size stored. Turning it ON resumes the same saved choices; a deliberately empty chip selection remains valid while ON. Only bonus-smart-loot controls dim/lock while OFF.
+* **NPC LOOT & EQUIPMENT:** one centered compact **SMART LOOT** sub-card now contains the master ON/OFF checkbox at the very top, all three independent Medicine/Ammo/Water bonus-package chips, the existing NEED BOOST dial without a separate checkbox, and the **AMMO PACK SIZE** slider with its original native caliber samples. These are the NPC SmartLoot-only inputs; they are not duplicated elsewhere. A single native source-backed `loot.npcSmartLootEnabled` (default ON) owns this scope. OFF replaces the selected difficulty's `EconomyDifficulty.CorpseSmartLoot` subtree with a blank assignment (no Medicine/Ammo/Water bonus packages), while keeping selected chips, NEED BOOST and ammo size stored. Turning it ON resumes the same saved choices; a deliberately empty chip selection remains valid while ON. Only bonus-smart-loot controls dim/lock while OFF.
 * **Not Smart Loot:** regular NPC corpse **SCARCITY**, **MED DROPS**, **MOD LOOT SCARCITY**, weapon condition, and per-consumable Chance rows remain outside SMART LOOT and are unaffected by its master. The checkbox affects ordinary corpse optional SmartLoot only, not trader inventory, quest NPCs, weapon-attached ammo or normal corpse items.
 * **STASHES:** the independent **STASH SMART LOOT** board continues to own **WHEN STOCKED**, **WHEN SHORT**, and the MEDS/AMMO chance-of-set preview. Its existing `loot.stashSmartLootEnabled` source-backed toggle is now integrated into the **top title row** as the single checkbox caption, removing the redundant repeated header/enable row. OFF keeps native SmartLoot stash groups disabled and its knobs saved, while Basic/Standard/Rare stash supply and medical composition stay independently editable.
 * Compact responsive geometry: the NPC SMART LOOT outer card has one header line plus adjacent package selector, NEED BOOST knob and ammo-size rail. At 600-DIP+ content width, ordinary corpse knobs occupy the left half of the next row and the weapon condition range its right half; narrow widths stack without control clipping. No unrelated full-width editor or extra baseline/Vanilla captions.
@@ -4065,7 +4070,7 @@ is removed from code; selecting GLOBAL shows the DAMAGE BY ANOMALY help.
   on its knobs (and on ARTIFACT HUNTING knobs). Catalog 409 / 204 visible.
 * See docs/STASH-SMART-LOOT-NEED.md.
 
-## CURRENT 2026-11-17 — NEED BOOST ON/OFF
+## HISTORICAL 2026-11-17 — NEED BOOST ON/OFF (superseded by SMART LOOT master)
 
 The NPC LOOT NEED BOOST card gets the MOD LOOT SCARCITY checkbox chrome (top-left, caption inset 29).
 OFF = the corpse SmartLoot need span stays vanilla; the dial value is kept (dimmed) and returns when ON.

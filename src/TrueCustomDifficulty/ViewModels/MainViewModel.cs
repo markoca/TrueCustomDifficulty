@@ -185,26 +185,9 @@ public sealed class MainViewModel : ObservableObject
     // TRADER STOCK partial odds per role x category (0 = SELL toggle off).
     public TraderSellOddsViewModel TraderSellOdds { get; } = new();
 
-    // NEED BOOST ON/OFF: OFF keeps the knob value saved but writes vanilla.
-    private bool _corpseSmartLootNeedBoostEnabled = true;
-    public bool CorpseSmartLootNeedBoostEnabled
-    {
-        get => _corpseSmartLootNeedBoostEnabled;
-        set
-        {
-            if (SetProperty(ref _corpseSmartLootNeedBoostEnabled, value))
-            {
-                OnPropertyChanged(nameof(IsCorpseSmartLootNeedBoostModified));
-                AllParameters.FirstOrDefault(p => p.Id == "loot.npcCorpseBonus")
-                    ?.RefreshAggregateModifiedState();
-            }
-        }
-    }
-
     /// <summary>The boost the writer applies: disabled Smart Loot cannot emit boost effects.</summary>
     public double EffectiveCorpseSmartLootNeedBoost =>
-        CorpseSmartLootNeedBoostEnabled
-        && AllParameters.FirstOrDefault(p => p.Id == "loot.npcSmartLootEnabled")?.CurrentBoolean != false
+        AllParameters.FirstOrDefault(p => p.Id == "loot.npcSmartLootEnabled")?.CurrentBoolean != false
             ? CorpseSmartLootNeedBoost : 1.0;
 
     public bool IsCorpseSmartLootNeedBoostModified =>
@@ -1589,7 +1572,6 @@ public sealed class MainViewModel : ObservableObject
             WorldModItemsEnabled = false;
             CorpseModItemsEnabled = false;
             CorpseSmartLootNeedBoost = 1.0;
-            CorpseSmartLootNeedBoostEnabled = true;
             StashPresence.Reset();
             foreach (var item in NpcConsumableItems)
                 item.Reset();
@@ -1625,7 +1607,6 @@ public sealed class MainViewModel : ObservableObject
                 WorldModItemsEnabled = false;
                 CorpseModItemsEnabled = false;
                 CorpseSmartLootNeedBoost = 1.0;
-                CorpseSmartLootNeedBoostEnabled = true;
                 foreach (var item in NpcConsumableItems)
                     item.Reset();
             }
@@ -1797,10 +1778,9 @@ public sealed class MainViewModel : ObservableObject
             CorpseModItemsRemoval = CorpseModItemsRemoval,
             WorldModItemsEnabled = WorldModItemsEnabled,
             CorpseModItemsEnabled = CorpseModItemsEnabled,
-            // A saved-but-OFF value is kept so turning it back ON restores it.
+            // The multiplier is retained when the sole SMART LOOT master is OFF.
             CorpseSmartLootNeedBoost = Math.Abs(CorpseSmartLootNeedBoost - 1.0) > 0.000001
                 ? CorpseSmartLootNeedBoost : null,
-            CorpseSmartLootNeedBoostEnabled = CorpseSmartLootNeedBoostEnabled ? null : false,
             StashPresence = StashPresence.ToPreset(),
             NpcConsumableChances = NpcConsumableItems.ToDictionary(
                 item => item.Sid, item => item.ToPreset(), StringComparer.Ordinal),
@@ -1884,8 +1864,6 @@ public sealed class MainViewModel : ObservableObject
                 CorpseModItemsEnabled = preset.CorpseModItemsEnabled ?? CorpseModItemsRemoval > 0.0;
                 // Older presets omit NEED BOOST and load at vanilla 1x.
                 CorpseSmartLootNeedBoost = preset.CorpseSmartLootNeedBoost ?? 1.0;
-                // Older presets omit the switch: NEED BOOST is ON.
-                CorpseSmartLootNeedBoostEnabled = preset.CorpseSmartLootNeedBoostEnabled ?? true;
                 // Older presets omit stash presence and load at vanilla 100%.
                 StashPresence.FromPreset(preset.StashPresence);
                 var npcChances = preset.NpcConsumableChances

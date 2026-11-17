@@ -378,7 +378,15 @@ internal static partial class Program
                 "Novice native optional packages or independent stash switch missing");
 
             bonusAmmo.SnapCurrentNumberToMarker(2.0);
+            vm.CorpseSmartLootNeedBoost = 1.5;
+            Check(Math.Abs(vm.EffectiveCorpseSmartLootNeedBoost - 1.5) < 0.000001,
+                "NEED BOOST must follow its knob without a second enable flag");
+            Check(typeof(PresetFile).GetProperty("CorpseSmartLootNeedBoostEnabled") is null,
+                "Retired NEED BOOST checkbox must not persist a hidden preset toggle");
             master.CurrentBoolean = false;
+            Check(Math.Abs(vm.EffectiveCorpseSmartLootNeedBoost - 1.0) < 0.000001
+                && Math.Abs(vm.CorpseSmartLootNeedBoost - 1.5) < 0.000001,
+                "SMART LOOT master OFF must suspend boost without losing the knob value");
             Check(!bonusAmmo.IsControlEnabled
                 && packages.CurrentText.Contains("NPC_Ammo_Smart", StringComparison.Ordinal),
                 "Smart Loot OFF must preserve options while disabling the ammo editor");
@@ -397,6 +405,8 @@ internal static partial class Program
                 "NPC Smart Loot toggle unexpectedly altered stash Smart Loot");
 
             master.CurrentBoolean = true;
+            Check(Math.Abs(vm.EffectiveCorpseSmartLootNeedBoost - 1.5) < 0.000001,
+                "SMART LOOT master ON must restore the saved NEED BOOST multiplier");
             Check(bonusAmmo.IsControlEnabled
                 && packages.CurrentText.Contains("NPC_Ammo_Smart", StringComparison.Ordinal),
                 "Smart Loot ON did not restore the saved bonus package state");

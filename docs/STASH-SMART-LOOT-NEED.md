@@ -37,11 +37,12 @@ average effective range of the MEDS and AMMO (main weapon) sets with vanilla tic
 Examples: hardcore "no hand-outs" = WHEN SHORT 0.5×; "only helps when you need it" = WHEN STOCKED 0×.
 Corpse smart loot is separate (Loot → NPC LOOT, NEED BOOST). Checks: `tools/audit_stash_smart_need.py`.
 
-## Corpse NEED BOOST switch
+## Corpse NEED BOOST (single master)
 
-Loot → NPC LOOT → NEED BOOST now has an ON/OFF checkbox. OFF writes the vanilla corpse SmartLoot span
-(knob value kept for later); 0× is labelled FLAT (flat 10%). Preset field
-`corpseSmartLootNeedBoostEnabled` is stored only when OFF.
+Loot → NPC LOOT → SMART LOOT contains the only ON/OFF checkbox for corpse bonus packs,
+NEED BOOST and AMMO PACK SIZE. NEED BOOST is a compact 0–2× dial with no separate checkbox.
+The knob value is kept when the master is OFF and resumes when ON; 0× reads FLAT (flat 10%).
+Legacy preset field `corpseSmartLootNeedBoostEnabled` is ignored and never saved again.
 
 ## SMART LOOT IN STASHES (master switch)
 
@@ -49,5 +50,5 @@ Loot → NPC LOOT → NEED BOOST now has an ON/OFF checkbox. OFF writes the vani
 OFF sets `MinSpawnChance`, `MaxSpawnChance` and (where present) `ItemSetCount` of every stash SmartLoot
 group to 0 in the TCD clones, so stashes hold only their normal Basic/Standard/Rare contents and
 hand-placed items. WHEN STOCKED / WHEN SHORT `requiresToggle` it: dimmed, values kept. The SMART
-columns drop to "—". Corpse smart loot is switched off separately: Loot → NPC LOOT → BONUS PACKS with no
-pack selected (NEED BOOST then has nothing to shape).
+columns drop to "—". Corpse Smart Loot is switched off separately by Loot → NPC LOOT → SMART LOOT master; choosing
+no BONUS PACKS also leaves NEED BOOST with nothing to shape.
