@@ -1,4 +1,11 @@
 
+## 2026-11-17 — CURRENT: shared medical heal time
+
+* MEDICAL ITEMS adds one compact **HEAL TIME** horizontal track centered above the existing HEAL/BLEED bars. It stays in the original medical card, with no extra top-level control; values highlight only when changed. Drag/click and keyboard steps adjust the single control, right-click resets it and R resets the entire medical card.
+* Source-backed `health.healTime` scales the native `Duration` in `GameData/EffectPrototypes.cfg` for `BandageHealing2`, `MedkitHealing3`, `ArmyMedkitHealing4` and `EcoMedkitHealing4`. 1× = unchanged, 2× = half-speed healing, 0.5× = double-speed healing. Editable 0.25–8× in 0.25× steps.
+* HP `ValueMin`/`ValueMax`, bleeding, radiation and food healing are untouched; the aggregate modified state and preset storage include this member. Game 2.1 runtime pacing remains to be tested.
+
+
 ## 2026-11-17 — CURRENT: centered weather-knob values and unambiguous vertical labels
 
 * **FOG VISIBILITY**, **RAIN NOISE** and **THUNDER NOISE** retain the right-hand vertical column with 32-DIP-radius industrial 270° knobs. Each knob's current percentage is **centered inside its own dial**, using the matching native-knob readout typography (only modified numbers highlighted). There is **no numeric readout below the knob**.
