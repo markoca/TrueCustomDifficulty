@@ -68,48 +68,37 @@ public sealed class ParameterViewModel : ObservableObject
             : string.Empty)
         + (Id == "loot.npcMedicalChance"
             ? Environment.NewLine + Environment.NewLine
-              + "STANDARD NPC MEDICAL CHANCE — 58 source rows across six "
-              + "role pools. Enabled individual Bandage, Medkit, Army Medkit and "
-              + "Anti-Rad controls replace this global multiplier for their "
-              + "exact item SID; the two multipliers are never stacked. "
-              + "Unchecked items continue to use this global control."
+              + "STANDARD NPC MEDICAL CHANCE\n"
+              + "Checked Bandage, Medkit, Army Medkit and Anti-Rad rows replace this "
+              + "slider for that item; the two never stack. Unchecked items follow this slider."
             : string.Empty)
         + (Id == "loot.worldAmmoCratesRemoved"
             ? Environment.NewLine + Environment.NewLine
               + "MOD ITEM REMOVAL — WORLD\n"
               + "Affected mods: ZoneWatch; Point of No Return — Backpacks Pack; "
               + "Point of No Return — Repair System; Point of No Return — AR Goggles Pack.\n"
-              + "Reduces the original Chance of audited mod additions in world stashes "
-              + "and containers by the chosen percent. 0% leaves them unchanged; 100% "
-              + "blocks their generator branch. Does not alter traders, NPC corpses "
-              + "or the five normal physical-loot reduction bars. "
-              + "Project Itemization Reborn is not supported (shared generator pools)."
+              + "Removes that share of the mod items added to world stashes and containers: "
+              + "0% leaves them, 100% removes them all. Traders, corpses and the five loot "
+              + "bars are unchanged. Project Itemization Reborn is not supported."
             : Id == "loot.npcCorpseBonus"
                 ? Environment.NewLine + Environment.NewLine
                   + "NEED BOOST\n"
-                  + "Shapes the selected bonus packages, which roll more often "
-                  + "when the player is short of that item: 10% when stocked up, "
-                  + "up to 70–90% when lacking. OFF keeps a flat 10%, 1x is "
-                  + "vanilla, 2x doubles the extra chance when lacking (max "
-                  + "100%). SCARCITY still applies afterwards.\n"
+                  + "Bonus packs roll more often when you are short of that item: 10% when "
+                  + "stocked up, up to 70–90% when lacking. OFF keeps a flat 10%, 1x is "
+                  + "vanilla, 2x doubles the extra chance (max 100%). SCARCITY still applies.\n"
                   + "STANDARD NPC CONSUMABLE CHANCE — FOOD / DRINKS / MEDICAL\n"
-                  + "Each checked item slider multiplies every native Chance of "
-                  + "that item (0–3x, 1x = vanilla, clamped at 100%), so the "
-                  + "growth by player rank is kept. The N/E/V/M bars show the "
-                  + "average Chance per player rank: colour = after this board, "
-                  + "outline = vanilla. The 104 source "
-                  + "rows remain gated by native difficulty, rank and role, "
-                  + "with original counts unchanged. Food/Drinks have no global "
-                  + "slider; enabled Medical items replace only their own part "
-                  + "of NPC Medical Drops. Water belongs to the separate bonus "
-                  + "package. This never alters named NPCs, zombies or stashes.\n"
+                  + "Each checked item multiplies that item's chance (0–3x, 1x = vanilla, "
+                  + "max 100%), so higher ranks still find more. N/E/V/M bars = average "
+                  + "chance per player rank: colour = now, outline = vanilla. Food and "
+                  + "drinks have no global slider; checked meds replace only their own part "
+                  + "of MED DROPS. Water is in the bonus packs. Named NPCs, zombies and "
+                  + "stashes are never touched.\n"
                   + "MOD ITEM REMOVAL — CORPSE\n"
                   + "Affected mods: Point of No Return — Backpacks Pack; "
                   + "Point of No Return — Repair System.\n"
-                  + "Reduces the original Chance of audited mod additions on human NPC "
-                  + "corpses by the chosen percent. 0% leaves them unchanged; 100% "
-                  + "blocks their generator branch. Does not change traders, stashes "
-                  + "or SMART LOOT. Project Itemization Reborn is unsupported."
+                  + "Removes that share of the mod items added to human corpses: 0% leaves "
+                  + "them, 100% removes them all. Traders, stashes and SMART LOOT are "
+                  + "unchanged. Project Itemization Reborn is not supported."
                 : string.Empty);
 
     /// <summary>
@@ -140,24 +129,24 @@ public sealed class ParameterViewModel : ObservableObject
                     "StaminaCore" => "Set Max Stamina and Stamina Regen at the top. The tracks below change vault height and carry weight independently.",
                     "WaterStaminaPressure" => "Drag the MEDIUM WATER or DEEP WATER track separately.",
                     "SevereFatiguePenaltyBoard" => "Enable severe-fatigue mechanics, then drag each of the five vertical penalty equalizer bars independently.",
-                    "MasterLowHealth" => "Enable low-health mechanics and turn the HEALTH RECOVERY LOSS knob; the percentage controls HP regeneration loss below the authored low-health trigger.",
+                    "MasterLowHealth" => "Enable low-health mechanics and turn the HEALTH RECOVERY LOSS knob: how much slower HP regenerates while your health is low.",
                     "MasterRadiationPenalty" => "Enable the heavy-radiation stamina penalty, then choose how much extra stamina actions cost while it applies.",
                     "MasterMedicalHealing" => "Switch the Master effect bundle on or off; adjust the Bandage, Medkit or Army Medkit healing tracks independently.",
                     "CouponFlow" => "Drag Starting Coupons to change your new-game wallet. Main and side quest payouts are separate.",
                     "TradingDashboard" => "PRICES TRADERS PAY controls selling; PRICES YOU PAY controls buying. The lower tracks handle sellable condition and broken-gear value.",
-                    "RepairCurve" => "Drag one reputation point vertically to set its repair-price multiplier. Linked values follow the existing source-value ordering.",
+                    "RepairCurve" => "Drag one reputation point up or down to set its repair price; neighbouring points keep their order.",
                     "ServiceCostsBoard" => "Adjust guide travel, upgrades and repairs separately. Discounts and reputation may still affect final prices.",
                     "ItemWeightBoard" => "Adjust ammunition, food and medicine, weapons or armor weight independently.",
-                    "HumanTactics" => "COMBAT MINUTE: each row is one minute of a fight. Drag a row's first marker left for more GRENADES, SUPPRESSION, FLANKING, PUSH or CAMPING PENALTY, right for fewer; hollow markers show the vanilla rhythm, the shaded part is the random window of the first action. ENEMY ACCURACY: drag the ring over the figure: a tighter group means more of their bullets hit you (dashed ring = vanilla).",
-                    "HumanAwareness" => "Top-down radar, enemy in the centre facing up: drag the tip of the vision field (SIGHT, up to 200 m), the footstep-circle handle (HEARING) or the end of the outer timer ring (MEMORY). Weather dials: FOG VISIBILITY = how much they still see in fog; RAIN / THUNDER NOISE = how much the weather covers your noise (higher = they hear less). Mutants are not changed.",
+                    "HumanTactics" => "COMBAT MINUTE: each row is one minute of a fight. Drag a row's marker left for more GRENADES, SUPPRESSION, FLANKING, PUSH or CAMPING PENALTY, right for fewer (hollow = vanilla, shaded = random window). ENEMY ACCURACY: drag the ring; tighter = more of their bullets hit you (dashed = vanilla).",
+                    "HumanAwareness" => "Radar, enemy in the centre facing up: drag the vision tip (SIGHT), the footstep circle (HEARING) or the end of the outer ring (MEMORY). FOG VISIBILITY = how much they still see in fog; RAIN / THUNDER NOISE = how much the weather hides your noise. Mutants are not changed.",
                     "ArtifactHunting" => "Turn a knob: SPAWN CHANCE (odds a field actually grows an artifact when it refills), RARE LUCK (how often a find is rare or epic, shown per zone below) and PER SPAWN (how many drop at once). Quest and unique artifacts are not changed.",
                     "AnomalySpecialEffects" => "Adjust Glass Shards bleeding and Psy drain independently. Their other damage effects remain separate.",
-                    "NpcLootLoadout" => "SCARCITY scales eligible ordinary NPC consumable Chance and optional corpse SmartLoot activation, not weapons. Other controls select packages, bonus stacks, medical Chance and condition. R also resets NEED BOOST and the item rows; MOD LOOT SCARCITY resets on its own (R with it focused).",
-                    "WorldLootLayout" => "Shuffle weapons, attachments and blueprints separately. Remove loose armor, loose detectors or the fixed loose artifacts (Weird Kettle/Nut/Flower/Ball, DLC Water Drip) independently; quest rewards and anomaly fields stay. GUNS TO FIND controls possible loose-weapon spawns when weapon shuffle is on; 0% still keeps one of every regular weapon model.",
+                    "NpcLootLoadout" => "SCARCITY thins the food, drinks, meds and SMART LOOT packs on ordinary corpses, not weapons. R resets the board, NEED BOOST and the item rows; MOD LOOT SCARCITY resets on its own (R with it selected).",
+                    "WorldLootLayout" => "Shuffle weapons, attachments and blueprints separately. Remove loose armor, loose detectors or the fixed loose artifacts on their own; quest rewards and anomaly fields stay. GUNS TO FIND sets how many loose guns appear with weapon shuffle on (0% still keeps one of each model).",
                     "StashContentMix" => "ADJUST ODDS: each cell keeps X% of the game's odds for that kind of loot in that stash tier (100% = game odds, 0% = never); Basic GRENADES and Rare COUPONS set the real chance per stash. ODDS PER STASH shows the result. SUPPLY REDUCTION lowers the odds of all supplies; AMMO AMOUNT and RGD-5 AMOUNT change how much you get.",
                     "StashMedicalComposition" => "ADJUST ODDS: each item keeps X% of the game's odds in every stash (100% = game odds, 0% = never); ODDS PER STASH · MEDS shows the result per tier. QUANTITY sets Medkit and Army Medkit MIN/MAX stack sizes.",
-                    "StashSmartLoot" => "The checkbox switches smart loot off in ordinary stashes (they then hold only their normal contents; quest and special stashes stay vanilla). Smart loot rolls between two chances: EXTRA LOOT WHEN STOCKED (you already carry enough of that supply) and EXTRA LOOT WHEN LOW (you are low on it). Turn either knob. The SMART LOOT GIVES checkboxes choose which kinds of items smart loot may give (the Basic/Standard/Rare cells never touch it). The bars show the chance a set appears, grey ticks = vanilla; the SMART columns in the odds tables follow.",
-                    "StashGear" => "BONUS GEAR COVERAGE chooses eligible stash locations. PRIORITY favors item categories; BONUS CHANCE checks each candidate. Quest and unique loot are protected.",
+                    "StashSmartLoot" => "Checkbox: smart loot ON/OFF in ordinary stashes. EXTRA LOOT WHEN STOCKED / WHEN LOW: how often a set appears when you have enough or run low. SMART LOOT GIVES: which items it may give. Bars = chance a set appears (grey tick = vanilla).",
+                    "StashGear" => "BONUS GEAR COVERAGE chooses how many stashes can get extra gear; PRIORITY favors item kinds; BONUS CHANCE is the roll per stash. Quest and unique loot are protected.",
                     "AmmoDistribution" => "AMMO PER BOX and GRENADES PER BOX change amounts. The AMMO TYPE MIX knobs favor calibers; AMMO BOX CONTENT DISTRIBUTION only previews the result. MEDICAL BOXES: the ARMY MEDKIT MIX knob sets how often a medical box gives an Army Medkit (per player rank).",
                     "BreakableBoxYields" => "Drag the ammo or grenade yield track to change only that box's contents.",
                     "PlayerWeaponProfile" => "Turn Weapon Damage, Headshot Damage and Jam Rate independently. Scroll or use arrow keys for fine adjustments.",
@@ -1717,12 +1706,8 @@ public sealed class ParameterViewModel : ObservableObject
             if (Id.StartsWith("loot.mutant.", StringComparison.Ordinal))
                 return "Each eligible mutant kill rolls for one part. This changes how often a part appears, not how many parts drop.";
 
-            if (Id == "loot.cheapStashGrenadeChance")
-                return "This chance applies to eligible Basic stash grenade entries, not every physical stash.";
-
-            if (Id == "loot.expensiveStashMoneyChance")
-                return "This controls coupon rewards in eligible Rare stashes, not how often you find stashes.";
-
+            // Basic RGD-5 and Rare coupon chances: their HIGHER / LOWER and
+            // WITH OTHER SETTINGS texts already say it; no repeat block.
             if (Definition.ValueKind == "probability")
                 return string.Empty;
 

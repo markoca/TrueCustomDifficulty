@@ -1,3 +1,11 @@
+## 2026-11-17 — CURRENT: gamer-facing panel texts (WHAT IT DOES, HIGHER / LOWER, WITH OTHER SETTINGS, CONTROLS)
+
+* Every panel section is player-facing, so engine words are gone from the texts a selected control shows: no *native*, *CFG*, *writer*, *SID*, *MinCount/MaxCount*, *DispersionRadius*, *HearingDistanceCoef*, *authored*, *SmartLoot package / generator branch* (≈70 texts, 31 of them the TRADER STOCK category lines).
+* Cross-references name the controls as they are drawn today: PRICES TRADERS PAY / PRICES YOU PAY (was *Trader Buy/Sell Price*), GUNS TO FIND (*World Weapon Density*), AMMO AMOUNT (*One Ammo Quantity*), AMMO BOX CONTENT DISTRIBUTION, AMMO BOXES, REGEN DELAY, GLOBAL ANOMALY DAMAGE, BOOST STARTS BELOW / BOOST STRENGTH / BOOST DURATION, WATER / ENERGY DRINK STAMINA GAIN, RADIATION REMOVAL, BLEEDING SEVERITY, RADIATION STAMINA PENALTY, MASTER STARVATION PENALTIES, STAMINA REGEN, MAX STAMINA, BASE REPAIR COST, AMMO PACK SIZE, SMART LOOT, MED DROPS.
+* "Vanilla:" is stated the same way everywhere (NPC SMART LOOT gains `Vanilla: ON`; energy drink / water / radiation texts say `Vanilla: 1×`); the TRADER STOCK anchor drops its generic intro and reads like its sibling cells.
+* CONTROLS help for HUMAN TACTICS, HUMAN AWARENESS, NPC LOOT, WORLD LOOT, STASH SMART LOOT, BONUS GEAR, LOW HEALTH and REPAIR is shortened to what the hands do; the NPC LOOT / MOD ITEM appendices are rewritten the same way.
+* The separate WHAT THIS VALUE MEANS block no longer repeats the Basic RGD-5 / Rare coupon caveat already in the panel.
+
 ## 2026-11-17 — CURRENT: factory presets tuned for the newest controls
 
 * All 12 factory roles now give the newest boards real role values (HUMAN TACTICS / AWARENESS, MUTANT AGGRESSION, ARTIFACT HUNTING, STASH / NPC SMART LOOT, REMOVE ARMORS / LOOSE ARTIFACTS, Army Medkit in boxes, HEAL TIME, weight) plus TRADER STOCK odds and RARE GEAR where the role calls for it. No UI or writer change; matrix and reasons in docs/FACTORY-PRESETS.md and `tools/factory_preset_thematic_2026_11_17.json`.
