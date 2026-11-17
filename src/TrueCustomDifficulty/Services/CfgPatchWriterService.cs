@@ -151,6 +151,27 @@ public sealed partial class CfgPatchWriterService
             }
         }
 
+        // Source-locked 2.1 weather-hearing routes share the existing AIGlobals patch.
+        foreach (var (id, indices) in new (string Id, int[] Indices)[]
+        {
+            (HumanCombatPolicy.RainNoiseId, new[] { 3, 4 }),
+            (HumanCombatPolicy.StormNoiseId, new[] { 5 })
+        })
+        {
+            if (!modifiedById.TryGetValue(id, out var hearing))
+                continue;
+            var document = GetDocument(documents, "GameData/AIGlobals.cfg");
+            var value = FormatLikeSource(hearing.CurrentNumber,
+                id == HumanCombatPolicy.StormNoiseId ? "0.6" : "0.7");
+            foreach (var index in indices)
+            {
+                document.AddAssignment("AISettings", new[] { "WeatherSettings", $"[{index}]" },
+                    "HearingDistanceCoef", value);
+                editCount++;
+            }
+            writtenParameters.Add(id);
+        }
+
         // Linked roaming-guide price route exists only in the 2.1 source.
         // The old hub guide fee source is still handled by the original direct loop.
         if (gameInstall?.SupportsRoamingGuideEconomy == true
@@ -537,6 +558,8 @@ public sealed partial class CfgPatchWriterService
         supported.UnionWith(MutantAggressionPolicy.ParameterIds);
         supported.Add(ArtifactSpawnPolicy.RareLuckId);
         supported.UnionWith(HumanCombatPolicy.TacticIds);
+        supported.Add(HumanCombatPolicy.RainNoiseId);
+        supported.Add(HumanCombatPolicy.StormNoiseId);
         if (!string.IsNullOrWhiteSpace(baseline.Special.CheapStashProduction.AmmoQuantityParameterId))
             supported.Add(baseline.Special.CheapStashProduction.AmmoQuantityParameterId);
         if (!string.IsNullOrWhiteSpace(baseline.Special.CheapStashProduction.GrenadeChanceParameterId))
@@ -574,7 +597,8 @@ public sealed partial class CfgPatchWriterService
         if (uncovered.Count > 0)
             throw new InvalidDataException("CFG writer baseline has no status for parameter IDs: " + string.Join(", ", uncovered));
 
-        if (supported.Count != baseline.SupportedParameterCount)
+        // Two source-locked weather routes are added outside the frozen baseline file.
+        if (supported.Count != baseline.SupportedParameterCount + 2)
         {
             throw new InvalidDataException(
                 $"CFG writer baseline supported-parameter count is {baseline.SupportedParameterCount}, but {supported.Count} unique writer mappings were loaded.");

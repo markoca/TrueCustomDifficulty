@@ -33,6 +33,8 @@ public static class HumanCombatPolicy
     public const string HearingRangeId = "combat.npcHearingRange";
     public const string AlertMemoryId = "combat.npcAlertMemory";
     public const string FogVisibilityId = "combat.npcFogVisibility";
+    public const string RainNoiseId = "combat.npcRainNoise";
+    public const string StormNoiseId = "combat.npcStormNoise";
 
     /// <param name="Groups">FilterGroups index and its AllowedTags[0] (guarded on load).</param>
     /// <param name="DefaultSeconds">Newbie-rank Default pause (display).</param>
@@ -66,7 +68,7 @@ public static class HumanCombatPolicy
     public static IReadOnlyList<string> TacticIds { get; } = Tactics.Select(t => t.Id).ToArray();
 
     public static IReadOnlyList<string> AwarenessIds { get; } =
-        new[] { SightRangeId, HearingRangeId, AlertMemoryId, FogVisibilityId };
+        new[] { SightRangeId, HearingRangeId, AlertMemoryId, FogVisibilityId, RainNoiseId, StormNoiseId };
 
     /// <summary>Board order of the HUMAN TACTICS cards (tactics, then accuracy).</summary>
     public static IReadOnlyList<string> TacticsBoardIds { get; } = TacticIds.Append(AccuracyId).ToArray();
@@ -105,6 +107,8 @@ public static class HumanCombatPolicy
             HearingRangeId => HearingDisplay(value),
             AlertMemoryId => MemoryDisplay(value),
             FogVisibilityId => FogVisibilityDisplay(value),
+            RainNoiseId => WeatherHearingDisplay("rain", value),
+            StormNoiseId => WeatherHearingDisplay("storm", value),
             _ when Tactics.FirstOrDefault(t => t.Id == id) is { } tactic => TacticDisplay(tactic, value, reference),
             _ => null
         };
@@ -131,6 +135,9 @@ public static class HumanCombatPolicy
 
     public static string MemoryDisplay(double factor)
         => string.Create(CultureInfo.InvariantCulture, $"{factor:0.##}x · searches for {30.0 * factor:0} s");
+
+    public static string WeatherHearingDisplay(string weather, double coefficient)
+        => string.Create(CultureInfo.InvariantCulture, $"{weather} hearing {coefficient * 100.0:0}%");
 
     public static string FogVisibilityDisplay(double coefficient)
         => string.Create(CultureInfo.InvariantCulture, $"fog visibility {coefficient * 100.0:0}%");

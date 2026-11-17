@@ -1,3 +1,9 @@
+## 2026-11-17 — CURRENT: weather hearing (RAIN NOISE / STORM NOISE)
+
+* Three small 270-degree knobs are grouped side by side under the SIGHT / HEARING / MEMORY legend: FOG VISIBILITY, RAIN NOISE, STORM NOISE. The existing radar is unchanged. Small ticks, hover glow, reference marks, right-click reset, keyboard control, R group reset and only-changed-number accent match the catalog.
+* RAIN NOISE (`combat.npcRainNoise`) changes both Rainy [3] and LightRainy [4] `HearingDistanceCoef` in `AISettings.WeatherSettings`, from the verified 2.1 source coefficient 0.7. STORM NOISE (`combat.npcStormNoise`) changes Thundery [5], source 0.6. Each knob ranges 10–100% with 5% steps.
+* The native 2.1 source is `GameData/AIGlobals.cfg`. Both controls write only hearing values in the singleton cfg_patch and leave visibility, flair, audio, graphics and weather occurrence unchanged. The two direct routes are accounted for separately from the frozen writer-baseline blob; AI-class scope and effective metres require in-game testing.
+
 ## 2026-11-17 — CURRENT: HUMAN AWARENESS FOG VISIBILITY native coefficient knob
 
 * FOG VISIBILITY is a fourth independent Human Awareness control, displayed as a **small 270° knob** in the legend column directly below SIGHT / HEARING / MEMORY. It does **not** add a fourth radar ring or expand the 200 m SIGHT distance. The wide two-column radar retains its current height; the narrow stacked legend is increased by only 72 DIP to accommodate the knob.

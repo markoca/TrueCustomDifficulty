@@ -821,6 +821,103 @@
       "interaction": "Independent of SIGHT (always-on scanner range). This coefficient may apply to any AI using the global weather setting; needs an in-game 2.1 acceptance test."
     },
     {
+      "id": "combat.npcRainNoise",
+      "tab": "combat",
+      "group": "Human Awareness",
+      "label": "Rain Noise",
+      "description": "Adjusts weather-specific AI hearing distance for Rainy and LightRainy. Does not alter weather intensity, audio, or visual effects.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Rain Noise"
+      },
+      "vanilla": {
+        "All": 0.7
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.1,
+        "max": 1,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/AIGlobals.cfg",
+          "prototype": "AISettings",
+          "path": "WeatherSettings[3].HearingDistanceCoef",
+          "operation": "set"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/AIGlobals.cfg",
+          "prototype": "AISettings",
+          "path": "WeatherSettings[4].HearingDistanceCoef",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Original STALKER 2.1 AIGlobals.cfg WeatherSettings 3/4 has Rainy and LightRainy HearingDistanceCoef = 0.7.",
+          "Global AI weather coefficient; effects and AI-class scope still need an in-game test."
+        ]
+      },
+      "rationale": "Lower values mask player sounds more in Rainy and LightRainy; 100% removes this weather-specific hearing reduction. Actual detection distance is not guaranteed to scale linearly.",
+      "logic": "Writes only HearingDistanceCoef in WeatherSettings entries 3 and 4.",
+      "interaction": "Independent of SIGHT, general HEARING and FOG VISIBILITY; the weather must be active."
+    },
+    {
+      "id": "combat.npcStormNoise",
+      "tab": "combat",
+      "group": "Human Awareness",
+      "label": "Storm Noise",
+      "description": "Adjusts weather-specific AI hearing distance for Thundery. Does not alter weather intensity, audio, or visual effects.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Storm Noise"
+      },
+      "vanilla": {
+        "All": 0.6
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.1,
+        "max": 1,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/AIGlobals.cfg",
+          "prototype": "AISettings",
+          "path": "WeatherSettings[5].HearingDistanceCoef",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Original STALKER 2.1 AIGlobals.cfg WeatherSettings 5 has Thundery HearingDistanceCoef = 0.6.",
+          "Global AI weather coefficient; effects and AI-class scope still need an in-game test."
+        ]
+      },
+      "rationale": "Lower values mask player sounds more in Thundery; 100% removes this weather-specific hearing reduction. Actual detection distance is not guaranteed to scale linearly.",
+      "logic": "Writes only HearingDistanceCoef in WeatherSettings entries 5.",
+      "interaction": "Independent of SIGHT, general HEARING and FOG VISIBILITY; the weather must be active."
+    },
+    {
       "id": "combat.playerWeaponDamage",
       "tab": "combat",
       "group": "Your Weapons",
