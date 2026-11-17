@@ -4419,3 +4419,13 @@ and ON. Preset sidecar `corpseSmartLootNeedBoostEnabled` (written only when OFF;
 The SMART LOOT NEED board is titled **STASH SMART LOOT** and starts with the universal checkbox row
 "Smart loot in stashes" (`loot.stashSmartLootEnabled`, vanilla ON); the two knobs move down 28 DIP and
 dim while it is OFF (requiresToggle). OFF zeroes every stash SmartLoot set. Catalog 410 / 205 visible.
+
+## CURRENT 2026-11-17 — SMART LOOT CONSISTENCY PASS
+
+* Catalog labels match the board: **Extra Loot When Stocked** / **Extra Loot When Low**; help and notes
+  say EXTRA LOOT WHEN STOCKED / WHEN LOW and STASH SMART LOOT (not SMART LOOT NEED / WHEN SHORT).
+* "Smart loot in stashes" OFF is documented as the 803 ordinary base + 112 audited DLC1 stashes;
+  protected/quest stashes and 32 breakable crates keep vanilla SmartLoot.
+* `loot.npcSmartLootEnabled` is integrated everywhere: all 12 presets (ON), stock-upgrade hashes,
+  baseline special `npcSmartLoot` (WriteCorpseSmartLoot), census 411 / 206 visible, audits.
+* Review matrix: docs/STASH-SMART-LOOT-NEED.md → "Consistency review".

@@ -759,6 +759,24 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "4aa5db72532f5588384b712f278e168392883c86",
     };
 
+    // Exact stock files before NPC SMART LOOT (ON/OFF) joined the presets (2026-11-17).
+    private static readonly Dictionary<string, string> PreNpcSmartLootFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "f0a13d9025013ab8ccddbc41e41a26df4968cd4d",
+        ["Field Medic"] = "7c360afd923bd94ad365c3dd7681dc8970d94258",
+        ["Hardcore+"] = "faf077b0d93850f434f7840aa4efd1ec63283d5d",
+        ["Hardcore"] = "40f672779e9cf4b7a47527f17b00f534df98b8dd",
+        ["Immersive"] = "9578faffe8994d393873dcbac275e86c51aede99",
+        ["Mercenary"] = "c65cbf60df537ce20a149ed2bab0af46f6ea5f8b",
+        ["Mutant Hunter"] = "44925c8dc798369478d90c1240d28070c6e23541",
+        ["Outcast"] = "41c64e6c3dccd4776c4cfcffbad403bc61b9981e",
+        ["Scavenger"] = "1646768157cb6d0774cedf9d0d252c735e3174d1",
+        ["Smuggler"] = "444d1bbfe1adf6a86e309c25faa03a7844495495",
+        ["Tactical"] = "3ac868e36ef99de2900ca680ce3b0c93b325fc60",
+        ["Wanderer"] = "d6abc3863f568d24146c9c79063ebaecb04ed0aa",
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -788,7 +806,8 @@ public sealed class PresetDirectoryService
             && !PreLooseArtifactFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreMedicalBoxFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreSmartLootNeedFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreSmartLootSwitchFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreSmartLootSwitchFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreNpcSmartLootFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -856,7 +875,9 @@ public sealed class PresetDirectoryService
                 || (PreSmartLootNeedFactoryBlobs.TryGetValue(name, out var preSmartNeedHash)
                     && actual.Equals(preSmartNeedHash, StringComparison.OrdinalIgnoreCase))
                 || (PreSmartLootSwitchFactoryBlobs.TryGetValue(name, out var preSmartSwitchHash)
-                    && actual.Equals(preSmartSwitchHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preSmartSwitchHash, StringComparison.OrdinalIgnoreCase))
+                || (PreNpcSmartLootFactoryBlobs.TryGetValue(name, out var preNpcSmartHash)
+                    && actual.Equals(preNpcSmartHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

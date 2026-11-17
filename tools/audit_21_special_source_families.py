@@ -46,7 +46,7 @@ ACTOR_DEPENDENT = {
     "crateSpawnProduction", "worldWeaponShuffle", "looseWorldLootProduction",
     "blueprintShuffle", "worldAttachmentShuffle", "worldDetectors",
     "worldF1GrenadeBoxes", "stashContentAndGearProduction",
-    "stashMedicalProduction", "stashSmartNeed", "worldArmorRemoved", "looseArtifactsRemoved",
+    "stashMedicalProduction", "stashSmartNeed", "npcSmartLoot", "worldArmorRemoved", "looseArtifactsRemoved",
     "looseUniqueWeaponShuffle",
 }
 
@@ -86,7 +86,7 @@ def main():
 
     baseline = json.loads(BASELINE.read_text(encoding="utf-8"))
     special = baseline["special"]
-    assert len(special) == 31, "Special CFG writer group census drift"  # + weatherHearing, looseArtifactsRemoved, stashSmartNeed
+    assert len(special) == 32, "Special CFG writer group census drift"  # + weatherHearing, looseArtifactsRemoved, stashSmartNeed
     assert ACTOR_DEPENDENT <= set(special), "Actor-dependent writer group removed"
     assert baseline["gameVersion"] == "2.1", "2.1 target/source metadata mismatch"
     assert "GameData/SpawnActorPrototypes.cfg" not in SOURCES

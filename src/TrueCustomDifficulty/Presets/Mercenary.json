@@ -296,6 +296,10 @@
       "kind": "slider",
       "number": 80
     },
+    "loot.npcSmartLootEnabled": {
+      "kind": "toggle",
+      "boolean": true
+    },
     "loot.npcCorpseBonus": {
       "kind": "choiceSlider",
       "text": ""

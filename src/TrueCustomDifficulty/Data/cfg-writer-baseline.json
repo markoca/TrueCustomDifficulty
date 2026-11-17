@@ -48143,6 +48143,12 @@
       "scope": "Existing TCD stash SmartLoot clones (WriteWorldStashSmartLoot)",
       "notes": "MinSpawnChance x stocked, MaxSpawnChance x short, after kept-share and supply reduction; clamped 0..1, min never above max. OFF toggle: Min/MaxSpawnChance and ItemSetCount 0 for every group."
     },
+    "npcSmartLoot": {
+      "parameterId": "loot.npcSmartLootEnabled",
+      "writer": "WriteCorpseSmartLoot",
+      "source": "GameData/DifficultyPrototypes.cfg EconomyDifficulty.CorpseSmartLoot (selected difficulty)",
+      "notes": "OFF replaces the CorpseSmartLoot subtree with a blank assignment; package chips, NEED BOOST and AMMO PACK SIZE stay saved."
+    },
     "worldArmorRemoved": {
       "parameterId": "loot.worldArmorRemoved",
       "directManifestResource": "TrueCustomDifficulty.Data.world-armor-direct-manifest.csv",

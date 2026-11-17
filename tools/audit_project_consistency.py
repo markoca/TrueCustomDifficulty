@@ -3917,7 +3917,7 @@ _global_expected_tabs = {
     "equipment": 6,
     "master": 20,
     "environment": 9,  # ARTIFACT HUNTING (3 after RESPAWN RATE retired)
-    "loot": 30,         # + corpse supply reduction, loose artifacts
+    "loot": 31,  # + NPC SMART LOOT master         # + corpse supply reduction, loose artifacts
     "stashes": 38,      # + stash supply reduction
     "alife": 2,
 }
@@ -4013,6 +4013,7 @@ _global_dependency_expected = {
     "loot.worldWeaponShuffle": 1,
     "loot.stashGearEnabled": 6,
     "loot.stashSmartLootEnabled": 2,  # WHEN STOCKED / WHEN SHORT
+    "loot.npcSmartLootEnabled": 1,  # AMMO PACK SIZE (bonus ammo)
 }
 _global_dependency_actual = {}
 _global_dependency_bad = []
@@ -4085,10 +4086,10 @@ if (len(parameters) != _CENSUS_CATALOG or len(_global_visible) != _CENSUS_VISIBL
     fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected {_CENSUS_CATALOG}/{_CENSUS_VISIBLE}/{_CENSUS_HIDDEN}")
 elif _global_tab_counts != _global_expected_tabs:
     fail(f"global visible tab counts drifted: {_global_tab_counts}; expected {_global_expected_tabs}")
-elif _global_confirmed != 117 or _global_runtime != 88:
-    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 117/88")
-elif _global_control_counts != {"slider": 186, "toggle": 17, "choiceSlider": 1, "range": 1}:
-    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 186 sliders / 17 toggles / 1 choiceSlider / 1 range")
+elif _global_confirmed != 117 or _global_runtime != 89:
+    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 117/89")
+elif _global_control_counts != {"slider": 186, "toggle": 18, "choiceSlider": 1, "range": 1}:
+    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 186 sliders / 18 toggles / 1 choiceSlider / 1 range")
 elif _global_duplicate_labels:
     fail(f"duplicate player-facing labels detected: {_global_duplicate_labels}")
 elif _global_out_of_range:
@@ -5308,13 +5309,14 @@ if any(_tok not in _npc_preview_source for _tok in (
     'private NpcLootGeometry CurrentNpcLootLayout(double width)',
     '=> LayoutNpcLoot(width, NpcBonusPackageSelected());',
     'private const double NpcLootMaxContentWidth = 780.0;',
-    'var unit = (contentWidth - 4.0 * gap) / 5.5;',
+    # 2026-11-17: SMART LOOT sub-card (selector, NEED BOOST, AMMO PACK SIZE).
+    'var unit = (innerWidth - 2.0 * gap) / 5.2;',
+    'smart = new Rect(left, smartTop, contentWidth, 179.0);',
     'DrawNpcNeedBoostCard(dc, layout.Boost,',
     '_ = showBonusAmmo;',
     'if (contentWidth >= 600.0)',
-    'if (contentWidth >= 520.0)',
     'var ammoActive = NpcBonusPackageSelected();',
-    'ammo = new Rect(condition.Right + gap, top, half, middleHeight);',
+    'ammo = new Rect(boost.Right + gap, contentTop,',
     'DrawHorizontalTrackCard(dc, ammo, "AMMO PACK SIZE", ammoCard,',
     'var ammoCard = layout.Ammo;',
     'DrawNpcCompactMultiplierKnob(dc, scarcity, "SCARCITY", layout.Supply,',
@@ -5451,7 +5453,7 @@ if any(_tok not in _npc_paint for _tok in (
     "RegisterNpcCard(NpcLootCards.NeedBoost, layout.Boost);",
     "RegisterNpcCard(NpcLootCards.WeaponCondition, layout.Condition);",
     "DrawNpcCardHover(dc);",
-    'DrawText(dc, "BONUS PACKS",', 'DrawText(dc, "WEAPON CONDITION",',
+    'DrawText(dc, "BONUS PACKS",', 'DrawText(dc, "DROPPED WEAPON CONDITION",',
 )) or "RegisterNpcCard(group, card);" not in _npc_items_ui \
         or "new Pen(Brushes.White, 1.2), rect, 4.0, 4.0" not in _cards_src \
         or _cards_vm.count("new(") < 10 \

@@ -59,3 +59,37 @@ group to 0 in the TCD clones, so stashes hold only their normal Basic/Standard/R
 hand-placed items. Both EXTRA LOOT knobs `requiresToggle` it: dimmed, values kept. The SMART
 columns drop to "—". Corpse Smart Loot is switched off separately by Loot → NPC LOOT → SMART LOOT master; choosing
 no BONUS PACKS also leaves NEED BOOST with nothing to shape.
+
+## Consistency review — loot vs smart loot (2026-11-17 evening)
+
+**Source parity.** `Data/smartloot-world-source-entries.csv` was re-parsed against the 2.1
+`GameData/StashPrototypes.cfg`: 13 stash prototypes, 991 item rows, every Weight / Chance / Min/MaxCount /
+Min/MaxSpawnChance / ItemSetCount identical (0 diffs). Groups also carry `PriorityCaliber` and
+`MainWeaponAmmoCount` (392 ammo groups), which TCD never edits. DLC1 has no StashPrototypes of its own.
+
+**Who carries stash SmartLoot (WorldMap_WP):**
+
+| Containers | Count | Covered by stash smart controls |
+|---|---:|---|
+| Ordinary base stashes (no clue) | 803 | yes |
+| Ordinary DLC1 stashes (audited allowlist) | 112 | yes (with DLC1) |
+| Protected base stashes (clue / special / quest) | 99 with SmartLoot | no, by design |
+| DLC1 stashes outside the allowlist (5 clue, rest unaudited) | 49 | no, by design |
+| Breakable wooden crates with `StashPrototypeSID` | 30 base + 2 DLC1 | no (they use the shared *_Cheap / *_Smart sets) |
+
+**Control matrix (who moves SmartLoot):**
+
+| Control | Tier lists | SmartLoot |
+|---|---|---|
+| SUPPLY REDUCTION | yes | yes (endpoints) |
+| Basic MEDS / FOOD / DRINKS cells (`loot.stashMix*`) | Basic only | **yes** (Weight and Chance groups) |
+| Standard / Rare cells | their tier | no |
+| AMMO / GRENADES selection | Basic presence sidecar, Rare chance | only the hidden legacy `stashMixAmmo` / `stashMixGrenades` |
+| Bandage / Medkit / Army Medkit / Anti-Rad item odds | all tiers | yes |
+| Medkit / Army Medkit MIN / MAX | all tiers | yes |
+| AMMO AMOUNT, RGD-5 AMOUNT | tier lists | **no** (SmartLoot ammo/grenade counts stay vanilla) |
+| Smart loot switch, EXTRA LOOT WHEN STOCKED / LOW | no | yes |
+
+Open inconsistency: the BASIC column cells for MEDS / FOOD / DRINKS still move the SMART column, while
+ammo and grenade SmartLoot selection has no visible control and SmartLoot counts follow none of the
+AMOUNT controls.

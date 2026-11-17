@@ -8986,12 +8986,13 @@
         "status": "runtime_test_required",
         "notes": [
           "ON (vanilla) keeps stash smart loot.",
-          "OFF sets MinSpawnChance, MaxSpawnChance and ItemSetCount of every stash SmartLoot group to 0 in the TCD clones, so stashes only hold their normal Basic/Standard/Rare contents and hand-placed items.",
+          "OFF sets MinSpawnChance, MaxSpawnChance and ItemSetCount of every stash SmartLoot group to 0 in the TCD clones that the 803 ordinary base stashes and the 112 audited ordinary DLC1 stashes use; they then hold only their normal Basic/Standard/Rare contents and hand-placed items.",
+          "Unchanged on purpose: protected quest/clue/special stashes (base 99 with SmartLoot, DLC1 49 unaudited), and 32 breakable wooden crates (30 base, 2 DLC1) that carry the shared Cheap/Smart sets.",
           "Corpse smart loot is switched off separately: Loot → NPC LOOT → BONUS PACKS with no pack selected."
         ]
       },
       "rationale": "Smart loot is the part of a stash that reacts to what you are missing. Vanilla: ON. OFF = stashes never top you up; you get only their normal contents.",
-      "logic": "OFF zeroes every stash smart loot set (spawn chances and roll count). WHEN STOCKED / WHEN SHORT are then inactive but keep their values.",
+      "logic": "OFF zeroes the smart loot sets of every ordinary (non-quest) stash: spawn chances and roll count. EXTRA LOOT WHEN STOCKED / WHEN LOW are then inactive but keep their values.",
       "interaction": "SUPPLY REDUCTION and ODDS still shape the normal contents. Corpse bonus packs are separate.",
       "exposeInUi": true
     },
@@ -9013,12 +9014,12 @@
         "stepMode": "absolute"
       },
       "id": "loot.stashSmartStockedChance",
-      "label": "Smart Loot When Stocked",
+      "label": "Extra Loot When Stocked",
       "description": "Scales the chance that a stash's smart loot sets (medicine, ammo for your weapons, food, grenades) appear when you already carry enough of that supply.",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "When Stocked"
+        "valueLabel": "Extra Loot When Stocked"
       },
       "targets": [
         {
@@ -9033,13 +9034,13 @@
         "status": "runtime_test_required",
         "notes": [
           "Smart loot rolls between MinSpawnChance (you are well stocked) and MaxSpawnChance (you are short); the game decides where you are.",
-          "Applies to every regular-stash SmartLoot set (817 medicine / 766 ammo sets, a few food/grenade sets) through the existing TCD stash SmartLoot clones.",
+          "Applies to the SmartLoot sets of the 803 ordinary base and 112 ordinary DLC1 stashes (817 medicine / 766 ammo sets, a few food/grenade sets) through the existing TCD stash SmartLoot clones.",
           "Corpse smart loot is separate (Corpse Smart Loot / NEED BOOST)."
         ]
       },
       "rationale": "How often stashes still hand you supplies you already have plenty of. Vanilla: 1× (about 10% per set). 0 = smart loot only helps when you are short; 2× = twice as generous.",
       "logic": "Multiplies MinSpawnChance of each stash smart loot set, after odds and supply reduction; capped at the set's 'when short' chance.",
-      "interaction": "WHEN SHORT sets the other end. SUPPLY REDUCTION and the ODDS cells still apply first.",
+      "interaction": "EXTRA LOOT WHEN LOW sets the other end. SUPPLY REDUCTION and the Basic MEDS/FOOD/DRINKS odds cells still apply first.",
       "exposeInUi": true,
       "requiresToggle": "loot.stashSmartLootEnabled"
     },
@@ -9061,12 +9062,12 @@
         "stepMode": "absolute"
       },
       "id": "loot.stashSmartShortChance",
-      "label": "Smart Loot When Short",
+      "label": "Extra Loot When Low",
       "description": "Scales the chance that a stash's smart loot sets appear when you are short of that supply.",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "When Short"
+        "valueLabel": "Extra Loot When Low"
       },
       "targets": [
         {
@@ -9080,13 +9081,13 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "Member of the SMART LOOT NEED board (anchor: When Stocked).",
+          "Member of the STASH SMART LOOT board (anchor: Extra Loot When Stocked).",
           "Lowering it removes the game's help when you run low; raising it (capped at 100%) makes stashes reliably top you up."
         ]
       },
       "rationale": "How strongly stashes help when you run low. Vanilla: 1× (about 70–80% per set). Lower = the Zone stops topping you up; 0 = no smart loot at all.",
       "logic": "Multiplies MaxSpawnChance of each stash smart loot set, after odds and supply reduction; capped at 100%.",
-      "interaction": "WHEN STOCKED sets the other end and never exceeds this one.",
+      "interaction": "EXTRA LOOT WHEN STOCKED sets the other end and never exceeds this one.",
       "exposeInUi": true,
       "requiresToggle": "loot.stashSmartLootEnabled"
     },

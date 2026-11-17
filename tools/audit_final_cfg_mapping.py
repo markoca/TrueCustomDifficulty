@@ -190,6 +190,7 @@ def method_routes(special):
     add("WriteWorldArmorRemovals", special["worldArmorRemoved"]["parameterId"])
     add("WriteLooseArtifactRemovals", special["looseArtifactsRemoved"]["parameterId"])
     add("WriteWorldStashSmartLoot", *special["stashSmartNeed"]["parameterIds"])
+    add("WriteCorpseSmartLoot", special["npcSmartLoot"]["parameterId"])
     add("WriteBlueprintShuffle", special["blueprintShuffle"]["parameterId"])
     add("WriteWorldF1GrenadeBoxes", special["worldF1GrenadeBoxes"]["parameterId"])
     add("WriteCrateSpawnRemovals", *(x["parameterId"] for x in special["crateSpawnProduction"]["categories"]))
@@ -249,7 +250,7 @@ def main():
     require(len(baseline["editPoints"]) == EDIT_POINTS and len(direct) == DIRECT_IDS,
             "direct writer point count drift")
     special = method_routes(baseline["special"])
-    require(len(special) == 179, "special writer route count drift")  # + loose artifacts, SMART LOOT NEED x2
+    require(len(special) == 180, "special writer route count drift")  # + loose artifacts, stash smart x3, NPC smart master
     require(not set(direct).intersection(special), "direct/special parameter double ownership")
     # Weather hearing (RAIN / THUNDER NOISE) is written inline in Write()
     # (AISettings WeatherSettings[3..5].HearingDistanceCoef).
@@ -263,7 +264,7 @@ def main():
     require(not weather.intersection(direct) and not weather.intersection(special),
             "weather-hearing double ownership")
     require(set(direct) | set(special) | weather == set(definitions), "unrouted CFG IDs")
-    require(len(definitions) - len(NON_UI) == 387, "UI dimension count drift")
+    require(len(definitions) - len(NON_UI) == 388, "UI dimension count drift")
     require(len(NON_UI) == 23 and NON_UI.issubset(definitions),
             "23 non-mounted catalog source IDs required")
     for pid in NON_UI:

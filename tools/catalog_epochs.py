@@ -23,6 +23,8 @@ POST_361_IDS = frozenset({
     "loot.medicalBoxArmyMedkitWeight",
     # 2026-11-17: SMART LOOT NEED (own audit).
     "loot.stashSmartStockedChance", "loot.stashSmartShortChance", "loot.stashSmartLootEnabled",
+    # 2026-11-17: NPC SMART LOOT master (WriteCorpseSmartLoot).
+    "loot.npcSmartLootEnabled",
 })
 
 
