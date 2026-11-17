@@ -1,6 +1,9 @@
 # ARTIFACT HUNTING (2026-11-16)
 
-Anomalies tab → **ARTIFACT HUNTING** board: three compact cards and a read-only RARITY BY ZONE strip.
+Anomalies tab → **ARTIFACT HUNTING** board: three source knobs (YOUR WEAPONS geometry, 181-DIP cards,
+bank ≤ 620 DIP) and a read-only RARITY BY ZONE strip. Knob centres: SPAWN CHANCE / RARE LUCK show the
+factor with a short in-dial line (`25% CHANCE`, `25% RARE+` = Master zone Rare+Epic); PER SPAWN shows
+`1 ARTIFACT` / `2 ARTIFACTS`. Only changed digits turn gold (2026-11-17).
 
 | Card | Id | Range | Vanilla | CFG |
 |---|---|---|---|---|

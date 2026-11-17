@@ -100,6 +100,19 @@ public static class ArtifactSpawnPolicy
         _ => null
     };
 
+    /// <summary>
+    /// Short in-dial line for the knobs: "25% CHANCE" (base spawn chance),
+    /// "25% RARE+" (Master zone Rare+Epic share). Null for other ids.
+    /// </summary>
+    public static string? KnobText(string id, double value) => id switch
+    {
+        SpawnChanceId => string.Create(System.Globalization.CultureInfo.InvariantCulture,
+            $"{SpawnChance(value).Base:0.#}% CHANCE"),
+        RareLuckId => string.Create(System.Globalization.CultureInfo.InvariantCulture,
+            $"{RarePlusShare(3, value):0.#}% RARE+"),
+        _ => null
+    };
+
     private static string SpawnChanceText(double factor)
     {
         var (chance, bonus) = SpawnChance(factor);

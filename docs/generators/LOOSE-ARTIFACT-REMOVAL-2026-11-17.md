@@ -1,6 +1,6 @@
 # REMOVE LOOSE ARTIFACTS (2026-11-17)
 
-Loot → World Loot → WORLD ITEM SPAWNS → **REMOVE** card, third row **Loose Artifacts**
+Loot → World Loot → WORLD ITEM SPAWNS → **REMOVE** card (Loose Detectors, Loose Armor), third row **Loose Artifacts**
 (`loot.looseArtifactsRemoved`, toggle, vanilla OFF, `runtime_test_required`).
 
 ## What it removes

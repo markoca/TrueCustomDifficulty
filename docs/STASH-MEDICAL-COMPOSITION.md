@@ -124,3 +124,13 @@ All source categories/rank/difficulty guards, existing count overrides on other 
 - [ ] Freshly populated in-game regular stash trials across game difficulties, player ranks and tiers verify the practical effect; **do not infer an in-game success or absolute spawn percentage solely from a CFG diff**
 
 **Limits:** Smart Loot and authored loot not routed through the exact TCD production-clone manifests are not touched. The `EcoMedkit` SID remains covered by the *global* medical control where present, but it is **not** a new independent editor because it does not appear in the audited Basic/Standard/Rare template categories. This is intentional.
+
+## CURRENT 2026-11-17 — Why ARMY MEDKITS often has nothing to control
+
+In the 2.1 source, regular random stashes hold Army Medkits **only in the Rare tier's Easy-only bonus
+list** (`GamePass_Stash_ItemGenerator_Rare` category `[4]`, `Diff = EGameDifficulty::Easy`, Chance 1,
+1–2). On Normal and Hard no Basic/Standard/Rare list contains them, so the ARMY MEDKITS odds and
+quantity controls only reach: that Easy list, the SmartLoot medicine set (`StashMedicine_Smart`,
+Veteran/Master player rank) and the audited direct stash entries. The ODDS PER STASH · MEDS row now
+shows "—" for every tier where the selected difficulty has no Army Medkit list (previously a dead 0%
+bar on Rare). TCD does not inject Army Medkits into lists where the game has none.

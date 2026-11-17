@@ -106,7 +106,9 @@ check("vanilla[2] + vanilla[3] <= 0.0" in special and "ArtifactSpawnPolicy.Rarit
 # ---- UI ------------------------------------------------------------------------------
 for token in ('case "ArtifactHunting":', 'DrawArtifactHunting(', '"ARTIFACT HUNTING"', '"RARITY BY ZONE"',
               '"ArtifactHunting" => ArtifactHuntingHeight(width)', '"ArtifactHunting" => ArtifactSpawnPolicy.ParameterIds',
-              'ArtifactSpawnPolicy.CardText(parameter.Id, value)'):
+              'ArtifactSpawnPolicy.CardText(parameter.Id, value)',
+              'ArtifactKnobBank(ActualWidth)', 'DrawSourceKnob(dc, parameter, controls[i].Label, knobCard,',
+              'ArtifactSpawnPolicy.KnobText(parameter.Id, parameter.CurrentNumber)'):
     check(token in ui, f"UI token {token}")
 check(all(f'["{pid}"] = "ArtifactHunting"' in pvm for pid in IDS)
       and '["ArtifactHunting"] = "environment.artifactSpawnChance"' in pvm

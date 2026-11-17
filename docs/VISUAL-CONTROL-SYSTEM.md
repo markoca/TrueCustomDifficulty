@@ -4306,3 +4306,12 @@ The REMOVE card has three rows: Detectors, Armor, **Loose Artifacts** (`loot.loo
 universal checkbox, vanilla OFF). It removes the four fixed Weird artifact spots and the DLC Water Drip
 spot; anomaly fields and quest artifacts stay. Catalog 406 / 202 visible. See
 docs/generators/LOOSE-ARTIFACT-REMOVAL-2026-11-17.md.
+
+## CURRENT 2026-11-17 — ARTIFACT HUNTING KNOBS · LOOSE LABELS · ARMY MEDKIT ODDS
+
+* ARTIFACT HUNTING: SPAWN CHANCE, RARE LUCK and PER SPAWN are source knobs (DrawSourceKnob, three
+  across, 181-DIP cards, ≤ 620 DIP bank) above RARITY BY ZONE. In-dial line: `25% CHANCE`,
+  `25% RARE+`; PER SPAWN reads `1 ARTIFACT` / `N ARTIFACTS`. Only changed digits are gold.
+* WORLD ITEM SPAWNS → REMOVE rows read **Loose Detectors**, **Loose Armor**, **Loose Artifacts**.
+* MEDICAL COMPOSITION → ODDS PER STASH · MEDS draws "—" for a tier whose lists do not contain the item
+  at the selected difficulty (Army Medkits: Rare only, Easy only). See STASH-MEDICAL-COMPOSITION.md.

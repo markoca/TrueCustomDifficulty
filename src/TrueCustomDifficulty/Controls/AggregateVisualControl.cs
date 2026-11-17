@@ -894,13 +894,24 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
     }
 
-    // ARTIFACT HUNTING: four independent spawner cards (respawn rate, spawn
-    // chance, rare luck, artifacts per spawn) and a read-only rarity split per
-    // zone rank that follows RARE LUCK (ArtifactSpawnPolicy, same as the writer).
+    // ARTIFACT HUNTING: three spawner knobs (spawn chance, rare luck,
+    // artifacts per spawn) and a read-only rarity split per zone rank that
+    // follows RARE LUCK (ArtifactSpawnPolicy, same as the writer).
     private const double ArtifactRarityRowPitch = 22.0;
+    private const double ArtifactKnobTop = 48.0;
+    private const double ArtifactKnobHeight = 181.0;
+    private const double ArtifactKnobGap = 12.0;
+
+    private static (double Left, double BankWidth, double CellWidth) ArtifactKnobBank(double width)
+    {
+        var bankWidth = Math.Max(1.0, Math.Min(620.0, width - 36.0));
+        var cellWidth = (bankWidth - 2.0 * ArtifactKnobGap) / 3.0;
+        return ((width - bankWidth) / 2.0, bankWidth, cellWidth);
+    }
 
     private static double ArtifactHuntingHeight(double width)
-        => EconomyBoardHeight(width, 3) + 36.0 + 4 * ArtifactRarityRowPitch + 14.0;
+        => ArtifactKnobTop + ArtifactKnobHeight + ArtifactKnobGap
+            + 30.0 + 4 * ArtifactRarityRowPitch + 14.0;
 
     private void DrawArtifactHunting(
         DrawingContext dc, Brush text, Brush muted, Brush border,
@@ -909,30 +920,36 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawCenteredText(dc, "ARTIFACT HUNTING",
             new Point(ActualWidth / 2.0, 21.0), VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
 
+        // Three source knobs (YOUR WEAPONS geometry). The centre shows the
+        // control value; the short in-dial line says what it means in game.
         var controls = new (string Id, string Label)[]
         {
             (ArtifactSpawnPolicy.SpawnChanceId, "SPAWN CHANCE"),
             (ArtifactSpawnPolicy.RareLuckId, "RARE LUCK"),
             (ArtifactSpawnPolicy.CountId, "PER SPAWN")
         };
-        var columns = EconomyColumns(ActualWidth);
-        var cardWidth = EconomyCardWidth(ActualWidth, columns);
-        const double gap = 12.0;
-        var bankWidth = columns * cardWidth + (columns - 1) * gap;
-        var left = (ActualWidth - bankWidth) / 2.0;
-
+        var (left, bankWidth, cellWidth) = ArtifactKnobBank(ActualWidth);
         for (var i = 0; i < controls.Length; i++)
         {
-            var rect = new Rect(left + (i % columns) * (cardWidth + gap),
-                48.0 + (i / columns) * 94.0, cardWidth, 80.0);
-            DrawEconomyCard(dc, P(controls[i].Id), controls[i].Label,
-                rect, text, muted, border, accent, panel);
+            var parameter = P(controls[i].Id);
+            var knobCard = new Rect(left + i * (cellWidth + ArtifactKnobGap),
+                ArtifactKnobTop, cellWidth, ArtifactKnobHeight);
+            dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9), knobCard, 4.0, 4.0, parameter);
+            var isCount = controls[i].Id == ArtifactSpawnPolicy.CountId;
+            DrawSourceKnob(dc, parameter, controls[i].Label, knobCard,
+                text, muted, border, accent, panel,
+                rawReadout: isCount,
+                nativeUnit: isCount
+                    ? (parameter?.CurrentNumber ?? 1.0) >= 1.5 ? "ARTIFACTS" : "ARTIFACT"
+                    : null,
+                secondaryReadout: parameter is null || isCount
+                    ? null : ArtifactSpawnPolicy.KnobText(parameter.Id, parameter.CurrentNumber),
+                secondaryModified: parameter?.IsValueModifiedFromReference() == true);
         }
 
         // Rarity split per zone rank (Common / Uncommon / Rare / Epic).
         var luck = P(ArtifactSpawnPolicy.RareLuckId)?.CurrentNumber ?? 1.0;
-        var rows = (controls.Length + columns - 1) / columns;
-        var card = new Rect(left, 48.0 + rows * 94.0,
+        var card = new Rect(left, ArtifactKnobTop + ArtifactKnobHeight + ArtifactKnobGap,
             bankWidth, 30.0 + 4 * ArtifactRarityRowPitch);
         dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0);
         DrawText(dc, "RARITY BY ZONE", new Point(card.Left + 12.0, card.Top + 8.0),
@@ -1901,7 +1918,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         };
         var removeRows = new (ParameterViewModel Parameter, string Label)[]
         {
-            (detectors, "Detectors"), (armor, "Armor"), (artifacts, "Loose Artifacts")
+            (detectors, "Loose Detectors"), (armor, "Loose Armor"), (artifacts, "Loose Artifacts")
         };
         DrawWorldToggleListCard(dc, layout.Shuffle, "SHUFFLE", shuffleRows,
             text, muted, border, accent, panel);
@@ -5368,9 +5385,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             for (var t = 0; t < 3; t++)
             {
                 var x = gridLeft + t * (columnWidth + columnGap);
-                if (!StashItemAuthored(StashOddsTiers[t], StashMedicalItems[k].Sid))
+                if (!StashItemAuthored(StashOddsTiers[t], StashMedicalItems[k].Sid, StashDifficultySid()))
                 {
-                    // The game never puts this item in this tier.
+                    // The game never puts this item in this tier at this difficulty.
                     DrawText(dc, "—", new Point(x, y), 10.0,
                         CloneWithOpacity(muted, .7), FontWeights.SemiBold);
                     continue;

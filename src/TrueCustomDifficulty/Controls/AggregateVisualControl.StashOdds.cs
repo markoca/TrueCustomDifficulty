@@ -57,9 +57,15 @@ public sealed partial class AggregateVisualControl
             sid => sids.ToList().FindIndex(x => x.Equals(sid, StringComparison.OrdinalIgnoreCase)),
             sids.Count);
 
-    /// <summary>True when the tier's native source lists contain this SID at all.</summary>
-    private static bool StashItemAuthored(string tier, string sid)
+    /// <summary>
+    /// True when the tier's native source lists contain this SID for the
+    /// selected difficulty at any rank. Army Medkits, for example, exist in
+    /// regular stashes only in the Rare tier's Easy-only bonus list, so on
+    /// Normal/Hard their row shows "—" instead of a dead 0% bar.
+    /// </summary>
+    private static bool StashItemAuthored(string tier, string sid, string difficulty)
         => StashSourceGroups.Value.Any(g => !g.IsSmart && g.Tier == tier
+            && Enumerable.Range(0, 4).Any(rank => g.AppliesTo(rank, difficulty))
             && g.Items.Any(item => item.ItemSid.Equals(sid, StringComparison.OrdinalIgnoreCase)
                 && StashEffectiveState.Number(item.SourceRaw) > Epsilon));
 
