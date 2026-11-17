@@ -11199,7 +11199,7 @@
       },
       "rationale": "How much ammo every trader has on the shelf — shopkeepers, bartenders, stalkers you can trade with and DLC traders alike. Vanilla: 1×. Lower = smaller stacks, and where a stack is already 1 the offer turns up less often; higher = bigger stacks. Doesn't add new calibers.",
       "logic": "1x keeps vanilla trader ammo stock. Below 1x stacks shrink (never below 1) and whatever they cannot lose comes off the offer's odds, so the expected amount follows the setting. Above 1x only stack sizes grow.",
-      "interaction": "Changes amount only. It does not add ammo types, alter availability chance, bypass player-rank progression, or change refresh timing. TRADER STOCK odds sliders change how often ammo is offered."
+      "interaction": "Stack sizes change first; only offers already down to 1 turn up less often below 1x. It does not add ammo types, bypass player-rank progression or change refresh timing. The AMMO rail of each trader type changes how often ammo is offered."
     },
     {
       "id": "economy.medicStock",
@@ -11244,7 +11244,7 @@
       },
       "rationale": "How many meds every trader has for sale — medics, shopkeepers and stalkers you can trade with alike. Vanilla: 1×. Lower = smaller stacks, and single meds turn up less often, so you can't restock everything in one visit; higher = bigger stacks.",
       "logic": "1x keeps vanilla trader medical stock. Below 1x stacks shrink (never below 1) and whatever they cannot lose comes off the offer's odds (most meds are sold one or two at a time). Above 1x only stack sizes grow.",
-      "interaction": "Changes amount only. Availability chance, progression and restock timing stay vanilla. TRADER STOCK odds sliders change how often meds are offered."
+      "interaction": "Stack sizes change first; only offers already down to 1 turn up less often below 1x. Progression and restock timing stay vanilla. The MEDICAL rail of each trader type changes how often meds are offered."
     },
     {
       "id": "economy.consumableCost",
@@ -16991,8 +16991,8 @@
       "id": "economy.traderBuys.general.weapon",
       "tab": "economy",
       "group": "Trader Buys",
-      "label": "Trader Buys",
-      "description": "Controls whether general traders buy weapons from you when overriding the original rule.",
+      "label": "Shopkeeper Buys Weapons",
+      "description": "Controls whether shopkeepers buy weapons from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17019,7 +17019,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Which kinds of loot each type of trader will buy from you. Each switch is one trader type and one item kind; untouched switches keep the game's own rules. This one: whether general traders buy weapons from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
+      "rationale": "Which kinds of loot each type of trader will buy from you. Each switch is one trader type and one item kind; untouched switches keep the game's own rules. This one: whether shopkeepers buy weapons from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys weapons when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -17028,8 +17028,8 @@
       "id": "economy.traderBuys.general.armor",
       "tab": "economy",
       "group": "Trader Buys",
-      "label": "General Buys Armor",
-      "description": "Controls whether general traders buy armor from you when overriding the original rule.",
+      "label": "Shopkeeper Buys Armor",
+      "description": "Controls whether shopkeepers buy armor from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17056,7 +17056,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Whether general traders buy armor from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
+      "rationale": "Whether shopkeepers buy armor from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys armor when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -17065,8 +17065,8 @@
       "id": "economy.traderBuys.general.attach",
       "tab": "economy",
       "group": "Trader Buys",
-      "label": "General Buys Attachments",
-      "description": "Controls whether general traders buy attachments from you when overriding the original rule.",
+      "label": "Shopkeeper Buys Attachments",
+      "description": "Controls whether shopkeepers buy attachments from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17093,7 +17093,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Whether general traders buy attachments from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
+      "rationale": "Whether shopkeepers buy attachments from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys attachments when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -17102,8 +17102,8 @@
       "id": "economy.traderBuys.general.ammo",
       "tab": "economy",
       "group": "Trader Buys",
-      "label": "General Buys Ammo",
-      "description": "Controls whether general traders buy ammo from you when overriding the original rule.",
+      "label": "Shopkeeper Buys Ammo",
+      "description": "Controls whether shopkeepers buy ammo from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17130,7 +17130,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Whether general traders buy ammo from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
+      "rationale": "Whether shopkeepers buy ammo from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys ammo when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -17139,8 +17139,8 @@
       "id": "economy.traderBuys.general.grenade",
       "tab": "economy",
       "group": "Trader Buys",
-      "label": "General Buys Grenades",
-      "description": "Controls whether general traders buy grenades from you when overriding the original rule.",
+      "label": "Shopkeeper Buys Grenades",
+      "description": "Controls whether shopkeepers buy grenades from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17167,7 +17167,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Whether general traders buy grenades from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
+      "rationale": "Whether shopkeepers buy grenades from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys grenades when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -17176,8 +17176,8 @@
       "id": "economy.traderBuys.general.artifact",
       "tab": "economy",
       "group": "Trader Buys",
-      "label": "General Buys Artifacts",
-      "description": "Controls whether general traders buy artifacts from you when overriding the original rule.",
+      "label": "Shopkeeper Buys Artifacts",
+      "description": "Controls whether shopkeepers buy artifacts from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17204,7 +17204,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Whether general traders buy artifacts from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
+      "rationale": "Whether shopkeepers buy artifacts from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys artifacts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -17213,8 +17213,8 @@
       "id": "economy.traderBuys.general.consumable",
       "tab": "economy",
       "group": "Trader Buys",
-      "label": "General Buys Consumables",
-      "description": "Controls whether general traders buy consumables from you when overriding the original rule.",
+      "label": "Shopkeeper Buys Consumables",
+      "description": "Controls whether shopkeepers buy consumables from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17241,7 +17241,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Whether general traders buy food, drinks and meds from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
+      "rationale": "Whether shopkeepers buy food, drinks and meds from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys consumables when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Food, drinks and medical supplies are one native item type.",
       "exposeInUi": false
@@ -17250,8 +17250,8 @@
       "id": "economy.traderBuys.general.mutantLoot",
       "tab": "economy",
       "group": "Trader Buys",
-      "label": "General Buys Mutant Parts",
-      "description": "Controls whether general traders buy mutant parts from you when overriding the original rule.",
+      "label": "Shopkeeper Buys Mutant Parts",
+      "description": "Controls whether shopkeepers buy mutant parts from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17278,7 +17278,7 @@
           "Consumables combines food, drinks and medicine; no verified native split."
         ]
       },
-      "rationale": "Whether general traders buy mutant parts from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
+      "rationale": "Whether shopkeepers buy mutant parts from you. Vanilla: ON. Turn it OFF to make that loot harder to cash in.",
       "logic": "CHECKED buys mutant parts when overridden. UNCHECKED rejects them. Untouched cells keep original individual merchant rules.",
       "interaction": "Changes purchases from you, not the merchant's stock, prices or money. Original condition, price and story restrictions still apply.",
       "exposeInUi": false
@@ -17288,7 +17288,7 @@
       "tab": "economy",
       "group": "Trader Buys",
       "label": "Medic Buys Weapons",
-      "description": "Controls whether medic traders buy weapons from you when overriding the original rule.",
+      "description": "Controls whether medics buy weapons from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17325,7 +17325,7 @@
       "tab": "economy",
       "group": "Trader Buys",
       "label": "Medic Buys Armor",
-      "description": "Controls whether medic traders buy armor from you when overriding the original rule.",
+      "description": "Controls whether medics buy armor from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17362,7 +17362,7 @@
       "tab": "economy",
       "group": "Trader Buys",
       "label": "Medic Buys Attachments",
-      "description": "Controls whether medic traders buy attachments from you when overriding the original rule.",
+      "description": "Controls whether medics buy attachments from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17399,7 +17399,7 @@
       "tab": "economy",
       "group": "Trader Buys",
       "label": "Medic Buys Ammo",
-      "description": "Controls whether medic traders buy ammo from you when overriding the original rule.",
+      "description": "Controls whether medics buy ammo from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17436,7 +17436,7 @@
       "tab": "economy",
       "group": "Trader Buys",
       "label": "Medic Buys Grenades",
-      "description": "Controls whether medic traders buy grenades from you when overriding the original rule.",
+      "description": "Controls whether medics buy grenades from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17473,7 +17473,7 @@
       "tab": "economy",
       "group": "Trader Buys",
       "label": "Medic Buys Artifacts",
-      "description": "Controls whether medic traders buy artifacts from you when overriding the original rule.",
+      "description": "Controls whether medics buy artifacts from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17510,7 +17510,7 @@
       "tab": "economy",
       "group": "Trader Buys",
       "label": "Medic Buys Consumables",
-      "description": "Controls whether medic traders buy consumables from you when overriding the original rule.",
+      "description": "Controls whether medics buy consumables from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17547,7 +17547,7 @@
       "tab": "economy",
       "group": "Trader Buys",
       "label": "Medic Buys Mutant Parts",
-      "description": "Controls whether medic traders buy mutant parts from you when overriding the original rule.",
+      "description": "Controls whether medics buy mutant parts from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17584,7 +17584,7 @@
       "tab": "economy",
       "group": "Trader Buys",
       "label": "Technician Buys Weapons",
-      "description": "Controls whether technician traders buy weapons from you when overriding the original rule.",
+      "description": "Controls whether technicians buy weapons from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17621,7 +17621,7 @@
       "tab": "economy",
       "group": "Trader Buys",
       "label": "Technician Buys Armor",
-      "description": "Controls whether technician traders buy armor from you when overriding the original rule.",
+      "description": "Controls whether technicians buy armor from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17658,7 +17658,7 @@
       "tab": "economy",
       "group": "Trader Buys",
       "label": "Technician Buys Attachments",
-      "description": "Controls whether technician traders buy attachments from you when overriding the original rule.",
+      "description": "Controls whether technicians buy attachments from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17695,7 +17695,7 @@
       "tab": "economy",
       "group": "Trader Buys",
       "label": "Technician Buys Ammo",
-      "description": "Controls whether technician traders buy ammo from you when overriding the original rule.",
+      "description": "Controls whether technicians buy ammo from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17732,7 +17732,7 @@
       "tab": "economy",
       "group": "Trader Buys",
       "label": "Technician Buys Grenades",
-      "description": "Controls whether technician traders buy grenades from you when overriding the original rule.",
+      "description": "Controls whether technicians buy grenades from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17769,7 +17769,7 @@
       "tab": "economy",
       "group": "Trader Buys",
       "label": "Technician Buys Artifacts",
-      "description": "Controls whether technician traders buy artifacts from you when overriding the original rule.",
+      "description": "Controls whether technicians buy artifacts from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17806,7 +17806,7 @@
       "tab": "economy",
       "group": "Trader Buys",
       "label": "Technician Buys Consumables",
-      "description": "Controls whether technician traders buy consumables from you when overriding the original rule.",
+      "description": "Controls whether technicians buy consumables from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17843,7 +17843,7 @@
       "tab": "economy",
       "group": "Trader Buys",
       "label": "Technician Buys Mutant Parts",
-      "description": "Controls whether technician traders buy mutant parts from you when overriding the original rule.",
+      "description": "Controls whether technicians buy mutant parts from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17880,7 +17880,7 @@
       "tab": "economy",
       "group": "Trader Buys",
       "label": "Bartender Buys Weapons",
-      "description": "Controls whether bartender traders buy weapons from you when overriding the original rule.",
+      "description": "Controls whether bartenders buy weapons from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17917,7 +17917,7 @@
       "tab": "economy",
       "group": "Trader Buys",
       "label": "Bartender Buys Armor",
-      "description": "Controls whether bartender traders buy armor from you when overriding the original rule.",
+      "description": "Controls whether bartenders buy armor from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17954,7 +17954,7 @@
       "tab": "economy",
       "group": "Trader Buys",
       "label": "Bartender Buys Attachments",
-      "description": "Controls whether bartender traders buy attachments from you when overriding the original rule.",
+      "description": "Controls whether bartenders buy attachments from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -17991,7 +17991,7 @@
       "tab": "economy",
       "group": "Trader Buys",
       "label": "Bartender Buys Ammo",
-      "description": "Controls whether bartender traders buy ammo from you when overriding the original rule.",
+      "description": "Controls whether bartenders buy ammo from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -18028,7 +18028,7 @@
       "tab": "economy",
       "group": "Trader Buys",
       "label": "Bartender Buys Grenades",
-      "description": "Controls whether bartender traders buy grenades from you when overriding the original rule.",
+      "description": "Controls whether bartenders buy grenades from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -18065,7 +18065,7 @@
       "tab": "economy",
       "group": "Trader Buys",
       "label": "Bartender Buys Artifacts",
-      "description": "Controls whether bartender traders buy artifacts from you when overriding the original rule.",
+      "description": "Controls whether bartenders buy artifacts from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -18102,7 +18102,7 @@
       "tab": "economy",
       "group": "Trader Buys",
       "label": "Bartender Buys Consumables",
-      "description": "Controls whether bartender traders buy consumables from you when overriding the original rule.",
+      "description": "Controls whether bartenders buy consumables from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -18139,7 +18139,7 @@
       "tab": "economy",
       "group": "Trader Buys",
       "label": "Bartender Buys Mutant Parts",
-      "description": "Controls whether bartender traders buy mutant parts from you when overriding the original rule.",
+      "description": "Controls whether bartenders buy mutant parts from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -18175,8 +18175,8 @@
       "id": "economy.traderBuys.genericNpc.weapon",
       "tab": "economy",
       "group": "Trader Buys",
-      "label": "Generic NPC Buys Weapons",
-      "description": "Controls whether generic npc traders buy weapons from you when overriding the original rule.",
+      "label": "Stalker Buys Weapons",
+      "description": "Controls whether stalkers you can trade with buy weapons from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -18212,8 +18212,8 @@
       "id": "economy.traderBuys.genericNpc.armor",
       "tab": "economy",
       "group": "Trader Buys",
-      "label": "Generic NPC Buys Armor",
-      "description": "Controls whether generic npc traders buy armor from you when overriding the original rule.",
+      "label": "Stalker Buys Armor",
+      "description": "Controls whether stalkers you can trade with buy armor from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -18249,8 +18249,8 @@
       "id": "economy.traderBuys.genericNpc.attach",
       "tab": "economy",
       "group": "Trader Buys",
-      "label": "Generic NPC Buys Attachments",
-      "description": "Controls whether generic npc traders buy attachments from you when overriding the original rule.",
+      "label": "Stalker Buys Attachments",
+      "description": "Controls whether stalkers you can trade with buy attachments from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -18286,8 +18286,8 @@
       "id": "economy.traderBuys.genericNpc.ammo",
       "tab": "economy",
       "group": "Trader Buys",
-      "label": "Generic NPC Buys Ammo",
-      "description": "Controls whether generic npc traders buy ammo from you when overriding the original rule.",
+      "label": "Stalker Buys Ammo",
+      "description": "Controls whether stalkers you can trade with buy ammo from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -18323,8 +18323,8 @@
       "id": "economy.traderBuys.genericNpc.grenade",
       "tab": "economy",
       "group": "Trader Buys",
-      "label": "Generic NPC Buys Grenades",
-      "description": "Controls whether generic npc traders buy grenades from you when overriding the original rule.",
+      "label": "Stalker Buys Grenades",
+      "description": "Controls whether stalkers you can trade with buy grenades from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -18360,8 +18360,8 @@
       "id": "economy.traderBuys.genericNpc.artifact",
       "tab": "economy",
       "group": "Trader Buys",
-      "label": "Generic NPC Buys Artifacts",
-      "description": "Controls whether generic npc traders buy artifacts from you when overriding the original rule.",
+      "label": "Stalker Buys Artifacts",
+      "description": "Controls whether stalkers you can trade with buy artifacts from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -18397,8 +18397,8 @@
       "id": "economy.traderBuys.genericNpc.consumable",
       "tab": "economy",
       "group": "Trader Buys",
-      "label": "Generic NPC Buys Consumables",
-      "description": "Controls whether generic npc traders buy consumables from you when overriding the original rule.",
+      "label": "Stalker Buys Consumables",
+      "description": "Controls whether stalkers you can trade with buy consumables from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -18434,8 +18434,8 @@
       "id": "economy.traderBuys.genericNpc.mutantLoot",
       "tab": "economy",
       "group": "Trader Buys",
-      "label": "Generic NPC Buys Mutant Parts",
-      "description": "Controls whether generic npc traders buy mutant parts from you when overriding the original rule.",
+      "label": "Stalker Buys Mutant Parts",
+      "description": "Controls whether stalkers you can trade with buy mutant parts from you when overriding the original rule.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {

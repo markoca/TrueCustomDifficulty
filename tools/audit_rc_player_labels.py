@@ -47,7 +47,7 @@ names={
   "survival.starvationStaminaDrain": "Starvation Action Cost"
 }
 assert len(names)==35
-assert by["economy.traderBuys.general.weapon"]["label"] == "Trader Buys"
+assert by["economy.traderBuys.general.weapon"]["label"] == "Shopkeeper Buys Weapons"
 assert by["economy.traderSells.general.weapons"]["label"] == "Shopkeeper Sells Weapons"
 for pid,label in names.items():assert by[pid]["label"]==label,(pid,by[pid]["label"])
 for old in ("Item Price Scalers","Equipment Wear","Individual Anomaly Damage","Human Group Size"):assert all(x["group"]!=old for x in p),old
