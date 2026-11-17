@@ -1172,8 +1172,8 @@ else:
         '"AMMO YIELD PREVIEW"',
         '"ROUNDS IF ROLLED"',
         '"AMMO MIX PER BOX"',
-        'MixBar("SNG", mix.Top + 27.0, new[] { (2.0 * w918, 0), (w545, 2), (w012, 3) });',
-        'MixBar("NATO", mix.Top + 49.0, new[] { (w045, 1), (w918, 0), (w545, 2), (w012, 3) });',
+        '(w918, 0, "9×18"), (w918, 0, "9×19"), (w545, 2, "5.45"), (w012, 3, "12 GA")',
+        '(w045, 1, ".45 ACP"), (w918, 0, "9×19"), (w545, 2, "5.56"), (w012, 3, "12 GA")',
         'var countsModified = ammoYield.IsValueModifiedFromReference();',
         'item.MinCount * ammoYield.CurrentNumber + 0.5',
         'item.MaxCount * ammoYield.CurrentNumber + 0.5',
@@ -1228,13 +1228,15 @@ else:
     )
     if any(color not in _abd_palette_code for color in _abd_colors):
         _abd_errors.append("breakable ammo family palette missing unique four-color mapping")
-    # One consolidated AMMO MIX card (two bars, one shared legend) replaces
-    # the two separate SNG/NATO pool cards; segments + legend share the knob brush.
+    # One consolidated AMMO MIX card (two bars) replaces the two separate
+    # SNG/NATO pool cards; segments use the knob brush and name their caliber
+    # (2026-11-17: caliber labels replace percentages and the legend).
     if 'Pool("SNG POOL",' in _abd_control_text or 'Pool("NATO POOL",' in _abd_control_text:
         _abd_errors.append("retired separate SNG/NATO pool cards returned")
     if 'dc.DrawRectangle(BreakableAmmoPalette[segment.Color], null, rect);' not in _abd_control_text \
-            or 'dc.DrawRectangle(BreakableAmmoPalette[i], null, new Rect(x, mix.Top + 76.0, 9.0, 9.0));' not in _abd_control_text:
-        _abd_errors.append("mix segments and legend must use the same family brush")
+            or 'CreateText(segment.Caliber, 9.4,' not in _abd_control_text \
+            or 'mix.Top + 76.0' in _abd_control_text:
+        _abd_errors.append("mix segments must use the family brush and name their caliber (no legend)")
     if 'var tones = new[] { 0.95, 0.72, 0.50, 0.30 };' in _abd_control_text:
         _abd_errors.append("legacy single-yellow pool tint mix returned")
     _abd_knob_input = (

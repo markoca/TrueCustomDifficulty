@@ -6033,10 +6033,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 dialAccent: BreakableAmmoPalette[i]);
         }
 
-        // ONE consolidated weight-share card: SNG and NATO stay separate bars
-        // (different physical boxes, shares never merged), sharing a single
-        // four-family legend in the knob colors. Percentages sit inside a
-        // segment when it is wide enough; a 0% family simply has no segment.
+        // ONE consolidated mix card: SNG and NATO stay separate bars
+        // (different physical boxes, shares never merged). Each segment is
+        // one source row and names its caliber; width = its weight share.
+        // A zero-weight caliber simply has no segment.
         var mix = geometry.Mix;
         dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9), mix, 4.0, 4.0);
         DrawText(dc, "AMMO MIX PER BOX", new Point(mix.Left + 11.0, mix.Top + 6.0),
@@ -6045,7 +6045,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var w045 = Math.Max(0.0, weight045.CurrentNumber);
         var w545 = Math.Max(0.0, weight545.CurrentNumber);
         var w012 = Math.Max(0.0, weight012.CurrentNumber);
-        void MixBar(string pool, double top, (double Weight, int Color)[] segments)
+        void MixBar(string pool, double top, (double Weight, int Color, string Caliber)[] segments)
         {
             const double labelWidth = 42.0;
             var bar = new Rect(mix.Left + 11.0 + labelWidth, top,
@@ -6060,11 +6060,14 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             {
                 if (sum <= Epsilon || segment.Weight <= Epsilon)
                     continue;
-                var share = segment.Weight / sum;
-                var span = bar.Width * share;
+                var span = bar.Width * segment.Weight / sum;
                 var rect = new Rect(cursor, bar.Top, span, bar.Height);
                 dc.DrawRectangle(BreakableAmmoPalette[segment.Color], null, rect);
-                var label = CreateText($"{share * 100.0:0.#}%", 9.4,
+                // Hairline between neighbours (9×18 and 9×19 share a colour).
+                if (cursor > bar.Left + Epsilon)
+                    dc.DrawLine(new Pen(CloneWithOpacity(panel, .9), 1.2),
+                        new Point(cursor, bar.Top), new Point(cursor, bar.Bottom));
+                var label = CreateText(segment.Caliber, 9.4,
                     Brushes.Black, FontWeights.Bold);
                 if (label.WidthIncludingTrailingWhitespace + 6.0 <= span)
                     dc.DrawText(label, new Point(
@@ -6074,22 +6077,18 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             }
         }
         // SNG: 9×18 and 9×19 are two source rows under one family weight.
-        MixBar("SNG", mix.Top + 27.0, new[] { (2.0 * w918, 0), (w545, 2), (w012, 3) });
-        MixBar("NATO", mix.Top + 49.0, new[] { (w045, 1), (w918, 0), (w545, 2), (w012, 3) });
-        var legendLeft = mix.Left + 53.0;
-        var legendWidth = Math.Max(1.0, mix.Width - 64.0) / weights.Length;
-        for (var i = 0; i < weights.Length; i++)
+        MixBar("SNG", mix.Top + 27.0, new[]
         {
-            var x = legendLeft + i * legendWidth;
-            dc.DrawRectangle(BreakableAmmoPalette[i], null, new Rect(x, mix.Top + 76.0, 9.0, 9.0));
-            dc.DrawText(CreateText(weights[i].Label, 9.6, muted, FontWeights.SemiBold,
-                    Math.Max(1.0, legendWidth - 16.0)),
-                new Point(x + 13.0, mix.Top + 73.0));
-        }
+            (w918, 0, "9×18"), (w918, 0, "9×19"), (w545, 2, "5.45"), (w012, 3, "12 GA")
+        });
+        MixBar("NATO", mix.Top + 49.0, new[]
+        {
+            (w045, 1, ".45 ACP"), (w918, 0, "9×19"), (w545, 2, "5.56"), (w012, 3, "12 GA")
+        });
     }
 
     private const double AmmoYieldTileHeight = 39.0;
-    private const double AmmoMixCardHeight = 96.0;
+    private const double AmmoMixCardHeight = 76.0;
     private const double AmmoDistributionWideWidth = 760.0;
 
     private readonly record struct AmmoDistributionGeometry(

@@ -4315,3 +4315,11 @@ docs/generators/LOOSE-ARTIFACT-REMOVAL-2026-11-17.md.
 * WORLD ITEM SPAWNS → REMOVE rows read **Loose Detectors**, **Loose Armor**, **Loose Artifacts**.
 * MEDICAL COMPOSITION → ODDS PER STASH · MEDS draws "—" for a tier whose lists do not contain the item
   at the selected difficulty (Army Medkits: Rare only, Easy only). See STASH-MEDICAL-COMPOSITION.md.
+
+## CURRENT 2026-11-17 — AMMO MIX PER BOX: CALIBERS, NOT PERCENTAGES
+
+AMMO MIX PER BOX is a 76-DIP card with the SNG and NATO bars only. Every segment is one source row
+and is labelled with its caliber (SNG: 9×18, 9×19, 5.45, 12 GA; NATO: .45 ACP, 9×19, 5.56, 12 GA);
+its width is the weight share. 9×18 and 9×19 share the 9 mm colour and are split by a hairline. No
+percentages and no legend (the AMMO TYPE MIX knobs carry the colours). A label that does not fit its
+segment is omitted; a zero-weight caliber has no segment. Supersedes the 96-DIP percentage + legend card.
