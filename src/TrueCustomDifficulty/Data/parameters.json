@@ -253,7 +253,7 @@
       },
       "rationale": "How many bullets a human enemy can soak up before going down. Higher = longer, more ammo-hungry firefights; lower = enemies drop fast. Vanilla: Novice 1×, Stalker 1.2×, Veteran 1×, Master 1.5×. Pair it with WEAPON DAMAGE — both set your time-to-kill, so raising one and lowering the other stacks hard.",
       "logic": "",
-      "interaction": "Weapon Damage affects the same time-to-kill from the opposite side. Raising enemy health while lowering your weapon damage compounds the effect."
+      "interaction": "WEAPON DAMAGE affects the same time-to-kill from the opposite side. Raising enemy health while lowering your weapon damage compounds the effect."
     },
     {
       "id": "combat.npcWeaponDamage",
@@ -957,9 +957,9 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "The damage your own guns deal on a normal body hit. Lower values mean more bullets per kill and more ammo burned. Vanilla: Novice 1.3×, Stalker 1×, Veteran and Master 0.75×. Headshots get an extra boost on top from Headshot Damage.",
+      "rationale": "The damage your own guns deal on a normal body hit. Lower values mean more bullets per kill and more ammo burned. Vanilla: Novice 1.3×, Stalker 1×, Veteran and Master 0.75×. Headshots get an extra boost on top from HEADSHOT DAMAGE.",
       "logic": "",
-      "interaction": "Headshot Damage adds another layer on headshots. Human Enemy HP also changes the final time-to-kill."
+      "interaction": "HEADSHOT DAMAGE adds another layer on headshots. HUMAN ENEMY HP also changes the final time-to-kill."
     },
     {
       "id": "combat.playerHeadshotMultiplier",
@@ -1003,7 +1003,7 @@
       },
       "rationale": "Extra punch for your headshots on top of normal weapon damage. 2× doubles the headshot bonus, rewarding careful aim over spraying. Vanilla: Novice–Veteran 1×, Master 2×.",
       "logic": "1.0× is the normal multiplier. 2.0× doubles the headshot damage multiplier used by the selected Base Preset; it is not an additive extra-damage percentage.",
-      "interaction": "Weapon Damage also affects the underlying hit. The headshot multiplier scales that hit; changing both settings compounds their effect."
+      "interaction": "WEAPON DAMAGE also affects the underlying hit. The headshot multiplier scales that hit; changing both settings compounds their effect."
     },
     {
       "id": "combat.weaponJamming",
@@ -1137,7 +1137,7 @@
       },
       "rationale": "The game quietly softens damage when many hits land at once, so you don't melt in a single burst. This is the strongest that safety net can get. Higher = more forgiving under heavy fire, lower = bursts hit closer to full damage. Vanilla: Novice 100%, Stalker 75%, Veteran 50%, Master 40%.",
       "logic": "Higher values give more protection against rapid hits; lower values make them harsher. The number is protection strength, not a literal damage-reduction percentage.",
-      "interaction": "Minimum Hit Protection sets the weakest protection in the same repeated-hit system. Incoming gun damage is independent."
+      "interaction": "MINIMUM HIT PROTECTION sets the weakest protection in the same repeated-hit system. Incoming gun damage is independent."
     },
     {
       "id": "combat.accumulatedDamageWeightMin",
@@ -1180,9 +1180,9 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "The weakest end of the same hidden safety net against rapid hits. Raising it keeps some protection even in long, sustained fights. Vanilla: Novice 100%, Stalker 33%, Veteran 15%, Master 12%. Works together with Peak Hit Protection.",
+      "rationale": "The weakest end of the same hidden safety net against rapid hits. Raising it keeps some protection even in long, sustained fights. Vanilla: Novice 100%, Stalker 33%, Veteran 15%, Master 12%. Works together with PEAK HIT PROTECTION.",
       "logic": "Higher values give more protection at the weak end; lower values make rapid hits harsher. This is not a literal damage-reduction percentage.",
-      "interaction": "Peak Hit Protection sets the strongest protection in the same system. Incoming gun damage is independent."
+      "interaction": "PEAK HIT PROTECTION sets the strongest protection in the same system. Incoming gun damage is independent."
     },
     {
       "id": "combat.accumulatedDamageIncludesHealedHealth",
@@ -1216,7 +1216,7 @@
       },
       "rationale": "Decides whether hits you already healed still count against your burst protection. ON (Veteran, Master) means patching up mid-fight doesn't reset the safety net; OFF (Novice, Stalker) is more forgiving. Healing itself always restores your HP normally.",
       "logic": "OFF matches Novice and Stalker. ON matches Veteran and Master. Healing always restores HP normally; this toggle only decides whether the healed portion is still remembered by the repeated-hit protection system.",
-      "interaction": "Works with Minimum and Peak Hit Protection; healing always restores HP even when past hits remain counted."
+      "interaction": "Works with Minimum and PEAK HIT PROTECTION; healing always restores HP even when past hits remain counted."
     },
     {
       "id": "combat.mutantHealth.bloodsucker",
@@ -3224,7 +3224,7 @@
       },
       "rationale": "In the Psy encounters that Master makes harder, how long you get before the next wave of phantoms appears. Lower = less breathing room. Vanilla: Novice–Veteran 1×, Master 0.5×.",
       "logic": "Lower = phantom waves come back sooner. 1× is the normal wait; vanilla Master already uses 0.5×.",
-      "interaction": "Pair this with Psy Phantom Count: shorter waits plus more phantoms can make an encounter far more intense."
+      "interaction": "Pair this with PSY PHANTOM COUNT: shorter waits plus more phantoms can make an encounter far more intense."
     },
     {
       "id": "combat.psyPhantomCount",
@@ -3278,7 +3278,7 @@
       },
       "rationale": "In those Master Psy encounters, how many phantoms come at you per wave. 2× doubles them. Vanilla: Novice–Veteran 1×, Master 2×. Combine with a short spawn interval for a real nightmare.",
       "logic": "1× keeps the normal count; 2× matches vanilla Master and doubles it.",
-      "interaction": "Phantom Spawn Interval changes how quickly another wave can happen; this setting changes the size of each wave."
+      "interaction": "PHANTOM SPAWN INTERVAL changes how quickly another wave can happen; this setting changes the size of each wave."
     },
     {
       "id": "combat.psyBleeding",
@@ -3321,7 +3321,7 @@
       },
       "rationale": "Lets the Master Psy phantoms make you bleed, so bandages become part of surviving the encounter. Vanilla: Novice–Veteran OFF, Master ON.",
       "logic": "OFF: psy attacks don't make you bleed. ON: they do, like on Master.",
-      "interaction": "Bleeding Severity and medical treatment determine how serious the extra bleeding becomes."
+      "interaction": "BLEEDING SEVERITY and medical treatment determine how serious the extra bleeding becomes."
     },
     {
       "id": "combat.psyDurabilityDamage",
@@ -3464,7 +3464,7 @@
       },
       "rationale": "How filling one piece of bread is. Vanilla: 20 hunger points out of 100 — a quick snack, not a meal.",
       "logic": "Higher means more hunger removed by that item. At zero it gives no normal hunger relief.",
-      "interaction": "Hunger Rate controls how quickly hunger returns; food healing and special effects stay separate.",
+      "interaction": "HUNGER RATE controls how quickly hunger returns; food healing and special effects stay separate.",
       "exposeInUi": true
     },
     {
@@ -3511,7 +3511,7 @@
       },
       "rationale": "How filling one sausage is. Vanilla: 30 hunger points out of 100.",
       "logic": "Higher means more hunger removed by that item. At zero it gives no normal hunger relief.",
-      "interaction": "Hunger Rate controls how quickly hunger returns; food healing and special effects stay separate.",
+      "interaction": "HUNGER RATE controls how quickly hunger returns; food healing and special effects stay separate.",
       "exposeInUi": true
     },
     {
@@ -3558,7 +3558,7 @@
       },
       "rationale": "How filling one can of food is. Vanilla: 50 hunger points — half the meter in one go.",
       "logic": "Higher means more hunger removed by that item. At zero it gives no normal hunger relief.",
-      "interaction": "Hunger Rate controls how quickly hunger returns; food healing and special effects stay separate.",
+      "interaction": "HUNGER RATE controls how quickly hunger returns; food healing and special effects stay separate.",
       "exposeInUi": true
     },
     {
@@ -4076,7 +4076,7 @@
       },
       "rationale": "How much tiredness an energy drink washes away. Vanilla: 1×. 0× makes energy drinks useless against fatigue, 2× doubles their wake-up kick. It doesn't slow how fast you get tired again.",
       "logic": "1× keeps vanilla fatigue relief; 0.5× halves it, 2× doubles it, 0× removes it.",
-      "interaction": "Fatigue Rate controls how quickly tiredness comes back. This changes the amount removed by ordinary and special Energy Drinks."
+      "interaction": "FATIGUE RATE controls how quickly tiredness comes back. This changes the amount removed by ordinary and special Energy Drinks."
     },
     {
       "id": "survival.waterInstantStaminaRestore",
@@ -5164,7 +5164,7 @@
       },
       "rationale": "How much one beer gets you drunk. Vanilla: 15 — tipsy on the 2nd beer, properly drunk by the 6th in a row. The chart shows exactly when each stage hits.",
       "logic": "Vanilla: 15 drunkenness per beer. With tipsy at 30 and drunk at 80, back-to-back beers make you tipsy on the 2nd and drunk on the 6th.",
-      "interaction": "Sits beside Vodka Strength; the preview shows right away how many beers make you tipsy and drunk."
+      "interaction": "Sits beside VODKA STRENGTH; the preview shows right away how many beers make you tipsy and drunk."
     },
     {
       "id": "survival.vodkaDrunknessStrength",
@@ -5211,7 +5211,7 @@
       },
       "rationale": "How much one vodka gets you drunk. Vanilla: 30 — tipsy after the 1st bottle, drunk by the 3rd in a row.",
       "logic": "Vanilla: 30 drunkenness per vodka. With tipsy at 30 and drunk at 80, the 1st vodka makes you tipsy and the 3rd drunk.",
-      "interaction": "Sits beside Beer Strength; the preview shows right away how many vodkas make you tipsy and drunk."
+      "interaction": "Sits beside BEER STRENGTH; the preview shows right away how many vodkas make you tipsy and drunk."
     },
     {
       "id": "survival.sleepEligibilityThreshold",
@@ -5341,7 +5341,7 @@
       },
       "rationale": "How fast radiation builds up while you stand in contaminated areas. Higher = hotspots become deadly quickly. Vanilla: Novice 0.6×, Stalker 1×, Veteran 1.5×, Master 1.85×.",
       "logic": "",
-      "interaction": "Radiation Recovery controls passive reduction separately. RADIATION STAMINA PENALTY can add a stamina cost at high radiation."
+      "interaction": "RADIATION RECOVERY controls passive reduction separately. RADIATION STAMINA PENALTY can add a stamina cost at high radiation."
     },
     {
       "id": "survival.radiationRecovery",
@@ -5384,7 +5384,7 @@
       },
       "rationale": "How fast radiation drains away on its own without anti-rad or vodka. Vanilla: 0.05 pts/s — slow, so meds still matter.",
       "logic": "",
-      "interaction": "This acts on recovery, not exposure strength. Radiation Accumulation determines how quickly new radiation is gained."
+      "interaction": "This acts on recovery, not exposure strength. RADIATION ACCUMULATION determines how quickly new radiation is gained."
     },
     {
       "id": "survival.radiationDamage",
@@ -5542,7 +5542,7 @@
       },
       "rationale": "How bad bleeding wounds are overall. Higher = you bleed out faster and need bandages sooner. Vanilla: Novice 0.25×, Stalker and Veteran 1×, Master 1.5×.",
       "logic": "Higher values make bleeding effects stronger overall; lower values soften them. Vanilla: Novice 0.25×, Stalker and Veteran 1×, Master 1.5×.",
-      "interaction": "Low / Medium / Severe Bleeding Damage decide how much HP you lose once each bleeding state is active. Natural Bleeding Recovery and medical treatment decide how quickly bleeding goes away."
+      "interaction": "Low / Medium / SEVERE BLEEDING DAMAGE decide how much HP you lose once each bleeding state is active. NATURAL BLEEDING RECOVERY and medical treatment decide how quickly bleeding goes away."
     },
     {
       "id": "survival.bleedingRecovery",
@@ -5725,9 +5725,9 @@
           "The field explicitly uses seconds; the exact set of regeneration sources that honor it requires runtime validation."
         ]
       },
-      "rationale": "How long after taking damage your health starts coming back. Vanilla: 5 seconds. Only matters if something is actually healing you, so with Passive HP Regen at 0 you may not notice it.",
+      "rationale": "How long after taking damage your health starts coming back. Vanilla: 5 seconds. Only matters if something is actually healing you, so with PASSIVE HP REGEN at 0 you may not notice it.",
       "logic": "Higher values postpone actor-level HP regeneration for longer; lower values shorten the configured delay.",
-      "interaction": "With Passive HP Regen at 0 this delay shows no effect until another healing-over-time effect is active."
+      "interaction": "With PASSIVE HP REGEN at 0 this delay shows no effect until another healing-over-time effect is active."
     },
     {
       "id": "health.regenerationScalar",
@@ -5771,7 +5771,7 @@
       },
       "rationale": "How strong all health recovery over time is. Vanilla: Novice and Stalker 100%, Veteran 75%, Master 50%. Doesn't start healing by itself — it boosts or weakens healing that is already running.",
       "logic": "100% keeps healing-over-time effects at full strength; lower weakens them, higher strengthens them.",
-      "interaction": "Passive HP Regen is 0 in vanilla, so this matters mainly when another effect is already restoring health, such as low-health recovery."
+      "interaction": "PASSIVE HP REGEN is 0 in vanilla, so this matters mainly when another effect is already restoring health, such as low-health recovery."
     },
     {
       "id": "health.lowHealthRegen",
@@ -5813,7 +5813,7 @@
       },
       "rationale": "The small comeback heal the game gives you when you're almost dead. Vanilla: 1 HP/s. 0 removes it, so near-death means near-death; Master penalties can cut it further.",
       "logic": "",
-      "interaction": "Health Regen Strength can scale this effect, and the Master low-health penalty can reduce it further."
+      "interaction": "HEALTH REGEN STRENGTH can scale this effect, and the Master low-health penalty can reduce it further."
     },
     {
       "id": "advanced.lowHealthMechanics",
@@ -5889,7 +5889,7 @@
       },
       "rationale": "How much that Master low-health punishment slows your healing. Vanilla: 70%. 0% removes it. Only works while LOW HEALTH MECHANICS is ON.",
       "logic": "Higher values suppress health regeneration more strongly; zero removes this penalty component.",
-      "interaction": "This remains inactive while LOW HEALTH MECHANICS is OFF. It layers on top of ordinary low-health recovery and the Health Regen Strength setting.",
+      "interaction": "This remains inactive while LOW HEALTH MECHANICS is OFF. It layers on top of ordinary low-health recovery and the HEALTH REGEN STRENGTH setting.",
       "requiresToggle": "advanced.lowHealthMechanics"
     },
     {
@@ -6169,7 +6169,7 @@
       },
       "rationale": "How much health a regular medkit gives back. Vanilla: 70 HP — most of a vanilla health bar.",
       "logic": "",
-      "interaction": "Bleeding treatment is separate. With HEALING ITEM EFFICIENCY REDUCTION ON, Master Medkit Healing further changes the final heal.",
+      "interaction": "Bleeding treatment is separate. With HEALING ITEM EFFICIENCY REDUCTION ON, MASTER MEDKIT HEALING further changes the final heal.",
       "exposeInUi": false
     },
     {
@@ -6213,7 +6213,7 @@
       },
       "rationale": "How much health an army medkit gives back. Vanilla: 85 HP.",
       "logic": "",
-      "interaction": "Bleeding treatment is separate. With HEALING ITEM EFFICIENCY REDUCTION ON, Master Army Medkit Healing further changes the final heal.",
+      "interaction": "Bleeding treatment is separate. With HEALING ITEM EFFICIENCY REDUCTION ON, MASTER ARMY MEDKIT HEALING further changes the final heal.",
       "exposeInUi": false
     },
     {
@@ -6310,7 +6310,7 @@
       },
       "rationale": "Whether bread, fresh bread, canned food and sausage also heal you a bit. Vanilla: ON. Turn it OFF to make food only fix hunger, so medical items are your only way to heal.",
       "logic": "ON keeps vanilla food healing. OFF removes healing from the supported food items.",
-      "interaction": "Bandage healing remains controlled by the Healing Amount radar. Weird Kettle alternative food effects are deliberately outside this switch.",
+      "interaction": "Bandage healing remains controlled by the HEALING AMOUNT radar. Weird Kettle alternative food effects are deliberately outside this switch.",
       "exposeInUi": true
     },
     {
@@ -6480,7 +6480,7 @@
       },
       "rationale": "How much bleeding one bandage stops. Vanilla: 100 bleed pts — it fully stops any bleed. Lower it and a bad wound needs more than one bandage.",
       "logic": "",
-      "interaction": "This changes direct treatment only. Natural Bleeding Recovery and bleeding damage remain separate."
+      "interaction": "This changes direct treatment only. NATURAL BLEEDING RECOVERY and bleeding damage remain separate."
     },
     {
       "id": "health.medkitBleeding",
@@ -6523,7 +6523,7 @@
       },
       "rationale": "How much bleeding a regular medkit stops. Vanilla: 15 bleed pts — barely a dent, so you still want a bandage for a real bleed.",
       "logic": "",
-      "interaction": "This changes direct treatment only. Natural Bleeding Recovery and bleeding damage remain separate."
+      "interaction": "This changes direct treatment only. NATURAL BLEEDING RECOVERY and bleeding damage remain separate."
     },
     {
       "id": "health.armyMedkitBleeding",
@@ -6566,7 +6566,7 @@
       },
       "rationale": "How much bleeding an army medkit stops. Vanilla: 35 bleed pts.",
       "logic": "",
-      "interaction": "This changes direct treatment only. Natural Bleeding Recovery and bleeding damage remain separate."
+      "interaction": "This changes direct treatment only. NATURAL BLEEDING RECOVERY and bleeding damage remain separate."
     },
     {
       "id": "health.ecoMedkitBleeding",
@@ -6609,7 +6609,7 @@
       },
       "rationale": "How much bleeding a scientific medkit stops. Vanilla: 25 bleed pts.",
       "logic": "",
-      "interaction": "This changes direct treatment only. Natural Bleeding Recovery and bleeding damage remain separate."
+      "interaction": "This changes direct treatment only. NATURAL BLEEDING RECOVERY and bleeding damage remain separate."
     },
     {
       "id": "health.ecoMedkitAntirad",
@@ -6750,7 +6750,7 @@
       "description": "Below this stamina value, sprinting is disabled. Default: 16.1 of the vanilla 100 stamina pool.",
       "rationale": "When your stamina drops below this, you can't sprint any more until it recovers. Vanilla: 16.1 out of 100. Lower it to squeeze out a longer final dash.",
       "logic": "Higher values make sprint lock out earlier while stamina is still relatively high; lower values let the player sprint deeper into the stamina bar.",
-      "interaction": "Pairs with Exhaustion Regen Delay; sets sprint lockout, not sprint speed or stamina drain.",
+      "interaction": "Pairs with EXHAUSTION REGEN DELAY; sets sprint lockout, not sprint speed or stamina drain.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -6795,7 +6795,7 @@
       "description": "Seconds before stamina regeneration resumes after sprint exhaustion.",
       "rationale": "How long you stand there gasping after sprinting yourself out before stamina starts coming back. Vanilla: 1 second.",
       "logic": "Higher values make exhaustion pauses last longer before recovery can resume; lower values shorten the pause.",
-      "interaction": "Applies after sprint exhaustion; Sprint Stops Below determines the separate lockout threshold.",
+      "interaction": "Applies after sprint exhaustion; SPRINT STOPS BELOW determines the separate lockout threshold.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -6883,7 +6883,7 @@
       "description": "Regeneration strength of the temporary low-stamina recovery boost (10 stamina/s originally).",
       "rationale": "How strong that second wind is. Vanilla: 10 stamina/s on top of normal recovery. 0 removes it.",
       "logic": "Higher values make the emergency recovery effect stronger; lower values make low-stamina recovery closer to the ordinary base rate.",
-      "interaction": "Boost Starts Below sets its trigger; low-stamina Boost Duration sets how long it lasts.",
+      "interaction": "BOOST STARTS BELOW sets its trigger; low-stamina BOOST DURATION sets how long it lasts.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -8432,7 +8432,7 @@
       },
       "rationale": "Follows the BANDAGES cell automatically: the same \"keep X% of the vanilla odds\" for bandage in the shared Basic pick and smart world stashes. Vanilla: 100%.",
       "logic": "Follows the BANDAGES cell: 100% keeps vanilla odds, 0% removes Bandage from the weighted picks.",
-      "interaction": "Mirrored both ways with Bandage Odds; the last change (cell, preset or reset) wins.",
+      "interaction": "Mirrored both ways with BANDAGE ODDS; the last change (cell, preset or reset) wins.",
       "exposeInUi": true
     },
     {
@@ -8526,7 +8526,7 @@
       },
       "rationale": "Follows the MEDKITS cell automatically: the same \"keep X% of the vanilla odds\" for medkit in smart world stashes. Vanilla: 100%.",
       "logic": "Follows the MEDKITS cell: 100% keeps vanilla odds, 0% removes Medkit from the weighted picks.",
-      "interaction": "Mirrored both ways with Medkit Odds; the last change (cell, preset or reset) wins.",
+      "interaction": "Mirrored both ways with MEDKIT ODDS; the last change (cell, preset or reset) wins.",
       "exposeInUi": true
     },
     {
@@ -8620,7 +8620,7 @@
       },
       "rationale": "Follows the ARMY MEDKITS cell automatically: the same \"keep X% of the vanilla odds\" for army medkit in smart world stashes. Vanilla: 100%.",
       "logic": "Follows the ARMY MEDKITS cell: 100% keeps vanilla odds, 0% removes Army Medkit from the weighted picks.",
-      "interaction": "Mirrored both ways with Army Medkit Odds; the last change (cell, preset or reset) wins.",
+      "interaction": "Mirrored both ways with ARMY MEDKIT ODDS; the last change (cell, preset or reset) wins.",
       "exposeInUi": true
     },
     {
@@ -8714,7 +8714,7 @@
       },
       "rationale": "Follows the ANTI-RAD cell automatically: the same \"keep X% of the vanilla odds\" for anti-rads in smart world stashes. Vanilla: 100%.",
       "logic": "Follows the ANTI-RAD cell: 100% keeps vanilla odds, 0% removes Anti-Rad from the weighted picks.",
-      "interaction": "Mirrored both ways with Anti-Rad Odds; the last change (cell, preset or reset) wins.",
+      "interaction": "Mirrored both ways with ANTI-RAD ODDS; the last change (cell, preset or reset) wins.",
       "exposeInUi": true
     },
     {
@@ -9361,9 +9361,9 @@
           "Rank tiers and 142-item rank-scoped SID catalog originate from gear-progression-ranks.csv."
         ]
       },
-      "rationale": "How many regular stashes get a shot at bonus gear. Vanilla: 0%. 50% = about half of them. Each picked stash still rolls the Bonus Chance. Only works while EXTRA STASH GEAR is ON.",
+      "rationale": "How many regular stashes get a shot at bonus gear. Vanilla: 0%. 50% = about half of them. Each picked stash still rolls the BONUS CHANCE. Only works while EXTRA STASH GEAR is ON.",
       "logic": "Higher covers more eligible stashes; zero covers none. Full coverage still does not guarantee an item.",
-      "interaction": "Bonus Chance controls each offered item's roll; category priorities choose which gear can be offered.",
+      "interaction": "BONUS CHANCE controls each offered item's roll; category priorities choose which gear can be offered.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },
@@ -9418,7 +9418,7 @@
       },
       "rationale": "How often bonus gear is a weapon. Vanilla: 1×. 0× = never a weapon. Only works while EXTRA STASH GEAR is ON.",
       "logic": "Higher priority favors weapons when a supported stash chooses its bonus gear types. Zero excludes this category.",
-      "interaction": "Coverage decides which stashes participate; Bonus Chance checks each offered item. Rank limits still apply.",
+      "interaction": "Coverage decides which stashes participate; BONUS CHANCE checks each offered item. Rank limits still apply.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },
@@ -9473,7 +9473,7 @@
       },
       "rationale": "How often bonus gear is armor. Vanilla: 1×. 0× = never armor. Only works while EXTRA STASH GEAR is ON.",
       "logic": "Higher priority favors armor when a supported stash chooses its bonus gear types. Zero excludes this category.",
-      "interaction": "Coverage decides which stashes participate; Bonus Chance checks each offered item. Rank limits still apply.",
+      "interaction": "Coverage decides which stashes participate; BONUS CHANCE checks each offered item. Rank limits still apply.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },
@@ -9528,7 +9528,7 @@
       },
       "rationale": "How often bonus gear is an artifact. Vanilla: 1×. 0× = never an artifact. Only works while EXTRA STASH GEAR is ON.",
       "logic": "Higher priority favors artifacts when a supported stash chooses its bonus gear types. Zero excludes this category.",
-      "interaction": "Coverage decides which stashes participate; Bonus Chance checks each offered item. Rank limits still apply.",
+      "interaction": "Coverage decides which stashes participate; BONUS CHANCE checks each offered item. Rank limits still apply.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },
@@ -9585,7 +9585,7 @@
       },
       "rationale": "How often bonus gear is a weapon attachment, matched to the area's progression. Vanilla: 0 — off. Raise it to find scopes and other attachments in stashes. Only works while EXTRA STASH GEAR is ON.",
       "logic": "Higher priority favors attachments when a supported stash chooses its bonus gear types. Zero excludes this category.",
-      "interaction": "Coverage decides which stashes participate; Bonus Chance checks each offered item. Rank limits still apply.",
+      "interaction": "Coverage decides which stashes participate; BONUS CHANCE checks each offered item. Rank limits still apply.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },
@@ -10063,7 +10063,7 @@
       },
       "rationale": "How often breakable ammo boxes give 9 mm pistol rounds (9×18 in SNG boxes, 9×19 in both box types). Vanilla: 1×. Together with the other calibers this sets the ammo mix, not the number of rounds.",
       "logic": "Higher priority makes an ammo family more likely within supported box pools. 1× preserves the original mix.",
-      "interaction": "Ammo per Box changes how many rounds appear, not which caliber families are favored.",
+      "interaction": "AMMO PER BOX changes how many rounds appear, not which caliber families are favored.",
       "exposeInUi": true
     },
     {
@@ -10245,7 +10245,7 @@
       },
       "rationale": "How often a breakable medical box gives an Army Medkit. Vanilla: 1× (16% / 29% / 33% of boxes at Experienced / Veteran / Master rank). 0× = never; 3× = much more often.",
       "logic": "Higher = Army Medkits push out regular and Eco medkits in the same box. 2× roughly doubles the Army Medkit share.",
-      "interaction": "Medical Boxes Removed decides how many boxes exist; this decides what one box gives.",
+      "interaction": "MEDICAL BOXES REMOVED decides how many boxes exist; this decides what one box gives.",
       "exposeInUi": false
     },
     {
@@ -11020,7 +11020,7 @@
       },
       "rationale": "How much traders pay you when you sell. Vanilla: Novice and Stalker 1×, Veteran 0.65×, Master 0.55×. Lower = selling loot earns less.",
       "logic": "Higher raises what traders offer when you sell; lower reduces it. This is a price modifier, not an exact payout.",
-      "interaction": "Broken Gear Value and item condition also affect what you can sell and for how much."
+      "interaction": "BROKEN GEAR VALUE and item condition also affect what you can sell and for how much."
     },
     {
       "id": "economy.sellCondition",
@@ -11064,7 +11064,7 @@
       },
       "rationale": "How much traders charge you when you buy. Vanilla: Novice and Stalker 1×, Veteran 1.25×, Master 1.65×. Higher = everything in the shop costs more.",
       "logic": "Higher makes buying more expensive; lower makes it cheaper. Each trader still applies their own pricing rules.",
-      "interaction": "Item Values changes underlying prices; Prices Traders Pay applies when you sell instead."
+      "interaction": "ITEM VALUES changes underlying prices; PRICES TRADERS PAY applies when you sell instead."
     },
     {
       "id": "economy.traderMinBuyCondition",
@@ -11743,7 +11743,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Locked at 1×. Base Repair Cost already does this job, so you don't get two sliders for the same thing.",
+      "rationale": "Locked at 1×. BASE REPAIR COST already does this job, so you don't get two sliders for the same thing.",
       "logic": "Kept at vanilla. BASE REPAIR COST is the one repair-price setting you see.",
       "interaction": "Hidden from normal use so you do not get two different global settings that both change repair prices.",
       "exposeInUi": false
@@ -11828,7 +11828,7 @@
       },
       "rationale": "Repair price when the technician's faction is hostile to you. Vanilla: 2× — double the bill.",
       "logic": "Higher means more expensive repairs from hostile technicians; lower means cheaper repairs at this reputation level.",
-      "interaction": "Base Repair Cost and the faction's current attitude both affect the final price."
+      "interaction": "BASE REPAIR COST and the faction's current attitude both affect the final price."
     },
     {
       "id": "economy.repairDisaffection",
@@ -11869,7 +11869,7 @@
       },
       "rationale": "Repair price when the technician's faction dislikes you. Vanilla: 1.5×.",
       "logic": "Higher means more expensive repairs from disliked technicians; lower means cheaper repairs at this reputation level.",
-      "interaction": "Base Repair Cost and the faction's current attitude both affect the final price."
+      "interaction": "BASE REPAIR COST and the faction's current attitude both affect the final price."
     },
     {
       "id": "economy.repairNeutral",
@@ -11910,7 +11910,7 @@
       },
       "rationale": "Repair price when you're neutral with the technician's faction. Vanilla: 1×.",
       "logic": "Higher means more expensive repairs from neutral technicians; lower means cheaper repairs at this reputation level.",
-      "interaction": "Base Repair Cost and the faction's current attitude both affect the final price."
+      "interaction": "BASE REPAIR COST and the faction's current attitude both affect the final price."
     },
     {
       "id": "economy.repairFriend",
@@ -11951,7 +11951,7 @@
       },
       "rationale": "Repair price when the technician's faction likes you. Vanilla: 0.75× — a friend's discount.",
       "logic": "Higher means more expensive repairs from friendly technicians; lower means cheaper repairs at this reputation level.",
-      "interaction": "Base Repair Cost and the faction's current attitude both affect the final price."
+      "interaction": "BASE REPAIR COST and the faction's current attitude both affect the final price."
     },
     {
       "id": "economy.mainQuestReward",
@@ -11995,7 +11995,7 @@
       },
       "rationale": "Coupons you get for main story quests. Vanilla: Novice 1.35×, Stalker 1×, Veteran 0.75×, Master 0.55×.",
       "logic": "",
-      "interaction": "Side Quest Coupons are adjusted independently. This does not change stash rewards or starting money."
+      "interaction": "SIDE QUEST COUPONS are adjusted independently. This does not change stash rewards or starting money."
     },
     {
       "id": "economy.sideQuestReward",
@@ -12039,7 +12039,7 @@
       },
       "rationale": "Coupons you get for side quests. Vanilla: Novice 1.35×, Stalker 1×, Veteran 0.75×, Master 0.55×.",
       "logic": "",
-      "interaction": "Main Quest Coupons are adjusted independently. This does not change stash rewards or starting money."
+      "interaction": "MAIN QUEST COUPONS are adjusted independently. This does not change stash rewards or starting money."
     },
     {
       "id": "equipment.armorDurability",
@@ -12396,7 +12396,7 @@
       },
       "rationale": "Master's extra stamina cost while you're heavily irradiated. Vanilla: Novice–Veteran OFF, Master ON. Radiation still builds up and hurts you either way.",
       "logic": "When the game enters the heavy-radiation state used by this Master bundle, it adds an extra stamina-drain penalty (50% in vanilla). The normal radiation system remains active either way.",
-      "interaction": "The activation point stays vanilla. Radiation Accumulation and Radiation Recovery determine how quickly the player reaches and leaves that state."
+      "interaction": "The activation point stays vanilla. RADIATION ACCUMULATION and RADIATION RECOVERY determine how quickly the player reaches and leaves that state."
     },
     {
       "id": "advanced.fatigueMechanics",
@@ -12474,7 +12474,7 @@
       },
       "rationale": "Bonus stamina recovery while your stomach is full. Vanilla: +20% — a reward for eating before a fight. 0% removes it.",
       "logic": "Higher values reward staying well fed with stronger stamina recovery; zero removes the bonus. The supported UI range does not turn this lowest-hunger state into a penalty.",
-      "interaction": "The game keeps the vanilla boundary for leaving the well-fed state. Stamina Regen in the Stamina tab sets the underlying regeneration rate."
+      "interaction": "The game keeps the vanilla boundary for leaving the well-fed state. STAMINA REGEN in the Stamina tab sets the underlying regeneration rate."
     },
     {
       "id": "survival.starvationStaminaDrain",
@@ -12559,7 +12559,7 @@
       },
       "rationale": "Health lost each time starvation hits under Master rules. Vanilla: 4 HP. 0 = starving no longer hurts directly. Only works while STARVATION MECHANICS is ON.",
       "logic": "Higher values increase each starvation-damage charge; zero retains the bundle but removes direct HP damage from this component.",
-      "interaction": "Starvation Damage Interval controls how often the charge repeats, while Starvation Penalty Delay controls when this effect begins after activation.",
+      "interaction": "STARVATION DAMAGE INTERVAL controls how often the charge repeats, while STARVATION PENALTY DELAY controls when this effect begins after activation.",
       "requiresToggle": "advanced.starvationMechanics"
     },
     {
@@ -12603,7 +12603,7 @@
       },
       "rationale": "Seconds between starvation hits. Vanilla: 10 seconds. Lower = the same damage comes faster. Only works while STARVATION MECHANICS is ON.",
       "logic": "Lower values make the same damage arrive more frequently; higher values spread the damage out over a longer interval.",
-      "interaction": "Practical starvation pressure depends on both this interval and Starvation Damage.",
+      "interaction": "Practical starvation pressure depends on both this interval and STARVATION DAMAGE.",
       "requiresToggle": "advanced.starvationMechanics"
     },
     {
@@ -12702,7 +12702,7 @@
       },
       "rationale": "How much starving blocks your healing under Master rules. Vanilla: 100% — no healing at all. 0% removes it. Only works while STARVATION MECHANICS is ON.",
       "logic": "Higher values suppress health regeneration more strongly; zero removes this component.",
-      "interaction": "This acts on regeneration rather than direct damage, so it combines with Starvation Damage and the Health tab regeneration settings.",
+      "interaction": "This acts on regeneration rather than direct damage, so it combines with STARVATION DAMAGE and the Health tab regeneration settings.",
       "requiresToggle": "advanced.starvationMechanics"
     },
     {
@@ -13033,7 +13033,7 @@
       },
       "rationale": "How much of your stamina bar you lose while exhausted under Master rules. Vanilla: 20%. 0% removes it. Only works while SEVERE FATIGUE MECHANICS is ON.",
       "logic": "Higher values reduce the available stamina pool further; zero removes this component.",
-      "interaction": "Max Stamina defines your normal pool; this loss applies only during Master severe fatigue.",
+      "interaction": "MAX STAMINA defines your normal pool; this loss applies only during Master severe fatigue.",
       "requiresToggle": "advanced.fatigueMechanics"
     },
     {
@@ -13255,7 +13255,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much more stamina actions cost while heavily irradiated under Master rules. Vanilla: +50%. 0% removes it. Only works while Radiation Stamina Penalty is ON.",
+      "rationale": "How much more stamina actions cost while heavily irradiated under Master rules. Vanilla: +50%. 0% removes it. Only works while RADIATION STAMINA PENALTY is ON.",
       "logic": "50% means +50% extra stamina cost. 0% removes this extra radiation cost.",
       "interaction": "",
       "requiresToggle": "advanced.radiationMechanics"
@@ -13395,7 +13395,7 @@
       },
       "rationale": "Health lost per tick from a light bleed. Vanilla: 1 HP.",
       "logic": "",
-      "interaction": "Applies while the game is in its vanilla low-bleeding state. Natural Bleeding Recovery determines how long bleeding lasts."
+      "interaction": "Applies while the game is in its vanilla low-bleeding state. NATURAL BLEEDING RECOVERY determines how long bleeding lasts."
     },
     {
       "id": "survival.bleedingMediumDamage",
@@ -13557,8 +13557,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How hard electro anomalies hit you. Vanilla: 65 base damage, then scaled by Global Anomaly Damage (Stalker 1×). Each anomaly type has its own bar on this board. 0 makes them harmless.",
-      "logic": "",
+      "rationale": "How hard electro anomalies hit you. Vanilla: 65 base damage, then scaled by GLOBAL ANOMALY DAMAGE (Stalker 1×). Each anomaly type has its own bar on this board. 0 makes them harmless.",
+      "logic": "EFFECTIVE = BASE × GLOBAL ANOMALY DAMAGE, before your protection. The vanilla base 65 gives about Novice 19.5, Stalker 65, Veteran 94.25, Master 113.75.",
       "interaction": "Use GLOBAL ANOMALY DAMAGE to make every damaging anomaly stronger or weaker at once.",
       "exposeInUi": true
     },
@@ -13601,9 +13601,9 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How hard chemical anomalies hit you. Vanilla: 30 base damage, then scaled by Global Anomaly Damage (Stalker 1×). 0 makes them harmless.",
-      "logic": "Effective pre-protection output is approximately base damage x Global Anomaly Damage. With the vanilla base 30, the four vanilla difficulty references are approximately: Novice 9, Stalker 30, Veteran 43.5, Master 52.5. The Base value is the game setting written for this anomaly; Effective is the live result after the global anomaly difficulty setting.",
-      "interaction": "Keep this at 100% to preserve that anomaly's vanilla balance, or change it when this specific hazard should be stronger or weaker than the rest. Global Anomaly Damage stacks with this setting.",
+      "rationale": "How hard chemical anomalies hit you. Vanilla: 30 base damage, then scaled by GLOBAL ANOMALY DAMAGE (Stalker 1×). 0 makes them harmless.",
+      "logic": "EFFECTIVE = BASE × GLOBAL ANOMALY DAMAGE, before your protection. The vanilla base 30 gives about Novice 9, Stalker 30, Veteran 43.5, Master 52.5.",
+      "interaction": "Leave the vanilla base for that anomaly's usual balance, or change it to make just this hazard stronger or weaker. GLOBAL ANOMALY DAMAGE stacks with this setting.",
       "exposeInUi": false
     },
     {
@@ -13645,9 +13645,9 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How hard fire anomalies hit you. Vanilla: 60 base damage, then scaled by Global Anomaly Damage (Stalker 1×). 0 makes them harmless.",
-      "logic": "Effective pre-protection output is approximately base damage x Global Anomaly Damage. With the vanilla base 60, the four vanilla difficulty references are approximately: Novice 18, Stalker 60, Veteran 87, Master 105. The Base value is the game setting written for this anomaly; Effective is the live result after the global anomaly difficulty setting.",
-      "interaction": "Keep this at 100% to preserve that anomaly's vanilla balance, or change it when this specific hazard should be stronger or weaker than the rest. Global Anomaly Damage stacks with this setting.",
+      "rationale": "How hard fire anomalies hit you. Vanilla: 60 base damage, then scaled by GLOBAL ANOMALY DAMAGE (Stalker 1×). 0 makes them harmless.",
+      "logic": "EFFECTIVE = BASE × GLOBAL ANOMALY DAMAGE, before your protection. The vanilla base 60 gives about Novice 18, Stalker 60, Veteran 87, Master 105.",
+      "interaction": "Leave the vanilla base for that anomaly's usual balance, or change it to make just this hazard stronger or weaker. GLOBAL ANOMALY DAMAGE stacks with this setting.",
       "exposeInUi": false
     },
     {
@@ -13689,9 +13689,9 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How hard carousel (gravity whirl) anomalies hit you. Vanilla: 105 base damage, then scaled by Global Anomaly Damage (Stalker 1×). The hardest-hitting of the group. 0 makes them harmless.",
-      "logic": "Effective pre-protection output is approximately base damage x Global Anomaly Damage. With the vanilla base 105, the four vanilla difficulty references are approximately: Novice 31.5, Stalker 105, Veteran 152.25, Master 183.75. The Base value is the game setting written for this anomaly; Effective is the live result after the global anomaly difficulty setting.",
-      "interaction": "Keep this at 100% to preserve that anomaly's vanilla balance, or change it when this specific hazard should be stronger or weaker than the rest. Global Anomaly Damage stacks with this setting.",
+      "rationale": "How hard carousel (gravity whirl) anomalies hit you. Vanilla: 105 base damage, then scaled by GLOBAL ANOMALY DAMAGE (Stalker 1×). The hardest-hitting of the group. 0 makes them harmless.",
+      "logic": "EFFECTIVE = BASE × GLOBAL ANOMALY DAMAGE, before your protection. The vanilla base 105 gives about Novice 31.5, Stalker 105, Veteran 152.25, Master 183.75.",
+      "interaction": "Leave the vanilla base for that anomaly's usual balance, or change it to make just this hazard stronger or weaker. GLOBAL ANOMALY DAMAGE stacks with this setting.",
       "exposeInUi": false
     },
     {
@@ -13733,9 +13733,9 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How hard toxic cloud anomalies hit you. Vanilla: 25 base damage, then scaled by Global Anomaly Damage (Stalker 1×). 0 makes them harmless.",
-      "logic": "Effective pre-protection output is approximately base damage x Global Anomaly Damage. With the vanilla base 25, the four vanilla difficulty references are approximately: Novice 7.5, Stalker 25, Veteran 36.25, Master 43.75. The Base value is the game setting written for this anomaly; Effective is the live result after the global anomaly difficulty setting.",
-      "interaction": "Keep this at 100% to preserve that anomaly's vanilla balance, or change it when this specific hazard should be stronger or weaker than the rest. Global Anomaly Damage stacks with this setting.",
+      "rationale": "How hard toxic cloud anomalies hit you. Vanilla: 25 base damage, then scaled by GLOBAL ANOMALY DAMAGE (Stalker 1×). 0 makes them harmless.",
+      "logic": "EFFECTIVE = BASE × GLOBAL ANOMALY DAMAGE, before your protection. The vanilla base 25 gives about Novice 7.5, Stalker 25, Veteran 36.25, Master 43.75.",
+      "interaction": "Leave the vanilla base for that anomaly's usual balance, or change it to make just this hazard stronger or weaker. GLOBAL ANOMALY DAMAGE stacks with this setting.",
       "exposeInUi": false
     },
     {
@@ -13777,9 +13777,9 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How hard steam anomalies hit you. Vanilla: 60 base damage, then scaled by Global Anomaly Damage (Stalker 1×). 0 makes them harmless.",
-      "logic": "Effective pre-protection output is approximately base damage x Global Anomaly Damage. With the vanilla base 60, the four vanilla difficulty references are approximately: Novice 18, Stalker 60, Veteran 87, Master 105. The Base value is the game setting written for this anomaly; Effective is the live result after the global anomaly difficulty setting.",
-      "interaction": "Keep this at 100% to preserve that anomaly's vanilla balance, or change it when this specific hazard should be stronger or weaker than the rest. Global Anomaly Damage stacks with this setting.",
+      "rationale": "How hard steam anomalies hit you. Vanilla: 60 base damage, then scaled by GLOBAL ANOMALY DAMAGE (Stalker 1×). 0 makes them harmless.",
+      "logic": "EFFECTIVE = BASE × GLOBAL ANOMALY DAMAGE, before your protection. The vanilla base 60 gives about Novice 18, Stalker 60, Veteran 87, Master 105.",
+      "interaction": "Leave the vanilla base for that anomaly's usual balance, or change it to make just this hazard stronger or weaker. GLOBAL ANOMALY DAMAGE stacks with this setting.",
       "exposeInUi": false
     },
     {
@@ -13967,7 +13967,7 @@
       },
       "rationale": "How much health Glass Shards take as you move through them. Vanilla: 1×. Running through still hurts more than walking.",
       "logic": "1× keeps vanilla Glass Shards damage; 0× removes its health damage; 2× doubles both walking and running damage.",
-      "interaction": "Glass Shards Bleeding and Glass Shards equipment corrosion remain separate effects. This control does not change the anomaly speed thresholds.",
+      "interaction": "GLASS SHARDS BLEEDING and Glass Shards equipment corrosion remain separate effects. This control does not change the anomaly speed thresholds.",
       "exposeInUi": false
     },
     {
@@ -14018,7 +14018,7 @@
       },
       "rationale": "How badly Glass Shards make you bleed. Vanilla: 1×. 0× = no bleeding; running through still cuts deeper than walking.",
       "logic": "1× keeps vanilla Glass Shards bleeding; 0× removes it; 2× doubles it.",
-      "interaction": "Glass Shards Health Damage is independent. Movement-speed thresholds and corrosion values remain vanilla."
+      "interaction": "GLASS SHARDS HEALTH DAMAGE is independent. Movement-speed thresholds and corrosion values remain vanilla."
     },
     {
       "id": "environment.soapBubbleHealthDamage",
@@ -14156,7 +14156,7 @@
       },
       "rationale": "How much health a Diamond hit takes. Vanilla: 15. Its bleeding is a separate setting.",
       "logic": "15 keeps vanilla Diamond health damage; 0 removes it; 30 doubles it.",
-      "interaction": "Diamond Bleeding is controlled separately.",
+      "interaction": "DIAMOND BLEEDING is controlled separately.",
       "exposeInUi": false
     },
     {
@@ -14203,7 +14203,7 @@
       },
       "rationale": "How badly a Diamond hit makes you bleed. Vanilla: 10 bleed pts. 0 = no bleeding from it.",
       "logic": "10 is vanilla; the range is 0–20.",
-      "interaction": "Diamond Health Damage is a separate setting.",
+      "interaction": "DIAMOND HEALTH DAMAGE is a separate setting.",
       "exposeInUi": false
     },
     {
@@ -15109,7 +15109,7 @@
       },
       "rationale": "How fast your guns wear out when you shoot. Vanilla: 1×. 0.5× = about twice as many shots between repairs; 2× = half as many. A healthier gun also jams less.",
       "logic": "1× keeps vanilla wear; 0.5× roughly halves condition loss per shot; 2× roughly doubles it.",
-      "interaction": "Weapon Jam Rate is separate. Slower wear indirectly delays condition-related jams because your gun stays healthy longer."
+      "interaction": "WEAPON JAM RATE is separate. Slower wear indirectly delays condition-related jams because your gun stays healthy longer."
     },
     {
       "id": "loot.worldAmmoCratesRemoved",
@@ -15383,7 +15383,7 @@
       },
       "rationale": "Share of ammo, consumables and grenades lying around loose that disappears. Vanilla: 0%. Stashes, boxes, NPC loot, traders, weapons, armor and quest rewards are not affected.",
       "logic": "0% keeps vanilla loose world loot. Higher settings remove more eligible loose pickups from the world.",
-      "interaction": "Separate from the AMMO / FOOD & DRINK / MEDICAL BOXES bars and Shuffle Loose Weapons. Loot bundles that stay keep their vanilla contents.",
+      "interaction": "Separate from the AMMO / FOOD & DRINK / MEDICAL BOXES bars and SHUFFLE LOOSE WEAPONS. Loot bundles that stay keep their vanilla contents.",
       "exposeInUi": false
     },
     {
@@ -15425,7 +15425,7 @@
       },
       "rationale": "Moves nine loose unique weapons to each other's spots, so you can't walk straight to a guide location. Vanilla: OFF. All nine are still out there, once each.",
       "logic": "OFF keeps every unique weapon where the game put it; ON moves all nine, once each, to another unique-weapon spot.",
-      "interaction": "Separate from Shuffle Loose Weapons and GUNS TO FIND. Quest rewards and trader stock are untouched.",
+      "interaction": "Separate from SHUFFLE LOOSE WEAPONS and GUNS TO FIND. Quest rewards and trader stock are untouched.",
       "exposeInUi": false
     },
     {
@@ -15532,7 +15532,7 @@
       },
       "rationale": "How many loose guns you'll find out in the Zone after shuffling. Vanilla: 100% fills all safe weapon spots. Turn it down for fewer guns lying around — even 0% leaves at least one of each regular model. Quest, unique and NPC weapons are unaffected.",
       "logic": "Higher values leave more compatible loose-weapon spots filled; lower values make found guns scarcer. Even 0% guarantees at least one of every regular model.",
-      "interaction": "Only affects loose regular weapons when Shuffle Loose Weapons is ON; quest, unique and NPC guns are untouched."
+      "interaction": "Only affects loose regular weapons when SHUFFLE LOOSE WEAPONS is ON; quest, unique and NPC guns are untouched."
     },
     {
       "id": "loot.worldAttachmentShuffle",
@@ -16032,7 +16032,7 @@
       },
       "rationale": "Not used: the game limits each mutant species separately, so there is no single mutant slider that's proven to work. Use the per-species bars instead.",
       "logic": "The game has separate per-species group limits, so this hidden setting is not used to scale them.",
-      "interaction": "Not shown in the normal UI. Use the species-specific Mutant Group Size radar instead.",
+      "interaction": "Not shown in the normal UI. Use the species-specific MUTANT GROUP SIZE radar instead.",
       "exposeInUi": false
     },
     {

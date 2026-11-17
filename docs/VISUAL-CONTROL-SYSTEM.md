@@ -1,3 +1,8 @@
+## 2026-11-17 — CURRENT: control references in caps, anomaly damage texts
+
+* Every reference to another control inside WHAT IT DOES / HIGHER / LOWER / WITH OTHER SETTINGS is written in caps like the board draws it (95 references: GLOBAL ANOMALY DAMAGE, NATURAL BLEEDING RECOVERY, BONUS CHANCE, BASE REPAIR COST, PEAK HIT PROTECTION, …), so a control name is always recognisable as one.
+* DAMAGE BY ANOMALY base-damage bars: HIGHER / LOWER reads `EFFECTIVE = BASE × GLOBAL ANOMALY DAMAGE, before your protection. The vanilla base 30 gives about Novice 9, …` (was *pre-protection output … game setting written for this anomaly*); Electro gains the same line. WITH OTHER SETTINGS no longer says *keep this at 100%* on a raw-damage bar.
+
 ## 2026-11-17 — CURRENT: endpoint units and duplicate vanilla lines
 
 * "0 removes it" style endpoints use the control's unit: `0% removes it` on Master / severe-fatigue / starvation / well-fed / radiation penalties, `0× removes them` on the AMMO TYPE MIX calibers, `0× makes it free` on Guide Travel Fees (raw anomaly base damages keep plain `0`).

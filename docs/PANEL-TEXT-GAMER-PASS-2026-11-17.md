@@ -53,3 +53,7 @@ The right-hand panel shows four sections for a selected control: **WHAT IT DOES*
 
 21. Endpoints ("0 removes it", "2 doubles it") use the control's unit too (`0%`, `0×`), except raw-value controls.
 22. Vanilla values are stated once, in WHAT IT DOES; HIGHER / LOWER explains direction only.
+
+## Ninth pass (same day)
+
+23. Any other control named in a panel text is written in CAPS (its label or board token).
