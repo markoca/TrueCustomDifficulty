@@ -60,3 +60,7 @@ Each medical item exists in Chance rows (Basic / Standard / Rare) and in Weight 
 
 Cabin and direct medical rows are fixed Chance rows (MEDICAL COMPOSITION only); they and DLC1 CheapNoFresh are outside ODDS PER STASH.
 
+
+## 2026-11-17 — ADJUST ODDS: no CHANCE tag
+
+The two absolute chance cells (Basic GRENADES `loot.cheapStashGrenadeChance`, Rare COUPONS `loot.expensiveStashMoneyChance`) keep their real-per-stash-chance semantics but no longer carry a `CHANCE` tag; the header reads `100% = GAME ODDS`. The CONTROLS help names both cells.

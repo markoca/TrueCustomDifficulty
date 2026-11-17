@@ -1,3 +1,7 @@
+## 2026-11-17 — CURRENT: ADJUST ODDS without the CHANCE tag
+
+* STASH LOOT MIX → **ADJUST ODDS**: the quiet `CHANCE` tag before the Basic GRENADES and Rare COUPONS rails is removed (redundant: row label, % readout and vanilla tick already say it); those rails now start at the same x as every other cell. The header is just `100% = GAME ODDS` (the former `· CHANCE = REAL %` referred to the tag). Supersedes the tag in the 2026-11-16 STASH consistency entry. Values, 5% grid, writer and presets unchanged; the CONTROLS help names the two real-chance cells instead.
+
 ## 2026-11-17 — CURRENT: TRADER STOCK consistency review (text fixes)
 
 * **AMMO / MEDICAL SUPPLY** interaction text no longer claims the supply "does not alter availability chance": below 1x stacks shrink first and only offers already down to 1 turn up less often (`SupplyOddsFactor`), exactly as the logic text and the board help say. The pointer to the per-category control now names the board's **AMMO / MEDICAL rail of each trader type** (the former "odds sliders" wording referred to controls that do not exist). No value, range, preset key or writer change.

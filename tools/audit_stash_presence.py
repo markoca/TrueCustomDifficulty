@@ -146,10 +146,9 @@ for c in easy:
             vanilla_none *= 1 - float(i["fields"]["Chance"].rstrip("f"))
 assert vanilla_none == 0.0  # Novice: Basic meds are certain from Chance rows alone
 
-# ---- 9. ADJUST ODDS: absolute CHANCE cells are tagged, one 5% grid --------
-assert 'id is "loot.cheapStashGrenadeChance" or "loot.expensiveStashMoneyChance"' in grid
-assert '"100% = GAME ODDS · CHANCE = REAL %"' in grid
-assert 'CreateText("CHANCE", 8.4, muted, FontWeights.Bold)' in grid
+# ---- 9. ADJUST ODDS: one 5% grid, no CHANCE tag (2026-11-17) --------------
+assert '"100% = GAME ODDS"' in grid and "CHANCE = REAL %" not in grid
+assert 'CreateText("CHANCE"' not in grid
 catalog = {p["id"]: p for p in json.loads(read("Data/parameters.json"))["parameters"]}
 import re as _re
 grid_ids = set(_re.findall(r'"(loot\.[A-Za-z]+)"', grid.split("StashControlGrid =", 1)[1].split("};", 1)[0]))
