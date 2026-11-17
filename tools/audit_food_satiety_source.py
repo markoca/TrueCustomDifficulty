@@ -98,7 +98,7 @@ def main() -> int:
     require(len(factory_files) == 12, "expected 12 factory playstyle profiles")
     for preset_file in factory_files:
         profile = json.loads(read(preset_file))
-        require(len(profile["values"]) == 359, f"{preset_file.name}: incomplete source keys")
+        require(len(profile["values"]) == len(params), f"{preset_file.name}: incomplete source keys")
         for pid, _, reference, maximum, _, _, _ in FOOD:
             entry = profile["values"][pid]
             value = entry.get("number")

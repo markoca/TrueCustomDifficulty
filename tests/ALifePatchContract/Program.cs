@@ -203,9 +203,11 @@ internal static class Program
                 ?? throw new InvalidDataException("Missing embedded factory preset: " + name);
             var preset = JsonSerializer.Deserialize<PresetFile>(resource)
                 ?? throw new InvalidDataException("Cannot parse embedded factory preset: " + name);
-            Check(preset.Values.Count == 359 && Catalog.Parameters.Count == 399
-                && !preset.Values.ContainsKey("loot.genericCorpseReduction")
-                && !preset.Values.ContainsKey("loot.genericStashReduction"),
+            Check(preset.Values.Count == 399 && Catalog.Parameters.Count == 399
+                && preset.Values.TryGetValue("loot.genericCorpseReduction", out var corpseReduction)
+                && corpseReduction.Number == 0.0
+                && preset.Values.TryGetValue("loot.genericStashReduction", out var stashReduction)
+                && stashReduction.Number == 0.0,
                 "Incomplete factory source count: " + name);
             Check(preset.Values.TryGetValue("alife.mutantSpawn.generic", out var generic)
                 && generic.Number == 1.0, "Hidden A-Life generic must remain neutral: " + name);

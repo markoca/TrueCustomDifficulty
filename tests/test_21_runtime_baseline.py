@@ -26,7 +26,7 @@ class Game21BaselineContract(unittest.TestCase):
         for name in names:
             preset = json.loads((SRC / "Presets" / (name + ".json")).read_text(encoding="utf-8"))
             self.assertEqual("2.1", preset["gameVersion"], name)
-            self.assertEqual(359, len(preset["values"]), name)
+            self.assertEqual(399, len(preset["values"]), name)
         service = (SRC / "Services" / "PresetDirectoryService.cs").read_text(encoding="utf-8")
         self.assertIn("Pre21FactoryBlobs", service)
         self.assertIn("&& !Pre21FactoryBlobs.TryGetValue(name, out knownHash)", service)

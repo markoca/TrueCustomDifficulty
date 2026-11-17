@@ -1,3 +1,9 @@
+## 2026-11-17 — CURRENT: factory presets store every control
+
+* All 12 factory presets now contain all 399 controls. The 40 controls added on 2026-11-16 (MUTANT AGGRESSION 25, ARTIFACT HUNTING 4, HUMAN TACTICS / HUMAN AWARENESS 9, corpse/stash SUPPLY REDUCTION 2) are stored at the preset's reference-difficulty vanilla value (Master presets: 2× on the Master-only combat-sync rows), exactly what loading produced while they were missing. Nothing plays differently; thematic tuning of these controls comes later.
+* `PresetDirectoryService.PreNewControlsFactoryBlobs` holds the previous stock hashes, so byte-identical installed factory copies upgrade; edited presets stay untouched.
+* `tools/audit_factory_preset_coverage.py` checks full coverage, the stored vanilla values and the upgrade hashes.
+
 ## 2026-11-16 — CURRENT: factory presets match MEDICAL COMPOSITION (option a)
 
 * All 12 factory presets now store each medical Weight factor (`loot.stashMedical{Item}Bias`) equal to its Chance scale, i.e. what loading already produced since one MEDICAL COMPOSITION cell drives both (0–100%). The old 1.25–1.75× Weight boosts (Field Medic, Anomaly Runner, Mutant Hunter, Scavenger, Wanderer, Immersive, Smuggler) were silently dropped on load; they are now gone from the files too. Field Medic's stash medicine is therefore vanilla (100%); its medical identity stays in healing, bleeding and trader/NPC supply.

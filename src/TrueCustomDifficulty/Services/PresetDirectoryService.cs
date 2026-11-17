@@ -628,6 +628,27 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "eef85efa9c5e5051fdb6bcff02bdb9c8440e8044",
     };
 
+    // Exact stock files before every factory preset stored the 2026-11-16
+    // controls (MUTANT AGGRESSION, ARTIFACT HUNTING, HUMAN TACTICS / HUMAN
+    // AWARENESS, supply reductions) at its reference difficulty's vanilla.
+    // Byte-identical copies upgrade; edited presets stay.
+    private static readonly Dictionary<string, string> PreNewControlsFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "c08e270f36e6772060f1a238c3a74debca2660ca",
+        ["Field Medic"] = "7ca9e6f9ea9d23a3b28a6911998befcb48fd3a41",
+        ["Hardcore+"] = "e260e8d05060c8a7484ba8ae5d38e063160bb0d1",
+        ["Hardcore"] = "e46d98f3128f074eb03a0130c30639841915eacf",
+        ["Immersive"] = "b2112d17158a03d8335a68414e93f68ae511bd53",
+        ["Mercenary"] = "f3fd78311fa21e87a190b08420e0b5041fa8d188",
+        ["Mutant Hunter"] = "3fcef45fd781d0974ad7198886097dea357b81bc",
+        ["Outcast"] = "396eb18fd3c2caef727795b3f53fec1d73cfb6d0",
+        ["Scavenger"] = "9a14aa33a903ce77a47ff3b1e8d029cf28e81885",
+        ["Smuggler"] = "020f78804fbc66a3139fc5912252f4aff5bebff5",
+        ["Tactical"] = "770247c6ca7720b498a7153038431e26e8362246",
+        ["Wanderer"] = "98fd063277744c7b995fb60340f339ae9c6bc342",
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -650,7 +671,8 @@ public sealed class PresetDirectoryService
             && !PreWorldArmorRemovalFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreWeaponArmorWeightFactoryBlobs.TryGetValue(name, out knownHash)
             && !Pre21FactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreMedicalMirrorFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreMedicalMirrorFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreNewControlsFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -704,7 +726,9 @@ public sealed class PresetDirectoryService
                 || (Pre21FactoryBlobs.TryGetValue(name, out var pre21Hash)
                     && actual.Equals(pre21Hash, StringComparison.OrdinalIgnoreCase))
                 || (PreMedicalMirrorFactoryBlobs.TryGetValue(name, out var preMirrorHash)
-                    && actual.Equals(preMirrorHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preMirrorHash, StringComparison.OrdinalIgnoreCase))
+                || (PreNewControlsFactoryBlobs.TryGetValue(name, out var preNewControlsHash)
+                    && actual.Equals(preNewControlsHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

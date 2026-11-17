@@ -341,7 +341,7 @@ def main():
     inert = []
     for name in NAMES:
         doc = json.loads((PRESETS / (name + ".json")).read_text(encoding="utf-8"))
-        require(len(doc["values"]) == 359 and set(doc["values"]) == set(definitions) - {"loot.genericCorpseReduction", "loot.genericStashReduction"},
+        require(set(doc["values"]) == set(definitions),
                 "factory catalog source ID drift " + name)
         sid = SIDS[doc["referenceDifficulty"]]
         for pid, p in definitions.items():

@@ -1444,6 +1444,166 @@
     "economy.traderSells.genericNpc.grenades": {
       "kind": "toggle",
       "boolean": true
+    },
+    "combat.npcGrenadeRate": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.npcSuppressionRate": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.npcFlankRate": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.npcPushRate": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.npcCamperPunishRate": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.npcAccuracy": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.npcSightRange": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.npcHearingRange": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.npcAlertMemory": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.mutantAttackRate.bayun": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.mutantAttackRate.blinddog": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.mutantAttackRate.bloodsucker": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.mutantAttackRate.boar": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.mutantAttackRate.burer": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.mutantAttackRate.chimera": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.mutantAttackRate.controller": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.mutantAttackRate.deer": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.mutantAttackRate.flesh": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.mutantAttackRate.poltergeist": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.mutantAttackRate.pseudodog": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.mutantAttackRate.pseudogiant": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.mutantAttackRate.snork": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.mutantAttackRate.tushkan": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.mutantAbilityRate.bayun": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.mutantAbilityRate.blinddog": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.mutantAbilityRate.bloodsucker": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.mutantAbilityRate.burer": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.mutantAbilityRate.chimera": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.mutantAbilityRate.controller": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.mutantAbilityRate.poltergeist": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.mutantAbilityRate.pseudodog": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.mutantAbilityRate.pseudogiant": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.mutantAbilityRate.snork": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.mutantSpecialAbilityRate": {
+      "kind": "slider",
+      "number": 1
+    },
+    "loot.genericCorpseReduction": {
+      "kind": "slider",
+      "number": 0
+    },
+    "loot.genericStashReduction": {
+      "kind": "slider",
+      "number": 0
+    },
+    "environment.artifactRespawnRate": {
+      "kind": "slider",
+      "number": 1
+    },
+    "environment.artifactSpawnChance": {
+      "kind": "slider",
+      "number": 1
+    },
+    "environment.artifactRareLuck": {
+      "kind": "slider",
+      "number": 1
+    },
+    "environment.artifactCount": {
+      "kind": "slider",
+      "number": 1
     }
   }
 }

@@ -2072,15 +2072,15 @@ _factory_legacy_catalog = {pid: p for pid, p in _factory_catalog.items()
                            if pid not in {"survival.breadSatiety", "survival.sausageSatiety",
                                "survival.cannedFoodSatiety", "survival.milkSatiety"}
                            and pid not in _factory_new_tier_chance_ids
-                           # Post-legacy supply masters: factory presets omit
-                           # them and load at the 0% (no edit) default.
+                           # Post-legacy controls below are stored by every factory
+                           # preset at its reference vanilla (audit_factory_preset_coverage)
+                           # but lie outside the frozen 2026-10-15 decision ledgers.
+                           # Supply masters: 0% (no edit).
                            and pid not in {"loot.genericCorpseReduction", "loot.genericStashReduction"}
-                           # MUTANT AGGRESSION (2026-11-16): omitted by factory
-                           # presets, loads at the difficulty's vanilla value.
+                           # MUTANT AGGRESSION (2026-11-16): reference vanilla.
                            and not pid.startswith(("combat.mutantAttackRate.", "combat.mutantAbilityRate."))
                            and pid != "combat.mutantSpecialAbilityRate"
-                           # ARTIFACT HUNTING (2026-11-16): omitted by factory
-                           # presets until they are tuned; loads at vanilla 1x.
+                           # ARTIFACT HUNTING (2026-11-16): vanilla 1x until tuned.
                            and not pid.startswith("environment.artifact")
                            # HUMAN TACTICS / HUMAN AWARENESS (2026-11-16): same.
                            and pid not in {"combat.npcGrenadeRate", "combat.npcSuppressionRate",

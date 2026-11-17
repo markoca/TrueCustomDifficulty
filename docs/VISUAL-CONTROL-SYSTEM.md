@@ -1,3 +1,9 @@
+## 2026-11-17 — CURRENT: factory presets store every control
+
+* All 12 factory presets now contain all 399 controls. The 40 controls added on 2026-11-16 (MUTANT AGGRESSION 25, ARTIFACT HUNTING 4, HUMAN TACTICS / HUMAN AWARENESS 9, corpse/stash SUPPLY REDUCTION 2) are stored at the preset's reference-difficulty vanilla value (Master presets: 2× on the Master-only combat-sync rows), exactly what loading produced while they were missing. Nothing plays differently; thematic tuning of these controls comes later.
+* `PresetDirectoryService.PreNewControlsFactoryBlobs` holds the previous stock hashes, so byte-identical installed factory copies upgrade; edited presets stay untouched.
+* `tools/audit_factory_preset_coverage.py` checks full coverage, the stored vanilla values and the upgrade hashes.
+
 ## 2026-11-17 — CURRENT: consistency pass (help, ranges, HUMAN AWARENESS, no status messages)
 
 * CONTROLS help of ARTIFACT HUNTING, HUMAN TACTICS and HUMAN AWARENESS no longer repeats the reset sentence (the panel adds it under every board).
