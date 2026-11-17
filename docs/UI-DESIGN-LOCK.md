@@ -1,3 +1,24 @@
+## 2026-11-17 — CURRENT: descriptive combat card texts
+
+The combat cards read as short sentences about the enemy. The panel adds the factor in front (`1x · …`).
+
+| Card | Text at 1× |
+|---|---|
+| GRENADES | `throws a grenade every 20–35 s` |
+| SUPPRESSION | `pins you down every 15–25 s` |
+| FLANKING | `flanks you every 10–20 s` |
+| PUSH | `rushes your cover every 12–25 s` |
+| CAMPING PENALTY | `flushes you out every 2–5 s` |
+| ENEMY ACCURACY | `shot spread 100%` |
+| SIGHT | `spots you 80 m ahead, 25 m aside` |
+| HEARING | `hears steps at 12 m` |
+| MEMORY | `searches for 30 s` |
+| SPECIAL ABILITY RATE | `special move every 8–12 s` |
+
+* Track ends keep only the figure at each slider limit (`80–140 s`, `20 m`, `400%`), matched by `AggregateVisualControl.EndpointFigure`.
+* Only the numbers turn gold when changed (ReadoutInk).
+* The HUMAN TACTICS rationales quote the same texts.
+
 ## 2026-11-17 — CURRENT: Combat cards show the real values, not the slider factor
 
 * The HUMAN TACTICS, HUMAN AWARENESS and MUTANT SPECIAL ABILITY RATE cards no longer show the `1.4x · ` prefix. The factor is not a game value by itself. The card shows only the concrete result:

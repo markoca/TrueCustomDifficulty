@@ -211,7 +211,7 @@ public static class MutantAggressionPolicy
     /// <summary>Board and panel value of SPECIAL ABILITY RATE (writer rounding).</summary>
     public static string SpecialAbilityDisplay(double rate)
         => string.Create(CultureInfo.InvariantCulture,
-            $"{rate:0.##}x · pause {8.0 / rate:0.##}–{12.0 / rate:0.##} s");
+            $"{rate:0.##}x · special move every {8.0 / rate:0.##}–{12.0 / rate:0.##} s");
 
     // ---- SPECIAL ABILITY RATE --------------------------------------------
     public static IReadOnlyList<(string Index, string Tag, double Min, double Max)> AbilityTokenGroups { get; } =

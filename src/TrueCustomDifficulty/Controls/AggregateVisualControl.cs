@@ -628,14 +628,15 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
     // Track ends: the first concrete figure only ("80–140 s", "20 m", "400%"),
     // so both ends fit under narrow cards.
+    private static readonly System.Text.RegularExpressions.Regex EndpointFigure =
+        new(@"\d+(?:\.\d+)?(?:–\d+(?:\.\d+)?)?\s?(?:%|s\b|m\b)");
+
     private static string CardEndpoint(ParameterViewModel parameter, double value)
     {
         if (HumanCombatPolicy.CardText(parameter.Id, value, parameter.ReferenceNumber) is not { } concrete)
             return EconomyValue(parameter, value);
-        var first = concrete.IndexOfAny("0123456789".ToCharArray());
-        var figure = first < 0 ? concrete : concrete[first..];
-        var dot = figure.IndexOf(" · ", StringComparison.Ordinal);
-        return dot > 0 ? figure[..dot] : figure;
+        var figure = EndpointFigure.Match(concrete);
+        return figure.Success ? figure.Value : concrete;
     }
 
     // Generic compact board of economy-style cards (two columns when wide).

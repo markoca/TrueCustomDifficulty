@@ -54,3 +54,5 @@ save rules (out of scope).
 points (exact), `audit_combat_contract.py`.
 
 **Cards (2026-11-17):** concrete results only (`grenade every 20–35 s`, `steps 12 m`, `search 30 s`, `spread 100%`); track ends show the figures at the slider limits; the factor stays in the selected-control panel.
+
+**Card texts (2026-11-17):** `throws a grenade every 20–35 s`, `pins you down every 15–25 s`, `flanks you every 10–20 s`, `rushes your cover every 12–25 s`, `flushes you out every 2–5 s`, `shot spread 100%`, `spots you 80 m ahead, 25 m aside`, `hears steps at 12 m`, `searches for 30 s`.

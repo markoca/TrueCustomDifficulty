@@ -389,7 +389,7 @@
           "The four full rank tables are written together with SPECIAL ABILITY RATE and the other tactics (one writer)."
         ]
       },
-      "rationale": "How often human enemies throw grenades at you. Vanilla: every 20–35 s per squad; Master halves it (10–17 s). 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (grenade every 20–35 s at 1×).",
+      "rationale": "How often human enemies throw grenades at you. Vanilla: every 20–35 s per squad; Master halves it (10–17 s). 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (throws a grenade every 20–35 s at 1×).",
       "logic": "1× keeps the selected difficulty's own pauses. The rate divides the pause of every enemy rank; who may act still depends on the game's tactics.",
       "interaction": "Other tactics, ENEMY ACCURACY and HUMAN AWARENESS are independent. Enemy gun damage is HUMAN ENEMIES."
     },
@@ -437,7 +437,7 @@
           "The four full rank tables are written together with SPECIAL ABILITY RATE and the other tactics (one writer)."
         ]
       },
-      "rationale": "How often human enemies pin you down with suppressive fire. Vanilla: every 15–25 s; Master about every 7–12 s. 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (suppressive fire every 15–25 s at 1×).",
+      "rationale": "How often human enemies pin you down with suppressive fire. Vanilla: every 15–25 s; Master about every 7–12 s. 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (pins you down every 15–25 s at 1×).",
       "logic": "1× keeps the selected difficulty's own pauses. The rate divides the pause of every enemy rank; who may act still depends on the game's tactics.",
       "interaction": "Other tactics, ENEMY ACCURACY and HUMAN AWARENESS are independent. Enemy gun damage is HUMAN ENEMIES."
     },
@@ -485,7 +485,7 @@
           "The four full rank tables are written together with SPECIAL ABILITY RATE and the other tactics (one writer)."
         ]
       },
-      "rationale": "How often human enemies try to flank you. Vanilla: every 10–20 s; Master 5–10 s. 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (flank every 10–20 s at 1×).",
+      "rationale": "How often human enemies try to flank you. Vanilla: every 10–20 s; Master 5–10 s. 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (flanks you every 10–20 s at 1×).",
       "logic": "1× keeps the selected difficulty's own pauses. The rate divides the pause of every enemy rank; who may act still depends on the game's tactics.",
       "interaction": "Other tactics, ENEMY ACCURACY and HUMAN AWARENESS are independent. Enemy gun damage is HUMAN ENEMIES."
     },
@@ -533,7 +533,7 @@
           "The four full rank tables are written together with SPECIAL ABILITY RATE and the other tactics (one writer)."
         ]
       },
-      "rationale": "How often human enemies rush and close in on your cover. Vanilla: advance every 12–25 s, approach every 25–40 s; Master about twice as often. 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (push every 12–25 s at 1×).",
+      "rationale": "How often human enemies rush and close in on your cover. Vanilla: advance every 12–25 s, approach every 25–40 s; Master about twice as often. 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (rushes your cover every 12–25 s at 1×).",
       "logic": "1× keeps the selected difficulty's own pauses. The rate divides the pause of every enemy rank; who may act still depends on the game's tactics.",
       "interaction": "Other tactics, ENEMY ACCURACY and HUMAN AWARENESS are independent. Enemy gun damage is HUMAN ENEMIES."
     },
@@ -578,7 +578,7 @@
           "The four full rank tables are written together with SPECIAL ABILITY RATE and the other tactics (one writer)."
         ]
       },
-      "rationale": "How often human enemies punish you for staying in one spot. Vanilla: every 2–5 s on every difficulty. 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (flush-out every 2–5 s at 1×).",
+      "rationale": "How often human enemies punish you for staying in one spot. Vanilla: every 2–5 s on every difficulty. 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (flushes you out every 2–5 s at 1×).",
       "logic": "1× keeps the selected difficulty's own pauses. The rate divides the pause of every enemy rank; who may act still depends on the game's tactics.",
       "interaction": "Other tactics, ENEMY ACCURACY and HUMAN AWARENESS are independent. Enemy gun damage is HUMAN ENEMIES."
     },

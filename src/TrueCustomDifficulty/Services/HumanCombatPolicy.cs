@@ -43,19 +43,19 @@ public static class HumanCombatPolicy
 
     public static IReadOnlyList<TacticControl> Tactics { get; } = new TacticControl[]
     {
-        new(GrenadeRateId, "GRENADES", "grenade",
+        new(GrenadeRateId, "GRENADES", "throws a grenade",
             new[] { ("[9]", "TokenTag.CombatAction.ThrowGrenade"), ("[16]", "TokenTag.CombatAction.Special.ThrowGrenade") },
             true, (20, 35), (10, 17)),
-        new(SuppressionRateId, "SUPPRESSION", "suppressive fire",
+        new(SuppressionRateId, "SUPPRESSION", "pins you down",
             new[] { ("[10]", "TokenTag.CombatAction.SuppressiveFire") },
             true, (15, 25), (7, 12)),
-        new(FlankRateId, "FLANKING", "flank",
+        new(FlankRateId, "FLANKING", "flanks you",
             new[] { ("[5]", "TokenTag.CombatAction.Flank") },
             true, (10, 20), (5, 10)),
-        new(PushRateId, "PUSH", "push",
+        new(PushRateId, "PUSH", "rushes your cover",
             new[] { ("[6]", "TokenTag.CombatAction.Advance.Action"), ("[7]", "TokenTag.CombatAction.Advance.Approach") },
             true, (12, 25), (6, 12)),
-        new(CamperPunishRateId, "CAMPING PENALTY", "flush-out",
+        new(CamperPunishRateId, "CAMPING PENALTY", "flushes you out",
             new[] { ("[8]", "TokenTag.CamperPunish") },
             false, (2, 5), (2, 5))
     };
@@ -71,7 +71,7 @@ public static class HumanCombatPolicy
     public static double Reference(TacticControl control, string difficultySid)
         => difficultySid == "Stalker" && control.MasterHalves ? 2.0 : 1.0;
 
-    /// <summary>Card / panel text, e.g. "2x · grenade every 10–17 s".</summary>
+    /// <summary>Panel text, e.g. "2x · throws a grenade every 10–17 s" (cards drop the factor).</summary>
     public static string TacticDisplay(TacticControl control, double rate, double reference)
     {
         var master = reference > 1.0;
@@ -83,7 +83,7 @@ public static class HumanCombatPolicy
 
     /// <summary>
     /// Card text without the slider factor: the concrete result only
-    /// ("grenade every 20–35 s", "ahead 80 m · side 25 m"). The factor is not a
+    /// ("throws a grenade every 20–35 s", "spots you 80 m ahead, 25 m aside"). The factor is not a
     /// game value by itself; the selected-control panel still shows it.
     /// Null for ids outside HUMAN TACTICS / HUMAN AWARENESS.
     /// </summary>
@@ -110,15 +110,15 @@ public static class HumanCombatPolicy
 
     // ---- display helpers for HUMAN AWARENESS / ACCURACY ------------------------
     public static string AccuracyDisplay(double factor)
-        => string.Create(CultureInfo.InvariantCulture, $"{factor:0.##}x · spread {100.0 / factor:0}%");
+        => string.Create(CultureInfo.InvariantCulture, $"{factor:0.##}x · shot spread {100.0 / factor:0}%");
 
     public static string SightDisplay(double factor)
         // Central vision (straight ahead) and peripheral vision (edge of view).
-        => string.Create(CultureInfo.InvariantCulture, $"{factor:0.##}x · ahead {80.0 * factor:0} m · side {25.0 * factor:0} m");
+        => string.Create(CultureInfo.InvariantCulture, $"{factor:0.##}x · spots you {80.0 * factor:0} m ahead, {25.0 * factor:0} m aside");
 
     public static string HearingDisplay(double factor)
-        => string.Create(CultureInfo.InvariantCulture, $"{factor:0.##}x · steps {12.0 * factor:0.#} m");
+        => string.Create(CultureInfo.InvariantCulture, $"{factor:0.##}x · hears steps at {12.0 * factor:0.#} m");
 
     public static string MemoryDisplay(double factor)
-        => string.Create(CultureInfo.InvariantCulture, $"{factor:0.##}x · search {30.0 * factor:0} s");
+        => string.Create(CultureInfo.InvariantCulture, $"{factor:0.##}x · searches for {30.0 * factor:0} s");
 }
