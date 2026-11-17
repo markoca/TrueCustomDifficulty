@@ -30,36 +30,55 @@ public sealed partial class AggregateVisualControl
     private const double AwarenessHalfAngle = 85.0;       // HorizontalVisionHalvedAngleDegrees
     private const double AwarenessMemoryGap = 18.0;       // ring outside the radar
     private const double AwarenessLegendRow = 46.0;
-    private const double AwarenessWeatherRowHeight = 96.0;
+    private const double AwarenessWeatherRowHeight = 118.0;
+    private const double AwarenessWeatherColumnWidth = 148.0;
+    private const double AwarenessWeatherRightMargin = 14.0;
+    private const double AwarenessWeatherTop = 40.0;
 
-    private readonly record struct AwarenessLayout(Point Center, double Radius, Rect Legend, bool Wide, double Height);
+    // Radar | readable sensing legend | large weather-dial column.
+    // The weather strip gets its own rectangle so it never overlaps a legend row.
+    private readonly record struct AwarenessLayout(
+        Point Center, double Radius, Rect Legend, Rect Weather, bool Wide, double Height);
 
     private static AwarenessLayout HumanAwarenessLayout(double width)
     {
-        var wide = width >= 750.0;
-        // Side margins leave room for the MEMORY caption outside the ring.
-        var legendHeight = AwarenessLegendRow * 3.0 + AwarenessWeatherRowHeight;
+        var wide = width >= 700.0;
+        // Keep the right-column legend readable without reducing the weather knobs.
+        // At the usual ~850-DIP board width the radar remains 150 DIP in radius.
         var radius = wide
-            ? Math.Clamp((width - 420.0) / 2.0, 90.0, 150.0)
+            ? Math.Clamp((width - 520.0) / 2.0, 90.0, 150.0)
             : Math.Clamp((width - 170.0) / 2.0, 70.0, 140.0);
-        var centerX = wide ? 70.0 + AwarenessMemoryGap + radius : width / 2.0;
+        var centerX = wide ? radius + 24.0 : width / 2.0;
         var center = new Point(centerX, 48.0 + AwarenessMemoryGap + radius + 8.0);
         var radarBottom = center.Y + radius + AwarenessMemoryGap + 14.0;
+        var weatherLeft = Math.Max(16.0,
+            width - AwarenessWeatherColumnWidth - AwarenessWeatherRightMargin);
         Rect legend;
+        Rect weather;
         double height;
         if (wide)
         {
-            var left = center.X + radius + AwarenessMemoryGap + 70.0;
-            legend = new Rect(left, center.Y - AwarenessLegendRow * 1.5,
-                Math.Max(1.0, width - left - 16.0), legendHeight);
-            height = radarBottom;
+            var legendLeft = center.X + radius + AwarenessMemoryGap + 40.0;
+            legend = new Rect(legendLeft, center.Y - AwarenessLegendRow * 1.5,
+                Math.Max(1.0, weatherLeft - legendLeft - 16.0),
+                AwarenessLegendRow * 3.0);
+            weather = new Rect(weatherLeft, AwarenessWeatherTop,
+                AwarenessWeatherColumnWidth, AwarenessWeatherRowHeight * 3.0);
+            height = Math.Max(radarBottom, weather.Bottom + 10.0);
         }
         else
         {
-            legend = new Rect(16.0, radarBottom, Math.Max(1.0, width - 32.0), legendHeight);
-            height = legend.Bottom + 8.0;
+            // On a narrow board the radar goes above a split lower area;
+            // the weather knobs still remain a vertical column at the right.
+            var belowRadar = radarBottom + 12.0;
+            legend = new Rect(16.0, belowRadar,
+                Math.Max(1.0, weatherLeft - 28.0), AwarenessLegendRow * 3.0);
+            weather = new Rect(weatherLeft, belowRadar,
+                Math.Max(1.0, width - weatherLeft - AwarenessWeatherRightMargin),
+                AwarenessWeatherRowHeight * 3.0);
+            height = Math.Max(legend.Bottom, weather.Bottom) + 10.0;
         }
-        return new AwarenessLayout(center, radius, legend, wide, height);
+        return new AwarenessLayout(center, radius, legend, weather, wide, height);
     }
 
     private static double HumanAwarenessHeight(double width) => HumanAwarenessLayout(width).Height;
@@ -225,27 +244,28 @@ public sealed partial class AggregateVisualControl
                 new Point(layout.Legend.Left + 18.0, top + 19.0));
         }
 
-        // Weather coefficients remain independent of SIGHT, HEARING and MEMORY.
+        // The right column has three large, independently editable weather knobs.
+        // No second sliders, no overlapping sensing-legend text.
         var weather = new (ParameterViewModel? Parameter, string Caption)[]
         {
             (fog, "FOG VISIBILITY"),
             (rain, "RAIN NOISE"),
             (storm, "THUNDER NOISE")
         };
-        var weatherTop = layout.Legend.Top + AwarenessLegendRow * 3.0;
-        var cellWidth = layout.Legend.Width / weather.Length;
         for (var i = 0; i < weather.Length; i++)
             if (weather[i].Parameter is { } parameter)
                 DrawAwarenessWeatherKnob(dc, parameter, weather[i].Caption,
-                    new Rect(layout.Legend.Left + i * cellWidth, weatherTop, cellWidth, AwarenessWeatherRowHeight),
+                    new Rect(layout.Weather.Left,
+                        layout.Weather.Top + i * AwarenessWeatherRowHeight,
+                        layout.Weather.Width, AwarenessWeatherRowHeight),
                     text, muted, border, accent, panel);
     }
 
     private void DrawAwarenessWeatherKnob(DrawingContext dc, ParameterViewModel parameter,
         string caption, Rect cell, Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
-        var center = new Point(cell.Left + cell.Width / 2.0, cell.Top + 29.0);
-        const double radius = 21.0;
+        var center = new Point(cell.Left + cell.Width / 2.0, cell.Top + 39.0);
+        const double radius = 32.0;
         var editable = parameter.IsControlEnabled;
         var ink = editable ? accent : muted;
         // NOISE is masking (1 - native HearingDistanceCoef).
@@ -257,44 +277,44 @@ public sealed partial class AggregateVisualControl
             : parameter.ReferenceNumber - parameter.Minimum) / range, 0.0, 1.0);
         var start = WeaponKnobStartAngle;
         var sweep = WeaponKnobSweepAngle;
-        dc.DrawEllipse(CloneWithOpacity(panel, 0.96), null, center, radius - 7.0, radius - 7.0);
-        DrawKnobArc(dc, center, radius, start, sweep, new Pen(CloneWithOpacity(border, 0.95), 3.5));
+        dc.DrawEllipse(CloneWithOpacity(panel, 0.96), null, center, radius - 9.0, radius - 9.0);
+        DrawKnobArc(dc, center, radius, start, sweep, new Pen(CloneWithOpacity(border, 0.95), 4.5));
         var steps = (int)Math.Round((parameter.Maximum - parameter.Minimum) / 0.05);
         for (var tick = 0; tick <= steps; tick++)
         {
             var angle = start + tick / (double)steps * sweep;
             var major = tick % 4 == 0 || tick == steps;
-            dc.DrawLine(new Pen(CloneWithOpacity(muted, major ? 0.72 : 0.38), major ? 1.2 : 0.8),
-                KnobPoint(center, radius + 3.0, angle),
-                KnobPoint(center, radius + (major ? 8.0 : 6.0), angle));
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, major ? 0.72 : 0.38), major ? 1.3 : 0.9),
+                KnobPoint(center, radius + 4.0, angle),
+                KnobPoint(center, radius + (major ? 9.0 : 7.0), angle));
         }
         if (ratio > 0.001)
             DrawKnobArc(dc, center, radius, start, ratio * sweep,
-                new Pen(CloneWithOpacity(ink, 0.92), 3.5));
+                new Pen(CloneWithOpacity(ink, 0.92), 4.5));
         var referenceAngle = start + referenceRatio * sweep;
-        dc.DrawLine(new Pen(muted, 1.6),
-            KnobPoint(center, radius - 6.0, referenceAngle),
-            KnobPoint(center, radius + 5.0, referenceAngle));
+        dc.DrawLine(new Pen(muted, 1.8),
+            KnobPoint(center, radius - 8.0, referenceAngle),
+            KnobPoint(center, radius + 6.0, referenceAngle));
         var handle = KnobPoint(center, radius, start + ratio * sweep);
         var hovered = _hoverTarget?.Kind == HitKind.Knob
             && ReferenceEquals(_hoverTarget.Parameter, parameter);
         ControlHoverGlow.Draw(dc, handle, accent, editable && hovered);
-        dc.DrawEllipse(panel, new Pen(ink, hovered || IsSelected(parameter) ? 2.4 : 1.4),
-            handle, 4.5, 4.5);
-        dc.DrawEllipse(ink, null, handle, 2.0, 2.0);
-        var label = CreateText(caption, 9.1, editable ? text : muted,
-            FontWeights.Bold, Math.Max(1.0, cell.Width - 4.0));
-        dc.DrawText(label, new Point(cell.Left + (cell.Width - label.Width) / 2.0, cell.Top + 59.0));
+        dc.DrawEllipse(panel, new Pen(ink, hovered || IsSelected(parameter) ? 2.5 : 1.5),
+            handle, 5.5, 5.5);
+        dc.DrawEllipse(ink, null, handle, 2.2, 2.2);
+        var label = CreateText(caption, 10.2, editable ? text : muted,
+            FontWeights.Bold, Math.Max(1.0, cell.Width - 8.0));
+        dc.DrawText(label, new Point(cell.Left + (cell.Width - label.Width) / 2.0, cell.Top + 83.0));
         var value = CreateText(
             string.Create(CultureInfo.InvariantCulture,
                 $"{(noise ? HumanCombatPolicy.NoiseMaskingPercent(parameter.CurrentNumber) : parameter.CurrentNumber * 100.0):0}%"),
-            14.0, parameter.IsValueModifiedFromReference()
+            15.5, parameter.IsValueModifiedFromReference()
                 ? ReadoutInk.Numbers(accent, text) : editable ? text : muted, FontWeights.Bold);
-        dc.DrawText(value, new Point(cell.Left + (cell.Width - value.Width) / 2.0, cell.Top + 75.0));
+        dc.DrawText(value, new Point(cell.Left + (cell.Width - value.Width) / 2.0, cell.Top + 99.0));
         if (!editable)
             return;
-        var hit = new Rect(center.X - radius - 6.0, center.Y - radius - 6.0,
-            2.0 * (radius + 6.0), 2.0 * (radius + 6.0));
+        var hit = new Rect(center.X - radius - 9.0, center.Y - radius - 9.0,
+            2.0 * (radius + 9.0), 2.0 * (radius + 9.0));
         // Reverse visual input endpoints for NOISE without altering saved values.
         _hitTargets.Add(new HitTarget(parameter, hit, hit, HitKind.Knob,
             noise ? parameter.Maximum : parameter.Minimum,

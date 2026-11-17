@@ -51,6 +51,7 @@ internal static partial class Program
             // NPC_Ammo_Smart, so that source must be explicitly probed where
             // the real native ammo package is active (Novice).
             VerifyHumanAwarenessWeatherKnobs();
+            VerifyHumanAwarenessWeatherLayout();
             VerifyWeatherNoiseMaskingSemantics();
             VerifyReferenceDifficultyVisibility();
             VerifyDormantNpcAmmoNotCounted();
@@ -217,6 +218,42 @@ internal static partial class Program
     // the preset, but must NOT contribute to the writer's applied count or
     // produce an NPC_Ammo_Smart clone. Native sleep recovery is unchanged:
     // this probe should produce no files at all.
+    private static void VerifyHumanAwarenessWeatherLayout()
+    {
+        var layoutMethod = typeof(TrueCustomDifficulty.Controls.AggregateVisualControl).GetMethod(
+            "HumanAwarenessLayout", System.Reflection.BindingFlags.NonPublic
+                | System.Reflection.BindingFlags.Static);
+        Check(layoutMethod is not null, "Human Awareness layout is missing.");
+
+        foreach (var width in new[] { 700.0, 750.0, 850.0, 1024.0 })
+        {
+            var layout = layoutMethod!.Invoke(null, new object[] { width })!;
+            var props = layout.GetType();
+            var legend = (System.Windows.Rect)props.GetProperty("Legend")!.GetValue(layout)!;
+            var weather = (System.Windows.Rect)props.GetProperty("Weather")!.GetValue(layout)!;
+            var height = (double)props.GetProperty("Height")!.GetValue(layout)!;
+            var radius = (double)props.GetProperty("Radius")!.GetValue(layout)!;
+            var center = (System.Windows.Point)props.GetProperty("Center")!.GetValue(layout)!;
+            Check(weather.Left >= legend.Right + 12.0
+                  && weather.Right <= width - 12.0
+                  && weather.Top >= 35.0
+                  && weather.Bottom + 8.0 <= height
+                  && weather.Height >= 3.0 * 116.0
+                  && center.X + radius + 18.0 < legend.Left,
+                $"Human Awareness vertical weather dials overlap radar/legend or clip at {width} DIP.");
+        }
+
+        // Narrow fallback retains the right-hand vertical column below the radar.
+        var narrow = layoutMethod!.Invoke(null, new object[] { 620.0 })!;
+        var type = narrow.GetType();
+        var narrowLegend = (System.Windows.Rect)type.GetProperty("Legend")!.GetValue(narrow)!;
+        var narrowWeather = (System.Windows.Rect)type.GetProperty("Weather")!.GetValue(narrow)!;
+        var narrowHeight = (double)type.GetProperty("Height")!.GetValue(narrow)!;
+        Check(narrowWeather.Left >= narrowLegend.Right + 12.0
+              && narrowHeight >= narrowWeather.Bottom + 8.0,
+            "Narrow Human Awareness weather column must not overlap the sensing legend.");
+    }
+
     private static void VerifyHumanAwarenessWeatherKnobs()
     {
         var vm = new MainViewModel(Catalog);

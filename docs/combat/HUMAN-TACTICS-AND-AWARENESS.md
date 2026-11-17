@@ -93,7 +93,7 @@ Current behavior supersedes the earlier display-only cap. SIGHT is really limite
 
 ## 2026-11-17 — CURRENT: weather hearing (RAIN NOISE / THUNDER NOISE)
 
-* Three small 270-degree knobs are grouped side by side under the SIGHT / HEARING / MEMORY legend: FOG VISIBILITY, RAIN NOISE, THUNDER NOISE. The existing radar is unchanged. Small ticks, hover glow, reference marks, right-click reset, keyboard control, R group reset and only-changed-number accent match the catalog.
+* Three enlarged 270-degree weather knobs form a right-hand vertical column beside the SIGHT / HEARING / MEMORY legend: FOG VISIBILITY, RAIN NOISE, THUNDER NOISE. The radar remains left; hover glow, reference marks, right-click reset, keyboard control, R group reset and only-changed-number accent match the catalog.
 * RAIN NOISE (`combat.npcRainNoise`) changes both Rainy [3] and LightRainy [4] `HearingDistanceCoef` in `AISettings.WeatherSettings`, from the verified 2.1 source coefficient 0.7. THUNDER NOISE (`combat.npcStormNoise`) changes Thundery [5], source 0.6. Each knob ranges 10–100% with 5% steps.
 * The native 2.1 source is `GameData/AIGlobals.cfg`. Both controls write only hearing values in the singleton cfg_patch and leave visibility, flair, audio, graphics and weather occurrence unchanged. The two direct routes are accounted for separately from the frozen writer-baseline blob; AI-class scope and effective metres require in-game testing.
 
@@ -109,4 +109,11 @@ Current behavior supersedes the earlier display-only cap. SIGHT is really limite
 * **RAIN NOISE** and **THUNDER NOISE** display the percentage of hearing masked, rather than remaining hearing. Game-native `HearingDistanceCoef = 0.70` is displayed as **30% RAIN NOISE**; `0.60` as **40% THUNDER NOISE**. Higher knob values mean stronger masking. 0% noise means no weather hearing penalty; the existing minimum coefficient of 0.10 means maximum 90% masking, in 5% steps. FOG VISIBILITY is unchanged (remaining visibility).
 * The 270-degree dial orientation, thumb and grey source tick reverse for the two noise knobs. Pointer drag and keyboard Up/Right/End increase masking, Down/Left/Home decrease it; right click and R reset work as before. No redundant sliders or extra UI.
 * Native catalog defaults, saved preset numbers, loading and CFG writer assignments remain unchanged. The player-facing readouts, reference label and rationale use `(1 - HearingDistanceCoef) × 100`. Rainy/LightRainy still share one source value; Thundery remains separate. Gameplay effect remains pending in-game validation.
+
+
+## 2026-11-17 — CURRENT: enlarged vertical weather knobs at the right of HUMAN AWARENESS
+
+* HUMAN AWARENESS is a **three-zone board** at 700 DIP and wider: the existing SIGHT/HEARING/MEMORY radar is left, its concise three-row legend is in the middle, and exactly **three larger 270° weather knobs stack vertically on the far right** (FOG VISIBILITY, RAIN NOISE, THUNDER NOISE). The previous three-knob horizontal strip below the legend is retired. A 148-DIP weather column uses a 118-DIP cell per knob: radius **32 DIP** (previously 21), larger handle/readout, native 5%-point ticks, clear caption and value spacing, expanded hover/hit region. Board height stays approximately 406 DIP at common 820–850 DIP widths.
+* The radar size adapts to leave at least ~260 DIP for the legend before the 148-DIP knob column at common widths; its 200 m distance scale and source range do not change. Below 700 DIP, the radar moves above a two-column area: legend left, three **vertical** weather knobs right, without clipping/overlap. A layout regression check probes wide widths 700/750/850/1024 and narrow fallback 620 DIP.
+* Knob values, inverted NOISE percentage semantics (30% / 40% native), modifier coloring, hover, right-click, keyboard and R reset, preset storage and CFG writer are **unchanged**. No duplicate individual weather sliders.
 
