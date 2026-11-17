@@ -9038,7 +9038,7 @@
           "Corpse smart loot is separate (BONUS PACKS / NEED BOOST)."
         ]
       },
-      "rationale": "How often stashes still hand you supplies you already have plenty of. Vanilla: 1× (about 10% per set). 0 = smart loot only helps when you are short; 2× = twice as generous. Only works while STASH SMART LOOT is ON.",
+      "rationale": "How often stashes still hand you supplies you already have plenty of. Vanilla: 1× (about 10% per set). 0× = smart loot only helps when you are short; 2× = twice as generous. Only works while STASH SMART LOOT is ON.",
       "logic": "Scales the 'when stocked' chance of every smart loot set, after odds and SUPPLY REDUCTION; never above its 'when low' chance.",
       "interaction": "EXTRA LOOT WHEN LOW sets the other end. SUPPLY REDUCTION and the Basic MEDS/FOOD/DRINKS odds cells still apply first.",
       "exposeInUi": true,
@@ -9085,7 +9085,7 @@
           "Lowering it removes the game's help when you run low; raising it (capped at 100%) makes stashes reliably top you up."
         ]
       },
-      "rationale": "How strongly stashes help when you run low. Vanilla: 1× (about 70–80% per set). Lower = the Zone stops topping you up; 0 = no smart loot at all. Only works while STASH SMART LOOT is ON.",
+      "rationale": "How strongly stashes help when you run low. Vanilla: 1× (about 70–80% per set). Lower = the Zone stops topping you up; 0× = no smart loot at all. Only works while STASH SMART LOOT is ON.",
       "logic": "Scales the 'when low' chance of every smart loot set, after odds and SUPPLY REDUCTION; capped at 100%.",
       "interaction": "EXTRA LOOT WHEN STOCKED sets the other end and never exceeds this one.",
       "exposeInUi": true,
@@ -9416,7 +9416,7 @@
           "Quest/Weird/special/unique items are excluded. If all three weights are zero, no extra generators are emitted."
         ]
       },
-      "rationale": "How often bonus gear is a weapon. Vanilla: 1×. 0 = never a weapon. Only works while EXTRA STASH GEAR is ON.",
+      "rationale": "How often bonus gear is a weapon. Vanilla: 1×. 0× = never a weapon. Only works while EXTRA STASH GEAR is ON.",
       "logic": "Higher priority favors weapons when a supported stash chooses its bonus gear types. Zero excludes this category.",
       "interaction": "Coverage decides which stashes participate; Bonus Chance checks each offered item. Rank limits still apply.",
       "requiresToggle": "loot.stashGearEnabled",
@@ -9471,7 +9471,7 @@
           "Quest/Weird/special/unique items are excluded. If all three weights are zero, no extra generators are emitted."
         ]
       },
-      "rationale": "How often bonus gear is armor. Vanilla: 1×. 0 = never armor. Only works while EXTRA STASH GEAR is ON.",
+      "rationale": "How often bonus gear is armor. Vanilla: 1×. 0× = never armor. Only works while EXTRA STASH GEAR is ON.",
       "logic": "Higher priority favors armor when a supported stash chooses its bonus gear types. Zero excludes this category.",
       "interaction": "Coverage decides which stashes participate; Bonus Chance checks each offered item. Rank limits still apply.",
       "requiresToggle": "loot.stashGearEnabled",
@@ -9526,7 +9526,7 @@
           "Quest/Weird/special/unique items are excluded. If all three weights are zero, no extra generators are emitted."
         ]
       },
-      "rationale": "How often bonus gear is an artifact. Vanilla: 1×. 0 = never an artifact. Only works while EXTRA STASH GEAR is ON.",
+      "rationale": "How often bonus gear is an artifact. Vanilla: 1×. 0× = never an artifact. Only works while EXTRA STASH GEAR is ON.",
       "logic": "Higher priority favors artifacts when a supported stash chooses its bonus gear types. Zero excludes this category.",
       "interaction": "Coverage decides which stashes participate; Bonus Chance checks each offered item. Rank limits still apply.",
       "requiresToggle": "loot.stashGearEnabled",
@@ -10243,7 +10243,7 @@
           "Box removal is separate (Medical Boxes Removed)."
         ]
       },
-      "rationale": "How often a breakable medical box gives an Army Medkit. Vanilla: 1× (16% / 29% / 33% of boxes at Experienced / Veteran / Master rank). 0 = never; 3× = much more often.",
+      "rationale": "How often a breakable medical box gives an Army Medkit. Vanilla: 1× (16% / 29% / 33% of boxes at Experienced / Veteran / Master rank). 0× = never; 3× = much more often.",
       "logic": "Higher = Army Medkits push out regular and Eco medkits in the same box. 2× roughly doubles the Army Medkit share.",
       "interaction": "Medical Boxes Removed decides how many boxes exist; this decides what one box gives.",
       "exposeInUi": false
