@@ -1,3 +1,11 @@
+## 2026-11-17 — CURRENT: HUMAN AWARENESS 200 m visual radar (without CFG change)
+
+* SIGHT visual distance scale is now bounded to **200 m**, with the 200 m labelled ring placed exactly on the radar perimeter. The previous unused ring margin from the 240 m canvas is removed; 10 / 25 / 50 / 100 m all gain ~9.5% in displayed radius, making the central radar more readable while retaining the compact layout.
+* The central vision cone, peripheral shape, SIGHT reference tick, hearing circle and distance rings all use the same accurate square-root 0–200 m visual ruler. SIGHT's true gameplay range remains **0.25×–3×** (20–240 m ahead); at 3× the image is **visually capped at 200 m**, but the legend still honestly displays **240 m ahead**.
+* The SIGHT tip remains draggable at the rim. Pointer travel can continue a short distance beyond the visible radar, reaching the full 3× source limit without displaying another ring. A pointer-start offset prevents simply clicking the capped 3× handle from silently changing its value to 2.5×. The reference/reset/keyboard semantics, CFG output and presets are unchanged.
+* The MEMORY timer ring stays just outside the 200 m circumference because it represents **time**, not another distance scale. All labels, controls and hover styles stay in place.
+* Audited by `tools/audit_human_tactics.py` for the 200 m cap, 200 m outer ring and original 3× source drag contract.
+
 ## 2026-11-17 — CURRENT: removed redundant HUMAN TACTICS line above sliders
 
 * HUMAN TACTICS now shows **one** full-width native-rate slider per action. The separate gold min–max seconds preview, grey dashed reference seconds line and 1 / 5 / 20 / 80 s ruler labels/ticks are removed.

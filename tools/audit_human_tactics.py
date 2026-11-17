@@ -150,4 +150,18 @@ for token in ("AwarenessSightMeters = 80.0", "AwarenessSideMeters = 25.0", "Awar
               "AwarenessMemorySeconds = 30.0", "AwarenessHalfAngle = 85.0", "HitKind.RadarRadius", "HitKind.RadarArc",
               "CardValue(parameter, parameter.CurrentNumber)", "ReadoutInk.Numbers(accent, text)"):
     check(token in radar, f"radar token {token}")
+
+# HUMAN AWARENESS radar visual bounds are independent of source max 3x.
+check("AwarenessDisplayMaxMeters = 200.0" in radar,
+      "awareness radar uses a 200 m display maximum")
+check("10.0, 25.0, 50.0, 100.0, AwarenessDisplayMaxMeters" in radar,
+      "200 m is the outermost distance ring")
+check("Math.Clamp(meters, 0.0, AwarenessDisplayMaxMeters)" in radar,
+      "visible sight cone clamps at the 200 m border")
+check("AwarenessSightDragMeters(distance, map.Width / 2.0)" in radar
+      and "_awarenessSightDragOffsetMeters" in radar,
+      "full 3x/240 m SIGHT remains editable with drag offset")
+check("BeginAwarenessSightDrag(target, point);" in ui
+      and "EndAwarenessSightDrag();" in ui,
+      "radar drag preserves source value on mouse down and clears on release")
 print("\nHUMAN TACTICS / HUMAN AWARENESS contract OK")

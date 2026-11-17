@@ -72,3 +72,7 @@ Each lane now has two distinct graphs: a thin noninteractive source-accurate coo
 ### 2026-11-17 — Simplified Human Tactics lanes
 
 Each action has **one native-rate slider** covering its complete source range. The extra gold min–max cooldown strip, dotted reference interval and 1/5/20/80-second ruler above the slider were removed as redundant. The actual cooldown min–max remains in the right-aligned seconds readout; the native-rate reference tick remains on the active slider. Board heights are now 340/530 DIP. Existing gameplay/CFG mappings, presets, snapping and reset interactions are unchanged.
+
+### HUMAN AWARENESS 200 m display limit (2026-11-17)
+
+The radar's visual distance maximum is 200 m rather than 240 m. The 200 m labelled ring is now the outer distance circumference, making the 10 / 25 / 50 / 100 m central rings ~9.5% larger without increasing the physical board footprint. SIGHT's underlying 0.25–3× source still permits 240 m; the drawn sector clamps at 200 m only, while the real legend says 240 m. To keep the 200–240 m portion of the source usable, the SIGHT rim handle accepts a small drag overshoot outside the drawn border and carries a per-drag offset so clicking a capped 3× handle does not rewrite the value to 2.5×. HEARING is on the same 200 m scale; MEMORY remains a separate external time ring. Source files, CFG mappings, keyboard resets and presets are unchanged.
