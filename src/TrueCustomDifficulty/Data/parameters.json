@@ -9868,8 +9868,8 @@
         ]
       },
       "rationale": "Standard-stash ammo amount. It always follows the single AMMO AMOUNT slider. Vanilla: 1×.",
-      "logic": "25-200% scales the amount of ammo found in Standard stashes. For example, a vanilla 18-24 round stack becomes about 9-12 at 50% and 36-48 at 200%.",
-      "interaction": "One global AMMO QUANTITY slider adjusts native MinCount/MaxCount in Basic, Standard and Rare with the same multiplier; tier-specific IDs remain CFG/preset backings.",
+      "logic": "0.25x–2x scales the amount of ammo found in Standard stashes. For example, a vanilla 18-24 round stack becomes about 9-12 at 0.5x and 36-48 at 2x.",
+      "interaction": "The single AMMO AMOUNT slider adjusts native MinCount/MaxCount in Basic, Standard and Rare with the same multiplier; tier-specific IDs remain CFG/preset backings.",
       "lootHint": {
         "kind": "scaledCountEntries",
         "label": "Contents",
@@ -10355,8 +10355,8 @@
         ]
       },
       "rationale": "Rare-stash ammo amount. It always follows the single AMMO AMOUNT slider. Vanilla: 1×.",
-      "logic": "25-200% changes the amount of ammo found in Rare stashes. 100% keeps vanilla amounts.",
-      "interaction": "One global AMMO QUANTITY slider adjusts native MinCount/MaxCount in Basic, Standard and Rare with the same multiplier; tier-specific IDs remain CFG/preset backings.",
+      "logic": "0.25x–2x changes the amount of ammo found in Rare stashes. 1x keeps vanilla amounts.",
+      "interaction": "The single AMMO AMOUNT slider adjusts native MinCount/MaxCount in Basic, Standard and Rare with the same multiplier; tier-specific IDs remain CFG/preset backings.",
       "lootHint": {
         "kind": "scaledCountEntries",
         "label": "Contents",
@@ -10463,7 +10463,7 @@
       },
       "rationale": "Scales every item chance in Standard stashes at once. Vanilla: 1×. Lower = emptier Standard stashes; higher = fuller. Items that were rarer stay rarer.",
       "logic": "One multiplier per tier is applied after legacy per-category modifiers to the authored native per-entry Chance. Results are clamped 0–1; no global stash drop chance is invented.",
-      "interaction": "Edit independent native per-category Chance. NATIVE is a source percentage, never whole-stash drop odds.",
+      "interaction": "Legacy compatibility-only: no visible control; older presets can still set it. It scales independent native per-entry Chance, never whole-stash drop odds; the ADJUST ODDS cells are the visible per-category controls.",
       "exposeInUi": false
     },
     {
@@ -10510,7 +10510,7 @@
       },
       "rationale": "Scales every item chance in Rare stashes at once. Vanilla: 1×. Lower = less exciting Rare finds; higher = more generous ones.",
       "logic": "One multiplier per tier is applied after legacy per-category modifiers to the authored native per-entry Chance. Results are clamped 0–1; no global stash drop chance is invented.",
-      "interaction": "Edit independent native per-category Chance. NATIVE is a source percentage, never whole-stash drop odds.",
+      "interaction": "Legacy compatibility-only: no visible control; older presets can still set it. It scales independent native per-entry Chance, never whole-stash drop odds; the ADJUST ODDS cells are the visible per-category controls.",
       "exposeInUi": false
     },
     {

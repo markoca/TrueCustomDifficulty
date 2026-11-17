@@ -1,3 +1,11 @@
+## 2026-11-17 — CURRENT: STASH / LOOT consistency review (texts, SmartLoot inputs)
+
+* Hidden Standard/Rare stash ammo mirrors (`loot.mediumStashAmmoQuantity`, `loot.expensiveStashAmmoQuantity`) name the real control **AMMO AMOUNT** (was *AMMO QUANTITY*) and use the multiplier grammar `0.25x–2x` / `1x` (was `25-200%` / `100%`).
+* Hidden `loot.standardStashChanceScale` / `loot.rareStashChanceScale` interaction text says what they are: legacy compatibility-only, no visible control, older presets can still set them (was a reference to a non-existent *NATIVE* readout).
+* NPC LOOT help (MOD ITEM REMOVAL — CORPSE) names **SMART LOOT** instead of the retired *Extra Corpse Loot*.
+* STASH SMART LOOT board redraw inputs no longer list the six Basic `loot.stashMix*` cells: since SMART LOOT GIVES they do not reach SmartLoot (code and comment now agree). No value, writer or preset change.
+* Open finding (user decision): four hidden legacy ids still reach the CFG when an older user preset sets them, with nothing on the board showing it — `loot.stashMixAmmo`, `loot.stashMixGrenades`, `loot.standardStashChanceScale`, `loot.rareStashChanceScale`. Factory presets keep them at 1. See docs/STASH-LOOT-CONSISTENCY-2026-11-17.md.
+
 ## 2026-11-17 — CURRENT: ADJUST ODDS without the CHANCE tag
 
 * STASH LOOT MIX → **ADJUST ODDS**: the quiet `CHANCE` tag before the Basic GRENADES and Rare COUPONS rails is removed (redundant: row label, % readout and vanilla tick already say it); those rails now start at the same x as every other cell. The header is just `100% = GAME ODDS` (the former `· CHANCE = REAL %` referred to the tag). Supersedes the tag in the 2026-11-16 STASH consistency entry. Values, 5% grid, writer and presets unchanged; the CONTROLS help names the two real-chance cells instead.

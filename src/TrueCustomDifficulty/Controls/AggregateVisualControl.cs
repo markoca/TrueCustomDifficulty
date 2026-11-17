@@ -256,11 +256,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 StashEffectiveState.SmartMedsId
             },
             // The set-chance bars follow every input of the stash SmartLoot endpoints.
+            // Basic cells (stashMix*) no longer reach SmartLoot (2026-11-17).
             "StashSmartLoot" => new[]
             {
                 "loot.genericStashReduction",
-                "loot.stashMixAmmo", "loot.stashMixMedical", "loot.stashMixFood",
-                "loot.stashMixDrinks", "loot.stashMixGrenades", "loot.stashMixCoupons",
                 "loot.stashMedicalBandageBias", "loot.stashMedicalMedkitBias",
                 "loot.stashMedicalArmyMedkitBias", "loot.stashMedicalAntiRadBias",
                 "loot.stashMedicalBandageChanceScale", "loot.stashMedicalMedkitChanceScale",

@@ -109,7 +109,7 @@ public sealed class ParameterViewModel : ObservableObject
                   + "Reduces the original Chance of audited mod additions on human NPC "
                   + "corpses by the chosen percent. 0% leaves them unchanged; 100% "
                   + "blocks their generator branch. Does not change traders, stashes "
-                  + "or Extra Corpse Loot. Project Itemization Reborn is unsupported."
+                  + "or SMART LOOT. Project Itemization Reborn is unsupported."
                 : string.Empty);
 
     /// <summary>
