@@ -4015,3 +4015,8 @@ and is labelled with its caliber (SNG: 9×18, 9×19, 5.45, 12 GA; NATO: .45 ACP,
 its width is the weight share. 9×18 and 9×19 share the 9 mm colour and are split by a hairline. No
 percentages and no legend (the AMMO TYPE MIX knobs carry the colours). A label that does not fit its
 segment is omitted; a zero-weight caliber has no segment. Supersedes the 96-DIP percentage + legend card.
+
+## CURRENT 2026-11-17 — AMMO BOX CONTENT DISTRIBUTION (title)
+
+The caliber card below the AMMO TYPE MIX knobs is titled **AMMO BOX CONTENT DISTRIBUTION**
+(formerly AMMO MIX PER BOX). Layout and caliber segments unchanged.

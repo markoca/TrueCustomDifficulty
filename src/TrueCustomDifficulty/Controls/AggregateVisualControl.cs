@@ -6039,7 +6039,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // A zero-weight caliber simply has no segment.
         var mix = geometry.Mix;
         dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9), mix, 4.0, 4.0);
-        DrawText(dc, "AMMO MIX PER BOX", new Point(mix.Left + 11.0, mix.Top + 6.0),
+        DrawText(dc, "AMMO BOX CONTENT DISTRIBUTION", new Point(mix.Left + 11.0, mix.Top + 6.0),
             10.2, text, FontWeights.Bold);
         var w918 = Math.Max(0.0, weight918.CurrentNumber);
         var w045 = Math.Max(0.0, weight045.CurrentNumber);

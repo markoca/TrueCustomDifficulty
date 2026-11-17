@@ -1171,7 +1171,7 @@ else:
         'DrawHorizontalTrackCard(dc, P("loot.destructibleGrenadeQuantity"),',
         '"AMMO YIELD PREVIEW"',
         '"ROUNDS IF ROLLED"',
-        '"AMMO MIX PER BOX"',
+        '"AMMO BOX CONTENT DISTRIBUTION"',
         '(w918, 0, "9×18"), (w918, 0, "9×19"), (w545, 2, "5.45"), (w012, 3, "12 GA")',
         '(w045, 1, ".45 ACP"), (w918, 0, "9×19"), (w545, 2, "5.56"), (w012, 3, "12 GA")',
         'var countsModified = ammoYield.IsValueModifiedFromReference();',
