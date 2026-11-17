@@ -61,7 +61,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private void RaiseParameterSelected(ParameterViewModel parameter)
     {
         if (Family is "FlycatcherSlowdown" or "AnomalySpecialEffects" or "ServiceCostsBoard"
-            or "CouponFlow" or "ItemWeightBoard" or "ArtifactHunting" or "HumanTactics" or "HumanAwareness" or "EquipmentWearBalance"
+            or "CouponFlow" or "ItemWeightBoard" or "ArtifactHunting" or "StashSmartLoot" or "HumanTactics" or "HumanAwareness" or "EquipmentWearBalance"
             or "StashContentMix" or "StashMedicalComposition"
             or "StashGear" or "NpcLootLoadout" or "HumanCombatProfile" or "PlayerWeaponProfile"
             or "StarvationTimeline" or "SevereFatiguePenaltyBoard"
@@ -242,11 +242,24 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 // the three ammo quantity sources owned by this family.
                 "loot.stashMedkitMinCount", "loot.stashMedkitMaxCount",
                 "loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount",
-                "loot.cheapStashGrenadeQuantity"
+                "loot.cheapStashGrenadeQuantity",
+                StashEffectiveState.SmartStockedId, StashEffectiveState.SmartShortId
             },
             "StashMedicalComposition" => new[]
             {
-                "loot.stashMixMedical"
+                "loot.stashMixMedical", "loot.genericStashReduction",
+                StashEffectiveState.SmartStockedId, StashEffectiveState.SmartShortId
+            },
+            // The set-chance bars follow every input of the stash SmartLoot endpoints.
+            "StashSmartLoot" => new[]
+            {
+                "loot.genericStashReduction",
+                "loot.stashMixAmmo", "loot.stashMixMedical", "loot.stashMixFood",
+                "loot.stashMixDrinks", "loot.stashMixGrenades", "loot.stashMixCoupons",
+                "loot.stashMedicalBandageBias", "loot.stashMedicalMedkitBias",
+                "loot.stashMedicalArmyMedkitBias", "loot.stashMedicalAntiRadBias",
+                "loot.stashMedicalBandageChanceScale", "loot.stashMedicalMedkitChanceScale",
+                "loot.stashMedicalArmyMedkitChanceScale", "loot.stashMedicalAntiRadChanceScale"
             },
             "NpcLootLoadout" => new[] { "economy.traderMinBuyCondition" },
             _ => Array.Empty<string>()
@@ -392,6 +405,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 break;
             case "StashGear":
                 DrawStashGear(dc, text, muted, border, accent, panel);
+                break;
+            case "StashSmartLoot":
+                DrawStashSmartLoot(dc, text, muted, border, accent, panel);
                 break;
             case "StaminaCore":
                 DrawStaminaMovementBoard(dc, text, muted, border, accent, panel);
@@ -5355,9 +5371,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var smartNow = StashSmartMedicineOdds(current, sids);
         var smartWas = StashSmartMedicineOdds(reference, sids);
         const double labelWidth = 104.0;
-        const double columnGap = 12.0;
-        var gridLeft = odds.Left + 12.0 + labelWidth;
-        var columnWidth = Math.Max(1.0, (odds.Right - 12.0 - gridLeft - 3.0 * columnGap) / 4.0);
+        var (gridLeft, columnWidth, columnGap) = StashOddsColumns(odds, labelWidth);
         var headerY = odds.Top + 30.0;
         for (var t = 0; t < 4; t++)
             DrawText(dc, t < 3 ? StashOddsTierLabels[t] : "SMART",
@@ -6935,7 +6949,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
         var stashGraph = Family is "StashContentMix"
             or "StashMedicalComposition" or "StashGear";
-        if (!stashGraph && Family is not ("PlayerWeaponProfile" or "AmmoDistribution" or "ConsumableMixer" or "EquipmentWearBalance" or "ServiceCostsBoard" or "RadiationBalance" or "HumanCombatProfile" or "StarvationTimeline" or "FlycatcherSlowdown" or "AnomalySpecialEffects" or "NpcLootLoadout"))
+        if (!stashGraph && Family is not ("PlayerWeaponProfile" or "ArtifactHunting" or "StashSmartLoot" or "AmmoDistribution" or "ConsumableMixer" or "EquipmentWearBalance" or "ServiceCostsBoard" or "RadiationBalance" or "HumanCombatProfile" or "StarvationTimeline" or "FlycatcherSlowdown" or "AnomalySpecialEffects" or "NpcLootLoadout"))
             return;
 
         var target = FindTarget(e.GetPosition(this));
@@ -8030,6 +8044,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "StashContentMix" => StashContentMixHeight(width),
             "StashMedicalComposition" => StashMedicalCompositionHeight(width),
             "StashGear" => StashGearHeight(width),
+            "StashSmartLoot" => StashSmartLootHeight,
             "StaminaCore" => 323.0,
             "WaterStaminaPressure" => 171.0,
             "FatigueCurve" => CompactFatigueHeight(width),
@@ -8170,6 +8185,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 "loot.stashMedicalArmyMedkitChanceScale", "loot.stashMedicalAntiRadChanceScale",
                 "loot.stashMedkitMinCount", "loot.stashMedkitMaxCount",
                 "loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount"
+            },
+            "StashSmartLoot" => new[]
+            {
+                StashEffectiveState.SmartStockedId, StashEffectiveState.SmartShortId
             },
             "StashGear" => new[]
             {

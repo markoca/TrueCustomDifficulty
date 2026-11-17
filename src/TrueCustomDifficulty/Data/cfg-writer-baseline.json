@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.1",
-  "supportedParameterCount": 407,
+  "supportedParameterCount": 409,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -48132,6 +48132,15 @@
       "source": "GameData/ItemGeneratorPrototypes.cfg",
       "scope": "Existing TCD-owned production-only Cheap/Medium/Expensive stash copies; branch/candidate coverage from source 2.0.5",
       "notes": "4 independent item selection biases times global Medical and 4 Medkit/ArmyMedkit AUTO / floor / cap controls; output remains rank/difficulty gated and untouched for scripted loot."
+    },
+    "stashSmartNeed": {
+      "parameterIds": [
+        "loot.stashSmartStockedChance",
+        "loot.stashSmartShortChance"
+      ],
+      "source": "GameData/StashPrototypes.cfg",
+      "scope": "Existing TCD stash SmartLoot clones (WriteWorldStashSmartLoot)",
+      "notes": "MinSpawnChance x stocked, MaxSpawnChance x short, after kept-share and supply reduction; clamped 0..1, min never above max."
     },
     "worldArmorRemoved": {
       "parameterId": "loot.worldArmorRemoved",

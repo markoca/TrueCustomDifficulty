@@ -1073,6 +1073,14 @@
       "kind": "slider",
       "number": 1
     },
+    "loot.stashSmartStockedChance": {
+      "kind": "slider",
+      "number": 1
+    },
+    "loot.stashSmartShortChance": {
+      "kind": "slider",
+      "number": 1
+    },
     "loot.standardStashChanceScale": {
       "kind": "slider",
       "number": 1

@@ -3880,13 +3880,13 @@ if not all(t in _stash_sort_body for t in _stash_order_check):
     fail("Stashes sections drifted from Rewards > Content > Medical Composition > Quantity > Extra Gear")
 
 
-_stash_groups = {"Stash Content", "Stash Medical Composition", "Stash Gear"}
+_stash_groups = {"Stash Content", "Stash Medical Composition", "Stash Gear", "Stash Smart Loot"}
 _stash_rows = [p for p in parameters if p.get("group") in _stash_groups]
 _stash_ids = {p["id"] for p in _stash_rows}
 _stash_tabs = [t for t in parameters_doc.get("tabs", []) if t.get("id") == "stashes"]
 _stash_include = parameters_doc.get("scope", {}).get("includedTabs", [])
 _stash_tab_text = (ROOT / "src/TrueCustomDifficulty/ViewModels/TabViewModel.cs").read_text(encoding="utf-8")
-if (len(_stash_rows) != 42 or len(_stash_ids) != 42  # + stash supply reduction
+if (len(_stash_rows) != 44 or len(_stash_ids) != 44  # + supply reduction, SMART LOOT NEED
     or _stash_tabs != [{"id": "stashes", "label": "Stashes", "order": 55}]
     or _stash_include.index("stashes") != _stash_include.index("loot") + 1
     or any(p.get("tab") != "stashes" or not p["id"].startswith("loot.") for p in _stash_rows)
@@ -3918,7 +3918,7 @@ _global_expected_tabs = {
     "master": 20,
     "environment": 9,  # ARTIFACT HUNTING (3 after RESPAWN RATE retired)
     "loot": 30,         # + corpse supply reduction, loose artifacts
-    "stashes": 35,      # + stash supply reduction
+    "stashes": 37,      # + stash supply reduction
     "alife": 2,
 }
 _global_confirmed = sum(p.get("support", {}).get("status") == "confirmed" for p in _global_visible)
@@ -4084,10 +4084,10 @@ if (len(parameters) != _CENSUS_CATALOG or len(_global_visible) != _CENSUS_VISIBL
     fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected {_CENSUS_CATALOG}/{_CENSUS_VISIBLE}/{_CENSUS_HIDDEN}")
 elif _global_tab_counts != _global_expected_tabs:
     fail(f"global visible tab counts drifted: {_global_tab_counts}; expected {_global_expected_tabs}")
-elif _global_confirmed != 117 or _global_runtime != 85:
-    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 117/85")
-elif _global_control_counts != {"slider": 184, "toggle": 16, "choiceSlider": 1, "range": 1}:
-    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 184 sliders / 16 toggles / 1 choiceSlider / 1 range")
+elif _global_confirmed != 117 or _global_runtime != 87:
+    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 117/87")
+elif _global_control_counts != {"slider": 186, "toggle": 16, "choiceSlider": 1, "range": 1}:
+    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 186 sliders / 16 toggles / 1 choiceSlider / 1 range")
 elif _global_duplicate_labels:
     fail(f"duplicate player-facing labels detected: {_global_duplicate_labels}")
 elif _global_out_of_range:

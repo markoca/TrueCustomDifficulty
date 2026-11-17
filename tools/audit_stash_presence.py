@@ -120,8 +120,10 @@ for weights, factors in (([5, 1], [0.5, 1.0]), ([4, 1], [1.0, 0.0]), ([1], [0.3]
 assert "Mirror(scale, bias);" in vm and "Mirror(bias, scale);" in vm
 assert 'DrawStashMedicalCell(dc, P(StashMedicalItems[k].Id)' in aggregate
 
-# ---- 7. No SMART column / no Basic mix preview (removed 2026-11-16) --------
-assert '"SMART"' not in odds and "StashSmartOdds" not in aggregate
+# ---- 7. SMART column returns 2026-11-17 (writer endpoints, no hover); ------
+#         still no Basic mix preview (removed 2026-11-16)
+assert '"SMART"' in odds and "StashSmartCategoryOdds(current)" in odds
+assert "group.EffectiveSpawn(state)" in odds
 assert 'DrawStashBasicNativePools(dc,' not in aggregate.split("private void DrawStashContentMix(", 1)[1].split("private void DrawStashMedicalComposition(", 1)[0]
 
 # ---- 8. Basic Chance rows follow the Basic MEDS / FOOD / DRINKS cells -----

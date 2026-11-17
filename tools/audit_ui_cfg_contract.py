@@ -165,7 +165,7 @@ def main():
     if not EXPECTED_HIDDEN_NON_UI.issubset(hidden_ids):
         fail(f"declared non-UI controls became visible or vanished: {sorted(EXPECTED_HIDDEN_NON_UI-hidden_ids)}")
     # +3 weather knobs and +4 per-item HEAL TIME bars (2026-11-17).
-    if len(effective_ui_ids) != 390 or len(backing_ids) != 188:
+    if len(effective_ui_ids) != 392 or len(backing_ids) != 188:
         fail(f"active source dimension count drifted: {len(effective_ui_ids)} / {len(backing_ids)} backing")
 
     # Named legacy aggregate cohorts are evidence, not the complete editor

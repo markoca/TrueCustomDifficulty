@@ -296,7 +296,7 @@ def build_graph():
         'x.ClueSid == "EmptyInherited"',
         'if (hasDlc1)',
         'rewritten.TryGetValue(x, out var replacement)',
-        'if (affected.Length == 0)',
+        'if (affected.Length == 0 && !needChanged)',
     ):
         assert contract in smart_writer, (
             "SmartLoot / tier protection writer contract drift", contract)

@@ -78,12 +78,12 @@ public sealed record StashBranchPreview(
             Items.Select(i => i.SourceRaw).ToArray(),
             Items.Select(i => state.SmartSelectionFactor(i.ItemSid, Field)).ToArray())
             * state.SupplyRemaining();
-        if (factor < 1.0 - 0.0000001)
-        {
-            if (min.Length > 0) min = StashEffectiveState.SmartSpawnEndpoint(min, factor);
-            if (max.Length > 0) max = StashEffectiveState.SmartSpawnEndpoint(max, factor);
-            if (factor <= 0 && sets.Length > 0) sets = "0";
-        }
+        // Same endpoint rule as the writer, including SMART LOOT NEED.
+        var (stocked, shortFactor) = state.SmartNeedFactors();
+        if (Math.Abs(factor - 1.0) > 0.0000001
+            || Math.Abs(stocked - 1.0) > 0.0000001 || Math.Abs(shortFactor - 1.0) > 0.0000001)
+            (min, max) = StashEffectiveState.SmartNeedEndpoints(min, max, factor, stocked, shortFactor);
+        if (factor <= 0 && sets.Length > 0) sets = "0";
         return (min, max, sets);
     }
 }

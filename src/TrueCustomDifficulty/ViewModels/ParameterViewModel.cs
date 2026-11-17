@@ -156,6 +156,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "WorldLootLayout" => "Shuffle weapons, attachments and blueprints separately. Remove loose armor, loose detectors or the fixed loose artifacts (Weird Kettle/Nut/Flower/Ball, DLC Water Drip) independently; quest rewards and anomaly fields stay. Weapon density only affects weapon shuffle.",
                     "StashContentMix" => "ADJUST ODDS: each cell keeps X% of the game's odds for that kind of loot in that stash tier (100% = game odds, 0% = never); cells tagged CHANCE set the real chance. ODDS PER STASH shows the result. SUPPLY REDUCTION lowers the odds of all supplies; AMMO AMOUNT and RGD-5 AMOUNT change how much you get.",
                     "StashMedicalComposition" => "ADJUST ODDS: each item keeps X% of the game's odds in every stash (100% = game odds, 0% = never); ODDS PER STASH · MEDS shows the result per tier. QUANTITY sets Medkit and Army Medkit MIN/MAX stack sizes.",
+                    "StashSmartLoot" => "Smart loot rolls between two chances: WHEN STOCKED (you already carry enough of that supply) and WHEN SHORT (you are low on it). Turn either knob; the bars show the chance a set appears in a stash, grey ticks = vanilla. The SMART columns in the odds tables follow.",
                     "StashGear" => "BONUS GEAR COVERAGE chooses eligible stash locations. PRIORITY favors item categories; BONUS CHANCE checks each candidate. Quest and unique loot are protected.",
                     "AmmoDistribution" => "AMMO PER BOX and GRENADES PER BOX change amounts. The AMMO TYPE MIX knobs favor calibers; AMMO BOX CONTENT DISTRIBUTION only previews the result. MEDICAL BOXES: the ARMY MEDKIT MIX knob sets how often a medical box gives an Army Medkit (per player rank).",
                     "BreakableBoxYields" => "Drag the ammo or grenade yield track to change only that box's contents.",
@@ -659,6 +660,8 @@ public sealed class ParameterViewModel : ObservableObject
         ["loot.stashMedkitMaxCount"] = "StashMedicalComposition",
         ["loot.stashArmyMedkitMinCount"] = "StashMedicalComposition",
         ["loot.stashArmyMedkitMaxCount"] = "StashMedicalComposition",
+        ["loot.stashSmartStockedChance"] = "StashSmartLoot",
+        ["loot.stashSmartShortChance"] = "StashSmartLoot",
         ["loot.stashGearEnabled"] = "StashGear",
         ["loot.stashGearCoveragePercent"] = "StashGear",
         ["loot.stashGearWeaponWeight"] = "StashGear",
@@ -725,6 +728,7 @@ public sealed class ParameterViewModel : ObservableObject
         ["WorldLootLayout"] = "loot.worldWeaponShuffle",
         ["StashContentMix"] = "loot.stashMixMedical",
         ["StashMedicalComposition"] = "loot.stashMedicalBandageBias",
+        ["StashSmartLoot"] = "loot.stashSmartStockedChance",
         ["StashGear"] = "loot.stashGearEnabled",
          ["AmmoDistribution"] = "loot.ammoBoxWeight918"
     };

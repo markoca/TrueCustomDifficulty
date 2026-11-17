@@ -18,13 +18,18 @@ public sealed partial class AggregateVisualControl
     private static readonly string[] StashOddsTiers = { "Cheap", "Medium", "Expensive" };
     private static readonly string[] StashOddsTierLabels = { "BASIC", "STANDARD", "RARE" };
 
-    /// <summary>Shared 3-column geometry of ODDS tables and the ADJUST ODDS grid.</summary>
+    /// <summary>
+    /// Shared 4-column geometry of ODDS tables and the ADJUST ODDS grid:
+    /// BASIC / STANDARD / RARE plus the read-only SMART column (SmartLoot).
+    /// The ADJUST ODDS grid keeps the same columns so cells line up; its
+    /// fourth column stays empty (SmartLoot follows the row's controls).
+    /// </summary>
     private static (double GridLeft, double ColumnWidth, double Gap) StashOddsColumns(
         Rect outer, double labelWidth)
     {
         const double gap = 12.0;
         var gridLeft = outer.Left + 12.0 + labelWidth;
-        return (gridLeft, Math.Max(1.0, (outer.Right - 12.0 - gridLeft - 2.0 * gap) / 3.0), gap);
+        return (gridLeft, Math.Max(1.0, (outer.Right - 12.0 - gridLeft - 3.0 * gap) / 4.0), gap);
     }
     private static readonly string[] StashOddsCategoryLabels =
         { "AMMO", "MEDS", "FOOD", "DRINKS", "GRENADES", "COUPONS" };
@@ -71,50 +76,96 @@ public sealed partial class AggregateVisualControl
 
     /// <summary>SmartLoot medicine set carried by 817 of 831 regular stashes.</summary>
     private const string StashSmartMedicinePrototype = "StashMedicine_Smart";
+    /// <summary>SmartLoot ammo set carried by 766 of 831 regular stashes.</summary>
+    private const string StashSmartAmmoPrototype = "Stash_Ammo_Smart_CommonRare";
 
-    /// <summary>
-    /// Odds that the SmartLoot medicine set of ONE regular stash adds at
-    /// least one of each item, averaged over the four player ranks, at the
-    /// low-need (MinSpawnChance) and high-need (MaxSpawnChance) endpoints.
-    /// Uses the writer's own effective endpoints and selections
-    /// (EffectiveSpawn / EffectiveSelection). Model: each of ItemSetCount
-    /// sets spawns with the endpoint chance and then picks one entry by
-    /// Weight (Chance lists: each entry rolls its Chance).
-    /// </summary>
     private static (double[] Low, double[] High) StashSmartMedicineOdds(
         StashEffectiveState state, IReadOnlyList<string> sids)
+        => StashSmartOdds(state,
+            sid => sids.ToList().FindIndex(x => x.Equals(sid, StringComparison.OrdinalIgnoreCase)),
+            sids.Count, new[] { StashSmartMedicinePrototype });
+
+    /// <summary>
+    /// SMART column of ODDS PER STASH: the medicine + ammo SmartLoot sets a
+    /// typical regular stash carries (food, drink and grenade sets sit on only
+    /// 2–3 stashes and are left out).
+    /// </summary>
+    private static (double[] Low, double[] High) StashSmartCategoryOdds(StashEffectiveState state)
+        => StashSmartOdds(state, StashCategoryIndex, StashOddsCategoryLabels.Length,
+            new[] { StashSmartMedicinePrototype, StashSmartAmmoPrototype });
+
+    /// <summary>
+    /// Odds that the given SmartLoot sets of ONE regular stash add at least
+    /// one item of each kind, averaged over the four player ranks, at the
+    /// low-need (MinSpawnChance) and high-need (MaxSpawnChance) endpoints.
+    /// Uses the writer's own effective endpoints and selections
+    /// (EffectiveSpawn / EffectiveSelection), so SUPPLY REDUCTION, every odds
+    /// control and SMART LOOT NEED move it. Model: each of ItemSetCount sets
+    /// (1 when absent) spawns with the endpoint chance, then picks one entry
+    /// by Weight (Chance lists: each entry rolls its Chance). Weapon-ammo
+    /// groups are one per caliber and only the caliber of the weapon you
+    /// carry applies, so PrimaryWeaponParams groups are averaged ("for your
+    /// main weapon"); Secondary/Pistol groups are left out.
+    /// </summary>
+    private static (double[] Low, double[] High) StashSmartOdds(
+        StashEffectiveState state, Func<string, int> indexOf, int count,
+        IReadOnlyCollection<string> prototypes)
     {
         var baseline = StashPreviewBaseline.Value;
-        var low = new double[sids.Count];
-        var high = new double[sids.Count];
+        var low = new double[count];
+        var high = new double[count];
         var groups = StashSourceGroups.Value
-            .Where(g => g.IsSmart && g.Prototype == StashSmartMedicinePrototype).ToArray();
+            .Where(g => g.IsSmart && prototypes.Contains(g.Prototype)
+                && (!g.Category.EndsWith("WeaponParams", StringComparison.Ordinal)
+                    || g.Category == "PrimaryWeaponParams")).ToArray();
+
+        (double[] Low, double[] High) GroupOdds(StashBranchPreview group)
+        {
+            var noneLow = Enumerable.Repeat(1.0, count).ToArray();
+            var noneHigh = Enumerable.Repeat(1.0, count).ToArray();
+            var (minRaw, maxRaw, setsRaw) = group.EffectiveSpawn(state);
+            var sets = setsRaw.Length == 0 ? 1.0 : StashEffectiveState.Number(setsRaw);
+            var pLow = minRaw.Length == 0 ? 1.0 : StashEffectiveState.Number(minRaw);
+            var pHigh = maxRaw.Length == 0 ? 1.0 : StashEffectiveState.Number(maxRaw);
+            var selection = group.Items.Select(item => Math.Max(0.0,
+                StashEffectiveState.Number(group.EffectiveSelection(baseline, state, item)))).ToArray();
+            var total = selection.Sum();
+            for (var i = 0; i < group.Items.Count; i++)
+            {
+                var k = indexOf(group.Items[i].ItemSid);
+                if (k < 0) continue;
+                var pick = group.Field == "Weight"
+                    ? total <= Epsilon ? 0.0 : selection[i] / total
+                    : Math.Clamp(selection[i], 0.0, 1.0);
+                noneLow[k] *= Math.Pow(1.0 - Math.Clamp(pLow * pick, 0.0, 1.0), sets);
+                noneHigh[k] *= Math.Pow(1.0 - Math.Clamp(pHigh * pick, 0.0, 1.0), sets);
+            }
+            return (noneLow.Select(x => 1.0 - x).ToArray(), noneHigh.Select(x => 1.0 - x).ToArray());
+        }
+
         for (var rank = 0; rank < 4; rank++)
         {
-            var noneLow = Enumerable.Repeat(1.0, sids.Count).ToArray();
-            var noneHigh = Enumerable.Repeat(1.0, sids.Count).ToArray();
-            foreach (var group in groups.Where(g => g.RankIndex == rank))
+            var noneLow = Enumerable.Repeat(1.0, count).ToArray();
+            var noneHigh = Enumerable.Repeat(1.0, count).ToArray();
+            var rankGroups = groups.Where(g => g.RankIndex == rank).ToArray();
+            foreach (var group in rankGroups.Where(g => g.Category != "PrimaryWeaponParams"))
             {
-                var (minRaw, maxRaw, setsRaw) = group.EffectiveSpawn(state);
-                var sets = setsRaw.Length == 0 ? 1.0 : StashEffectiveState.Number(setsRaw);
-                var pLow = minRaw.Length == 0 ? 1.0 : StashEffectiveState.Number(minRaw);
-                var pHigh = maxRaw.Length == 0 ? 1.0 : StashEffectiveState.Number(maxRaw);
-                var selection = group.Items.Select(item => Math.Max(0.0,
-                    StashEffectiveState.Number(group.EffectiveSelection(baseline, state, item)))).ToArray();
-                var total = selection.Sum();
-                for (var i = 0; i < group.Items.Count; i++)
+                var (gl, gh) = GroupOdds(group);
+                for (var k = 0; k < count; k++)
                 {
-                    var k = sids.ToList().FindIndex(x =>
-                        x.Equals(group.Items[i].ItemSid, StringComparison.OrdinalIgnoreCase));
-                    if (k < 0) continue;
-                    var pick = group.Field == "Weight"
-                        ? total <= Epsilon ? 0.0 : selection[i] / total
-                        : Math.Clamp(selection[i], 0.0, 1.0);
-                    noneLow[k] *= Math.Pow(1.0 - Math.Clamp(pLow * pick, 0.0, 1.0), sets);
-                    noneHigh[k] *= Math.Pow(1.0 - Math.Clamp(pHigh * pick, 0.0, 1.0), sets);
+                    noneLow[k] *= 1.0 - gl[k];
+                    noneHigh[k] *= 1.0 - gh[k];
                 }
             }
-            for (var k = 0; k < sids.Count; k++)
+            var weapon = rankGroups.Where(g => g.Category == "PrimaryWeaponParams")
+                .Select(GroupOdds).ToArray();
+            if (weapon.Length > 0)
+                for (var k = 0; k < count; k++)
+                {
+                    noneLow[k] *= 1.0 - weapon.Average(w => w.Low[k]);
+                    noneHigh[k] *= 1.0 - weapon.Average(w => w.High[k]);
+                }
+            for (var k = 0; k < count; k++)
             {
                 low[k] += (1.0 - noneLow[k]) / 4.0;
                 high[k] += (1.0 - noneHigh[k]) / 4.0;
@@ -184,13 +235,15 @@ public sealed partial class AggregateVisualControl
         var reference = ReferenceStashEffectiveState();
         var now = StashOddsTiers.Select(t => StashCategoryOdds(current, t)).ToArray();
         var was = StashOddsTiers.Select(t => StashCategoryOdds(reference, t)).ToArray();
+        var smartNow = StashSmartCategoryOdds(current);
+        var smartWas = StashSmartCategoryOdds(reference);
 
         const double labelWidth = 92.0;
         const double rowPitch = 20.0;
         var (gridLeft, columnWidth, columnGap) = StashOddsColumns(outer, labelWidth);
         var headerY = outer.Top + 30.0;
-        for (var t = 0; t < 3; t++)
-            DrawText(dc, StashOddsTierLabels[t],
+        for (var t = 0; t < 4; t++)
+            DrawText(dc, t < 3 ? StashOddsTierLabels[t] : "SMART",
                 new Point(gridLeft + t * (columnWidth + columnGap), headerY),
                 9.4, muted, FontWeights.Bold);
 
@@ -205,6 +258,14 @@ public sealed partial class AggregateVisualControl
                 DrawStashOddsBar(dc, gridLeft + t * (columnWidth + columnGap), y,
                     columnWidth, now[t][k], was[t][k], StashMixPalette[k],
                     text, muted, border, accent);
+            var smartX = gridLeft + 3.0 * (columnWidth + columnGap);
+            if (smartNow.High[k] <= Epsilon && smartWas.High[k] <= Epsilon)
+                DrawText(dc, "—", new Point(smartX, y), 10.0,
+                    CloneWithOpacity(muted, .7), FontWeights.SemiBold);
+            else
+                DrawStashOddsRangeBar(dc, smartX, y, columnWidth,
+                    smartNow.Low[k], smartNow.High[k], smartWas.Low[k], smartWas.High[k],
+                    StashMixPalette[k], text, muted, border, accent);
         }
     }
 }

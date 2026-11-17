@@ -4044,3 +4044,13 @@ is removed from code; selecting GLOBAL shows the DAMAGE BY ANOMALY help.
   DISTRIBUTION: ARMY MEDKIT MIX knob (0–3×) + ARMY MEDKIT PER BOX bars for NEWBIE (—) / EXPERIENCED /
   VETERAN / MASTER. See docs/generators/MEDICAL-BOX-ARMY-MEDKIT-2026-11-17.md.
 * Catalog 407 / 202 visible.
+
+## CURRENT 2026-11-17 — STASH SMART LOOT: SMART COLUMNS + SMART LOOT NEED
+
+* Both ODDS tables (STASH LOOT MIX and MEDICAL COMPOSITION) use 4 columns: BASIC / STANDARD / RARE /
+  **SMART** (`low–high%` range bar, grey ticks = vanilla range, only changed digits gold). The ADJUST
+  ODDS grid keeps the same geometry with an empty 4th column. Supersedes the 2026-11-16 removal.
+* New Stashes board **SMART LOOT NEED** (family StashSmartLoot): WHEN STOCKED and WHEN SHORT knobs
+  (0–2×, in-dial "N% A SET"), then CHANCE A SET APPEARS with MEDS and AMMO range bars. Mouse wheel works
+  on its knobs (and on ARTIFACT HUNTING knobs). Catalog 409 / 204 visible.
+* See docs/STASH-SMART-LOOT-NEED.md.

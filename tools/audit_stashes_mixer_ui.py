@@ -51,8 +51,8 @@ expected = {
                   "loot.stashGearBonusChance"],
 }
 ids = [p["id"] for p in catalog["parameters"] if p["tab"] == "stashes"]
-assert len(ids) == len(set(ids)) == 42
-assert set(ids) == set(sum(expected.values(), []))
+assert len(ids) == len(set(ids)) == 44
+assert set(ids) == set(sum(expected.values(), [])) | {"loot.stashSmartStockedChance", "loot.stashSmartShortChance"}
 family_ids = source.split("private static IReadOnlyList<string> GetFamilyIds(", 1)[1]
 for family, expected_ids in expected.items():
     hit = re.search(r'"' + re.escape(family) + r'"\s*=>\s*new\[\]\s*\{(.*?)\}', family_ids, re.S)
@@ -413,7 +413,7 @@ assert "effective.SmartSelection(" in smart
 assert "StashEffectiveState.SmartGroupEndpointFactor(" in smart
 assert 'SmartKeptShare(weights.Select(' in effective  # Weight groups keep per-item odds via spawn endpoints
 assert "effective.SmartSelectionFactor(item.ItemSid, selectionField)" in smart
-assert "StashEffectiveState.SmartSpawnEndpoint(" in smart
+assert "StashEffectiveState.SmartNeedEndpoints(" in smart  # endpoints incl. SMART LOOT NEED
 assert "StashState(all).TuneSelection(" in tuning
 assert "StashState(all).TuneCount(" in tuning
 assert "CurrentStashEffectiveState(StashDifficultySid())" in source

@@ -37,6 +37,12 @@ public sealed partial class CfgPatchWriterService
         "loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount"
     };
 
+    // SMART LOOT NEED: stash SmartLoot spawn endpoint multipliers.
+    private static readonly string[] StashSmartNeedParameterIds =
+    {
+        StashEffectiveState.SmartStockedId, StashEffectiveState.SmartShortId
+    };
+
     private static readonly string[] StashGearParameterIds =
     {
         "loot.stashGearEnabled", "loot.stashGearCoveragePercent",

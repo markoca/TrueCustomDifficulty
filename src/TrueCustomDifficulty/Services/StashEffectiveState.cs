@@ -517,4 +517,31 @@ public sealed class StashEffectiveState
 
     public static string SmartSpawnEndpoint(string raw, double factor)
         => FormatLikeSource(Math.Clamp(Number(raw) * factor, 0, 1), raw);
+
+    /// <summary>SMART LOOT NEED: MinSpawnChance multiplier ("when stocked").</summary>
+    public const string SmartStockedId = "loot.stashSmartStockedChance";
+    /// <summary>SMART LOOT NEED: MaxSpawnChance multiplier ("when short").</summary>
+    public const string SmartShortId = "loot.stashSmartShortChance";
+
+    /// <summary>The two stash SmartLoot need multipliers (vanilla 1, never negative).</summary>
+    public (double Stocked, double Short) SmartNeedFactors()
+        => (Math.Max(0.0, Value(SmartStockedId)), Math.Max(0.0, Value(SmartShortId)));
+
+    /// <summary>
+    /// Final stash SmartLoot spawn endpoints, shared by the writer and every
+    /// preview: source endpoint × group factor (kept Weight share × supply
+    /// reduction) × need multiplier, clamped to 0..1. The stocked endpoint is
+    /// never above the short one. Empty raw stays empty.
+    /// </summary>
+    public static (string Min, string Max) SmartNeedEndpoints(
+        string minRaw, string maxRaw, double groupFactor, double stocked, double shortFactor)
+    {
+        var hasMin = !string.IsNullOrWhiteSpace(minRaw);
+        var hasMax = !string.IsNullOrWhiteSpace(maxRaw);
+        var max = hasMax ? Math.Clamp(Number(maxRaw) * groupFactor * shortFactor, 0, 1) : 1.0;
+        var min = hasMin ? Math.Clamp(Number(minRaw) * groupFactor * stocked, 0, 1) : 0.0;
+        if (hasMin && hasMax && min > max) min = max;
+        return (hasMin ? FormatLikeSource(min, minRaw) : minRaw,
+            hasMax ? FormatLikeSource(max, maxRaw) : maxRaw);
+    }
 }

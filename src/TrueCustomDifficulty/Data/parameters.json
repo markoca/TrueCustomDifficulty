@@ -8917,6 +8917,99 @@
       "exposeInUi": true
     },
     {
+      "tab": "stashes",
+      "group": "Stash Smart Loot",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "id": "loot.stashSmartStockedChance",
+      "label": "Smart Loot When Stocked",
+      "description": "Scales the chance that a stash's smart loot sets (medicine, ammo for your weapons, food, grenades) appear when you already carry enough of that supply.",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "When Stocked"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/StashPrototypes.cfg",
+          "prototype": "TCD_ clones of every stash SmartLoot prototype (+ actor redirects, DLC1 when present)",
+          "path": "ItemGenerators/[rank]/SmartLootParams/<group>/[n].MinSpawnChance",
+          "operation": "scale (clamped 0..1, never above MaxSpawnChance)"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Smart loot rolls between MinSpawnChance (you are well stocked) and MaxSpawnChance (you are short); the game decides where you are.",
+          "Applies to every regular-stash SmartLoot set (817 medicine / 766 ammo sets, a few food/grenade sets) through the existing TCD stash SmartLoot clones.",
+          "Corpse smart loot is separate (Corpse Smart Loot / NEED BOOST)."
+        ]
+      },
+      "rationale": "How often stashes still hand you supplies you already have plenty of. Vanilla: 1× (about 10% per set). 0 = smart loot only helps when you are short; 2× = twice as generous.",
+      "logic": "Multiplies MinSpawnChance of each stash smart loot set, after odds and supply reduction; capped at the set's 'when short' chance.",
+      "interaction": "WHEN SHORT sets the other end. SUPPLY REDUCTION and the ODDS cells still apply first.",
+      "exposeInUi": true
+    },
+    {
+      "tab": "stashes",
+      "group": "Stash Smart Loot",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "id": "loot.stashSmartShortChance",
+      "label": "Smart Loot When Short",
+      "description": "Scales the chance that a stash's smart loot sets appear when you are short of that supply.",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "When Short"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/StashPrototypes.cfg",
+          "prototype": "TCD_ clones of every stash SmartLoot prototype (+ actor redirects, DLC1 when present)",
+          "path": "ItemGenerators/[rank]/SmartLootParams/<group>/[n].MaxSpawnChance",
+          "operation": "scale (clamped 0..1)"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Member of the SMART LOOT NEED board (anchor: When Stocked).",
+          "Lowering it removes the game's help when you run low; raising it (capped at 100%) makes stashes reliably top you up."
+        ]
+      },
+      "rationale": "How strongly stashes help when you run low. Vanilla: 1× (about 70–80% per set). Lower = the Zone stops topping you up; 0 = no smart loot at all.",
+      "logic": "Multiplies MaxSpawnChance of each stash smart loot set, after odds and supply reduction; capped at 100%.",
+      "interaction": "WHEN STOCKED sets the other end and never exceeds this one.",
+      "exposeInUi": true
+    },
+    {
       "id": "loot.stashGearEnabled",
       "tab": "stashes",
       "group": "Stash Gear",

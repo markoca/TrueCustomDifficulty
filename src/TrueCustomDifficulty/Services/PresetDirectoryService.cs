@@ -723,6 +723,24 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "1094eaf2950e80d56e0a5ffaf4c17d097ff7c3ee",
     };
 
+    // Exact stock files before SMART LOOT NEED was added (2026-11-17).
+    private static readonly Dictionary<string, string> PreSmartLootNeedFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "562ac2b6a27c8d91e4a432a413929241ac281542",
+        ["Field Medic"] = "2ed172571858ec3a5188391f0b8b6af3d22b6122",
+        ["Hardcore+"] = "f50c143fb6fa77b8e54a90a031da817e266a5ac6",
+        ["Hardcore"] = "4e03ac194cbbaa378860d8fb6e327796903ea183",
+        ["Immersive"] = "57d36f4d361512c668bbd442e2e4ed548677e1b5",
+        ["Mercenary"] = "cb88eb4fa60fc8d0bae516ba1f7baf760aeb2a3e",
+        ["Mutant Hunter"] = "a3258d603afd5c619dd88241735ebac86849d5c9",
+        ["Outcast"] = "5d8c8f71d9e9c29d0ddd3713e0f9060656804b28",
+        ["Scavenger"] = "eab631723938346408a49eb43a143f2d87dee00c",
+        ["Smuggler"] = "8529964b34811c02224795ca8c81f0d6ed35cda3",
+        ["Tactical"] = "e67d29c50c6ef9f44d7a65a3cef319d3c6e777e1",
+        ["Wanderer"] = "b8b5a4bf92241f4c5d16725d1d370c6cb7bb2575",
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -750,7 +768,8 @@ public sealed class PresetDirectoryService
             && !PreWeatherHealTimeFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreRespawnRetirementFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreLooseArtifactFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreMedicalBoxFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreMedicalBoxFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreSmartLootNeedFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -814,7 +833,9 @@ public sealed class PresetDirectoryService
                 || (PreLooseArtifactFactoryBlobs.TryGetValue(name, out var preLooseArtifactHash)
                     && actual.Equals(preLooseArtifactHash, StringComparison.OrdinalIgnoreCase))
                 || (PreMedicalBoxFactoryBlobs.TryGetValue(name, out var preMedicalBoxHash)
-                    && actual.Equals(preMedicalBoxHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preMedicalBoxHash, StringComparison.OrdinalIgnoreCase))
+                || (PreSmartLootNeedFactoryBlobs.TryGetValue(name, out var preSmartNeedHash)
+                    && actual.Equals(preSmartNeedHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

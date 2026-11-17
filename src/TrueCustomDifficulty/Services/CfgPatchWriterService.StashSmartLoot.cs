@@ -250,12 +250,16 @@ public sealed partial class CfgPatchWriterService
         // Leave original world SmartLoot and all actors untouched at VANILLA.
         var relevant = StashMixParameterIds.Concat(StashMedicalParameterIds)
             .Append(StashSupplyReductionId)
+            .Concat(StashSmartNeedParameterIds)
             .Where(modified.ContainsKey).ToArray();
         if (relevant.Length == 0)
             return 0;
         // One numeric source snapshot for all affected SmartLoot groups.
         var effective = new StashEffectiveState(all.Values, modified.Keys, "Easy");
         var masterChanged = modified.ContainsKey(StashSupplyReductionId);
+        // SMART LOOT NEED reshapes every group's spawn endpoints.
+        var (stocked, shortFactor) = effective.SmartNeedFactors();
+        var needChanged = StashSmartNeedParameterIds.Any(modified.ContainsKey);
         var remaining = GenericSupplyRemaining(all, StashSupplyReductionId);
         var source = LoadSmartStashItems();
         var actors = LoadSmartStashActors();
@@ -273,7 +277,7 @@ public sealed partial class CfgPatchWriterService
                 && (StashTuningCurrent(all, $"loot.stash{item.ItemSid}MinCount", 0) > 0
                     || StashTuningCurrent(all, $"loot.stash{item.ItemSid}MaxCount", 0) > 0))
                 .ToArray();
-            if (affected.Length == 0)
+            if (affected.Length == 0 && !needChanged)
                 continue;
             var target = "TCD_" + group.Key;
             rewritten.Add(group.Key, target);
@@ -303,17 +307,21 @@ public sealed partial class CfgPatchWriterService
                 // Apply the master once, AFTER the source correction. Never
                 // multiply two separately emitted endpoint assignments.
                 var endpointFactor = groupFactor * remaining;
-                if (Math.Abs(endpointFactor - 1.0) > 0.0000001)
+                if (Math.Abs(endpointFactor - 1.0) > 0.0000001
+                    || Math.Abs(stocked - 1.0) > 0.0000001
+                    || Math.Abs(shortFactor - 1.0) > 0.0000001)
                 {
+                    var (minOut, maxOut) = StashEffectiveState.SmartNeedEndpoints(
+                        items[0].MinSpawnChance, items[0].MaxSpawnChance,
+                        endpointFactor, stocked, shortFactor);
                     foreach (var pair in new[]
                     {
-                        (Name: "MinSpawnChance", Raw: items[0].MinSpawnChance),
-                        (Name: "MaxSpawnChance", Raw: items[0].MaxSpawnChance)
+                        (Name: "MinSpawnChance", Raw: items[0].MinSpawnChance, Value: minOut),
+                        (Name: "MaxSpawnChance", Raw: items[0].MaxSpawnChance, Value: maxOut)
                     })
                     {
-                        if (string.IsNullOrWhiteSpace(pair.Raw)) continue;
-                        groupNode.SetAssignment(pair.Name,
-                            StashEffectiveState.SmartSpawnEndpoint(pair.Raw, endpointFactor));
+                        if (string.IsNullOrWhiteSpace(pair.Raw) || pair.Value == pair.Raw) continue;
+                        groupNode.SetAssignment(pair.Name, pair.Value);
                         edits++;
                     }
                     if (endpointFactor <= 0.0

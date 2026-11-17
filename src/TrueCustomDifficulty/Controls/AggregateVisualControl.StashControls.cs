@@ -80,7 +80,8 @@ public sealed partial class AggregateVisualControl
             new Point(outer.Right - 12.0, outer.Top + 9.0),
             9.4, muted, FontWeights.SemiBold);
 
-        // Same 3-column geometry as ODDS PER STASH, so cells line up.
+        // Same column geometry as ODDS PER STASH (its 4th column, SMART, is
+        // read-only and has no cell here), so cells line up.
         const double labelWidth = 92.0;
         var (gridLeft, columnWidth, columnGap) = StashOddsColumns(outer, labelWidth);
         var headerY = outer.Top + 30.0;
