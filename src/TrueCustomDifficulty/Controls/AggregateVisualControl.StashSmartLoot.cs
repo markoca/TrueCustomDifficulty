@@ -8,7 +8,7 @@ namespace TrueCustomDifficulty.Controls;
 
 /// <summary>
 /// STASH SMART LOOT (Stashes): ON/OFF switch plus two knobs for the stash SmartLoot spawn
-/// endpoints — WHEN STOCKED (MinSpawnChance) and WHEN SHORT (MaxSpawnChance) —
+/// endpoints — EXTRA LOOT WHEN STOCKED (MinSpawnChance) and EXTRA LOOT WHEN LOW (MaxSpawnChance) —
 /// and the chance a set appears, per set kind, from the writer's own
 /// effective endpoints (StashBranchPreview.EffectiveSpawn).
 /// </summary>
@@ -52,26 +52,25 @@ public sealed partial class AggregateVisualControl
         var left = (ActualWidth - bankWidth) / 2.0;
         var cellWidth = (bankWidth - StashSmartGap) / 2.0;
 
-        // One master checkbox is the card title, not a redundant caption row.
-        // OFF zeroes SmartLoot sets while the source-backed odds stay saved.
+        // One top-left master checkbox is the board title. OFF disables
+        // SmartLoot sets while preserving the source-backed knob values.
         if (P(StashEffectiveState.SmartEnabledId) is { } enabled)
             DrawWorldCheckRow(dc, enabled, "STASH SMART LOOT",
-                new Rect((ActualWidth - 190.0) / 2.0, StashSmartToggleTop,
-                    190.0, WorldListRow),
+                new Rect(12.0, StashSmartToggleTop, 190.0, WorldListRow),
                 StashSmartToggleTop, text, muted, border, accent, panel);
 
         // Typical set endpoints (most stash sets roll 10% → 80%).
         var knobs = new (string Id, string Label, double Typical)[]
         {
-            (StashEffectiveState.SmartStockedId, "WHEN STOCKED", 0.1),
-            (StashEffectiveState.SmartShortId, "WHEN SHORT", 0.8)
+            (StashEffectiveState.SmartStockedId, "EXTRA LOOT WHEN STOCKED", 0.1),
+            (StashEffectiveState.SmartShortId, "EXTRA LOOT WHEN LOW", 0.8)
         };
         for (var i = 0; i < knobs.Length; i++)
         {
             var parameter = P(knobs[i].Id);
             var card = new Rect(left + i * (cellWidth + StashSmartGap), StashSmartKnobTop,
                 cellWidth, StashSmartKnobHeight);
-            dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0, parameter);
+            // Bare source dials: no individual framed cards inside this board.
             DrawSourceKnob(dc, parameter, knobs[i].Label, card, text, muted, border, accent, panel,
                 secondaryReadout: parameter is null ? null : string.Create(
                     System.Globalization.CultureInfo.InvariantCulture,

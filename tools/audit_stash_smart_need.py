@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """SMART LOOT NEED + SMART odds columns contract (2026-11-17).
 
-Two catalog sliders scale the stash SmartLoot spawn endpoints:
-WHEN STOCKED -> MinSpawnChance, WHEN SHORT -> MaxSpawnChance. Writer and every
-preview share StashEffectiveState.SmartNeedEndpoints (clamp 0..1, stocked never
-above short). The ODDS tables show a SMART column from the same endpoints.
+Two source-backed knobs scale the stash SmartLoot spawn endpoints:
+EXTRA LOOT WHEN STOCKED -> MinSpawnChance, EXTRA LOOT WHEN LOW -> MaxSpawnChance.
+Writer and previews share StashEffectiveState.SmartNeedEndpoints (clamp 0..1,
+stocked never above short). The ODDS tables show the same SMART endpoints.
 """
 import json
 import sys
@@ -54,8 +54,13 @@ ui = read("Controls/AggregateVisualControl.cs")
 board = read("Controls/AggregateVisualControl.StashSmartLoot.cs")
 odds = read("Controls/AggregateVisualControl.StashOdds.cs")
 check('case "StashSmartLoot":' in ui and '"StashSmartLoot" => StashSmartLootHeight' in ui
-      and '"STASH SMART LOOT"' in board and '"WHEN STOCKED"' in board and '"WHEN SHORT"' in board
+      and '"STASH SMART LOOT"' in board and '"EXTRA LOOT WHEN STOCKED"' in board
+      and '"EXTRA LOOT WHEN LOW"' in board
       and '"CHANCE A SET APPEARS"' in board, "SMART LOOT NEED board")
+check("new Rect(12.0, StashSmartToggleTop, 190.0, WorldListRow)" in board
+      and "dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9), card" not in board
+      and "DrawSourceKnob(dc, parameter, knobs[i].Label, card" in board,
+      "master checkbox at top left; borderless source dials")
 check('"SMART"' in odds and "StashSmartCategoryOdds(current)" in odds
       and 'StashSmartOdds(state, StashCategoryIndex' in odds
       and "(outer.Right - 12.0 - gridLeft - 3.0 * gap) / 4.0" in odds, "SMART column in STASH LOOT MIX odds")
@@ -64,19 +69,23 @@ pvm = read("ViewModels/ParameterViewModel.cs")
 check('["StashSmartLoot"] = "loot.stashSmartStockedChance"' in pvm
       and all(f'["{pid}"] = "StashSmartLoot"' in pvm for pid in IDS), "family map and anchor")
 
-# ---- corpse NEED BOOST ON/OFF switch ------------------------------------------
+# ---- corpse NEED BOOST: one SMART LOOT master, no secondary switch ------------
 boost = read("Controls/AggregateVisualControl.NeedBoost.cs")
 vm = read("ViewModels/MainViewModel.cs")
 preset = read("Models/PresetFile.cs")
 writer = read("Services/CfgPatchWriterService.cs")
 xaml = read("MainWindow.xaml")
-check("NeedBoostEnabledProperty" in boost and "_npcBoostCheckbox" in boost
-      and '"FLAT", "2×"' in boost and "NpcNeedBoostKnobActive()" in boost, "NEED BOOST checkbox + FLAT label")
-check("CorpseSmartLootNeedBoostEnabled ? CorpseSmartLootNeedBoost : 1.0" in vm
-      and "vm.EffectiveCorpseSmartLootNeedBoost" in writer, "OFF writes vanilla, knob value kept")
-check('"corpseSmartLootNeedBoostEnabled"' in preset
-      and "preset.CorpseSmartLootNeedBoostEnabled ?? true" in vm, "preset sidecar (null = ON)")
-check('NeedBoostEnabled="{Binding DataContext.CorpseSmartLootNeedBoostEnabled' in xaml, "XAML binding")
+check("NeedBoostEnabledProperty" not in boost and "_npcBoostCheckbox" not in boost
+      and '"FLAT", "2×"' in boost and "NpcNeedBoostKnobActive()" in boost,
+      "NEED BOOST dial without redundant checkbox")
+check('p.Id == "loot.npcSmartLootEnabled"' in vm
+      and "vm.EffectiveCorpseSmartLootNeedBoost" in writer,
+      "single SMART LOOT master gates effective NEED BOOST")
+check('"corpseSmartLootNeedBoostEnabled"' not in preset
+      and "preset.CorpseSmartLootNeedBoostEnabled" not in vm,
+      "no redundant NEED BOOST preset toggle")
+check('NeedBoost="{Binding DataContext.CorpseSmartLootNeedBoost' in xaml
+      and 'NeedBoostEnabled=' not in xaml, "only NEED BOOST value bound")
 
 # ---- SMART LOOT IN STASHES master switch ---------------------------------------
 sw = catalog.get("loot.stashSmartLootEnabled", {})
@@ -87,7 +96,7 @@ check("var smartOff = !effective.SmartLootEnabled;" in smart
       and "var endpointFactor = smartOff ? 0.0 : groupFactor * remaining;" in smart,
       "writer: OFF zeroes every group (0 / 0 / ItemSetCount 0)")
 check("* (state.SmartLootEnabled ? 1.0 : 0.0)" in preview, "previews follow the switch")
-check('DrawWorldCheckRow(dc, enabled, "Smart loot in stashes"' in board, "board checkbox")
+check('DrawWorldCheckRow(dc, enabled, "STASH SMART LOOT"' in board, "board checkbox")
 
 if failures:
     print(f"\n{len(failures)} failure(s)")

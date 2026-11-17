@@ -1,4 +1,10 @@
 
+## 2026-11-17 — CURRENT: STASH SMART LOOT top-left master and borderless knobs
+
+* Master `loot.stashSmartLootEnabled` checkbox and **STASH SMART LOOT** caption occupy the upper-left corner (12-DIP local title-row origin, canonical `DrawWorldCheckRow` checkbox chrome and caption-wide click target). They are no longer centered above the knobs.
+* Two frameless, centered, source-backed dials: **EXTRA LOOT WHEN STOCKED** (`loot.stashSmartStockedChance`, player's supplies plentiful, source `MinSpawnChance`) and **EXTRA LOOT WHEN LOW** (`loot.stashSmartShortChance`, player's supplies depleted, source `MaxSpawnChance`). The rectangular panel outlines around individual knobs are removed; dial geometry, native 0–2×/0.05× range, central figures, reference ticks, hover and right-click reset are unchanged. These names describe bonus-set **chance**, not quantities. The single outlined MEDS/AMMO chance-of-set preview beneath the knobs remains.
+* Preserve centered compact two-dial alignment and existing responsiveness; no additional explanation captions or Base/Vanilla readouts in the visual controls. Historical STASHES labels in older sections below are superseded by this entry.
+
 ## 2026-11-17 — CURRENT: Single NPC SMART LOOT master for NEED BOOST
 
 * NPC **SMART LOOT** has one master ON/OFF checkbox in its title row. Its **NEED BOOST** knob has no checkbox or reserved checkbox-caption spacing; it keeps the existing 0–2× / 0.05× dial, FLAT endpoint, drag, wheel, keyboard and right-click reset. Master OFF dims and locks all Smart Loot-only controls, retaining the boost value for re-enable.

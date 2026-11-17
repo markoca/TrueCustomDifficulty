@@ -23,10 +23,17 @@ hover text.)
 
 ## SMART LOOT NEED (Stashes → Stash Smart Loot)
 
+The board's only checkbox and **STASH SMART LOOT** caption sit at the upper-left, using
+the canonical checkbox chrome and whole-label hit target. The two centered knobs are
+unframed (no individual rectangular cards); their 270° native arcs, values, reference
+ticks and mouse/keyboard interactions are unchanged. The lower MEDS/AMMO chance-of-set
+panel remains framed. The labels make clear that "stocked" and "low" refer to the
+**player's** supplies and that these knobs change the odds of bonus loot, not item quantity.
+
 | Knob | Id | Range | Vanilla | Writes |
 |---|---|---|---|---|
-| WHEN STOCKED | `loot.stashSmartStockedChance` | 0–2× / 0.05 | 1× | every stash SmartLoot `MinSpawnChance` × k |
-| WHEN SHORT | `loot.stashSmartShortChance` | 0–2× / 0.05 | 1× | every stash SmartLoot `MaxSpawnChance` × k |
+| EXTRA LOOT WHEN STOCKED | `loot.stashSmartStockedChance` | 0–2× / 0.05 | 1× | stash SmartLoot `MinSpawnChance` × k when the player has plenty of supplies |
+| EXTRA LOOT WHEN LOW | `loot.stashSmartShortChance` | 0–2× / 0.05 | 1× | stash SmartLoot `MaxSpawnChance` × k when the player runs low |
 
 Both run through the existing TCD stash SmartLoot clones (`WriteWorldStashSmartLoot`, actor
 redirects incl. DLC1). Final endpoint = source × kept Weight share × (1 − supply reduction) × knob,
@@ -34,7 +41,7 @@ clamped 0..1; WHEN STOCKED is never above WHEN SHORT (`StashEffectiveState.Smart
 with the previews). The in-dial line shows a typical set (10% / 80%); CHANCE A SET APPEARS shows the
 average effective range of the MEDS and AMMO (main weapon) sets with vanilla ticks.
 
-Examples: hardcore "no hand-outs" = WHEN SHORT 0.5×; "only helps when you need it" = WHEN STOCKED 0×.
+Examples: hardcore "no hand-outs" = EXTRA LOOT WHEN LOW 0.5×; "only helps when you need it" = EXTRA LOOT WHEN STOCKED 0×.
 Corpse smart loot is separate (Loot → NPC LOOT, NEED BOOST). Checks: `tools/audit_stash_smart_need.py`.
 
 ## Corpse NEED BOOST (single master)
@@ -49,6 +56,6 @@ Legacy preset field `corpseSmartLootNeedBoostEnabled` is ignored and never saved
 `loot.stashSmartLootEnabled` (toggle, vanilla ON, checkbox at the top of the STASH SMART LOOT board).
 OFF sets `MinSpawnChance`, `MaxSpawnChance` and (where present) `ItemSetCount` of every stash SmartLoot
 group to 0 in the TCD clones, so stashes hold only their normal Basic/Standard/Rare contents and
-hand-placed items. WHEN STOCKED / WHEN SHORT `requiresToggle` it: dimmed, values kept. The SMART
+hand-placed items. Both EXTRA LOOT knobs `requiresToggle` it: dimmed, values kept. The SMART
 columns drop to "—". Corpse Smart Loot is switched off separately by Loot → NPC LOOT → SMART LOOT master; choosing
 no BONUS PACKS also leaves NEED BOOST with nothing to shape.
