@@ -71,14 +71,20 @@ public static class HumanCombatPolicy
     public static double Reference(TacticControl control, string difficultySid)
         => difficultySid == "Stalker" && control.MasterHalves ? 2.0 : 1.0;
 
+    /// <summary>Source-accurate cooldown range for the selected reference difficulty and current rate.</summary>
+    public static (double Min, double Max) CooldownSeconds(TacticControl control, double rate, double reference)
+    {
+        var (min, max) = reference > 1.0 ? control.MasterSeconds : control.DefaultSeconds;
+        var factor = reference / Math.Max(rate, 0.0000001);
+        return (min * factor, max * factor);
+    }
+
     /// <summary>Panel text, e.g. "2x · throws a grenade every 10–17 s" (cards drop the factor).</summary>
     public static string TacticDisplay(TacticControl control, double rate, double reference)
     {
-        var master = reference > 1.0;
-        var (min, max) = master ? control.MasterSeconds : control.DefaultSeconds;
-        var factor = (master ? reference : 1.0) / Math.Max(rate, 0.0000001);
+        var (min, max) = CooldownSeconds(control, rate, reference);
         return string.Create(CultureInfo.InvariantCulture,
-            $"{rate:0.##}x · {control.Verb} every {min * factor:0.#}–{max * factor:0.#} s");
+            $"{rate:0.##}x · {control.Verb} every {min:0.#}–{max:0.#} s");
     }
 
     /// <summary>

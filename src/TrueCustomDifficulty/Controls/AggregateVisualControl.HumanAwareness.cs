@@ -34,7 +34,7 @@ public sealed partial class AggregateVisualControl
 
     private static AwarenessLayout HumanAwarenessLayout(double width)
     {
-        var wide = width >= 600.0;
+        var wide = width >= 750.0;
         // Side margins leave room for the MEMORY caption outside the ring.
         var radius = wide
             ? Math.Clamp((width - 420.0) / 2.0, 90.0, 150.0)

@@ -367,15 +367,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 DrawArtifactHunting(dc, text, muted, border, accent, panel);
                 break;
             case "HumanTactics":
-                DrawCardBoard(dc, "HUMAN TACTICS", new (string, string)[]
-                {
-                    (HumanCombatPolicy.GrenadeRateId, "GRENADES"),
-                    (HumanCombatPolicy.SuppressionRateId, "SUPPRESSION"),
-                    (HumanCombatPolicy.FlankRateId, "FLANKING"),
-                    (HumanCombatPolicy.PushRateId, "PUSH"),
-                    (HumanCombatPolicy.CamperPunishRateId, "CAMPING PENALTY"),
-                    (HumanCombatPolicy.AccuracyId, "ENEMY ACCURACY")
-                }, text, muted, border, accent, panel);
+                DrawHumanTacticsBoard(dc, text, muted, border, accent, panel);
                 break;
             case "HumanAwareness":
                 DrawHumanAwarenessRadar(dc, text, muted, border, accent, panel);
@@ -472,7 +464,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // NPC LOOT owns an explicit card layer (NpcLootCards); every other
         // family uses the generic recorded cards.
         _cardHover.Finish(_hitTargets.Select(target => target.HitRect), RenderSize);
-        if (Family != "NpcLootLoadout")
+        if (Family is not ("NpcLootLoadout" or "HumanTactics"))
             _cardHover.DrawHover(dc);
     }
 
@@ -488,7 +480,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // The generic map-center glow would be in the wrong position here.
         if (Family is "EquipmentWearBalance" or "FlycatcherSlowdown"
             or "AnomalyGlobalDamage" or "AnomalySpecialEffects" or "PlayerWeaponProfile"
-            or "HumanAwareness")
+            or "HumanAwareness" or "HumanTactics")
             return;
         if (Family == "HumanCombatProfile" && target.Kind == HitKind.Knob)
             return;
@@ -6791,9 +6783,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         SetHoverTarget(target);
         Cursor = target?.Kind switch
         {
-            HitKind.Horizontal or HitKind.RangeMin or HitKind.RangeMax => Cursors.SizeWE,
+            HitKind.Horizontal or HitKind.RangeMin or HitKind.RangeMax
+                or HitKind.TacticalCooldown => Cursors.SizeWE,
             HitKind.Vertical => Cursors.SizeNS,
-            HitKind.Knob => Cursors.Hand,
+            HitKind.Knob or HitKind.TacticalSpread => Cursors.Hand,
             HitKind.HumanJoint or HitKind.HungerJoint or HitKind.FatigueJoint or HitKind.FatigueReloadJoint
                 or HitKind.RadarRadius or HitKind.RadarArc => Cursors.SizeAll,
             HitKind.Toggle or HitKind.DrinkDurationOverride or HitKind.Choice => Cursors.Hand,
@@ -7347,6 +7340,12 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 Math.Clamp(-signedEffect / 100.0, effect.Minimum, effect.Maximum));
             EnforceFamilyConstraints(threshold);
             InvalidateVisual();
+            return;
+        }
+
+        if (target.Kind is HitKind.TacticalCooldown or HitKind.TacticalSpread)
+        {
+            UpdateHumanTacticsTarget(target, point);
             return;
         }
 
@@ -7923,7 +7922,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "ServiceCostsBoard" => ServicePriceBoardHeight(width),
             "ItemWeightBoard" => EconomyBoardHeight(width, 4),
             "ArtifactHunting" => ArtifactHuntingHeight(width),
-            "HumanTactics" => EconomyBoardHeight(width, 6),
+            "HumanTactics" => HumanTacticsHeight(width),
             "HumanAwareness" => HumanAwarenessHeight(width),
             "AnomalyGlobalDamage" => 242.0,
             "FlycatcherSlowdown" => FlycatcherBoardHeight(width),
@@ -8248,7 +8247,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         RangeMin,
         RangeMax,
         RadarRadius,
-        RadarArc
+        RadarArc,
+        TacticalCooldown,
+        TacticalSpread
     }
 
     private sealed record HitTarget(

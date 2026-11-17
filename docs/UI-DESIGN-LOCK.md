@@ -1,3 +1,13 @@
+## 2026-11-17 — CURRENT: HUMAN TACTICS intervals and reticle
+
+* HUMAN TACTICS is no longer six slider cards: it uses a bounded, two-part custom editor in Controls/AggregateVisualControl.HumanTactics.cs.
+* Five tactical actions (GRENADES, SUPPRESSION, FLANKING, PUSH, CAMPING PENALTY) each show a real Newbie-rank min–max cooldown interval (seconds) on a shared logarithmic 0.5–160 s scale. The one draggable handle moves both endpoints together by changing the existing independent rate factor (0.25×–3×). Tick labels: 1 / 5 / 20 / 80 s; the muted dashed interval shows the selected reference difficulty, including Master-only timing and 2× reference where appropriate. This is a cooldown between available actions, not a guaranteed event frequency.
+* ENEMY ACCURACY is a circular interactive shot-spread reticle: 100 / accuracyFactor %, using a logarithmic UI ring radius for a legible 50–400% spread range. A dashed ghost circle shows the reference. The graphic is neither bullet hit probability nor a simulated hit grouping; the source remains NPC weapon DispersionRadius.
+* Above and including 600 DIP the five lanes sit beside the reticle in a centered bank at most 760 DIP wide, with 360-DIP measured height. Under 600 DIP the reticle stacks beneath the lanes, with 550-DIP measured height.
+* Same catalog IDs, rate/accuracy ranges and steps, same CFG writer, presets, chosen-reference values, panel selection, right-click source reset, R group reset and arrow/Home/End keys. Handle-only hover glow; only changed numeric readout tokens become gold. No duplicate Base/Vanilla captions.
+* HUMAN AWARENESS remains its existing radar, but the legend uses the side-by-side position only at 750 DIP or above so long player-facing readouts do not clip. Below 750 DIP the legend stacks underneath.
+* Contract audit: tools/audit_human_tactics.py now checks custom UI routing, hit kinds and sizing as well as the gameplay source mappings.
+
 ## 2026-11-17 — CURRENT: HUMAN AWARENESS radar readability pass
 
 * Ring labels (10 / 25 / 50 / 100 / 200 m) moved to the 6 o'clock axis behind the enemy. Each sits on a small panel-coloured backing, so they no longer pile up on one line.

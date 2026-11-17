@@ -58,3 +58,9 @@ points (exact), `audit_combat_contract.py`.
 **Card texts (2026-11-17):** `throws a grenade every 20–35 s`, `pins you down every 15–25 s`, `flanks you every 10–20 s`, `rushes your cover every 12–25 s`, `flushes you out every 2–5 s`, `shot spread 100%`, `spots you 80 m ahead, 25 m aside`, `hears steps at 12 m`, `searches for 30 s`.
 
 **HUMAN AWARENESS board (2026-11-17):** detection radar. The vision field is 80 m ahead, blending to 25 m at the 85° edge. The footstep circle is 12 m. The outer timer ring shows MEMORY. Square-root distance scale with true-metre rings; legend with the player texts. See UI-DESIGN-LOCK.
+
+## HUMAN TACTICS visual editor (2026-11-17)
+
+The six slider cards have become five interactive cooldown intervals and a circular accuracy spread editor (AggregateVisualControl.HumanTactics.cs). A common logarithmic ruler (0.5–160 seconds) shows each native min–max cooldown on one linked draggable interval; only the underlying single scalar rate changes. Readouts respect the selected reference difficulty's Default or Master combat-sync table. Pauses are not guaranteed action cadence.
+
+The ENEMY ACCURACY reticle visualises relative DispersionRadius (100 / factor %) on a compact logarithmic ring scale (50–400%), never simulated bullet hits or chance. The source is unchanged. Right click resets a parameter; R resets all six; source step snapping and keyboard navigation remain. Layout is side-by-side at 600 DIP and stacked below that. Awareness legend stacks below the radar until 750 DIP. See UI-DESIGN-LOCK.md and VISUAL-CONTROL-SYSTEM.md for visual details.

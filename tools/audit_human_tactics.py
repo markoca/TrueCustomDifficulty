@@ -102,7 +102,7 @@ for pid in ("combat.npcAccuracy", "combat.npcSightRange", "combat.npcHearingRang
           f"{pid}: vanilla 1, runtime_test_required")
 
 # ---- UI ----------------------------------------------------------------------------------
-for token in ('case "HumanTactics":', 'case "HumanAwareness":', 'DrawCardBoard(dc, "HUMAN TACTICS"',
+for token in ('case "HumanTactics":', 'case "HumanAwareness":', 'DrawHumanTacticsBoard(dc, text, muted, border, accent, panel)',
               'DrawHumanAwarenessRadar(dc, text, muted, border, accent, panel)',
               '"HumanAwareness" => HumanAwarenessHeight(width)', '"HumanTactics" => HumanCombatPolicy.TacticsBoardIds',
               '"HumanAwareness" => HumanCombatPolicy.AwarenessIds', "private static string CardReadout("):
@@ -119,6 +119,22 @@ if dump:
     npc = re.findall(r"^(\w+_NPC) : struct\.begin", text, re.M)
     check(len(npc) == 75 and {p["prototype"] for p in acc if p["scope"] == "baseGame"} == set(npc),
           f"dump: 75 base NPC weapon settings ({len(npc)})")
+
+# Custom tactical visuals must be source-bound, interactive and measured.
+tactics_ui = read("Controls/AggregateVisualControl.HumanTactics.cs")
+for token in ("HumanTacticsHeight(double width)", "DrawHumanTacticsBoard(",
+              "HumanCombatPolicy.Tactics", "HumanCombatPolicy.CooldownSeconds(",
+              "HitKind.TacticalCooldown", "HitKind.TacticalSpread",
+              "ReadoutInk.Numbers(accent, text)", "ControlHoverGlow.Draw(",
+              "Snap(parameter,", "Math.Log(", "Math.Exp("):
+    check(token in tactics_ui, f"tactics editor token {token}")
+for token in ("HitKind.TacticalCooldown", "HitKind.TacticalSpread",
+              "UpdateHumanTacticsTarget(target, point)",
+              '"HumanTactics" => HumanTacticsHeight(width)'):
+    check(token in ui, f"tactics input/measure token {token}")
+check('var wide = width >= 750.0;' in
+      read("Controls/AggregateVisualControl.HumanAwareness.cs"),
+      "awareness responsive legend breakpoint")
 
 if failures:
     print(f"\n{len(failures)} failure(s)")
