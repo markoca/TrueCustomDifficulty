@@ -1,4 +1,11 @@
 
+## 2026-11-17 — CURRENT: Source-gated COUPONS cells in STASH LOOT MIX
+
+* The pinned STALKER 2.1 baseline has Basic (`GamePass_Stash_ItemGenerator_Cheap`) coupon **Weight** rows and Standard (`GamePass_Stash_ItemGenerator_Common_Var1`) coupon **Chance=0.1** rows only under native `EGameDifficulty::Easy, EGameDifficulty::Medium`; ranks Experienced/Veteran/Master are eligible, Newbie is not. Native `Hard/Stalker` has **no Basic/Standard coupon rows**. Rare contains coupon Chance rows for all four native difficulties (0.2 Easy/Medium, 0.1 Hard/Stalker).
+* UI difficulty translation: **Novice → Easy**, **Stalker → Medium**, **Veteran → Hard**, **Master → Stalker**. Therefore, on **Veteran/Master**, both **ADJUST ODDS** and **ODDS PER STASH** show a plain muted `—` for Basic and Standard COUPONS; no invisible/disabled slider hit regions are registered. On Novice/Stalker both editable cells and source-derived odds bars remain. Rare coupons remain editable at every difficulty.
+* Eligibility is computed from the writer-backed `StashSourceGroups` entries via `StashItemAuthored` (rank/difficulty, positive native selection), not hard-coded UI-difficulty names. The six category rows and column alignment remain fixed. Switching Base Difficulty Preset updates visibility; previously saved coupon values remain intact, including when inactive. No writer routes, parameter IDs, factory presets, source values or tier-wide quantities are changed.
+* No synthetic coupon SmartLoot is added: source SmartLoot prototypes have **zero** money SIDs. The Basic and Standard coupon rationale text is updated accordingly. Source acceptance remains subject to in-game validation.
+
 ## 2026-11-17 — CURRENT: Gamer-facing description for Shuffle Loose Weapons supply
 
 * In **WORLD ITEM SPAWNS → WEAPONS**, the dependent `loot.worldWeaponDensity` slider directly beneath **Shuffle Loose Weapons** now reads **GUNS TO FIND** instead of **Density**. Keep its compact Stamina Usage-style label-left, value-right, single-rail layout, native 0–100%/5% steps, original reference tick and muted/locked behavior when shuffle is disabled.

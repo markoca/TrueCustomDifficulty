@@ -102,8 +102,11 @@ public sealed partial class AggregateVisualControl
                 var cell = new Rect(gridLeft + t * (columnWidth + columnGap), y,
                     columnWidth, StashControlRowPitch - 4.0);
                 var id = StashControlGrid[k, t];
-                if (id is null)
+                if (id is null || (StashOddsCategoryLabels[k] == "COUPONS"
+                    && !StashCouponTierAuthored(t)))
                 {
+                    // An absent native source means no slider, hit target or
+                    // 0% odds claim for the selected base difficulty.
                     DrawText(dc, "—", new Point(cell.Left + 6.0, cell.Top + 6.0),
                         10.0, CloneWithOpacity(muted, .7), FontWeights.SemiBold);
                     continue;

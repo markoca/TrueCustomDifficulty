@@ -8339,7 +8339,7 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Basic Coupons Odds",
-      "description": "Keeps X% of the game's odds for coupons (Common/Rare/Epic coupons) in Basic stashes and in the game's smart world stashes. In Basic Weight lists the removed Weight goes to an appended native Empty pick; in smart world stashes Weight groups scale each item's Weight and the group's spawn chance, Chance groups scale each item's Chance, so the item keeps exactly X% of its odds. The six DLC1 CheapNoFresh Basic stashes follow the same rule. Other kinds keep their own odds. 100% = vanilla, 0% = never from these lists.",
+      "description": "Keeps X% of the original coupon Weight odds in eligible Basic stash generators. Basic coupons are authored only on Novice/Stalker (native Easy/Medium) for Experienced, Veteran and Master player ranks. On Veteran/Master difficulty, Basic coupons have no native source and their UI cell is unavailable. 100% keeps original selection odds; 0% disables eligible Basic coupon Weight picks. This does not create coupons in absent branches or change Rare coupon Chance. SmartLoot has no coupon items.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -8383,7 +8383,7 @@
           "Quest, unique, DLC1 regular and Cabin/direct rows are outside this rule."
         ]
       },
-      "rationale": "How much of the game's odds for coupons (money) you keep in Basic stashes (the Basic COUPONS cell) and in smart world stashes. Vanilla: 100%. 0% = no coupons from those picks. Other items keep their own odds.",
+      "rationale": "How often money bundles can appear in Basic stashes on Novice/Stalker difficulty. Lower it for fewer coupons; 100% keeps original odds and 0% removes eligible Basic coupon picks. On Veteran/Master there is no Basic coupon source, so the slider is hidden.",
       "logic": "100% keeps the game's coupons odds; 50% halves them; 0% removes coupons from these Basic and smart stash lists. Other items are not affected.",
       "interaction": "Standard and Rare stashes have their own cells in ADJUST ODDS. Stack sizes stay separate.",
       "exposeInUi": false
@@ -10470,7 +10470,7 @@
       },
       "exposeInUi": true,
       "label": "Standard Coupon Chance",
-      "description": "Source-native Rank-gated coupon reward source Chance, originally 10%. Its ADJUST ODDS cell keeps X% of these authored chances; ODDS PER STASH shows the result. Does not define a category-wide physical stash drop probability.",
+      "description": "Keeps X% of the native 10% coupon Chance roll in eligible Standard stash generators. Standard coupons are authored only on Novice/Stalker (native Easy/Medium) for Experienced, Veteran and Master player ranks. On Veteran/Master difficulty, Standard coupons have no source and their UI cell is unavailable. 100% preserves the 10% source Chance; 0% disables those eligible rolls.",
       "slider": {
         "min": 0,
         "max": 1,
@@ -10488,7 +10488,7 @@
       ],
       "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
       "interaction": "Affects eligible Standard stash coupons only. Availability, selection priority and stack size remain separate.",
-      "rationale": "Scales the chance of a coupon (money) reward in Standard stashes. Vanilla: 100% of the game's 10%."
+      "rationale": "How often Standard stashes pay out coupons on Novice/Stalker difficulty. Their native 10% Chance becomes 5% at this slider's 50% and 0% at zero. On Veteran/Master the source has no Standard coupons, so there is no control."
     },
     {
       "id": "loot.expensiveStashAmmoChance",

@@ -76,6 +76,17 @@ public sealed partial class AggregateVisualControl
             && g.Items.Any(item => item.ItemSid.Equals(sid, StringComparison.OrdinalIgnoreCase)
                 && StashEffectiveState.Number(item.SourceRaw) > Epsilon));
 
+    // Basic/Standard coupon sources exist only on native Easy/Medium.
+    // Consult the same gated CFG groups as the writer; never offer a dead
+    // coupon rail on UI Veteran/Master (native Hard/Stalker), while keeping
+    // lower-difficulty values and saved presets intact.
+    private static readonly string[] StashCouponSids =
+        { "MoneyCommon", "MoneyRare", "MoneyEpic", "MoneyLegendary" };
+
+    private bool StashCouponTierAuthored(int tier)
+        => StashCouponSids.Any(sid =>
+            StashItemAuthored(StashOddsTiers[tier], sid, StashDifficultySid()));
+
     /// <summary>SmartLoot medicine set carried by 817 of 831 regular stashes.</summary>
     private const string StashSmartMedicinePrototype = "StashMedicine_Smart";
     /// <summary>SmartLoot ammo set carried by 766 of 831 regular stashes.</summary>
@@ -257,9 +268,17 @@ public sealed partial class AggregateVisualControl
             DrawText(dc, StashOddsCategoryLabels[k],
                 new Point(outer.Left + 20.0, y), 10.0, text, FontWeights.SemiBold);
             for (var t = 0; t < 3; t++)
-                DrawStashOddsBar(dc, gridLeft + t * (columnWidth + columnGap), y,
-                    columnWidth, now[t][k], was[t][k], StashMixPalette[k],
-                    text, muted, border, accent);
+            {
+                var x = gridLeft + t * (columnWidth + columnGap);
+                if (StashOddsCategoryLabels[k] == "COUPONS"
+                    && !StashCouponTierAuthored(t))
+                    DrawText(dc, "—", new Point(x, y), 10.0,
+                        CloneWithOpacity(muted, .7), FontWeights.SemiBold);
+                else
+                    DrawStashOddsBar(dc, x, y,
+                        columnWidth, now[t][k], was[t][k], StashMixPalette[k],
+                        text, muted, border, accent);
+            }
             var smartX = gridLeft + 3.0 * (columnWidth + columnGap);
             if (smartNow.High[k] <= Epsilon && smartWas.High[k] <= Epsilon)
                 DrawText(dc, "—", new Point(smartX, y), 10.0,
