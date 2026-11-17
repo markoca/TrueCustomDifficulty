@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Every shipped factory preset stores every catalog control.
 
-Controls added after the last thematic tuning (2026-11-16: MUTANT AGGRESSION,
+Controls added after the 2026-10-19 tuning (2026-11-16: MUTANT AGGRESSION,
 ARTIFACT HUNTING, HUMAN TACTICS / HUMAN AWARENESS, supply reductions) are
 stored at the preset's reference-difficulty vanilla value, i.e. exactly what
 loading produced while they were omitted. Previous stock files upgrade only
@@ -32,6 +32,9 @@ NEW_IDS |= {"combat.npcFogVisibility", "combat.npcRainNoise", "combat.npcStormNo
             "loot.npcSmartLootEnabled", "loot.stashSmartMeds", "loot.stashSmartAmmo",
             "loot.stashSmartFoodDrinks", "loot.stashSmartGrenades"}
 
+# 2026-11-17 thematic pass: role values for those controls (absent = vanilla).
+THEMATIC = json.loads((ROOT / "tools/factory_preset_thematic_2026_11_17.json").read_text(encoding="utf-8"))
+
 presets = sorted((APP / "Presets").glob("*.json"))
 assert len(presets) == 12, len(presets)
 for path in presets:
@@ -41,12 +44,19 @@ for path in presets:
     values = data["values"]
     assert set(values) == set(by_id), (path.name, sorted(set(by_id) ^ set(values)))
     ref = data["referenceDifficulty"]
-    for pid in NEW_IDS:
+    role = THEMATIC["values"][data["name"]] if data["name"] in THEMATIC["values"] else THEMATIC["values"][path.stem]
+    assert set(role) <= set(by_id), (path.name, set(role) - set(by_id))
+    for pid in NEW_IDS | set(role):
         p = by_id[pid]
-        expected = p["vanilla"].get(ref, p["vanilla"].get("All"))
+        expected = role.get(pid, p["vanilla"].get(ref, p["vanilla"].get("All")))
         want = ({"kind": "toggle", "boolean": expected} if p.get("control") == "toggle"
                 else {"kind": "slider", "number": expected})
         assert values[pid] == want, (path.name, pid, values[pid])
+    side = THEMATIC["sidecars"].get(path.stem, {})
+    for key in ("traderSellOdds", "genericNpcRareGearEnabled", "genericNpcRareGearChance"):
+        assert data.get(key) == side.get(key), (path.name, key, data.get(key))
+    for pid in side.get("traderSellOdds", {}):
+        assert values[pid] == {"kind": "toggle", "boolean": True}, (path.name, pid)
     for pid, stored in values.items():
         p = by_id[pid]
         if stored.get("kind") == "slider" and p.get("slider") and not data.get("drinkDurationOverride"):
@@ -59,6 +69,9 @@ assert pds.count("PreMedicalBoxFactoryBlobs") == 3 and pds.count("PreSmartLootNe
 assert pds.count("PreSmartLootSwitchFactoryBlobs") == 3
 assert pds.count("PreNpcSmartLootFactoryBlobs") == 3
 assert pds.count("PreSmartOddsFactoryBlobs") == 3
+assert pds.count("PreThematicFactoryBlobs") == 3
+for _name, _hash in THEMATIC["previousStockBlobs"].items():
+    assert f'["{_name}"] = "{_hash}"' in pds, _name
 assert len(pds.split("PreNewControlsFactoryBlobs =", 1)[1].split("};", 1)[0].split('"] = "')) == 13
 
-print(f"PASS: 12 factory presets store all {len(by_id)} controls; the 56 newest at reference vanilla; stock upgrade hashes kept")
+print(f"PASS: 12 factory presets store all {len(by_id)} controls; the newest controls follow the 2026-11-17 thematic matrix; stock upgrade hashes kept")

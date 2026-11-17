@@ -1083,11 +1083,11 @@
     },
     "loot.stashSmartStockedChance": {
       "kind": "slider",
-      "number": 1
+      "number": 0.5
     },
     "loot.stashSmartShortChance": {
       "kind": "slider",
-      "number": 1
+      "number": 0.8
     },
     "loot.stashSmartMeds": {
       "kind": "toggle",
@@ -1511,15 +1511,15 @@
     },
     "combat.npcSightRange": {
       "kind": "slider",
-      "number": 1
+      "number": 1.1
     },
     "combat.npcHearingRange": {
       "kind": "slider",
-      "number": 1
+      "number": 1.1
     },
     "combat.npcAlertMemory": {
       "kind": "slider",
-      "number": 1
+      "number": 1.5
     },
     "combat.mutantAttackRate.bayun": {
       "kind": "slider",
@@ -1643,31 +1643,31 @@
     },
     "combat.npcFogVisibility": {
       "kind": "slider",
-      "number": 0.7
+      "number": 0.6
     },
     "combat.npcRainNoise": {
       "kind": "slider",
-      "number": 0.7
+      "number": 0.6
     },
     "combat.npcStormNoise": {
       "kind": "slider",
-      "number": 0.6
+      "number": 0.5
     },
     "health.bandageHealTime": {
       "kind": "slider",
-      "number": 1
+      "number": 3
     },
     "health.medkitHealTime": {
       "kind": "slider",
-      "number": 1
+      "number": 4
     },
     "health.armyMedkitHealTime": {
       "kind": "slider",
-      "number": 1
+      "number": 4
     },
     "health.ecoMedkitHealTime": {
       "kind": "slider",
-      "number": 1
+      "number": 4
     }
   }
 }

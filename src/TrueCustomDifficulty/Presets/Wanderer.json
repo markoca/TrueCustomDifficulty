@@ -1083,7 +1083,7 @@
     },
     "loot.stashSmartStockedChance": {
       "kind": "slider",
-      "number": 1
+      "number": 0.75
     },
     "loot.stashSmartShortChance": {
       "kind": "slider",
@@ -1195,11 +1195,11 @@
     },
     "equipment.weaponWeight": {
       "kind": "slider",
-      "number": 1
+      "number": 0.85
     },
     "equipment.armorWeight": {
       "kind": "slider",
-      "number": 1
+      "number": 0.85
     },
     "economy.traderBuys.general.weapon": {
       "kind": "toggle",
@@ -1523,103 +1523,103 @@
     },
     "combat.mutantAttackRate.bayun": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.mutantAttackRate.blinddog": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.mutantAttackRate.bloodsucker": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.mutantAttackRate.boar": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.mutantAttackRate.burer": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.mutantAttackRate.chimera": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.mutantAttackRate.controller": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.mutantAttackRate.deer": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.mutantAttackRate.flesh": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.mutantAttackRate.poltergeist": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.mutantAttackRate.pseudodog": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.mutantAttackRate.pseudogiant": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.mutantAttackRate.snork": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.mutantAttackRate.tushkan": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.mutantAbilityRate.bayun": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.mutantAbilityRate.blinddog": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.mutantAbilityRate.bloodsucker": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.mutantAbilityRate.burer": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.mutantAbilityRate.chimera": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.mutantAbilityRate.controller": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.mutantAbilityRate.poltergeist": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.mutantAbilityRate.pseudodog": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.mutantAbilityRate.pseudogiant": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.mutantAbilityRate.snork": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.mutantSpecialAbilityRate": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "loot.genericCorpseReduction": {
       "kind": "slider",
@@ -1631,7 +1631,7 @@
     },
     "environment.artifactSpawnChance": {
       "kind": "slider",
-      "number": 1
+      "number": 1.2
     },
     "environment.artifactRareLuck": {
       "kind": "slider",
@@ -1643,7 +1643,7 @@
     },
     "combat.npcFogVisibility": {
       "kind": "slider",
-      "number": 0.7
+      "number": 0.65
     },
     "combat.npcRainNoise": {
       "kind": "slider",

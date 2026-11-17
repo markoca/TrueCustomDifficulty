@@ -1,3 +1,7 @@
+## 2026-11-17 — CURRENT: factory presets tuned for the newest controls
+
+* All 12 factory roles now give the newest boards real role values (HUMAN TACTICS / AWARENESS, MUTANT AGGRESSION, ARTIFACT HUNTING, STASH / NPC SMART LOOT, REMOVE ARMORS / LOOSE ARTIFACTS, Army Medkit in boxes, HEAL TIME, weight) plus TRADER STOCK odds and RARE GEAR where the role calls for it. No UI or writer change; matrix and reasons in docs/FACTORY-PRESETS.md and `tools/factory_preset_thematic_2026_11_17.json`.
+
 ## 2026-11-17 — CURRENT: STASH / LOOT consistency review (texts, SmartLoot inputs)
 
 * Hidden Standard/Rare stash ammo mirrors (`loot.mediumStashAmmoQuantity`, `loot.expensiveStashAmmoQuantity`) name the real control **AMMO AMOUNT** (was *AMMO QUANTITY*) and use the multiplier grammar `0.25x–2x` / `1x` (was `25-200%` / `100%`).

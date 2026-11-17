@@ -1,3 +1,24 @@
+## 2026-11-17 — CURRENT: thematic tuning of the newest controls
+
+The controls added after the last factory pass (HUMAN TACTICS / HUMAN AWARENESS, MUTANT AGGRESSION, ARTIFACT HUNTING, STASH SMART LOOT, NPC SMART LOOT, REMOVE ARMORS / LOOSE ARTIFACTS, Army Medkit in medical boxes, HEAL TIME, weapon/armor weight) and the TRADER STOCK / RARE GEAR sidecars now carry role values. Source of truth: `tools/factory_preset_thematic_2026_11_17.json` (absent ids = reference-difficulty vanilla); gate: `tools/audit_factory_preset_coverage.py`.
+
+| Role | Human tactics · accuracy | Awareness (sight · hearing · memory · fog/rain/storm) | Mutants (attack · ability · special) | Other |
+|---|---|---|---|---|
+| Tactical | 1.5/1.5/1.5/1.25/1.5 · 1.25 | 1.15 · 1.15 · 1.5 | — | smart .5/.75, heal 2–3 s |
+| Mercenary | 1.25 all · 1.1 | 1.1 · 1.1 · 1.25 | — | smart .5/.8, RARE GEAR 3% |
+| Hardcore | Master 2×, camper 1.5 · 1.15 | 1.2 · 1.2 · 1.5 · .75/.75/.65 | Master 2× | artifacts .8/.75, smart 0/.6 no grenades, Army Medkit .5×, heal 3–4 s, weight 1.1×, LOOSE ARTIFACTS ON, shopkeeper armor 75% |
+| Hardcore+ | 2.5 all, camper 2 · 1.3 | 1.35 · 1.35 · 2 · .8/.8/.7 | 2.5 | artifacts .6/.5, stash + NPC smart loot OFF, REMOVE ARMORS + LOOSE ARTIFACTS ON, Army Medkit .25×, heal 5–6 s, weight 1.15×, armor/artifacts 50% and ammo 75% at traders |
+| Immersive | — | 1.1 · 1.1 · 1.5 · .6/.6/.5 | — | smart .5/.8, heal 3–4 s |
+| Smuggler | — | .85 · .85 · .75 · .6/.55/.45 | — | artifacts 1.2/1.25, smart .5/.75, weapon weight .9×, RARE GEAR 5% |
+| Outcast | flank/push 1.25 · 1.1 | 1.1 · — · 1.5 | 1.25 | artifacts .8/1, smart 0/.5, REMOVE ARMORS ON, Army Medkit .5×, heal 3–4 s, shopkeeper weapons/armor 50% |
+| Scavenger | — | .9 · .9 | — | RARE GEAR 3% |
+| Mutant Hunter | — | — | 1.5 · 1.25 · 1.5 | smart .5/.8 |
+| Wanderer | — | fog .65 | 1.25 | artifacts 1.2/1, smart .75/1, weight .85× |
+| Field Medic | — | — | — | Army Medkit 1.5× |
+| Anomaly Runner | — | — | — | artifacts 1.5/1.5, smart .75/1 |
+
+SUPPLY REDUCTION (stash and corpse) stays 0 everywhere: scarcity is already set by the odds cells, boxes and loose loot, and would stack. Artifacts per spawn stay 1. `PresetDirectoryService.PreThematicFactoryBlobs` upgrades byte-identical stock copies; edited presets stay untouched.
+
 ## 2026-11-13 — Trader Sells factory preset extension
 
 All 12 factory profiles now have **359 catalog entries**: the original 288, 40 independent Trader Buys cells, and 31 independent Trader Sells cells. The new seller cells are all ON/neutral, so **existing merchant stock remains unchanged** unless a player explicitly turns one OFF. No per-role merchant-category customization is introduced by default; reset and older preset import preserve the same vanilla behavior. See `docs/generators/TRADER-SELLS-IMPLEMENTATION-2026-11-13.md`.

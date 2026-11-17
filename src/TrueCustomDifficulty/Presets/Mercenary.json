@@ -6,6 +6,8 @@
   "referenceDifficulty": "Veteran",
   "drinkDurationOverride": true,
   "medicalOverride": false,
+  "genericNpcRareGearEnabled": true,
+  "genericNpcRareGearChance": 0.03,
   "savedAtUtc": "2026-10-19T18:00:00Z",
   "values": {
     "combat.npcHealth": {
@@ -1083,11 +1085,11 @@
     },
     "loot.stashSmartStockedChance": {
       "kind": "slider",
-      "number": 1
+      "number": 0.5
     },
     "loot.stashSmartShortChance": {
       "kind": "slider",
-      "number": 1
+      "number": 0.8
     },
     "loot.stashSmartMeds": {
       "kind": "toggle",
@@ -1487,39 +1489,39 @@
     },
     "combat.npcGrenadeRate": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.npcSuppressionRate": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.npcFlankRate": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.npcPushRate": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.npcCamperPunishRate": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.npcAccuracy": {
       "kind": "slider",
-      "number": 1
+      "number": 1.1
     },
     "combat.npcSightRange": {
       "kind": "slider",
-      "number": 1
+      "number": 1.1
     },
     "combat.npcHearingRange": {
       "kind": "slider",
-      "number": 1
+      "number": 1.1
     },
     "combat.npcAlertMemory": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.mutantAttackRate.bayun": {
       "kind": "slider",

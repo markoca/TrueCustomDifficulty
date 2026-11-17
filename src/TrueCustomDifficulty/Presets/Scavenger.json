@@ -6,6 +6,8 @@
   "referenceDifficulty": "Veteran",
   "drinkDurationOverride": true,
   "medicalOverride": false,
+  "genericNpcRareGearEnabled": true,
+  "genericNpcRareGearChance": 0.03,
   "savedAtUtc": "2026-10-19T18:00:00Z",
   "values": {
     "combat.npcHealth": {
@@ -1511,11 +1513,11 @@
     },
     "combat.npcSightRange": {
       "kind": "slider",
-      "number": 1
+      "number": 0.9
     },
     "combat.npcHearingRange": {
       "kind": "slider",
-      "number": 1
+      "number": 0.9
     },
     "combat.npcAlertMemory": {
       "kind": "slider",

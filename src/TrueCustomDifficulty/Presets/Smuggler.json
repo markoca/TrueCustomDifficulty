@@ -6,6 +6,8 @@
   "referenceDifficulty": "Veteran",
   "drinkDurationOverride": true,
   "medicalOverride": false,
+  "genericNpcRareGearEnabled": true,
+  "genericNpcRareGearChance": 0.05,
   "savedAtUtc": "2026-10-19T18:00:00Z",
   "values": {
     "combat.npcHealth": {
@@ -1083,11 +1085,11 @@
     },
     "loot.stashSmartStockedChance": {
       "kind": "slider",
-      "number": 1
+      "number": 0.5
     },
     "loot.stashSmartShortChance": {
       "kind": "slider",
-      "number": 1
+      "number": 0.75
     },
     "loot.stashSmartMeds": {
       "kind": "toggle",
@@ -1195,7 +1197,7 @@
     },
     "equipment.weaponWeight": {
       "kind": "slider",
-      "number": 1
+      "number": 0.9
     },
     "equipment.armorWeight": {
       "kind": "slider",
@@ -1511,15 +1513,15 @@
     },
     "combat.npcSightRange": {
       "kind": "slider",
-      "number": 1
+      "number": 0.85
     },
     "combat.npcHearingRange": {
       "kind": "slider",
-      "number": 1
+      "number": 0.85
     },
     "combat.npcAlertMemory": {
       "kind": "slider",
-      "number": 1
+      "number": 0.75
     },
     "combat.mutantAttackRate.bayun": {
       "kind": "slider",
@@ -1631,11 +1633,11 @@
     },
     "environment.artifactSpawnChance": {
       "kind": "slider",
-      "number": 1
+      "number": 1.2
     },
     "environment.artifactRareLuck": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "environment.artifactCount": {
       "kind": "slider",
@@ -1643,15 +1645,15 @@
     },
     "combat.npcFogVisibility": {
       "kind": "slider",
-      "number": 0.7
+      "number": 0.6
     },
     "combat.npcRainNoise": {
       "kind": "slider",
-      "number": 0.7
+      "number": 0.55
     },
     "combat.npcStormNoise": {
       "kind": "slider",
-      "number": 0.6
+      "number": 0.45
     },
     "health.bandageHealTime": {
       "kind": "slider",

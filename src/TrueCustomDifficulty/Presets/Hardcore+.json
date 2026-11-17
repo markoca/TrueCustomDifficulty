@@ -6,6 +6,15 @@
   "referenceDifficulty": "Master",
   "drinkDurationOverride": true,
   "medicalOverride": false,
+  "traderSellOdds": {
+    "economy.traderSells.general.armor": 0.5,
+    "economy.traderSells.general.artifacts": 0.5,
+    "economy.traderSells.medic.artifacts": 0.5,
+    "economy.traderSells.bartender.artifacts": 0.5,
+    "economy.traderSells.general.ammo": 0.75,
+    "economy.traderSells.bartender.ammo": 0.75,
+    "economy.traderSells.genericNpc.ammo": 0.75
+  },
   "savedAtUtc": "2026-10-19T18:00:00Z",
   "values": {
     "combat.npcHealth": {
@@ -298,7 +307,7 @@
     },
     "loot.npcSmartLootEnabled": {
       "kind": "toggle",
-      "boolean": true
+      "boolean": false
     },
     "loot.npcCorpseBonus": {
       "kind": "choiceSlider",
@@ -355,7 +364,7 @@
     },
     "loot.medicalBoxArmyMedkitWeight": {
       "kind": "slider",
-      "number": 1
+      "number": 0.25
     },
     "loot.destructibleGrenadeQuantity": {
       "kind": "slider",
@@ -1079,7 +1088,7 @@
     },
     "loot.stashSmartLootEnabled": {
       "kind": "toggle",
-      "boolean": true
+      "boolean": false
     },
     "loot.stashSmartStockedChance": {
       "kind": "slider",
@@ -1187,19 +1196,19 @@
     },
     "loot.worldArmorRemoved": {
       "kind": "toggle",
-      "boolean": false
+      "boolean": true
     },
     "loot.looseArtifactsRemoved": {
       "kind": "toggle",
-      "boolean": false
+      "boolean": true
     },
     "equipment.weaponWeight": {
       "kind": "slider",
-      "number": 1
+      "number": 1.15
     },
     "equipment.armorWeight": {
       "kind": "slider",
-      "number": 1
+      "number": 1.15
     },
     "economy.traderBuys.general.weapon": {
       "kind": "toggle",
@@ -1487,139 +1496,139 @@
     },
     "combat.npcGrenadeRate": {
       "kind": "slider",
-      "number": 2
+      "number": 2.5
     },
     "combat.npcSuppressionRate": {
       "kind": "slider",
-      "number": 2
+      "number": 2.5
     },
     "combat.npcFlankRate": {
       "kind": "slider",
-      "number": 2
+      "number": 2.5
     },
     "combat.npcPushRate": {
       "kind": "slider",
-      "number": 2
+      "number": 2.5
     },
     "combat.npcCamperPunishRate": {
       "kind": "slider",
-      "number": 1
+      "number": 2
     },
     "combat.npcAccuracy": {
       "kind": "slider",
-      "number": 1
+      "number": 1.3
     },
     "combat.npcSightRange": {
       "kind": "slider",
-      "number": 1
+      "number": 1.35
     },
     "combat.npcHearingRange": {
       "kind": "slider",
-      "number": 1
+      "number": 1.35
     },
     "combat.npcAlertMemory": {
       "kind": "slider",
-      "number": 1
+      "number": 2
     },
     "combat.mutantAttackRate.bayun": {
       "kind": "slider",
-      "number": 2
+      "number": 2.5
     },
     "combat.mutantAttackRate.blinddog": {
       "kind": "slider",
-      "number": 1
+      "number": 2.5
     },
     "combat.mutantAttackRate.bloodsucker": {
       "kind": "slider",
-      "number": 2
+      "number": 2.5
     },
     "combat.mutantAttackRate.boar": {
       "kind": "slider",
-      "number": 1
+      "number": 2.5
     },
     "combat.mutantAttackRate.burer": {
       "kind": "slider",
-      "number": 2
+      "number": 2.5
     },
     "combat.mutantAttackRate.chimera": {
       "kind": "slider",
-      "number": 2
+      "number": 2.5
     },
     "combat.mutantAttackRate.controller": {
       "kind": "slider",
-      "number": 2
+      "number": 2.5
     },
     "combat.mutantAttackRate.deer": {
       "kind": "slider",
-      "number": 2
+      "number": 2.5
     },
     "combat.mutantAttackRate.flesh": {
       "kind": "slider",
-      "number": 1
+      "number": 2.5
     },
     "combat.mutantAttackRate.poltergeist": {
       "kind": "slider",
-      "number": 1
+      "number": 2.5
     },
     "combat.mutantAttackRate.pseudodog": {
       "kind": "slider",
-      "number": 2
+      "number": 2.5
     },
     "combat.mutantAttackRate.pseudogiant": {
       "kind": "slider",
-      "number": 2
+      "number": 2.5
     },
     "combat.mutantAttackRate.snork": {
       "kind": "slider",
-      "number": 1
+      "number": 2.5
     },
     "combat.mutantAttackRate.tushkan": {
       "kind": "slider",
-      "number": 1
+      "number": 2.5
     },
     "combat.mutantAbilityRate.bayun": {
       "kind": "slider",
-      "number": 2
+      "number": 2.5
     },
     "combat.mutantAbilityRate.blinddog": {
       "kind": "slider",
-      "number": 1
+      "number": 2.5
     },
     "combat.mutantAbilityRate.bloodsucker": {
       "kind": "slider",
-      "number": 2
+      "number": 2.5
     },
     "combat.mutantAbilityRate.burer": {
       "kind": "slider",
-      "number": 2
+      "number": 2.5
     },
     "combat.mutantAbilityRate.chimera": {
       "kind": "slider",
-      "number": 2
+      "number": 2.5
     },
     "combat.mutantAbilityRate.controller": {
       "kind": "slider",
-      "number": 2
+      "number": 2.5
     },
     "combat.mutantAbilityRate.poltergeist": {
       "kind": "slider",
-      "number": 1
+      "number": 2.5
     },
     "combat.mutantAbilityRate.pseudodog": {
       "kind": "slider",
-      "number": 2
+      "number": 2.5
     },
     "combat.mutantAbilityRate.pseudogiant": {
       "kind": "slider",
-      "number": 2
+      "number": 2.5
     },
     "combat.mutantAbilityRate.snork": {
       "kind": "slider",
-      "number": 1
+      "number": 2.5
     },
     "combat.mutantSpecialAbilityRate": {
       "kind": "slider",
-      "number": 2
+      "number": 2.5
     },
     "loot.genericCorpseReduction": {
       "kind": "slider",
@@ -1631,11 +1640,11 @@
     },
     "environment.artifactSpawnChance": {
       "kind": "slider",
-      "number": 1
+      "number": 0.6
     },
     "environment.artifactRareLuck": {
       "kind": "slider",
-      "number": 1
+      "number": 0.5
     },
     "environment.artifactCount": {
       "kind": "slider",
@@ -1643,31 +1652,31 @@
     },
     "combat.npcFogVisibility": {
       "kind": "slider",
-      "number": 0.7
+      "number": 0.8
     },
     "combat.npcRainNoise": {
       "kind": "slider",
-      "number": 0.7
+      "number": 0.8
     },
     "combat.npcStormNoise": {
       "kind": "slider",
-      "number": 0.6
+      "number": 0.7
     },
     "health.bandageHealTime": {
       "kind": "slider",
-      "number": 1
+      "number": 5
     },
     "health.medkitHealTime": {
       "kind": "slider",
-      "number": 1
+      "number": 6
     },
     "health.armyMedkitHealTime": {
       "kind": "slider",
-      "number": 1
+      "number": 6
     },
     "health.ecoMedkitHealTime": {
       "kind": "slider",
-      "number": 1
+      "number": 6
     }
   }
 }
