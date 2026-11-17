@@ -851,7 +851,7 @@
                                Margin="0,3,0,0" />
                 </StackPanel>
 
-                <!-- BASE PRESET: framed, four-segment selector. The selected
+                <!-- BASE DIFFICULTY PRESET: framed, four-segment selector. The selected
                      vanilla difficulty is a solid accent segment; picking one
                      still resets every control to that difficulty. -->
                 <Border Grid.Column="1" VerticalAlignment="Center"
@@ -859,7 +859,7 @@
                         BorderBrush="{StaticResource AccentBrush}" BorderThickness="1"
                         CornerRadius="4" Padding="10,7,10,8">
                     <StackPanel>
-                        <TextBlock Text="BASE PRESET"
+                        <TextBlock Text="BASE DIFFICULTY PRESET"
                                    FontSize="10.5" FontWeight="Bold"
                                    Foreground="{StaticResource AccentBrush}"
                                    Margin="1,0,0,5" />

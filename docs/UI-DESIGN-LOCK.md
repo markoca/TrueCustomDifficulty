@@ -223,9 +223,9 @@ The automated checks again describe the current tool. Every remaining failure is
 * Panel rationales use × throughout (the artifact texts used x).
 * The undisplayed status-message helper (`VisualStatusMessage`) and all its calls are removed; no control ever showed those texts, redraws stay explicit.
 
-## 2026-11-16 — CURRENT: BASE PRESET selector (header, top right)
+## 2026-11-17 — CURRENT: BASE DIFFICULTY PRESET selector (header, top right)
 
-* The Base Preset is a framed card (accent 1-DIP border, PanelAlt fill) with an accent **BASE PRESET** caption and four equal segments **NOVICE · STALKER · VETERAN · MASTER** (88×30 DIP, bold 11.5). The selected difficulty is a solid accent segment with dark text; hover = white border. Replaces the thin 4-step slider with a muted name above and muted labels below.
+* The Base Preset is a framed card (accent 1-DIP border, PanelAlt fill) with an accent **BASE DIFFICULTY PRESET** caption and four equal segments **NOVICE · STALKER · VETERAN · MASTER** (88×30 DIP, bold 11.5). The selected difficulty is a solid accent segment with dark text; hover = white border. Replaces the thin 4-step slider with a muted name above and muted labels below.
 * Same behaviour: picking a segment sets the vanilla difficulty and resets every control to it; keyboard arrows move the selection. Binds `BasePresetSelection` (int) over the existing `BasePresetIndex`.
 
 ## 2026-11-16 — CURRENT: HUMAN TACTICS and HUMAN AWARENESS boards (Combat)
