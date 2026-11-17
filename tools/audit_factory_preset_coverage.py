@@ -22,7 +22,7 @@ NEW_IDS |= {"combat.mutantSpecialAbilityRate", "combat.npcGrenadeRate", "combat.
             "combat.npcFlankRate", "combat.npcPushRate", "combat.npcCamperPunishRate",
             "combat.npcAccuracy", "combat.npcSightRange", "combat.npcHearingRange",
             "combat.npcAlertMemory", "loot.genericCorpseReduction", "loot.genericStashReduction"}
-assert len(NEW_IDS) == 40, len(NEW_IDS)
+assert len(NEW_IDS) == 39, len(NEW_IDS)  # 40 before RESPAWN RATE retired
 # 2026-11-17: weather AI coefficients and per-item medical HEAL TIME seconds.
 NEW_IDS |= {"combat.npcFogVisibility", "combat.npcRainNoise", "combat.npcStormNoise",
             "health.bandageHealTime", "health.medkitHealTime", "health.armyMedkitHealTime",
@@ -50,4 +50,4 @@ pds = (APP / "Services/PresetDirectoryService.cs").read_text(encoding="utf-8")
 assert pds.count("PreNewControlsFactoryBlobs") == 3 and pds.count("PreWeatherHealTimeFactoryBlobs") == 3
 assert len(pds.split("PreNewControlsFactoryBlobs =", 1)[1].split("};", 1)[0].split('"] = "')) == 13
 
-print(f"PASS: 12 factory presets store all {len(by_id)} controls; the 47 newest at reference vanilla; stock upgrade hashes kept")
+print(f"PASS: 12 factory presets store all {len(by_id)} controls; the 46 newest at reference vanilla; stock upgrade hashes kept")

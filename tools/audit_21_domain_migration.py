@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "src/TrueCustomDifficulty/Data"
 EXPECTED = {
     "combat": 165, "survival": 153, "health": 51, "stamina": 26,
-    "economy": 409, "equipment": 331, "environment": 82,
+    "economy": 409, "equipment": 331, "environment": 66,
     "loot": 1554, "alife": 64,
 }
 SELL_RESOURCE = "TrueCustomDifficulty.Data.trader-sells-2.1-runtime.csv"

@@ -150,7 +150,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "ItemWeightBoard" => "Adjust ammunition, food and medicine, weapons or armor weight independently.",
                     "HumanTactics" => "Drag a card's track: GRENADES, SUPPRESSION, FLANKING, PUSH and CAMPING PENALTY set how often a squad may start that action (2x = twice as often, the card shows the resulting pause); ENEMY ACCURACY tightens or widens their bullet spread.",
                     "HumanAwareness" => "Top-down radar, enemy in the centre facing up: drag the tip of the vision field (SIGHT, up to 200 m), the footstep-circle handle (HEARING) or the end of the outer timer ring (MEMORY). Weather dials: FOG VISIBILITY = how much they still see in fog; RAIN / THUNDER NOISE = how much the weather covers your noise (higher = they hear less). Mutants are not changed.",
-                    "ArtifactHunting" => "Drag a card's track: RESPAWN RATE (how fast anomaly fields regrow artifacts), SPAWN CHANCE (odds each regrow actually drops one), RARE LUCK (how often a find is rare or epic, shown per zone below) and PER SPAWN (how many drop at once). Quest and unique artifacts are not changed.",
+                    "ArtifactHunting" => "Drag a card's track: SPAWN CHANCE (odds a field actually grows an artifact when it refills), RARE LUCK (how often a find is rare or epic, shown per zone below) and PER SPAWN (how many drop at once). Quest and unique artifacts are not changed.",
                     "AnomalyGlobalDamage" => "GLOBAL MULTIPLIER affects all supported anomaly damage. Each anomaly also has its own damage setting; EFFECTIVE includes both before protection.",
                     "AnomalySpecialEffects" => "Adjust Glass Shards bleeding and Psy drain independently. Their other damage effects remain separate.",
                     "NpcLootLoadout" => "SCARCITY scales eligible ordinary NPC consumable Chance and optional corpse SmartLoot activation, not weapons. Other controls select packages, bonus stacks, medical Chance and condition. R also resets NEED BOOST and the item rows; MOD LOOT SCARCITY resets on its own (R with it focused).",
@@ -622,7 +622,6 @@ public sealed class ParameterViewModel : ObservableObject
         // Weather hearing is edited on this same board; no duplicate slider cards.
         ["combat.npcRainNoise"] = "HumanAwareness",
         ["combat.npcStormNoise"] = "HumanAwareness",
-        ["environment.artifactRespawnRate"] = "ArtifactHunting",
         ["environment.artifactSpawnChance"] = "ArtifactHunting",
         ["environment.artifactRareLuck"] = "ArtifactHunting",
         ["environment.artifactCount"] = "ArtifactHunting",
@@ -716,7 +715,7 @@ public sealed class ParameterViewModel : ObservableObject
         ["RepairCurve"] = "economy.repairEnemy",
         ["ServiceCostsBoard"] = "economy.fastTravelCost",
         ["ItemWeightBoard"] = "equipment.ammoWeight",
-        ["ArtifactHunting"] = "environment.artifactRespawnRate",
+        ["ArtifactHunting"] = "environment.artifactSpawnChance",
         ["HumanTactics"] = "combat.npcGrenadeRate",
         ["HumanAwareness"] = "combat.npcSightRange",
         ["AnomalyGlobalDamage"] = "environment.anomalyDamage",
@@ -1296,7 +1295,7 @@ public sealed class ParameterViewModel : ObservableObject
             HumanCombatPolicy.FogVisibilityId => HumanCombatPolicy.FogVisibilityDisplay(CurrentNumber),
             _ when HumanCombatPolicy.Tactics.FirstOrDefault(t => t.Id == Id) is { } tactic
                 => HumanCombatPolicy.TacticDisplay(tactic, CurrentNumber, ReferenceNumber),
-            ArtifactSpawnPolicy.RespawnRateId or ArtifactSpawnPolicy.SpawnChanceId
+            ArtifactSpawnPolicy.SpawnChanceId
                 or ArtifactSpawnPolicy.RareLuckId or ArtifactSpawnPolicy.CountId
                 => ArtifactSpawnPolicy.CardText(Id, CurrentNumber)!,
 

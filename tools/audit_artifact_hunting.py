@@ -33,8 +33,8 @@ catalog = json.loads((SRC / "Data" / "parameters.json").read_text(encoding="utf-
 by_id = {r["id"]: r for r in catalog}
 baseline = json.loads((SRC / "Data" / "cfg-writer-baseline.json").read_text(encoding="utf-8"))
 
-IDS = ["environment.artifactRespawnRate", "environment.artifactSpawnChance",
-       "environment.artifactRareLuck", "environment.artifactCount"]
+IDS = ["environment.artifactSpawnChance", "environment.artifactRareLuck", "environment.artifactCount"]
+RETIRED = "environment.artifactRespawnRate"  # 2026-11-17: refill is emission-driven, not cooldown
 SPAWNERS = ["UniversalArtifactSpawner", "LesserZoneMagneticShortDistance"]
 RANKS = ["Newbie", "Experienced", "Veteran", "Master"]
 VANILLA_RARITY = [[80, 20, 0, 0], [50, 48, 1.9, 0.1], [30, 59, 10, 1], [10, 65, 20, 5]]
@@ -71,16 +71,18 @@ for pid in IDS:
     check(row.get("vanilla") == {"All": 1} and row["default"]["mode"] == "fixedVanilla", f"{pid}: vanilla 1")
     check(row["support"]["status"] == "runtime_test_required", f"{pid}: runtime_test_required")
 s = {pid: (by_id[pid]["slider"]["min"], by_id[pid]["slider"]["max"], by_id[pid]["slider"]["step"]) for pid in IDS}
-check(s == {IDS[0]: (0.25, 4, 0.25), IDS[1]: (0, 4, 0.1), IDS[2]: (0.25, 4, 0.25), IDS[3]: (1, 3, 1)},
+check(s == {IDS[0]: (0, 4, 0.1), IDS[1]: (0.25, 4, 0.25), IDS[2]: (1, 3, 1)},
       f"slider ranges {s}")
 
 # ---- writer baseline --------------------------------------------------------------
 points = [p for p in baseline["editPoints"] if p["parameterId"].startswith("environment.artifact")]
-check(len(points) == 40, f"40 direct artifact edit points ({len(points)})")
+check(len(points) == 24, f"24 direct artifact edit points ({len(points)})")
+check(RETIRED not in by_id and RETIRED not in policy and RETIRED not in pvm
+      and not any(p["key"] in ("MinCooldown", "MaxCooldown") for p in points),
+      "RESPAWN RATE retired: no catalog row, policy id, help mapping or cooldown edit")
 expected = {
-    IDS[0]: ({"MinCooldown", "MaxCooldown"}, "inverseScale", {"5400.f"}),
-    IDS[1]: ({"SpawnChanceBase", "SpawnChanceBonus"}, "scaleClamp100", {"25.f", "15.f"}),
-    IDS[3]: ({"Count"}, "set", {"1"}),
+    IDS[0]: ({"SpawnChanceBase", "SpawnChanceBonus"}, "scaleClamp100", {"25.f", "15.f"}),
+    IDS[2]: ({"Count"}, "set", {"1"}),
 }
 for pid, (keys, op, raws) in expected.items():
     pts = [p for p in points if p["parameterId"] == pid]
@@ -92,9 +94,9 @@ for pid, (keys, op, raws) in expected.items():
           and {p["nodePath"][0] for p in pts} == set(RANKS)
           and all(p["difficultySid"] == "" and p["file"] == "GameData/ArtifactSpawnerPrototypes.cfg" for p in pts),
           f"{pid}: {op} on {sorted(keys)} for 2 spawners x 4 zone ranks")
-check(not [p for p in points if p["parameterId"] == IDS[2]], "rare luck has no direct points (special writer)")
+check(not [p for p in points if p["parameterId"] == IDS[1]], "rare luck has no direct points (special writer)")
 entry = baseline["special"].get("artifactHunting", {})
-check(entry.get("parameterId") == IDS[2] and entry.get("spawners") == SPAWNERS, "baseline special.artifactHunting")
+check(entry.get("parameterId") == IDS[1] and entry.get("spawners") == SPAWNERS, "baseline special.artifactHunting")
 check('"scaleClamp100" =>' in writer, "writer supports scaleClamp100")
 check("WriteArtifactRareLuck(modifiedById, documents, writtenParameters)" in writer
       and "supported.Add(ArtifactSpawnPolicy.RareLuckId);" in writer, "main writer calls the rare-luck writer")
@@ -107,9 +109,9 @@ for token in ('case "ArtifactHunting":', 'DrawArtifactHunting(', '"ARTIFACT HUNT
               'ArtifactSpawnPolicy.CardText(parameter.Id, value)'):
     check(token in ui, f"UI token {token}")
 check(all(f'["{pid}"] = "ArtifactHunting"' in pvm for pid in IDS)
-      and '["ArtifactHunting"] = "environment.artifactRespawnRate"' in pvm
+      and '["ArtifactHunting"] = "environment.artifactSpawnChance"' in pvm
       and '"ArtifactHunting" =>' in pvm, "family map, anchor and CONTROLS help")
-check("ArtifactSpawnPolicy.RespawnRateId,\n            ArtifactSpawnPolicy.ParameterIds.ToArray());" in mvm
+check("ArtifactSpawnPolicy.SpawnChanceId,\n            ArtifactSpawnPolicy.ParameterIds.ToArray());" in mvm
       and '"Artifacts" => 400,' in mvm, "board modified state and Anomalies order")
 
 # ---- optional dump ---------------------------------------------------------------------

@@ -669,6 +669,24 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "934e6744f451424fa540fd1dd61b264ec6bd86da",
     };
 
+    // Exact stock files before RESPAWN RATE was retired (2026-11-17).
+    private static readonly Dictionary<string, string> PreRespawnRetirementFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "4a22e0d2b9be04a75f42d1ea6dfc262450e3218e",
+        ["Field Medic"] = "1eb4900626eb46ab8e1237f206f98784b7a7417d",
+        ["Hardcore+"] = "10d5f356e1c5898c8ad3e314f73d339ead1e4012",
+        ["Hardcore"] = "077dc8ab19fac5d4d2fd06aae968c272c1c96901",
+        ["Immersive"] = "9f370d179845562f7286e010202354c41ba32070",
+        ["Mercenary"] = "bdce43cdd31a3e76547965bd0fe75cac3caa29e7",
+        ["Mutant Hunter"] = "08cab7814322820920806370d9124f77a977a07b",
+        ["Outcast"] = "00e7b60db9ced3914034c232556777c8d02af41c",
+        ["Scavenger"] = "833c4ce137db21c1e1b61097f9814c78f4ed004e",
+        ["Smuggler"] = "96fef4cee53790819d14c59456fe3f2d4f096a14",
+        ["Tactical"] = "db174b08b16c3b2e7569c6ddd155ea6473f960dd",
+        ["Wanderer"] = "1c5f703e141ec5a8dfc996eaa89d7033457ca584",
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -693,7 +711,8 @@ public sealed class PresetDirectoryService
             && !Pre21FactoryBlobs.TryGetValue(name, out knownHash)
             && !PreMedicalMirrorFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreNewControlsFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreWeatherHealTimeFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreWeatherHealTimeFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreRespawnRetirementFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -751,7 +770,9 @@ public sealed class PresetDirectoryService
                 || (PreNewControlsFactoryBlobs.TryGetValue(name, out var preNewControlsHash)
                     && actual.Equals(preNewControlsHash, StringComparison.OrdinalIgnoreCase))
                 || (PreWeatherHealTimeFactoryBlobs.TryGetValue(name, out var preWeatherHealTimeHash)
-                    && actual.Equals(preWeatherHealTimeHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preWeatherHealTimeHash, StringComparison.OrdinalIgnoreCase))
+                || (PreRespawnRetirementFactoryBlobs.TryGetValue(name, out var preRespawnHash)
+                    && actual.Equals(preRespawnHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

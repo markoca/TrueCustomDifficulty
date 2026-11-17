@@ -685,7 +685,7 @@ public sealed class MainViewModel : ObservableObject
             "equipment.weaponWeight",
             "equipment.armorWeight");
         WireVisualAggregate(
-            ArtifactSpawnPolicy.RespawnRateId,
+            ArtifactSpawnPolicy.SpawnChanceId,
             ArtifactSpawnPolicy.ParameterIds.ToArray());
         WireVisualAggregate(
             HumanCombatPolicy.GrenadeRateId,

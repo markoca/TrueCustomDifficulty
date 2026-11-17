@@ -13868,52 +13868,6 @@
       "interaction": "Changes the continuous Psy drain only. Other Psy effects and thresholds remain unchanged."
     },
     {
-      "id": "environment.artifactRespawnRate",
-      "tab": "environment",
-      "group": "Artifacts",
-      "label": "Artifact Respawn Rate",
-      "description": "How quickly anomaly fields grow a new artifact after one is taken or the last attempt failed. Rate r divides the spawners' MinCooldown/MaxCooldown (5400) by r.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Respawn rate"
-      },
-      "vanilla": {
-        "All": 1
-      },
-      "default": {
-        "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0.25,
-        "max": 4,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/ArtifactSpawnerPrototypes.cfg",
-          "prototype": "UniversalArtifactSpawner + LesserZoneMagneticShortDistance",
-          "path": "{Newbie|Experienced|Veteran|Master}.MinCooldown|MaxCooldown",
-          "operation": "inverseScale"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "The world's anomaly-field artifacts come from UniversalArtifactSpawner (73 world spawn points) and its short-range child LesserZoneMagneticShortDistance. Quest and unique spawners (Weird*, Quest*, Water Drip) are not touched.",
-          "Values apply to all four zone ranks (Newbie, Experienced, Veteran, Master areas) and do not depend on the selected difficulty.",
-          "The cooldown unit is not documented in the CFG; the control is a pure rate (2x = half the wait), not a time."
-        ]
-      },
-      "rationale": "How fast anomaly fields grow new artifacts after you loot them. Vanilla: game pace. 2× = fields refill twice as fast, so your favourite loop pays off sooner; 0.5× = every artifact is a hard-won find.",
-      "logic": "1x keeps the game's cooldown. 2x halves it, 0.25x makes it four times longer. Whether an artifact actually appears is ARTIFACT SPAWN CHANCE.",
-      "interaction": "SPAWN CHANCE decides each attempt, RARE LUCK what kind of artifact appears, ARTIFACTS PER SPAWN how many."
-    },
-    {
       "id": "environment.artifactSpawnChance",
       "tab": "environment",
       "group": "Artifacts",

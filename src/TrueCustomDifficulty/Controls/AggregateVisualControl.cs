@@ -900,7 +900,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private const double ArtifactRarityRowPitch = 22.0;
 
     private static double ArtifactHuntingHeight(double width)
-        => EconomyBoardHeight(width, 4) + 36.0 + 4 * ArtifactRarityRowPitch + 14.0;
+        => EconomyBoardHeight(width, 3) + 36.0 + 4 * ArtifactRarityRowPitch + 14.0;
 
     private void DrawArtifactHunting(
         DrawingContext dc, Brush text, Brush muted, Brush border,
@@ -911,7 +911,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         var controls = new (string Id, string Label)[]
         {
-            (ArtifactSpawnPolicy.RespawnRateId, "RESPAWN RATE"),
             (ArtifactSpawnPolicy.SpawnChanceId, "SPAWN CHANCE"),
             (ArtifactSpawnPolicy.RareLuckId, "RARE LUCK"),
             (ArtifactSpawnPolicy.CountId, "PER SPAWN")

@@ -4292,3 +4292,10 @@ WPF cross-build revealed shadowing of the existing horizontal renderer's local `
 ### 2026-11-15 — Corpse SmartLoot bonus ammo gate audit correction
 
 - The current NPC bonus-ammo UI lock is **only** `parameter.Id == "loot.npcWeaponAmmoSupply"` when the bonus ammo package is absent. Standard NPC medical Chance remains independent/editable with WATER and NONE. The whole-project audit previously expected an older gate that also locked `loot.npcMedicalChance`; it now asserts the active source behavior without weakening the bonus-gate regression.
+
+## CURRENT 2026-11-17 — ARTIFACT HUNTING: RESPAWN RATE RETIRED
+
+ARTIFACT HUNTING has three cards: SPAWN CHANCE, RARE LUCK, PER SPAWN, plus the RARITY BY ZONE
+strip. RESPAWN RATE (`environment.artifactRespawnRate`, spawner `MinCooldown`/`MaxCooldown`) is
+removed: field refill follows emissions, so the cooldown had no proven effect. Catalog 405 /
+201 visible; old presets with the key load and ignore it. See docs/environment/ARTIFACT-HUNTING.md.

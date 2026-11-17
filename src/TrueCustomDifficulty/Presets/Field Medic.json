@@ -1589,10 +1589,6 @@
       "kind": "slider",
       "number": 0
     },
-    "environment.artifactRespawnRate": {
-      "kind": "slider",
-      "number": 1
-    },
     "environment.artifactSpawnChance": {
       "kind": "slider",
       "number": 1

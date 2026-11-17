@@ -261,7 +261,7 @@ def main():
     require(not weather.intersection(direct) and not weather.intersection(special),
             "weather-hearing double ownership")
     require(set(direct) | set(special) | weather == set(definitions), "unrouted CFG IDs")
-    require(len(definitions) - len(NON_UI) == 383, "UI dimension count drift")
+    require(len(definitions) - len(NON_UI) == 382, "UI dimension count drift")
     require(len(NON_UI) == 23 and NON_UI.issubset(definitions),
             "23 non-mounted catalog source IDs required")
     for pid in NON_UI:

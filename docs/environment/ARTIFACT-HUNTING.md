@@ -1,15 +1,14 @@
 # ARTIFACT HUNTING (2026-11-16)
 
-Anomalies tab → **ARTIFACT HUNTING** board: four compact cards and a read-only RARITY BY ZONE strip.
+Anomalies tab → **ARTIFACT HUNTING** board: three compact cards and a read-only RARITY BY ZONE strip.
 
 | Card | Id | Range | Vanilla | CFG |
 |---|---|---|---|---|
-| RESPAWN RATE | `environment.artifactRespawnRate` | 0.25x–4x / 0.25 | 1x | `MinCooldown`, `MaxCooldown` (5400) ÷ rate (`inverseScale`) |
 | SPAWN CHANCE | `environment.artifactSpawnChance` | 0x–4x / 0.1 | 1x (25% +15%) | `SpawnChanceBase` 25, `SpawnChanceBonus` 15 × factor, capped at 100 (`scaleClamp100`) |
 | RARE LUCK | `environment.artifactRareLuck` | 0.25x–4x / 0.25 | 1x | `RarityChance`: Rare and Epic × k, all four renormalised to 100 (special writer) |
 | PER SPAWN | `environment.artifactCount` | 1–3 | 1 | `Count` (`set`) |
 
-All four are `runtime_test_required` and independent of the selected difficulty.
+All three are `runtime_test_required` and independent of the selected difficulty.
 
 ## Source (S.T.A.L.K.E.R. 2 2.1 base dump)
 
@@ -31,7 +30,10 @@ All four are `runtime_test_required` and independent of the selected difficulty.
 
 * RARE LUCK keeps Newbie areas without rare artifacts (as in the game). Example Master at 2x:
   Rare 32 / Epic 8 (40% rare+, was 25%).
-* The cooldown unit is not documented in the CFG, so RESPAWN RATE is shown as a rate, never a time.
+* **RESPAWN RATE retired (2026-11-17).** It scaled `MinCooldown`/`MaxCooldown` (5400), but fields
+  refill on the game's own schedule (after emissions), so the cooldown has no proven in-game effect.
+  The control, its 16 edit points and the preset key are gone; older presets that still carry
+  `environment.artifactRespawnRate` load and the key is ignored. Cooldowns stay vanilla.
 * `CoreVariables.ArtifactSpawnPityStructs` (luck growth per failed attempt) is not changed.
 * `ArtifactSpawnPolicy` holds the ids, spawners and vanilla split; the writer and the board use the
   same `Rarity()` so the strip shows what is written.

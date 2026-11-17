@@ -12,25 +12,25 @@ namespace TrueCustomDifficulty.Services;
 /// spawn actors) and its short-range child
 /// <c>LesserZoneMagneticShortDistance</c> (1). Each has four zone ranks
 /// (Newbie / Experienced / Veteran / Master = the area's rank, not the game
-/// difficulty) with Count, MinCooldown/MaxCooldown (5400), SpawnChanceBase (25)
+/// difficulty) with Count, MinCooldown/MaxCooldown (5400, never edited: the
+/// world refill is driven by the game, e.g. emissions), SpawnChanceBase (25)
 /// + SpawnChanceBonus (15) and a RarityChance split (Common / Uncommon / Rare /
 /// Epic, summing to 100). Single quest / unique spawners (Weird*, Quest*,
 /// WaterDrip) are never touched.
 ///
-/// RESPAWN RATE, SPAWN CHANCE and ARTIFACTS PER SPAWN are direct edit points
+/// SPAWN CHANCE and ARTIFACTS PER SPAWN are direct edit points
 /// in cfg-writer-baseline.json. RARE LUCK multiplies Rare and Epic by k and
 /// renormalises the four shares back to 100 (written by the special writer).
 /// </summary>
 public static class ArtifactSpawnPolicy
 {
-    public const string RespawnRateId = "environment.artifactRespawnRate";
     public const string SpawnChanceId = "environment.artifactSpawnChance";
     public const string RareLuckId = "environment.artifactRareLuck";
     public const string CountId = "environment.artifactCount";
     public const string File = "GameData/ArtifactSpawnerPrototypes.cfg";
 
     public static IReadOnlyList<string> ParameterIds { get; } =
-        new[] { RespawnRateId, SpawnChanceId, RareLuckId, CountId };
+        new[] { SpawnChanceId, RareLuckId, CountId };
 
     public static IReadOnlyList<string> Spawners { get; } =
         new[] { "UniversalArtifactSpawner", "LesserZoneMagneticShortDistance" };
@@ -85,13 +85,12 @@ public static class ArtifactSpawnPolicy
     }
 
     /// <summary>
-    /// Card text in player terms (no bare factor): "fields regrow 2× faster",
+    /// Card text in player terms (no bare factor):
     /// "artifact chance 25% (+15% bonus)", "25% rare finds in Master zones",
     /// "1 artifact per spawn". Null for other ids.
     /// </summary>
     public static string? CardText(string id, double value) => id switch
     {
-        RespawnRateId => RespawnText(value),
         SpawnChanceId => SpawnChanceText(value),
         RareLuckId => string.Create(System.Globalization.CultureInfo.InvariantCulture,
             $"{RarePlusShare(3, value):0.#}% rare finds in Master zones"),
@@ -100,16 +99,6 @@ public static class ArtifactSpawnPolicy
             : "1 artifact per spawn",
         _ => null
     };
-
-    private static string RespawnText(double rate)
-    {
-        var c = System.Globalization.CultureInfo.InvariantCulture;
-        if (Math.Abs(rate - 1.0) < 0.0000001)
-            return "fields regrow at game pace";
-        return rate > 1.0
-            ? string.Create(c, $"fields regrow {rate:0.##}× faster")
-            : string.Create(c, $"fields regrow {1.0 / rate:0.##}× slower");
-    }
 
     private static string SpawnChanceText(double factor)
     {
