@@ -153,8 +153,10 @@ for token in ("HumanTacticsHeight(double width)", "DrawHumanTacticsBoard(",
               "ReadoutInk.Numbers(accent, text)", "ControlHoverGlow.Draw(",
               "Snap(parameter,", "Math.Log(", "Math.Exp(",
               "TacticsRateAt(point, target.MapRect, parameter)",
-              "ValueToX(parameter.CurrentNumber,",
-              "parameter.Minimum, parameter.Maximum, track, reverse: false)",
+              # 2026-11-17: COMBAT MINUTE timeline + shot group on a silhouette.
+              '"COMBAT MINUTE"', "TacticsMinuteSeconds = 60.0", "DrawTacticsMarkers(dc, track, vanillaAvg,",
+              "TacticsAverageSeconds(tactic, 1.0, parameter.ReferenceNumber)",
+              "TacticsShotPattern", '$"every {lo:0.#}–{hi:0.#} s"',
               "HitKind.TacticalCooldown, parameter.Minimum, parameter.Maximum"):
     check(token in tactics_ui, f"tactics editor token {token}")
 for retired in ("TacticsTimeX(", "secondsTrack", 'DrawCenteredText(dc, $"{seconds:0}s"'):
