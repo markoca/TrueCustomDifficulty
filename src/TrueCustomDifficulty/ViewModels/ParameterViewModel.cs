@@ -149,7 +149,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "ServiceCostsBoard" => "Adjust guide travel, upgrades and repairs separately. Discounts and reputation may still affect final prices.",
                     "ItemWeightBoard" => "Adjust ammunition, food and medicine, weapons or armor weight independently.",
                     "HumanTactics" => "Drag a card's track: GRENADES, SUPPRESSION, FLANKING, PUSH and CAMPING PENALTY set how often a squad may start that action (2x = twice as often, the card shows the resulting pause); ENEMY ACCURACY tightens or widens their bullet spread.",
-                    "HumanAwareness" => "Drag SIGHT, HEARING or MEMORY: how far human enemies see and hear you and how long they keep searching. Mutants are not changed.",
+                    "HumanAwareness" => "Drag SIGHT, HEARING or MEMORY: how far human enemies see and hear you and how long they keep searching. SIGHT shows two distances: AHEAD is straight in front of an enemy, SIDE is the edge of his view. Mutants are not changed.",
                     "ArtifactHunting" => "Drag a card's track: RESPAWN RATE (how often fields roll), SPAWN CHANCE (each roll), RARE LUCK (rarity split, shown per zone below) and PER SPAWN (artifacts per success). Quest and unique artifacts are not changed.",
                     "AnomalyGlobalDamage" => "GLOBAL MULTIPLIER affects all supported anomaly damage. Each anomaly also has its own damage setting; EFFECTIVE includes both before protection.",
                     "AnomalySpecialEffects" => "Adjust Glass Shards bleeding and Psy drain independently. Their other damage effects remain separate.",

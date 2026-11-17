@@ -86,7 +86,8 @@ public static class HumanCombatPolicy
         => string.Create(CultureInfo.InvariantCulture, $"{factor:0.##}x · spread {100.0 / factor:0}%");
 
     public static string SightDisplay(double factor)
-        => string.Create(CultureInfo.InvariantCulture, $"{factor:0.##}x · {80.0 * factor:0} m / {25.0 * factor:0} m");
+        // Central vision (straight ahead) and peripheral vision (edge of view).
+        => string.Create(CultureInfo.InvariantCulture, $"{factor:0.##}x · ahead {80.0 * factor:0} m · side {25.0 * factor:0} m");
 
     public static string HearingDisplay(double factor)
         => string.Create(CultureInfo.InvariantCulture, $"{factor:0.##}x · steps {12.0 * factor:0.#} m");

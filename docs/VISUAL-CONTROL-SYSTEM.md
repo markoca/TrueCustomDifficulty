@@ -1,3 +1,8 @@
+## 2026-11-17 — CURRENT: HUMAN AWARENESS · SIGHT readout names both distances
+
+* The SIGHT card readout was `1x · 80 m / 25 m`, which did not say what the two numbers are. It now reads **`1x · ahead 80 m · side 25 m`**: AHEAD = central vision straight in front of the enemy, SIDE = peripheral vision at the edge of his view. Both scale with the slider.
+* HUMAN AWARENESS CONTROLS help explains AHEAD / SIDE in one sentence. No tooltip, no extra caption on the board.
+
 ## 2026-11-17 — CURRENT: audits match the current project
 
 The automated checks again describe the current tool. Every remaining failure is a real problem, not an outdated count.

@@ -36,7 +36,7 @@ The distance curve and the zombie addend are unchanged. The game does not change
 
 | Card | Id | CFG | Vanilla |
 |---|---|---|---|
-| SIGHT | `combat.npcSightRange` 0.25–3× | `AIPrototypes/VisionScannerPrototypes.cfg` DefaultNPC Central / PeripheralVisionDistance | 8000 / 2500 (80 m / 25 m) |
+| SIGHT | `combat.npcSightRange` 0.25–3× | `AIPrototypes/VisionScannerPrototypes.cfg` DefaultNPC Central / PeripheralVisionDistance | 8000 / 2500 (ahead 80 m / side 25 m; card: `1x · ahead 80 m · side 25 m`) |
 | HEARING | `combat.npcHearingRange` 0.25–3× | `AIPrototypes/HearingSensorPrototypes.cfg` BaseHearingSensor SoundEvents[*].HearingDistance (14 non-zero) | shots 46 m, steps 12 m, voice 30 m … |
 | MEMORY | `combat.npcAlertMemory` 0.25–3× (0.05 steps, like SIGHT / HEARING) | `AIPrototypes/ThreatPrototypes.cfg` [1] DefaultNPC: freeze 30 s × m, loss 30/s ÷ m; Actions[3] SearchEnemy freeze 30 s × m, loss 20/s ÷ m | ~30 s |
 
