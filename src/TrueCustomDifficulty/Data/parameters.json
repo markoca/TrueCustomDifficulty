@@ -1002,8 +1002,8 @@
         "notes": []
       },
       "rationale": "Extra punch for your headshots on top of normal weapon damage. 2× doubles the headshot bonus, rewarding careful aim over spraying. Vanilla: Novice–Veteran 1×, Master 2×.",
-      "logic": "1.0× is the normal multiplier. 2.0× doubles the headshot damage multiplier used by the selected Base Preset; it is not an additive extra-damage percentage.",
-      "interaction": "WEAPON DAMAGE also affects the underlying hit. The headshot multiplier scales that hit; changing both settings compounds their effect."
+      "logic": "1.0× = the normal headshot multiplier; 2.0× doubles it. It multiplies, it doesn't add a flat bonus.",
+      "interaction": "WEAPON DAMAGE sets the base hit; this multiplies headshots on top, so raising both stacks up."
     },
     {
       "id": "combat.weaponJamming",
@@ -1045,7 +1045,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How often worn guns jam on you. Higher values make maintenance and weapon condition matter much more; 0.5× halves jams. Vanilla: Novice–Veteran 1×, Master 1.5×. A gun in good condition still rarely jams.",
+      "rationale": "How often worn guns jam on you. Vanilla: Novice–Veteran 1×, Master 1.5×. Higher = keeping your gun repaired matters much more; 0.5× halves jams. A gun in good condition still rarely jams.",
       "logic": "",
       "interaction": "Weapon condition and each weapon's own jam behavior still matter. Use this to make jams generally more or less common."
     },
@@ -1136,8 +1136,8 @@
         "notes": []
       },
       "rationale": "The game quietly softens damage when many hits land at once, so you don't melt in a single burst. This is the strongest that safety net can get. Higher = more forgiving under heavy fire, lower = bursts hit closer to full damage. Vanilla: Novice 100%, Stalker 75%, Veteran 50%, Master 40%.",
-      "logic": "Higher values give more protection against rapid hits; lower values make them harsher. The number is protection strength, not a literal damage-reduction percentage.",
-      "interaction": "MINIMUM HIT PROTECTION sets the weakest protection in the same repeated-hit system. Incoming gun damage is independent."
+      "logic": "Higher = more protection when many hits land at once; lower = bursts hurt more. It's protection strength, not a straight damage cut.",
+      "interaction": "MINIMUM HIT PROTECTION sets the weakest end. Enemy gun damage is separate."
     },
     {
       "id": "combat.accumulatedDamageWeightMin",
@@ -1181,8 +1181,8 @@
         "notes": []
       },
       "rationale": "The weakest end of the same hidden safety net against rapid hits. Raising it keeps some protection even in long, sustained fights. Vanilla: Novice 100%, Stalker 33%, Veteran 15%, Master 12%. Works together with PEAK HIT PROTECTION.",
-      "logic": "Higher values give more protection at the weak end; lower values make rapid hits harsher. This is not a literal damage-reduction percentage.",
-      "interaction": "PEAK HIT PROTECTION sets the strongest protection in the same system. Incoming gun damage is independent."
+      "logic": "Higher = more protection even in long firefights; lower = sustained fire hurts more. It's protection strength, not a straight damage cut.",
+      "interaction": "PEAK HIT PROTECTION sets the strongest end. Enemy gun damage is separate."
     },
     {
       "id": "combat.accumulatedDamageIncludesHealedHealth",
@@ -3418,7 +3418,7 @@
       },
       "rationale": "How fast your stomach empties while you roam. Higher = you need to eat more often and carry more food; lower = food lasts much longer. Vanilla: 0.015 pts/s.",
       "logic": "",
-      "interaction": "Food Hunger Relief changes how much hunger each item removes. Hunger-state thresholds still decide when penalties apply."
+      "interaction": "FOOD HUNGER RELIEF sets how much each meal fills you; the hunger thresholds decide when penalties start."
     },
     {
       "id": "survival.breadSatiety",
@@ -4395,7 +4395,7 @@
         ]
       },
       "rationale": "How long water's stamina-saving effect lasts after drinking. Vanilla: 1× (30 seconds). Its shorter bonus can never outlast this.",
-      "logic": "1× restores the original 30-second stamina-cost effect; the separate regeneration control starts at its original 5 seconds and cannot outlast the main effect.",
+      "logic": "1× = vanilla 30 seconds of cheaper actions; the short regeneration (5 s) can't outlast it.",
       "interaction": "WATER STAMINA GAIN controls the instant refill separately."
     },
     {
@@ -4540,8 +4540,8 @@
         ]
       },
       "rationale": "How long water's +25% max-stamina bonus lasts. Vanilla: 5 seconds — a short burst for a sprint.",
-      "logic": "Adjust between the original 5s and the current main drink-effect duration; no effect magnitude or action type is changed.",
-      "interaction": "Can't outlast the drink's main effect on the same timeline. Each short effect is tuned on its own.",
+      "logic": "From vanilla 5 s up to the length of the drink's main effect. Only the duration changes.",
+      "interaction": "Can't outlast the drink's main effect.",
       "exposeInUi": false
     },
     {
@@ -4587,8 +4587,8 @@
         ]
       },
       "rationale": "How long an energy drink makes actions cost no stamina at all. Vanilla: 5 seconds.",
-      "logic": "Adjust between the original 5s and the current main drink-effect duration; no effect magnitude or action type is changed.",
-      "interaction": "Can't outlast the drink's main effect on the same timeline. Each short effect is tuned on its own.",
+      "logic": "From vanilla 5 s up to the length of the drink's main effect. Only the duration changes.",
+      "interaction": "Can't outlast the drink's main effect.",
       "exposeInUi": false
     },
     {
@@ -4634,8 +4634,8 @@
         ]
       },
       "rationale": "How long an energy drink makes actions cost 30% less stamina. Vanilla: 15 seconds.",
-      "logic": "Adjust between the original 15s and the current main drink-effect duration; no effect magnitude or action type is changed.",
-      "interaction": "Can't outlast the drink's main effect on the same timeline. Each short effect is tuned on its own.",
+      "logic": "From vanilla 15 s up to the length of the drink's main effect. Only the duration changes.",
+      "interaction": "Can't outlast the drink's main effect.",
       "exposeInUi": false
     },
     {
@@ -5253,7 +5253,7 @@
         "notes": []
       },
       "rationale": "How tired you must be before the game lets you sleep. Vanilla: 50 pts on the 0–100 fatigue meter. Lower = nap whenever you like; higher = sleep only when exhausted.",
-      "logic": "Higher values require more accumulated sleepiness before sleep becomes available; lower values allow sleeping earlier.",
+      "logic": "Higher = you must be more tired before you can sleep; lower = you can sleep earlier.",
       "interaction": "Separate no-sleep effects from hunger, bleeding, radiation or Psy can still block sleep regardless of this threshold."
     },
     {
@@ -5541,7 +5541,7 @@
         "notes": []
       },
       "rationale": "How bad bleeding wounds are overall. Higher = you bleed out faster and need bandages sooner. Vanilla: Novice 0.25×, Stalker and Veteran 1×, Master 1.5×.",
-      "logic": "Higher values make bleeding effects stronger overall; lower values soften them. Vanilla: Novice 0.25×, Stalker and Veteran 1×, Master 1.5×.",
+      "logic": "Higher = every bleed hurts more; lower = bleeding is gentler.",
       "interaction": "LOW / MEDIUM / SEVERE BLEEDING DAMAGE set the HP lost per stage; NATURAL BLEEDING RECOVERY and meds decide how fast it stops."
     },
     {
@@ -5637,7 +5637,7 @@
       },
       "rationale": "Your total health pool. Vanilla: 100 HP. More HP lets you survive more hits; healing items still restore the same flat amount, so each medkit covers a smaller share of a bigger pool.",
       "logic": "",
-      "interaction": "The game keeps its vanilla low-health state boundary. Other systems may also assume a 100-point health scale, so very large Max Health changes should be tested in game."
+      "interaction": "The low-health warning still starts where vanilla does. Very large values may behave oddly in game — test them."
     },
     {
       "id": "health.baseRegen",
@@ -5726,8 +5726,8 @@
         ]
       },
       "rationale": "How long after taking damage your health starts coming back. Vanilla: 5 seconds. Only matters if something is actually healing you, so with PASSIVE HP REGEN at 0 you may not notice it.",
-      "logic": "Higher values postpone actor-level HP regeneration for longer; lower values shorten the configured delay.",
-      "interaction": "With PASSIVE HP REGEN at 0 this delay shows no effect until another healing-over-time effect is active."
+      "logic": "Higher = HP regen waits longer after you get hurt; lower = it starts sooner.",
+      "interaction": "With PASSIVE HP REGEN at 0 you won't notice it unless another heal-over-time effect is active."
     },
     {
       "id": "health.regenerationScalar",
@@ -5813,7 +5813,7 @@
       },
       "rationale": "The small comeback heal the game gives you when you're almost dead. Vanilla: 1 HP/s. 0 removes it, so near-death means near-death; LOW HEALTH MECHANICS can cut it further.",
       "logic": "",
-      "interaction": "HEALTH REGEN STRENGTH can scale this effect, and the Master low-health penalty can reduce it further."
+      "interaction": "HEALTH REGEN STRENGTH scales it, and LOW HEALTH MECHANICS can cut it further."
     },
     {
       "id": "advanced.lowHealthMechanics",
@@ -5847,7 +5847,7 @@
         "notes": []
       },
       "rationale": "Master's extra punishment for being badly hurt: your health barely recovers until you patch up. Vanilla: Novice–Veteran OFF, Master ON. The normal low-health system works either way.",
-      "logic": "OFF leaves only the normal low-health system. ON adds the extra Master recovery penalty whenever the game enters its Master low-health state.",
+      "logic": "OFF = normal low-HP behaviour. ON = your health barely recovers while you're badly hurt.",
       "interaction": "The game keeps the vanilla activation point for this state. The child control only changes how strong the recovery penalty is."
     },
     {
@@ -5889,7 +5889,7 @@
       },
       "rationale": "How much that Master low-health punishment slows your healing. Vanilla: 70%. 0% removes it. Only works while LOW HEALTH MECHANICS is ON.",
       "logic": "Higher values suppress health regeneration more strongly; zero removes this penalty component.",
-      "interaction": "This remains inactive while LOW HEALTH MECHANICS is OFF. It layers on top of ordinary low-health recovery and the HEALTH REGEN STRENGTH setting.",
+      "interaction": "Stacks on top of the normal low-HP recovery and HEALTH REGEN STRENGTH.",
       "requiresToggle": "advanced.lowHealthMechanics"
     },
     {
@@ -6352,7 +6352,7 @@
       },
       "rationale": "How much of a bandage's heal you keep under Master's weaker meds. Vanilla: 25% — about 5 HP from a 20 HP bandage. 100% = no cut.",
       "logic": "100% means no Master healing cut; lower values make the Bandage heal less.",
-      "interaction": "This setting only has an effect while HEALING ITEM EFFICIENCY REDUCTION is ON. Changing both the base heal and this Master percentage compounds the result.",
+      "interaction": "The base heal and this Master cut multiply, so changing both stacks up.",
       "requiresToggle": "advanced.masterEffectModifierMechanics"
     },
     {
@@ -6394,7 +6394,7 @@
       },
       "rationale": "How much of a medkit's heal you keep under Master's weaker meds. Vanilla: 71% — about 50 HP from a 70 HP medkit. 100% = no cut.",
       "logic": "100% means no Master healing cut; lower values make the Medkit heal less.",
-      "interaction": "This setting only has an effect while HEALING ITEM EFFICIENCY REDUCTION is ON. Changing both the base heal and this Master percentage compounds the result.",
+      "interaction": "The base heal and this Master cut multiply, so changing both stacks up.",
       "requiresToggle": "advanced.masterEffectModifierMechanics"
     },
     {
@@ -6436,7 +6436,7 @@
       },
       "rationale": "How much of an army medkit's heal you keep under Master's weaker meds. Vanilla: 82% — about 70 HP from an 85 HP army medkit. 100% = no cut.",
       "logic": "100% means no Master healing cut; lower values make the Army Medkit heal less.",
-      "interaction": "This setting only has an effect while HEALING ITEM EFFICIENCY REDUCTION is ON. Changing both the base heal and this Master percentage compounds the result.",
+      "interaction": "The base heal and this Master cut multiply, so changing both stacks up.",
       "requiresToggle": "advanced.masterEffectModifierMechanics"
     },
     {
@@ -6749,7 +6749,7 @@
       "label": "Sprint Stops Below",
       "description": "Below this stamina value, sprinting is disabled. Default: 16.1 of the vanilla 100 stamina pool.",
       "rationale": "When your stamina drops below this, you can't sprint any more until it recovers. Vanilla: 16.1 out of 100. Lower it to squeeze out a longer final dash.",
-      "logic": "Higher values make sprint lock out earlier while stamina is still relatively high; lower values let the player sprint deeper into the stamina bar.",
+      "logic": "Higher = sprint locks out earlier; lower = you can sprint deeper into the bar.",
       "interaction": "Pairs with EXHAUSTION REGEN DELAY; sets sprint lockout, not sprint speed or stamina drain.",
       "control": "slider",
       "valueKind": "raw",
@@ -6794,7 +6794,7 @@
       "label": "Exhaustion Regen Delay",
       "description": "Seconds before stamina regeneration resumes after sprint exhaustion.",
       "rationale": "How long you stand there gasping after sprinting yourself out before stamina starts coming back. Vanilla: 1 second.",
-      "logic": "Higher values make exhaustion pauses last longer before recovery can resume; lower values shorten the pause.",
+      "logic": "Higher = a longer pause before stamina refills after you run dry; lower = shorter.",
       "interaction": "Applies after sprint exhaustion; SPRINT STOPS BELOW determines the separate lockout threshold.",
       "control": "slider",
       "valueKind": "raw",
@@ -6837,7 +6837,7 @@
       "label": "Boost Starts Below",
       "description": "Below this stamina value, the separate low-stamina recovery boost becomes eligible. Default: 30 stamina.",
       "rationale": "When stamina falls below this, the game gives you a short second-wind boost. Vanilla: 30 out of 100.",
-      "logic": "Higher values allow the low-stamina recovery helper to engage across a larger portion of the bar; lower values reserve it for near-exhaustion.",
+      "logic": "Higher = the second wind kicks in sooner; lower = only when you're nearly empty.",
       "interaction": "Pairs with BOOST STRENGTH and BOOST DURATION, not with SPRINT STOPS BELOW.",
       "control": "slider",
       "valueKind": "raw",
@@ -6882,7 +6882,7 @@
       "label": "Boost Strength",
       "description": "Regeneration strength of the temporary low-stamina recovery boost (10 stamina/s originally).",
       "rationale": "How strong that second wind is. Vanilla: 10 stamina/s on top of normal recovery. 0 removes it.",
-      "logic": "Higher values make the emergency recovery effect stronger; lower values make low-stamina recovery closer to the ordinary base rate.",
+      "logic": "Higher = a stronger second wind; lower = recovery stays close to normal.",
       "interaction": "BOOST STARTS BELOW sets its trigger; low-stamina BOOST DURATION sets how long it lasts.",
       "control": "slider",
       "valueKind": "raw",
@@ -6931,7 +6931,7 @@
       "label": "Boost Duration",
       "description": "Seconds that the conditional low-stamina stamina regeneration boost remains active (4 seconds originally).",
       "rationale": "How long the second wind lasts once it kicks in. Vanilla: 4 seconds.",
-      "logic": "Higher values keep the low-stamina recovery effect active longer; lower values shorten the boost.",
+      "logic": "Higher = the second wind lasts longer; lower = it ends sooner.",
       "interaction": "BOOST STARTS BELOW sets the trigger; BOOST STRENGTH sets how strong it is.",
       "control": "slider",
       "valueKind": "raw",
@@ -6973,8 +6973,8 @@
       "group": "Movement Stamina - Internal Speed States",
       "label": "Speed-Limited Sprint Stamina Effect",
       "description": "Changes stamina recovery while you are sprinting but your movement speed is being limited. The game decides when this slower sprint state is active.",
-      "rationale": "Stamina drain when you hold sprint but the game limits you to a slower speed. Vanilla: −0.65, the same as normal running. The game decides when this state applies.",
-      "logic": "More negative values suppress recovery more strongly; zero adds no state penalty; positive values help recovery. Do not read this as a separate 'slow sprint' button.",
+      "rationale": "Stamina drain when you hold sprint but something slows you down (heavy load, injury). Vanilla: −0.65, the same as normal running.",
+      "logic": "More negative = it drains faster; 0 = no extra drain; positive = you recover while doing it.",
       "interaction": "This works alongside normal Sprint stamina behavior. Encumbrance and other movement limits can affect when the game uses this slower sprint state.",
       "control": "slider",
       "valueKind": "raw",
@@ -7017,7 +7017,7 @@
       "group": "Movement Stamina - Internal Speed States",
       "label": "Jogging-State Stamina Effect",
       "description": "Changes stamina recovery during the game's lighter running movement state. There is no separate Jogging keybind.",
-      "rationale": "Stamina effect while the game counts you as jogging. Vanilla: 0 — no drain. There's no jog key; the game picks this state itself.",
+      "rationale": "Stamina effect while you jog (the game switches to it by itself; there's no key). Vanilla: 0 — no drain.",
       "logic": "Negative settings slow stamina recovery while jogging; 0 is neutral; positive settings help stamina recover.",
       "interaction": "The game decides when your movement counts as jogging. This setting only affects stamina recovery during that movement.",
       "control": "slider",
@@ -7061,8 +7061,8 @@
       "group": "Movement Stamina - Internal Speed States",
       "label": "Slow-Run-State Stamina Effect",
       "description": "Changes stamina recovery during the game's slow-running movement state. There is no separate Slow Run keybind.",
-      "rationale": "Stamina effect while the game counts you as slow-running. Vanilla: 0 — no drain. There's no key for it; the game picks this state itself.",
-      "logic": "Negative values cost stamina while slow-running; zero is neutral; positive values help recovery. This is not the Walk toggle.",
+      "rationale": "Stamina effect while you run slowly (the game switches to it by itself; there's no key). Vanilla: 0 — no drain.",
+      "logic": "Negative = it costs stamina; 0 = neutral; positive = you recover while doing it. Not the Walk toggle.",
       "interaction": "This is separate from walking. The game decides when movement counts as slow running.",
       "control": "slider",
       "valueKind": "raw",
@@ -7300,7 +7300,7 @@
       },
       "rationale": "How fast your stamina refills when you ease off. Vanilla: 5 stamina/s. Higher = shorter breathers between sprints.",
       "logic": "",
-      "interaction": "Movement-state values, hunger penalties and fatigue effects can reduce this base regeneration in context."
+      "interaction": "Movement, hunger and fatigue can still slow it down."
     },
     {
       "id": "stamina.sprintCost",
@@ -7962,7 +7962,7 @@
       },
       "rationale": "How many rounds the bonus Ammo package gives when it drops. Vanilla: 1×. Only matters while the Ammo package is on; the ammo loaded in their guns stays the same. Only works while NPC SMART LOOT is ON.",
       "logic": "0–3× the size of the bonus ammo stacks; 0 removes them. Your rank still decides which calibers can show up.",
-      "interaction": "Works only while the Ammo pack in BONUS PACKS is on; otherwise the value stays saved but does nothing.",
+      "interaction": "Only matters while the AMMO pack in BONUS PACKS is on.",
       "requiresToggle": "loot.npcSmartLootEnabled"
     },
     {
@@ -9640,7 +9640,7 @@
           "Existing presets missing this new key inherit 50% to preserve the prior authored Chance 0.5. Master OFF disables the editor."
         ]
       },
-      "rationale": "The roll for each bonus gear item in a picked stash. Vanilla: 50%. Even 100% isn't a guarantee in every stash — BONUS GEAR COVERAGE decides which stashes get a roll at all. Only works while EXTRA STASH GEAR is ON.",
+      "rationale": "The chance for each bonus gear item in a stash that qualifies. Vanilla: 50%. Even 100% isn't a guarantee everywhere — BONUS GEAR COVERAGE decides which stashes qualify. Only works while EXTRA STASH GEAR is ON.",
       "logic": "Higher improves the odds for each offered bonus item. Even 100% still needs an eligible stash and item candidate.",
       "interaction": "BONUS GEAR COVERAGE sets how many stashes qualify; the PRIORITY bars set which kinds of gear are offered.",
       "requiresToggle": "loot.stashGearEnabled",
@@ -10557,7 +10557,7 @@
       ],
       "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
       "interaction": "Affects eligible Standard stash medical items only. Availability, selection priority and stack size remain separate.",
-      "rationale": "Scales the chance of meds in Standard stashes. Vanilla: 100% (bandages 40%, medkits 100% in the game's own rolls). 50% = half as likely."
+      "rationale": "How often Standard stashes have meds. Vanilla: 100% (bandages 40%, medkits 100%). 50% = half as likely."
     },
     {
       "id": "loot.mediumStashDrinksChance",
@@ -10603,7 +10603,7 @@
       ],
       "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
       "interaction": "Affects eligible Standard stash drinks only. Availability, selection priority and stack size remain separate.",
-      "rationale": "Scales the chance of drinks in Standard stashes. Vanilla: 100% (vodka 50%, energy drinks 100% in the game's own rolls)."
+      "rationale": "How often Standard stashes have drinks. Vanilla: 100% (vodka 50%, energy drinks 100%)."
     },
     {
       "id": "loot.mediumStashCouponsChance",
@@ -10741,7 +10741,7 @@
       ],
       "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
       "interaction": "Affects eligible Rare stash medical items only. Availability, selection priority and stack size remain separate.",
-      "rationale": "Scales the chance of meds (bandages, medkits, anti-rads, army medkits) in Rare stashes. Vanilla: 100% — the game always rolls them in."
+      "rationale": "How often Rare stashes have meds (bandages, medkits, anti-rads, army medkits). Vanilla: 100% — they're always there."
     },
     {
       "id": "loot.expensiveStashFoodChance",
@@ -10787,7 +10787,7 @@
       ],
       "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
       "interaction": "Affects eligible Rare stash food only. Availability, selection priority and stack size remain separate.",
-      "rationale": "Scales the chance of canned food in Rare stashes. Vanilla: 100%."
+      "rationale": "How often Rare stashes have canned food. Vanilla: 100%."
     },
     {
       "id": "loot.expensiveStashDrinksChance",
@@ -10833,7 +10833,7 @@
       ],
       "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
       "interaction": "Affects eligible Rare stash drinks only. Availability, selection priority and stack size remain separate.",
-      "rationale": "Scales the chance of energy drinks in Rare stashes. Vanilla: 100%."
+      "rationale": "How often Rare stashes have energy drinks. Vanilla: 100%."
     },
     {
       "id": "loot.expensiveStashGrenadesChance",
@@ -10879,7 +10879,7 @@
       ],
       "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
       "interaction": "Affects eligible Rare stash grenades only. Availability, selection priority and stack size remain separate.",
-      "rationale": "Scales the chance of RGD-5 grenades in Rare stashes. Vanilla: 100%."
+      "rationale": "How often Rare stashes have RGD-5 grenades. Vanilla: 100%."
     },
     {
       "id": "loot.expensiveStashMoneyChance",
@@ -11152,8 +11152,8 @@
         "notes": []
       },
       "rationale": "What a completely broken item is still worth. Vanilla: 10% of its price. Higher = wrecked gear still sells for something.",
-      "logic": "At the normal 10% setting, completely broken gear keeps 10% of its base value. Raising this makes badly damaged gear worth more.",
-      "interaction": "Traders still apply their buy and sell prices. This only changes how durability affects an item's underlying value."
+      "logic": "At 10%, completely broken gear is still worth 10% of its price; higher = wrecked gear sells for more.",
+      "interaction": "Trader markups still apply; this only changes how much wear lowers the price."
     },
     {
       "id": "economy.traderAmmoStock",
@@ -12325,7 +12325,7 @@
         "notes": []
       },
       "rationale": "How much all damaging anomalies hurt, on top of each anomaly's own damage. Vanilla: Novice 0.3×, Stalker 1×, Veteran 1.45×, Master 1.75×. Your suit's protection still applies after this.",
-      "logic": "Higher raises the global damage multiplier; lower reduces it. Individual anomaly damage settings still apply.",
+      "logic": "Higher = every damaging anomaly hits harder; lower = softer. Each anomaly's own BASE still applies.",
       "interaction": "Individual anomaly damage and this global setting combine before armor and other protection."
     },
     {
@@ -12430,7 +12430,7 @@
         "notes": []
       },
       "rationale": "Master's punishment for being exhausted: smaller stamina bar, less carry capacity, more recoil, more sway and wider spread. Vanilla: Novice–Veteran OFF, Master ON. Normal tiredness effects work either way.",
-      "logic": "When the game enters the Master severe-fatigue state, this bundle adds -20% maximum stamina, -20% carry capacity, +55% recoil, extra aim sway and shot spread in vanilla.",
+      "logic": "Once you're severely tired: −20% max stamina, −20% carry weight, +55% recoil, more sway and wider spread (vanilla values). OFF leaves only normal tiredness.",
       "interaction": "The activation point stays vanilla. The child controls only change how strong each severe-fatigue penalty becomes."
     },
     {
@@ -12558,7 +12558,7 @@
         "notes": []
       },
       "rationale": "Health lost each time starvation hits under Master rules. Vanilla: 4 HP. 0 = starving no longer hurts directly. Only works while STARVATION MECHANICS is ON.",
-      "logic": "Higher values increase each starvation-damage charge; zero retains the bundle but removes direct HP damage from this component.",
+      "logic": "Higher = each starvation hit takes more HP; 0 = no HP damage (the other penalties stay).",
       "interaction": "STARVATION DAMAGE INTERVAL controls how often the charge repeats, while STARVATION PENALTY DELAY controls when this effect begins after activation.",
       "requiresToggle": "advanced.starvationMechanics"
     },
@@ -12602,7 +12602,7 @@
         "notes": []
       },
       "rationale": "Seconds between starvation hits. Vanilla: 10 seconds. Lower = the same damage comes faster. Only works while STARVATION MECHANICS is ON.",
-      "logic": "Lower values make the same damage arrive more frequently; higher values spread the damage out over a longer interval.",
+      "logic": "Lower = the same damage comes more often; higher = it's spread out.",
       "interaction": "Practical starvation pressure depends on both this interval and STARVATION DAMAGE.",
       "requiresToggle": "advanced.starvationMechanics"
     },
@@ -12659,7 +12659,7 @@
         "notes": []
       },
       "rationale": "Grace period before the starvation penalties kick in. Vanilla: 3 seconds.",
-      "logic": "Lower values make the penalties engage sooner after the starvation state activates; higher values provide a longer grace period.",
+      "logic": "Lower = the penalties hit sooner once you're starving; higher = a longer grace period.",
       "interaction": "STARVATION MECHANICS decides whether this bundle exists. This control only changes the grace period before its active penalties begin.",
       "requiresToggle": "advanced.starvationMechanics"
     },
@@ -12785,7 +12785,7 @@
       },
       "rationale": "How much moderate tiredness slows your aiming. Vanilla: +25% time to aim.",
       "logic": "Higher values further slow aiming during medium fatigue; zero removes this component.",
-      "interaction": "Applies whenever the game is in its vanilla medium-fatigue state, replacing the low-state aiming penalty."
+      "interaction": "Applies whenever you're moderately tired, instead of the low-fatigue aim delay."
     },
     {
       "id": "survival.fatigueStrongAimPenalty",
@@ -12867,7 +12867,7 @@
       },
       "rationale": "How much moderate tiredness slows your reloads. Vanilla: +15% reload time.",
       "logic": "Higher values lengthen reloads more while medium fatigue is active; zero removes this penalty.",
-      "interaction": "Applies whenever the game is in its vanilla medium-fatigue state. It is separate from the aiming-time penalty."
+      "interaction": "Applies whenever you're moderately tired; the aim delay is separate."
     },
     {
       "id": "survival.fatigueStrongReloadPenalty",
@@ -12908,7 +12908,7 @@
       },
       "rationale": "How much severe tiredness slows your reloads. Vanilla: +18.75% reload time. Master fatigue can add more.",
       "logic": "Higher values make reloads slower while severely fatigued. Zero removes this reload penalty.",
-      "interaction": "Applies whenever the game is in its vanilla severe-fatigue state. SEVERE FATIGUE MECHANICS can add another layer on top."
+      "interaction": "Applies whenever you're severely tired. SEVERE FATIGUE MECHANICS can add more on top."
     },
     {
       "id": "survival.sleepHealthRestore",
@@ -13395,7 +13395,7 @@
       },
       "rationale": "Health lost per tick from a light bleed. Vanilla: 1 HP.",
       "logic": "",
-      "interaction": "Applies while the game is in its vanilla low-bleeding state. NATURAL BLEEDING RECOVERY determines how long bleeding lasts."
+      "interaction": "Applies while you bleed lightly. NATURAL BLEEDING RECOVERY decides how long it lasts."
     },
     {
       "id": "survival.bleedingMediumDamage",
@@ -13438,7 +13438,7 @@
       },
       "rationale": "Health lost per tick from a moderate bleed. Vanilla: 1.5 HP.",
       "logic": "",
-      "interaction": "Applies while the game is in its vanilla medium-bleeding state. Movement and sleep penalties remain separate."
+      "interaction": "Applies while you bleed moderately. Movement and sleep penalties are separate."
     },
     {
       "id": "survival.bleedingStrongDamage",
@@ -13515,7 +13515,7 @@
         "notes": []
       },
       "rationale": "Master's weaker meds: bandages and medkits heal less, plus a few food, energy-drink and artifact tweaks. Vanilla: Novice–Veteran OFF, Master ON. The healing cuts are the bars below.",
-      "logic": "OFF leaves these extra Master penalties inactive. ON applies the Master-only changes on top of the normal item effects.",
+      "logic": "OFF = items work normally. ON = Master's weaker meds and item tweaks.",
       "interaction": "The healing controls below only matter while this is ON. A few food, energy-drink and Weird Kettle tweaks come with it and can't be set separately."
     },
     {
@@ -14018,7 +14018,7 @@
       },
       "rationale": "How badly Glass Shards make you bleed. Vanilla: 1×. 0× = no bleeding; running through still cuts deeper than walking.",
       "logic": "1× keeps vanilla Glass Shards bleeding; 0× removes it; 2× doubles it.",
-      "interaction": "GLASS SHARDS HEALTH DAMAGE is independent. Movement-speed thresholds and corrosion values remain vanilla."
+      "interaction": "GLASS SHARDS HEALTH DAMAGE is separate; how fast you must move and gear corrosion stay vanilla."
     },
     {
       "id": "environment.soapBubbleHealthDamage",
@@ -15531,7 +15531,7 @@
         ]
       },
       "rationale": "How many loose guns you'll find out in the Zone after shuffling. Vanilla: 100% fills all safe weapon spots. Turn it down for fewer guns lying around — even 0% leaves at least one of each regular model. Quest, unique and NPC weapons are unaffected.",
-      "logic": "Higher values leave more compatible loose-weapon spots filled; lower values make found guns scarcer. Even 0% guarantees at least one of every regular model.",
+      "logic": "Higher = more weapon spots stay filled; lower = guns are scarcer. Even 0% keeps one of every regular model.",
       "interaction": "Only affects loose regular weapons when SHUFFLE LOOSE WEAPONS is ON; quest, unique and NPC guns are untouched."
     },
     {

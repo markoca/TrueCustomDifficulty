@@ -28,7 +28,7 @@ critical = {
     "loot.stashGearCoveragePercent": ("stashes", "Bonus Chance"),
     "loot.stashGearBonusChance": ("each", "isn't a guarantee"),
     "loot.stashMixMedical": ("odds", "keep their own odds"),
-    "loot.mediumStashMedicalChance": ("chance", "game's own rolls"),
+    "loot.mediumStashMedicalChance": ("how often", "bandages 40%"),
     "loot.expensiveStashMoneyChance": ("coupon", "progression"),
     "loot.cheapStashAmmoQuantity": ("Basic, Standard and Rare", "rounds"),
     "survival.starvationStaminaDrain": ("actions", "starving"),

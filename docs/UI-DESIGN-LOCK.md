@@ -1,3 +1,10 @@
+## 2026-11-18 — CURRENT: player-voice pass, second round (~55 texts)
+
+* HIGHER / LOWER and WITH OTHER SETTINGS no longer speak about *states*, *bundles*, *layers*, *components*, *actor-level* or *configured* values: e.g. `Higher = a stronger second wind`, `Applies whenever you're severely tired`, `Once you're severely tired: −20% max stamina, −20% carry weight, +55% recoil …`, `Higher = HP regen waits longer after you get hurt`, `The base heal and this Master cut multiply, so changing both stacks up.`
+* Movement-state stamina rows explain the state in play terms (*something slows you down (heavy load, injury)*, *the game switches to it by itself; there's no key*).
+* Standard / Rare stash odds cells start with `How often … stashes have …` (was *Scales the chance of …*); Weapon Jam Rate puts `Vanilla:` right after the first sentence like every other row.
+* Audits follow: headshot logic keeps `1.0×`; Standard meds caveat pinned to `bandages 40%`.
+
 ## 2026-11-18 — CURRENT: player-voice pass on the longest texts
 
 * MUTANT AGGRESSION (25 species rows): WHAT IT DOES is `How often <species> use their attacks/abilities — <moves>. Vanilla: … Higher = less breathing room between them.` (variant lists, *2× = twice as often; 0.5× = twice the wait* and *The card shows the wait …* dropped — the card says it). HIGHER / LOWER: `2× halves every pause between these moves; 0.5× doubles it.` (was *Each attack has its own wait (cooldown) … scales the waits of all the family's attacks*).
