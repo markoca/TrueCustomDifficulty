@@ -1,3 +1,9 @@
+## 2026-11-17 — CURRENT: TRADER STOCK consistency review (text fixes)
+
+* **AMMO / MEDICAL SUPPLY** interaction text no longer claims the supply "does not alter availability chance": below 1x stacks shrink first and only offers already down to 1 turn up less often (`SupplyOddsFactor`), exactly as the logic text and the board help say. The pointer to the per-category control now names the board's **AMMO / MEDICAL rail of each trader type** (the former "odds sliders" wording referred to controls that do not exist). No value, range, preset key or writer change.
+* Legacy BUY restriction labels (hidden, still saved and written for old presets; shown in change lists and the CLEAR notice context) use the same player-facing role names as TRADER STOCK: **Shopkeeper Buys …** (was *General Buys …* and the anchor *Trader Buys*) and **Stalker Buys …** (was *Generic NPC Buys …*); descriptions say shopkeepers / medics / bartenders / technicians / stalkers you can trade with. IDs unchanged.
+* Open finding (not changed, user decision): 15 base-game technicians do sell items — scopes and silencers (Attachments, 141 source rows, CANDIDATE chances 0.1–1.0) — so the locked statement "TECHNICIAN is not edited: only Bolshak (DLC1) sells items" is factually wrong. See docs/economy/TRADER-STOCK-CONSISTENCY-2026-11-17.md.
+
 
 ## 2026-11-17 — CURRENT: GUNS TO FIND displays possible-spawn coverage
 
