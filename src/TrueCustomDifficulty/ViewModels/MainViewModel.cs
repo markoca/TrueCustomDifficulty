@@ -700,7 +700,6 @@ public sealed class MainViewModel : ObservableObject
         // aggregate source registered for state/provenance, but its standalone
         // visual anchor is hidden in ParameterViewModel.IsControlVisible.
         // Flycatcher and Anomaly Special Effects remain separate.
-        WireVisualAggregate("environment.anomalyDamage", "environment.anomalyDamage");
         WireVisualAggregate(
             "environment.flycatcherMovementSpeed",
             "environment.flycatcherMovementSpeed",

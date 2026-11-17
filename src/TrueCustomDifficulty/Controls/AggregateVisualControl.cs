@@ -60,7 +60,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
     private void RaiseParameterSelected(ParameterViewModel parameter)
     {
-        if (Family is "AnomalyGlobalDamage" or "FlycatcherSlowdown" or "AnomalySpecialEffects" or "ServiceCostsBoard"
+        if (Family is "FlycatcherSlowdown" or "AnomalySpecialEffects" or "ServiceCostsBoard"
             or "CouponFlow" or "ItemWeightBoard" or "ArtifactHunting" or "HumanTactics" or "HumanAwareness" or "EquipmentWearBalance"
             or "StashContentMix" or "StashMedicalComposition"
             or "StashGear" or "NpcLootLoadout" or "HumanCombatProfile" or "PlayerWeaponProfile"
@@ -372,9 +372,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             case "HumanAwareness":
                 DrawHumanAwarenessRadar(dc, text, muted, border, accent, panel);
                 break;
-            case "AnomalyGlobalDamage":
-                DrawAnomalyGlobalDamage(dc, text, muted, border, accent, panel);
-                break;
             case "FlycatcherSlowdown":
                 DrawFlycatcherSlowdown(dc, text, muted, border, soft, accent, panel);
                 break;
@@ -479,7 +476,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // All three Equipment rings draw their own matching Combat-style halo.
         // The generic map-center glow would be in the wrong position here.
         if (Family is "EquipmentWearBalance" or "FlycatcherSlowdown"
-            or "AnomalyGlobalDamage" or "AnomalySpecialEffects" or "PlayerWeaponProfile"
+            or "AnomalySpecialEffects" or "PlayerWeaponProfile"
             or "HumanAwareness" or "HumanTactics")
             return;
         if (Family == "HumanCombatProfile" && target.Kind == HitKind.Knob)
@@ -994,22 +991,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             dc.DrawText(readout, new Point(
                 card.Right - 12.0 - readout.WidthIncludingTrailingWhitespace, y));
         }
-    }
-
-    private void DrawAnomalyGlobalDamage(
-        DrawingContext dc, Brush text, Brush muted, Brush border,
-        Brush accent, Brush panel)
-    {
-        DrawCenteredText(dc, "GLOBAL ANOMALY DAMAGE",
-            new Point(ActualWidth / 2.0, 21.0), VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
-        // Reuse the native-source rotary control from Your Weapons, without
-        // changing EnvironmentDifficulty.Anomaly_Damage or the selected baseline.
-        // This single knob stays centered and bounded within its full-width group.
-        const double knobCardWidth = 194.0;
-        DrawSourceKnob(dc, P("environment.anomalyDamage"),
-            "GLOBAL MULTIPLIER",
-            new Rect((ActualWidth - knobCardWidth) / 2.0, 49.0,
-                knobCardWidth, 181.0), text, muted, border, accent, panel);
     }
 
     // This native-axis graph uses exactly the same triple-circle grammar as
@@ -6855,7 +6836,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
         var stashGraph = Family is "StashContentMix"
             or "StashMedicalComposition" or "StashGear";
-        if (!stashGraph && Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer" or "EquipmentWearBalance" or "ServiceCostsBoard" or "RadiationBalance" or "HumanCombatProfile" or "StarvationTimeline" or "FlycatcherSlowdown" or "AnomalySpecialEffects" or "NpcLootLoadout"))
+        if (!stashGraph && Family is not ("PlayerWeaponProfile" or "AmmoDistribution" or "ConsumableMixer" or "EquipmentWearBalance" or "ServiceCostsBoard" or "RadiationBalance" or "HumanCombatProfile" or "StarvationTimeline" or "FlycatcherSlowdown" or "AnomalySpecialEffects" or "NpcLootLoadout"))
             return;
 
         var target = FindTarget(e.GetPosition(this));
@@ -7943,7 +7924,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "ArtifactHunting" => ArtifactHuntingHeight(width),
             "HumanTactics" => HumanTacticsHeight(width),
             "HumanAwareness" => HumanAwarenessHeight(width),
-            "AnomalyGlobalDamage" => 242.0,
             "FlycatcherSlowdown" => FlycatcherBoardHeight(width),
             "AnomalySpecialEffects" => 270.0,
             "NpcLootLoadout" => NpcLootBoardHeight(width),
@@ -8035,7 +8015,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 "equipment.weaponWeight",
                 "equipment.armorWeight"
             },
-            "AnomalyGlobalDamage" => new[] { "environment.anomalyDamage" },
             "FlycatcherSlowdown" => new[]
             {
                 "environment.flycatcherMovementSpeed",

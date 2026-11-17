@@ -151,7 +151,6 @@ public sealed class ParameterViewModel : ObservableObject
                     "HumanTactics" => "Drag a card's track: GRENADES, SUPPRESSION, FLANKING, PUSH and CAMPING PENALTY set how often a squad may start that action (2x = twice as often, the card shows the resulting pause); ENEMY ACCURACY tightens or widens their bullet spread.",
                     "HumanAwareness" => "Top-down radar, enemy in the centre facing up: drag the tip of the vision field (SIGHT, up to 200 m), the footstep-circle handle (HEARING) or the end of the outer timer ring (MEMORY). Weather dials: FOG VISIBILITY = how much they still see in fog; RAIN / THUNDER NOISE = how much the weather covers your noise (higher = they hear less). Mutants are not changed.",
                     "ArtifactHunting" => "Turn a knob: SPAWN CHANCE (odds a field actually grows an artifact when it refills), RARE LUCK (how often a find is rare or epic, shown per zone below) and PER SPAWN (how many drop at once). Quest and unique artifacts are not changed.",
-                    "AnomalyGlobalDamage" => "GLOBAL MULTIPLIER affects all supported anomaly damage. Each anomaly also has its own damage setting; EFFECTIVE includes both before protection.",
                     "AnomalySpecialEffects" => "Adjust Glass Shards bleeding and Psy drain independently. Their other damage effects remain separate.",
                     "NpcLootLoadout" => "SCARCITY scales eligible ordinary NPC consumable Chance and optional corpse SmartLoot activation, not weapons. Other controls select packages, bonus stacks, medical Chance and condition. R also resets NEED BOOST and the item rows; MOD LOOT SCARCITY resets on its own (R with it focused).",
                     "WorldLootLayout" => "Shuffle weapons, attachments and blueprints separately. Remove loose armor, loose detectors or the fixed loose artifacts (Weird Kettle/Nut/Flower/Ball, DLC Water Drip) independently; quest rewards and anomaly fields stay. Weapon density only affects weapon shuffle.",
@@ -191,7 +190,8 @@ public sealed class ParameterViewModel : ObservableObject
             if (IsMutantDropMember)
                 return "Drag a mutant's track to change its part-drop chance."
                     + Environment.NewLine + "Right-click one species to reset it; R resets all fourteen.";
-            if (IsIndividualAnomalyDamageMember)
+            // GLOBAL lives on the DAMAGE BY ANOMALY board (no separate board).
+            if (IsIndividualAnomalyDamageMember || Id == "environment.anomalyDamage")
                 return "Each bar compares editable BASE damage with vanilla (100% unchanged). EFFECTIVE includes the global multiplier before protection."
                     + Environment.NewLine + "Turn GLOBAL in the same card. Right-click a control to reset it; R resets the whole damage group.";
             if (IsItemPriceScalerMember)
@@ -603,7 +603,6 @@ public sealed class ParameterViewModel : ObservableObject
         ["equipment.consumableWeight"] = "ItemWeightBoard",
         ["equipment.weaponWeight"] = "ItemWeightBoard",
         ["equipment.armorWeight"] = "ItemWeightBoard",
-        ["environment.anomalyDamage"] = "AnomalyGlobalDamage",
         ["environment.flycatcherMovementSpeed"] = "FlycatcherSlowdown",
         ["environment.flycatcherTurnSpeed"] = "FlycatcherSlowdown",
         ["environment.razorBleeding"] = "FlycatcherSlowdown",
@@ -719,7 +718,6 @@ public sealed class ParameterViewModel : ObservableObject
         ["ArtifactHunting"] = "environment.artifactSpawnChance",
         ["HumanTactics"] = "combat.npcGrenadeRate",
         ["HumanAwareness"] = "combat.npcSightRange",
-        ["AnomalyGlobalDamage"] = "environment.anomalyDamage",
         ["FlycatcherSlowdown"] = "environment.flycatcherMovementSpeed",
         ["AnomalySpecialEffects"] = "environment.razorBleeding",
         ["NpcLootLoadout"] = "loot.npcCorpseBonus",

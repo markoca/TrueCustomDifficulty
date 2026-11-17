@@ -4336,3 +4336,9 @@ The caliber card below the AMMO TYPE MIX knobs is titled **AMMO BOX CONTENT DIST
 * The Global Anomaly Damage knob is titled GLOBAL MULTIPLIER, the same name as in Damage by Anomaly.
 * Stash medical MIN/MAX readouts use the accent marker (ReadoutInk), not hard-coded yellow.
 * Help: ARTIFACT HUNTING says "Turn a knob"; AMMO help names AMMO BOX CONTENT DISTRIBUTION.
+
+## CURRENT 2026-11-17 — GLOBAL ANOMALY DAMAGE: ONE PLACE ONLY
+
+`environment.anomalyDamage` is edited only by the GLOBAL MULTIPLIER knob on the DAMAGE BY ANOMALY
+board. The former standalone AnomalyGlobalDamage aggregate board (already hidden by IsControlVisible)
+is removed from code; selecting GLOBAL shows the DAMAGE BY ANOMALY help.

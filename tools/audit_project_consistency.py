@@ -5851,7 +5851,7 @@ _visual_boards = {
     "MutantDropRadar.cs": 1,
     "WorldLootRemovalRadar.cs": 1,
     "AnomalyDamageRadar.cs": 1,
-    "AggregateVisualControl.cs": 8,
+    "AggregateVisualControl.cs": 7,  # GLOBAL ANOMALY DAMAGE board removed 2026-11-17
 }
 for _file, _expected in _visual_boards.items():
     _source = (_visual_dir / _file).read_text(encoding="utf-8")
