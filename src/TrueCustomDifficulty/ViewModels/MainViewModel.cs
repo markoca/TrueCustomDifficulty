@@ -201,9 +201,11 @@ public sealed class MainViewModel : ObservableObject
         }
     }
 
-    /// <summary>The boost the writer applies: the knob while ON, vanilla 1x while OFF.</summary>
+    /// <summary>The boost the writer applies: disabled Smart Loot cannot emit boost effects.</summary>
     public double EffectiveCorpseSmartLootNeedBoost =>
-        CorpseSmartLootNeedBoostEnabled ? CorpseSmartLootNeedBoost : 1.0;
+        CorpseSmartLootNeedBoostEnabled
+        && AllParameters.FirstOrDefault(p => p.Id == "loot.npcSmartLootEnabled")?.CurrentBoolean != false
+            ? CorpseSmartLootNeedBoost : 1.0;
 
     public bool IsCorpseSmartLootNeedBoostModified =>
         Math.Abs(EffectiveCorpseSmartLootNeedBoost - 1.0) > 0.000001;
@@ -735,10 +737,23 @@ public sealed class MainViewModel : ObservableObject
         WireVisualAggregate(
             "loot.npcCorpseBonus",
             "loot.npcCorpseBonus",
+            "loot.npcSmartLootEnabled",
             "loot.genericCorpseReduction",
             "loot.npcMedicalChance",
             "loot.npcWeaponAmmoSupply",
             "loot.droppedWeaponCondition");
+
+        // A disabled corpse Smart Loot bundle retains NEED BOOST's user value,
+        // but its writer-facing effective strength becomes neutral.
+        parametersById["loot.npcSmartLootEnabled"].PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(ParameterViewModel.CurrentBoolean))
+            {
+                OnPropertyChanged(nameof(EffectiveCorpseSmartLootNeedBoost));
+                OnPropertyChanged(nameof(IsCorpseSmartLootNeedBoostModified));
+                parametersById["loot.npcCorpseBonus"].RefreshAggregateModifiedState();
+            }
+        };
 
         var npcConsumableAnchor = parametersById["loot.npcCorpseBonus"];
         foreach (var consumable in NpcConsumableItems)
@@ -2584,6 +2599,7 @@ public sealed class MainViewModel : ObservableObject
                 "loot.looseArtifactsRemoved" => 107,
 
                 // NPC loot and equipment
+                "loot.npcSmartLootEnabled" => 199,
                 "loot.npcCorpseBonus" => 200,
                 "loot.npcMedicalChance" => 201,
                 "loot.npcWeaponAmmoSupply" => 202,

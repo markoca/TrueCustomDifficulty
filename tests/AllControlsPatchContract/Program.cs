@@ -77,8 +77,8 @@ internal static partial class Program
 
             var ids = Catalog.Parameters.Select(p => p.Id).ToHashSet(StringComparer.Ordinal);
             var tested = ids.Except(NonUi, StringComparer.Ordinal).OrderBy(x => x, StringComparer.Ordinal).ToArray();
-            Check(ids.Count == 410 && NonUi.IsSubsetOf(ids) && tested.Length == 387,
-                "Expected 410 catalog sources and 387 mounted editable writer probes");
+            Check(ids.Count == 411 && NonUi.IsSubsetOf(ids) && tested.Length == 388,
+                "Expected 411 catalog sources and 388 mounted editable writer probes");
 
             // The ordinary Master/Stalker corpse package contains no bonus
             // NPC_Ammo_Smart, so that source must be explicitly probed where
@@ -89,6 +89,7 @@ internal static partial class Program
             VerifyWeatherNoiseMaskingSemantics();
             VerifyReferenceDifficultyVisibility();
             VerifyDormantNpcAmmoNotCounted();
+            VerifyNpcSmartLootMasterToggle();
             VerifySingletonCfgPatchAndFileAccounting();
             var executed = 0;
             var failed = new List<string>();
@@ -353,6 +354,62 @@ internal static partial class Program
         Check(rain.CurrentDisplay == "60%"
               && Math.Abs(rain.ToPresetValue().Number.GetValueOrDefault() - 0.4) < 0.000001,
             "Editing noise must only invert its display, not the preset.");
+    }
+
+    private static void VerifyNpcSmartLootMasterToggle()
+    {
+        var toggleSource = Catalog.Parameters.Single(p => p.Id == "loot.npcSmartLootEnabled");
+        Check(toggleSource.Control == "toggle" && toggleSource.Vanilla["All"].GetBoolean()
+            && toggleSource.Targets.Count == 1
+            && toggleSource.Targets[0].Path == "EconomyDifficulty.CorpseSmartLoot.GeneralNPC"
+            && toggleSource.Targets[0].Operation == "setListEmptyWhenOff",
+            "NPC Smart Loot master toggle has no native list destination");
+        var dir = Path.Combine(Path.GetTempPath(),
+            "TCD_NpcSmartLootMaster_" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Novice" };
+            var master = vm.AllParameters.Single(p => p.Id == toggleSource.Id);
+            var packages = vm.AllParameters.Single(p => p.Id == "loot.npcCorpseBonus");
+            var bonusAmmo = vm.AllParameters.Single(p => p.Id == "loot.npcWeaponAmmoSupply");
+            var stockStashToggle = vm.AllParameters.Single(p => p.Id == "loot.stashSmartLootEnabled");
+            Check(packages.CurrentText.Contains("NPC_Ammo_Smart", StringComparison.Ordinal)
+                && stockStashToggle.CurrentBoolean,
+                "Novice native optional packages or independent stash switch missing");
+
+            bonusAmmo.SnapCurrentNumberToMarker(2.0);
+            master.CurrentBoolean = false;
+            Check(!bonusAmmo.IsControlEnabled
+                && packages.CurrentText.Contains("NPC_Ammo_Smart", StringComparison.Ordinal),
+                "Smart Loot OFF must preserve options while disabling the ammo editor");
+            var off = new CfgPatchWriterService().Write(vm, Catalog, null, dir);
+            var files = Directory.EnumerateFiles(dir, "*", SearchOption.AllDirectories).ToArray();
+            var difficulty = files.SingleOrDefault(p => p.Contains(
+                "DifficultyPrototypes_patch_TrueCustomDifficulty.cfg", StringComparison.Ordinal));
+            Check(off.FileCount > 0 && difficulty is not null,
+                "Smart Loot OFF did not emit a difficulty CFG");
+            var offText = File.ReadAllText(difficulty!);
+            Check(offText.Contains("CorpseSmartLoot =", StringComparison.Ordinal)
+                && !offText.Contains("GeneralNPC = NPC_Ammo_Smart", StringComparison.Ordinal)
+                && !files.Any(p => p.Contains("StashPrototypes_patch_TrueCustomDifficulty.cfg", StringComparison.Ordinal)),
+                "Smart Loot OFF failed to remove all corpse bonus packages");
+            Check(stockStashToggle.CurrentBoolean,
+                "NPC Smart Loot toggle unexpectedly altered stash Smart Loot");
+
+            master.CurrentBoolean = true;
+            Check(bonusAmmo.IsControlEnabled
+                && packages.CurrentText.Contains("NPC_Ammo_Smart", StringComparison.Ordinal),
+                "Smart Loot ON did not restore the saved bonus package state");
+            var on = new CfgPatchWriterService().Write(vm, Catalog, null, dir);
+            var staged = Directory.EnumerateFiles(dir, "*", SearchOption.AllDirectories).ToArray();
+            Check(on.FileCount > 0
+                && staged.Any(p => p.Contains("StashPrototypes_patch_TrueCustomDifficulty.cfg", StringComparison.Ordinal)),
+                "Re-enabled bonus ammo did not generate its saved private clone");
+        }
+        finally
+        {
+            if (Directory.Exists(dir)) Directory.Delete(dir, true);
+        }
     }
 
     private static void VerifyDormantNpcAmmoNotCounted()

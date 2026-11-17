@@ -14,8 +14,8 @@ namespace TrueCustomDifficulty.Controls;
 /// </summary>
 public sealed partial class AggregateVisualControl
 {
-    private const double StashSmartToggleTop = 40.0;
-    private const double StashSmartKnobTop = 76.0;
+    private const double StashSmartToggleTop = 14.0;
+    private const double StashSmartKnobTop = 59.0;
     private const double StashSmartKnobHeight = 181.0;
     private const double StashSmartGap = 12.0;
     private const double StashSmartRowPitch = 24.0;
@@ -48,17 +48,16 @@ public sealed partial class AggregateVisualControl
     private void DrawStashSmartLoot(DrawingContext dc, Brush text, Brush muted,
         Brush border, Brush accent, Brush panel)
     {
-        DrawCenteredText(dc, "STASH SMART LOOT", new Point(ActualWidth / 2.0, 21.0),
-            VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
         var bankWidth = Math.Max(1.0, Math.Min(620.0, ActualWidth - 36.0));
         var left = (ActualWidth - bankWidth) / 2.0;
         var cellWidth = (bankWidth - StashSmartGap) / 2.0;
 
-        // Master switch: OFF zeroes every stash SmartLoot set; the knobs
-        // below dim (requiresToggle) but keep their values.
+        // One master checkbox is the card title, not a redundant caption row.
+        // OFF zeroes SmartLoot sets while the source-backed odds stay saved.
         if (P(StashEffectiveState.SmartEnabledId) is { } enabled)
-            DrawWorldCheckRow(dc, enabled, "Smart loot in stashes",
-                new Rect(left - 11.0, StashSmartToggleTop, bankWidth + 11.0, WorldListRow),
+            DrawWorldCheckRow(dc, enabled, "STASH SMART LOOT",
+                new Rect((ActualWidth - 190.0) / 2.0, StashSmartToggleTop,
+                    190.0, WorldListRow),
                 StashSmartToggleTop, text, muted, border, accent, panel);
 
         // Typical set endpoints (most stash sets roll 10% → 80%).

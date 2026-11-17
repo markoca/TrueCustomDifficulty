@@ -1341,8 +1341,50 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private bool NpcBonusPackageSelected()
     {
         var corpse = P("loot.npcCorpseBonus");
-        return corpse is not null
+        return P("loot.npcSmartLootEnabled")?.CurrentBoolean != false
+            && corpse is not null
             && NpcCorpsePackages.Contains(corpse.CurrentText, NpcCorpsePackages.Ammo);
+    }
+
+    private bool NpcSmartLootOn()
+        => P("loot.npcSmartLootEnabled")?.CurrentBoolean != false;
+
+    // Native SmartLoot settings remain saved while OFF. The preview guards
+    // prevent editing a dimmed package/boost/ammo area without affecting normal
+    // corpse supply knobs or the independent master checkbox in its header.
+    private bool IsDisabledNpcSmartArea(Point point)
+    {
+        if (Family != "NpcLootLoadout" || NpcSmartLootOn())
+            return false;
+        var smart = CurrentNpcLootLayout(ActualWidth).Smart;
+        return smart.Contains(point) && point.Y > smart.Top + 30.0;
+    }
+
+    protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
+    {
+        base.OnPreviewMouseLeftButtonDown(e);
+        if (IsDisabledNpcSmartArea(e.GetPosition(this))) e.Handled = true;
+    }
+
+    protected override void OnPreviewMouseRightButtonDown(MouseButtonEventArgs e)
+    {
+        base.OnPreviewMouseRightButtonDown(e);
+        if (IsDisabledNpcSmartArea(e.GetPosition(this))) e.Handled = true;
+    }
+
+    protected override void OnPreviewMouseWheel(MouseWheelEventArgs e)
+    {
+        base.OnPreviewMouseWheel(e);
+        if (IsDisabledNpcSmartArea(e.GetPosition(this))) e.Handled = true;
+    }
+
+    protected override void OnPreviewKeyDown(KeyEventArgs e)
+    {
+        base.OnPreviewKeyDown(e);
+        if (Family == "NpcLootLoadout" && !NpcSmartLootOn()
+            && (_selectedParameter?.Id is "loot.npcCorpseBonus" or "loot.npcWeaponAmmoSupply")
+            && (e.Key is Key.Up or Key.Down or Key.Left or Key.Right or Key.Space))
+            e.Handled = true;
     }
 
     private bool IsNpcBonusSliderLocked(ParameterViewModel? parameter)
@@ -1403,14 +1445,13 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             RaiseParameterSelected(anchor);
     }
 
+    // One explicitly scoped SMART LOOT card owns packs, need-driven boost
+    // and optional ammo. Standard corpse supplies and equipment stay outside.
     // Identical geometry is used by OnRender and MeasureOverride.
-    // Three tiers inside one centered, width-capped column:
-    //   1) SmartLoot packages + NEED BOOST + three peer knobs (one 88-DIP row),
-    //   2) Dropped Weapon Condition + optional Bonus Ammo card side by side,
-    //   3) FOOD / DRINKS / MEDICAL per-item Chance columns.
     private readonly record struct NpcLootGeometry(
-        Rect Selector, Rect Boost, Rect Ammo, Rect Supply, Rect Medical,
-        Rect Mod, Rect Condition, double ContentLeft, double ContentWidth,
+        Rect Smart, Rect Selector, Rect Boost, Rect Ammo,
+        Rect Supply, Rect Medical, Rect Mod, Rect Condition,
+        double ContentLeft, double ContentWidth,
         double ConsumablesTop, double Height);
 
     private const double NpcLootMaxContentWidth = 780.0;
@@ -1424,62 +1465,71 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var available = Math.Max(1.0, hostWidth - margin * 2.0);
         var contentWidth = Math.Min(NpcLootMaxContentWidth, available);
         var left = margin + (available - contentWidth) / 2.0;
-        var top = 54.0;
+        const double smartTop = 54.0;
 
+        Rect smart;
         Rect selector;
         Rect boost;
+        Rect ammo;
         Rect supply;
         Rect medical;
         Rect mod;
+        Rect condition;
+        double top;
+
         if (contentWidth >= 600.0)
         {
-            // Package selector gets 1.5 knob widths; NEED BOOST sits right
-            // beside the packages it shapes, then the three peer knobs.
-            var unit = (contentWidth - 4.0 * gap) / 5.5;
-            selector = new Rect(left, top, unit * 1.5, scalarHeight);
-            boost = new Rect(selector.Right + gap, top, unit, scalarHeight);
-            supply = new Rect(boost.Right + gap, top, unit, scalarHeight);
-            medical = new Rect(supply.Right + gap, top, unit, scalarHeight);
-            mod = new Rect(medical.Right + gap, top, unit, scalarHeight);
-            top = selector.Bottom + gap;
-        }
-        else
-        {
-            var selectorWidth = Math.Min(330.0, contentWidth);
-            selector = new Rect(left + (contentWidth - selectorWidth) / 2.0,
-                top, selectorWidth, scalarHeight);
-            top = selector.Bottom + gap;
-            var knobWidth = (contentWidth - 3.0 * gap) / 4.0;
-            boost = new Rect(left, top, knobWidth, scalarHeight);
-            supply = new Rect(boost.Right + gap, top, knobWidth, scalarHeight);
+            // Header + one smart row. The right-hand ammo track has enough
+            // vertical room for its three compact ammo example rows.
+            smart = new Rect(left, smartTop, contentWidth, 179.0);
+            var innerLeft = left + 10.0;
+            var innerWidth = contentWidth - 20.0;
+            var unit = (innerWidth - 2.0 * gap) / 5.2;
+            var contentTop = smart.Top + 30.0;
+            selector = new Rect(innerLeft, contentTop, 1.55 * unit, scalarHeight);
+            boost = new Rect(selector.Right + gap, contentTop, unit, scalarHeight);
+            ammo = new Rect(boost.Right + gap, contentTop,
+                smart.Right - 10.0 - (boost.Right + gap), middleHeight);
+
+            // Ordinary corpse modifiers share the left half of the next row;
+            // condition occupies its right half without creating a third row.
+            top = smart.Bottom + gap;
+            var half = (contentWidth - gap) / 2.0;
+            var knobWidth = (half - 2.0 * gap) / 3.0;
+            supply = new Rect(left, top, knobWidth, scalarHeight);
             medical = new Rect(supply.Right + gap, top, knobWidth, scalarHeight);
             mod = new Rect(medical.Right + gap, top, knobWidth, scalarHeight);
-            top = supply.Bottom + gap;
-        }
-
-        // The Bonus Ammo slot is ALWAYS reserved beside the condition card:
-        // under WATER / NONE it is drawn muted and locked instead of leaving
-        // an empty half row. showBonusAmmo therefore never changes geometry.
-        _ = showBonusAmmo;
-        Rect condition;
-        Rect ammo;
-        if (contentWidth >= 520.0)
-        {
-            var half = (contentWidth - gap) / 2.0;
-            condition = new Rect(left, top, half, middleHeight);
-            ammo = new Rect(condition.Right + gap, top, half, middleHeight);
+            condition = new Rect(left + half + gap, top, half, middleHeight);
             top = condition.Bottom;
         }
         else
         {
-            condition = new Rect(left, top, contentWidth, middleHeight);
-            ammo = new Rect(left, condition.Bottom + gap, contentWidth, middleHeight);
-            top = ammo.Bottom;
+            // Compact stacked fallback: grouped controls remain contiguous
+            // and none of their source rails gets squeezed to zero width.
+            var innerLeft = left + 10.0;
+            var innerWidth = Math.Max(1.0, contentWidth - 20.0);
+            var selectorWidth = Math.Max(1.0, (innerWidth - gap) * .6);
+            var contentTop = smartTop + 30.0;
+            selector = new Rect(innerLeft, contentTop, selectorWidth, scalarHeight);
+            boost = new Rect(selector.Right + gap, contentTop,
+                Math.Max(1.0, innerWidth - selectorWidth - gap), scalarHeight);
+            ammo = new Rect(innerLeft, selector.Bottom + gap, innerWidth, middleHeight);
+            smart = new Rect(left, smartTop, contentWidth, ammo.Bottom - smartTop + 10.0);
+            top = smart.Bottom + gap;
+            var knobWidth = Math.Max(1.0, (contentWidth - 2.0 * gap) / 3.0);
+            supply = new Rect(left, top, knobWidth, scalarHeight);
+            medical = new Rect(supply.Right + gap, top, knobWidth, scalarHeight);
+            mod = new Rect(medical.Right + gap, top, knobWidth, scalarHeight);
+            condition = new Rect(left, supply.Bottom + gap, contentWidth, middleHeight);
+            top = condition.Bottom;
         }
 
+        // A disabled Ammo pack preserves its saved amount and its same slot.
+        _ = showBonusAmmo;
         var itemsTop = top + 12.0;
-        return new NpcLootGeometry(selector, boost, ammo, supply, medical, mod,
-            condition, left, contentWidth, itemsTop, itemsTop + 167.0);
+        return new NpcLootGeometry(smart, selector, boost, ammo,
+            supply, medical, mod, condition, left, contentWidth,
+            itemsTop, itemsTop + 167.0);
     }
 
     private NpcLootGeometry CurrentNpcLootLayout(double width)
@@ -1632,13 +1682,14 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         Brush accent, Brush panel)
     {
         var corpse = P("loot.npcCorpseBonus");
+        var smartEnabled = P("loot.npcSmartLootEnabled");
         var medical = P("loot.npcMedicalChance");
         var scarcity = P("loot.genericCorpseReduction");
         var ammo = P("loot.npcWeaponAmmoSupply");
         var condition = P("loot.droppedWeaponCondition");
         DrawHeader(dc, "NPC LOOT & EQUIPMENT", "", text, muted, accent);
-        if (corpse is null || medical is null || ammo is null || condition is null
-            || scarcity is null
+        if (corpse is null || smartEnabled is null || medical is null
+            || ammo is null || condition is null || scarcity is null
             || corpse.ChoiceOptions.Count == 0)
         {
             DrawCenteredText(dc, "NPC loot data unavailable.",
@@ -1656,6 +1707,13 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         RegisterNpcCard(NpcLootCards.ModCut, layout.Mod);
         RegisterNpcCard(NpcLootCards.WeaponCondition, layout.Condition);
         RegisterNpcCard(NpcLootCards.AmmoPack, layout.Ammo);
+
+        // A single grouped Smart Loot card: the checkbox is in its top
+        // caption row, while all package-only controls stay inside.
+        IndustrialChrome.DrawRecessedCard(dc, layout.Smart, panel, border);
+        DrawWorldCheckRow(dc, smartEnabled, "SMART LOOT",
+            layout.Smart, layout.Smart.Top + 2.0,
+            text, muted, border, accent, panel);
 
         // Three independent package toggles: the native CorpseSmartLoot
         // field is a list, so any subset (including none) is valid. Each
@@ -1693,12 +1751,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 _hitTargets.Add(new HitTarget(corpse, rect, rect, HitKind.Choice, i, i, false));
         }
 
-        // The four normal NPC loot controls are independent of SmartLoot.
-        DrawNpcCompactMultiplierKnob(dc, scarcity, "SCARCITY", layout.Supply,
-            text, muted, border, accent, panel, percentage: true);
-        DrawNpcCompactMultiplierKnob(dc, medical, "MED DROPS", layout.Medical,
-            text, muted, border, accent, panel);
-        DrawNpcModItemsCard(dc, layout.Mod, text, muted, border, accent, panel);
         DrawNpcNeedBoostCard(dc, layout.Boost, text, muted, border, accent, panel);
 
         // Bonus ammo only applies with the AMMO package. Without it the
@@ -1749,6 +1801,22 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                     9.8, sampleValueInk, FontWeights.SemiBold);
             }
         }
+
+        // The master switch dims the whole dependent region, including the
+        // NEED BOOST sidecar. Pointer, wheel, and keyboard editing are blocked
+        // by the preview guards while all saved values are preserved.
+        if (!smartEnabled.CurrentBoolean)
+            dc.DrawRectangle(CloneWithOpacity(panel, 0.78), null,
+                new Rect(layout.Smart.Left + 3.0, layout.Smart.Top + 30.0,
+                    Math.Max(1.0, layout.Smart.Width - 6.0),
+                    Math.Max(1.0, layout.Smart.Height - 33.0)));
+
+        // Regular corpse loot is not governed by Smart Loot.
+        DrawNpcCompactMultiplierKnob(dc, scarcity, "SCARCITY", layout.Supply,
+            text, muted, border, accent, panel, percentage: true);
+        DrawNpcCompactMultiplierKnob(dc, medical, "MED DROPS", layout.Medical,
+            text, muted, border, accent, panel);
+        DrawNpcModItemsCard(dc, layout.Mod, text, muted, border, accent, panel);
 
         var rangeCard = layout.Condition;
         // This is a dual-ended native RANGE, not two normal slider
@@ -8148,6 +8216,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             },
             "NpcLootLoadout" => new[]
             {
+                "loot.npcSmartLootEnabled",
                 "loot.npcCorpseBonus",
                 "loot.genericCorpseReduction",
                 "loot.npcMedicalChance",

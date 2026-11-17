@@ -7791,6 +7791,45 @@
       "interaction": "Does not change the saved SmartLoot package choice, Bonus Ammo Qty, Mod Items or the individually configured raw Chance values."
     },
     {
+      "id": "loot.npcSmartLootEnabled",
+      "tab": "loot",
+      "group": "NPC Loot & Equipment",
+      "label": "NPC Smart Loot",
+      "description": "Enable or disable optional Medicine, Ammo and Water corpse SmartLoot packages, preserving their saved selections.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "display": {
+        "valueLabel": "NPC Smart Loot"
+      },
+      "vanilla": {
+        "All": true
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/DifficultyPrototypes.cfg",
+          "prototype": "$selectedDifficultySID",
+          "path": "EconomyDifficulty.CorpseSmartLoot.GeneralNPC",
+          "operation": "setListEmptyWhenOff"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "ON keeps the selected optional corpse SmartLoot packages.",
+          "OFF writes an empty CorpseSmartLoot subtree for the selected difficulty while preserving all package selections and bonus settings in presets.",
+          "Normal NPC consumables, ordinary gear and the independent stash SmartLoot switch are unaffected."
+        ]
+      },
+      "rationale": "Turn optional corpse Smart Loot packs on or off. Turning it off removes bonus Medicine, Ammo and Water packages from ordinary NPC corpses without changing their regular loot.",
+      "logic": "OFF clears the native CorpseSmartLoot entry; ON uses the saved package selection.",
+      "interaction": "The three package chips, NEED BOOST and bonus ammo controls stay saved but are inactive when OFF.",
+      "exposeInUi": true
+    },
+    {
       "id": "loot.npcCorpseBonus",
       "tab": "loot",
       "group": "NPC Loot & Equipment",
@@ -7923,7 +7962,8 @@
       },
       "rationale": "How many rounds the bonus Ammo package gives when it drops. Vanilla: 1×. Only matters while the Ammo package is on; the ammo loaded in their guns stays the same.",
       "logic": "The 0–3× amount multiplier scales only original MinCount/MaxCount. Zero removes these optional stacks; progression rank still controls which calibers can appear.",
-      "interaction": "Active only when the Ammo package of Corpse Smart Loot is on; otherwise this value stays saved but inactive."
+      "interaction": "Active only when the Ammo package of Corpse Smart Loot is on; otherwise this value stays saved but inactive.",
+      "requiresToggle": "loot.npcSmartLootEnabled"
     },
     {
       "id": "loot.droppedWeaponCondition",

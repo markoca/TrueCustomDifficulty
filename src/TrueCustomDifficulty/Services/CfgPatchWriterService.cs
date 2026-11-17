@@ -522,6 +522,9 @@ public sealed partial class CfgPatchWriterService
         supported.Add("loot.blueprintShuffle");
         supported.Add("loot.looseWorldLootRemoved");
         supported.Add(NpcSupplyReductionId);
+        // Runtime source-backed OFF switch: explicit empty CorpseSmartLoot subtree
+        // (the three package choices remain saved independently).
+        supported.Add("loot.npcSmartLootEnabled");
         supported.Add(StashSupplyReductionId);
         supported.UnionWith(StashMixParameterIds);
         supported.UnionWith(StashMedicalParameterIds);
@@ -876,9 +879,14 @@ public sealed partial class CfgPatchWriterService
         ISet<string> writtenParameters)
     {
         var edits = 0;
+        var smartLootOff = modifiedById.TryGetValue("loot.npcSmartLootEnabled", out var toggle)
+            && !toggle.CurrentBoolean;
         foreach (var item in baseline.Special.SetList)
         {
-            if (!modifiedById.ContainsKey(item.ParameterId) || !allById.TryGetValue(item.ParameterId, out var parameter))
+            // An explicit master OFF must emit an empty native list even when
+            // the per-difficulty package selection still equals its baseline.
+            if (!(smartLootOff || modifiedById.ContainsKey(item.ParameterId))
+                || !allById.TryGetValue(item.ParameterId, out var parameter))
                 continue;
             if (!IsScopeApplicable(item.Scope, hasDlc1))
                 continue;
@@ -897,7 +905,7 @@ public sealed partial class CfgPatchWriterService
             parent.RemoveChild(structName);
             parent.RemoveAssignment(structName);
 
-            if (string.IsNullOrWhiteSpace(parameter.CurrentText))
+            if (smartLootOff || string.IsNullOrWhiteSpace(parameter.CurrentText))
             {
                 parent.SetAssignment(structName, string.Empty);
                 edits++;
@@ -910,7 +918,10 @@ public sealed partial class CfgPatchWriterService
                 edits += 2;
             }
 
-            writtenParameters.Add(item.ParameterId);
+            if (modifiedById.ContainsKey(item.ParameterId))
+                writtenParameters.Add(item.ParameterId);
+            if (smartLootOff)
+                writtenParameters.Add("loot.npcSmartLootEnabled");
         }
         return edits;
     }

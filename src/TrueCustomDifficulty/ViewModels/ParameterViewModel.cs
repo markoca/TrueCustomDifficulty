@@ -627,6 +627,7 @@ public sealed class ParameterViewModel : ObservableObject
         ["environment.artifactCount"] = "ArtifactHunting",
 
         ["loot.genericCorpseReduction"] = "NpcLootLoadout",
+        ["loot.npcSmartLootEnabled"] = "NpcLootLoadout",
         ["loot.npcCorpseBonus"] = "NpcLootLoadout",
         ["loot.npcMedicalChance"] = "NpcLootLoadout",
         ["loot.npcWeaponAmmoSupply"] = "NpcLootLoadout",
