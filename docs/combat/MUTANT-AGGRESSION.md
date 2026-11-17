@@ -6,7 +6,7 @@ Two control groups on the Mutant board (*MUTANT DAMAGE, HEALTH AND AGGRESSION*):
 |---|---|---|---|
 | ATTACKS per family (14) | `combat.mutantAttackRate.{family}` | 0.25×–3×, step 0.25 | 1×; **2× on Master** for Bayun, Bloodsucker, Burer, Chimera, Controller, Deer, Pseudodog, Pseudogiant |
 | ABILITIES per family (10) | `combat.mutantAbilityRate.{family}` | 0.25×–3×, step 0.25 | 1×; **2× on Master** for Bayun, Bloodsucker, Burer, Chimera, Controller, Pseudodog, Pseudogiant |
-| SPECIAL ABILITY RATE (global) | `combat.mutantSpecialAbilityRate` | 0.5×–3×, step 0.25 | 1× Novice / Stalker / Veteran, 2× Master |
+| SPECIAL ABILITY RATE (global) | `combat.mutantSpecialAbilityRate` | 0.25×–3×, step 0.25 | 1× Novice / Stalker / Veteran, 2× Master |
 
 All are `runtime_test_required`. Source: S.T.A.L.K.E.R. 2 2.1 base dump.
 

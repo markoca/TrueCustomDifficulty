@@ -1,4 +1,4 @@
-## 2026-11-16 — HUMAN TACTICS / ENEMY AWARENESS in-game checks (runtime_test_required)
+## 2026-11-16 — HUMAN TACTICS / HUMAN AWARENESS in-game checks (runtime_test_required)
 
 * GRENADES 3× on Veteran (card `grenade every 6.7–11.7 s`) vs 0.25×: grenade frequency from a bandit squad clearly differs. Same idea for SUPPRESSION, FLANKING and PUSH. Change only one at a time.
 * ENEMY ACCURACY 0.5× vs 2× at 30–50 m: hits per magazine clearly differ.

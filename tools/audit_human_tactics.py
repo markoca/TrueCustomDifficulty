@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""HUMAN TACTICS + ENEMY AWARENESS contract (docs/combat/HUMAN-TACTICS-AND-AWARENESS.md).
+"""HUMAN TACTICS + HUMAN AWARENESS contract (docs/combat/HUMAN-TACTICS-AND-AWARENESS.md).
 
 Policy <-> embedded CombatSynchronization tables <-> catalog <-> writer baseline
 <-> writer <-> UI. Optional: TCD_BASE_DUMP=<dump>/base checks the NPC weapon
@@ -102,15 +102,15 @@ for pid in ("combat.npcAccuracy", "combat.npcSightRange", "combat.npcHearingRang
           f"{pid}: vanilla 1, runtime_test_required")
 
 # ---- UI ----------------------------------------------------------------------------------
-for token in ('case "HumanTactics":', 'case "EnemyAwareness":', 'DrawCardBoard(dc, "HUMAN TACTICS"',
-              'DrawCardBoard(dc, "ENEMY AWARENESS"', '"HumanTactics" => HumanCombatPolicy.TacticsBoardIds',
-              '"EnemyAwareness" => HumanCombatPolicy.AwarenessIds', "private static string CardReadout("):
+for token in ('case "HumanTactics":', 'case "HumanAwareness":', 'DrawCardBoard(dc, "HUMAN TACTICS"',
+              'DrawCardBoard(dc, "HUMAN AWARENESS"', '"HumanTactics" => HumanCombatPolicy.TacticsBoardIds',
+              '"HumanAwareness" => HumanCombatPolicy.AwarenessIds', "private static string CardReadout("):
     check(token in ui, f"UI token {token}")
-check('["HumanTactics"] = "combat.npcGrenadeRate"' in pvm and '["EnemyAwareness"] = "combat.npcSightRange"' in pvm,
+check('["HumanTactics"] = "combat.npcGrenadeRate"' in pvm and '["HumanAwareness"] = "combat.npcSightRange"' in pvm,
       "family anchors")
 check("HumanCombatPolicy.TacticsBoardIds.ToArray()" in mvm and "HumanCombatPolicy.AwarenessIds.ToArray()" in mvm,
       "board modified state")
-check('"Human Tactics" => 2,' in tab and '"Enemy Awareness" => 3,' in tab, "combat section order")
+check('"Human Tactics" => 2,' in tab and '"Human Awareness" => 3,' in tab, "combat section order")
 
 dump = os.environ.get("TCD_BASE_DUMP")
 if dump:
@@ -122,4 +122,4 @@ if dump:
 if failures:
     print(f"\n{len(failures)} failure(s)")
     sys.exit(1)
-print("\nHUMAN TACTICS / ENEMY AWARENESS contract OK")
+print("\nHUMAN TACTICS / HUMAN AWARENESS contract OK")

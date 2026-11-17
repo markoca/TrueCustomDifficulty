@@ -1,4 +1,4 @@
-# HUMAN TACTICS and ENEMY AWARENESS (2026-11-16)
+# HUMAN TACTICS and HUMAN AWARENESS (2026-11-16)
 
 Combat tab, after HUMAN ENEMIES: two compact card boards. All nine controls are `runtime_test_required`.
 
@@ -32,13 +32,13 @@ blocks (Newbie / Experienced / Veteran / Master = the enemy's rank).
 The distance curve and the zombie addend are unchanged. The game does not change it by difficulty.
 `NPC_AttackCooldown` / `HipAccuracyMultiplier` stay retired.
 
-## ENEMY AWARENESS (human NPCs only; mutants have their own senses)
+## HUMAN AWARENESS (human NPCs only; mutants have their own senses)
 
 | Card | Id | CFG | Vanilla |
 |---|---|---|---|
-| SIGHT | `combat.npcSightRange` 0.5–2× | `AIPrototypes/VisionScannerPrototypes.cfg` DefaultNPC Central / PeripheralVisionDistance | 8000 / 2500 (80 m / 25 m) |
-| HEARING | `combat.npcHearingRange` 0.25–2× | `AIPrototypes/HearingSensorPrototypes.cfg` BaseHearingSensor SoundEvents[*].HearingDistance (14 non-zero) | shots 46 m, steps 12 m, voice 30 m … |
-| MEMORY | `combat.npcAlertMemory` 0.25–3× | `AIPrototypes/ThreatPrototypes.cfg` [1] DefaultNPC: freeze 30 s × m, loss 30/s ÷ m; Actions[3] SearchEnemy freeze 30 s × m, loss 20/s ÷ m | ~30 s |
+| SIGHT | `combat.npcSightRange` 0.25–3× | `AIPrototypes/VisionScannerPrototypes.cfg` DefaultNPC Central / PeripheralVisionDistance | 8000 / 2500 (80 m / 25 m) |
+| HEARING | `combat.npcHearingRange` 0.25–3× | `AIPrototypes/HearingSensorPrototypes.cfg` BaseHearingSensor SoundEvents[*].HearingDistance (14 non-zero) | shots 46 m, steps 12 m, voice 30 m … |
+| MEMORY | `combat.npcAlertMemory` 0.25–3× (0.05 steps, like SIGHT / HEARING) | `AIPrototypes/ThreatPrototypes.cfg` [1] DefaultNPC: freeze 30 s × m, loss 30/s ÷ m; Actions[3] SearchEnemy freeze 30 s × m, loss 20/s ÷ m | ~30 s |
 
 Humans use DefaultNPC (ObjPrototypes NPCBase); bosses / zombies inherit where they do not override; the
 mutant sensors (`MutantsHearingSensor`, `DefaultMutants` threat) are separate and untouched.

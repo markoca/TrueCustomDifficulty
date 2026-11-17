@@ -53,7 +53,6 @@ public sealed class MutantDropRadar : FrameworkElement
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Mutants.Length];
     private readonly Dictionary<int, HitTarget> _targets = new();
-    private readonly VisualStatusMessage _status;
 
     private int _selectedRow;
     private int _hoverRow = -1;
@@ -73,7 +72,6 @@ public sealed class MutantDropRadar : FrameworkElement
 
     public MutantDropRadar()
     {
-        _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
         MinHeight = 0;
         Cursor = Cursors.Arrow;
@@ -351,7 +349,6 @@ public sealed class MutantDropRadar : FrameworkElement
 
         _selectedRow = row;
         parameter.ResetToReference();
-        _status.ShowTransient($"{Mutants[row].Label} drop chance reset to Base Preset.");
         InvalidateVisual();
         e.Handled = true;
     }
@@ -365,7 +362,6 @@ public sealed class MutantDropRadar : FrameworkElement
             foreach (var parameter in _parameters)
                 parameter?.ResetToReference();
 
-            _status.ShowTransient("Mutant part drop chances reset to Base Preset.");
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -386,7 +382,6 @@ public sealed class MutantDropRadar : FrameworkElement
             selected.Minimum,
             selected.Maximum);
 
-        _status.Clear();
         InvalidateVisual();
         e.Handled = true;
     }
@@ -407,7 +402,6 @@ public sealed class MutantDropRadar : FrameworkElement
             + Math.Round((raw - parameter.Minimum) / tick, MidpointRounding.AwayFromZero) * tick;
 
         parameter.CurrentNumber = Math.Clamp(snapped, parameter.Minimum, parameter.Maximum);
-        _status.Clear();
         InvalidateVisual();
     }
 

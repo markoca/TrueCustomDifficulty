@@ -391,7 +391,7 @@
       },
       "rationale": "How often human enemies throw grenades at you. Vanilla: every 20–35 s per squad; Master halves it (10–17 s). 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (grenade every 20–35 s at 1×).",
       "logic": "1× keeps the selected difficulty's own pauses. The rate divides the pause of every enemy rank; who may act still depends on the game's tactics.",
-      "interaction": "Other tactics, ENEMY ACCURACY and ENEMY AWARENESS are independent. Enemy gun damage is HUMAN ENEMIES."
+      "interaction": "Other tactics, ENEMY ACCURACY and HUMAN AWARENESS are independent. Enemy gun damage is HUMAN ENEMIES."
     },
     {
       "id": "combat.npcSuppressionRate",
@@ -439,7 +439,7 @@
       },
       "rationale": "How often human enemies pin you down with suppressive fire. Vanilla: every 15–25 s; Master about every 7–12 s. 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (suppressive fire every 15–25 s at 1×).",
       "logic": "1× keeps the selected difficulty's own pauses. The rate divides the pause of every enemy rank; who may act still depends on the game's tactics.",
-      "interaction": "Other tactics, ENEMY ACCURACY and ENEMY AWARENESS are independent. Enemy gun damage is HUMAN ENEMIES."
+      "interaction": "Other tactics, ENEMY ACCURACY and HUMAN AWARENESS are independent. Enemy gun damage is HUMAN ENEMIES."
     },
     {
       "id": "combat.npcFlankRate",
@@ -487,7 +487,7 @@
       },
       "rationale": "How often human enemies try to flank you. Vanilla: every 10–20 s; Master 5–10 s. 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (flank every 10–20 s at 1×).",
       "logic": "1× keeps the selected difficulty's own pauses. The rate divides the pause of every enemy rank; who may act still depends on the game's tactics.",
-      "interaction": "Other tactics, ENEMY ACCURACY and ENEMY AWARENESS are independent. Enemy gun damage is HUMAN ENEMIES."
+      "interaction": "Other tactics, ENEMY ACCURACY and HUMAN AWARENESS are independent. Enemy gun damage is HUMAN ENEMIES."
     },
     {
       "id": "combat.npcPushRate",
@@ -535,7 +535,7 @@
       },
       "rationale": "How often human enemies rush and close in on your cover. Vanilla: advance every 12–25 s, approach every 25–40 s; Master about twice as often. 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (push every 12–25 s at 1×).",
       "logic": "1× keeps the selected difficulty's own pauses. The rate divides the pause of every enemy rank; who may act still depends on the game's tactics.",
-      "interaction": "Other tactics, ENEMY ACCURACY and ENEMY AWARENESS are independent. Enemy gun damage is HUMAN ENEMIES."
+      "interaction": "Other tactics, ENEMY ACCURACY and HUMAN AWARENESS are independent. Enemy gun damage is HUMAN ENEMIES."
     },
     {
       "id": "combat.npcCamperPunishRate",
@@ -580,7 +580,7 @@
       },
       "rationale": "How often human enemies punish you for staying in one spot. Vanilla: every 2–5 s on every difficulty. 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (flush-out every 2–5 s at 1×).",
       "logic": "1× keeps the selected difficulty's own pauses. The rate divides the pause of every enemy rank; who may act still depends on the game's tactics.",
-      "interaction": "Other tactics, ENEMY ACCURACY and ENEMY AWARENESS are independent. Enemy gun damage is HUMAN ENEMIES."
+      "interaction": "Other tactics, ENEMY ACCURACY and HUMAN AWARENESS are independent. Enemy gun damage is HUMAN ENEMIES."
     },
     {
       "id": "combat.npcAccuracy",
@@ -630,7 +630,7 @@
     {
       "id": "combat.npcSightRange",
       "tab": "combat",
-      "group": "Enemy Awareness",
+      "group": "Human Awareness",
       "label": "Enemy Sight",
       "description": "Scales how far human enemies see: CentralVisionDistance (80 m) and PeripheralVisionDistance (25 m) of the DefaultNPC vision scanner.",
       "control": "slider",
@@ -647,8 +647,8 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.5,
-        "max": 2,
+        "min": 0.25,
+        "max": 3,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -675,7 +675,7 @@
     {
       "id": "combat.npcHearingRange",
       "tab": "combat",
-      "group": "Enemy Awareness",
+      "group": "Human Awareness",
       "label": "Enemy Hearing",
       "description": "Scales how far human enemies hear sounds: every non-zero HearingDistance of the base hearing sensor (shots 46 m, steps 12 m, voice 30 m, reload 7.5 m, explosions 60 m …).",
       "control": "slider",
@@ -693,7 +693,7 @@
       },
       "slider": {
         "min": 0.25,
-        "max": 2,
+        "max": 3,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -719,7 +719,7 @@
     {
       "id": "combat.npcAlertMemory",
       "tab": "combat",
-      "group": "Enemy Awareness",
+      "group": "Human Awareness",
       "label": "Enemy Memory",
       "description": "Scales how long human enemies keep hunting you after losing track: DefaultNPC threat freeze time (30 s) and SearchEnemy freeze (30 s) are multiplied, their per-second threat loss divided.",
       "control": "slider",
@@ -738,7 +738,7 @@
       "slider": {
         "min": 0.25,
         "max": 3,
-        "step": 0.25,
+        "step": 0.05,
         "stepMode": "absolute"
       },
       "targets": [
@@ -2988,7 +2988,7 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.5,
+        "min": 0.25,
         "max": 3,
         "step": 0.25,
         "stepMode": "absolute"
@@ -13553,7 +13553,7 @@
           "The cooldown unit is not documented in the CFG; the control is a pure rate (2x = half the wait), not a time."
         ]
       },
-      "rationale": "How fast anomaly fields grow new artifacts. Vanilla: 1x. 2x = twice as often, so revisiting a field pays off sooner; 0.5x = artifacts stay rare finds.",
+      "rationale": "How fast anomaly fields grow new artifacts. Vanilla: 1×. 2× = twice as often, so revisiting a field pays off sooner; 0.5× = artifacts stay rare finds.",
       "logic": "1x keeps the game's cooldown. 2x halves it, 0.25x makes it four times longer. Whether an artifact actually appears is ARTIFACT SPAWN CHANCE.",
       "interaction": "SPAWN CHANCE decides each attempt, RARE LUCK what kind of artifact appears, ARTIFACTS PER SPAWN how many."
     },
@@ -13599,7 +13599,7 @@
           "SpawnChanceBase (25) and SpawnChanceBonus (15) are both scaled; how the engine applies the bonus is not documented, so both keep their ratio."
         ]
       },
-      "rationale": "How likely an anomaly field is to hold an artifact when it rolls. Vanilla: 25% base +15% bonus. 2x = 50% +30%; 0x = anomaly fields never grow artifacts.",
+      "rationale": "How likely an anomaly field is to hold an artifact when it rolls. Vanilla: 25% base +15% bonus. 2× = 50% +30%; 0× = anomaly fields never grow artifacts.",
       "logic": "1x keeps the game's 25% / 15%. Each value is multiplied and capped at 100%. 0x removes world anomaly artifacts; quest and unique artifacts stay.",
       "interaction": "RESPAWN RATE sets how often fields roll; RARE LUCK and ARTIFACTS PER SPAWN shape what a successful roll gives."
     },
@@ -13645,7 +13645,7 @@
           "Vanilla split (Common/Uncommon/Rare/Epic): Newbie 80/20/0/0, Experienced 50/48/1.9/0.1, Veteran 30/59/10/1, Master 10/65/20/5. Newbie areas have no rare artifacts and stay unchanged."
         ]
       },
-      "rationale": "How often a found artifact is rare or epic. Vanilla: 1x (Master areas 25% rare or better, Veteran 11%). 2x roughly doubles those odds; 0.5x makes top artifacts a real event.",
+      "rationale": "How often a found artifact is rare or epic. Vanilla: 1× (Master areas 25% rare or better, Veteran 11%). 2× roughly doubles those odds; 0.5× makes top artifacts a real event.",
       "logic": "Rare and Epic shares are multiplied, then all four shares are scaled back to 100%. Beginner (Newbie) areas never grow rare artifacts in the game and keep that.",
       "interaction": "Changes only which rarity a spawned artifact gets. SPAWN CHANCE and RESPAWN RATE decide how many artifacts appear."
     },

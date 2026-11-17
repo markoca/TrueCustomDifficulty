@@ -25,7 +25,7 @@ def verify() -> None:
     for point in points:
         grouped[point["parameterId"]].append(point)
 
-    # +25 MUTANT AGGRESSION, +9 HUMAN TACTICS / ENEMY AWARENESS (2026-11-16)
+    # +25 MUTANT AGGRESSION, +9 HUMAN TACTICS / HUMAN AWARENESS (2026-11-16)
     assert len(combat) == 62, f"Combat catalog changed: {len(combat)}"
     human_direct = {"combat.npcAccuracy", "combat.npcSightRange", "combat.npcHearingRange", "combat.npcAlertMemory"}
     human_tactics = {"combat.npcGrenadeRate", "combat.npcSuppressionRate", "combat.npcFlankRate",

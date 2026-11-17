@@ -1,11 +1,19 @@
+## 2026-11-17 — CURRENT: consistency pass (help, ranges, HUMAN AWARENESS, no status messages)
+
+* CONTROLS help of ARTIFACT HUNTING, HUMAN TACTICS and HUMAN AWARENESS no longer repeats the reset sentence (the panel adds it under every board).
+* Same board, same range: SPECIAL ABILITY RATE now starts at 0.25x like ATTACKS / ABILITIES; SIGHT, HEARING and MEMORY are all 0.25x–3x in 0.05 steps.
+* ENEMY AWARENESS is renamed **HUMAN AWARENESS** (group *Human Awareness*), matching HUMAN ENEMIES / HUMAN TACTICS; it never affected mutants.
+* Panel rationales use × throughout (the artifact texts used x).
+* The undisplayed status-message helper (`VisualStatusMessage`) and all its calls are removed; no control ever showed those texts, redraws stay explicit.
+
 ## 2026-11-16 — CURRENT: BASE PRESET selector (header, top right)
 
 * The Base Preset is a framed card (accent 1-DIP border, PanelAlt fill) with an accent **BASE PRESET** caption and four equal segments **NOVICE · STALKER · VETERAN · MASTER** (88×30 DIP, bold 11.5). The selected difficulty is a solid accent segment with dark text; hover = white border. Replaces the thin 4-step slider with a muted name above and muted labels below.
 * Same behaviour: picking a segment sets the vanilla difficulty and resets every control to it; keyboard arrows move the selection. Binds `BasePresetSelection` (int) over the existing `BasePresetIndex`.
 
-## 2026-11-16 — CURRENT: HUMAN TACTICS and ENEMY AWARENESS boards (Combat)
+## 2026-11-16 — CURRENT: HUMAN TACTICS and HUMAN AWARENESS boards (Combat)
 
-* Two new compact card boards after HUMAN ENEMIES, same grammar as ITEM WEIGHT / ARTIFACT HUNTING (two columns when wide): **HUMAN TACTICS** — GRENADES, SUPPRESSION, FLANKING, PUSH, CAMPING PENALTY, ENEMY ACCURACY; **ENEMY AWARENESS** — SIGHT, HEARING, MEMORY.
+* Two new compact card boards after HUMAN ENEMIES, same grammar as ITEM WEIGHT / ARTIFACT HUNTING (two columns when wide): **HUMAN TACTICS** — GRENADES, SUPPRESSION, FLANKING, PUSH, CAMPING PENALTY, ENEMY ACCURACY; **HUMAN AWARENESS** — SIGHT, HEARING, MEMORY.
 * Card readouts show the result, not just the rate: `2x · grenade every 10–17 s`, `1x · spread 100%`, `1x · 80 m / 25 m`, `1x · steps 12 m`, `1x · search 30 s`; rail ends stay plain `x`. Drag, right-click reset, R board reset, click selects the card's own panel text. Details: `docs/combat/HUMAN-TACTICS-AND-AWARENESS.md`.
 
 ## 2026-11-16 — CURRENT: TRADER STOCK redrawn as a board (supply rails, all roles, CLEAR, R)

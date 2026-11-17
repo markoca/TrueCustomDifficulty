@@ -30,7 +30,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private readonly List<HitTarget> _hitTargets = new();
     // Nine compact Standard/Rare Chance cards; tooltips are confined to their bounds.
     // Medical effective-pick preview uses the single original Veteran source pool.
-    private readonly VisualStatusMessage _status;
     private bool _fatigueReloadInteraction;
     // RAD inspection only: no runtime clock, no persisted field simulation.
     private ParameterViewModel? _radiationMaxHp;
@@ -62,7 +61,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private void RaiseParameterSelected(ParameterViewModel parameter)
     {
         if (Family is "AnomalyGlobalDamage" or "FlycatcherSlowdown" or "AnomalySpecialEffects" or "ServiceCostsBoard"
-            or "CouponFlow" or "ItemWeightBoard" or "ArtifactHunting" or "HumanTactics" or "EnemyAwareness" or "EquipmentWearBalance"
+            or "CouponFlow" or "ItemWeightBoard" or "ArtifactHunting" or "HumanTactics" or "HumanAwareness" or "EquipmentWearBalance"
             or "StashContentMix" or "StashMedicalComposition"
             or "StashGear" or "NpcLootLoadout" or "HumanCombatProfile" or "PlayerWeaponProfile"
             or "StarvationTimeline" or "SevereFatiguePenaltyBoard"
@@ -165,7 +164,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
     public AggregateVisualControl()
     {
-        _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
         // Family heights vary: compact two-setting boards may be under 320px.
         // WPF must not inflate those boards to a stale global minimum.
@@ -379,8 +377,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                     (HumanCombatPolicy.AccuracyId, "ENEMY ACCURACY")
                 }, text, muted, border, accent, panel);
                 break;
-            case "EnemyAwareness":
-                DrawCardBoard(dc, "ENEMY AWARENESS", new (string, string)[]
+            case "HumanAwareness":
+                DrawCardBoard(dc, "HUMAN AWARENESS", new (string, string)[]
                 {
                     (HumanCombatPolicy.SightRangeId, "SIGHT"),
                     (HumanCombatPolicy.HearingRangeId, "HEARING"),
@@ -6670,7 +6668,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         {
             target.Parameter.DrinkDurationOverrideEnabled =
                 !target.Parameter.DrinkDurationOverrideEnabled;
-            _status.ClearTransient();
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -6679,7 +6676,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         if (target.Kind == HitKind.Toggle)
         {
             target.Parameter.CurrentBoolean = !target.Parameter.CurrentBoolean;
-            _status.ClearTransient();
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -6886,7 +6882,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             target.Parameter.CurrentNumber = Snap(target.Parameter, next);
         }
         EnforceFamilyConstraints(target.Parameter);
-        _status.ClearTransient();
         InvalidateVisual();
         e.Handled = true;
     }
@@ -7051,7 +7046,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         if (target.Kind == HitKind.DrinkDurationOverride)
         {
             target.Parameter.DrinkDurationOverrideEnabled = false;
-            _status.ClearTransient();
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -7075,14 +7069,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 _ => "combat.npcWeaponDamage"
             })?.ResetToReference();
         EnforceFamilyConstraints(target.Parameter);
-        _status.ShowTransient(target.Kind == HitKind.HumanJoint
-            ? (Family switch
-            {
-                "EquipmentWearBalance" => "Armor Toughness + Weapon Wear reset to Base Preset.",
-                "FlycatcherSlowdown" => "Flycatcher Movement + Turn reset to Base Preset.",
-                _ => "Enemy Health + Gun Damage reset to Base Preset."
-            })
-            : $"{ShortLabel(target.Parameter)} reset to Base Preset.");
         InvalidateVisual();
         e.Handled = true;
     }
@@ -7162,7 +7148,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                         item.Reset();
             }
 
-            _status.ShowTransient("Visual group reset to Base Preset.");
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -7236,7 +7221,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             if (nextState >= 0.0)
             {
                 _selectedParameter.SnapCurrentNumberToMarker(nextState);
-                _status.ClearTransient();
                 InvalidateVisual();
                 e.Handled = true;
                 return;
@@ -7297,7 +7281,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             _selectedParameter.CurrentNumber = Snap(_selectedParameter, next);
 
         EnforceFamilyConstraints(_selectedParameter);
-        _status.ClearTransient();
         InvalidateVisual();
         e.Handled = true;
     }
@@ -7330,7 +7313,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             effect.CurrentNumber = Snap(effect, Math.Clamp(y * maximum,
                 effect.Minimum, effect.Maximum));
             EnforceFamilyConstraints(threshold);
-            _status.ClearTransient();
             InvalidateVisual();
             return;
         }
@@ -7353,7 +7335,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             effect.CurrentNumber = Snap(effect,
                 Math.Clamp(-signedEffect / 100.0, effect.Minimum, effect.Maximum));
             EnforceFamilyConstraints(threshold);
-            _status.ClearTransient();
             InvalidateVisual();
             return;
         }
@@ -7380,7 +7361,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             d.CurrentNumber = Snap(d, d.Minimum + y * (d.Maximum - d.Minimum));
             EnforceFamilyConstraints(h);
             EnforceFamilyConstraints(d);
-            _status.ClearTransient();
             InvalidateVisual();
             return;
         }
@@ -7406,7 +7386,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 (target.VisualMaximum - target.VisualMinimum);
             target.Parameter.CurrentNumber = Snap(target.Parameter, value);
             EnforceFamilyConstraints(target.Parameter);
-            _status.ClearTransient();
             InvalidateVisual();
             return;
         }
@@ -7420,7 +7399,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 Math.Clamp((int)Math.Round(target.VisualMinimum), 0, NpcCorpsePackages.Sids.Count - 1)];
             target.Parameter.CurrentText = NpcCorpsePackages.Toggle(
                 target.Parameter.CurrentText, package);
-            _status.ClearTransient();
             InvalidateVisual();
             return;
         }
@@ -7462,7 +7440,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         EnforceFamilyConstraints(target.Parameter);
 
-        _status.ClearTransient();
         InvalidateVisual();
     }
 
@@ -7928,7 +7905,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "ItemWeightBoard" => EconomyBoardHeight(width, 4),
             "ArtifactHunting" => ArtifactHuntingHeight(width),
             "HumanTactics" => EconomyBoardHeight(width, 6),
-            "EnemyAwareness" => EconomyBoardHeight(width, 3),
+            "HumanAwareness" => EconomyBoardHeight(width, 3),
             "AnomalyGlobalDamage" => 242.0,
             "FlycatcherSlowdown" => FlycatcherBoardHeight(width),
             "AnomalySpecialEffects" => 270.0,
@@ -8013,7 +7990,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             },
             "ArtifactHunting" => ArtifactSpawnPolicy.ParameterIds,
             "HumanTactics" => HumanCombatPolicy.TacticsBoardIds,
-            "EnemyAwareness" => HumanCombatPolicy.AwarenessIds,
+            "HumanAwareness" => HumanCombatPolicy.AwarenessIds,
             "ItemWeightBoard" => new[]
             {
                 "equipment.ammoWeight",

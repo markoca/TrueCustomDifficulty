@@ -118,14 +118,12 @@ public sealed class TraderBuysMatrix : FrameworkElement
     private string? _selectedRail;
     private string? _hoverRail;
     private string? _dragRail;
-    private readonly VisualStatusMessage _status;
 
     public TraderBuysMatrix()
     {
         Focusable = true;
         SnapsToDevicePixels = true;
         Cursor = Cursors.Arrow;
-        _status = new VisualStatusMessage(InvalidateVisual);
     }
 
     private void OnOddsChanged(object? sender, EventArgs e) => InvalidateVisual();
@@ -400,7 +398,6 @@ public sealed class TraderBuysMatrix : FrameworkElement
                 break;
             }
         }
-        _status.Clear();
         InvalidateVisual();
     }
 
@@ -423,7 +420,6 @@ public sealed class TraderBuysMatrix : FrameworkElement
                 SelectGearOwner();
                 break;
         }
-        _status.ShowTransient("Reset to Base Preset.");
         InvalidateVisual();
     }
 
@@ -436,7 +432,6 @@ public sealed class TraderBuysMatrix : FrameworkElement
         RareGearChance = RareGearDefault;
         foreach (var id in new[] { AmmoSupplyId, MedicalSupplyId })
             if (_source.TryGetValue(id, out var p)) p.ResetToReference();
-        _status.ShowTransient("Trader stock reset to Base Preset.");
         InvalidateVisual();
     }
 
@@ -445,7 +440,7 @@ public sealed class TraderBuysMatrix : FrameworkElement
         TraderItemOverrides = string.Empty;
         foreach (var id in LegacyBuyIds())
             if (_source.TryGetValue(id, out var p)) p.ResetToReference();
-        _status.ShowTransient("Older preset restrictions cleared.");
+        InvalidateVisual();
         InvalidateMeasure();
         InvalidateVisual();
     }

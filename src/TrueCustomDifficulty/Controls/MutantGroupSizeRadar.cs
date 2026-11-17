@@ -56,7 +56,6 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Axes.Length];
     private readonly Dictionary<int, HitTarget> _targets = new();
-    private readonly VisualStatusMessage _status;
 
     private int _selectedRow;
     private int _hoverRow = -1;
@@ -76,7 +75,6 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
 
     public MutantGroupSizeRadar()
     {
-        _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
         MinHeight = DesiredHeight;
         Cursor = Cursors.Arrow;
@@ -336,7 +334,6 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
         ParameterSelected?.Invoke(this,
             new AggregateParameterSelectedEventArgs(parameter));
         parameter.ResetToReference();
-        _status.ShowTransient($"{Axes[row].Label} reset to Base Preset.");
         InvalidateVisual();
         e.Handled = true;
     }
@@ -350,7 +347,6 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
             foreach (var parameter in _parameters)
                 parameter?.ResetToReference();
 
-            _status.ShowTransient("Mutant encounter caps reset to Base Preset.");
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -370,7 +366,6 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
             selected.CurrentNumber, selected.Minimum, selected.Maximum,
             selected.TickFrequency, direction);
 
-        _status.Clear();
         InvalidateVisual();
         e.Handled = true;
     }
@@ -387,7 +382,6 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
             + Math.Round((raw - parameter.Minimum) / tick, MidpointRounding.AwayFromZero) * tick;
 
         parameter.CurrentNumber = Math.Clamp(snapped, parameter.Minimum, parameter.Maximum);
-        _status.Clear();
         InvalidateVisual();
     }
 

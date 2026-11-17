@@ -6,7 +6,7 @@ using System.Linq;
 namespace TrueCustomDifficulty.Services;
 
 /// <summary>
-/// HUMAN TACTICS and ENEMY AWARENESS source map (2.1 base dump,
+/// HUMAN TACTICS and HUMAN AWARENESS source map (2.1 base dump,
 /// docs/combat/HUMAN-TACTICS-AND-AWARENESS.md).
 ///
 /// TACTICS scale group token cooldowns in <c>CombatSynchronizationPrototypes.cfg</c>
@@ -81,7 +81,7 @@ public static class HumanCombatPolicy
             $"{rate:0.##}x · {control.Verb} every {min * factor:0.#}–{max * factor:0.#} s");
     }
 
-    // ---- display helpers for ENEMY AWARENESS / ACCURACY ------------------------
+    // ---- display helpers for HUMAN AWARENESS / ACCURACY ------------------------
     public static string AccuracyDisplay(double factor)
         => string.Create(CultureInfo.InvariantCulture, $"{factor:0.##}x · spread {100.0 / factor:0}%");
 

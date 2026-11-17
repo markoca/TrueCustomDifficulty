@@ -539,7 +539,7 @@ _combat_doc = DOCS / "COMBAT-CONTROL-DEEP-AUDIT.md"
 _combat_rows = {p.get("id"): p for p in parameters if p.get("tab") == "combat" and p.get("exposeInUi", True)}
 _combat_runtime_expected = {
     "combat.psySpawnCycleDelay", "combat.psyPhantomCount", "combat.psyBleeding", "combat.psyDurabilityDamage",
-    # HUMAN TACTICS / ENEMY AWARENESS (2026-11-16)
+    # HUMAN TACTICS / HUMAN AWARENESS (2026-11-16)
     "combat.npcGrenadeRate", "combat.npcSuppressionRate", "combat.npcFlankRate", "combat.npcPushRate",
     "combat.npcCamperPunishRate", "combat.npcAccuracy", "combat.npcSightRange", "combat.npcHearingRange",
     "combat.npcAlertMemory",
@@ -1667,23 +1667,14 @@ for _active_panel in ("ResponsiveParameterGridPanel", "ResponsiveSectionGridPane
         fail("Live responsive layout panel registration missing: " + _active_panel)
 note("Unused card-width converter retired; both active responsive panels remain registered")
 
-# Shared visual status infrastructure: persistent text used to be stored,
-# but no editor consumed that property or invoked SetPersistent. Preserve
-# transient invalidation and expiration for currently deployed WPF handlers.
-_visual_status_source = (ROOT / 'src/TrueCustomDifficulty/Controls/VisualStatusMessage.cs').read_text(encoding='utf-8')
-for _unused in ('_persistentText', 'public string Text =>', 'SetPersistent('):
-    if _unused in _visual_status_source:
-        fail('Unconsumed persistent visual-status API has returned: ' + _unused)
-for _needed in (
-    'public void ShowTransient(string text)',
-    'public void Clear()',
-    'public void ClearTransient()',
-    '_timer.Tick += (_, _) => ClearTransient();',
-    '_changed();'
-):
-    if _needed not in _visual_status_source:
-        fail('Active WPF transient redraw contract missing: ' + _needed)
-note('VisualStatusMessage: unconsumed persistent-text state removed, transient redraw lifecycle intact')
+# Visual status messages (2026-11-17): no control ever displayed them, so the
+# helper and every ShowTransient/Clear call were removed; redraws stay explicit.
+if (ROOT / 'src/TrueCustomDifficulty/Controls/VisualStatusMessage.cs').exists():
+    fail('Undisplayed VisualStatusMessage helper returned')
+for _control in (ROOT / 'src/TrueCustomDifficulty/Controls').glob('*.cs'):
+    if 'VisualStatusMessage' in _control.read_text(encoding='utf-8'):
+        fail('Undisplayed status message use returned: ' + _control.name)
+note('Visual status messages: undisplayed helper removed')
 
 # Economy dashboard approval contract, 2026-10-11. The seven-control
 # baseline, native CFG writer surface and pre-existing responsive layouts
@@ -2091,7 +2082,7 @@ _factory_legacy_catalog = {pid: p for pid, p in _factory_catalog.items()
                            # ARTIFACT HUNTING (2026-11-16): omitted by factory
                            # presets until they are tuned; loads at vanilla 1x.
                            and not pid.startswith("environment.artifact")
-                           # HUMAN TACTICS / ENEMY AWARENESS (2026-11-16): same.
+                           # HUMAN TACTICS / HUMAN AWARENESS (2026-11-16): same.
                            and pid not in {"combat.npcGrenadeRate", "combat.npcSuppressionRate",
                                "combat.npcFlankRate", "combat.npcPushRate", "combat.npcCamperPunishRate",
                                "combat.npcAccuracy", "combat.npcSightRange", "combat.npcHearingRange",

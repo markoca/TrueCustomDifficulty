@@ -75,7 +75,6 @@ public sealed class MutantHealthRadar : FrameworkElement
     private readonly List<DamageMarkerHitTarget> _damageMarkerTargets = new();
     private ParameterViewModel? _damage;
     private int _hoverDamageMarker = -1;
-    private readonly VisualStatusMessage _status;
     private int _selectedRow;
     private int _hoverRow = -1;
     private int _dragRow = -1;
@@ -94,7 +93,6 @@ public sealed class MutantHealthRadar : FrameworkElement
 
     public MutantHealthRadar()
     {
-        _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
         MinHeight = DesiredHeight;
         Cursor = Cursors.Arrow;
@@ -401,7 +399,6 @@ public sealed class MutantHealthRadar : FrameworkElement
             _selectedRow = marker.Row;
             marker.Parameter.SnapCurrentNumberToMarker(marker.Value);
             ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(marker.Parameter));
-            _status.Clear();
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -484,14 +481,6 @@ public sealed class MutantHealthRadar : FrameworkElement
         ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
         _selectedRow = row;
         parameter.ResetToReference();
-        _status.ShowTransient(row switch
-        {
-            DamageRow => "Mutant hit damage reset.",
-            SpecialRow => "Special ability rate reset.",
-            >= AbilityRowBase => $"{Mutants[row - AbilityRowBase].Label} ability rate reset to Base Preset.",
-            >= RateRowBase => $"{Mutants[row - RateRowBase].Label} attack rate reset to Base Preset.",
-            _ => $"{Mutants[row].Label} health reset to Base Preset."
-        });
         InvalidateVisual();
         e.Handled = true;
     }
@@ -509,7 +498,6 @@ public sealed class MutantHealthRadar : FrameworkElement
             _damage?.ResetToReference();
             _special?.ResetToReference();
 
-            _status.ShowTransient("Mutant board reset to Base Preset.");
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -530,7 +518,6 @@ public sealed class MutantHealthRadar : FrameworkElement
             selected.Minimum,
             selected.Maximum);
 
-        _status.Clear();
         InvalidateVisual();
         e.Handled = true;
     }
@@ -550,7 +537,6 @@ public sealed class MutantHealthRadar : FrameworkElement
         // Off-grid vanilla (e.g. 0.35x hit damage on Novice) stays reachable.
         parameter.CurrentNumber = parameter.ReferenceMagnet(raw,
             Math.Clamp(snapped, parameter.Minimum, parameter.Maximum));
-        _status.Clear();
         InvalidateVisual();
     }
 

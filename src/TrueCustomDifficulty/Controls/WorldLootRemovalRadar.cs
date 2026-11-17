@@ -44,7 +44,6 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Populations.Length];
     private readonly Dictionary<int, HitTarget> _targets = new();
-    private readonly VisualStatusMessage _status;
 
     private int _selectedRow;
     private int _hoverRow = -1;
@@ -96,7 +95,6 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
 
     public WorldLootRemovalRadar()
     {
-        _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
         MinHeight = 0;
         Cursor = Cursors.Arrow;
@@ -379,7 +377,6 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
 
         _selectedRow = row;
         parameter.ResetToReference();
-        _status.ShowTransient($"{Populations[row].Label} removal reset to Base Preset.");
         InvalidateVisual();
         e.Handled = true;
     }
@@ -421,7 +418,6 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
             foreach (var parameter in _parameters)
                 parameter?.ResetToReference();
 
-            _status.ShowTransient("World loot removal reset to Base Preset.");
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -442,7 +438,6 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
             selected.Minimum,
             selected.Maximum);
 
-        _status.Clear();
         InvalidateVisual();
         e.Handled = true;
     }
@@ -475,7 +470,6 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
             + Math.Round((raw - parameter.Minimum) / tick, MidpointRounding.AwayFromZero) * tick;
 
         parameter.CurrentNumber = Math.Clamp(snapped, parameter.Minimum, parameter.Maximum);
-        _status.Clear();
         InvalidateVisual();
     }
 

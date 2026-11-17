@@ -56,7 +56,6 @@ public sealed class AnomalyDamageRadar : FrameworkElement
     private bool _dragGlobalKnob;
     private bool _selectedGlobalKnob;
     private readonly Dictionary<int, HitTarget> _targets = new();
-    private readonly VisualStatusMessage _status;
     private int _selectedRow;
     private int _hoverRow = -1;
     private int _dragRow = -1;
@@ -75,7 +74,6 @@ public sealed class AnomalyDamageRadar : FrameworkElement
 
     public AnomalyDamageRadar()
     {
-        _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
         MinHeight = DesiredHeight;
         Cursor = Cursors.Arrow;
@@ -396,7 +394,6 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         var snapped = p.Minimum + Math.Round(
             (raw - p.Minimum) / step, MidpointRounding.AwayFromZero) * step;
         p.CurrentNumber = Math.Clamp(snapped, p.Minimum, p.Maximum);
-        _status.Clear();
         InvalidateVisual();
     }
 
@@ -507,7 +504,6 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             _selectedGlobalKnob = true;
             ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(global));
             global.ResetToReference();
-            _status.ShowTransient("Global anomaly multiplier reset to Base Preset.");
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -520,7 +516,6 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         _selectedRow = row;
         ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
         parameter.ResetToReference();
-        _status.ShowTransient($"{Anomalies[row].Label} damage reset to Base Preset.");
         InvalidateVisual();
         e.Handled = true;
     }
@@ -535,7 +530,6 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             foreach (var parameter in _parameters)
                 parameter?.ResetToReference();
 
-            _status.ShowTransient("Global and individual anomaly damage reset to Base Preset.");
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -578,7 +572,6 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             selected.Minimum,
             selected.Maximum);
 
-        _status.Clear();
         InvalidateVisual();
         e.Handled = true;
     }
@@ -618,7 +611,6 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         var snapped = parameter.Minimum + Math.Round((raw - parameter.Minimum) / tick, MidpointRounding.AwayFromZero) * tick;
 
         parameter.CurrentNumber = Math.Clamp(snapped, parameter.Minimum, parameter.Maximum);
-        _status.Clear();
         InvalidateVisual();
     }
 
