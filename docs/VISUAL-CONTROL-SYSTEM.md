@@ -1,3 +1,9 @@
+## 2026-11-18 — CURRENT: HUMAN TACTICS texts in seconds, help names in caps
+
+* HUMAN TACTICS rows (grenades, suppression, flanking, push, camping penalty) read out pauses in seconds on COMBAT MINUTE, so their texts no longer talk in × (*2× = twice as often*, *The card shows the resulting pause … at 1×*): `Vanilla: Novice–Veteran every 20–35 s per squad, Master every 10–17 s. Shorter pause on COMBAT MINUTE = they do it more often.` HIGHER / LOWER: every enemy rank's pause changes together.
+* CONTROLS help names controls in caps (EXPLOSION DAMAGE, MAX STAMINA, STAMINA REGEN, VAULT HEIGHT, MAXIMUM CARRY WEIGHT, STARTING COUPONS, WEAPON DAMAGE, HEADSHOT DAMAGE, JAM RATE).
+* World removal texts say *bar* (the controls are bars, not sliders); Healed Damage Counts names PEAK / MINIMUM HIT PROTECTION instead of *the repeated-hit protection system*.
+
 ## 2026-11-17 — CURRENT: control references in caps, anomaly damage texts
 
 * Every reference to another control inside WHAT IT DOES / HIGHER / LOWER / WITH OTHER SETTINGS is written in caps like the board draws it (95 references: GLOBAL ANOMALY DAMAGE, NATURAL BLEEDING RECOVERY, BONUS CHANCE, BASE REPAIR COST, PEAK HIT PROTECTION, …), so a control name is always recognisable as one.

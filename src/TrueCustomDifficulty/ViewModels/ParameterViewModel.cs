@@ -115,7 +115,7 @@ public sealed class ParameterViewModel : ObservableObject
             {
                 var instruction = VisualAggregateFamily switch
                 {
-                    "HumanCombatProfile" => "Drag the bottom ring for enemy HP, the left ring for enemy gun damage, or the center for both. The Explosion Damage knob changes blast damage separately.",
+                    "HumanCombatProfile" => "Drag the bottom ring for enemy HP, the left ring for enemy gun damage, or the center for both. The EXPLOSION DAMAGE knob changes blast damage separately.",
                     "EquipmentWearBalance" => "Drag the bottom ring for armor durability, the left ring for weapon wear, or the center for both.",
                     "FlycatcherSlowdown" => "Drag the bottom ring to change movement speed, the left ring for turning speed, or the center to adjust both.",
                     "HungerLadder" => "Use the upper tracks for hunger buildup and the well-fed stamina bonus. Move stage markers for hunger penalties, and use the food sliders below to set how many hunger points each item removes.",
@@ -125,13 +125,13 @@ public sealed class ParameterViewModel : ObservableObject
                     "ConsumableMixer" => "Set Water and Energy Drink instant stamina gains, lasting buffs and effect durations separately. OVERRIDE LIMITS allows longer durations.",
                     "SleepingDashboard" => "Set when you can sleep, the minimum hours and how much HP and stamina you regain when you wake up.",
                     "CoreHealthDashboard" => "Set MAX HP and PASSIVE HP REGEN at the top. REGEN DELAY, REGEN STRENGTH and LOW-HP RECOVERY RATE use separate tracks.",
-                    "StaminaCore" => "Set Max Stamina and Stamina Regen at the top. The tracks below change vault height and carry weight independently.",
+                    "StaminaCore" => "Set MAX STAMINA and STAMINA REGEN at the top. VAULT HEIGHT and MAXIMUM CARRY WEIGHT below change independently.",
                     "WaterStaminaPressure" => "Drag the MEDIUM WATER or DEEP WATER track separately.",
                     "SevereFatiguePenaltyBoard" => "Enable severe-fatigue mechanics, then drag each of the five vertical penalty equalizer bars independently.",
                     "MasterLowHealth" => "Enable low-health mechanics and turn the HEALTH RECOVERY LOSS knob: how much slower HP regenerates while your health is low.",
                     "MasterRadiationPenalty" => "Enable the heavy-radiation stamina penalty, then choose how much extra stamina actions cost while it applies.",
                     "MasterMedicalHealing" => "Switch the Master effect bundle on or off; adjust the Bandage, Medkit or Army Medkit healing tracks independently.",
-                    "CouponFlow" => "Drag Starting Coupons to change your new-game wallet. Main and side quest payouts are separate.",
+                    "CouponFlow" => "Drag STARTING COUPONS to change your new-game wallet. Main and side quest payouts are separate.",
                     "TradingDashboard" => "PRICES TRADERS PAY controls selling; PRICES YOU PAY controls buying. The lower tracks handle sellable condition and broken-gear value.",
                     "RepairCurve" => "Drag one reputation point up or down to set its repair price; neighbouring points keep their order.",
                     "ServiceCostsBoard" => "Adjust guide travel, upgrades and repairs separately. Discounts and reputation may still affect final prices.",
@@ -148,7 +148,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "StashGear" => "BONUS GEAR COVERAGE chooses how many stashes can get extra gear; PRIORITY favors item kinds; BONUS CHANCE is the roll per stash. Quest and unique loot are protected.",
                     "AmmoDistribution" => "AMMO PER BOX and GRENADES PER BOX change amounts. The AMMO TYPE MIX knobs favor calibers; AMMO BOX CONTENT DISTRIBUTION only previews the result. MEDICAL BOXES: the ARMY MEDKIT MIX knob sets how often a medical box gives an Army Medkit (per player rank).",
                     "BreakableBoxYields" => "Drag the ammo or grenade yield track to change only that box's contents.",
-                    "PlayerWeaponProfile" => "Turn Weapon Damage, Headshot Damage and Jam Rate independently. Scroll or use arrow keys for fine adjustments.",
+                    "PlayerWeaponProfile" => "Turn WEAPON DAMAGE, HEADSHOT DAMAGE and JAM RATE independently. Scroll or use arrow keys for fine adjustments.",
                     "HumanGroupSizeRadar" => "Drag each player-rank track to change that rank's maximum human squad size.",
                     _ => "Select a setting and click or drag its control. Each active handle edits its own value."
                 };
@@ -168,7 +168,7 @@ public sealed class ParameterViewModel : ObservableObject
                 return "Drag an action's track to change how much stamina that move costs."
                     + Environment.NewLine + "Right-click one track to reset it; R resets all Stamina Usage actions.";
             if (IsExhaustionRecoveryMember)
-                return "On the STAMINA THRESHOLDS ruler, drag the top marker to choose when sprint stops, or the bottom marker to choose when the low-stamina boost starts. The ruler uses 100 stamina by default and expands when Max Stamina exceeds 100; each marker keeps its own limit."
+                return "On the STAMINA THRESHOLDS ruler, drag the top marker to choose when sprint stops, or the bottom marker to choose when the low-stamina boost starts. The ruler uses 100 stamina by default and expands when MAX STAMINA exceeds 100; each marker keeps its own limit."
                     + Environment.NewLine + "Aiming, exhaustion delay and low-stamina boost stay independent. Right-click one source or press R for all.";
             if (IsMedicalHealingMember)
                 return "Four HEAL/BLEED/TIME source clusters and four RAD columns (Scientific, Anti-Rad, Beer, Vodka) edit independent effects."

@@ -389,8 +389,8 @@
           "The four full rank tables are written together with SPECIAL ABILITY RATE and the other tactics (one writer)."
         ]
       },
-      "rationale": "How often human enemies throw grenades at you. Vanilla: every 20–35 s per squad; Master halves it (10–17 s). 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (throws a grenade every 20–35 s at 1×).",
-      "logic": "1× keeps the selected difficulty's own pauses. The rate divides the pause of every enemy rank; who may act still depends on the game's tactics.",
+      "rationale": "How often human enemies throw grenades at you. Vanilla: Novice–Veteran every 20–35 s per squad, Master every 10–17 s. Shorter pause on COMBAT MINUTE = they do it more often.",
+      "logic": "Every enemy rank's pause changes together; which enemy acts still follows vanilla tactics.",
       "interaction": "Other tactics, ENEMY ACCURACY and HUMAN AWARENESS are independent. Enemy gun damage is in HUMAN ENEMY COMBAT."
     },
     {
@@ -437,8 +437,8 @@
           "The four full rank tables are written together with SPECIAL ABILITY RATE and the other tactics (one writer)."
         ]
       },
-      "rationale": "How often human enemies pin you down with suppressive fire. Vanilla: every 15–25 s; Master about every 7–12 s. 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (pins you down every 15–25 s at 1×).",
-      "logic": "1× keeps the selected difficulty's own pauses. The rate divides the pause of every enemy rank; who may act still depends on the game's tactics.",
+      "rationale": "How often human enemies pin you down with suppressive fire. Vanilla: Novice–Veteran every 15–25 s, Master every 7–12 s. Shorter pause on COMBAT MINUTE = they do it more often.",
+      "logic": "Every enemy rank's pause changes together; which enemy acts still follows vanilla tactics.",
       "interaction": "Other tactics, ENEMY ACCURACY and HUMAN AWARENESS are independent. Enemy gun damage is in HUMAN ENEMY COMBAT."
     },
     {
@@ -485,8 +485,8 @@
           "The four full rank tables are written together with SPECIAL ABILITY RATE and the other tactics (one writer)."
         ]
       },
-      "rationale": "How often human enemies try to flank you. Vanilla: every 10–20 s; Master 5–10 s. 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (flanks you every 10–20 s at 1×).",
-      "logic": "1× keeps the selected difficulty's own pauses. The rate divides the pause of every enemy rank; who may act still depends on the game's tactics.",
+      "rationale": "How often human enemies try to flank you. Vanilla: Novice–Veteran every 10–20 s, Master every 5–10 s. Shorter pause on COMBAT MINUTE = they do it more often.",
+      "logic": "Every enemy rank's pause changes together; which enemy acts still follows vanilla tactics.",
       "interaction": "Other tactics, ENEMY ACCURACY and HUMAN AWARENESS are independent. Enemy gun damage is in HUMAN ENEMY COMBAT."
     },
     {
@@ -533,8 +533,8 @@
           "The four full rank tables are written together with SPECIAL ABILITY RATE and the other tactics (one writer)."
         ]
       },
-      "rationale": "How often human enemies rush and close in on your cover. Vanilla: advance every 12–25 s, approach every 25–40 s; Master about twice as often. 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (rushes your cover every 12–25 s at 1×).",
-      "logic": "1× keeps the selected difficulty's own pauses. The rate divides the pause of every enemy rank; who may act still depends on the game's tactics.",
+      "rationale": "How often human enemies rush and close in on your cover. Vanilla: Novice–Veteran advance every 12–25 s and approach every 25–40 s, Master about twice as often. Shorter pause on COMBAT MINUTE = they do it more often.",
+      "logic": "Every enemy rank's pause changes together; which enemy acts still follows vanilla tactics.",
       "interaction": "Other tactics, ENEMY ACCURACY and HUMAN AWARENESS are independent. Enemy gun damage is in HUMAN ENEMY COMBAT."
     },
     {
@@ -578,8 +578,8 @@
           "The four full rank tables are written together with SPECIAL ABILITY RATE and the other tactics (one writer)."
         ]
       },
-      "rationale": "How often human enemies punish you for staying in one spot. Vanilla: every 2–5 s. 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (flushes you out every 2–5 s at 1×).",
-      "logic": "1× keeps the selected difficulty's own pauses. The rate divides the pause of every enemy rank; who may act still depends on the game's tactics.",
+      "rationale": "How often human enemies punish you for staying in one spot. Vanilla: every 2–5 s. Shorter pause on COMBAT MINUTE = they do it more often.",
+      "logic": "Every enemy rank's pause changes together; which enemy acts still follows vanilla tactics.",
       "interaction": "Other tactics, ENEMY ACCURACY and HUMAN AWARENESS are independent. Enemy gun damage is in HUMAN ENEMY COMBAT."
     },
     {
@@ -1215,7 +1215,7 @@
         "notes": []
       },
       "rationale": "Decides whether hits you already healed still count against your burst protection. ON (Veteran, Master) means patching up mid-fight doesn't reset the safety net; OFF (Novice, Stalker) is more forgiving. Healing itself always restores your HP normally.",
-      "logic": "OFF matches Novice and Stalker. ON matches Veteran and Master. Healing always restores HP normally; this toggle only decides whether the healed portion is still remembered by the repeated-hit protection system.",
+      "logic": "OFF matches Novice and Stalker. ON matches Veteran and Master. Healing always restores HP normally; this toggle only decides whether the healed portion is still remembered by the PEAK / MINIMUM HIT PROTECTION.",
       "interaction": "Works with Minimum and PEAK HIT PROTECTION; healing always restores HP even when past hits remain counted."
     },
     {
@@ -15220,7 +15220,7 @@
       },
       "rationale": "Share of F1 grenade boxes taken out of the world. Vanilla: 0% — every box stays. Separate from the ammo boxes.",
       "logic": "0% keeps every vanilla F1 grenade box; higher removes more of them from the world.",
-      "interaction": "Stacks with AMMO BOXES removal: that slider can remove some of the F1 boxes this one keeps.",
+      "interaction": "Stacks with AMMO BOXES removal: that bar can remove some of the F1 boxes this one keeps.",
       "exposeInUi": false
     },
     {
@@ -15274,7 +15274,7 @@
       },
       "rationale": "Share of food and drink boxes taken out of the world. Vanilla: 0%. Higher = you eat what you buy or loot, not what you find lying around.",
       "logic": "0% keeps vanilla food and drink boxes. Higher settings remove more of them from the world.",
-      "interaction": "Independent of the other World Loot sliders and does not change the contents of surviving boxes.",
+      "interaction": "Independent of the other removal bars; boxes that stay keep their vanilla contents.",
       "exposeInUi": false
     },
     {
@@ -15328,7 +15328,7 @@
       },
       "rationale": "Share of medical boxes taken out of the world. Vanilla: 0%. Higher = every bandage counts.",
       "logic": "0% keeps vanilla medical boxes. Higher settings remove more of them from the world.",
-      "interaction": "Independent of the other World Loot sliders and does not change the contents of surviving boxes.",
+      "interaction": "Independent of the other removal bars; boxes that stay keep their vanilla contents.",
       "exposeInUi": false
     },
     {
