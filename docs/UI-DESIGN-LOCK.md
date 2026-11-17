@@ -1,3 +1,7 @@
+## 2026-11-17 — CURRENT: build fix (MUTANT help string)
+
+* The MUTANT CONTROLS help example `"gore every 10 s"` is now escaped inside the C# string. This fixes CS1002 at `ParameterViewModel.cs:201`. The text is unchanged.
+
 ## 2026-11-17 — CURRENT: MUTANT ATTACKS / ABILITIES read as the wait between uses
 
 * On each species card the ATTACKS / ABILITIES readout now shows the **time between two uses** of the family's representative move, e.g. **`gore every 10 s`**, `psy every 6 s`. It no longer shows `1x · gore 10 s`, which did not say what the seconds meant. Dragging right shortens the wait (2x = twice as often). The card stays within the 166-DIP half-track width at the 760-DIP minimum content width.
