@@ -251,7 +251,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How many bullets a human enemy can soak up before going down. Higher = longer, more ammo-hungry firefights; lower = enemies drop fast.\n\nVanilla: Novice 1×, Stalker 1.2×, Veteran 1×, Master 1.5×. Pair it with WEAPON DAMAGE — both set your time-to-kill, so raising one and lowering the other stacks hard.",
+      "rationale": "How many bullets a human enemy can soak up before going down. Higher = longer, more ammo-hungry firefights; lower = enemies drop fast. Vanilla: Novice 1×, Stalker 1.2×, Veteran 1×, Master 1.5×. Pair it with WEAPON DAMAGE — both set your time-to-kill, so raising one and lowering the other stacks hard.",
       "logic": "",
       "interaction": "Weapon Damage affects the same time-to-kill from the opposite side. Raising enemy health while lowering your weapon damage compounds the effect."
     },
@@ -296,9 +296,9 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much it hurts when a human enemy shoots you. Low values let you tank a burst; high values make every exposed second dangerous.\n\nVanilla: Novice 0.17×, Stalker 0.85×, Veteran 1.02×, Master 1.35×. Mutant bites and explosions have their own settings.",
+      "rationale": "How much it hurts when a human enemy shoots you. Low values let you tank a burst; high values make every exposed second dangerous. Vanilla: Novice 0.17×, Stalker 0.85×, Veteran 1.02×, Master 1.35×. Mutant bites and explosions have their own settings.",
       "logic": "",
-      "interaction": "Human Enemy HP controls how long enemies survive; this controls how dangerous their shots are. Repeated-Hit Protection can also affect how sustained incoming fire feels."
+      "interaction": "HUMAN ENEMY HP sets how long enemies survive; this sets how dangerous their shots are. PEAK / MINIMUM HIT PROTECTION also soften sustained fire."
     },
     {
       "id": "combat.explosionDamage",
@@ -341,7 +341,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How deadly grenades and other blasts are — both yours and the enemy's. Raise it if you want grenades to feel lethal, lower it to survive the odd F1 at your feet.\n\nVanilla: Novice 0.25×, Stalker and Veteran 1×, Master 1.2×.",
+      "rationale": "How deadly grenades and other blasts are — both yours and the enemy's. Raise it if you want grenades to feel lethal, lower it to survive the odd F1 at your feet. Vanilla: Novice 0.25×, Stalker and Veteran 1×, Master 1.2×.",
       "logic": "",
       "interaction": "Each explosion still has its own base damage. This setting scales the difficulty layer applied on top of those base values."
     },
@@ -578,7 +578,7 @@
           "The four full rank tables are written together with SPECIAL ABILITY RATE and the other tactics (one writer)."
         ]
       },
-      "rationale": "How often human enemies punish you for staying in one spot. Vanilla: every 2–5 s on every difficulty. 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (flushes you out every 2–5 s at 1×).",
+      "rationale": "How often human enemies punish you for staying in one spot. Vanilla: every 2–5 s. 2× = twice as often; 0.5× = half as often. The card shows the resulting pause (flushes you out every 2–5 s at 1×).",
       "logic": "1× keeps the selected difficulty's own pauses. The rate divides the pause of every enemy rank; who may act still depends on the game's tactics.",
       "interaction": "Other tactics, ENEMY ACCURACY and HUMAN AWARENESS are independent. Enemy gun damage is in HUMAN ENEMY COMBAT."
     },
@@ -817,8 +817,8 @@
         ]
       },
       "rationale": "How well human enemies see through fog. Vanilla: 70% of their clear-weather sight. Lower = fog hides you better; 100% = fog gives you no cover. Real spotting range also depends on light and cover.",
-      "logic": "Writes only AISettings.WeatherSettings[2].VisibilityCoef in GameData/AIGlobals.cfg (Fogy), preserving all other weather, hearing, flair and luminance values.",
-      "interaction": "Independent of SIGHT (always-on scanner range). This coefficient may apply to any AI using the global weather setting; needs an in-game 2.1 acceptance test."
+      "logic": "Only fog changes; clear weather, rain, storms and night vision stay vanilla.",
+      "interaction": "Separate from SIGHT, which sets how far they see in clear weather."
     },
     {
       "id": "combat.npcRainNoise",
@@ -957,7 +957,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "The damage your own guns deal on a normal body hit. Lower values mean more bullets per kill and more ammo burned.\n\nVanilla: Novice 1.3×, Stalker 1×, Veteran and Master 0.75×. Headshots get an extra boost on top from Headshot Damage.",
+      "rationale": "The damage your own guns deal on a normal body hit. Lower values mean more bullets per kill and more ammo burned. Vanilla: Novice 1.3×, Stalker 1×, Veteran and Master 0.75×. Headshots get an extra boost on top from Headshot Damage.",
       "logic": "",
       "interaction": "Headshot Damage adds another layer on headshots. Human Enemy HP also changes the final time-to-kill."
     },
@@ -1001,7 +1001,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Extra punch for your headshots on top of normal weapon damage. 2× doubles the headshot bonus, rewarding careful aim over spraying.\n\nVanilla: 1× on every difficulty except Master, which uses 2×.",
+      "rationale": "Extra punch for your headshots on top of normal weapon damage. 2× doubles the headshot bonus, rewarding careful aim over spraying. Vanilla: Novice–Veteran 1×, Master 2×.",
       "logic": "1.0x is the normal multiplier. 2.0x doubles the headshot damage multiplier used by the selected Base Preset; it is not an additive extra-damage percentage.",
       "interaction": "Weapon Damage also affects the underlying hit. The headshot multiplier scales that hit; changing both settings compounds their effect."
     },
@@ -1045,7 +1045,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How often worn guns jam on you. Higher values make maintenance and weapon condition matter much more; 0.5× halves jams.\n\nVanilla: 1× on Novice, Stalker and Veteran; Master 1.5×. A gun in good condition still rarely jams.",
+      "rationale": "How often worn guns jam on you. Higher values make maintenance and weapon condition matter much more; 0.5× halves jams. Vanilla: Novice–Veteran 1×, Master 1.5×. A gun in good condition still rarely jams.",
       "logic": "",
       "interaction": "Weapon condition and each weapon's own jam behavior still matter. Use this to make jams generally more or less common."
     },
@@ -1090,7 +1090,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How hard mutants hit when they reach you — bites, claws and charges. Mutant toughness is set separately in the health cards.\n\nVanilla: Novice 0.35×, Stalker 1×, Veteran 1.35×, Master 1.5×.",
+      "rationale": "How hard mutants hit when they reach you — bites, claws and charges. Mutant toughness is set separately in the health cards. Vanilla: Novice 0.35×, Stalker 1×, Veteran 1.35×, Master 1.5×.",
       "logic": "",
       "interaction": "Mutant Health controls how much damage they can absorb; this control changes only damage dealt to the player."
     },
@@ -1135,7 +1135,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "The game quietly softens damage when many hits land at once, so you don't melt in a single burst. This is the strongest that safety net can get.\n\nHigher = more forgiving under heavy fire, lower = bursts hit closer to full damage. Vanilla: Novice 1, Stalker 0.75, Veteran 0.5, Master 0.4.",
+      "rationale": "The game quietly softens damage when many hits land at once, so you don't melt in a single burst. This is the strongest that safety net can get. Higher = more forgiving under heavy fire, lower = bursts hit closer to full damage. Vanilla: Novice 1, Stalker 0.75, Veteran 0.5, Master 0.4.",
       "logic": "Higher values give more protection against rapid hits; lower values make them harsher. The number is protection strength, not a literal damage-reduction percentage.",
       "interaction": "Minimum Hit Protection sets the weakest protection in the same repeated-hit system. Incoming gun damage is independent."
     },
@@ -1180,7 +1180,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "The weakest end of the same hidden safety net against rapid hits. Raising it keeps some protection even in long, sustained fights.\n\nVanilla: Novice 1, Stalker 0.33, Veteran 0.15, Master 0.12. Works together with Peak Hit Protection.",
+      "rationale": "The weakest end of the same hidden safety net against rapid hits. Raising it keeps some protection even in long, sustained fights. Vanilla: Novice 1, Stalker 0.33, Veteran 0.15, Master 0.12. Works together with Peak Hit Protection.",
       "logic": "Higher values give more protection at the weak end; lower values make rapid hits harsher. This is not a literal damage-reduction percentage.",
       "interaction": "Peak Hit Protection sets the strongest protection in the same system. Incoming gun damage is independent."
     },
@@ -1214,7 +1214,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Decides whether hits you already healed still count against your burst protection. ON (Veteran, Master) means patching up mid-fight doesn't reset the safety net; OFF (Novice, Stalker) is more forgiving.\n\nHealing itself always restores your HP normally.",
+      "rationale": "Decides whether hits you already healed still count against your burst protection. ON (Veteran, Master) means patching up mid-fight doesn't reset the safety net; OFF (Novice, Stalker) is more forgiving. Healing itself always restores your HP normally.",
       "logic": "OFF matches Novice and Stalker. ON matches Veteran and Master. Healing always restores HP normally; this toggle only decides whether the healed portion is still remembered by the repeated-hit protection system.",
       "interaction": "Works with Minimum and Peak Hit Protection; healing always restores HP even when past hits remain counted."
     },
@@ -1283,7 +1283,7 @@
           "Variants with their own MaxHP follow the same multiplier: AshyBloodsucker, PrologueBloodsucker. Collar variants inherit from the base prototype; illusion clones (Bayun clone, Pseudodog phantoms) are not scaled."
         ]
       },
-      "rationale": "How tough Bloodsuckers are — the invisible stalkers of the Zone. Includes the Mist, Ashy and prologue variants. Vanilla HP: 500.\n\nHigher values mean longer, scarier close-range fights; every other mutant has its own card.",
+      "rationale": "How tough Bloodsuckers are — the invisible stalkers of the Zone. Includes the Mist, Ashy and prologue variants. Vanilla HP: 500. Higher values mean longer, scarier close-range fights; every other mutant has its own card.",
       "logic": "",
       "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": true
@@ -1330,7 +1330,7 @@
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
-      "rationale": "How tough the Chimera is — the two-headed leaping apex predator. Vanilla HP: 1400, the second toughest mutant in the game.\n\nLowering it makes a Chimera encounter survivable with mid-game gear.",
+      "rationale": "How tough the Chimera is — the two-headed leaping apex predator. Vanilla HP: 1400, the second toughest mutant in the game. Lowering it makes a Chimera encounter survivable with mid-game gear.",
       "logic": "",
       "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": false
@@ -1424,7 +1424,7 @@
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
-      "rationale": "How tough the Pseudogiant is — the stomping tank of the Zone. Vanilla HP: 2500, by far the highest of any mutant.\n\nAt 2× you'll want an entire backpack of ammo; at 0.5× a good rifle can drop it in one magazine or two.",
+      "rationale": "How tough the Pseudogiant is — the stomping tank of the Zone. Vanilla HP: 2500, by far the highest of any mutant. At 2× you'll want an entire backpack of ammo; at 0.5× a good rifle can drop it in one magazine or two.",
       "logic": "",
       "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": false
@@ -1626,7 +1626,7 @@
         ]
       },
       "exposeInUi": false,
-      "rationale": "How tough Blind Dogs are — the pack hunters you meet from the first hour. Includes the Moldy variant. Vanilla HP: 63, so even a pistol handles them.\n\nRaising it makes early packs a real threat."
+      "rationale": "How tough Blind Dogs are — the pack hunters you meet from the first hour. Includes the Moldy variant. Vanilla HP: 63, so even a pistol handles them. Raising it makes early packs a real threat."
     },
     {
       "id": "combat.mutantHealth.boar",
@@ -1994,7 +1994,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Bayuns use their attacks — claw swipes, leaps, pounces and dodges (collar and quest variants included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 5 s at 1×).",
+      "rationale": "How often Bayuns use their attacks — claw swipes, leaps, pounces and dodges (collar and quest variants included). Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 5 s at 1×).",
       "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (growls and blink teleports) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2041,7 +2041,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Blind Dogs use their attacks — bites and running bites (collar and moldy variants included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (bite every 5 s at 1×).",
+      "rationale": "How often Blind Dogs use their attacks — bites and running bites (collar and moldy variants included). Vanilla: 1×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (bite every 5 s at 1×).",
       "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (the pack's shield) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2091,7 +2091,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Bloodsuckers use their attacks — claw slashes, running attacks, leaps and bites (Mist, Ashy, collar and prologue variants included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 6 s at 1×).",
+      "rationale": "How often Bloodsuckers use their attacks — claw slashes, running attacks, leaps and bites (Mist, Ashy, collar and prologue variants included). Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 6 s at 1×).",
       "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (roars and anomaly spawning) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2138,7 +2138,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Boars use their attacks — gores, running rams and charges (helmed and porcupine variants included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (gore every 10 s at 1×).",
+      "rationale": "How often Boars use their attacks — gores, running rams and charges (helmed and porcupine variants included). Vanilla: 1×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (gore every 10 s at 1×).",
       "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. It has no special abilities.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2188,7 +2188,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Burers use their attacks — claw swipes (shooting variant included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 8 s at 1×).",
+      "rationale": "How often Burers use their attacks — claw swipes (shooting variant included). Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 8 s at 1×).",
       "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (shields, telekinetic throws, grenade throws and weapon pulls) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2238,7 +2238,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Chimeras use their attacks — claws, short and long leaps, runs, fly-through attacks and dodges. Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (leap every 8 s at 1×).",
+      "rationale": "How often Chimeras use their attacks — claws, short and long leaps, runs, fly-through attacks and dodges. Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (leap every 8 s at 1×).",
       "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (growls) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2288,7 +2288,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Controllers use their attacks — claw swipes (collar and deer variants included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 10 s at 1×).",
+      "rationale": "How often Controllers use their attacks — claw swipes (collar and deer variants included). Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 10 s at 1×).",
       "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (psy attacks, roars, raising the dead and zombifying) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2338,7 +2338,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Deer use their attacks — claws, leaps, runs and charges. Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 4 s at 1×).",
+      "rationale": "How often Deer use their attacks — claws, leaps, runs and charges. Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 4 s at 1×).",
       "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. It has no special abilities.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2385,7 +2385,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Fleshes use their attacks — bites and leaps (boggy variant included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 3 s at 1×).",
+      "rationale": "How often Fleshes use their attacks — bites and leaps (boggy variant included). Vanilla: 1×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 3 s at 1×).",
       "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. It has no special abilities.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2432,7 +2432,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Poltergeists use their attacks — area bursts (electro, toxic, fire and explosive variants included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (burst every 3 s at 1×).",
+      "rationale": "How often Poltergeists use their attacks — area bursts (electro, toxic, fire and explosive variants included). Vanilla: 1×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (burst every 3 s at 1×).",
       "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (telekinetic throws, anomaly activation and shields) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2482,7 +2482,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Pseudodogs use their attacks — bites and running bites (its phantom copies included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (bite every 7 s at 1×).",
+      "rationale": "How often Pseudodogs use their attacks — bites and running bites (its phantom copies included). Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (bite every 7 s at 1×).",
       "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (psi shockwaves) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2532,7 +2532,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Pseudogiants use their attacks — stomps, runs and charges (collar variant included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (stomp every 5 s at 1×).",
+      "rationale": "How often Pseudogiants use their attacks — stomps, runs and charges (collar variant included). Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (stomp every 5 s at 1×).",
       "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (shockwaves, roars and throws) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2579,7 +2579,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Snorks use their attacks — claws, kicks, leaps, fly-through attacks and dodges (collar variant included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (kick every 7 s at 1×).",
+      "rationale": "How often Snorks use their attacks — claws, kicks, leaps, fly-through attacks and dodges (collar variant included). Vanilla: 1×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (kick every 7 s at 1×).",
       "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. Its abilities (growls) are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2626,7 +2626,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Tushkans use their attacks — bites and leaps. Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 3 s at 1×).",
+      "rationale": "How often Tushkans use their attacks — bites and leaps. Vanilla: 1×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (claw every 3 s at 1×).",
       "logic": "Each attack has its own wait (cooldown) before it can be used again; this scales the waits of all the family's attacks. 1× keeps vanilla timing. It has no special abilities.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2676,7 +2676,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Bayuns use their abilities — growls and blink teleports (collar and quest variants included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (teleport every 12 s at 1×).",
+      "rationale": "How often Bayuns use their abilities — growls and blink teleports (collar and quest variants included). Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (teleport every 12 s at 1×).",
       "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (claw swipes, leaps, pounces and dodges) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2723,7 +2723,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Blind Dogs use their abilities — the pack's shield (collar and moldy variants included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (shield every 25 s at 1×).",
+      "rationale": "How often Blind Dogs use their abilities — the pack's shield (collar and moldy variants included). Vanilla: 1×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (shield every 25 s at 1×).",
       "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (bites and running bites) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2773,7 +2773,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Bloodsuckers use their abilities — roars and anomaly spawning (Mist, Ashy, collar and prologue variants included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (anomaly every 3 s at 1×).",
+      "rationale": "How often Bloodsuckers use their abilities — roars and anomaly spawning (Mist, Ashy, collar and prologue variants included). Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (anomaly every 3 s at 1×).",
       "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (claw slashes, running attacks, leaps and bites) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2823,7 +2823,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Burers use their abilities — shields, telekinetic throws, grenade throws and weapon pulls (shooting variant included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (shield every 17 s at 1×).",
+      "rationale": "How often Burers use their abilities — shields, telekinetic throws, grenade throws and weapon pulls (shooting variant included). Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (shield every 17 s at 1×).",
       "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (claw swipes) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2873,7 +2873,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Chimeras use their abilities — growls. Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (growl every 30 s at 1×).",
+      "rationale": "How often Chimeras use their abilities — growls. Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (growl every 30 s at 1×).",
       "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (claws, short and long leaps, runs, fly-through attacks and dodges) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2923,7 +2923,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Controllers use their abilities — psy attacks, roars, raising the dead and zombifying (collar and deer variants included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (psy every 12 s at 1×).",
+      "rationale": "How often Controllers use their abilities — psy attacks, roars, raising the dead and zombifying (collar and deer variants included). Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (psy every 12 s at 1×).",
       "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (claw swipes) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2970,7 +2970,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Poltergeists use their abilities — telekinetic throws, anomaly activation and shields (electro, toxic, fire and explosive variants included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (shield every 20 s at 1×).",
+      "rationale": "How often Poltergeists use their abilities — telekinetic throws, anomaly activation and shields (electro, toxic, fire and explosive variants included). Vanilla: 1×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (shield every 20 s at 1×).",
       "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (area bursts) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -3020,7 +3020,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Pseudodogs use their abilities — psi shockwaves (its phantom copies included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait.",
+      "rationale": "How often Pseudodogs use their abilities — psi shockwaves (its phantom copies included). Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait.",
       "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (bites and running bites) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -3070,7 +3070,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Pseudogiants use their abilities — shockwaves, roars and throws (collar variant included). Vanilla: 1× on Novice, Stalker and Veteran; 2× on Master. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (shockwave every 8 s at 1×).",
+      "rationale": "How often Pseudogiants use their abilities — shockwaves, roars and throws (collar variant included). Vanilla: Novice–Veteran 1×, Master 2×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (shockwave every 8 s at 1×).",
       "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (stomps, runs and charges) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -3117,7 +3117,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Snorks use their abilities — growls (collar variant included). Vanilla: 1× on every difficulty. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (growl every 20 s at 1×).",
+      "rationale": "How often Snorks use their abilities — growls (collar variant included). Vanilla: 1×. 2× = twice as often; 0.5× = twice the wait. The card shows the wait for one of them (growl every 20 s at 1×).",
       "logic": "Each ability has its own wait (cooldown) before it can be used again; this scales the waits of all the family's abilities. 1× keeps vanilla timing. Its basic attacks (claws, kicks, leaps, fly-through attacks and dodges) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -3167,7 +3167,7 @@
           "Human combat actions (flank, grenades) are untouched."
         ]
       },
-      "rationale": "How often mutants in a fight get to use their special and knockdown moves — growls, shields, knockdown leaps and charges. Vanilla: 1× (a pause of 8–12 s after each one) on Novice, Stalker and Veteran; 2× (4–6 s) on Master. Higher = one special move after another; lower = more time to recover.",
+      "rationale": "How often mutants in a fight get to use their special and knockdown moves — growls, shields, knockdown leaps and charges. Vanilla: Novice–Veteran 1× (8–12 s pause after each one), Master 2× (4–6 s). Higher = one special move after another; lower = more time to recover.",
       "logic": "After a mutant uses a special or knockdown move, every mutant in the fight waits a random 8–12 s before the next one (divided by this rate).",
       "interaction": "Each mutant's own ATTACK RATE still decides how soon that mutant can repeat its attacks.",
       "exposeInUi": false
@@ -3222,7 +3222,7 @@
           "Novice/Stalker/Veteran contain no PsyPhantomNPCOverrides block; the UI represents absence as neutral 1.0 / Off. Creating equivalent overrides in Novice/Stalker/Veteran requires runtime validation."
         ]
       },
-      "rationale": "In the Psy encounters that Master makes harder, how long you get before the next wave of phantoms appears. Lower = less breathing room.\n\nVanilla: 100% everywhere except Master, which halves the wait (50%).",
+      "rationale": "In the Psy encounters that Master makes harder, how long you get before the next wave of phantoms appears. Lower = less breathing room. Vanilla: Novice–Veteran 100%, Master 50%.",
       "logic": "Lower = phantom waves come back sooner. Master already waits only half as long; 100% adds no extra Master speed-up.",
       "interaction": "Pair this with Psy Phantom Count: shorter waits plus more phantoms can make an encounter far more intense."
     },
@@ -3276,7 +3276,7 @@
           "Novice/Stalker/Veteran contain no PsyPhantomNPCOverrides block; the UI represents absence as neutral 1.0 / Off. Creating equivalent overrides in Novice/Stalker/Veteran requires runtime validation."
         ]
       },
-      "rationale": "In those Master Psy encounters, how many phantoms come at you per wave. 200% doubles them.\n\nVanilla: 100% everywhere except Master (200%). Combine with a short spawn interval for a real nightmare.",
+      "rationale": "In those Master Psy encounters, how many phantoms come at you per wave. 200% doubles them. Vanilla: Novice–Veteran 100%, Master 200%. Combine with a short spawn interval for a real nightmare.",
       "logic": "100% keeps the normal count. 200% matches vanilla Master and doubles the configured phantom count.",
       "interaction": "Phantom Spawn Interval changes how quickly another wave can happen; this setting changes the size of each wave."
     },
@@ -3319,7 +3319,7 @@
           "Novice/Stalker/Veteran contain no PsyPhantomNPCOverrides block; the UI represents absence as neutral 1.0 / Off. Creating equivalent overrides in Novice/Stalker/Veteran requires runtime validation."
         ]
       },
-      "rationale": "Lets the Master Psy phantoms make you bleed, so bandages become part of surviving the encounter.\n\nVanilla: OFF on every difficulty except Master.",
+      "rationale": "Lets the Master Psy phantoms make you bleed, so bandages become part of surviving the encounter. Vanilla: Novice–Veteran OFF, Master ON.",
       "logic": "OFF: psy attacks don't make you bleed. ON: they do, like on Master.",
       "interaction": "Bleeding Severity and medical treatment determine how serious the extra bleeding becomes."
     },
@@ -3373,7 +3373,7 @@
           "Novice/Stalker/Veteran contain no PsyPhantomNPCOverrides block; the UI represents absence as neutral 1.0 / Off. Creating equivalent overrides in Novice/Stalker/Veteran requires runtime validation."
         ]
       },
-      "rationale": "How fast the Master Psy enemies chew through your armor and helmet condition. Their damage to your health is unchanged.\n\nVanilla: 100% everywhere except Master (200%).",
+      "rationale": "How fast the Master Psy enemies chew through your armor and helmet condition. Their damage to your health is unchanged. Vanilla: Novice–Veteran 100%, Master 200%.",
       "logic": "100% keeps normal durability damage. 200% matches vanilla Master and doubles this durability damage.",
       "interaction": "This does not change their direct health damage. Armor/helmet durability settings still affect how your gear wears overall."
     },
@@ -3416,7 +3416,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How fast your stomach empties while you roam. Higher = you need to eat more often and carry more food; lower = food lasts much longer.\n\nVanilla: 0.015 on every difficulty.",
+      "rationale": "How fast your stomach empties while you roam. Higher = you need to eat more often and carry more food; lower = food lasts much longer. Vanilla: 0.015.",
       "logic": "",
       "interaction": "Food Hunger Relief changes how much hunger each item removes. Hunger-state thresholds still decide when penalties apply."
     },
@@ -3651,7 +3651,7 @@
         ]
       },
       "rationale": "Where on the 0–100 hunger meter the first, mild hunger stage kicks in. Vanilla: 17.",
-      "logic": "Keep LOW at or below MEDIUM and STRONG. Moving one threshold in the Hunger Ladder minimally pushes adjacent thresholds when needed.",
+      "logic": "Keep LOW at or below MEDIUM and SEVERE. Moving one threshold nudges its neighbours when needed.",
       "interaction": "This changes state timing only. Medium/Severe stamina-recovery penalties are tuned separately.",
       "exposeInUi": false
     },
@@ -3698,7 +3698,7 @@
         ]
       },
       "rationale": "Where real hunger starts: stamina recovers slower and you can't sleep. Vanilla: 33 on the 0–100 meter.",
-      "logic": "Keep LOW <= MEDIUM <= STRONG.",
+      "logic": "Keep LOW ≤ MEDIUM ≤ SEVERE.",
       "interaction": "This moves the stage boundary; the Medium stamina-recovery penalty magnitude remains a separate axis.",
       "exposeInUi": false
     },
@@ -3746,7 +3746,7 @@
         ]
       },
       "rationale": "Where severe hunger starts and the heavy penalties hit. Vanilla: 83 on the 0–100 meter.",
-      "logic": "Keep LOW <= MEDIUM <= STRONG.",
+      "logic": "Keep LOW ≤ MEDIUM ≤ SEVERE.",
       "interaction": "This changes the standard hunger stage boundary; it does not silently rewrite the separate Master starvation mechanics.",
       "exposeInUi": false
     },
@@ -3871,7 +3871,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How fast you get tired while awake. Higher = fatigue penalties (slower aim and reloads) and the need to sleep arrive sooner.\n\nVanilla: 0.01 on every difficulty.",
+      "rationale": "How fast you get tired while awake. Higher = fatigue penalties (slower aim and reloads) and the need to sleep arrive sooner. Vanilla: 0.01.",
       "logic": "",
       "interaction": "Vanilla fatigue states still decide when their penalties become active. Energy drinks can reduce accumulated fatigue separately."
     },
@@ -4074,7 +4074,7 @@
           "The slider scales only those energy-drink fatigue-relief values; passive player RegenSleepinessPoints remains controlled separately by Fatigue Build-up Rate."
         ]
       },
-      "rationale": "How much tiredness an energy drink washes away. Vanilla: 1×. 0× makes energy drinks useless against fatigue, 2× doubles their wake-up kick.\n\nIt doesn't slow how fast you get tired again.",
+      "rationale": "How much tiredness an energy drink washes away. Vanilla: 1×. 0× makes energy drinks useless against fatigue, 2× doubles their wake-up kick. It doesn't slow how fast you get tired again.",
       "logic": "100% keeps vanilla fatigue relief. 50% halves it, 200% doubles it, and 0% makes energy drinks provide no fatigue relief.",
       "interaction": "Fatigue Rate controls how quickly tiredness comes back. This changes the amount removed by ordinary and special Energy Drinks."
     },
@@ -4167,7 +4167,7 @@
       },
       "rationale": "How much stamina an energy drink gives back instantly. Vanilla: 50% of your stamina bar. Its longer regeneration boost is separate.",
       "logic": "50% is the vanilla refill; set 0–100% of maximum stamina directly, subject to the game stamina cap.",
-      "interaction": "Independent 1-percentage-point control; no changes to stamina regeneration, cost buffs or Limited Energy Drink.",
+      "interaction": "Moves in 1% steps; the energy drink's regeneration and stamina-cost effects stay separate.",
       "exposeInUi": false
     },
     {
@@ -4257,7 +4257,7 @@
       },
       "rationale": "Water also makes running and other actions cost less stamina for a while. Vanilla: −10%. 0× removes it, 2× doubles it to −20%.",
       "logic": "0x = actions cost the normal stamina; 1x = vanilla 10% cheaper; 2x = 20% cheaper.",
-      "interaction": "Separate independent WaterStamina2 and WaterStaminaInstant sources remain unchanged.",
+      "interaction": "Water's +25% stamina bonus and its instant refill are separate settings.",
       "exposeInUi": false
     },
     {
@@ -4812,8 +4812,8 @@
         ]
       },
       "rationale": "How much faster you stop bleeding while Vinca is active. Vanilla: +10 bleed recovery — handy when you're out of bandages.",
-      "logic": "Edits CinnamonDegenBleeding ValueMin and ValueMax directly in bleed-recovery points; the original +10 is not a multiplier.",
-      "interaction": "Independent from the drinks, the other medicine sources and original KeepNew stacking.",
+      "logic": "Set in bleed-recovery points (vanilla +10), not as a multiplier.",
+      "interaction": "Separate from drinks and the other medicines; taking another dose still refreshes it like vanilla.",
       "exposeInUi": false
     },
     {
@@ -4913,8 +4913,8 @@
         ]
       },
       "rationale": "Extra carry weight from a Hercules pill. Vanilla: +20 kg — the classic way to haul home one more rifle.",
-      "logic": "Edits HerculesWeight and HerculesWeight_Penalty ValueMin and ValueMax directly as the same extra kilogram amount.",
-      "interaction": "Independent from the drinks, the other medicine sources and original KeepNew stacking.",
+      "logic": "Set directly in extra kilograms, not as a multiplier.",
+      "interaction": "Separate from drinks and the other medicines; taking another dose still refreshes it like vanilla.",
       "exposeInUi": false
     },
     {
@@ -5014,8 +5014,8 @@
         ]
       },
       "rationale": "How much psy protection a Psi Block pill gives while it works. Vanilla: +10 psy points.",
-      "logic": "Edits PSYBlockerIncreaseRegen ValueMin and ValueMax directly in the game's displayed psi-protection points, not a multiplier.",
-      "interaction": "Independent from the drinks, the other medicine sources and original KeepNew stacking.",
+      "logic": "Set directly in psi-protection points as the game shows them, not as a multiplier.",
+      "interaction": "Separate from drinks and the other medicines; taking another dose still refreshes it like vanilla.",
       "exposeInUi": false
     },
     {
@@ -5164,7 +5164,7 @@
       },
       "rationale": "How much one beer gets you drunk. Vanilla: 15 — tipsy on the 2nd beer, properly drunk by the 6th in a row. The chart shows exactly when each stage hits.",
       "logic": "Vanilla: 15 drunkenness per beer. With tipsy at 30 and drunk at 80, back-to-back beers make you tipsy on the 2nd and drunk on the 6th.",
-      "interaction": "Always visible beside Vodka Strength. Moving it updates Beer strength, the Beer Strong-stage drink count, and the back-to-back progression immediately."
+      "interaction": "Sits beside Vodka Strength; the preview shows right away how many beers make you tipsy and drunk."
     },
     {
       "id": "survival.vodkaDrunknessStrength",
@@ -5211,7 +5211,7 @@
       },
       "rationale": "How much one vodka gets you drunk. Vanilla: 30 — tipsy after the 1st bottle, drunk by the 3rd in a row.",
       "logic": "Vanilla: 30 drunkenness per vodka. With tipsy at 30 and drunk at 80, the 1st vodka makes you tipsy and the 3rd drunk.",
-      "interaction": "Always visible beside Beer Strength. Moving it updates Vodka strength, the Vodka Strong-stage drink count, and the back-to-back progression immediately."
+      "interaction": "Sits beside Beer Strength; the preview shows right away how many vodkas make you tipsy and drunk."
     },
     {
       "id": "survival.sleepEligibilityThreshold",
@@ -5339,7 +5339,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How fast radiation builds up while you stand in contaminated areas. Higher = hotspots become deadly quickly.\n\nVanilla: Novice 0.6×, Stalker 1×, Veteran 1.5×, Master 1.85×.",
+      "rationale": "How fast radiation builds up while you stand in contaminated areas. Higher = hotspots become deadly quickly. Vanilla: Novice 0.6×, Stalker 1×, Veteran 1.5×, Master 1.85×.",
       "logic": "",
       "interaction": "Radiation Recovery controls passive reduction separately. RADIATION STAMINA PENALTY can add a stamina cost at high radiation."
     },
@@ -5540,7 +5540,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How bad bleeding wounds are overall. Higher = you bleed out faster and need bandages sooner.\n\nVanilla: Novice 0.25×, Stalker and Veteran 1×, Master 1.5×.",
+      "rationale": "How bad bleeding wounds are overall. Higher = you bleed out faster and need bandages sooner. Vanilla: Novice 0.25×, Stalker and Veteran 1×, Master 1.5×.",
       "logic": "Higher values make bleeding effects stronger overall; lower values soften them. Novice uses 25%, Stalker/Veteran 100%, and Master 150%.",
       "interaction": "Low / Medium / Severe Bleeding Damage decide how much HP you lose once each bleeding state is active. Natural Bleeding Recovery and medical treatment decide how quickly bleeding goes away."
     },
@@ -5635,7 +5635,7 @@
           "Direct MaxHP field is confirmed; broader assumptions about the 100-point HP scale require runtime validation."
         ]
       },
-      "rationale": "Your total health pool. Vanilla: 100 HP on every difficulty. More HP lets you survive more hits; healing items still restore the same flat amount, so each medkit covers a smaller share of a bigger pool.",
+      "rationale": "Your total health pool. Vanilla: 100 HP. More HP lets you survive more hits; healing items still restore the same flat amount, so each medkit covers a smaller share of a bigger pool.",
       "logic": "",
       "interaction": "The game keeps its vanilla low-health state boundary. Other systems may also assume a 100-point health scale, so very large Max Health changes should be tested in game."
     },
@@ -5727,7 +5727,7 @@
       },
       "rationale": "How long after taking damage your health starts coming back. Vanilla: 5 seconds. Only matters if something is actually healing you, so with Passive HP Regen at 0 you may not notice it.",
       "logic": "Higher values postpone actor-level HP regeneration for longer; lower values shorten the configured delay.",
-      "interaction": "If Passive HP Regen is set to 0, this delay may have no visible effect until another compatible health-recovery effect is active."
+      "interaction": "With Passive HP Regen at 0 this delay shows no effect until another healing-over-time effect is active."
     },
     {
       "id": "health.regenerationScalar",
@@ -5769,7 +5769,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How strong all health recovery over time is. Vanilla: 100% on Novice and Stalker, 75% on Veteran, 50% on Master. Doesn't start healing by itself — it boosts or weakens healing that is already running.",
+      "rationale": "How strong all health recovery over time is. Vanilla: Novice and Stalker 100%, Veteran 75%, Master 50%. Doesn't start healing by itself — it boosts or weakens healing that is already running.",
       "logic": "100% keeps compatible regeneration effects at full strength. Lower values weaken them; higher values strengthen them. Vanilla uses 100% on Novice/Stalker, 75% on Veteran and 50% on Master.",
       "interaction": "Passive HP Regen is 0 in vanilla, so this matters mainly when another effect is already restoring health, such as low-health recovery."
     },
@@ -5846,7 +5846,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Master's extra punishment for being badly hurt: your health barely recovers until you patch up. Vanilla: OFF on Novice, Stalker and Veteran, ON on Master. The normal low-health system works either way.",
+      "rationale": "Master's extra punishment for being badly hurt: your health barely recovers until you patch up. Vanilla: Novice–Veteran OFF, Master ON. The normal low-health system works either way.",
       "logic": "OFF leaves only the normal low-health system. ON adds the extra Master recovery penalty whenever the game enters its Master low-health state.",
       "interaction": "The game keeps the vanilla activation point for this state. The child control only changes how strong the recovery penalty is."
     },
@@ -5980,7 +5980,7 @@
         ]
       },
       "rationale": "How long the bandage's HP restore takes. Vanilla: 1 s — almost instant. Longer spreads the same 20 HP over more seconds, so you can't top up mid-fight.",
-      "logic": "Sets Duration of BandageHealing2; the effect keeps its 4 charges and its total HP. 1 s = vanilla, 10 s = the same heal over ten seconds.",
+      "logic": "Spreads the bandage's heal over this many seconds; the total HP stays the same. 1 s = vanilla, 10 s = the same heal over ten seconds.",
       "interaction": "Drag this item's TIME column; right-click resets only this duration.",
       "exposeInUi": false
     },
@@ -6028,7 +6028,7 @@
         ]
       },
       "rationale": "How long the medkit's HP restore takes. Vanilla: 1 s — almost instant. Longer spreads the same 70 HP over more seconds, so you can't top up mid-fight.",
-      "logic": "Sets Duration of MedkitHealing3; the effect keeps its 4 charges and its total HP. 1 s = vanilla, 10 s = the same heal over ten seconds.",
+      "logic": "Spreads the medkit's heal over this many seconds; the total HP stays the same. 1 s = vanilla, 10 s = the same heal over ten seconds.",
       "interaction": "Drag this item's TIME column; right-click resets only this duration.",
       "exposeInUi": false
     },
@@ -6076,7 +6076,7 @@
         ]
       },
       "rationale": "How long the army medkit's HP restore takes. Vanilla: 1 s — almost instant. Longer spreads the same 85 HP over more seconds, so you can't top up mid-fight.",
-      "logic": "Sets Duration of ArmyMedkitHealing4; the effect keeps its 4 charges and its total HP. 1 s = vanilla, 10 s = the same heal over ten seconds.",
+      "logic": "Spreads the army medkit's heal over this many seconds; the total HP stays the same. 1 s = vanilla, 10 s = the same heal over ten seconds.",
       "interaction": "Drag this item's TIME column; right-click resets only this duration.",
       "exposeInUi": false
     },
@@ -6124,7 +6124,7 @@
         ]
       },
       "rationale": "How long the scientific medkit's HP restore takes. Vanilla: 1 s — almost instant. Longer spreads the same 100 HP over more seconds, so you can't top up mid-fight.",
-      "logic": "Sets Duration of EcoMedkitHealing4; the effect keeps its 4 charges and its total HP. 1 s = vanilla, 10 s = the same heal over ten seconds.",
+      "logic": "Spreads the scientific medkit's heal over this many seconds; the total HP stays the same. 1 s = vanilla, 10 s = the same heal over ten seconds.",
       "interaction": "Drag this item's TIME column; right-click resets only this duration.",
       "exposeInUi": false
     },
@@ -6169,7 +6169,7 @@
       },
       "rationale": "How much health a regular medkit gives back. Vanilla: 70 HP — most of a vanilla health bar.",
       "logic": "",
-      "interaction": "Bleeding treatment is separate. If Master Consumable Effect Penalties are ON, the Master Medkit Healing setting further changes the final heal.",
+      "interaction": "Bleeding treatment is separate. With Master Consumable Effect Penalties ON, Master Medkit Healing further changes the final heal.",
       "exposeInUi": false
     },
     {
@@ -6213,7 +6213,7 @@
       },
       "rationale": "How much health an army medkit gives back. Vanilla: 85 HP.",
       "logic": "",
-      "interaction": "Bleeding treatment is separate. If Master Consumable Effect Penalties are ON, Master Army Medkit Healing further changes the final heal.",
+      "interaction": "Bleeding treatment is separate. With Master Consumable Effect Penalties ON, Master Army Medkit Healing further changes the final heal.",
       "exposeInUi": false
     },
     {
@@ -7062,7 +7062,7 @@
       "label": "Slow-Run-State Stamina Effect",
       "description": "Changes stamina recovery during the game's slow-running movement state. There is no separate Slow Run keybind.",
       "rationale": "Stamina effect while the game counts you as slow-running. Vanilla: 0 — no drain. There's no key for it; the game picks this state itself.",
-      "logic": "Negative values add a stamina penalty in the SlowRun state; zero is neutral; positive values help recovery. Do not treat this as the game's Walk toggle.",
+      "logic": "Negative values cost stamina while slow-running; zero is neutral; positive values help recovery. This is not the Walk toggle.",
       "interaction": "This is separate from walking. The game decides when movement counts as slow running.",
       "control": "slider",
       "valueKind": "raw",
@@ -7864,7 +7864,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Extra loot packages ordinary human bodies can carry: Medicine, Ammo and Water, in any combination. Vanilla: Novice gets Medicine + Ammo, Stalker gets Water, Veteran and Master get none.",
+      "rationale": "Extra loot packages ordinary human bodies can carry: Medicine, Ammo and Water, in any combination. Vanilla: Novice Medicine + Ammo, Stalker Water, Veteran and Master none.",
       "logic": "Each chip adds one bonus pack (Medicine, Ammo or Water) to ordinary corpses. Vanilla: Medicine + Ammo on Novice, Water on Stalker, none on Veteran and Master.",
       "interaction": "Bonus ammo quantity applies whenever the Ammo package is on. Standard medical items are not switched off by any package choice."
     },
@@ -8062,7 +8062,7 @@
       },
       "rationale": "Makes ordinary stashes come up empty more often. Vanilla: 0% — no change. 50% = every supply item turns up half as often (food, meds, drinks, ammo, coupons alike); the amount you get when it does stays the same. Quest and special stashes are never touched.",
       "logic": "0% keeps vanilla odds; 50% halves the odds of every supply item; 100% leaves these stashes without optional supplies. Same rule for every list type.",
-      "interaction": "Multiplies with every ADJUST ODDS cell and MEDICAL COMPOSITION; AMMO AMOUNT (stack sizes) and Extra Stash Gear stay separate. Test with unopened ordinary containers."
+      "interaction": "Multiplies with every ADJUST ODDS cell and MEDICAL COMPOSITION; AMMO AMOUNT (stack sizes) and EXTRA STASH GEAR stay separate. Check it on stashes you haven't opened yet."
     },
     {
       "id": "loot.stashMixAmmo",
@@ -9039,7 +9039,7 @@
         ]
       },
       "rationale": "How often stashes still hand you supplies you already have plenty of. Vanilla: 1× (about 10% per set). 0 = smart loot only helps when you are short; 2× = twice as generous.",
-      "logic": "Multiplies MinSpawnChance of each stash smart loot set, after odds and supply reduction; capped at the set's 'when short' chance.",
+      "logic": "Scales the 'when stocked' chance of every smart loot set, after odds and SUPPLY REDUCTION; never above its 'when low' chance.",
       "interaction": "EXTRA LOOT WHEN LOW sets the other end. SUPPLY REDUCTION and the Basic MEDS/FOOD/DRINKS odds cells still apply first.",
       "exposeInUi": true,
       "requiresToggle": "loot.stashSmartLootEnabled"
@@ -9086,7 +9086,7 @@
         ]
       },
       "rationale": "How strongly stashes help when you run low. Vanilla: 1× (about 70–80% per set). Lower = the Zone stops topping you up; 0 = no smart loot at all.",
-      "logic": "Multiplies MaxSpawnChance of each stash smart loot set, after odds and supply reduction; capped at 100%.",
+      "logic": "Scales the 'when low' chance of every smart loot set, after odds and SUPPLY REDUCTION; capped at 100%.",
       "interaction": "EXTRA LOOT WHEN STOCKED sets the other end and never exceeds this one.",
       "exposeInUi": true,
       "requiresToggle": "loot.stashSmartLootEnabled"
@@ -9308,7 +9308,7 @@
       },
       "rationale": "Adds a chance of bonus gear (weapons, armor, artifacts, attachments) in regular stashes, matched to the area's progression. Vanilla: OFF. While ON, 13 plain weapon spots in stashes are replaced by this system; quest and unique rewards stay.",
       "logic": "ON enables extra, rank-appropriate gear in eligible stashes. OFF disables that bonus system.",
-      "interaction": "The bonus system also replaces 13 verified regular-weapon stash placements. Quest and unique rewards remain protected.",
+      "interaction": "It also takes over 13 regular-weapon stash spots. Quest and unique rewards stay protected.",
       "exposeInUi": true
     },
     {
@@ -9642,7 +9642,7 @@
       },
       "rationale": "The roll for each bonus gear item in a picked stash. Vanilla: 50%. Even 100% isn't a guarantee in every stash — Coverage decides which stashes get a roll at all.",
       "logic": "Higher improves the odds for each offered bonus item. Even 100% still needs an eligible stash and item candidate.",
-      "interaction": "Use Bonus Gear Coverage for the number of eligible locations and category priority for the types of gear offered.",
+      "interaction": "BONUS GEAR COVERAGE sets how many stashes qualify; the PRIORITY bars set which kinds of gear are offered.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },
@@ -9763,7 +9763,7 @@
       },
       "rationale": "Chance a Basic stash has an RGD-5 grenade in it. Vanilla: 10%.",
       "logic": "The real chance a Basic stash has an RGD-5: 10% is vanilla, 0% never, 100% every Basic stash that can carry one.",
-      "interaction": "Pair it with RGD-5 AMOUNT: Chance decides whether the grenade appears; Amount decides how many you get. The six DLC1 CheapNoFresh stashes roll their RGD-5 at 100% in vanilla; there the same setting keeps its ratio to the Basic 10% (e.g. 5% = half as often).",
+      "interaction": "Pair it with RGD-5 AMOUNT: Chance decides whether the grenade appears; Amount decides how many you get. Six DLC1 Basic stashes always have their RGD-5 in vanilla; there the same setting keeps its ratio to the Basic 10% (e.g. 5% = half as often).",
       "lootHint": {
         "kind": "absoluteChancePer100",
         "label": "RGD-5 chance",
@@ -10923,7 +10923,7 @@
           "Runtime CFG uses 0.20 on Easy/Medium and 0.10 on Hard/Stalker for the Progression-Rank-matched MoneyCommon/Rare/Epic/Legendary entry."
         ]
       },
-      "rationale": "Chance a Rare stash pays out coupons (money). Vanilla: 20% on Novice and Stalker, 10% on Veteran and Master. How much you get still follows the game's progression.",
+      "rationale": "Chance a Rare stash pays out coupons (money). Vanilla: Novice and Stalker 20%, Veteran and Master 10%. How much you get still follows the game's progression.",
       "logic": "Novice and Stalker use 20%; Veteran and Master use 10%. This setting only changes whether coupons can appear, not which Common, Rare, Epic or Legendary coupon tier is selected.",
       "interaction": "Only the coupon reward inside a Rare stash; it doesn't change how often you find Rare stashes.",
       "exposeInUi": true,
@@ -11018,7 +11018,7 @@
         "status": "runtime_test_required",
         "notes": []
       },
-      "rationale": "How much traders pay you when you sell. Vanilla: 100% on Novice and Stalker, 65% on Veteran, 55% on Master. Lower = selling loot earns less.",
+      "rationale": "How much traders pay you when you sell. Vanilla: Novice and Stalker 100%, Veteran 65%, Master 55%. Lower = selling loot earns less.",
       "logic": "Higher raises what traders offer when you sell; lower reduces it. This is a price modifier, not an exact payout.",
       "interaction": "Broken Gear Value and item condition also affect what you can sell and for how much."
     },
@@ -11062,7 +11062,7 @@
         "status": "runtime_test_required",
         "notes": []
       },
-      "rationale": "How much traders charge you when you buy. Vanilla: 100% on Novice and Stalker, 125% on Veteran, 165% on Master. Higher = everything in the shop costs more.",
+      "rationale": "How much traders charge you when you buy. Vanilla: Novice and Stalker 100%, Veteran 125%, Master 165%. Higher = everything in the shop costs more.",
       "logic": "Higher makes buying more expensive; lower makes it cheaper. Each trader still applies their own pricing rules.",
       "interaction": "Item Values changes underlying prices; Prices Traders Pay applies when you sell instead."
     },
@@ -11110,7 +11110,7 @@
           "DLC1 profiles are patched only when DLC1 is installed."
         ]
       },
-      "rationale": "The most worn weapon or armor a trader will still take off your hands. Vanilla: 40% condition. Raise it and beat-up loot stops being sellable.\n\nSelma and Ragman buy anything in the game and keep doing so.",
+      "rationale": "The most worn weapon or armor a trader will still take off your hands. Vanilla: 40% condition. Raise it and beat-up loot stops being sellable. Selma and Ragman buy anything in the game and keep doing so.",
       "logic": "0% lets traders buy completely broken weapons and armor. 40% keeps vanilla. Higher settings make traders refuse more damaged gear.",
       "interaction": "Only decides whether a trader accepts damaged gear. The price they pay still depends on its condition and other trader rules."
     },
@@ -11286,7 +11286,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Base price of food, meds and other consumables. Vanilla: 1× on every difficulty. Affects both what you pay and what you get.",
+      "rationale": "Base price of food, meds and other consumables. Vanilla: 1×. Affects both what you pay and what you get.",
       "logic": "",
       "interaction": "",
       "exposeInUi": true
@@ -11331,7 +11331,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Base price of ammo. Vanilla: 1× on every difficulty. Higher = every magazine costs more to buy and sells for more.",
+      "rationale": "Base price of ammo. Vanilla: 1×. Higher = every magazine costs more to buy and sells for more.",
       "logic": "100% preserves the vanilla category-cost setting. Higher values increase this category cost layer; lower values decrease it.",
       "interaction": "Same on every difficulty. PRICES TRADERS PAY and PRICES YOU PAY still apply on top.",
       "exposeInUi": false
@@ -11376,7 +11376,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Base price of armor. Vanilla: 1× on every difficulty.",
+      "rationale": "Base price of armor. Vanilla: 1×.",
       "logic": "100% preserves the vanilla category-cost setting. Higher values increase this category cost layer; lower values decrease it.",
       "interaction": "Same on every difficulty. PRICES TRADERS PAY and PRICES YOU PAY still apply on top.",
       "exposeInUi": false
@@ -11421,7 +11421,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Base price of weapons. Vanilla: 1× on every difficulty. Lower = looted guns sell for less.",
+      "rationale": "Base price of weapons. Vanilla: 1×. Lower = looted guns sell for less.",
       "logic": "100% preserves the vanilla category-cost setting. Higher values increase this category cost layer; lower values decrease it.",
       "interaction": "Same on every difficulty. PRICES TRADERS PAY and PRICES YOU PAY still apply on top.",
       "exposeInUi": false
@@ -11466,7 +11466,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Base price of artifacts. Vanilla: 1× on every difficulty. Higher = artifact hunting pays better.",
+      "rationale": "Base price of artifacts. Vanilla: 1×. Higher = artifact hunting pays better.",
       "logic": "100% preserves the vanilla category-cost setting. Higher values increase this category cost layer; lower values decrease it.",
       "interaction": "Same on every difficulty. PRICES TRADERS PAY and PRICES YOU PAY still apply on top.",
       "exposeInUi": false
@@ -11655,7 +11655,7 @@
           "scaleNonZero preserves the zero-valued template/free entry while scaling all explicit paid-route prices together."
         ]
       },
-      "rationale": "What guides charge to take you to another area. Vanilla: 1×. Higher = fast travel hurts the wallet; 0 makes it free. Covers roaming guides on 2.1+ too.",
+      "rationale": "What guides charge to take you to another area. Vanilla: 1×. Higher = fast travel hurts the wallet; 0 makes it free. Covers roaming guides too.",
       "logic": "100% keeps vanilla guide prices. 50% halves paid routes, 200% doubles them, and 0% makes paid routes free.",
       "interaction": "Guide fees and their minimum price scale with this. Difficulty, reputation and region still shape the final price."
     },
@@ -11699,7 +11699,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Price of weapon and armor upgrades. Vanilla: 100% on Novice and Stalker, 125% on Veteran, 150% on Master. Which upgrades exist doesn't change.",
+      "rationale": "Price of weapon and armor upgrades. Vanilla: Novice and Stalker 100%, Veteran 125%, Master 150%. Which upgrades exist doesn't change.",
       "logic": "",
       "interaction": "Each upgrade still has its own base price. This setting makes upgrades generally cheaper or more expensive without changing their relative costs."
     },
@@ -11993,7 +11993,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Coupons you get for main story quests. Vanilla: 135% on Novice, 100% on Stalker, 75% on Veteran, 55% on Master.",
+      "rationale": "Coupons you get for main story quests. Vanilla: Novice 135%, Stalker 100%, Veteran 75%, Master 55%.",
       "logic": "",
       "interaction": "Side Quest Coupons are adjusted independently. This does not change stash rewards or starting money."
     },
@@ -12037,7 +12037,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Coupons you get for side quests. Vanilla: 135% on Novice, 100% on Stalker, 75% on Veteran, 55% on Master.",
+      "rationale": "Coupons you get for side quests. Vanilla: Novice 135%, Stalker 100%, Veteran 75%, Master 55%.",
       "logic": "",
       "interaction": "Main Quest Coupons are adjusted independently. This does not change stash rewards or starting money."
     },
@@ -12081,7 +12081,7 @@
         "status": "runtime_test_required",
         "notes": []
       },
-      "rationale": "How long your armor holds up before it's falling apart. Vanilla: 1.35× on Novice, 1× on Stalker, 0.9× on Veteran, 0.6× on Master. Higher = fewer repair trips; protection itself doesn't change.",
+      "rationale": "How long your armor holds up before it's falling apart. Vanilla: Novice 1.35×, Stalker 1×, Veteran 0.9×, Master 0.6×. Higher = fewer repair trips; protection itself doesn't change.",
       "logic": "",
       "interaction": "Changes armor condition durability only. It does not change armor protection values, weapon wear or jamming thresholds."
     },
@@ -12178,7 +12178,7 @@
       },
       "rationale": "How heavy food and meds are in your backpack. Vanilla: 1×. 0× = weightless. Their effects don't change.",
       "logic": "",
-      "interaction": "This does not change consumable effect strength or duration. DLC1 dry-ration weight is patched only when DLC1 is installed."
+      "interaction": "Effect strength and duration don't change. DLC1 dry rations are included when DLC1 is installed."
     },
     {
       "id": "equipment.weaponWeight",
@@ -12324,7 +12324,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much all damaging anomalies hurt, on top of each anomaly's own damage. Vanilla: 0.3× on Novice, 1× on Stalker, 1.45× on Veteran, 1.75× on Master. Your suit's protection still applies after this.",
+      "rationale": "How much all damaging anomalies hurt, on top of each anomaly's own damage. Vanilla: Novice 0.3×, Stalker 1×, Veteran 1.45×, Master 1.75×. Your suit's protection still applies after this.",
       "logic": "Higher raises the global damage multiplier; lower reduces it. Individual anomaly damage settings still apply.",
       "interaction": "Individual anomaly damage and this global setting combine before armor and other protection."
     },
@@ -12359,7 +12359,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Master's starvation punishment once you're severely hungry: actions cost much more stamina, you lose health every few seconds and stop healing. Vanilla: OFF on Novice, Stalker and Veteran, ON on Master. Normal hunger effects work either way.",
+      "rationale": "Master's starvation punishment once you're severely hungry: actions cost much more stamina, you lose health every few seconds and stop healing. Vanilla: Novice–Veteran OFF, Master ON. Normal hunger effects work either way.",
       "logic": "When the game reaches its severe-hunger state, this bundle adds +200% stamina drain, periodic 4 HP starvation damage on a 10-second interval after its delay, and -100% health regeneration. OFF leaves only the normal hunger effects.",
       "interaction": "The game keeps the vanilla starvation activation point. The child controls only change stamina drain, damage, interval, delay and health-recovery strength."
     },
@@ -12394,7 +12394,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Master's extra stamina cost while you're heavily irradiated. Vanilla: OFF on Novice, Stalker and Veteran, ON on Master. Radiation still builds up and hurts you either way.",
+      "rationale": "Master's extra stamina cost while you're heavily irradiated. Vanilla: Novice–Veteran OFF, Master ON. Radiation still builds up and hurts you either way.",
       "logic": "When the game enters the heavy-radiation state used by this Master bundle, it adds an extra stamina-drain penalty (50% in vanilla). The normal radiation system remains active either way.",
       "interaction": "The activation point stays vanilla. Radiation Accumulation and Radiation Recovery determine how quickly the player reaches and leaves that state."
     },
@@ -12402,7 +12402,7 @@
       "id": "advanced.fatigueMechanics",
       "tab": "master",
       "group": "Severe Fatigue",
-      "label": "Master Severe-Fatigue Penalties",
+      "label": "Master Severe Fatigue Penalties",
       "description": "Enables the Master-only severe-fatigue penalty bundle. This is separate from ordinary sleepiness build-up, aiming-time penalties and reload penalties.",
       "control": "toggle",
       "valueKind": "listMembership",
@@ -12429,7 +12429,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Master's punishment for being exhausted: smaller stamina bar, less carry capacity, more recoil, more sway and wider spread. Vanilla: OFF on Novice, Stalker and Veteran, ON on Master. Normal tiredness effects work either way.",
+      "rationale": "Master's punishment for being exhausted: smaller stamina bar, less carry capacity, more recoil, more sway and wider spread. Vanilla: Novice–Veteran OFF, Master ON. Normal tiredness effects work either way.",
       "logic": "When the game enters the Master severe-fatigue state, this bundle adds -20% maximum stamina, -20% carry capacity, +55% recoil, extra aim sway and shot spread in vanilla.",
       "interaction": "The activation point stays vanilla. The child controls only change how strong each severe-fatigue penalty becomes."
     },
@@ -12709,7 +12709,7 @@
       "id": "survival.fatigueLowAimPenalty",
       "tab": "survival",
       "group": "Fatigue / Sleepiness",
-      "label": "Light Fatigue Aim Delay",
+      "label": "Low Fatigue Aim Delay",
       "description": "At the Low Sleepiness state, vanilla increases aiming time by 15%.",
       "control": "slider",
       "valueKind": "raw",
@@ -12908,7 +12908,7 @@
       },
       "rationale": "How much severe tiredness slows your reloads. Vanilla: +18.75% reload time. Master fatigue can add more.",
       "logic": "Higher values make reloads slower while severely fatigued. Zero removes this reload penalty.",
-      "interaction": "Applies whenever the game is in its vanilla severe-fatigue state. Master Severe-Fatigue Penalties can add another layer on top."
+      "interaction": "Applies whenever the game is in its vanilla severe-fatigue state. Master Severe Fatigue Penalties can add another layer on top."
     },
     {
       "id": "survival.sleepHealthRestore",
@@ -13131,7 +13131,7 @@
       "id": "survival.severeFatigueAimSway",
       "tab": "master",
       "group": "Severe Fatigue",
-      "label": "Severe-Fatigue Aim Sway",
+      "label": "Severe Fatigue Aim Sway",
       "description": "Controls how much extra weapon sway Master severe fatigue adds while aiming.",
       "control": "slider",
       "valueKind": "raw",
@@ -13514,7 +13514,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Master's weaker meds: bandages and medkits heal less, plus a few food, energy-drink and artifact tweaks. Vanilla: OFF on Novice, Stalker and Veteran, ON on Master. The healing cuts are the bars below.",
+      "rationale": "Master's weaker meds: bandages and medkits heal less, plus a few food, energy-drink and artifact tweaks. Vanilla: Novice–Veteran OFF, Master ON. The healing cuts are the bars below.",
       "logic": "OFF leaves these extra Master penalties inactive. ON applies the Master-only changes on top of the normal item effects.",
       "interaction": "The healing controls directly below only matter while this switch is ON. Some food, energy-drink and Weird Kettle changes are still part of the same switch and are not individually adjustable yet."
     },
@@ -13915,8 +13915,8 @@
         "notes": []
       },
       "rationale": "How much health a Clicker hit takes. Vanilla: 70 base damage. Only the health damage changes; the hit still wears down your gear as usual.",
-      "logic": "Vanilla ClickerAnomalyHit deals 70 base Burn damage before the normal anomaly-difficulty/protection layers are resolved. 100% keeps that base value; 0% removes this direct health-damage component.",
-      "interaction": "This slider changes only the ClickerAnomalyHit base value. Global anomaly difficulty and player protection remain separate layers; Clicker equipment corrosion is intentionally untouched.",
+      "logic": "Vanilla: 70 base burn damage per hit, before difficulty and your protection. 100% keeps it; 0% removes this health damage.",
+      "interaction": "Only the Clicker's hit damage changes. GLOBAL ANOMALY DAMAGE and your protection still apply; its gear corrosion is untouched.",
       "exposeInUi": false
     },
     {
@@ -15219,7 +15219,7 @@
         ]
       },
       "rationale": "Share of F1 grenade boxes taken out of the world. Vanilla: 0% — every box stays. Separate from the ammo boxes.",
-      "logic": "0% keeps every vanilla F1 grenade box. Higher settings remove more of them from the world when you build the mod.",
+      "logic": "0% keeps every vanilla F1 grenade box; higher removes more of them from the world.",
       "interaction": "Stacks with AMMO BOXES removal: that slider can remove some of the F1 boxes this one keeps.",
       "exposeInUi": false
     },

@@ -1,3 +1,10 @@
+## 2026-11-17 — CURRENT: one Vanilla format, one paragraph, no file/engine names
+
+* **WHAT IT DOES is one paragraph** for every control (24 combat / survival texts had a second paragraph).
+* **One `Vanilla:` format:** `Vanilla: X.` when it is the same everywhere (no *on every difficulty*), otherwise `Vanilla: Novice a, Stalker b, Veteran c, Master d.` with equal neighbours merged (`Novice–Veteran 1×, Master 2×`, `Novice and Stalker 100%, …`). 53 rationales normalized; HUMAN TACTICS keep their seconds wording.
+* HIGHER / LOWER and WITH OTHER SETTINGS no longer name game files, effect IDs or fields (AIGlobals.cfg, WeatherSettings, BandageHealing2, CinnamonDegenBleeding, HerculesWeight, PSYBlockerIncreaseRegen, KeepNew, MinSpawnChance, ClickerAnomalyHit, CheapNoFresh, SlowRun) or dev notes (*needs an in-game acceptance test*, *verified*, *when you build the mod*).
+* Hunger thresholds say LOW / MEDIUM / SEVERE like the board (was STRONG / *Hunger Ladder*); labels `Low Fatigue Aim Delay` (was *Light*), `Severe Fatigue Aim Sway`, `Master Severe Fatigue Penalties` (no hyphen, like their siblings).
+
 ## 2026-11-17 — CURRENT: VANILLA instead of GAME ODDS; panel titles = board names
 
 * Board captions read `100% = VANILLA` (ADJUST ODDS, MEDICAL COMPOSITION) and `100% = VANILLA · 0% = REMOVED` (TRADER STOCK); was *GAME ODDS*. Panel texts follow: `Vanilla: 100%` (no *= the game's odds* tail), *keeps vanilla odds*, *X% of the vanilla odds*, *1× keeps vanilla timing / spread*.

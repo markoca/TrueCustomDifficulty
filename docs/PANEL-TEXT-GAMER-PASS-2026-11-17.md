@@ -20,3 +20,10 @@ The right-hand panel shows four sections for a selected control: **WHAT IT DOES*
 
 6. Say **vanilla**, not *the game's odds* / *GAME ODDS*: board captions `100% = VANILLA`, texts `Vanilla: 100%`, *keeps vanilla odds*.
 7. The panel title is the catalog label, so the label must be the name the board draws (Shuffle Loose Weapons, Med Drops, Ammo Pack Size, Bonus Packs, Corpse Scarcity, `{Tier} {Category} Odds`, Basic Grenades Chance, Rare Coupons Chance, RGD-5 Amount, Ammo Amount, Army Medkit Mix).
+
+## Third pass (same day)
+
+8. WHAT IT DOES is a single paragraph.
+9. `Vanilla:` format: `Vanilla: X.` if equal on all difficulties; otherwise `Vanilla: Novice a, Stalker b, Veteran c, Master d.` with equal neighbours merged (`Novice–Veteran`, `Novice and Stalker`).
+10. No game file names, effect IDs, CFG fields or dev notes in any panel section.
+11. Stage names follow the boards: LOW / MEDIUM / SEVERE.
