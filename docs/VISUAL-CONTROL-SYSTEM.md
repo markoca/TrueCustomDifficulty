@@ -4444,3 +4444,10 @@ The card between the EXTRA LOOT knobs and CHANCE A SET APPEARS is **SMART LOOT G
 `DrawWorldCheckRow` checkboxes — Meds, Ammo, Food & Drinks, Grenades — 4 across at ≥ 520-DIP bank,
 else 2×2; no percentages, no "100% = GAME ODDS" caption. Dimmed while the smart switch is OFF.
 Ids `loot.stashSmartMeds/Ammo/FoodDrinks/Grenades` (toggles, vanilla ON).
+
+## CURRENT 2026-11-17 — HUMAN TACTICS: COMBAT MINUTE + SHOT GROUP
+
+Left column title **COMBAT MINUTE** with 0 s / 30 s / 60 s axis labels; five rows (label 104 DIP, 22-DIP
+track, readout 112 DIP) replace the slider rails. Right column **ENEMY ACCURACY**: silhouette + dashed
+vanilla ring + tinted current ring with shot dots. Track, window and silhouette are non-card geometry
+(no card hover). Board geometry and heights unchanged. See docs/combat/HUMAN-TACTICS-AND-AWARENESS.md.

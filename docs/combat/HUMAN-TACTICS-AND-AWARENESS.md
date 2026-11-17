@@ -125,3 +125,18 @@ Current behavior supersedes the earlier display-only cap. SIGHT is really limite
 * Each knob's **caption sits above its own dial**; the vertical cell pitch is now **132 DIP** (formerly 118 DIP). The 9-DIP outer tick extension plus the 15-DIP conservative caption-height contract leave **at least 24 DIP** from the previous knob's last tick to the following knob's caption. The caption itself clears its own outer dial by at least 8 DIP. No borders, connector lines, secondary labels, or duplicated sliders are added.
 * Both narrow and wide responsive layouts derive board height from the same cell pitch, so no weather control is clipped. Source-native percent/rain-masking semantics, readout color, 5% steps, pointer hit area, hover glow, reset, keyboard operations, saved presets and CFG patch outputs remain unchanged. `AllControlsPatchContract` validates the caption-to-knob gutter.
 
+## CURRENT 2026-11-17 — HUMAN TACTICS redesign: COMBAT MINUTE + shot group
+
+* **COMBAT MINUTE** replaces the five rate sliders. Each tactic is one row on a shared 0–60 s axis
+  (labels 0 s / 30 s / 60 s, faint 30 s guide). Filled accent markers sit at every multiple of the
+  current average pause (middle of the native lo–hi window from `HumanCombatPolicy.CooldownSeconds`);
+  the first action's lo–hi window is shaded; hollow muted markers show the vanilla rhythm. Rhythms
+  denser than 7 DIP become short ticks (CAMPING PENALTY). A pause beyond 60 s parks the handle at the
+  right edge with "›". Readout right: `every 20–35 s` (only digits gold when changed).
+* Editing: drag anywhere on a row — the pointer sets the first action's time (average pause);
+  rate = average pause at 1× ÷ chosen pause, clamped to the native 0.25–3× range and snapped to the
+  catalog step. No new catalog ids, no writer change.
+* **ENEMY ACCURACY** draws a simple player silhouette (head, torso, legs) centred on the chest, the
+  vanilla group as a dashed ring and the current group as a tinted ring with a fixed 8-shot pattern;
+  drag the ring (same log mapping as before). Readout stays `shot spread N%`. `DispersionRadius` has no
+  documented unit, so the figure is relative — never a hit-percentage at a distance.
