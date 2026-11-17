@@ -130,7 +130,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "SevereFatiguePenaltyBoard" => "Enable severe-fatigue mechanics, then drag each of the five vertical penalty equalizer bars independently.",
                     "MasterLowHealth" => "Enable low-health mechanics and turn the HEALTH RECOVERY LOSS knob: how much slower HP regenerates while your health is low.",
                     "MasterRadiationPenalty" => "Enable the heavy-radiation stamina penalty, then choose how much extra stamina actions cost while it applies.",
-                    "MasterMedicalHealing" => "Switch the Master effect bundle on or off; adjust the Bandage, Medkit or Army Medkit healing tracks independently.",
+                    "MasterMedicalHealing" => "Switch HEALING ITEM EFFICIENCY REDUCTION on or off; adjust the Bandage, Medkit or Army Medkit healing tracks independently.",
                     "CouponFlow" => "Drag STARTING COUPONS to change your new-game wallet. Main and side quest payouts are separate.",
                     "TradingDashboard" => "PRICES TRADERS PAY controls selling; PRICES YOU PAY controls buying. The lower tracks handle sellable condition and broken-gear value.",
                     "RepairCurve" => "Drag one reputation point up or down to set its repair price; neighbouring points keep their order.",
@@ -145,7 +145,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "StashContentMix" => "ADJUST ODDS: each cell keeps X% of the vanilla odds for that kind of loot in that stash tier (100% = vanilla, 0% = never); Basic GRENADES and Rare COUPONS set the real chance per stash. ODDS PER STASH shows the result. SUPPLY REDUCTION lowers the odds of all supplies; AMMO AMOUNT and RGD-5 AMOUNT change how much you get.",
                     "StashMedicalComposition" => "ADJUST ODDS: each item keeps X% of the vanilla odds in every stash (100% = vanilla, 0% = never); ODDS PER STASH · MEDS shows the result per tier. QUANTITY sets Medkit and Army Medkit MIN/MAX stack sizes.",
                     "StashSmartLoot" => "Checkbox: smart loot ON/OFF in ordinary stashes. EXTRA LOOT WHEN STOCKED / WHEN LOW: how often a set appears when you have enough or run low. SMART LOOT GIVES: which items it may give. Bars = chance a set appears (grey tick = vanilla).",
-                    "StashGear" => "BONUS GEAR COVERAGE chooses how many stashes can get extra gear; PRIORITY favors item kinds; BONUS CHANCE is the roll per stash. Quest and unique loot are protected.",
+                    "StashGear" => "BONUS GEAR COVERAGE chooses how many stashes can get extra gear; PRIORITY favors item kinds; BONUS CHANCE is the chance per item. Quest and unique loot are protected.",
                     "AmmoDistribution" => "AMMO PER BOX and GRENADES PER BOX change amounts. The AMMO TYPE MIX knobs favor calibers; AMMO BOX CONTENT DISTRIBUTION only previews the result. MEDICAL BOXES: the ARMY MEDKIT MIX knob sets how often a medical box gives an Army Medkit (per player rank).",
                     "BreakableBoxYields" => "Drag the ammo or grenade yield track to change only that box's contents.",
                     "PlayerWeaponProfile" => "Turn WEAPON DAMAGE, HEADSHOT DAMAGE and JAM RATE independently. Scroll or use arrow keys for fine adjustments.",
@@ -199,7 +199,7 @@ public sealed class ParameterViewModel : ObservableObject
                     + Environment.NewLine + "Right-click one species to reset it; R resets all fourteen.";
 
             if (IsTraderSellsMember || IsTraderSupply)
-                return "Pick a trader type, then drag a category's rail: 100% keeps vanilla odds for those offers, lower makes them rarer, 0% removes the category. AMMO / MEDICAL SUPPLY change stack sizes for every trader; where a stack is already 1 a lower supply makes the offer rarer instead. RARE GEAR (STALKERS only): chance to offer one rare item, occasionally two (8% second roll); 0% = off."
+                return "Pick a trader type, then drag a category's rail: 100% keeps vanilla odds for those offers, lower makes them rarer, 0% removes the category. AMMO / MEDICAL SUPPLY change stack sizes for every trader; where a stack is already 1 a lower supply makes the offer rarer instead. RARE GEAR (STALKERS only): chance to offer one rare item, occasionally two (8% chance of a second); 0% = off."
                     + Environment.NewLine + "Right-click a rail to reset it; R resets the board. CLEAR removes restrictions left by older presets.";
             if (IsRange)
                 return "Drag MIN or MAX to choose the range. Arrow keys make small changes; Home/End jump to the limits."

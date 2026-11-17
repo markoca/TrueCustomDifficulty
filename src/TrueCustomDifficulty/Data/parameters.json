@@ -251,7 +251,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How many bullets a human enemy can soak up before going down. Higher = longer, more ammo-hungry firefights; lower = enemies drop fast. Vanilla: Novice 1×, Stalker 1.2×, Veteran 1×, Master 1.5×. Pair it with WEAPON DAMAGE — both set your time-to-kill, so raising one and lowering the other stacks hard.",
+      "rationale": "How many bullets a human enemy can soak up before going down. Higher = longer, more ammo-hungry firefights; lower = enemies drop fast. Vanilla: Novice 1×, Stalker 1.2×, Veteran 1×, Master 1.5×. Pair it with WEAPON DAMAGE — together they set your time-to-kill.",
       "logic": "",
       "interaction": "WEAPON DAMAGE affects the same time-to-kill from the opposite side. Raising enemy health while lowering your weapon damage compounds the effect."
     },
@@ -959,7 +959,7 @@
       },
       "rationale": "The damage your own guns deal on a normal body hit. Lower values mean more bullets per kill and more ammo burned. Vanilla: Novice 1.3×, Stalker 1×, Veteran and Master 0.75×. Headshots get an extra boost on top from HEADSHOT DAMAGE.",
       "logic": "",
-      "interaction": "HEADSHOT DAMAGE adds another layer on headshots. HUMAN ENEMY HP also changes the final time-to-kill."
+      "interaction": "HEADSHOT DAMAGE multiplies headshots on top. HUMAN ENEMY HP also changes the time-to-kill."
     },
     {
       "id": "combat.playerHeadshotMultiplier",
@@ -1214,7 +1214,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Whether hits you already healed still count against your burst protection. ON (Veteran, Master) = patching up mid-fight doesn't reset the safety net; OFF (Novice, Stalker) is more forgiving.",
+      "rationale": "Whether hits you already healed still count against your burst protection. Vanilla: Novice and Stalker OFF, Veteran and Master ON. ON = patching up mid-fight doesn't reset the safety net; OFF is more forgiving.",
       "logic": "OFF = Novice and Stalker behaviour, ON = Veteran and Master. Healing always restores HP; this only decides whether PEAK / MINIMUM HIT PROTECTION still counts the healed damage.",
       "interaction": "Works with Minimum and PEAK HIT PROTECTION; healing always restores HP even when past hits remain counted."
     },
@@ -3652,7 +3652,7 @@
       },
       "rationale": "Where on the 0–100 hunger meter the first, mild hunger stage kicks in. Vanilla: 17 pts.",
       "logic": "Keep LOW at or below MEDIUM and SEVERE. Moving one threshold nudges its neighbours when needed.",
-      "interaction": "This changes state timing only. Medium/Severe stamina-recovery penalties are tuned separately.",
+      "interaction": "Only moves when hunger starts; the MEDIUM / SEVERE stamina penalties are set separately.",
       "exposeInUi": false
     },
     {
@@ -5848,7 +5848,7 @@
       },
       "rationale": "Master's extra punishment for being badly hurt: your health barely recovers until you patch up. Vanilla: Novice–Veteran OFF, Master ON. The normal low-health system works either way.",
       "logic": "OFF = normal low-HP behaviour. ON = your health barely recovers while you're badly hurt.",
-      "interaction": "The game keeps the vanilla activation point for this state. The child control only changes how strong the recovery penalty is."
+      "interaction": "It starts at the same HP as vanilla; LOW-HP REGEN LOSS below sets how hard it bites."
     },
     {
       "id": "health.masterLowHealthPenalty",
@@ -5888,7 +5888,7 @@
         "notes": []
       },
       "rationale": "How much that Master low-health punishment slows your healing. Vanilla: 70%. 0% removes it. Only works while LOW HEALTH MECHANICS is ON.",
-      "logic": "Higher values suppress health regeneration more strongly; zero removes this penalty component.",
+      "logic": "Higher = your health barely recovers while badly hurt; 0% removes this penalty.",
       "interaction": "Stacks on top of the normal low-HP recovery and HEALTH REGEN STRENGTH.",
       "requiresToggle": "advanced.lowHealthMechanics"
     },
@@ -6350,7 +6350,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much of a bandage's heal you keep under Master's weaker meds. Vanilla: 25% — about 5 HP from a 20 HP bandage. 100% = no cut.",
+      "rationale": "How much of a bandage's heal you keep under Master's weaker meds. Vanilla: 25% — about 5 HP from a 20 HP bandage. 100% = no cut. Only works while HEALING ITEM EFFICIENCY REDUCTION is ON.",
       "logic": "100% means no Master healing cut; lower values make the Bandage heal less.",
       "interaction": "The base heal and this Master cut multiply, so changing both stacks up.",
       "requiresToggle": "advanced.masterEffectModifierMechanics"
@@ -6392,7 +6392,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much of a medkit's heal you keep under Master's weaker meds. Vanilla: 71% — about 50 HP from a 70 HP medkit. 100% = no cut.",
+      "rationale": "How much of a medkit's heal you keep under Master's weaker meds. Vanilla: 71% — about 50 HP from a 70 HP medkit. 100% = no cut. Only works while HEALING ITEM EFFICIENCY REDUCTION is ON.",
       "logic": "100% means no Master healing cut; lower values make the Medkit heal less.",
       "interaction": "The base heal and this Master cut multiply, so changing both stacks up.",
       "requiresToggle": "advanced.masterEffectModifierMechanics"
@@ -6434,7 +6434,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much of an army medkit's heal you keep under Master's weaker meds. Vanilla: 82% — about 70 HP from an 85 HP army medkit. 100% = no cut.",
+      "rationale": "How much of an army medkit's heal you keep under Master's weaker meds. Vanilla: 82% — about 70 HP from an 85 HP army medkit. 100% = no cut. Only works while HEALING ITEM EFFICIENCY REDUCTION is ON.",
       "logic": "100% means no Master healing cut; lower values make the Army Medkit heal less.",
       "interaction": "The base heal and this Master cut multiply, so changing both stacks up.",
       "requiresToggle": "advanced.masterEffectModifierMechanics"
@@ -6975,7 +6975,7 @@
       "description": "Changes stamina recovery while you are sprinting but your movement speed is being limited. The game decides when this slower sprint state is active.",
       "rationale": "Stamina drain when you hold sprint but something slows you down (heavy load, injury). Vanilla: −0.65, the same as normal running.",
       "logic": "More negative = it drains faster; 0 = no extra drain; positive = you recover while doing it.",
-      "interaction": "This works alongside normal Sprint stamina behavior. Encumbrance and other movement limits can affect when the game uses this slower sprint state.",
+      "interaction": "Works alongside normal sprint stamina. Heavy load and other slowdowns decide when it kicks in.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -8430,8 +8430,8 @@
           "Older presets above 100% are clamped to 100% on load."
         ]
       },
-      "rationale": "Follows the BANDAGES cell automatically: the same \"keep X% of the vanilla odds\" for bandage in the shared Basic pick and smart world stashes. Vanilla: 100%.",
-      "logic": "Follows the BANDAGES cell: 100% keeps vanilla odds, 0% removes Bandage from the weighted picks.",
+      "rationale": "Follows the BANDAGES cell automatically: the same \"keep X% of the vanilla odds\" for bandages in Basic and smart world stashes. Vanilla: 100%.",
+      "logic": "Follows the BANDAGES cell: 100% keeps vanilla odds, 0% means stashes never give bandages this way.",
       "interaction": "Mirrored both ways with BANDAGE ODDS; the last change (cell, preset or reset) wins.",
       "exposeInUi": true
     },
@@ -8525,7 +8525,7 @@
         ]
       },
       "rationale": "Follows the MEDKITS cell automatically: the same \"keep X% of the vanilla odds\" for medkit in smart world stashes. Vanilla: 100%.",
-      "logic": "Follows the MEDKITS cell: 100% keeps vanilla odds, 0% removes Medkit from the weighted picks.",
+      "logic": "Follows the MEDKITS cell: 100% keeps vanilla odds, 0% means stashes never give medkits this way.",
       "interaction": "Mirrored both ways with MEDKIT ODDS; the last change (cell, preset or reset) wins.",
       "exposeInUi": true
     },
@@ -8619,7 +8619,7 @@
         ]
       },
       "rationale": "Follows the ARMY MEDKITS cell automatically: the same \"keep X% of the vanilla odds\" for army medkit in smart world stashes. Vanilla: 100%.",
-      "logic": "Follows the ARMY MEDKITS cell: 100% keeps vanilla odds, 0% removes Army Medkit from the weighted picks.",
+      "logic": "Follows the ARMY MEDKITS cell: 100% keeps vanilla odds, 0% means stashes never give army medkits this way.",
       "interaction": "Mirrored both ways with ARMY MEDKIT ODDS; the last change (cell, preset or reset) wins.",
       "exposeInUi": true
     },
@@ -8713,7 +8713,7 @@
         ]
       },
       "rationale": "Follows the ANTI-RAD cell automatically: the same \"keep X% of the vanilla odds\" for anti-rads in smart world stashes. Vanilla: 100%.",
-      "logic": "Follows the ANTI-RAD cell: 100% keeps vanilla odds, 0% removes Anti-Rad from the weighted picks.",
+      "logic": "Follows the ANTI-RAD cell: 100% keeps vanilla odds, 0% means stashes never give anti-rads this way.",
       "interaction": "Mirrored both ways with ANTI-RAD ODDS; the last change (cell, preset or reset) wins.",
       "exposeInUi": true
     },
@@ -9361,9 +9361,9 @@
           "Rank tiers and 142-item rank-scoped SID catalog originate from gear-progression-ranks.csv."
         ]
       },
-      "rationale": "How many regular stashes get a shot at bonus gear. Vanilla: 0%. 50% = about half of them. Each picked stash still rolls the BONUS CHANCE. Only works while EXTRA STASH GEAR is ON.",
+      "rationale": "How many regular stashes get a shot at bonus gear. Vanilla: 0%. 50% = about half of them. Each of those still needs to pass BONUS CHANCE. Only works while EXTRA STASH GEAR is ON.",
       "logic": "Higher covers more eligible stashes; zero covers none. Full coverage still does not guarantee an item.",
-      "interaction": "BONUS CHANCE controls each offered item's roll; category priorities choose which gear can be offered.",
+      "interaction": "BONUS CHANCE decides each bonus item; the PRIORITY bars decide which kinds of gear are offered.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },
@@ -10062,7 +10062,7 @@
         ]
       },
       "rationale": "How often breakable ammo boxes give 9 mm pistol rounds (9×18 in SNG boxes, 9×19 in both box types). Vanilla: 1×. Together with the other calibers this sets the ammo mix, not the number of rounds.",
-      "logic": "Higher priority makes an ammo family more likely within supported box pools. 1× preserves the original mix.",
+      "logic": "Higher = this caliber turns up more often in ammo boxes; 1× keeps the vanilla mix.",
       "interaction": "AMMO PER BOX changes how many rounds appear, not which caliber families are favored.",
       "exposeInUi": true
     },
@@ -10555,7 +10555,7 @@
           "operation": "scaleClampedChance"
         }
       ],
-      "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
+      "logic": "100% keeps vanilla odds for each item; 50% halves them; 0% means it never turns up. It never fills a whole stash.",
       "interaction": "Affects eligible Standard stash medical items only. Availability, selection priority and stack size remain separate.",
       "rationale": "How often Standard stashes have meds. Vanilla: 100% (bandages 40%, medkits 100%). 50% = half as likely."
     },
@@ -10601,7 +10601,7 @@
           "operation": "scaleClampedChance"
         }
       ],
-      "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
+      "logic": "100% keeps vanilla odds for each item; 50% halves them; 0% means it never turns up. It never fills a whole stash.",
       "interaction": "Affects eligible Standard stash drinks only. Availability, selection priority and stack size remain separate.",
       "rationale": "How often Standard stashes have drinks. Vanilla: 100% (vodka 50%, energy drinks 100%)."
     },
@@ -10647,7 +10647,7 @@
           "operation": "scaleClampedChance"
         }
       ],
-      "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
+      "logic": "100% keeps vanilla odds for each item; 50% halves them; 0% means it never turns up. It never fills a whole stash.",
       "interaction": "Affects eligible Standard stash coupons only. Availability, selection priority and stack size remain separate.",
       "rationale": "How often Standard stashes pay out coupons (Novice and Stalker only). Vanilla: 100% = the game's 10%. 50% = 5%; 0% = none. Veteran and Master have none to begin with."
     },
@@ -10693,7 +10693,7 @@
           "operation": "scaleClampedChance"
         }
       ],
-      "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
+      "logic": "100% keeps vanilla odds for each item; 50% halves them; 0% means it never turns up. It never fills a whole stash.",
       "interaction": "Affects Rare stash ammo only. Ammo amount (AMMO AMOUNT) stays separate.",
       "rationale": "How often Rare stashes have ammo. Vanilla: 100%. Lower = more Rare stashes without ammo; 0% = none at all."
     },
@@ -10739,7 +10739,7 @@
           "operation": "scaleClampedChance"
         }
       ],
-      "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
+      "logic": "100% keeps vanilla odds for each item; 50% halves them; 0% means it never turns up. It never fills a whole stash.",
       "interaction": "Affects eligible Rare stash medical items only. Availability, selection priority and stack size remain separate.",
       "rationale": "How often Rare stashes have meds (bandages, medkits, anti-rads, army medkits). Vanilla: 100% — they're always there."
     },
@@ -10785,7 +10785,7 @@
           "operation": "scaleClampedChance"
         }
       ],
-      "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
+      "logic": "100% keeps vanilla odds for each item; 50% halves them; 0% means it never turns up. It never fills a whole stash.",
       "interaction": "Affects eligible Rare stash food only. Availability, selection priority and stack size remain separate.",
       "rationale": "How often Rare stashes have canned food. Vanilla: 100%."
     },
@@ -10831,7 +10831,7 @@
           "operation": "scaleClampedChance"
         }
       ],
-      "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
+      "logic": "100% keeps vanilla odds for each item; 50% halves them; 0% means it never turns up. It never fills a whole stash.",
       "interaction": "Affects eligible Rare stash drinks only. Availability, selection priority and stack size remain separate.",
       "rationale": "How often Rare stashes have energy drinks. Vanilla: 100%."
     },
@@ -10877,7 +10877,7 @@
           "operation": "scaleClampedChance"
         }
       ],
-      "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
+      "logic": "100% keeps vanilla odds for each item; 50% halves them; 0% means it never turns up. It never fills a whole stash.",
       "interaction": "Affects eligible Rare stash grenades only. Availability, selection priority and stack size remain separate.",
       "rationale": "How often Rare stashes have RGD-5 grenades. Vanilla: 100%."
     },
@@ -12396,7 +12396,7 @@
       },
       "rationale": "Master's extra stamina cost while you're heavily irradiated. Vanilla: Novice–Veteran OFF, Master ON. Radiation still builds up and hurts you either way.",
       "logic": "While you're heavily irradiated, actions cost extra stamina (+50% in vanilla). Normal radiation damage works either way.",
-      "interaction": "The activation point stays vanilla. RADIATION ACCUMULATION and RADIATION RECOVERY determine how quickly the player reaches and leaves that state."
+      "interaction": "It starts at the same radiation level as vanilla. RADIATION ACCUMULATION and RADIATION RECOVERY decide how fast you get there and back."
     },
     {
       "id": "advanced.fatigueMechanics",
@@ -12474,7 +12474,7 @@
       },
       "rationale": "Bonus stamina recovery while your stomach is full. Vanilla: +20% — a reward for eating before a fight. 0% removes it.",
       "logic": "Higher = a bigger stamina bonus for staying well fed; 0% removes it. It never turns into a penalty.",
-      "interaction": "The game keeps the vanilla boundary for leaving the well-fed state. STAMINA REGEN in the Stamina tab sets the underlying regeneration rate."
+      "interaction": "You stop being well fed at the vanilla point. STAMINA REGEN sets the normal recovery rate."
     },
     {
       "id": "survival.starvationStaminaDrain",
@@ -12658,9 +12658,9 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Grace period before the starvation penalties kick in. Vanilla: 3 seconds.",
+      "rationale": "Grace period before the starvation penalties kick in. Vanilla: 3 seconds. Only works while STARVATION MECHANICS is ON.",
       "logic": "Lower = the penalties hit sooner once you're starving; higher = a longer grace period.",
-      "interaction": "STARVATION MECHANICS decides whether this bundle exists. This control only changes the grace period before its active penalties begin.",
+      "interaction": "STARVATION MECHANICS turns the penalties on; this only sets the grace period before they start.",
       "requiresToggle": "advanced.starvationMechanics"
     },
     {
@@ -12701,7 +12701,7 @@
         "notes": []
       },
       "rationale": "How much starving blocks your healing under Master rules. Vanilla: 100% — no healing at all. 0% removes it. Only works while STARVATION MECHANICS is ON.",
-      "logic": "Higher values suppress health regeneration more strongly; zero removes this component.",
+      "logic": "Higher = health recovers less while starving; 0% removes this penalty.",
       "interaction": "This acts on regeneration rather than direct damage, so it combines with STARVATION DAMAGE and the Health tab regeneration settings.",
       "requiresToggle": "advanced.starvationMechanics"
     },
@@ -12744,7 +12744,7 @@
       },
       "rationale": "How much light tiredness slows your aiming. Vanilla: +15% time to aim.",
       "logic": "Higher values make aiming settle more slowly once the low-fatigue threshold is crossed; zero removes this standard low-fatigue aiming penalty.",
-      "interaction": "Applies whenever the game is in its vanilla low-fatigue state."
+      "interaction": "Applies whenever you're slightly tired."
     },
     {
       "id": "survival.fatigueMediumAimPenalty",
@@ -12784,7 +12784,7 @@
         "notes": []
       },
       "rationale": "How much moderate tiredness slows your aiming. Vanilla: +25% time to aim.",
-      "logic": "Higher values further slow aiming during medium fatigue; zero removes this component.",
+      "logic": "Higher = aiming is slower while moderately tired; 0 removes this penalty.",
       "interaction": "Applies whenever you're moderately tired, instead of the low-fatigue aim delay."
     },
     {
@@ -12825,8 +12825,8 @@
         "notes": []
       },
       "rationale": "How much severe tiredness slows your aiming. Vanilla: +40% time to aim — sleep before a big fight.",
-      "logic": "Higher values make severe fatigue more disruptive to aiming; zero removes this standard aiming-time component.",
-      "interaction": "Applies whenever the game is in its vanilla severe-fatigue state."
+      "logic": "Higher = aiming is slower while severely tired; 0 removes this penalty.",
+      "interaction": "Applies whenever you're severely tired."
     },
     {
       "id": "survival.fatigueMediumReloadPenalty",
@@ -13032,8 +13032,8 @@
         "notes": []
       },
       "rationale": "How much of your stamina bar you lose while exhausted under Master rules. Vanilla: 20%. 0% removes it. Only works while SEVERE FATIGUE MECHANICS is ON.",
-      "logic": "Higher values reduce the available stamina pool further; zero removes this component.",
-      "interaction": "MAX STAMINA defines your normal pool; this loss applies only during Master severe fatigue.",
+      "logic": "Higher = an even smaller stamina bar while severely tired; 0% removes this penalty.",
+      "interaction": "MAX STAMINA sets your normal bar; this loss only applies while you're severely tired.",
       "requiresToggle": "advanced.fatigueMechanics"
     },
     {
@@ -13173,7 +13173,7 @@
       },
       "rationale": "How much more your sights wobble while exhausted under Master rules. Vanilla: +40%. 0% removes it. Only works while SEVERE FATIGUE MECHANICS is ON.",
       "logic": "",
-      "interaction": "Recoil and bullet spread are separate penalties in the same Master fatigue bundle.",
+      "interaction": "Recoil and shot spread are separate penalties of SEVERE FATIGUE MECHANICS.",
       "requiresToggle": "advanced.fatigueMechanics"
     },
     {
@@ -13215,7 +13215,7 @@
       },
       "rationale": "How much wider your shots spread while exhausted under Master rules. Vanilla: +50%. 0% removes it. Only works while SEVERE FATIGUE MECHANICS is ON.",
       "logic": "",
-      "interaction": "Recoil and aim sway are separate penalties in the same Master fatigue bundle.",
+      "interaction": "Recoil and aim sway are separate penalties of SEVERE FATIGUE MECHANICS.",
       "requiresToggle": "advanced.fatigueMechanics"
     },
     {
@@ -14293,7 +14293,7 @@
       },
       "rationale": "Odds that a field actually drops an artifact when it regrows. Vanilla: 1× (25% + 15% bonus). 2× = 50% (+30%); 0× = anomaly fields never grow artifacts.",
       "logic": "1× keeps the game's 25% / 15%. Each value is multiplied and capped at 100%. 0× removes world anomaly artifacts; quest and unique artifacts stay.",
-      "interaction": "RARE LUCK and PER SPAWN shape what a successful roll gives. When fields refill is the game's own schedule (after emissions)."
+      "interaction": "RARE LUCK and PER SPAWN shape what you find. Fields still refill on the game's own schedule (after emissions)."
     },
     {
       "id": "environment.artifactRareLuck",
@@ -14385,7 +14385,7 @@
       },
       "rationale": "How many artifacts drop at once when a field spawns. Vanilla: 1. 2–3 turn a well-searched field into a jackpot.",
       "logic": "1 keeps the game's single artifact per spawn. 2 or 3 sets the spawner Count directly.",
-      "interaction": "Multiplies every successful roll; SPAWN CHANCE decides how often that happens."
+      "interaction": "Multiplies every artifact that spawns; SPAWN CHANCE decides how often that happens."
     },
     {
       "id": "loot.mutant.blindDogChance",
@@ -15530,7 +15530,7 @@
           "The layout is freshly randomized on every Build."
         ]
       },
-      "rationale": "How many loose guns you'll find out in the Zone after shuffling. Vanilla: 100% fills all safe weapon spots. Turn it down for fewer guns lying around — even 0% leaves at least one of each regular model. Quest, unique and NPC weapons are unaffected.",
+      "rationale": "How many loose guns you'll find out in the Zone after shuffling. Vanilla: 100% fills all safe weapon spots. Turn it down for fewer guns lying around — even 0% leaves at least one of each regular model. Quest, unique and NPC weapons are unaffected. Only works while SHUFFLE LOOSE WEAPONS is ON.",
       "logic": "Higher = more weapon spots stay filled; lower = guns are scarcer. Even 0% keeps one of every regular model.",
       "interaction": "Only affects loose regular weapons when SHUFFLE LOOSE WEAPONS is ON; quest, unique and NPC guns are untouched."
     },
@@ -16030,7 +16030,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Not used: the game limits each mutant species separately, so there is no single mutant slider that's proven to work. Use the per-species bars instead.",
+      "rationale": "Not used: the game limits each mutant species separately, so there's no single mutant slider that works. Vanilla: 1×. Use the per-species bars instead.",
       "logic": "The game has separate per-species group limits, so this hidden setting is not used to scale them.",
       "interaction": "Not shown in the normal UI. Use the species-specific MUTANT GROUP SIZE radar instead.",
       "exposeInUi": false

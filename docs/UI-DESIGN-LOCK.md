@@ -1,3 +1,9 @@
+## 2026-11-18 — CURRENT: panel text style is a gated structure
+
+* New style guide `docs/PANEL-TEXT-STYLE.md`: per-control structure (WHAT IT DOES = effect → `Vanilla:` → feel → master hint; HIGHER / LOWER = direction only; WITH OTHER SETTINGS = CAPS cross-references; CONTROLS = hands + one reset sentence), format rules (× / % / raw units, spacing, – and →, CAPS names) and a tech-speak → player-words table.
+* New release gate `tools/audit_panel_text_style.py` (in pre_release): scans rationale / logic / interaction of every panel-reachable control, NPC LOOT cards and CONTROLS help for tech speak (CFG, native, entries, pools, rolls, picks, state, bundle, layer, component, internal ids, dev notes …), letter-x multipliers, hyphen ranges, `->`, multi-paragraph rationales, missing `Vanilla:`, missing `Only works while … is ON.` and over-long texts. `--report` lists all hits.
+* The first run found 57 hits; all fixed (stash odds cells *never turns up* instead of *disables that roll*, fatigue / starvation / severe-fatigue *component* / *bundle* / *state* wording, Master healing and starvation delay / GUNS TO FIND master hints, Healed Damage Counts and Mutant Spawn Count `Vanilla:` lines, artifact *roll* wording, HEALING ITEM EFFICIENCY REDUCTION help, RARE GEAR *second roll*).
+
 ## 2026-11-18 — CURRENT: player-voice pass, second round (~55 texts)
 
 * HIGHER / LOWER and WITH OTHER SETTINGS no longer speak about *states*, *bundles*, *layers*, *components*, *actor-level* or *configured* values: e.g. `Higher = a stronger second wind`, `Applies whenever you're severely tired`, `Once you're severely tired: −20% max stamina, −20% carry weight, +55% recoil …`, `Higher = HP regen waits longer after you get hurt`, `The base heal and this Master cut multiply, so changing both stacks up.`

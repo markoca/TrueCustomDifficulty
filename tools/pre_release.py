@@ -29,6 +29,7 @@ STATIC = (
     # The 2026-10-19 RC copy freeze is historical (all copy rewritten since);
     # current copy gates: readable rationales + approved player labels.
     ("rc-rationale-readability", "tools/audit_rc_rationale_readability.py"),
+    ("panel-text-style", "tools/audit_panel_text_style.py"),
     ("rc-player-labels", "tools/audit_rc_player_labels.py"),
     ("current-stashes", "tools/audit_stashes_current.py"),
     ("stash-content-gear", "tools/audit_stash_content_gear.py"),
