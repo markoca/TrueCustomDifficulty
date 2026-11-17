@@ -292,6 +292,7 @@ public sealed class MainViewModel : ObservableObject
             "health.armyMedkitHealing",
             "health.ecoMedkitHealing",
             "health.foodHealing",
+            "health.healTime",
             "health.bandageBleeding",
             "health.medkitBleeding",
             "health.armyMedkitBleeding",
