@@ -1,3 +1,11 @@
+## 2026-11-17 — CURRENT: HUMAN AWARENESS radar readability pass
+
+* Ring labels (10 / 25 / 50 / 100 / 200 m) moved to the 6 o'clock axis behind the enemy. Each sits on a small panel-coloured backing, so they no longer pile up on one line.
+* The extra outer boundary circle is removed. The MEMORY track is a thin line (1.2 px) and its filled arc is thicker (4 px), so the timer clearly differs from the distance rings.
+* HEARING is drawn under the SIGHT field. Each handle carries its own caption on the radar (SIGHT at the cone tip, HEARING at the circle handle, MEMORY outside the arc end).
+* The legend has a swatch for each shape (gold field / white circle / gold arc) and larger texts: 10.5 captions, 13 values, 14 when changed (only the numbers turn gold).
+* Wider side margins leave room for the MEMORY caption. The legend starts 70 DIP right of the ring.
+
 ## 2026-11-17 — CURRENT: HUMAN AWARENESS detection radar
 
 HUMAN AWARENESS is no longer three slider cards. It is a top-down **detection radar** with the enemy in the centre, facing up (`Controls/AggregateVisualControl.HumanAwareness.cs`).

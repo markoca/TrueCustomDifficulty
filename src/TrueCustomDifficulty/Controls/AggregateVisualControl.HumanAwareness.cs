@@ -35,17 +35,18 @@ public sealed partial class AggregateVisualControl
     private static AwarenessLayout HumanAwarenessLayout(double width)
     {
         var wide = width >= 600.0;
+        // Side margins leave room for the MEMORY caption outside the ring.
         var radius = wide
-            ? Math.Clamp((width - 340.0) / 2.0, 90.0, 150.0)
-            : Math.Clamp((width - 80.0) / 2.0, 80.0, 140.0);
-        var centerX = wide ? 24.0 + AwarenessMemoryGap + radius + 12.0 : width / 2.0;
+            ? Math.Clamp((width - 420.0) / 2.0, 90.0, 150.0)
+            : Math.Clamp((width - 170.0) / 2.0, 70.0, 140.0);
+        var centerX = wide ? 70.0 + AwarenessMemoryGap + radius : width / 2.0;
         var center = new Point(centerX, 48.0 + AwarenessMemoryGap + radius + 8.0);
         var radarBottom = center.Y + radius + AwarenessMemoryGap + 14.0;
         Rect legend;
         double height;
         if (wide)
         {
-            var left = center.X + radius + AwarenessMemoryGap + 30.0;
+            var left = center.X + radius + AwarenessMemoryGap + 70.0;
             legend = new Rect(left, center.Y - AwarenessLegendRow * 1.5,
                 Math.Max(1.0, width - left - 16.0), AwarenessLegendRow * 3.0);
             height = radarBottom;
@@ -88,16 +89,25 @@ public sealed partial class AggregateVisualControl
         var hearing = P(HumanCombatPolicy.HearingRangeId);
         var memory = P(HumanCombatPolicy.AlertMemoryId);
 
-        // Distance rings with true metres (square-root scale).
-        var ringPen = new Pen(CloneWithOpacity(border, 0.9), 0.8);
-        foreach (var meters in new[] { 10.0, 25.0, 50.0, 100.0, 200.0 })
+        // Distance rings with true metres (square-root scale). Labels sit on
+        // the 6 o'clock axis behind the enemy, where nothing else is drawn.
+        var ringPen = new Pen(CloneWithOpacity(border, 0.75), 0.8);
+        var ringMeters = new[] { 10.0, 25.0, 50.0, 100.0, 200.0 };
+        foreach (var meters in ringMeters)
+            dc.DrawEllipse(null, ringPen, center, AwarenessRadius(meters, radius), AwarenessRadius(meters, radius));
+        // HEARING: footstep circle, handle down-right.
+        if (hearing is not null)
         {
-            var r = AwarenessRadius(meters, radius);
-            dc.DrawEllipse(null, ringPen, center, r, r);
-            DrawText(dc, string.Create(CultureInfo.InvariantCulture, $"{meters:0} m"),
-                new Point(center.X - r + 3.0, center.Y + 2.0), 9.0, muted, FontWeights.Normal);
+            var r = AwarenessRadius(AwarenessHearingMeters * hearing.CurrentNumber, radius);
+            var ink = hearing.IsControlEnabled ? text : muted;
+            dc.DrawEllipse(CloneWithOpacity(ink, 0.06), new Pen(CloneWithOpacity(ink, 0.85), 1.3), center, r, r);
+            var reference = AwarenessRadius(AwarenessHearingMeters * hearing.ReferenceNumber, radius);
+            dc.DrawEllipse(null, new Pen(muted, 1.0) { DashStyle = DashStyles.Dash }, center, reference, reference);
+            var handle = AwarenessPolar(center, r, 135.0);
+            DrawAwarenessHandle(dc, hearing, handle, accent, panel);
+            DrawText(dc, "HEARING", new Point(handle.X + 10.0, handle.Y + 2.0), 9.5, text, FontWeights.Bold);
+            AddAwarenessTarget(hearing, handle, center, radius, AwarenessHearingMeters, HitKind.RadarRadius);
         }
-        dc.DrawEllipse(null, new Pen(border, 1.0), center, radius, radius);
 
         // SIGHT: vision field from 80 m ahead to 25 m at the 85° edge.
         if (sight is not null)
@@ -126,20 +136,18 @@ public sealed partial class AggregateVisualControl
             dc.DrawLine(new Pen(muted, 1.8),
                 new Point(center.X - 8.0, center.Y - reference), new Point(center.X + 8.0, center.Y - reference));
             DrawAwarenessHandle(dc, sight, tip, accent, panel);
+            DrawText(dc, "SIGHT", new Point(tip.X + 11.0, tip.Y - 7.0), 9.5, text, FontWeights.Bold);
             AddAwarenessTarget(sight, tip, center, radius, AwarenessSightMeters, HitKind.RadarRadius);
         }
 
-        // HEARING: footstep circle, handle down-right.
-        if (hearing is not null)
+        foreach (var meters in ringMeters)
         {
-            var r = AwarenessRadius(AwarenessHearingMeters * hearing.CurrentNumber, radius);
-            var ink = hearing.IsControlEnabled ? text : muted;
-            dc.DrawEllipse(CloneWithOpacity(ink, 0.06), new Pen(CloneWithOpacity(ink, 0.85), 1.3), center, r, r);
-            var reference = AwarenessRadius(AwarenessHearingMeters * hearing.ReferenceNumber, radius);
-            dc.DrawEllipse(null, new Pen(muted, 1.0) { DashStyle = DashStyles.Dash }, center, reference, reference);
-            var handle = AwarenessPolar(center, r, 135.0);
-            DrawAwarenessHandle(dc, hearing, handle, accent, panel);
-            AddAwarenessTarget(hearing, handle, center, radius, AwarenessHearingMeters, HitKind.RadarRadius);
+            var label = CreateText(string.Create(CultureInfo.InvariantCulture, $"{meters:0} m"),
+                9.5, muted, FontWeights.SemiBold);
+            var at = new Point(center.X - label.Width / 2.0,
+                center.Y + AwarenessRadius(meters, radius) - label.Height / 2.0);
+            dc.DrawRectangle(panel, null, new Rect(at.X - 2.0, at.Y, label.Width + 4.0, label.Height));
+            dc.DrawText(label, at);
         }
 
         // Enemy marker, facing up.
@@ -157,18 +165,23 @@ public sealed partial class AggregateVisualControl
         if (memory is not null)
         {
             var ringRadius = radius + AwarenessMemoryGap * 0.6;
-            dc.DrawEllipse(null, new Pen(CloneWithOpacity(border, 0.9), 3.0), center, ringRadius, ringRadius);
+            dc.DrawEllipse(null, new Pen(CloneWithOpacity(border, 0.6), 1.2), center, ringRadius, ringRadius);
             var maximum = Math.Max(0.0001, memory.Maximum);
             var sweep = Math.Clamp(memory.CurrentNumber / maximum, 0.0, 1.0) * 359.9;
             var enabled = memory.IsControlEnabled;
             DrawAwarenessArc(dc, center, ringRadius, sweep,
-                new Pen(CloneWithOpacity(enabled ? accent : muted, 0.8), 3.0));
+                new Pen(CloneWithOpacity(enabled ? accent : muted, 0.85), 4.0));
             var referenceAngle = Math.Clamp(memory.ReferenceNumber / maximum, 0.0, 1.0) * 360.0;
             dc.DrawLine(new Pen(muted, 1.8),
                 AwarenessPolar(center, ringRadius - 7.0, referenceAngle),
                 AwarenessPolar(center, ringRadius + 7.0, referenceAngle));
             var handle = AwarenessPolar(center, ringRadius, sweep);
             DrawAwarenessHandle(dc, memory, handle, accent, panel);
+            var caption = CreateText("MEMORY", 9.5, text, FontWeights.Bold);
+            var outward = AwarenessPolar(center, ringRadius + 16.0, sweep);
+            dc.DrawText(caption, new Point(
+                Math.Sin(sweep * Math.PI / 180.0) >= 0 ? outward.X : outward.X - caption.Width,
+                outward.Y - caption.Height / 2.0));
             AddAwarenessTarget(memory, handle, center, ringRadius, 0.0, HitKind.RadarArc);
         }
 
@@ -183,12 +196,27 @@ public sealed partial class AggregateVisualControl
                 continue;
             var top = layout.Legend.Top + i * AwarenessLegendRow;
             var modified = parameter.IsValueModifiedFromReference();
-            DrawText(dc, rows[i].Caption, new Point(layout.Legend.Left, top + 4.0), 10.0, text, FontWeights.Bold);
+            // Swatch = the shape it describes on the radar.
+            var swatch = new Point(layout.Legend.Left + 6.0, top + 10.0);
+            switch (i)
+            {
+                case 0:
+                    dc.DrawRectangle(CloneWithOpacity(accent, 0.35), new Pen(accent, 1.0),
+                        new Rect(swatch.X - 5.0, swatch.Y - 5.0, 10.0, 10.0));
+                    break;
+                case 1:
+                    dc.DrawEllipse(null, new Pen(text, 1.3), swatch, 5.0, 5.0);
+                    break;
+                default:
+                    dc.DrawLine(new Pen(accent, 4.0), new Point(swatch.X - 6.0, swatch.Y), new Point(swatch.X + 6.0, swatch.Y));
+                    break;
+            }
+            DrawText(dc, rows[i].Caption, new Point(layout.Legend.Left + 18.0, top + 3.0), 10.5, text, FontWeights.Bold);
             var value = CardValue(parameter, parameter.CurrentNumber);
-            dc.DrawText(CreateText(value, modified ? 13.0 : 11.8,
+            dc.DrawText(CreateText(value, modified ? 14.0 : 13.0,
                     modified ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold,
-                    layout.Legend.Width),
-                new Point(layout.Legend.Left, top + 19.0));
+                    Math.Max(1.0, layout.Legend.Width - 18.0)),
+                new Point(layout.Legend.Left + 18.0, top + 19.0));
         }
     }
 
