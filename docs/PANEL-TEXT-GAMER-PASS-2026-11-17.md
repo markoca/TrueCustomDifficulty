@@ -48,3 +48,8 @@ The right-hand panel shows four sections for a selected control: **WHAT IT DOES*
 ## Seventh pass (same day)
 
 20. The `Vanilla:` value carries the readout's unit (pts/s, pts, s, HP/s, bleed pts, rad pts, stamina/s, % strength). Where a multiplier board also shows a real amount, give both: `Vanilla: 1× (500 HP)`.
+
+## Eighth pass (same day)
+
+21. Endpoints ("0 removes it", "2 doubles it") use the control's unit too (`0%`, `0×`), except raw-value controls.
+22. Vanilla values are stated once, in WHAT IT DOES; HIGHER / LOWER explains direction only.

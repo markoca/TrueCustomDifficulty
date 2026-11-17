@@ -5770,7 +5770,7 @@
         "notes": []
       },
       "rationale": "How strong all health recovery over time is. Vanilla: Novice and Stalker 100%, Veteran 75%, Master 50%. Doesn't start healing by itself — it boosts or weakens healing that is already running.",
-      "logic": "100% keeps compatible regeneration effects at full strength. Lower values weaken them; higher values strengthen them. Vanilla uses 100% on Novice/Stalker, 75% on Veteran and 50% on Master.",
+      "logic": "100% keeps healing-over-time effects at full strength; lower weakens them, higher strengthens them.",
       "interaction": "Passive HP Regen is 0 in vanilla, so this matters mainly when another effect is already restoring health, such as low-health recovery."
     },
     {
@@ -5887,7 +5887,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much that Master low-health punishment slows your healing. Vanilla: 70%. 0 removes it. Only works while LOW HEALTH MECHANICS is ON.",
+      "rationale": "How much that Master low-health punishment slows your healing. Vanilla: 70%. 0% removes it. Only works while LOW HEALTH MECHANICS is ON.",
       "logic": "Higher values suppress health regeneration more strongly; zero removes this penalty component.",
       "interaction": "This remains inactive while LOW HEALTH MECHANICS is OFF. It layers on top of ordinary low-health recovery and the Health Regen Strength setting.",
       "requiresToggle": "advanced.lowHealthMechanics"
@@ -6351,7 +6351,7 @@
         "notes": []
       },
       "rationale": "How much of a bandage's heal you keep under Master's weaker meds. Vanilla: 25% — about 5 HP from a 20 HP bandage. 100% = no cut.",
-      "logic": "100% means no Master healing penalty. Lower values make the Bandage heal less. With the untouched base heal of 20 HP, vanilla Master gives about 5.0 HP.",
+      "logic": "100% means no Master healing cut; lower values make the Bandage heal less.",
       "interaction": "This setting only has an effect while HEALING ITEM EFFICIENCY REDUCTION is ON. Changing both the base heal and this Master percentage compounds the result.",
       "requiresToggle": "advanced.masterEffectModifierMechanics"
     },
@@ -6393,7 +6393,7 @@
         "notes": []
       },
       "rationale": "How much of a medkit's heal you keep under Master's weaker meds. Vanilla: 71% — about 50 HP from a 70 HP medkit. 100% = no cut.",
-      "logic": "100% means no Master healing penalty. Lower values make the Medkit heal less. With the untouched base heal of 70 HP, vanilla Master gives about 49.7 HP.",
+      "logic": "100% means no Master healing cut; lower values make the Medkit heal less.",
       "interaction": "This setting only has an effect while HEALING ITEM EFFICIENCY REDUCTION is ON. Changing both the base heal and this Master percentage compounds the result.",
       "requiresToggle": "advanced.masterEffectModifierMechanics"
     },
@@ -6435,7 +6435,7 @@
         "notes": []
       },
       "rationale": "How much of an army medkit's heal you keep under Master's weaker meds. Vanilla: 82% — about 70 HP from an 85 HP army medkit. 100% = no cut.",
-      "logic": "100% means no Master healing penalty. Lower values make the Army Medkit heal less. With the untouched base heal of 85 HP, vanilla Master gives about 69.7 HP.",
+      "logic": "100% means no Master healing cut; lower values make the Army Medkit heal less.",
       "interaction": "This setting only has an effect while HEALING ITEM EFFICIENCY REDUCTION is ON. Changing both the base heal and this Master percentage compounds the result.",
       "requiresToggle": "advanced.masterEffectModifierMechanics"
     },
@@ -7911,7 +7911,7 @@
           "92 ordinary-human SubItemGenerator links (88 base + 4 DLC1 NORD; roaming GeneralNPC_* and settlement GuardNPC_*) are redirected to TCD-owned pool clones; disabled Prologue edges, named MIK, unspawned No_Armor roots, zombies (which re-declare their own link) and the shared vanilla pools themselves remain vanilla."
         ]
       },
-      "rationale": "How often ordinary human enemies carry their usual meds. Vanilla: 1× (the game's own chances). 0 = they never carry meds; 2× = twice as likely.",
+      "rationale": "How often ordinary human enemies carry their usual meds. Vanilla: 1×. 0 = they never carry meds; 2× = twice as likely.",
       "logic": "0–2× the game's own chance for every med on ordinary corpses.",
       "interaction": "Always editable, even when BONUS PACKS is Water or None; zombies, quests, traders and stashes are untouched."
     },
@@ -8478,7 +8478,7 @@
         ]
       },
       "rationale": "How much of the vanilla odds for bandages you keep in stashes (the BANDAGES cell in MEDICAL COMPOSITION). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
-      "logic": "100% keeps the game's Bandage odds; 50% halves them; 0% = never from these stashes.",
+      "logic": "100% keeps vanilla Bandage odds; 50% halves them; 0% = never from these stashes.",
       "interaction": "Multiplies with the tier's MEDS cell in STASH LOOT MIX. Stack size (QUANTITY) stays separate.",
       "exposeInUi": true
     },
@@ -8572,7 +8572,7 @@
         ]
       },
       "rationale": "How much of the vanilla odds for medkits you keep in stashes (the MEDKITS cell in MEDICAL COMPOSITION). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
-      "logic": "100% keeps the game's Medkit odds; 50% halves them; 0% = never from these stashes.",
+      "logic": "100% keeps vanilla Medkit odds; 50% halves them; 0% = never from these stashes.",
       "interaction": "Multiplies with the tier's MEDS cell in STASH LOOT MIX. Stack size (QUANTITY) stays separate.",
       "exposeInUi": true
     },
@@ -8666,7 +8666,7 @@
         ]
       },
       "rationale": "How much of the vanilla odds for army medkits you keep in stashes (the ARMY MEDKITS cell in MEDICAL COMPOSITION). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
-      "logic": "100% keeps the game's Army Medkit odds; 50% halves them; 0% = never from these stashes.",
+      "logic": "100% keeps vanilla Army Medkit odds; 50% halves them; 0% = never from these stashes.",
       "interaction": "Multiplies with the tier's MEDS cell in STASH LOOT MIX. Stack size (QUANTITY) stays separate.",
       "exposeInUi": true
     },
@@ -8760,7 +8760,7 @@
         ]
       },
       "rationale": "How much of the vanilla odds for anti-rads you keep in stashes (the ANTI-RAD cell in MEDICAL COMPOSITION). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
-      "logic": "100% keeps the game's Anti-Rad odds; 50% halves them; 0% = never from these stashes.",
+      "logic": "100% keeps vanilla Anti-Rad odds; 50% halves them; 0% = never from these stashes.",
       "interaction": "Multiplies with the tier's MEDS cell in STASH LOOT MIX. Stack size (QUANTITY) stays separate.",
       "exposeInUi": true
     },
@@ -10106,7 +10106,7 @@
           "Hidden backing parameter for the .45 ACP radar axis."
         ]
       },
-      "rationale": "How often breakable ammo boxes give .45 ACP rounds. Vanilla: 1×. 0 removes them from the mix.",
+      "rationale": "How often breakable ammo boxes give .45 ACP rounds. Vanilla: 1×. 0× removes them from the mix.",
       "logic": "1× keeps the vanilla chance. Lower settings make .45 ACP less common; higher settings make it more common.",
       "interaction": "Set on the AMMO BOX CONTENT DISTRIBUTION board.",
       "exposeInUi": false
@@ -10151,7 +10151,7 @@
           "Hidden backing parameter for the 5.45 / 5.56 mm family axis."
         ]
       },
-      "rationale": "How often breakable ammo boxes give 5.45 / 5.56 mm rifle rounds. Vanilla: 1×. 0 removes them from the mix.",
+      "rationale": "How often breakable ammo boxes give 5.45 / 5.56 mm rifle rounds. Vanilla: 1×. 0× removes them from the mix.",
       "logic": "1× keeps the vanilla chance. Lower settings make 5.45 / 5.56 mm less common; higher settings make it more common.",
       "interaction": "Set on the AMMO BOX CONTENT DISTRIBUTION board.",
       "exposeInUi": false
@@ -10196,7 +10196,7 @@
           "Hidden backing parameter for the 12 Gauge radar axis."
         ]
       },
-      "rationale": "How often breakable ammo boxes give 12 gauge shells. Vanilla: 1×. 0 removes them from the mix.",
+      "rationale": "How often breakable ammo boxes give 12 gauge shells. Vanilla: 1×. 0× removes them from the mix.",
       "logic": "1× keeps the vanilla chance. Lower settings make 12 Gauge less common; higher settings make it more common.",
       "interaction": "Set on the AMMO BOX CONTENT DISTRIBUTION board.",
       "exposeInUi": false
@@ -11655,7 +11655,7 @@
           "scaleNonZero preserves the zero-valued template/free entry while scaling all explicit paid-route prices together."
         ]
       },
-      "rationale": "What guides charge to take you to another area. Vanilla: 1×. Higher = fast travel hurts the wallet; 0 makes it free. Covers roaming guides too.",
+      "rationale": "What guides charge to take you to another area. Vanilla: 1×. Higher = fast travel hurts the wallet; 0× makes it free. Covers roaming guides too.",
       "logic": "1× keeps vanilla guide prices; 0.5× halves paid routes, 2× doubles them, 0× makes them free.",
       "interaction": "Guide fees and their minimum price scale with this. Difficulty, reputation and region still shape the final price."
     },
@@ -12472,7 +12472,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Bonus stamina recovery while your stomach is full. Vanilla: +20% — a reward for eating before a fight. 0 removes it.",
+      "rationale": "Bonus stamina recovery while your stomach is full. Vanilla: +20% — a reward for eating before a fight. 0% removes it.",
       "logic": "Higher values reward staying well fed with stronger stamina recovery; zero removes the bonus. The supported UI range does not turn this lowest-hunger state into a penalty.",
       "interaction": "The game keeps the vanilla boundary for leaving the well-fed state. Stamina Regen in the Stamina tab sets the underlying regeneration rate."
     },
@@ -12513,7 +12513,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much more stamina actions cost while you're starving under Master rules. Vanilla: +200% — three times the normal cost. 0 removes the extra. Only works while STARVATION MECHANICS is ON.",
+      "rationale": "How much more stamina actions cost while you're starving under Master rules. Vanilla: +200% — three times the normal cost. 0% removes the extra. Only works while STARVATION MECHANICS is ON.",
       "logic": "100% means +100% extra stamina cost, not normal cost. 0% removes this extra starvation cost.",
       "interaction": "Severe hunger also slows stamina recovery. This changes the extra cost of actions, not an ongoing drain.",
       "requiresToggle": "advanced.starvationMechanics"
@@ -12700,7 +12700,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much starving blocks your healing under Master rules. Vanilla: 100% — no healing at all. 0 removes it. Only works while STARVATION MECHANICS is ON.",
+      "rationale": "How much starving blocks your healing under Master rules. Vanilla: 100% — no healing at all. 0% removes it. Only works while STARVATION MECHANICS is ON.",
       "logic": "Higher values suppress health regeneration more strongly; zero removes this component.",
       "interaction": "This acts on regeneration rather than direct damage, so it combines with Starvation Damage and the Health tab regeneration settings.",
       "requiresToggle": "advanced.starvationMechanics"
@@ -13031,7 +13031,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much of your stamina bar you lose while exhausted under Master rules. Vanilla: 20%. 0 removes it. Only works while SEVERE FATIGUE MECHANICS is ON.",
+      "rationale": "How much of your stamina bar you lose while exhausted under Master rules. Vanilla: 20%. 0% removes it. Only works while SEVERE FATIGUE MECHANICS is ON.",
       "logic": "Higher values reduce the available stamina pool further; zero removes this component.",
       "interaction": "Max Stamina defines your normal pool; this loss applies only during Master severe fatigue.",
       "requiresToggle": "advanced.fatigueMechanics"
@@ -13080,7 +13080,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much carry capacity you lose while exhausted under Master rules. Vanilla: 20%. 0 removes it. Only works while SEVERE FATIGUE MECHANICS is ON.",
+      "rationale": "How much carry capacity you lose while exhausted under Master rules. Vanilla: 20%. 0% removes it. Only works while SEVERE FATIGUE MECHANICS is ON.",
       "logic": "Higher values make fatigue reduce carrying capability more strongly; zero removes both carry-related components together.",
       "interaction": "Your normal carrying limit and equipment carry bonuses remain separate.",
       "requiresToggle": "advanced.fatigueMechanics"
@@ -13122,7 +13122,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much harder your guns kick while exhausted under Master rules. Vanilla: +55% recoil. 0 removes it. Only works while SEVERE FATIGUE MECHANICS is ON.",
+      "rationale": "How much harder your guns kick while exhausted under Master rules. Vanilla: +55% recoil. 0% removes it. Only works while SEVERE FATIGUE MECHANICS is ON.",
       "logic": "",
       "interaction": "This stacks with other recoil sources but does not change reload or aim-time penalties.",
       "requiresToggle": "advanced.fatigueMechanics"
@@ -13171,7 +13171,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much more your sights wobble while exhausted under Master rules. Vanilla: +40%. 0 removes it. Only works while SEVERE FATIGUE MECHANICS is ON.",
+      "rationale": "How much more your sights wobble while exhausted under Master rules. Vanilla: +40%. 0% removes it. Only works while SEVERE FATIGUE MECHANICS is ON.",
       "logic": "",
       "interaction": "Recoil and bullet spread are separate penalties in the same Master fatigue bundle.",
       "requiresToggle": "advanced.fatigueMechanics"
@@ -13213,7 +13213,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much wider your shots spread while exhausted under Master rules. Vanilla: +50%. 0 removes it. Only works while SEVERE FATIGUE MECHANICS is ON.",
+      "rationale": "How much wider your shots spread while exhausted under Master rules. Vanilla: +50%. 0% removes it. Only works while SEVERE FATIGUE MECHANICS is ON.",
       "logic": "",
       "interaction": "Recoil and aim sway are separate penalties in the same Master fatigue bundle.",
       "requiresToggle": "advanced.fatigueMechanics"
@@ -13255,7 +13255,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much more stamina actions cost while heavily irradiated under Master rules. Vanilla: +50%. 0 removes it. Only works while Radiation Stamina Penalty is ON.",
+      "rationale": "How much more stamina actions cost while heavily irradiated under Master rules. Vanilla: +50%. 0% removes it. Only works while Radiation Stamina Penalty is ON.",
       "logic": "50% means +50% extra stamina cost. 0% removes this extra radiation cost.",
       "interaction": "",
       "requiresToggle": "advanced.radiationMechanics"

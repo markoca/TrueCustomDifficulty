@@ -1,3 +1,8 @@
+## 2026-11-17 — CURRENT: endpoint units and duplicate vanilla lines
+
+* "0 removes it" style endpoints use the control's unit: `0% removes it` on Master / severe-fatigue / starvation / well-fed / radiation penalties, `0× removes them` on the AMMO TYPE MIX calibers, `0× makes it free` on Guide Travel Fees (raw anomaly base damages keep plain `0`).
+* HIGHER / LOWER no longer repeats the vanilla values already in WHAT IT DOES: Health Regen Strength and Master Bandage / Medkit / Army Medkit Healing (the Master lines also disagreed: *about 49 HP* vs *about 50 HP*). Stash medical cells say *vanilla odds*; Med Drops says `Vanilla: 1×.`
+
 ## 2026-11-17 — CURRENT: Vanilla values carry the readout unit
 
 * `Vanilla:` now uses the same unit as the control's readout: Peak / Minimum Hit Protection in % (`Novice 100%, Stalker 75%…`, readout `% strength`), Low-HP Recovery Rate `1 HP/s` (was *100%*), Hunger / Fatigue / Bleeding / Radiation rates `pts/s`, hunger / fatigue / sleep thresholds `pts`, Starvation Damage Interval `10 seconds`, bleed-removal and anti-rad amounts `bleed pts` / `rad pts`, Stamina Regen and Boost Strength `stamina/s`, Psi Block / Vinca `+10 psi pts` / `+10 bleed pts`, Corpse Scarcity `0%`.
