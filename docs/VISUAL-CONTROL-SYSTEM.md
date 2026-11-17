@@ -1,3 +1,9 @@
+## 2026-11-18 — CURRENT: style gate covers every on-screen string
+
+* `tools/audit_panel_text_style.py` now also scans every string literal in `Controls/`, `ViewModels/` and `PresetService` (boards, panel blocks, dialogs, preset load errors), with interpolations blanked; only the modder-facing build summary (*BPatch CFG files / CFG edits*) is allowed.
+* Fixed what it found: TechnicalDisplay rows for the shuffles / detectors / blueprints / Healed Damage Counts (*Moves scopes, suppressors … between matching spots* instead of *Redistribute … across compatible world locations*, no *source-verified* / *audited* / *tracker*), mutant part meaning (*Each mutant you kill has this chance to leave one part*), NEED BOOST appendix (*turn up* not *roll*), `Global anomaly damage: …×`, practical examples (*stashes that have it*), build dialog (*No setting differs from vanilla for the selected base difficulty*), preset errors (*setting* / *item* instead of *parameter ID* / *SID*, *NEED BOOST* without *Corpse SmartLoot*), board fallbacks (*SETTING UNAVAILABLE*, *Nothing to show here.*).
+* The panel's third section is called **WORKS WITH** on screen; docs and the style guide now use that name (was *WITH OTHER SETTINGS* in docs only).
+
 ## 2026-11-18 — CURRENT: panel text style is a gated structure
 
 * New style guide `docs/PANEL-TEXT-STYLE.md`: per-control structure (WHAT IT DOES = effect → `Vanilla:` → feel → master hint; HIGHER / LOWER = direction only; WITH OTHER SETTINGS = CAPS cross-references; CONTROLS = hands + one reset sentence), format rules (× / % / raw units, spacing, – and →, CAPS names) and a tech-speak → player-words table.

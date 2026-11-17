@@ -84,7 +84,7 @@ public sealed class PresetService
         if (preset.CorpseSmartLootNeedBoost is double needBoost
             && (!double.IsFinite(needBoost) || needBoost < 0.0 || needBoost > 2.0
                 || Math.Abs(needBoost * 20.0 - Math.Round(needBoost * 20.0)) > 0.0000001))
-            throw new InvalidDataException("Corpse SmartLoot NEED BOOST must use 0–2× in 0.05× steps.");
+            throw new InvalidDataException("NEED BOOST must use 0–2× in 0.05× steps.");
 
         // TRADER STOCK partial odds: known SELL ids only, 5–95% in 5% steps.
         if (preset.TraderSellOdds is { } sellOdds)
@@ -106,7 +106,7 @@ public sealed class PresetService
             {
                 if (!StashPresenceViewModel.Ids.Contains(id)
                     && id != StashPresenceViewModel.LegacyCheapDrinksId)
-                    throw new InvalidDataException($"Unknown stash presence entry '{id}'.");
+                    throw new InvalidDataException($"Unknown stash presence item '{id}'.");
                 if (!double.IsFinite(value) || value < 0.0 || value > 1.0
                     || Math.Abs(value * 20.0 - Math.Round(value * 20.0)) > 0.0000001)
                     throw new InvalidDataException($"Stash presence '{id}' must use 0–100% in 5% steps.");
@@ -123,7 +123,7 @@ public sealed class PresetService
         {
             if (!npcSids.Contains(sid) || settings is null)
                 throw new InvalidDataException(
-                    $"NPC consumable Chance preset contains an unknown or empty source SID: {sid}");
+                    $"NPC consumable chances in this preset name an unknown or empty item: {sid}");
             if (settings.ChancePercent is double percent)
             {
                 if (settings.Multiplier is not null || !double.IsFinite(percent)
@@ -150,19 +150,19 @@ public sealed class PresetService
         foreach (var (id, value) in preset.Values)
         {
             if (string.IsNullOrWhiteSpace(id))
-                throw new InvalidDataException("Preset contains an empty parameter ID.");
+                throw new InvalidDataException("Preset contains a setting without a name.");
 
             if (value is null)
-                throw new InvalidDataException($"Preset parameter '{id}' has no value object.");
+                throw new InvalidDataException($"Preset setting '{id}' has no value object.");
 
             if (value.Number is double number && !double.IsFinite(number))
-                throw new InvalidDataException($"Preset parameter '{id}' contains a non-finite number.");
+                throw new InvalidDataException($"Preset setting '{id}' contains a non-finite number.");
 
             if (value.MinNumber is double min && !double.IsFinite(min))
-                throw new InvalidDataException($"Preset parameter '{id}' contains a non-finite minimum.");
+                throw new InvalidDataException($"Preset setting '{id}' contains a non-finite minimum.");
 
             if (value.MaxNumber is double max && !double.IsFinite(max))
-                throw new InvalidDataException($"Preset parameter '{id}' contains a non-finite maximum.");
+                throw new InvalidDataException($"Preset setting '{id}' contains a non-finite maximum.");
         }
     }
 }

@@ -12,7 +12,7 @@ The right-hand panel is read by a **player**, not by a modder. Every text answer
 | Panel title | `label` (or `OwnPanelTitle` for board anchors) | The name the board draws. | — |
 | **WHAT IT DOES** | `rationale` | One paragraph: **① what it changes in play** (one sentence, starts with *How …* / *Whether …* / *Which …* when it fits) → **② `Vanilla: …`** → **③ what higher / lower feels like** (optional) → **④ `Only works while X is ON.`** if it has a master switch. | 300 chars |
 | **HIGHER / LOWER** | `logic` | Direction only: `Higher = …; lower = …` or `0 = …; 2× = …`. No vanilla values (they live in ①–②). | 200 chars |
-| **WITH OTHER SETTINGS** | `interaction` | Which other controls stack, override or stay separate — named in CAPS. | 220 chars |
+| **WORKS WITH** | `interaction` | Which other controls stack, override or stay separate — named in CAPS. | 220 chars |
 | **CONTROLS** | `ControlHelp` / NPC LOOT card help | What the hands do, then one reset sentence: `Right-click one <part> to reset it; R resets <scope>.` | — |
 
 Template:
@@ -45,7 +45,8 @@ Say what the player **feels** (*less breathing room between attacks*, *you lose 
 
 ## 4. Scope and exceptions
 
-* Checked: `rationale`, `logic`, `interaction` of every catalog row the panel can show; NPC LOOT card texts; CONTROLS help.
+* Checked: `rationale`, `logic`, `interaction` of every catalog row the panel can show; NPC LOOT card texts; CONTROLS help; every string literal in `Controls/`, `ViewModels/` and `PresetService` (boards, panel blocks, dialogs, preset errors).
+* Allowed exception: the modder-facing build summary (`BPatch CFG files`, `CFG edits`).
 * Skipped: legacy compatibility-only rows with no control (`LEGACY` in the audit) and the legacy BUY restrictions (`Trader Buys`). `description` is a fallback field and not shown when a rationale exists.
 * `--report` lists every hit without failing; use it before a copy pass.
 

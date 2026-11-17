@@ -121,6 +121,31 @@ help_block = help_block[: help_block.index("\n    public ", 20)]
 for text in literals(help_block, 30):
     hits += lint("ControlHelp", text, "help")
 
+# Every other on-screen string in the UI layer (boards, panel blocks,
+# dialogs, preset load errors): interpolations are blanked first.
+UI_FILES = sorted((APP / "Controls").glob("*.cs")) + sorted((APP / "ViewModels").glob("*.cs")) \
+    + [APP / "Services/PresetService.cs"]
+UI_ALLOW = (
+    "BPatch CFG file", "concrete CFG edit",  # build summary for modders
+)
+for f in UI_FILES:
+    for text in literals(f.read_text(encoding="utf-8"), 12):
+        if "{(" in text:  # conditional interpolation: code, not copy
+            continue
+        text = re.sub(r"\{[^{}]*\}", "N", text)
+        if any(a in text for a in UI_ALLOW):
+            continue
+        for pat, fix in TECH.items():
+            if pat.startswith(r"\b[a-z]+[A-Z]"):  # identifiers are expected in code
+                continue
+            m = re.search(pat, text)
+            if m:
+                hits.append((f.name, "ui", f"tech speak '{m.group(0)}' -> {fix}: {text[:80]}"))
+                break
+        for pat, fix in FORMAT[:3]:
+            if re.search(pat, text):
+                hits.append((f.name, "ui", f"{fix}: {text[:80]}"))
+
 if REPORT:
     for h in hits:
         print(" | ".join(h))

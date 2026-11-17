@@ -469,7 +469,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 DrawAmmoDistribution(dc, text, muted, border, soft, accent, panel);
                 break;
             default:
-                DrawHeader(dc, "VISUAL CONTROL", "No visual family is configured.", text, muted, accent);
+                DrawHeader(dc, "VISUAL CONTROL", "Nothing to show here.", text, muted, accent);
                 break;
         }
 
@@ -1038,7 +1038,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var turning = P("environment.flycatcherTurnSpeed");
         if (movement is null || turning is null)
         {
-            DrawCenteredText(dc, "Flycatcher parameters unavailable.",
+            DrawCenteredText(dc, "Flycatcher settings unavailable.",
                 new Point(ActualWidth / 2.0, 160.0), 10.0, muted,
                 FontWeights.SemiBold);
             return;
@@ -6600,7 +6600,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         if (parameter is null)
         {
-            dc.DrawText(CreateText("CFG PARAMETER UNAVAILABLE", 9.0, muted,
+            dc.DrawText(CreateText("SETTING UNAVAILABLE", 9.0, muted,
                     FontWeights.Normal, textWidth),
                 new Point(card.Left + 12.0, card.Top + 22.0));
             return;

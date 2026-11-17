@@ -82,7 +82,7 @@ public sealed class ParameterViewModel : ObservableObject
             : Id == "loot.npcCorpseBonus"
                 ? Environment.NewLine + Environment.NewLine
                   + "NEED BOOST\n"
-                  + "Bonus packs roll more often when you are short of that item: 10% when "
+                  + "Bonus packs turn up more often when you are short of that item: 10% when "
                   + "stocked up, up to 70–90% when lacking. OFF keeps a flat 10%, 1× is "
                   + "vanilla, 2× doubles the extra chance (max 100%). SCARCITY still applies.\n"
                   + "STANDARD NPC CONSUMABLE CHANCE — FOOD / DRINKS / MEDICAL\n"
@@ -1414,9 +1414,9 @@ public sealed class ParameterViewModel : ObservableObject
         get
         {
             if (Id == "loot.looseUniqueWeaponShuffle")
-                return "Shuffle all nine source-verified standalone unique weapons among their original world pickup locations. None are removed.";
+                return "Moves all nine unique weapons between their original spots. None are removed.";
             if (Id == "loot.worldWeaponShuffle")
-                return "Redistribute regular world weapons across compatible locations while preserving progression.";
+                return "Moves regular loose weapons between matching spots; early areas still get early guns.";
             if (Id == "loot.worldWeaponDensity")
             {
                 var baseCount = 36 + (int)Math.Round(260.0 * CurrentNumber, MidpointRounding.AwayFromZero);
@@ -1440,15 +1440,15 @@ public sealed class ParameterViewModel : ObservableObject
                 return $"Removes {baseCount}/61 base F1 boxes ({dlcCount}/101 with DLC).";
             }
             if (Id == "loot.worldAttachmentShuffle")
-                return "Redistribute optics, suppressors, magazines and underbarrel attachments across compatible world locations.";
+                return "Moves scopes, suppressors, magazines and underbarrel attachments between matching spots.";
             if (Id == "loot.worldDetectors")
-                return "ON removes the audited loose and stash detectors. OFF leaves vanilla detector spawns untouched.";
+                return "ON removes loose and stash detectors. OFF keeps them where vanilla puts them.";
             if (Id == "loot.looseArtifactsRemoved")
                 return "ON removes 4 fixed Weird artifact spots (+1 Water Drip with DLC). Anomaly fields stay.";
             if (Id == "loot.blueprintShuffle")
-                return "Randomize blueprint locations.";
+                return "Moves blueprints between their spots.";
             if (Id == "combat.accumulatedDamageIncludesHealedHealth")
-                return "ON: Healing restores HP, but healed damage stays in the repeated-hit protection tracker.";
+                return "ON: healing restores HP, but PEAK / MINIMUM HIT PROTECTION still count the healed damage.";
             if (IsToggle || IsChoiceSlider)
                 return string.Empty;
 
@@ -1602,12 +1602,12 @@ public sealed class ParameterViewModel : ObservableObject
                 var lowMaxBase = 25.0 * CurrentNumber;
                 var highBase = 100.0 * CurrentNumber;
                 return $"Base anomaly damage: low {lowMinBase:0.##}–{lowMaxBase:0.##}, high {highBase:0.##}\n" +
-                       $"Global anomaly damage: {multiplier:0.##}x\n" +
+                       $"Global anomaly damage: {multiplier:0.##}×\n" +
                        $"Before protection: low {lowMinBase * multiplier:0.##}–{lowMaxBase * multiplier:0.##}, high {highBase * multiplier:0.##} damage";
             }
 
             var effective = CurrentNumber * multiplier;
-            return $"Base anomaly damage: {CurrentNumber:0.#####}\nGlobal anomaly damage: {multiplier:0.##}x\nBefore protection: {effective:0.##} damage";
+            return $"Base anomaly damage: {CurrentNumber:0.#####}\nGlobal anomaly damage: {multiplier:0.##}×\nBefore protection: {effective:0.##} damage";
         }
     }
 
@@ -1641,7 +1641,7 @@ public sealed class ParameterViewModel : ObservableObject
                 var scale = Math.Abs(reference) > Epsilon ? CurrentNumber / reference : CurrentNumber;
                 var result = Math.Clamp(hint.Chance.Value * scale, 0.0, 1.0);
                 var outcome = hint.Unit.Contains("stash", StringComparison.OrdinalIgnoreCase)
-                    ? $"~{result * 100:0.#} stashes with this entry / 100 {hint.Unit}"
+                    ? $"~{result * 100:0.#} stashes that have it / 100 {hint.Unit}"
                     : $"~{result * 100:0.#} drops / 100 {hint.Unit}";
                 return $"Example · {label}: {hint.Chance.Value * 100:0.#}% vanilla → {result * 100:0.#}% current · {outcome}";
             }
@@ -1717,10 +1717,10 @@ public sealed class ParameterViewModel : ObservableObject
             }
 
             if (Id.StartsWith("loot.mutant.", StringComparison.Ordinal))
-                return "Each eligible mutant kill rolls for one part. This changes how often a part appears, not how many parts drop.";
+                return "Each mutant you kill has this chance to leave one part. It changes how often a part appears, not how many.";
 
             // Basic RGD-5 and Rare coupon chances: their HIGHER / LOWER and
-            // WITH OTHER SETTINGS texts already say it; no repeat block.
+            // WORKS WITH texts already say it; no repeat block.
             if (Definition.ValueKind == "probability")
                 return string.Empty;
 

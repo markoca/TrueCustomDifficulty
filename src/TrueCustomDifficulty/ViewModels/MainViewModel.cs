@@ -1877,7 +1877,7 @@ public sealed class MainViewModel : ObservableObject
                 var unknownSids = npcChances.Keys.Where(sid => !knownSids.Contains(sid)).ToArray();
                 if (unknownSids.Length > 0)
                     throw new InvalidDataException(
-                        "Unknown NPC consumable Chance SID(s) in preset: "
+                        "Unknown NPC consumable item(s) in preset: "
                         + string.Join(", ", unknownSids));
                 foreach (var item in NpcConsumableItems)
                     item.ApplyPreset(npcChances.GetValueOrDefault(item.Sid));
@@ -2251,7 +2251,7 @@ public sealed class MainViewModel : ObservableObject
         if (!result.HasMod)
         {
             MessageBox.Show(
-                "No gameplay values differ from the selected vanilla baseline.\n\n" +
+                "No setting differs from vanilla for the selected base difficulty.\n\n" +
                 "Previous True Custom Difficulty files were removed from:\n" + modsFolder,
                 AppName,
                 MessageBoxButton.OK,
