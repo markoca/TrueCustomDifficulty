@@ -90,7 +90,7 @@ public sealed partial class CfgPatchWriterService
         // NEED BOOST stretches the need-driven span Min→Max (0 = flat Min,
         // 1 = vanilla, 2 = doubled span), SCARCITY then scales both.
         if (!double.IsFinite(needBoost) || needBoost < 0.0 || needBoost > 2.0)
-            throw new InvalidDataException("Corpse SmartLoot NEED BOOST must be 0–2x.");
+            throw new InvalidDataException("Corpse SmartLoot NEED BOOST must be 0–2×.");
         var reductionActive = modified.ContainsKey(NpcSupplyReductionId);
         var boostActive = Math.Abs(needBoost - 1.0) > 0.000001;
         if (!reductionActive && !boostActive) return 0;

@@ -84,7 +84,7 @@ public sealed class PresetService
         if (preset.CorpseSmartLootNeedBoost is double needBoost
             && (!double.IsFinite(needBoost) || needBoost < 0.0 || needBoost > 2.0
                 || Math.Abs(needBoost * 20.0 - Math.Round(needBoost * 20.0)) > 0.0000001))
-            throw new InvalidDataException("Corpse SmartLoot NEED BOOST must use 0–2x in 0.05x steps.");
+            throw new InvalidDataException("Corpse SmartLoot NEED BOOST must use 0–2× in 0.05× steps.");
 
         // TRADER STOCK partial odds: known SELL ids only, 5–95% in 5% steps.
         if (preset.TraderSellOdds is { } sellOdds)
@@ -138,7 +138,7 @@ public sealed class PresetService
                     || factor > NpcConsumableItemViewModel.MaximumMultiplier
                     || Math.Abs(factor * 20.0 - Math.Round(factor * 20.0)) > 0.0000001)
                     throw new InvalidDataException(
-                        $"NPC consumable Chance multiplier for {sid} must use 0–3x in 0.05x steps.");
+                        $"NPC consumable Chance multiplier for {sid} must use 0–3× in 0.05× steps.");
             }
             else if (settings.Enabled)
             {

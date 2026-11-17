@@ -215,7 +215,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             // visible in muted text because dragging still edits that source.
             var inherited = parameter.EffectiveDamageValue;
             var effectiveText = Anomalies[i].IsMultiplier
-                ? $"{inherited:0.##}x" : $"{inherited:0.#}";
+                ? $"{inherited:0.##}×" : $"{inherited:0.#}";
             DrawCenteredText(dc, "EFFECTIVE", new Point(center, 256), 8.0,
                 muted, FontWeights.SemiBold);
             DrawCenteredText(dc, effectiveText, new Point(center, 268), 11.2,
@@ -223,7 +223,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
                     || _globalDamage?.IsValueModifiedFromReference() == true ? ReadoutInk.Numbers(accent, text) : text,
                 FontWeights.Bold);
             var nativeText = Anomalies[i].IsMultiplier
-                ? $"{parameter.CurrentNumber:0.##}x" : $"{parameter.CurrentNumber:0.#}";
+                ? $"{parameter.CurrentNumber:0.##}×" : $"{parameter.CurrentNumber:0.#}";
             DrawCenteredText(dc, "BASE", new Point(center, 283), 7.8,
                 muted, FontWeights.SemiBold);
             DrawCenteredText(dc, nativeText, new Point(center, 295), 10.2,
@@ -340,13 +340,13 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             KnobPoint(center, KnobRadius + 3.0, currentAngle));
         // This helper already centers vertically by text height: use the dial
         // center directly rather than applying the generic top-edge offset.
-        DrawCenteredText(dc, $"{p.CurrentNumber:0.##}x", new Point(center.X, center.Y),
+        DrawCenteredText(dc, $"{p.CurrentNumber:0.##}×", new Point(center.X, center.Y),
             p.IsValueModifiedFromReference() ? 16.2 : 15.0,
             active && p.IsValueModifiedFromReference() ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
-        DrawCenteredText(dc, $"{p.Minimum:0.##}x",
+        DrawCenteredText(dc, $"{p.Minimum:0.##}×",
             new Point(center.X - KnobRadius * .8, card.Bottom - KnobTypography.EndpointInsetFromBottom),
             KnobTypography.EndpointSize, Brushes.White, FontWeights.SemiBold);
-        DrawCenteredText(dc, $"{p.Maximum:0.##}x",
+        DrawCenteredText(dc, $"{p.Maximum:0.##}×",
             new Point(center.X + KnobRadius * .8, card.Bottom - KnobTypography.EndpointInsetFromBottom),
             KnobTypography.EndpointSize, Brushes.White, FontWeights.SemiBold);
         if (active)

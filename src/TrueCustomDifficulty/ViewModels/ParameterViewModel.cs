@@ -83,10 +83,10 @@ public sealed class ParameterViewModel : ObservableObject
                 ? Environment.NewLine + Environment.NewLine
                   + "NEED BOOST\n"
                   + "Bonus packs roll more often when you are short of that item: 10% when "
-                  + "stocked up, up to 70–90% when lacking. OFF keeps a flat 10%, 1x is "
-                  + "vanilla, 2x doubles the extra chance (max 100%). SCARCITY still applies.\n"
+                  + "stocked up, up to 70–90% when lacking. OFF keeps a flat 10%, 1× is "
+                  + "vanilla, 2× doubles the extra chance (max 100%). SCARCITY still applies.\n"
                   + "STANDARD NPC CONSUMABLE CHANCE — FOOD / DRINKS / MEDICAL\n"
-                  + "Each checked item multiplies that item's chance (0–3x, 1x = vanilla, "
+                  + "Each checked item multiplies that item's chance (0–3×, 1× = vanilla, "
                   + "max 100%), so higher ranks still find more. N/E/V/M bars = average "
                   + "chance per player rank: colour = now, outline = vanilla. Food and "
                   + "drinks have no global slider; checked meds replace only their own part "
@@ -187,7 +187,7 @@ public sealed class ParameterViewModel : ObservableObject
                 return "Drag a category's price track to tune its multiplier."
                     + Environment.NewLine + "Right-click one category to reset it; R resets the price group.";
             if (IsMutantHealthMember)
-                return "Each species card has a health track (multiplier and resulting HP on its top line), then ATTACKS (claws, bites, leaps) and ABILITIES (psy, shields, throws, roars). Each shows the wait between two uses of one of its moves, e.g. \"gore every 10 s\"; drag right to shorten the wait (2x = twice as often). SPECIAL ABILITY RATE paces special and knockdown moves for all mutants."
+                return "Each species card has a health track (multiplier and resulting HP on its top line), then ATTACKS (claws, bites, leaps) and ABILITIES (psy, shields, throws, roars). Each shows the wait between two uses of one of its moves, e.g. \"gore every 10 s\"; drag right to shorten the wait (2× = twice as often). SPECIAL ABILITY RATE paces special and knockdown moves for all mutants."
                     + Environment.NewLine + "Right-click one track to reset it; R resets the whole board.";
             if (IsHumanGroupSizeMember)
                 return "Drag NEWBIE, EXPERIENCED, VETERAN or MASTER to set that rank's maximum human squad size."
@@ -1157,13 +1157,13 @@ public sealed class ParameterViewModel : ObservableObject
                 return $"{CurrentNumber * 100:0.#}%";
 
             if (Definition.Display?.Primary == "multiplier")
-                return $"{CurrentNumber:0.##}x";
+                return $"{CurrentNumber:0.##}×";
 
             var vanilla = GetReferenceNumber();
             if (Definition.Display?.Primary == "percentOfVanilla" && Math.Abs(vanilla) > Epsilon)
                 return $"{CurrentNumber / vanilla * 100:0}%";
             if (Definition.Display?.Primary == "multiplierOfVanilla" && Math.Abs(vanilla) > Epsilon)
-                return $"{CurrentNumber / vanilla:0.##}x";
+                return $"{CurrentNumber / vanilla:0.##}×";
 
             if (Definition.Display?.Primary == "raw" && !string.IsNullOrWhiteSpace(Definition.Display.Unit))
                 return $"{FormatCompact(CurrentNumber)} {Definition.Display.Unit}";
@@ -1335,7 +1335,7 @@ public sealed class ParameterViewModel : ObservableObject
     }
 
     private static string Times(double value, string meaning)
-        => $"{value:0.##}x {meaning}";
+        => $"{value:0.##}× {meaning}";
 
     // Mutant ATTACKS / ABILITIES: rate plus the resulting headline cooldown.
     private string? MutantRateDisplay()
@@ -1471,7 +1471,7 @@ public sealed class ParameterViewModel : ObservableObject
             {
                 var reference = GetReferenceNumber();
                 var multiplier = Math.Abs(reference) > Epsilon ? CurrentNumber / reference : 0.0;
-                return $"{descriptor} - {multiplier:0.##}x";
+                return $"{descriptor} - {multiplier:0.##}×";
             }
 
             if (Definition.ValueKind == "probability")
@@ -1494,19 +1494,19 @@ public sealed class ParameterViewModel : ObservableObject
             }
 
             if (Id is "combat.accumulatedDamageWeightMax" or "combat.accumulatedDamageWeightMin")
-                return $"{descriptor} - {CurrentNumber:0.##}x of full scale";
+                return $"{descriptor} - {CurrentNumber:0.##}× of full scale";
 
             if (Definition.ValueKind == "multiplier")
             {
                 var basis = Definition.Display?.Primary == "percentOfVanilla" ? "of vanilla" : "of normal";
-                return $"{descriptor} - {CurrentNumber:0.##}x {basis}";
+                return $"{descriptor} - {CurrentNumber:0.##}× {basis}";
             }
 
             if (Definition.Tab == "loot" && Definition.Display?.Primary == "percentOfVanilla")
             {
                 var reference = GetReferenceNumber();
                 var scale = Math.Abs(reference) > Epsilon ? CurrentNumber / reference : CurrentNumber;
-                return $"{descriptor} - {scale:0.##}x of vanilla";
+                return $"{descriptor} - {scale:0.##}× of vanilla";
             }
 
             var value = FormatTechnicalValue(CurrentNumber);
@@ -2093,11 +2093,11 @@ public sealed class ParameterViewModel : ObservableObject
             }
 
             if (Definition.Display?.Primary == "multiplier")
-                return $"{value:0.##}x";
+                return $"{value:0.##}×";
 
             // Shared direct-value parameters are displayed as vanilla 1x plus their real CFG value.
             if (Definition.Display?.Primary == "percentOfVanilla" && isSharedValue)
-                return $"1x  ({value:0.#####}{unit})";
+                return $"1×  ({value:0.#####}{unit})";
 
             return $"{value:0.#####}{unit}";
         }

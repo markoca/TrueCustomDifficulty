@@ -98,7 +98,7 @@ internal static partial class Program
 
         var npcRationale = uiVm.AllParameters.Single(p => p.Id == "loot.npcCorpseBonus")
             .RationaleDisplay;
-        Check(npcRationale.Contains("0–3x, 1x = vanilla", StringComparison.Ordinal)
+        Check(npcRationale.Contains("0–3×, 1× = vanilla", StringComparison.Ordinal)
             && !npcRationale.Contains("100% = 1", StringComparison.Ordinal),
             "NPC corpse Chance rationale must describe the source-relative multiplier");
 

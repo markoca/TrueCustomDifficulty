@@ -3480,7 +3480,7 @@ _primary_expected = {
     )),
     "Fatigue": (_fatigue_first_row, (
         'DrawCoreResourceRuler(dc, rate, "FATIGUE RATE", "pts/s"',
-        'DrawCoreResourceRuler(dc, relief, "ENERGY DRINK FATIGUE RELIEF", "x"',
+        'DrawCoreResourceRuler(dc, relief, "ENERGY DRINK FATIGUE RELIEF", "×"',
     )),
 }
 for _title, (_renderer, _required) in _primary_expected.items():
@@ -4274,7 +4274,7 @@ for _ui_catalog in ('UI-DESIGN-LOCK.md', 'VISUAL-CONTROL-SYSTEM.md'):
 _anomaly_knob_param = _knob_catalog.get('environment.anomalyDamage', {})
 _anomaly_knob_slider = _anomaly_knob_param.get('slider') or {}
 _anomaly_radar_source = (ROOT / 'src/TrueCustomDifficulty/Controls/AnomalyDamageRadar.cs').read_text(encoding='utf-8')
-if ('DrawCenteredText(dc, $"{p.CurrentNumber:0.##}x", new Point(center.X, center.Y),'
+if ('DrawCenteredText(dc, $"{p.CurrentNumber:0.##}×", new Point(center.X, center.Y),'
     not in _anomaly_radar_source
     or 'new Point(center.X, center.Y + 3)' in _anomaly_radar_source):
     fail('Anomaly Damage independent dial readout does not use vertical-center coordinates')
@@ -5907,7 +5907,7 @@ if (any(retired in _microcopy_ui for retired in (
         'x BASE×REP'))
     or 'CreateText("MOVEMENT SPEED", 10.5, text, FontWeights.Bold)' not in _microcopy_ui
     or 'CreateText("TURN SPEED", 10.5, text, FontWeights.Bold)' not in _microcopy_ui
-    or 'DrawDerivedCentered(dc, $"{baseRepair * parameter.CurrentNumber:0.##}x",' not in _microcopy_ui
+    or 'DrawDerivedCentered(dc, $"{baseRepair * parameter.CurrentNumber:0.##}×",' not in _microcopy_ui
     or 'var baseRepair = Linked("economy.repairCostBase")?.CurrentNumber ?? 0.7;' not in _microcopy_ui):
     fail("Repair reputation/Flycatcher caption contract drifted")
 for _microcopy_doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):

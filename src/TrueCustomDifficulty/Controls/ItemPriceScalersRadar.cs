@@ -130,7 +130,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
             var y = chart.Bottom - step * PlotHeight / 4.0;
             dc.DrawLine(new Pen(Clone(border, .48), .8),
                 new Point(plotLeft, y), new Point(plotRight, y));
-            var tick = Text($"{step * .5:0.#}x", VisualControlTypography.AxisTick, muted, FontWeights.SemiBold);
+            var tick = Text($"{step * .5:0.#}×", VisualControlTypography.AxisTick, muted, FontWeights.SemiBold);
             dc.DrawText(tick, new Point(plotLeft - tick.Width - 9.0, y - tick.Height / 2));
         }
         var axis = new Point(12.0, chart.Top + chart.Height / 2);
@@ -162,7 +162,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
                 new Point(barLeft - 5, referenceY), new Point(barLeft + barWidth + 5, referenceY));
             VerticalBarHandleChrome.Draw(dc, new Point(center, y),
                 barWidth, enabled ? accent : muted, enabled && _hoverIndex == i);
-            Center(dc, $"{p.CurrentNumber:0.##}x", center, 84, 11.3,
+            Center(dc, $"{p.CurrentNumber:0.##}×", center, 84, 11.3,
                 enabled && p.IsValueModifiedFromReference() ? ReadoutInk.Numbers(accent, text) : text,
                 FontWeights.Bold);
             var words = Items[i].Label.Split(' ');

@@ -1,3 +1,8 @@
+## 2026-11-18 — CURRENT: × everywhere; typography pass
+
+* **Multiplier sign is `×` in every readout**, not the letter `x`: board values, axis ticks, min/max captions, panel CURRENT values, MUTANT AGGRESSION / HUMAN TACTICS / AWARENESS readouts (`1.4× · …`), TRADER STOCK supply, ALife radars, item price radar, anomaly dials, unit `×` on the water / fatigue-relief rulers, and the build-error / preset-error messages. `HumanCombatPolicy.WithoutFactor` strips a leading `… ×` factor. Catalog strings follow (44). ReadoutInk is unchanged (only digits turn gold; `×` stays in the unit colour).
+* Typography: en dash in numeric ranges (`9–12`, `0–90%`), no *UI masking range* wording, RGD-5 AMOUNT / BASIC GRENADES CHANCE / LOW HEALTH MECHANICS / BONUS GEAR COVERAGE named in caps where texts said *Amount*, *Master penalties*, *Coverage*; Rare coupon logic no longer repeats the vanilla line; NPC SMART LOOT rationale explains the switch in player words.
+
 ## 2026-11-18 — CURRENT: HUMAN TACTICS texts in seconds, help names in caps
 
 * HUMAN TACTICS rows (grenades, suppression, flanking, push, camping penalty) read out pauses in seconds on COMBAT MINUTE, so their texts no longer talk in × (*2× = twice as often*, *The card shows the resulting pause … at 1×*): `Vanilla: Novice–Veteran every 20–35 s per squad, Master every 10–17 s. Shorter pause on COMBAT MINUTE = they do it more often.` HIGHER / LOWER: every enemy rank's pause changes together.

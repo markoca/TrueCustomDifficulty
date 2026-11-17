@@ -169,7 +169,7 @@ public static class MutantAggressionPolicy
     /// <summary>Panel text, e.g. "2x · psy every 6 s" (rate + the family's headline cooldown).</summary>
     public static string RateDisplay(Family family, Group group, double rate, double reference)
     {
-        var text = $"{rate.ToString("0.##", CultureInfo.InvariantCulture)}x";
+        var text = $"{rate.ToString("0.##", CultureInfo.InvariantCulture)}×";
         return CooldownDisplay(family, group, rate, reference) is { } cooldown
             ? text + " · " + cooldown
             : text + (group == Group.Attacks ? " attacks" : " abilities");
@@ -211,7 +211,7 @@ public static class MutantAggressionPolicy
     /// <summary>Board and panel value of SPECIAL ABILITY RATE (writer rounding).</summary>
     public static string SpecialAbilityDisplay(double rate)
         => string.Create(CultureInfo.InvariantCulture,
-            $"{rate:0.##}x · special move every {8.0 / rate:0.##}–{12.0 / rate:0.##} s");
+            $"{rate:0.##}× · special move every {8.0 / rate:0.##}–{12.0 / rate:0.##} s");
 
     // ---- SPECIAL ABILITY RATE --------------------------------------------
     public static IReadOnlyList<(string Index, string Tag, double Min, double Max)> AbilityTokenGroups { get; } =

@@ -1889,7 +1889,7 @@ public sealed partial class CfgPatchWriterService
             if (effectiveWeights.All(x => x <= 0))
             {
                 throw new InvalidDataException(
-                    "Ammo Box Distribution cannot set every caliber in the same ammo box pool to 0x.");
+                    "Ammo Box Distribution cannot set every caliber in the same ammo box pool to 0×.");
             }
         }
 
@@ -2462,7 +2462,7 @@ public sealed partial class CfgPatchWriterService
             .ToList();
         if (underGuaranteed.Count > 0)
             throw new InvalidDataException(
-                $"World weapon minimum-copy guarantee failed ({guaranteedCopies}x): {string.Join(", ", underGuaranteed)}");
+                $"World weapon minimum-copy guarantee failed ({guaranteedCopies}×): {string.Join(", ", underGuaranteed)}");
 
         var edits = 0;
         var files = 0;

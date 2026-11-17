@@ -201,7 +201,7 @@ public sealed class MutantHealthRadar : FrameworkElement
         var content = ContentRect();
         if (_damage is { } damage)
             DrawGlobalTrack(dc, damage, DamageRow, "MUTANT HIT DAMAGE",
-                $"{damage.CurrentNumber:0.##}x hit dmg",
+                $"{damage.CurrentNumber:0.##}× hit dmg",
                 new Rect(content.Left, 43.0, content.Width, GlobalCardHeight),
                 text, muted, border, accent, panel);
         if (_special is { } special)
@@ -292,7 +292,7 @@ public sealed class MutantHealthRadar : FrameworkElement
 
         // Top row: species left, current multiplier centered, derived real HP right.
         // Current multiplier and actual HP stay legible; only changed digits turn gold.
-        DrawSourceNumber(dc, $"{parameter.CurrentNumber:0.##}x",
+        DrawSourceNumber(dc, $"{parameter.CurrentNumber:0.##}×",
             new Point(card.Left + card.Width / 2.0, card.Top + 12.0),
             13.0, text, accent, FontWeights.Bold, modified);
 

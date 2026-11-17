@@ -89,7 +89,7 @@ public static class HumanCombatPolicy
     {
         var (min, max) = CooldownSeconds(control, rate, reference);
         return string.Create(CultureInfo.InvariantCulture,
-            $"{rate:0.##}x · {control.Verb} every {min:0.#}–{max:0.#} s");
+            $"{rate:0.##}× · {control.Verb} every {min:0.#}–{max:0.#} s");
     }
 
     /// <summary>
@@ -115,26 +115,26 @@ public static class HumanCombatPolicy
         return full is null ? null : WithoutFactor(full);
     }
 
-    /// <summary>Drops a leading "1.4x · " factor from a readout.</summary>
+    /// <summary>Drops a leading "1.4× · " factor from a readout.</summary>
     public static string WithoutFactor(string display)
     {
         var dot = display.IndexOf(" · ", StringComparison.Ordinal);
-        return dot > 0 && display[..dot].EndsWith('x') ? display[(dot + 3)..] : display;
+        return dot > 0 && display[..dot].EndsWith('×') ? display[(dot + 3)..] : display;
     }
 
     // ---- display helpers for HUMAN AWARENESS / ACCURACY ------------------------
     public static string AccuracyDisplay(double factor)
-        => string.Create(CultureInfo.InvariantCulture, $"{factor:0.##}x · shot spread {100.0 / factor:0}%");
+        => string.Create(CultureInfo.InvariantCulture, $"{factor:0.##}× · shot spread {100.0 / factor:0}%");
 
     public static string SightDisplay(double factor)
         // Central vision (straight ahead) and peripheral vision (edge of view).
-        => string.Create(CultureInfo.InvariantCulture, $"{factor:0.##}x · spots you {80.0 * factor:0} m ahead, {25.0 * factor:0} m aside");
+        => string.Create(CultureInfo.InvariantCulture, $"{factor:0.##}× · spots you {80.0 * factor:0} m ahead, {25.0 * factor:0} m aside");
 
     public static string HearingDisplay(double factor)
-        => string.Create(CultureInfo.InvariantCulture, $"{factor:0.##}x · hears steps at {12.0 * factor:0.#} m");
+        => string.Create(CultureInfo.InvariantCulture, $"{factor:0.##}× · hears steps at {12.0 * factor:0.#} m");
 
     public static string MemoryDisplay(double factor)
-        => string.Create(CultureInfo.InvariantCulture, $"{factor:0.##}x · searches for {30.0 * factor:0} s");
+        => string.Create(CultureInfo.InvariantCulture, $"{factor:0.##}× · searches for {30.0 * factor:0} s");
 
     // Persist native hearing coefficients; display their complementary masking.
     public static bool IsWeatherNoise(string id) => id is RainNoiseId or StormNoiseId;

@@ -627,7 +627,7 @@
         "status": "runtime_test_required",
         "notes": [
           "DispersionRadius is the NPC weapon's own bullet spread (e.g. AK74 300); the distance curve and the zombie addend are unchanged.",
-          "Not changed by the game's difficulty; 1x is vanilla on every difficulty."
+          "Not changed by the game's difficulty; 1× is vanilla on every difficulty."
         ]
       },
       "rationale": "How accurately human enemies shoot. Vanilla: 1×. 2× = half the spread, so more bullets find you at range; 0.5× = twice the spread. Damage per hit is ENEMY GUN DAMAGE.",
@@ -639,7 +639,7 @@
       "tab": "combat",
       "group": "Human Awareness",
       "label": "Enemy Sight",
-      "description": "Scales how far human enemies see: CentralVisionDistance (80 m) and PeripheralVisionDistance (25 m) of the DefaultNPC vision scanner. Maximum 2.5x = 200 m ahead / 62.5 m peripheral.",
+      "description": "Scales how far human enemies see: CentralVisionDistance (80 m) and PeripheralVisionDistance (25 m) of the DefaultNPC vision scanner. Maximum 2.5× = 200 m ahead / 62.5 m peripheral.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -870,7 +870,7 @@
       },
       "rationale": "How much rain covers your noise. Vanilla: 30% — in rain enemies hear you at 70% of the normal range. Higher = sneak closer while it pours; 0% = rain gives you no cover.",
       "logic": "Shown as how much of your noise the rain hides: 30% = enemies hear you at 70% of the normal range. Applies to rain and heavy rain.",
-      "interaction": "Only active during light or regular rain; independent of general HEARING. UI masking range is 0-90%, 5% steps."
+      "interaction": "Only active during light or regular rain; independent of general HEARING. Range 0–90% in 5% steps."
     },
     {
       "id": "combat.npcStormNoise",
@@ -915,7 +915,7 @@
       },
       "rationale": "How much a thunderstorm covers your noise. Vanilla: 40% — enemies hear you at 60% of the normal range. Higher = thunder hides your steps and shots better; 0% = no cover.",
       "logic": "Shown as how much of your noise a thunderstorm hides: 40% = enemies hear you at 60% of the normal range.",
-      "interaction": "Only active during thunder; independent of general HEARING. UI masking range is 0-90%, 5% steps."
+      "interaction": "Only active during thunder; independent of general HEARING. Range 0–90% in 5% steps."
     },
     {
       "id": "combat.playerWeaponDamage",
@@ -966,7 +966,7 @@
       "tab": "combat",
       "group": "Your Weapons",
       "label": "Headshot Damage",
-      "description": "Scales the damage multiplier applied to your headshots; 1x is normal and 2x doubles the configured headshot damage.",
+      "description": "Scales the damage multiplier applied to your headshots; 1× is normal and 2× doubles the configured headshot damage.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -1277,7 +1277,7 @@
         "status": "confirmed",
         "notes": [
           "Directly scales the authored MaxHP field in GameData/ObjPrototypes.cfg.",
-          "1x is vanilla.",
+          "1× is vanilla.",
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty.",
           "The Bloodsucker family control applies the same multiplier to Bloodsucker (500 MaxHP) and MistBloodsucker (1000 MaxHP); the radar displays the standard Bloodsucker value only.",
           "Variants with their own MaxHP follow the same multiplier: AshyBloodsucker, PrologueBloodsucker. Collar variants inherit from the base prototype; illusion clones (Bayun clone, Pseudodog phantoms) are not scaled."
@@ -1326,7 +1326,7 @@
         "status": "confirmed",
         "notes": [
           "Directly scales the authored MaxHP field in GameData/ObjPrototypes.cfg.",
-          "1x is vanilla.",
+          "1× is vanilla.",
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
@@ -1373,7 +1373,7 @@
         "status": "confirmed",
         "notes": [
           "Directly scales the authored MaxHP field in GameData/ObjPrototypes.cfg.",
-          "1x is vanilla.",
+          "1× is vanilla.",
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
@@ -1420,7 +1420,7 @@
         "status": "confirmed",
         "notes": [
           "Directly scales the authored MaxHP field in GameData/ObjPrototypes.cfg.",
-          "1x is vanilla.",
+          "1× is vanilla.",
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
@@ -1467,7 +1467,7 @@
         "status": "confirmed",
         "notes": [
           "Directly scales the authored MaxHP field in GameData/ObjPrototypes.cfg.",
-          "1x is vanilla.",
+          "1× is vanilla.",
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
@@ -1521,7 +1521,7 @@
         "status": "confirmed",
         "notes": [
           "Directly scales the authored MaxHP field in GameData/ObjPrototypes.cfg.",
-          "1x is vanilla.",
+          "1× is vanilla.",
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
@@ -1568,7 +1568,7 @@
         "status": "confirmed",
         "notes": [
           "Directly scales the authored MaxHP field in GameData/ObjPrototypes.cfg.",
-          "1x is vanilla.",
+          "1× is vanilla.",
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
@@ -1940,7 +1940,7 @@
         "status": "confirmed",
         "notes": [
           "Directly scales the authored MaxHP field in GameData/ObjPrototypes.cfg.",
-          "1x is vanilla.",
+          "1× is vanilla.",
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
@@ -4252,7 +4252,7 @@
         "status": "confirmed",
         "notes": [
           "WaterStaminaPerAction1 is a native -10% SPDrain effect over 30 seconds; it does not share a ValueMin/ValueMax target with WaterStamina2.",
-          "The yellow STAMINA COST mini-knob shows the native negative drain modifier as 0% to -20%, without changing its underlying 0–2x scale."
+          "The yellow STAMINA COST mini-knob shows the native negative drain modifier as 0% to -20%, without changing its underlying 0–2× scale."
         ]
       },
       "rationale": "Water also makes running and other actions cost less stamina for a while. Vanilla: 1× (−10%). 0× removes it, 2× doubles it to −20%.",
@@ -5739,7 +5739,7 @@
       "valueKind": "multiplier",
       "display": {
         "primary": "percent",
-        "rawFormat": "0.00x",
+        "rawFormat": "0.00×",
         "valueLabel": "Health recovery multiplier"
       },
       "vanilla": {
@@ -5811,7 +5811,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "The small comeback heal the game gives you when you're almost dead. Vanilla: 1 HP/s. 0 removes it, so near-death means near-death; Master penalties can cut it further.",
+      "rationale": "The small comeback heal the game gives you when you're almost dead. Vanilla: 1 HP/s. 0 removes it, so near-death means near-death; LOW HEALTH MECHANICS can cut it further.",
       "logic": "",
       "interaction": "HEALTH REGEN STRENGTH can scale this effect, and the Master low-health penalty can reduce it further."
     },
@@ -7824,7 +7824,7 @@
           "Normal NPC consumables, ordinary gear and the independent stash SmartLoot switch are unaffected."
         ]
       },
-      "rationale": "Turn optional corpse Smart Loot packs on or off. Turning it off removes bonus Medicine, Ammo and Water packages from ordinary NPC corpses without changing their regular loot. Vanilla: ON.",
+      "rationale": "Smart loot on bodies: the bonus packs that react to what you are missing. Vanilla: ON. OFF = ordinary bodies never carry the Medicine, Ammo and Water packs; their regular loot stays.",
       "logic": "OFF: ordinary corpses never get bonus packs. ON: the packs picked on this board can appear.",
       "interaction": "The three package chips, NEED BOOST and bonus ammo controls stay saved but are inactive when OFF.",
       "exposeInUi": true
@@ -7864,7 +7864,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Extra loot packages ordinary human bodies can carry: Medicine, Ammo and Water, in any combination. Vanilla: Novice Medicine + Ammo, Stalker Water, Veteran and Master none.",
+      "rationale": "Bonus packs ordinary human bodies can carry: Medicine, Ammo and Water, in any combination. Vanilla: Novice Medicine + Ammo, Stalker Water, Veteran and Master none.",
       "logic": "Each chip adds one bonus pack (Medicine, Ammo or Water) to ordinary corpses. Vanilla: Medicine + Ammo on Novice, Water on Stalker, none on Veteran and Master.",
       "interaction": "Bonus ammo quantity applies whenever the Ammo package is on. Standard medical items are not switched off by any package choice."
     },
@@ -8069,7 +8069,7 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Ammo Stash Weight",
-      "description": "Legacy compatibility-only global ammo Weight multiplier across eligible Basic/Standard/Rare stash groups and ranks (not smart loot since 2026-11-17). 1x keeps native Weight, 0x zeros supported Weight entries, 0.1–1x reduces the source Weight compared with unchanged categories. Native Chance entries are not changed by this knob; native bonus Chance has separate controls where exposed.",
+      "description": "Legacy compatibility-only global ammo Weight multiplier across eligible Basic/Standard/Rare stash groups and ranks (not smart loot since 2026-11-17). 1× keeps native Weight, 0× zeros supported Weight entries, 0.1–1× reduces the source Weight compared with unchanged categories. Native Chance entries are not changed by this knob; native bonus Chance has separate controls where exposed.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -8108,8 +8108,8 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "1x keeps native Weight; independently-authored Chance is untouched.",
-          "0x zeros only eligible Weight entries, not Chance-only entries; full exclusion is not guaranteed.",
+          "1× keeps native Weight; independently-authored Chance is untouched.",
+          "0× zeros only eligible Weight entries, not Chance-only entries; full exclusion is not guaranteed.",
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
@@ -8162,7 +8162,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "1x (100%) writes nothing; below 100% the removed share becomes a native Empty pick (Weight lists) or a lower Chance (Chance rows).",
+          "1× (100%) writes nothing; below 100% the removed share becomes a native Empty pick (Weight lists) or a lower Chance (Chance rows).",
           "Empty next to real items is not used by vanilla lists: runtime test required (RELEASE-TESTING.md, Stash presence).",
           "Quest, unique, DLC1 regular and Cabin/direct rows are outside this rule."
         ]
@@ -8216,7 +8216,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "1x (100%) writes nothing; below 100% the removed share becomes a native Empty pick (Weight lists) or a lower Chance (Chance rows).",
+          "1× (100%) writes nothing; below 100% the removed share becomes a native Empty pick (Weight lists) or a lower Chance (Chance rows).",
           "Empty next to real items is not used by vanilla lists: runtime test required (RELEASE-TESTING.md, Stash presence).",
           "Quest, unique, DLC1 regular and Cabin/direct rows are outside this rule."
         ]
@@ -8270,7 +8270,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "1x (100%) writes nothing; below 100% the removed share becomes a native Empty pick (Weight lists) or a lower Chance (Chance rows).",
+          "1× (100%) writes nothing; below 100% the removed share becomes a native Empty pick (Weight lists) or a lower Chance (Chance rows).",
           "Empty next to real items is not used by vanilla lists: runtime test required (RELEASE-TESTING.md, Stash presence).",
           "Quest, unique, DLC1 regular and Cabin/direct rows are outside this rule."
         ]
@@ -8285,7 +8285,7 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Grenades Stash Weight",
-      "description": "Legacy compatibility-only global grenades Weight multiplier across eligible Basic/Standard/Rare stash groups and ranks (not smart loot since 2026-11-17). 1x keeps native Weight, 0x zeros supported Weight entries, 0.1–1x reduces the source Weight compared with unchanged categories. Native Chance entries are not changed by this knob; native bonus Chance has separate controls where exposed.",
+      "description": "Legacy compatibility-only global grenades Weight multiplier across eligible Basic/Standard/Rare stash groups and ranks (not smart loot since 2026-11-17). 1× keeps native Weight, 0× zeros supported Weight entries, 0.1–1× reduces the source Weight compared with unchanged categories. Native Chance entries are not changed by this knob; native bonus Chance has separate controls where exposed.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -8324,8 +8324,8 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "1x keeps native Weight; independently-authored Chance is untouched.",
-          "0x zeros only eligible Weight entries, not Chance-only entries; full exclusion is not guaranteed.",
+          "1× keeps native Weight; independently-authored Chance is untouched.",
+          "0× zeros only eligible Weight entries, not Chance-only entries; full exclusion is not guaranteed.",
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
@@ -8378,7 +8378,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "1x (100%) writes nothing; below 100% the removed share becomes a native Empty pick (Weight lists) or a lower Chance (Chance rows).",
+          "1× (100%) writes nothing; below 100% the removed share becomes a native Empty pick (Weight lists) or a lower Chance (Chance rows).",
           "Empty next to real items is not used by vanilla lists: runtime test required (RELEASE-TESTING.md, Stash presence).",
           "Quest, unique, DLC1 regular and Cabin/direct rows are outside this rule."
         ]
@@ -9377,7 +9377,7 @@
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
-        "rawFormat": "0.0x",
+        "rawFormat": "0.0×",
         "valueLabel": "Relative mix weight"
       },
       "vanilla": {
@@ -9432,7 +9432,7 @@
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
-        "rawFormat": "0.0x",
+        "rawFormat": "0.0×",
         "valueLabel": "Relative mix weight"
       },
       "vanilla": {
@@ -9487,7 +9487,7 @@
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
-        "rawFormat": "0.0x",
+        "rawFormat": "0.0×",
         "valueLabel": "Relative mix weight"
       },
       "vanilla": {
@@ -9542,7 +9542,7 @@
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
-        "rawFormat": "0.0x",
+        "rawFormat": "0.0×",
         "valueLabel": "Relative mix weight"
       },
       "vanilla": {
@@ -9580,7 +9580,7 @@
           "Initial pool contains 19 ordinary attachment models from native single-item Stash_* generators; the other safe-world entries require separate source approval.",
           "Weapon fitting is NOT checked; attachments are independent inventory items rather than attached to a weapon.",
           "Bonus Chance gates the outer SubItemGenerator; unchanged nested source Chance may further affect appearances.",
-          "Default weight 0x preserves existing three-category presets."
+          "Default weight 0× preserves existing three-category presets."
         ]
       },
       "rationale": "How often bonus gear is a weapon attachment, matched to the area's progression. Vanilla: 0 — off. Raise it to find scopes and other attachments in stashes. Only works while EXTRA STASH GEAR is ON.",
@@ -9640,7 +9640,7 @@
           "Existing presets missing this new key inherit 50% to preserve the prior authored Chance 0.5. Master OFF disables the editor."
         ]
       },
-      "rationale": "The roll for each bonus gear item in a picked stash. Vanilla: 50%. Even 100% isn't a guarantee in every stash — Coverage decides which stashes get a roll at all. Only works while EXTRA STASH GEAR is ON.",
+      "rationale": "The roll for each bonus gear item in a picked stash. Vanilla: 50%. Even 100% isn't a guarantee in every stash — BONUS GEAR COVERAGE decides which stashes get a roll at all. Only works while EXTRA STASH GEAR is ON.",
       "logic": "Higher improves the odds for each offered bonus item. Even 100% still needs an eligible stash and item candidate.",
       "interaction": "BONUS GEAR COVERAGE sets how many stashes qualify; the PRIORITY bars set which kinds of gear are offered.",
       "requiresToggle": "loot.stashGearEnabled",
@@ -9685,7 +9685,7 @@
         "notes": [
           "One visible control; the Standard and Rare amount values are mirrored from it (presets and reset included).",
           "Each tier scales only its existing vanilla ammo MinCount/MaxCount values.",
-          "1x preserves vanilla stack counts.",
+          "1× preserves vanilla stack counts.",
           "Chance, Weight, rank gates and PossibleItems membership remain unchanged.",
           "The existing production-only stash fan-out and exclusions remain unchanged."
         ]
@@ -9763,7 +9763,7 @@
       },
       "rationale": "Chance a Basic stash has an RGD-5 grenade in it. Vanilla: 10%.",
       "logic": "The real chance a Basic stash has an RGD-5: 10% is vanilla, 0% never, 100% every Basic stash that can carry one.",
-      "interaction": "Pair it with RGD-5 AMOUNT: Chance decides whether the grenade appears; Amount decides how many you get. Six DLC1 Basic stashes always have their RGD-5 in vanilla; there the same setting keeps its ratio to the Basic 10% (e.g. 5% = half as often).",
+      "interaction": "Pair it with RGD-5 AMOUNT: Chance decides whether the grenade appears; RGD-5 AMOUNT decides how many you get. Six DLC1 Basic stashes always have their RGD-5 in vanilla; there the same setting keeps its ratio to the Basic 10% (e.g. 5% = half as often).",
       "lootHint": {
         "kind": "absoluteChancePer100",
         "label": "RGD-5 chance",
@@ -9815,7 +9815,7 @@
       },
       "rationale": "How many RGD-5s you get when a Basic stash has grenades. Vanilla: 1.",
       "logic": "Exactly 0–4 grenades when the stash has its grenade. Vanilla: 1.",
-      "interaction": "Chance and Amount are separate: 0% Chance means no grenade appears; Amount decides how many are given when it does.",
+      "interaction": "BASIC GRENADES CHANCE and RGD-5 AMOUNT are separate: at 0% chance no grenade appears; RGD-5 AMOUNT decides how many when it does.",
       "lootHint": {
         "kind": "exactCount",
         "label": "RGD-5 stack",
@@ -9868,7 +9868,7 @@
         ]
       },
       "rationale": "Standard-stash ammo amount. It always follows the single AMMO AMOUNT slider. Vanilla: 1×.",
-      "logic": "0.25×–2× scales the amount of ammo found in Standard stashes. For example, a vanilla 18-24 round stack becomes about 9-12 at 0.5× and 36-48 at 2×.",
+      "logic": "0.25×–2× scales the amount of ammo found in Standard stashes. For example, a vanilla 18–24 round stack becomes about 9–12 at 0.5× and 36–48 at 2×.",
       "interaction": "The single AMMO AMOUNT slider adjusts native MinCount/MaxCount in Basic, Standard and Rare with the same multiplier; tier-specific IDs remain CFG/preset backings.",
       "lootHint": {
         "kind": "scaledCountEntries",
@@ -10055,9 +10055,9 @@
           ".45 ACP scales only the existing A045D entry.",
           "12 Gauge scales only the existing A012D entries.",
           "No new PossibleItems entries are ever created by Breakable Box Ammo Distribution.",
-          "0x removes that family from weighted selection only by setting its existing entry/entries to Weight 0.",
-          "1x preserves every authored vanilla Weight = 2.",
-          "At least one existing candidate in each internal pool must remain above 0x.",
+          "0× removes that family from weighted selection only by setting its existing entry/entries to Weight 0.",
+          "1× preserves every authored vanilla Weight = 2.",
+          "At least one existing candidate in each internal pool must remain above 0×.",
           "Ammo from Breakable Boxes remains independent and changes only MinCount/MaxCount."
         ]
       },
@@ -10534,7 +10534,7 @@
         "status": "runtime_test_required",
         "notes": [
           "Scales only authored per-item Chance rows in this regular stash tier; original entry-specific Chance fields and rank/difficulty eligibility remain distinct.",
-          "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
+          "Vanilla 1× leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
         ]
       },
       "exposeInUi": true,
@@ -10580,7 +10580,7 @@
         "status": "runtime_test_required",
         "notes": [
           "Scales only authored per-item Chance rows in this regular stash tier; original entry-specific Chance fields and rank/difficulty eligibility remain distinct.",
-          "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
+          "Vanilla 1× leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
         ]
       },
       "exposeInUi": true,
@@ -10626,7 +10626,7 @@
         "status": "runtime_test_required",
         "notes": [
           "Scales only authored per-item Chance rows in this regular stash tier; original entry-specific Chance fields and rank/difficulty eligibility remain distinct.",
-          "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
+          "Vanilla 1× leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
         ]
       },
       "exposeInUi": true,
@@ -10718,7 +10718,7 @@
         "status": "runtime_test_required",
         "notes": [
           "Scales only authored per-item Chance rows in this regular stash tier; original entry-specific Chance fields and rank/difficulty eligibility remain distinct.",
-          "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
+          "Vanilla 1× leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
         ]
       },
       "exposeInUi": true,
@@ -10764,7 +10764,7 @@
         "status": "runtime_test_required",
         "notes": [
           "Scales only authored per-item Chance rows in this regular stash tier; original entry-specific Chance fields and rank/difficulty eligibility remain distinct.",
-          "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
+          "Vanilla 1× leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
         ]
       },
       "exposeInUi": true,
@@ -10810,7 +10810,7 @@
         "status": "runtime_test_required",
         "notes": [
           "Scales only authored per-item Chance rows in this regular stash tier; original entry-specific Chance fields and rank/difficulty eligibility remain distinct.",
-          "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
+          "Vanilla 1× leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
         ]
       },
       "exposeInUi": true,
@@ -10856,7 +10856,7 @@
         "status": "runtime_test_required",
         "notes": [
           "Scales only authored per-item Chance rows in this regular stash tier; original entry-specific Chance fields and rank/difficulty eligibility remain distinct.",
-          "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
+          "Vanilla 1× leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
         ]
       },
       "exposeInUi": true,
@@ -10924,7 +10924,7 @@
         ]
       },
       "rationale": "Chance a Rare stash pays out coupons (money). Vanilla: Novice and Stalker 20%, Veteran and Master 10%. How much you get still follows the game's progression.",
-      "logic": "Novice and Stalker use 20%; Veteran and Master use 10%. This setting only changes whether coupons can appear, not which Common, Rare, Epic or Legendary coupon tier is selected.",
+      "logic": "Only changes whether coupons appear, not which coupon tier (Common to Legendary) you get.",
       "interaction": "Only the coupon reward inside a Rare stash; it doesn't change how often you find Rare stashes.",
       "exposeInUi": true,
       "lootHint": {
@@ -11713,7 +11713,7 @@
       "valueKind": "multiplier",
       "display": {
         "primary": "percent",
-        "rawFormat": "0.00x",
+        "rawFormat": "0.00×",
         "valueLabel": "Repair price difficulty setting"
       },
       "vanilla": {
@@ -11794,7 +11794,7 @@
       "tab": "economy",
       "group": "Repair per Reputation",
       "label": "Hostile Repair Price",
-      "description": "Changes repair prices when your reputation with the technician's faction is Enemy. Vanilla is 2x of the base repair price.",
+      "description": "Changes repair prices when your reputation with the technician's faction is Enemy. Vanilla is 2× of the base repair price.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -11835,7 +11835,7 @@
       "tab": "economy",
       "group": "Repair per Reputation",
       "label": "Disliked Repair Price",
-      "description": "Changes repair prices when your reputation with the technician's faction is Disliked. Vanilla is 1.5x of the base repair price.",
+      "description": "Changes repair prices when your reputation with the technician's faction is Disliked. Vanilla is 1.5× of the base repair price.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -11876,7 +11876,7 @@
       "tab": "economy",
       "group": "Repair per Reputation",
       "label": "Neutral Repair Price",
-      "description": "Changes repair prices when your reputation with the technician's faction is Neutral. Vanilla is 1x of the base repair price.",
+      "description": "Changes repair prices when your reputation with the technician's faction is Neutral. Vanilla is 1× of the base repair price.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -11917,7 +11917,7 @@
       "tab": "economy",
       "group": "Repair per Reputation",
       "label": "Friendly Repair Price",
-      "description": "Changes repair prices when your reputation with the technician's faction is Friend. Vanilla is 0.75x of the base repair price.",
+      "description": "Changes repair prices when your reputation with the technician's faction is Friend. Vanilla is 0.75× of the base repair price.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {

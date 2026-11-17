@@ -306,7 +306,7 @@ for pid in ("loot.stashMixMedical", "loot.stashMixFood", "loot.stashMixDrinks"):
 assert [round(i * 0.05, 2) for i in range(21)][-1] == 1.0
 assert "var nativeStep = Math.Max(Epsilon, parameter.TickFrequency);" in source
 assert "target.Parameter.CurrentNumber = Snap(target.Parameter, value);" in source
-assert 'parameter.CurrentNumber:0.##}x' in source
+assert 'parameter.CurrentNumber:0.##}×' in source
 
 base = native_group_weights(exp, [1] * 6)
 assert base == [0, 2, 13, 1, 0, 1.77], base

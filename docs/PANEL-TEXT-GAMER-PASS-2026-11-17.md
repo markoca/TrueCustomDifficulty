@@ -62,3 +62,8 @@ The right-hand panel shows four sections for a selected control: **WHAT IT DOES*
 
 24. Rule 17 also covers time readouts: HUMAN TACTICS speak in seconds, not ×.
 25. Rule 23 also covers CONTROLS help; texts call a control what it is (bar, knob, slider, checkbox).
+
+## Eleventh pass (2026-11-18)
+
+26. The multiplier sign is `×` everywhere — readouts, ticks, panel texts, messages. Never the letter `x`.
+27. Numeric ranges use an en dash (`9–12`).

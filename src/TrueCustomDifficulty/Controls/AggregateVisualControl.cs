@@ -673,7 +673,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "economy.startingMoney" => value.ToString("N0", CultureInfo.InvariantCulture),
             "economy.repairCostBase" or "economy.traderMinBuyCondition" or "economy.itemValueFloor"
                 or "environment.flycatcherMovementSpeed" or "environment.flycatcherTurnSpeed" => $"{value * 100.0:0.#}%",
-            _ => $"{value:0.##}x"
+            _ => $"{value:0.##}×"
         };
 
     // Money Flow / compact native coupons counter + two independent reward meters.
@@ -2171,11 +2171,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         const double gap = 12.0;
         var cell = (width - gap) / 2.0;
         if (P("stamina.waterMediumDrain") is { } medium)
-            DrawCoreResourceRuler(dc, medium, "MEDIUM WATER", "x",
+            DrawCoreResourceRuler(dc, medium, "MEDIUM WATER", "×",
                 new Rect(16.0, 51.0, cell, 105.0),
                 text, muted, border, accent, panel);
         if (P("stamina.waterStrongDrain") is { } deep)
-            DrawCoreResourceRuler(dc, deep, "DEEP WATER", "x",
+            DrawCoreResourceRuler(dc, deep, "DEEP WATER", "×",
                 new Rect(16.0 + cell + gap, 51.0, cell, 105.0),
                 text, muted, border, accent, panel);
     }
@@ -2434,7 +2434,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawCoreResourceRuler(dc, rate, "FATIGUE RATE", "pts/s",
             new Rect(16.0, SurvivalPrimaryRulerTop, half, SurvivalPrimaryRulerHeight),
             text, muted, border, accent, panel);
-        DrawCoreResourceRuler(dc, relief, "ENERGY DRINK FATIGUE RELIEF", "x",
+        DrawCoreResourceRuler(dc, relief, "ENERGY DRINK FATIGUE RELIEF", "×",
             new Rect(16.0 + half + resourceGap, SurvivalPrimaryRulerTop,
                 half, SurvivalPrimaryRulerHeight),
             text, muted, border, accent, panel);
@@ -2804,7 +2804,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private static string MasterPercent(double value) => $"{value * 100:0.#}%";
     private static string MasterPositivePercent(double value) => $"+{value * 100:0.#}%";
     private static string MasterNegativePercent(double value) => $"-{value * 100:0.#}%";
-    private static string MasterScalar(double value) => $"{value:0.##}x";
+    private static string MasterScalar(double value) => $"{value:0.##}×";
 
     private void DrawMasterConditionalPenalty(
         DrawingContext dc, Brush text, Brush muted, Brush border,
@@ -3123,7 +3123,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var value = unit switch
         {
             "HP" or "stamina" => $"{parameter.CurrentNumber:0} {unit}",
-            "x" => $"{parameter.CurrentNumber:0.##}x",
+            "×" => $"{parameter.CurrentNumber:0.##}×",
             "pts/s" => $"{parameter.CurrentNumber:0.000} pts/s",
             "%" => $"{(parameter.CurrentNumber > Epsilon ? "+" : "")}{parameter.CurrentNumber * 100.0:0.#}%",
             _ => FriendlyValue(parameter)
@@ -3198,14 +3198,14 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             ? $"{parameter.Maximum:0}" : FormatCompact(parameter.Maximum);
         var leftBound = unit switch
         {
-            "x" => $"{minValue}x",
+            "×" => $"{minValue}×",
             "pts/s" => $"{parameter.Minimum:0.000} pts/s",
             "%" => $"{parameter.Minimum * 100.0:0.#}%",
             _ => $"{minValue} {unit}"
         };
         var rightBound = unit switch
         {
-            "x" => $"{maxValue}x",
+            "×" => $"{maxValue}×",
             "pts/s" => $"{parameter.Maximum:0.000} pts/s",
             "%" => $"{parameter.Maximum * 100.0:0.#}%",
             _ => $"{maxValue} {unit}"
@@ -3368,7 +3368,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             : percentageReadout ? Percent(parameter.CurrentNumber)
             : rawReadout
                 ? $"{(positivePrefix && nativeUnit is not null && parameter.CurrentNumber > Epsilon ? "+" : "")}{parameter.CurrentNumber:0.#}"
-                : $"{parameter.CurrentNumber:0.##}x";
+                : $"{parameter.CurrentNumber:0.##}×";
         // WPF draws at the text's top edge: center every source-backed dial
         // readout, including single-line multiplier/percentage and signed
         // percentage values. Two-line amount/unit or rate/unit pairs share
@@ -3437,14 +3437,14 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             rateReadout ? $"{parameter.Minimum:0.00}"
                 : percentageReadout ? Percent(parameter.Minimum)
                 : rawReadout ? $"{parameter.Minimum:0.#}"
-                : $"{parameter.Minimum:0.##}x",
+                : $"{parameter.Minimum:0.##}×",
             new Point(center.X - radius * .80, card.Bottom - KnobTypography.EndpointInsetFromBottom),
             KnobTypography.EndpointSize, Brushes.White, FontWeights.SemiBold);
         DrawCenteredText(dc,
             rateReadout ? $"{parameter.Maximum:0.00}"
                 : percentageReadout ? Percent(dialMaximum)
                 : rawReadout ? $"{dialMaximum:0.#}"
-                : $"{dialMaximum:0.##}x",
+                : $"{dialMaximum:0.##}×",
             new Point(center.X + radius * .80, card.Bottom - KnobTypography.EndpointInsetFromBottom),
             KnobTypography.EndpointSize, Brushes.White, FontWeights.SemiBold);
 
@@ -3588,9 +3588,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
             if (tick is 0 or 2 or 4)
             {
-                DrawCenteredText(dc, $"{healthTick:0.##}x",
+                DrawCenteredText(dc, $"{healthTick:0.##}×",
                     new Point(gridX, plot.Bottom + 13.0), 9.3, muted, FontWeights.Normal);
-                DrawRightAlignedText(dc, $"{damageTick:0.##}x",
+                DrawRightAlignedText(dc, $"{damageTick:0.##}×",
                     new Point(plot.Left - 13.0, gridY - 7.0), 9.3, muted, FontWeights.Normal);
             }
         }
@@ -3657,7 +3657,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     {
         DrawCenteredText(dc, label, new Point(centerX, 68.0),
             9.3, muted, FontWeights.Bold);
-        var value = $"{parameter.CurrentNumber:0.##}x";
+        var value = $"{parameter.CurrentNumber:0.##}×";
         var active = parameter.IsControlEnabled;
         var formatted = CreateText(value, 16.0, active ? text : muted,
             FontWeights.Bold);
@@ -3713,7 +3713,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             dc.DrawLine(new Pen(CloneWithOpacity(muted, tick == 0 ? .5 : .23), 0.9)
                 { DashStyle = DashStyles.Dot },
                 new Point(plot.Left, y), new Point(plot.Right, y));
-            DrawRightAlignedText(dc, $"{tick}x",
+            DrawRightAlignedText(dc, $"{tick}×",
                 new Point(plot.Left - 11, y - 7.0),
                 9.3, muted, FontWeights.SemiBold);
         }
@@ -3738,7 +3738,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             DrawMixerCentered(dc, channels[i].Label,
                 new Point(x, plot.Bottom + 13.0),
                 plot.Width / 4.0 - 10.0, 9.7, text, FontWeights.Bold);
-            DrawMixerCentered(dc, $"{parameter.CurrentNumber:0.##}x",
+            DrawMixerCentered(dc, $"{parameter.CurrentNumber:0.##}×",
                 new Point(x, plot.Bottom + 37.0),
                 plot.Width / 4.0 - 10.0,
                 parameter.IsValueModifiedFromReference() ? 12.3 : 11.1,
@@ -3749,7 +3749,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             // plotted reputation source. Difficulty layer remains independent;
             // this is not a final coupon bill.
             var baseRepair = Linked("economy.repairCostBase")?.CurrentNumber ?? 0.7;
-            DrawDerivedCentered(dc, $"{baseRepair * parameter.CurrentNumber:0.##}x",
+            DrawDerivedCentered(dc, $"{baseRepair * parameter.CurrentNumber:0.##}×",
                 new Point(x, plot.Bottom + 57.0),
                 plot.Width / 4.0 - 10.0, 9.4, muted, accent, FontWeights.SemiBold);
         }
@@ -4344,7 +4344,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawText(dc, label, new Point(card.Left + 12, card.Top + 10),
             10.5, text, FontWeights.Bold);
         var changed = parameter.IsValueModifiedFromReference();
-        DrawRightAlignedText(dc, $"{parameter.CurrentNumber:0.##}x",
+        DrawRightAlignedText(dc, $"{parameter.CurrentNumber:0.##}×",
             new Point(card.Right - 12, card.Top + 8),
             changed ? 13.3 : 12.1, changed ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
         var track = new Rect(card.Left + 18, card.Top + 49,
@@ -4369,8 +4369,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         dc.DrawEllipse(panel, new Pen(hover ? Brushes.White : accent,
             hover ? 3.0 : 2.0),
             new Point(now, track.Top + 6), 6.5, 6.5);
-        var low = $"{parameter.Minimum:0.##}x";
-        var high = $"{parameter.Maximum:0.##}x";
+        var low = $"{parameter.Minimum:0.##}×";
+        var high = $"{parameter.Maximum:0.##}×";
         DrawText(dc, reverse ? high : low,
             new Point(track.Left, card.Bottom - 19), 9.1, muted, FontWeights.Normal);
         DrawRightAlignedText(dc, reverse ? low : high,
@@ -6545,18 +6545,18 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "equipment.ammoWeight" or "equipment.consumableWeight" or
             "equipment.weaponWeight" or "equipment.armorWeight" or
             "environment.anomalyDamage" or "environment.razorBleeding" or
-            "environment.psyAnomalyIntensity" => $"{rawValue:0.##}x",
+            "environment.psyAnomalyIntensity" => $"{rawValue:0.##}×",
             "economy.repairCostBase" or
             "environment.flycatcherMovementSpeed" or
             "environment.flycatcherTurnSpeed" => $"{rawValue * 100.0:0.#}%",
-            "loot.npcMedicalChance" or "loot.npcWeaponAmmoSupply" => $"{rawValue:0.##}x",
+            "loot.npcMedicalChance" or "loot.npcWeaponAmmoSupply" => $"{rawValue:0.##}×",
             "loot.genericCorpseReduction" or "loot.genericStashReduction" => $"{rawValue * 100.0:0}%",
             "loot.destructibleAmmoQuantity" or "loot.destructibleGrenadeQuantity" or
             "loot.cheapStashAmmoQuantity" or "loot.mediumStashAmmoQuantity" or
             "loot.expensiveStashAmmoQuantity" or
             "loot.ammoBoxWeight918" or "loot.ammoBoxWeight045" or
             "loot.ammoBoxWeight545" or "loot.ammoBoxWeight012" or
-            "loot.medicalBoxArmyMedkitWeight" => $"{rawValue:0.##}x",
+            "loot.medicalBoxArmyMedkitWeight" => $"{rawValue:0.##}×",
             "loot.cheapStashGrenadeChance" or "loot.expensiveStashMoneyChance" =>
                 $"{rawValue * 100.0:0}%",
             "loot.cheapStashGrenadeQuantity" => $"{rawValue:0}",
@@ -6590,7 +6590,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // Reserve the actual width of the current HP/rate readout, not a
         // hard-coded 150 DIP lane that would clip health names on small windows.
         var valueReserve = (healthTypography || combatTypography) && parameter is not null
-            ? CreateText(combatTypography ? $"{parameter.CurrentNumber:0.##}x" : FriendlyValue(parameter),
+            ? CreateText(combatTypography ? $"{parameter.CurrentNumber:0.##}×" : FriendlyValue(parameter),
                 (healthTypography ? HealthTypography.Value + 0.8 : 12.8) + 1.2,
                 text, FontWeights.SemiBold).WidthIncludingTrailingWhitespace + 12.0
             : 126.0;
@@ -6608,7 +6608,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         // Stamina Usage: one readable header line; the muted rail tick
         // alone communicates the selected reference difficulty.
-        var value = combatTypography ? $"{parameter.CurrentNumber:0.##}x"
+        var value = combatTypography ? $"{parameter.CurrentNumber:0.##}×"
             : pairedValueFormatting ? ComparablePairedValue(parameter, parameter.CurrentNumber)
             : FriendlyValue(parameter);
         var baseSize = healthTypography ? HealthTypography.Value + 0.8
@@ -8076,10 +8076,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
             "survival.radiationRecovery" => $"{parameter.CurrentNumber:0.00} pts/s",
             "survival.radiationAccumulation" or
-            "survival.radiationDamage" => $"{parameter.CurrentNumber:0.##}x",
+            "survival.radiationDamage" => $"{parameter.CurrentNumber:0.##}×",
 
             "economy.buyCondition" or
-            "economy.sellCondition" => $"{parameter.CurrentNumber:0.##}x",
+            "economy.sellCondition" => $"{parameter.CurrentNumber:0.##}×",
             "economy.traderMinBuyCondition" or
             "economy.itemValueFloor" => $"{parameter.CurrentNumber * 100:0}%",
 
@@ -8087,7 +8087,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "survival.sleepLowThreshold" or
             "survival.sleepMediumThreshold" or
             "survival.sleepStrongThreshold" => $"{parameter.CurrentNumber:0} pts",
-            "survival.energyDrinkFatigueRelief" => $"{parameter.CurrentNumber:0.##}x",
+            "survival.energyDrinkFatigueRelief" => $"{parameter.CurrentNumber:0.##}×",
 
             "survival.waterInstantStaminaRestore" or
             "survival.waterStaminaEffectStrength" or
@@ -8096,7 +8096,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "survival.energyDrinkEffectDuration" or
             "survival.vodkaEffectDuration" or
             "survival.beerEffectDuration" or
-            "survival.magicVodkaEffectDuration" => $"{parameter.CurrentNumber:0.##}x",
+            "survival.magicVodkaEffectDuration" => $"{parameter.CurrentNumber:0.##}×",
 
             _ => parameter.CurrentDisplay
         };

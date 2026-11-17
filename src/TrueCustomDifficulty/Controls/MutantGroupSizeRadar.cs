@@ -192,7 +192,7 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
         DrawText(dc, info.Label.ToUpperInvariant(),
             new Point(card.Left + 10.0, card.Top + 6.0),
             10.0, text, FontWeights.Bold);
-        DrawRightAlignedText(dc, $"{parameter.CurrentNumber:0.##}x",
+        DrawRightAlignedText(dc, $"{parameter.CurrentNumber:0.##}×",
             new Point(card.Right - 10.0, card.Top + 5.0),
             10.3, muted, FontWeights.SemiBold);
 
