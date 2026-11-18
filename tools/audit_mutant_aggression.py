@@ -94,9 +94,10 @@ check(cooldowns.exists() and "| ABILITIES | summon | `CombatSummon` | 20 s |" in
       "generated MUTANT-COOLDOWNS.md is current")
 
 # ---- catalog ------------------------------------------------------------------
-ids = [f"combat.mutantAttackRate.{k}" for k in families] + \
-      [f"combat.mutantAbilityRate.{k}" for k in ability_families] + ["combat.mutantSpecialAbilityRate"]
-check(len(ids) == 23 and all(i in by_id for i in ids), "all 23 aggression sliders are in parameters.json")
+ids = [f"combat.mutantAttackRate.{k}" for k in families] + ["combat.mutantSpecialAbilityRate"]
+check(len(ids) == 15 and all(i in by_id for i in ids), "all 15 aggression sliders are in parameters.json")
+check(not [r["id"] for r in catalog if r["id"].startswith("combat.mutantAbilityRate.")],
+      "no ABILITIES slider: each ability is its own knob")
 
 # ---- one knob per move ------------------------------------------------------------
 moves_src = policy[policy.index("public static IReadOnlyList<Move> Moves("):policy.index("public static IReadOnlyList<(Family Family")]
@@ -116,9 +117,11 @@ for _key, _group, _slug, _label, _tag, _secs in move_rows:
     check(_full in _own, f"{_key}.{_slug}: tag {_full} belongs to its {_group} slider")
     check(_secs > 0 and len(_label) <= 9 and _label == _label.upper(), f"{_key}.{_slug}: cooldown > 0, short CAPS caption")
     _row = by_id[f"combat.mutantMoveRate.{_key}.{_slug}"]
-    check(_row.get("vanilla") == {"All": 1} and _row.get("exposeInUi") is False
+    _listed = _group == "Abilities" and any(_full in v for v in families[_key]["agents"].values())
+    _want = {"Novice": 1, "Stalker": 1, "Veteran": 1, "Master": 2} if _listed else {"All": 1}
+    check(_row.get("vanilla") == _want and _row.get("exposeInUi") is False
           and (_row["slider"]["min"], _row["slider"]["max"], _row["slider"]["step"]) == (0.25, 3, 0.25),
-          f"{_key}.{_slug}: vanilla 1×, board member, 0.25–3× step 0.25")
+          f"{_key}.{_slug}: vanilla {_want}, board member, 0.25–3× step 0.25")
 check(len({(k, t) for k, _, _, _, t, _ in move_rows}) == 54, "one knob per cooldown tag per family")
 check(not [r["id"] for r in catalog if r["id"].startswith("combat.mutantAbilityRate.")
            and r["id"].split(".")[-1] not in ability_families], "no ability rate for families without abilities")
@@ -155,9 +158,11 @@ check("combat-synchronization-2.1.json" in csproj, "csproj embeds combat-synchro
 check("WriteMutantAggression(" in main_writer and "MutantAggressionPolicy.ParameterIds" in main_writer,
       "main writer calls WriteMutantAggression and supports the ids")
 for token in ('GetOrAddChild("AgentCooldownMultipliers", useBpatch: false)',
-              "agent.VanillaMasterTags", "MutantAggressionPolicy.Reference(family, group, difficultySid)",
-              "MutantAggressionPolicy.Multiplier(agent, tag, r.Rate, r.Reference)",
-              "MutantAggressionPolicy.MoveId(family, move)", "/ (knobs.TryGetValue(tag, out var k) ? k : 1.0)",
+              "agent.VanillaMasterTags", "MutantAggressionPolicy.Reference(family, MutantAggressionPolicy.Group.Attacks, difficultySid)",
+              "MutantAggressionPolicy.Multiplier(agent, tag, attackRate, attackReference)",
+              "MutantAggressionPolicy.Multiplier(agent, tag, ability.Rate, ability.Reference)",
+              "MutantAggressionPolicy.KnobReference(family, group, move, difficultySid)",
+              "MutantAggressionPolicy.MoveId(family, move)", "/ (knobs.TryGetValue(tag, out var k) ? k.Rate : 1.0)",
               "LoadCombatSynchronizationTables", '"CombatSynchronizerStalker" : "Default"'):
     check(token in writer, f"writer token {token}")
 entry = baseline["special"].get("mutantAggression", {})
@@ -167,7 +172,7 @@ check(sorted(entry.get("parameterIds", [])) == sorted(ids[:-1] + move_ids)
 # ---- UI -----------------------------------------------------------------------
 for token in ("MUTANT DAMAGE, HEALTH AND AGGRESSION", "SPECIAL ABILITY RATE",
               "DrawKnobRow(", "DrawMoveKnob(", "MutantAggressionPolicy.MoveSeconds(", "OnMouseWheel(", '"ATTACKS"', '"ABILITIES"',
-              "DrawRateHalf(", "AbilityRowBase", "ReferenceMagnet"):
+              "ReferenceMagnet"):
     check(token in radar, f"radar token {token}")
 
 # ---- optional dump cross-check -----------------------------------------------

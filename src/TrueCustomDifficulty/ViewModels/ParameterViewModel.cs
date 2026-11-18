@@ -265,28 +265,34 @@ public sealed class ParameterViewModel : ObservableObject
     private double SiblingReference(string id)
         => MutantSiblingLookup?.Invoke(id) is { } sibling ? sibling.ReferenceNumber : 1.0;
 
-    /// <summary>Mutant ATTACKS / ABILITIES slider or move knob: every move in real seconds.</summary>
+    /// <summary>Seconds of one move knob with its ATTACKS slider (abilities: the knob alone).</summary>
+    private double KnobSeconds(MutantAggressionPolicy.Family family, MutantAggressionPolicy.Group group,
+        MutantAggressionPolicy.Move move, double knob, double knobReference)
+        => MutantAggressionPolicy.MoveSeconds(family, group, move,
+            SiblingNumber(family.ParameterId), SiblingReference(family.ParameterId), knob, knobReference);
+
+    /// <summary>Mutant ATTACKS slider or move knob: every move in real seconds.</summary>
     public string CooldownTimes
     {
         get
         {
             foreach (var family in MutantAggressionPolicy.Families)
             {
-                foreach (var group in new[] { MutantAggressionPolicy.Group.Attacks, MutantAggressionPolicy.Group.Abilities })
-                {
-                    var groupId = MutantAggressionPolicy.ParameterId(family, group);
-                    var moves = MutantAggressionPolicy.Moves(family, group);
-                    if (Id == groupId)
-                        return string.Join("\n", moves.Select(m => m.Name + " " + MutantAggressionPolicy.Seconds(
-                            MutantAggressionPolicy.MoveSeconds(family, m, CurrentNumber, ReferenceNumber,
-                                SiblingNumber(MutantAggressionPolicy.MoveId(family, m))))));
-                    foreach (var move in moves)
-                    {
-                        if (Id == MutantAggressionPolicy.MoveId(family, move))
-                            return move.Name + " " + MutantAggressionPolicy.Seconds(MutantAggressionPolicy.MoveSeconds(
-                                family, move, SiblingNumber(groupId), SiblingReference(groupId), CurrentNumber));
-                    }
-                }
+                if (Id == family.ParameterId)
+                    return string.Join("\n", MutantAggressionPolicy.Moves(family, MutantAggressionPolicy.Group.Attacks)
+                        .Select(m =>
+                        {
+                            var knob = MutantSiblingLookup?.Invoke(MutantAggressionPolicy.MoveId(family, m));
+                            return m.Name + " " + MutantAggressionPolicy.Seconds(MutantAggressionPolicy.MoveSeconds(
+                                family, MutantAggressionPolicy.Group.Attacks, m, CurrentNumber, ReferenceNumber,
+                                knob?.CurrentNumber ?? 1.0, knob?.ReferenceNumber ?? 1.0));
+                        }));
+            }
+            foreach (var (family, group, move) in MutantAggressionPolicy.MoveKnobs)
+            {
+                if (Id == MutantAggressionPolicy.MoveId(family, move))
+                    return move.Name + " " + MutantAggressionPolicy.Seconds(
+                        KnobSeconds(family, group, move, CurrentNumber, ReferenceNumber));
             }
             return string.Empty;
         }
@@ -299,11 +305,9 @@ public sealed class ParameterViewModel : ObservableObject
             return null;
         foreach (var (family, group, move) in MutantAggressionPolicy.MoveKnobs)
         {
-            if (Id != MutantAggressionPolicy.MoveId(family, move))
-                continue;
-            var groupId = MutantAggressionPolicy.ParameterId(family, group);
-            return move.Name + " every " + MutantAggressionPolicy.Seconds(MutantAggressionPolicy.MoveSeconds(
-                family, move, SiblingNumber(groupId), SiblingReference(groupId), CurrentNumber));
+            if (Id == MutantAggressionPolicy.MoveId(family, move))
+                return move.Name + " every " + MutantAggressionPolicy.Seconds(
+                    KnobSeconds(family, group, move, CurrentNumber, ReferenceNumber));
         }
         return null;
     }
@@ -1412,9 +1416,6 @@ public sealed class ParameterViewModel : ObservableObject
         {
             if (Id == family.ParameterId)
                 return MutantAggressionPolicy.RateDisplay(family, MutantAggressionPolicy.Group.Attacks,
-                    CurrentNumber, ReferenceNumber);
-            if (Id == family.AbilityParameterId)
-                return MutantAggressionPolicy.RateDisplay(family, MutantAggressionPolicy.Group.Abilities,
                     CurrentNumber, ReferenceNumber);
         }
         return null;

@@ -5,9 +5,7 @@ Two control groups on the Mutant board (*MUTANT DAMAGE, HEALTH AND AGGRESSION*):
 | Control | Ids | Range | Vanilla |
 |---|---|---|---|
 | ATTACKS per family (14) | `combat.mutantAttackRate.{family}` | 0.25×–3×, step 0.25 | 1×; **2× on Master** for Bayun, Bloodsucker, Burer, Chimera, Controller, Deer, Pseudodog, Pseudogiant |
-| ABILITIES per family (8) | `combat.mutantAbilityRate.{family}` | 0.25×–3×, step 0.25 | 1×; **2× on Master** for Burer, Controller, Pseudogiant |
-| ABILITIES Deer (2026-11-18) | `combat.mutantAbilityRate.deer` | 0.25×–3×, step 0.25 | 1× (blind dog summon) |
-| One knob per attack (54) | `combat.mutantMoveRate.{family}.{move}` | 0.25×–3×, step 0.25 | 1× |
+| One knob per move (54: 37 attacks, 17 abilities) | `combat.mutantMoveRate.{family}.{move}` | 0.25×–3×, step 0.25 | 1×; ability knobs **2× on Master** where the game halves them (Burer disarm / throw / weapons, Controller psy / corpse / zombify, Pseudogiant shockwave) |
 | SPECIAL ABILITY RATE (global) | `combat.mutantSpecialAbilityRate` | 0.25×–3×, step 0.25 | 1× Novice / Stalker / Veteran, 2× Master |
 
 All are `runtime_test_required`. Source: S.T.A.L.K.E.R. 2 2.1 base dump.
@@ -48,6 +46,16 @@ All are `runtime_test_required`. Source: S.T.A.L.K.E.R. 2 2.1 base dump.
   psy/shield/teleport/anomaly/growl/shockwave/summon for ABILITIES. Chimera growl is 60 s and Snork growl 120 s
   (2026-11-18 fix; the card used to say 30 s and 20 s). At the vanilla value it shows the game's effective time (e.g. Master Controller psy 6 s).
 * `Mutant_AttackCooldown` (1.0 on all difficulties) is not touched.
+
+## No ABILITIES sliders (2026-11-18, third pass)
+
+* The ABILITIES sliders are gone: each ability is its own knob and a one-tag group in the writer
+  (`Multiplier(agent, tag, knob, KnobReference)`), so its knob carries the Master vanilla (2× where the game
+  lists the tag on Master). Attacks keep the ATTACKS slider × knob.
+* Presets folded the old slider into each ability knob: knob × slider, or knob × its Master 2× when the slider sat
+  at its vanilla (`tools/factory_preset_ability_knobs_2026_11_18.json`).
+* Board: ATTACKS caption and slider share one line; ABILITIES is a caption only. Knobs are 15 px radius on a fixed
+  five-column grid per half, so they line up across cards; caption 9 pt, seconds 10.5 pt bold.
 
 ## Attacks only (2026-11-18, second pass)
 

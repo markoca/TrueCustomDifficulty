@@ -165,8 +165,8 @@ def main():
     if not EXPECTED_HIDDEN_NON_UI.issubset(hidden_ids):
         fail(f"declared non-UI controls became visible or vanished: {sorted(EXPECTED_HIDDEN_NON_UI-hidden_ids)}")
     # +3 weather knobs and +4 per-item HEAL TIME bars (2026-11-17).
-    # +3 LAIR POPULATION, +4 ZONE WEATHER / TRADER RESTOCK, +54 mutant attack knobs, +1 Deer / -3 ABILITIES sliders (2026-11-18).
-    if len(effective_ui_ids) != 457 or len(backing_ids) != 244:
+    # +3 LAIR POPULATION, +4 ZONE WEATHER / TRADER RESTOCK, +54 mutant move knobs, ABILITIES sliders folded into knobs (2026-11-18).
+    if len(effective_ui_ids) != 449 or len(backing_ids) != 236:
         fail(f"active source dimension count drifted: {len(effective_ui_ids)} / {len(backing_ids)} backing")
 
     # Named legacy aggregate cohorts are evidence, not the complete editor

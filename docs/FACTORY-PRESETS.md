@@ -336,3 +336,8 @@ The 12 profiles now store the four new controls (422 catalog controls each). The
 
 * 474 controls per profile: roar, growl, howl, dodge, teleport and shield knobs and the Blind Dog, Chimera and Snork ABILITIES sliders are gone (their moves stay vanilla).
 * Stock Hardcore stores Bayun and Bloodsucker ABILITIES at 1× (their Master vanilla is now 1×). Untouched older stock copies upgrade by blob hash (`PreAttackOnlyFactoryBlobs`).
+
+## 2026-11-18 — ABILITIES sliders folded into their knobs
+
+* 466 controls per profile. Each ability knob took over its old slider's value (knob × slider; at the slider's vanilla the Master 2× where the game halves that ability). Hardcore keeps vanilla Master pacing; Hardcore+, Mutant Hunter, Outcast and Wanderer keep their faster abilities (Hardcore+ clone, phantom and dog summons capped at 3×).
+* Untouched older stock copies upgrade by blob hash (`PreAbilityKnobFactoryBlobs`).

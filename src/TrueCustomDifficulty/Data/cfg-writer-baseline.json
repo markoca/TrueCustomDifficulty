@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.1",
-  "supportedParameterCount": 474,
+  "supportedParameterCount": 466,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -48360,7 +48360,7 @@
       "expectedProfiles": 86
     },
     "mutantAggression": {
-      "note": "Per family two rates over its own cooldown tags (ATTACKS / ABILITIES, all variants): rate r writes 1/r into [difficulty].MutantCombatDifficulty.AgentCooldownMultipliers (full list); a group at its difficulty vanilla keeps the game's Master entries (0.5). SPECIAL ABILITY RATE scales CombatSynchronizer FilterGroups [3]/[4]. Every attack also has its own knob (combat.mutantMoveRate.{family}.{move}): its tag gets group × 1/knob in the same list. Roars, growls, howls, dodges, teleports and shields have no control: the game's Master 0.5 entries are written back.",
+      "note": "Per family one ATTACKS rate over its own attack cooldown tags (all variants): rate r writes 1/r into [difficulty].MutantCombatDifficulty.AgentCooldownMultipliers (full list); at its difficulty vanilla it keeps the game's Master entries (0.5). Every attack also has its own knob (combat.mutantMoveRate.{family}.{move}): its tag gets slider × 1/knob. Each ability is a knob of its own (one-tag group, Master vanilla 2× where the game halves it). Roars, growls, howls, dodges, teleports and shields have no control: the game's Master 0.5 entries are written back. SPECIAL ABILITY RATE scales CombatSynchronizer FilterGroups [3]/[4].",
       "parameterIds": [
         "combat.mutantAttackRate.bayun",
         "combat.mutantAttackRate.blinddog",
@@ -48376,14 +48376,6 @@
         "combat.mutantAttackRate.pseudogiant",
         "combat.mutantAttackRate.snork",
         "combat.mutantAttackRate.tushkan",
-        "combat.mutantAbilityRate.bayun",
-        "combat.mutantAbilityRate.bloodsucker",
-        "combat.mutantAbilityRate.burer",
-        "combat.mutantAbilityRate.controller",
-        "combat.mutantAbilityRate.deer",
-        "combat.mutantAbilityRate.poltergeist",
-        "combat.mutantAbilityRate.pseudodog",
-        "combat.mutantAbilityRate.pseudogiant",
         "combat.mutantMoveRate.bayun.claw",
         "combat.mutantMoveRate.bayun.jumpIn",
         "combat.mutantMoveRate.bayun.leap",

@@ -143,10 +143,10 @@ public static class MutantAggressionPolicy
             Array.Empty<string>(), ("claw", 3), null)
     };
 
+    // ATTACKS sliders only. ABILITIES have no slider: each ability is its own knob
+    // (2026-11-18), carrying the game's Master vanilla itself.
     public static IReadOnlyList<string> RateParameterIds { get; } =
-        Families.Select(f => f.ParameterId)
-            .Concat(Families.Where(f => f.HasAbilities).Select(f => f.AbilityParameterId))
-            .ToArray();
+        Families.Select(f => f.ParameterId).ToArray();
 
 
     // ---- One knob per move (docs/combat/MUTANT-COOLDOWNS.md) ---------------
@@ -227,9 +227,20 @@ public static class MutantAggressionPolicy
     public static IReadOnlyList<string> ParameterIds { get; } =
         RateParameterIds.Append(SpecialAbilityRateId).Concat(MoveParameterIds).ToArray();
 
-    /// <summary>Real seconds of one move: vanilla × its group's slider × its own knob.</summary>
-    public static double MoveSeconds(Family family, Move move, double groupRate, double groupReference, double moveRate)
-        => move.Seconds * Multiplier(family.Agents[0], move.Tag, groupRate, groupReference) / moveRate;
+    /// <summary>Difficulty vanilla of a move knob: an ability the game halves on Master is 2× there.</summary>
+    public static double KnobReference(Family family, Group group, Move move, string difficultySid)
+        => group == Group.Abilities && difficultySid == "Stalker"
+            && family.Agents.Any(a => a.VanillaMasterTags.Contains(move.Tag)) ? 2.0 : 1.0;
+
+    /// <summary>
+    /// Real seconds of one move. Attacks: vanilla × ATTACKS slider × own knob.
+    /// Abilities: vanilla × own knob alone (the knob holds the Master vanilla).
+    /// </summary>
+    public static double MoveSeconds(Family family, Group group, Move move,
+        double attackRate, double attackReference, double knob, double knobReference)
+        => group == Group.Attacks
+            ? move.Seconds * Multiplier(family.Agents[0], move.Tag, attackRate, attackReference) / knob
+            : move.Seconds * Multiplier(family.Agents[0], move.Tag, knob, knobReference);
 
     public static string Seconds(double seconds)
         => seconds.ToString(seconds < 10 ? "0.##" : "0.#", CultureInfo.InvariantCulture) + " s";

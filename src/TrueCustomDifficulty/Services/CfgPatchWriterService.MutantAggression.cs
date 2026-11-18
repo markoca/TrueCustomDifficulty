@@ -51,11 +51,11 @@ public sealed partial class CfgPatchWriterService
         {
             var document = GetDocument(documents, "GameData/DifficultyPrototypes.cfg");
             var mutant = document.GetOrAddNode(difficultySid, new[] { "MutantCombatDifficulty" });
-            // The whole list is replaced. Per agent and tag the multiplier is
-            // group × knob: a group at its difficulty vanilla keeps the game's
-            // own value (Master: 0.5 on the listed tags), a changed group gives
-            // 1/rate; each move knob k then divides its own tag by k. Tags that
-            // end at exactly 1 are not written.
+            // The whole list is replaced. Attacks: ATTACKS slider × knob (the
+            // slider at its difficulty vanilla keeps the game's own value, Master
+            // 0.5 on the listed tags, else 1/rate; the knob k divides its tag by k).
+            // Abilities: the knob alone, as a one-tag group with its own Master
+            // vanilla. Tags that end at exactly 1 are not written.
             mutant.RemoveAssignment("AgentCooldownMultipliers");
             mutant.RemoveChild("AgentCooldownMultipliers");
             var list = mutant.GetOrAddChild("AgentCooldownMultipliers", useBpatch: false);
@@ -63,16 +63,15 @@ public sealed partial class CfgPatchWriterService
             var index = 0;
             foreach (var family in MutantAggressionPolicy.Families)
             {
-                var rates = new Dictionary<MutantAggressionPolicy.Group, (double Rate, double Reference)>();
-                var knobs = new Dictionary<string, double>(StringComparer.Ordinal);
+                var attackRate = PositiveRate(allById, family.ParameterId);
+                var attackReference = MutantAggressionPolicy.Reference(family, MutantAggressionPolicy.Group.Attacks, difficultySid);
+                var knobs = new Dictionary<string, (double Rate, double Reference, bool Ability)>(StringComparer.Ordinal);
                 foreach (var group in groups)
                 {
-                    if (family.Tags(group).Count == 0)
-                        continue;
-                    var id = MutantAggressionPolicy.ParameterId(family, group);
-                    rates[group] = (PositiveRate(allById, id), MutantAggressionPolicy.Reference(family, group, difficultySid));
                     foreach (var move in MutantAggressionPolicy.Moves(family, group))
-                        knobs[move.Tag] = PositiveRate(allById, MutantAggressionPolicy.MoveId(family, move));
+                        knobs[move.Tag] = (PositiveRate(allById, MutantAggressionPolicy.MoveId(family, move)),
+                            MutantAggressionPolicy.KnobReference(family, group, move, difficultySid),
+                            group == MutantAggressionPolicy.Group.Abilities);
                 }
 
                 foreach (var agent in family.Agents)
@@ -92,12 +91,16 @@ public sealed partial class CfgPatchWriterService
                                 entries.Add((tag, MutantAggressionPolicy.VanillaMasterCooldownMultiplier));
                             continue;
                         }
-                        var group = family.AttackTags.Contains(tag)
-                            ? MutantAggressionPolicy.Group.Attacks : MutantAggressionPolicy.Group.Abilities;
-                        if (!rates.TryGetValue(group, out var r))
-                            continue;
-                        var multiplier = MutantAggressionPolicy.Multiplier(agent, tag, r.Rate, r.Reference)
-                            / (knobs.TryGetValue(tag, out var k) ? k : 1.0);
+                        double multiplier;
+                        if (family.AttackTags.Contains(tag))
+                            multiplier = MutantAggressionPolicy.Multiplier(agent, tag, attackRate, attackReference)
+                                / (knobs.TryGetValue(tag, out var k) ? k.Rate : 1.0);
+                        else if (knobs.TryGetValue(tag, out var ability))
+                            // An ability knob is its own group of one tag (Master vanilla 2× → 0.5).
+                            multiplier = MutantAggressionPolicy.Multiplier(agent, tag, ability.Rate, ability.Reference);
+                        else
+                            multiplier = difficultySid == "Stalker" && agent.VanillaMasterTags.Contains(tag)
+                                ? MutantAggressionPolicy.VanillaMasterCooldownMultiplier : 1.0;
                         if (Math.Abs(multiplier - 1.0) >= 0.0000001)
                             entries.Add((tag, multiplier));
                     }

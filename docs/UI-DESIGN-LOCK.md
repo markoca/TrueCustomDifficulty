@@ -1,3 +1,9 @@
+## CURRENT 2026-11-18 — Mutant cards: no ABILITIES slider, larger aligned knobs
+
+* Species card 138 px. Under the health track one line: `ATTACKS` caption with its slider to the right (left half), `ABILITIES` caption only (right half, when the mutant has abilities). No ABILITIES slider: each ability knob is its own control.
+* Knobs: 15 px radius, 3.2 px arcs, pointer from the hub, reference tick; on a fixed five-column grid per half, left-aligned, so columns line up across every card. Caption 9 pt bold (light muted), seconds 10.5 pt bold below. Only changed digits turn gold and grow.
+* Interaction unchanged: drag up / right, wheel, arrows, right-click or R reset; click selects for the panel.
+
 ## CURRENT 2026-11-18 — Mutant knobs: attacks only
 
 * The knob rows hold only moves that hurt or bring enemies (54). No ROAR, GROWL, HOWL, DODGE, BLINK or SHIELD knob, and no HOP (Chimera never short-leaps). Blind Dog, Chimera and Snork have no ABILITIES half any more: their card shows only the ATTACKS slider and its knob row on the left.
