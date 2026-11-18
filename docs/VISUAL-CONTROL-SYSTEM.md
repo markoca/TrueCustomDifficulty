@@ -1,3 +1,9 @@
+## CURRENT 2026-11-18 — v0.9.27.0: bpatch gate and gamer lines
+
+* Version 0.9.27.0. No layout change.
+* New static gate `bpatch-usage` (`tools/audit_bpatch_usage.py`). All 2831 direct edit points are written as `{bpatch}` from root to key. The 94 whole-list, clone, removenode and new-definition sites are pinned to their writer methods with reasons; see `CFG-BPATCH-USAGE-AUDIT-2026-11-18.md`.
+* WHAT IT DOES: 37 dry panels (hunger, bleeding, stamina, repairs, quest coupons, Rare stash odds, flycatcher, mutant part chances…) get one extra sentence on what the value means in play. Vanilla numbers unchanged.
+
 ## CURRENT 2026-11-18 — Pre-release consistency pass
 
 * No UI layout change. Mutant board help text now describes knobs and SPECIAL MOVES (no ATTACKS / ABILITIES sliders); the MUTANT HIT DAMAGE panel points to the health tracks on the same board.

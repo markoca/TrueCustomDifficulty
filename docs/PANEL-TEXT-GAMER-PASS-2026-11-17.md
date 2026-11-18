@@ -105,3 +105,7 @@ The right-hand panel shows four sections for a selected control: **WHAT IT DOES*
 ## Since 2026-11-18
 
 The rules above are consolidated in `docs/PANEL-TEXT-STYLE.md` and enforced by `tools/audit_panel_text_style.py`.
+
+## Third pass (2026-11-18, v0.9.27.0)
+
+37 rationales that were only "what it is + Vanilla" get one sentence on how it feels in play: for example, "That's about 20 s from empty to a full bar." for STAMINA REGEN, or "On Master you get barely half the value of your loot." for PRICES TRADERS PAY. Vanilla values and the first sentence are unchanged; each panel stays at 300 characters or fewer.

@@ -184,3 +184,7 @@ Both embedded catalog and CFG writer baseline require gameVersion 2.1. The write
 
 A new direct source mapping for `combat.npcFogVisibility` targets the original 2.1 `GameData/AIGlobals.cfg` singleton root `AISettings`, child `WeatherSettings/[2]` (`WeatherSID=Fogy`), leaf `VisibilityCoef=0.7`. Native 20–100% coefficient slider rendered as a small knob; `set` operation only. The generic writer emits a `GameData/AIGlobals.cfg_patch_TrueCustomDifficulty` file with a nested BPatch assignment and never copies the whole original CFG. No hearing, flair, luminance, or other-weather fields are written. Source and writer mapping audited; game-runtime acceptance pending.
 
+
+## BPATCH USAGE GATE (2026-11-18)
+
+`tools/audit_bpatch_usage.py` checks that direct edit points go through `AddAssignment` → `GetOrAddNode` (all `{bpatch}`). It also checks that every edit-point operation has a writer case, and pins each non-bpatch site (whole list, refurl clone, removenode, new TCD definition) with its reason. Details: `CFG-BPATCH-USAGE-AUDIT-2026-11-18.md`.

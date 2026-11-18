@@ -5,7 +5,7 @@
     "platform": "Windows",
     "defaultReferenceDifficulty": "Stalker",
     "uiRule": "Show the primary value plus a descriptive CFG value and all relevant vanilla difficulty reference values.",
-    "version": "0.9.26.82"
+    "version": "0.9.27.0"
   },
   "source": {
     "gameVersion": "2.1",
@@ -4818,7 +4818,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How fast your stomach empties while you roam. Vanilla: 0.015 pts/s.",
+      "rationale": "How fast your stomach empties while you roam. Vanilla: 0.015 pts/s. Crank it up and every long trek turns into a food run.",
       "logic": "Higher = you eat more often and carry more food; lower = food lasts much longer.",
       "interaction": "FOOD HUNGER RELIEF sets how much each meal fills you; the hunger thresholds decide when penalties start."
     },
@@ -4911,7 +4911,7 @@
           "Normal food effect only; no edits to healing, alternate effect lists or other consumables."
         ]
       },
-      "rationale": "How filling one sausage is. Vanilla: 30 hunger points out of 100.",
+      "rationale": "How filling one sausage is. Vanilla: 30 hunger points out of 100. A solid snack: three of them fill most of the meter.",
       "logic": "Higher = it fills you more; 0 = no hunger relief.",
       "interaction": "HUNGER RATE controls how quickly hunger returns; food healing and special effects stay separate.",
       "exposeInUi": true
@@ -5273,7 +5273,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How fast you get tired while awake. Vanilla: 0.01 pts/s.",
+      "rationale": "How fast you get tired while awake. Vanilla: 0.01 pts/s. Raise it and you'll be looking for a bed every evening.",
       "logic": "Higher = fatigue penalties and the need to sleep come sooner; lower = you stay fresh longer.",
       "interaction": "Fatigue stages still start at the vanilla points. Energy drinks clear fatigue separately."
     },
@@ -6985,7 +6985,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How fast bleeding stops on its own without bandages. Vanilla: 0.3 pts/s.",
+      "rationale": "How fast bleeding stops on its own without bandages. Vanilla: 0.3 pts/s. That's why a small cut eventually stops without a bandage.",
       "logic": "Higher = scratches stop bleeding on their own; lower = every wound needs treatment.",
       "interaction": "Only passive recovery. Bandages and medkits stop bleeding separately."
     },
@@ -7213,7 +7213,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "The small comeback heal the game gives you when you're almost dead. Vanilla: 1 HP/s.",
+      "rationale": "The small comeback heal the game gives you when you're almost dead. Vanilla: 1 HP/s. Just enough to crawl behind cover and reach for a medkit.",
       "logic": "Higher = a stronger comeback when nearly dead; 0 = near-death means near-death.",
       "interaction": "HEALTH REGEN STRENGTH scales it, and LOW HEALTH MECHANICS can cut it further."
     },
@@ -8012,7 +8012,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much bleeding an army medkit stops. Vanilla: 35 bleed pts.",
+      "rationale": "How much bleeding an army medkit stops. Vanilla: 35 bleed pts. Fine for a light bleed; a deep wound still wants a bandage.",
       "logic": "Higher = each army medkit stops more bleeding; lower = a bad wound needs more of them.",
       "interaction": "Only this item. NATURAL BLEEDING RECOVERY and bleed damage are separate."
     },
@@ -8055,7 +8055,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much bleeding a scientific medkit stops. Vanilla: 25 bleed pts.",
+      "rationale": "How much bleeding a scientific medkit stops. Vanilla: 25 bleed pts. Fine for a scratch; a real bleed still wants a bandage.",
       "logic": "Higher = each scientific medkit stops more bleeding; lower = a bad wound needs more of them.",
       "interaction": "Only this item. NATURAL BLEEDING RECOVERY and bleed damage are separate."
     },
@@ -8612,7 +8612,7 @@
       "group": "Water",
       "label": "Medium-Water Stamina Drain",
       "description": "Changes the extra stamina drain while moving through medium-depth water.",
-      "rationale": "Extra stamina lost while wading through waist-deep water. Vanilla: 1.",
+      "rationale": "Extra stamina lost while wading through waist-deep water. Vanilla: 1. Every swamp crossing slowly eats into your bar.",
       "logic": "Higher = wading costs more stamina; lower = it's easier; 0 = free.",
       "interaction": "Only the drain. How deep the water must be stays vanilla.",
       "control": "slider",
@@ -8746,7 +8746,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How fast your stamina refills when you ease off. Vanilla: 5 stamina/s.",
+      "rationale": "How fast your stamina refills when you ease off. Vanilla: 5 stamina/s. That's about 20 s from empty to a full bar.",
       "logic": "Higher = shorter breathers between sprints; lower = longer ones.",
       "interaction": "Movement, hunger and fatigue can still slow it down."
     },
@@ -8789,7 +8789,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much stamina sprinting burns. Vanilla: 5.25. Jump, vault and melee costs have their own bars.",
+      "rationale": "How much stamina sprinting burns. Vanilla: 5.25. Jump, vault and melee costs have their own bars. It decides how far you can run before you're gasping.",
       "logic": "Higher = every dash counts; lower = you run further.",
       "interaction": "Only sprinting. Stamina regen is separate.",
       "exposeInUi": true
@@ -9187,7 +9187,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much you can carry before you get slowed down. Vanilla: 80 kg.",
+      "rationale": "How much you can carry before you get slowed down. Vanilla: 80 kg. Pack past it and you slow to a crawl.",
       "logic": "Higher = you haul more loot; lower = a tighter backpack.",
       "interaction": "Overload starts before this limit, and gear carry bonuses add on top."
     },
@@ -10399,7 +10399,7 @@
           "Underlying -1/0/1–6 sentinel values are retained for legacy preset compatibility."
         ]
       },
-      "rationale": "The maximum army medkit stack a stash can give. Vanilla: 5.",
+      "rationale": "The maximum army medkit stack a stash can give. Vanilla: 5. Lower it so a stash never hands you a pile of them.",
       "logic": "Lower = smaller army medkit stacks; 0 means stashes never give it; 5 keeps the vanilla maximum.",
       "interaction": "Only stack size. Its chance and which stashes have it are separate.",
       "exposeInUi": true
@@ -11209,7 +11209,7 @@
           "The production-only redirect manifest excludes quest/test/unresolved Cheap paths."
         ]
       },
-      "rationale": "Chance a Basic stash has an RGD-5 grenade in it. Vanilla: 10%.",
+      "rationale": "Chance a Basic stash has an RGD-5 grenade in it. Vanilla: 10%. Roughly one Basic stash in ten hands you a grenade.",
       "logic": "Higher = more Basic stashes have an RGD-5; 0% = never; 100% = every Basic stash that can carry one.",
       "interaction": "RGD-5 AMOUNT decides how many. Six DLC1 Basic stashes that always have one in vanilla follow the same ratio (5% = half as often).",
       "lootHint": {
@@ -11261,7 +11261,7 @@
           "The same audited production-only Cheap stash redirect surface is used as the Chance and Ammo Quantity controls."
         ]
       },
-      "rationale": "How many RGD-5s you get when a Basic stash has grenades. Vanilla: 1.",
+      "rationale": "How many RGD-5s you get when a Basic stash has grenades. Vanilla: 1. Raise it to turn a lucky find into a proper arsenal.",
       "logic": "Higher = more grenades when the stash has one; 0 = none.",
       "interaction": "BASIC GRENADES CHANCE and RGD-5 AMOUNT are separate: at 0% chance no grenade appears; RGD-5 AMOUNT decides how many when it does.",
       "lootHint": {
@@ -12235,7 +12235,7 @@
       ],
       "logic": "100% keeps vanilla odds for each item; 50% halves them; 0% means it never turns up. It never fills a whole stash.",
       "interaction": "Only food in Rare stashes. Which stashes have them and stack size are separate.",
-      "rationale": "How often Rare stashes have canned food. Vanilla: 100%."
+      "rationale": "How often Rare stashes have canned food. Vanilla: 100%. Lower it and Rare stashes stop doubling as a pantry."
     },
     {
       "id": "loot.expensiveStashDrinksChance",
@@ -12281,7 +12281,7 @@
       ],
       "logic": "100% keeps vanilla odds for each item; 50% halves them; 0% means it never turns up. It never fills a whole stash.",
       "interaction": "Only drinks in Rare stashes. Which stashes have them and stack size are separate.",
-      "rationale": "How often Rare stashes have energy drinks. Vanilla: 100%."
+      "rationale": "How often Rare stashes have energy drinks. Vanilla: 100%. Lower it and you'll ration your energy drinks."
     },
     {
       "id": "loot.expensiveStashGrenadesChance",
@@ -12327,7 +12327,7 @@
       ],
       "logic": "100% keeps vanilla odds for each item; 50% halves them; 0% means it never turns up. It never fills a whole stash.",
       "interaction": "Only grenades in Rare stashes. Which stashes have them and stack size are separate.",
-      "rationale": "How often Rare stashes have RGD-5 grenades. Vanilla: 100%."
+      "rationale": "How often Rare stashes have RGD-5 grenades. Vanilla: 100%. Lower it so Rare stashes stop arming you for free."
     },
     {
       "id": "loot.expensiveStashMoneyChance",
@@ -12466,7 +12466,7 @@
         "status": "runtime_test_required",
         "notes": []
       },
-      "rationale": "How much traders pay you when you sell. Vanilla: Novice–Stalker 1×, Veteran 0.65×, Master 0.55×.",
+      "rationale": "How much traders pay you when you sell. Vanilla: Novice–Stalker 1×, Veteran 0.65×, Master 0.55×. On Master you get barely half the value of your loot.",
       "logic": "Higher = traders pay more when you sell; lower = less. Each trader still adds their own markup.",
       "interaction": "BROKEN GEAR VALUE and item condition also affect what you can sell and for how much."
     },
@@ -12510,7 +12510,7 @@
         "status": "runtime_test_required",
         "notes": []
       },
-      "rationale": "How much traders charge you when you buy. Vanilla: Novice–Stalker 1×, Veteran 1.25×, Master 1.65×.",
+      "rationale": "How much traders charge you when you buy. Vanilla: Novice–Stalker 1×, Veteran 1.25×, Master 1.65×. On Master everything costs about two-thirds more.",
       "logic": "Higher = buying costs more; lower = cheaper. Each trader still adds their own markup.",
       "interaction": "ITEM VALUES changes underlying prices; PRICES TRADERS PAY applies when you sell instead."
     },
@@ -12599,7 +12599,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "What a completely broken item is still worth. Vanilla: 10% of its price.",
+      "rationale": "What a completely broken item is still worth. Vanilla: 10% of its price. Even scrap fetches a few coupons.",
       "logic": "Higher = wrecked gear still sells for more; 0% = worthless when fully broken.",
       "interaction": "Only how much wear lowers the price. Trader markups still apply."
     },
@@ -12789,7 +12789,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Base price of food, meds and other consumables. Vanilla: 1×.",
+      "rationale": "Base price of food, meds and other consumables. Vanilla: 1×. Push it up and a stack of medkits becomes a real investment.",
       "logic": "Higher = consumables cost more to buy and sell for more.",
       "interaction": "PRICES TRADERS PAY and PRICES YOU PAY still apply on top.",
       "exposeInUi": true
@@ -13370,7 +13370,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Repair price when the technician's faction dislikes you. Vanilla: 1.5×.",
+      "rationale": "Repair price when the technician's faction dislikes you. Vanilla: 1.5×. Half again the normal bill for being on their bad side.",
       "logic": "Higher = unfriendly technicians charge more for repairs; lower = cheaper.",
       "interaction": "BASE REPAIR COST and the faction's current attitude both affect the final price."
     },
@@ -13411,7 +13411,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Repair price when you're neutral with the technician's faction. Vanilla: 1×.",
+      "rationale": "Repair price when you're neutral with the technician's faction. Vanilla: 1×. The bill most technicians start you on.",
       "logic": "Higher = neutral technicians charge more for repairs; lower = cheaper.",
       "interaction": "BASE REPAIR COST and the faction's current attitude both affect the final price."
     },
@@ -13496,7 +13496,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Coupons you get for main story quests. Vanilla: Novice 1.35×, Stalker 1×, Veteran 0.75×, Master 0.55×.",
+      "rationale": "Coupons you get for main story quests. Vanilla: Novice 1.35×, Stalker 1×, Veteran 0.75×, Master 0.55×. Lower it and every coupon has to be earned out in the Zone.",
       "logic": "Higher = more coupons per story quest; lower = fewer.",
       "interaction": "SIDE QUEST COUPONS are adjusted independently. This does not change stash rewards or starting money."
     },
@@ -13540,7 +13540,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Coupons you get for side quests. Vanilla: Novice 1.35×, Stalker 1×, Veteran 0.75×, Master 0.55×.",
+      "rationale": "Coupons you get for side quests. Vanilla: Novice 1.35×, Stalker 1×, Veteran 0.75×, Master 0.55×. Lower it and side jobs become about the story, not the payout.",
       "logic": "Higher = more coupons per side quest; lower = fewer.",
       "interaction": "MAIN QUEST COUPONS are adjusted independently. This does not change stash rewards or starting money."
     },
@@ -13628,7 +13628,7 @@
           "Inherited ammo weights are resolved to their effective vanilla values and patched on the concrete child prototype so every ammo type follows the same multiplier."
         ]
       },
-      "rationale": "How heavy ammo is in your backpack. Vanilla: 1×. Heavy calibers stay heavier than light ones.",
+      "rationale": "How heavy ammo is in your backpack. Vanilla: 1×. Heavy calibers stay heavier than light ones. Lower it to haul spare ammo without leaving loot behind.",
       "logic": "Higher = heavier ammo; 0× = weightless.",
       "interaction": "Carry capacity and overload stay separate; only the ammo itself gets lighter or heavier."
     },
@@ -14245,7 +14245,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much light tiredness slows your aiming. Vanilla: +15% time to aim.",
+      "rationale": "How much light tiredness slows your aiming. Vanilla: +15% time to aim. Barely noticeable, but your sights take longer to settle.",
       "logic": "Higher = aiming settles more slowly while slightly tired; 0 removes this penalty.",
       "interaction": "Applies whenever you're slightly tired."
     },
@@ -14286,7 +14286,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much moderate tiredness slows your aiming. Vanilla: +25% time to aim.",
+      "rationale": "How much moderate tiredness slows your aiming. Vanilla: +25% time to aim. Snap shots start to feel sluggish.",
       "logic": "Higher = aiming is slower while moderately tired; 0 removes this penalty.",
       "interaction": "Applies whenever you're moderately tired, instead of the low-fatigue aim delay."
     },
@@ -14368,7 +14368,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much moderate tiredness slows your reloads. Vanilla: +15% reload time.",
+      "rationale": "How much moderate tiredness slows your reloads. Vanilla: +15% reload time. You feel it most when the mag runs dry mid-fight.",
       "logic": "Higher = slower reloads while moderately tired; 0 removes this penalty.",
       "interaction": "Applies whenever you're moderately tired; the aim delay is separate."
     },
@@ -14896,7 +14896,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Health lost per tick from a light bleed. Vanilla: 1 HP.",
+      "rationale": "Health lost per tick from a light bleed. Vanilla: 1 HP. Easy to ignore for a while, but it adds up.",
       "logic": "Higher = a light bleed drains HP faster; lower = slower.",
       "interaction": "Applies while you bleed lightly. NATURAL BLEEDING RECOVERY decides how long it lasts."
     },
@@ -14939,7 +14939,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Health lost per tick from a moderate bleed. Vanilla: 1.5 HP.",
+      "rationale": "Health lost per tick from a moderate bleed. Vanilla: 1.5 HP. Enough to notice: patch it before the next fight.",
       "logic": "Higher = a moderate bleed drains HP faster; lower = slower.",
       "interaction": "Applies while you bleed moderately. Movement and sleep penalties are separate."
     },
@@ -15324,7 +15324,7 @@
           "Runtime CFG 2.0.5 stores FlycatcherVelocityChange as -50%. The UI exposes retained movement speed instead: CFG delta = UI value - 1.0."
         ]
       },
-      "rationale": "How fast you can still move when a Flycatcher grabs you. Vanilla: 50% of normal speed.",
+      "rationale": "How fast you can still move when a Flycatcher grabs you. Vanilla: 50% of normal speed. Half speed is what makes getting caught in one so dangerous.",
       "logic": "Higher = you move more freely inside it; 100% = no slowdown; 0% = stuck in place.",
       "interaction": "Only your walking speed inside. FLYCATCHER TURN SPEED, bullet slowdown and regen penalties are separate."
     },
@@ -15374,7 +15374,7 @@
           "Runtime CFG 2.0.5 stores both yaw and pitch effects as -0.7. One UI value intentionally drives both targets: CFG delta = UI value - 1.0."
         ]
       },
-      "rationale": "How fast you can still turn and look around inside a Flycatcher. Vanilla: 30% of normal.",
+      "rationale": "How fast you can still turn and look around inside a Flycatcher. Vanilla: 30% of normal. Lower it and you can barely look around for the way out.",
       "logic": "Higher = you turn more freely inside it; 100% = no slowdown; 0% = you can't turn.",
       "interaction": "Only turning, both sideways and up/down. FLYCATCHER MOVEMENT SPEED is separate."
     },
@@ -15748,7 +15748,7 @@
           "Runtime CFG stores PsyAnomalyIncreaseRegen as DegenPsyPoints with ValueMin/ValueMax = -1.7/-1.7. The UI exposes the magnitude as a positive 0-200% multiplier."
         ]
       },
-      "rationale": "How fast psy anomalies drain your psy meter. Vanilla: 1×.",
+      "rationale": "How fast psy anomalies drain your psy meter. Vanilla: 1×. Turn it up and psy fields become places you sprint through, not explore.",
       "logic": "1× keeps vanilla psy drain; 0× removes it; 2× doubles it.",
       "interaction": "Only the constant Psy drain. Other Psy effects stay vanilla."
     },
@@ -16130,7 +16130,7 @@
           "Runtime CFG explicitly stores Chance = 0.5 and Count = 1 for BloodsuckerLootGenerator."
         ]
       },
-      "rationale": "Chance a dead bloodsucker leaves one part you can sell or use. Vanilla: 50%. Doesn't change how many bloodsuckers spawn.",
+      "rationale": "Chance a dead bloodsucker leaves one part you can sell or use. Vanilla: 50%. Doesn't change how many bloodsuckers spawn. Every second kill pays out.",
       "logic": "Higher = more parts to sell; 100% = every kill, 0% = never.",
       "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
@@ -16514,7 +16514,7 @@
           "Runtime CFG explicitly stores Chance = 0.65 and Count = 1 for PoltergeistLootGenerator."
         ]
       },
-      "rationale": "Chance a dead poltergeist leaves one part you can sell or use. Vanilla: 65%. Doesn't change how many poltergeists spawn.",
+      "rationale": "Chance a dead poltergeist leaves one part you can sell or use. Vanilla: 65%. Doesn't change how many poltergeists spawn. About two kills in three pay out.",
       "logic": "Higher = more parts to sell; 100% = every kill, 0% = never.",
       "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
@@ -16811,7 +16811,7 @@
           "Selection is random without replacement at Build time."
         ]
       },
-      "rationale": "Share of breakable ammo and RGD grenade boxes taken out of the world. Vanilla: 0% — every box stays.",
+      "rationale": "Share of breakable ammo and RGD grenade boxes taken out of the world. Vanilla: 0% — every box stays. Raise it so ammo has to come from traders, stashes and bodies.",
       "logic": "Higher = more boxes gone; 0% keeps every box.",
       "interaction": "Only exploration boxes. Quest and story rewards are never removed.",
       "exposeInUi": true
