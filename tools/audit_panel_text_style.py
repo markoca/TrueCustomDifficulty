@@ -65,6 +65,7 @@ FORMAT = [
     (r"(?<![\w.])\d+(?:\.\d+)?x\b", "multiplier sign is ×"),
     (r"\b\d+(?:\.\d+)?-\d+(?:\.\d+)?\b", "numeric range uses an en dash"),
     (r"->", "use →"),
+    (r"\w - \w", "separator is · (or – for ranges), not a hyphen"),
     (r"\b\d+(?:\.\d+)? (?:seconds?|minutes?)\b", "time after a number is s / min (45 s, 5 min)"),
     (r"Vanilla:[^.]*\b(?:Novice|Stalker|Veteran) and (?:Stalker|Veteran|Master)\b", "neighbouring difficulties merge with an en dash (Novice–Stalker)"),
     (r"(?<![\w\-])\d+(?:\.\d+)?s\b", "space before the unit: 45 s"),
@@ -103,6 +104,14 @@ for p in CATALOG:
         text = p.get(kind) or ""
         if text:
             hits += lint(p["id"], text, kind)
+    hint = p.get("lootHint") or {}
+    hint_texts = [hint.get(k) or "" for k in ("label", "unit", "text")]
+    hint_texts += [e.get(k) or "" for e in hint.get("entries") or [] if isinstance(e, dict)
+                   for k in ("label", "qualifier", "selection")]
+    for text in filter(None, hint_texts):
+        hits += lint(p["id"], text, "lootHint")
+        if re.search(r"\beligible\b|\bcrates?\b|\bWeight \d|\d/\d", text):
+            hits.append((p["id"], "lootHint", f"example line '{text}': say Rare stashes / box / % share / ×"))
     value_label = (p.get("display") or {}).get("valueLabel") or ""
     if value_label:
         hits += lint(p["id"], value_label, "valueLabel")

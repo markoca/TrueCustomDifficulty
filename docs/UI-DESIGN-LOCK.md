@@ -1,3 +1,13 @@
+## 2026-11-18 — CURRENT: panel example lines and value line separators
+
+* **Example lines under the value** (`PracticalQuantityDisplay`, from `lootHint`):
+  * Separator is `·`, not a hyphen: `Expected · Blind Dog part: ~15 parts / 100 kills` (was *Expected - … part drops / 100 eligible kills - 1 part per successful drop*).
+  * Units are player words: *kills*, *Rare stashes*, *Basic stashes* (was *eligible …*, *eligible production Cheap stash rolls*).
+  * Calibers use ×: `9×18`, `5.45×39`, `12×70`.
+  * *F1 / RGD-5 crate* → `box`; *Weight 40* → `40% share`; *final counts use whole numbers* → `rounded to whole items`.
+* **Value line**: the weapon shuffle line uses `·` (was `|`). The percent-of-vanilla help reads `Scales each vanilla item chance, not a flat drop rate: 50% turns a vanilla 20% into 10%.` The weapon-condition range help no longer says *Editing either*.
+* The style gate now lints `lootHint` strings (×, *eligible*, *crate*, *Weight N*, `12/70`). It also flags a hyphen used as a separator (`word - word`) anywhere in panel texts and UI literals.
+
 ## 2026-11-18 — CURRENT: MIN / MAX everywhere, panel value labels in player words
 
 * **MIN / MAX names**:

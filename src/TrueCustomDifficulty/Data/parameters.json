@@ -9704,22 +9704,22 @@
         "label": "Contents",
         "entries": [
           {
-            "label": "9x18 FMJ",
+            "label": "9×18 FMJ",
             "min": 2,
             "max": 3,
-            "selection": "Weight 40"
+            "selection": "40% share"
           },
           {
-            "label": "9x19 FMJ",
+            "label": "9×19 FMJ",
             "min": 5,
             "max": 7,
-            "selection": "Weight 30"
+            "selection": "30% share"
           },
           {
-            "label": "12/70 Default",
+            "label": "12×70 Default",
             "min": 2,
             "max": 3,
-            "selection": "Weight 30"
+            "selection": "30% share"
           }
         ]
       },
@@ -9773,7 +9773,7 @@
       "lootHint": {
         "kind": "absoluteChancePer100",
         "label": "RGD-5 chance",
-        "unit": "eligible production Cheap stash rolls"
+        "unit": "Basic stashes"
       }
     },
     {
@@ -9881,17 +9881,17 @@
         "label": "Contents",
         "entries": [
           {
-            "label": "9x19 FMJ",
+            "label": "9×19 FMJ",
             "min": 18,
             "max": 24
           },
           {
-            "label": "5.45x39 FMJ",
+            "label": "5.45×39 FMJ",
             "min": 18,
             "max": 24
           },
           {
-            "label": "12/70 Default",
+            "label": "12×70 Default",
             "min": 4,
             "max": 6
           },
@@ -9901,31 +9901,31 @@
             "max": 45
           },
           {
-            "label": "5.56x45 FMJ",
+            "label": "5.56×45 FMJ",
             "min": 18,
             "max": 24,
             "qualifier": "Experienced+"
           },
           {
-            "label": "7.62x54 Supersonic",
+            "label": "7.62×54 Supersonic",
             "min": 25,
             "max": 30,
             "qualifier": "Veteran"
           },
           {
-            "label": "7.62x54 Supersonic",
+            "label": "7.62×54 Supersonic",
             "min": 5,
             "max": 10,
             "qualifier": "Master"
           },
           {
-            "label": "7.62x54 FMJ",
+            "label": "7.62×54 FMJ",
             "min": 45,
             "max": 55,
             "qualifier": "Veteran+"
           },
           {
-            "label": "9x39 FMJ",
+            "label": "9×39 FMJ",
             "min": 18,
             "max": 24,
             "qualifier": "Master"
@@ -9986,12 +9986,12 @@
         "label": "Contents",
         "entries": [
           {
-            "label": "9x18 FMJ",
+            "label": "9×18 FMJ",
             "min": 3,
             "max": 6
           },
           {
-            "label": "9x19 FMJ",
+            "label": "9×19 FMJ",
             "min": 5,
             "max": 10
           },
@@ -10001,17 +10001,17 @@
             "max": 10
           },
           {
-            "label": "5.45x39 FMJ",
+            "label": "5.45×39 FMJ",
             "min": 5,
             "max": 10
           },
           {
-            "label": "5.56x45 FMJ",
+            "label": "5.56×45 FMJ",
             "min": 5,
             "max": 10
           },
           {
-            "label": "12/70 Default (varies by box)",
+            "label": "12×70 Default (varies by box)",
             "min": 2,
             "max": 10
           }
@@ -10305,12 +10305,12 @@
         "label": "Contents",
         "entries": [
           {
-            "label": "F1 crate",
+            "label": "F1 box",
             "min": 1,
             "max": 2
           },
           {
-            "label": "RGD-5 crate",
+            "label": "RGD-5 box",
             "min": 1,
             "max": 2
           }
@@ -10368,22 +10368,22 @@
         "label": "Contents",
         "entries": [
           {
-            "label": "9x18 Armor-Piercing",
+            "label": "9×18 Armor-Piercing",
             "min": 20,
             "max": 25
           },
           {
-            "label": "12/70 Armor-Piercing",
+            "label": "12×70 Armor-Piercing",
             "min": 8,
             "max": 12
           },
           {
-            "label": "5.45x39 Armor-Piercing",
+            "label": "5.45×39 Armor-Piercing",
             "min": 55,
             "max": 65
           },
           {
-            "label": "9x19 Armor-Piercing",
+            "label": "9×19 Armor-Piercing",
             "min": 55,
             "max": 65
           },
@@ -10393,30 +10393,30 @@
             "max": 40
           },
           {
-            "label": "5.56x45 Armor-Piercing",
+            "label": "5.56×45 Armor-Piercing",
             "min": 55,
             "max": 65
           },
           {
-            "label": "7.62x54 Armor-Piercing",
+            "label": "7.62×54 Armor-Piercing",
             "min": 10,
             "max": 15,
             "qualifier": "Veteran+"
           },
           {
-            "label": "12/70 Expanding",
+            "label": "12×70 Expanding",
             "min": 8,
             "max": 12,
             "qualifier": "Veteran+"
           },
           {
-            "label": "7.62x54 FMJ",
+            "label": "7.62×54 FMJ",
             "min": 55,
             "max": 65,
             "qualifier": "Veteran+"
           },
           {
-            "label": "9x39 Armor-Piercing",
+            "label": "9×39 Armor-Piercing",
             "min": 30,
             "max": 40,
             "qualifier": "Master"
@@ -10936,7 +10936,7 @@
       "lootHint": {
         "kind": "absoluteChancePer100",
         "label": "Coupon drop chance",
-        "unit": "eligible expensive stashes"
+        "unit": "Rare stashes"
       }
     },
     {
@@ -14420,7 +14420,7 @@
       "lootHint": {
         "kind": "absoluteChancePer100",
         "label": "Blind Dog part",
-        "unit": "eligible kills"
+        "unit": "kills"
       },
       "targets": [
         {
@@ -14468,7 +14468,7 @@
       "lootHint": {
         "kind": "absoluteChancePer100",
         "label": "Bloodsucker part",
-        "unit": "eligible kills"
+        "unit": "kills"
       },
       "targets": [
         {
@@ -14516,7 +14516,7 @@
       "lootHint": {
         "kind": "absoluteChancePer100",
         "label": "Boar part",
-        "unit": "eligible kills"
+        "unit": "kills"
       },
       "targets": [
         {
@@ -14564,7 +14564,7 @@
       "lootHint": {
         "kind": "absoluteChancePer100",
         "label": "Burer part",
-        "unit": "eligible kills"
+        "unit": "kills"
       },
       "targets": [
         {
@@ -14612,7 +14612,7 @@
       "lootHint": {
         "kind": "absoluteChancePer100",
         "label": "Bayun part",
-        "unit": "eligible kills"
+        "unit": "kills"
       },
       "targets": [
         {
@@ -14660,7 +14660,7 @@
       "lootHint": {
         "kind": "absoluteChancePer100",
         "label": "Chimera part",
-        "unit": "eligible kills"
+        "unit": "kills"
       },
       "targets": [
         {
@@ -14708,7 +14708,7 @@
       "lootHint": {
         "kind": "absoluteChancePer100",
         "label": "Controller part",
-        "unit": "eligible kills"
+        "unit": "kills"
       },
       "targets": [
         {
@@ -14756,7 +14756,7 @@
       "lootHint": {
         "kind": "absoluteChancePer100",
         "label": "Deer part",
-        "unit": "eligible kills"
+        "unit": "kills"
       },
       "targets": [
         {
@@ -14804,7 +14804,7 @@
       "lootHint": {
         "kind": "absoluteChancePer100",
         "label": "Flesh part",
-        "unit": "eligible kills"
+        "unit": "kills"
       },
       "targets": [
         {
@@ -14852,7 +14852,7 @@
       "lootHint": {
         "kind": "absoluteChancePer100",
         "label": "Poltergeist part",
-        "unit": "eligible kills"
+        "unit": "kills"
       },
       "targets": [
         {
@@ -14900,7 +14900,7 @@
       "lootHint": {
         "kind": "absoluteChancePer100",
         "label": "Pseudodog part",
-        "unit": "eligible kills"
+        "unit": "kills"
       },
       "targets": [
         {
@@ -14948,7 +14948,7 @@
       "lootHint": {
         "kind": "absoluteChancePer100",
         "label": "Pseudogiant part",
-        "unit": "eligible kills"
+        "unit": "kills"
       },
       "targets": [
         {
@@ -14996,7 +14996,7 @@
       "lootHint": {
         "kind": "absoluteChancePer100",
         "label": "Tushkan part",
-        "unit": "eligible kills"
+        "unit": "kills"
       },
       "targets": [
         {
@@ -15044,7 +15044,7 @@
       "lootHint": {
         "kind": "absoluteChancePer100",
         "label": "Snork part",
-        "unit": "eligible kills"
+        "unit": "kills"
       },
       "targets": [
         {

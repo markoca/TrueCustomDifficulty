@@ -1431,7 +1431,7 @@ public sealed class ParameterViewModel : ObservableObject
                     _ => $"{value} times"
                 };
 
-                return $"{baseCount}/296 base locations ({dlcCount}/376 with DLC1) | every weapon at least {Copies(baseMinimum)} ({Copies(dlcMinimum)} with DLC1).";
+                return $"{baseCount}/296 base locations ({dlcCount}/376 with DLC1) · every weapon at least {Copies(baseMinimum)} ({Copies(dlcMinimum)} with DLC1).";
             }
             if (Id == "loot.worldF1GrenadeBoxes")
             {
@@ -1627,12 +1627,12 @@ public sealed class ParameterViewModel : ObservableObject
             {
                 var successes = CurrentNumber * 100.0;
                 if (Id.StartsWith("loot.mutant.", StringComparison.Ordinal))
-                    return $"Expected - {label}: ~{successes:0.#} part drops / 100 {hint.Unit} - 1 part per successful drop";
+                    return $"Expected · {label}: ~{successes:0.#} parts / 100 {hint.Unit}";
 
                 if (Id == "loot.expensiveStashMoneyChance")
-                    return $"Expected - {label}: ~{successes:0.#} stashes with coupons / 100 {hint.Unit}";
+                    return $"Expected · {label}: ~{successes:0.#} stashes with coupons / 100 {hint.Unit}";
 
-                return $"Expected - {label}: ~{successes:0.#} successes / 100 {hint.Unit}";
+                return $"Expected · {label}: ~{successes:0.#} / 100 {hint.Unit}";
             }
 
             if (hint.Kind == "scaledChanceExample" && IsSlider && hint.Chance.HasValue)
@@ -1650,7 +1650,7 @@ public sealed class ParameterViewModel : ObservableObject
             {
                 var min = hint.Min.Value * CurrentMinNumber;
                 var max = hint.Max.Value * CurrentMaxNumber;
-                return $"Example · {label}: {hint.Min.Value:0.##}–{hint.Max.Value:0.##} {hint.Unit} vanilla → ~{min:0.##}–{max:0.##} {hint.Unit} current · final counts use whole numbers";
+                return $"Example · {label}: {hint.Min.Value:0.##}–{hint.Max.Value:0.##} {hint.Unit} vanilla → ~{min:0.##}–{max:0.##} {hint.Unit} current · rounded to whole items";
             }
 
             if (hint.Kind == "rangePercentExample" && IsRange && hint.Min.HasValue && hint.Max.HasValue)
@@ -1706,7 +1706,7 @@ public sealed class ParameterViewModel : ObservableObject
             if (IsRange)
             {
                 if (Definition.ValueKind == "durabilityAbsoluteRange")
-                    return "MIN is the lowest dropped condition; MAX is the highest. Editing either replaces the normal NPC weapon-condition range.";
+                    return "MIN is the lowest dropped condition; MAX is the highest. Together they replace the normal NPC weapon-condition range.";
 
                 if (Definition.ValueKind == "durabilityRangeMultiplier")
                     return $"MIN {RangeMinDisplay} changes the low end of dropped weapon condition; MAX {RangeMaxDisplay} changes the high end. " +
@@ -1726,7 +1726,7 @@ public sealed class ParameterViewModel : ObservableObject
 
             if (Definition.Display?.Primary == "percentOfVanilla")
             {
-                return "This scales each vanilla item chance rather than setting a flat drop rate: 50% turns a vanilla 20% chance into 10%.";
+                return "Scales each vanilla item chance, not a flat drop rate: 50% turns a vanilla 20% into 10%.";
             }
 
             return string.Empty;
