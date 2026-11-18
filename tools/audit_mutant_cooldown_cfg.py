@@ -214,10 +214,12 @@ else:
     used = {t for v in knobs.values() for _, t in v} | {t for v in families.values() for _, m in v for t in m}
     check(not sorted(t for t in used if t not in tags), f"all {len(used)} CooldownTags exist in AbilityPrototypes")
     # render parses back: balanced, contiguous indices
-    tmp = ROOT / "audit" / "mutant-cooldown-sample.cfg"
-    tmp.parent.mkdir(exist_ok=True)
-    tmp.write_text(sample, encoding="utf-8")
+    import tempfile
+    with tempfile.NamedTemporaryFile("w", suffix=".cfg", delete=False, encoding="utf-8") as handle:
+        handle.write(sample)
+        tmp = Path(handle.name)
     back, _ = parse(str(tmp))
+    tmp.unlink(missing_ok=True)
     lst_node = kid(kid(back["Stalker"], "MutantCombatDifficulty"), "AgentCooldownMultipliers")
     idx_ok = [c["name"] for c in lst_node["kids"]] == [f"[{i}]" for i in range(len(lst_node["kids"]))]
     check(sample.count("struct.begin") == sample.count("struct.end") and idx_ok,
