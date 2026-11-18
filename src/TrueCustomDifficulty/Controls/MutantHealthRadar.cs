@@ -40,6 +40,7 @@ public sealed class MutantHealthRadar : FrameworkElement
     private const int SpecialRow = 15;
     private const int RateRowBase = 16;
     private const int AbilityRowBase = 30;
+    private const int SummonRow = 50;
     private const double GlobalCardHeight = 71.0;
     private const double SpeciesTop = 205.0;
     private const double SpeciesCardHeight = 92.0;
@@ -70,6 +71,7 @@ public sealed class MutantHealthRadar : FrameworkElement
     private readonly ParameterViewModel?[] _rates = new ParameterViewModel?[Mutants.Length];
     private readonly ParameterViewModel?[] _abilities = new ParameterViewModel?[Mutants.Length];
     private ParameterViewModel? _special;
+    private ParameterViewModel? _summon;
     private readonly Dictionary<int, HitTarget> _targets = new();
     // Marker labels are separate clickable hit regions, not part of the fader.
     private readonly List<DamageMarkerHitTarget> _damageMarkerTargets = new();
@@ -125,8 +127,11 @@ public sealed class MutantHealthRadar : FrameworkElement
             _damage.PropertyChanged -= Parameter_PropertyChanged;
         if (_special is not null)
             _special.PropertyChanged -= Parameter_PropertyChanged;
+        if (_summon is not null)
+            _summon.PropertyChanged -= Parameter_PropertyChanged;
         _damage = null;
         _special = null;
+        _summon = null;
         Array.Clear(_rates, 0, _rates.Length);
         Array.Clear(_abilities, 0, _abilities.Length);
         _hoverDamageMarker = -1;
@@ -140,6 +145,8 @@ public sealed class MutantHealthRadar : FrameworkElement
                 _damage.PropertyChanged += Parameter_PropertyChanged;
             if (byId.TryGetValue(MutantAggressionPolicy.SpecialAbilityRateId, out _special))
                 _special.PropertyChanged += Parameter_PropertyChanged;
+            if (byId.TryGetValue(MutantAggressionPolicy.SummonRateId, out _summon))
+                _summon.PropertyChanged += Parameter_PropertyChanged;
             for (var i = 0; i < Mutants.Length; i++)
             {
                 if (!byId.TryGetValue(Mutants[i].ParameterId, out var parameter))
@@ -204,10 +211,18 @@ public sealed class MutantHealthRadar : FrameworkElement
                 $"{damage.CurrentNumber:0.##}× hit dmg",
                 new Rect(content.Left, 43.0, content.Width, GlobalCardHeight),
                 text, muted, border, accent, panel);
+        // SPECIAL ABILITY RATE and SUMMON RATE share the second row, in seconds.
+        var halfGlobal = (content.Width - ColumnGap) / 2.0;
+        var secondTop = 43.0 + GlobalCardHeight + 8.0;
         if (_special is { } special)
             DrawGlobalTrack(dc, special, SpecialRow, "SPECIAL ABILITY RATE",
                 HumanCombatPolicy.WithoutFactor(MutantAggressionPolicy.SpecialAbilityDisplay(special.CurrentNumber)),
-                new Rect(content.Left, 43.0 + GlobalCardHeight + 8.0, content.Width, GlobalCardHeight),
+                new Rect(content.Left, secondTop, halfGlobal, GlobalCardHeight),
+                text, muted, border, accent, panel);
+        if (_summon is { } summon)
+            DrawGlobalTrack(dc, summon, SummonRow, "SUMMON RATE",
+                MutantAggressionPolicy.SummonDisplay(summon.CurrentNumber),
+                new Rect(content.Left + halfGlobal + ColumnGap, secondTop, halfGlobal, GlobalCardHeight),
                 text, muted, border, accent, panel);
         var cardWidth = (content.Width - ColumnGap) / 2.0;
         for (var i = 0; i < Mutants.Length; i++)
@@ -269,6 +284,7 @@ public sealed class MutantHealthRadar : FrameworkElement
     private ParameterViewModel? ParameterAt(int row)
         => row == DamageRow ? _damage
             : row == SpecialRow ? _special
+            : row == SummonRow ? _summon
             : row >= RateRowBase && row < RateRowBase + _rates.Length ? _rates[row - RateRowBase]
             : row >= AbilityRowBase && row < AbilityRowBase + _abilities.Length ? _abilities[row - AbilityRowBase]
             : row >= 0 && row < _parameters.Length ? _parameters[row] : null;
@@ -495,6 +511,7 @@ public sealed class MutantHealthRadar : FrameworkElement
                 rate?.ResetToReference();
             _damage?.ResetToReference();
             _special?.ResetToReference();
+            _summon?.ResetToReference();
 
             InvalidateVisual();
             e.Handled = true;

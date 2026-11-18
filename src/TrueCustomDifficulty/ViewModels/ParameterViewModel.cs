@@ -254,6 +254,27 @@ public sealed class ParameterViewModel : ObservableObject
     public bool PanelHasLogic => _panelCard is null && HasLogic;
     public bool PanelHasInteraction => _panelCard is null && HasInteraction;
     public bool PanelHasEffectiveDamage => _panelCard is null && HasEffectiveDamage;
+    public bool PanelHasCooldownTimes => _panelCard is null && CooldownTimes.Length > 0;
+
+    /// <summary>Mutant ATTACKS / ABILITIES / SUMMON RATE: every move in real seconds at the current value.</summary>
+    public string CooldownTimes
+    {
+        get
+        {
+            if (Id == MutantAggressionPolicy.SummonRateId)
+                return MutantAggressionPolicy.SummonTimes(CurrentNumber);
+            foreach (var family in MutantAggressionPolicy.Families)
+            {
+                if (Id == family.ParameterId)
+                    return MutantAggressionPolicy.MoveTimes(family, MutantAggressionPolicy.Group.Attacks,
+                        CurrentNumber, ReferenceNumber);
+                if (Id == family.AbilityParameterId)
+                    return MutantAggressionPolicy.MoveTimes(family, MutantAggressionPolicy.Group.Abilities,
+                        CurrentNumber, ReferenceNumber);
+            }
+            return string.Empty;
+        }
+    }
 
     private void RaisePanelChanged()
     {
@@ -264,6 +285,7 @@ public sealed class ParameterViewModel : ObservableObject
         OnPropertyChanged(nameof(PanelHasLogic));
         OnPropertyChanged(nameof(PanelHasInteraction));
         OnPropertyChanged(nameof(PanelHasEffectiveDamage));
+        OnPropertyChanged(nameof(PanelHasCooldownTimes));
     }
 
     public string Logic => Definition.Logic;
@@ -1199,6 +1221,7 @@ public sealed class ParameterViewModel : ObservableObject
             "combat.npcWeaponDamage" => Times(CurrentNumber, "gun dmg"),
             "combat.mutantDamage" => Times(CurrentNumber, "hit dmg"),
             MutantAggressionPolicy.SpecialAbilityRateId => MutantAggressionPolicy.SpecialAbilityDisplay(CurrentNumber),
+            MutantAggressionPolicy.SummonRateId => MutantAggressionPolicy.SummonDisplay(CurrentNumber),
             _ when MutantRateDisplay() is { } mutantRate => mutantRate,
             "combat.playerWeaponDamage" => Times(CurrentNumber, "weapon dmg"),
             "combat.playerHeadshotMultiplier" => Times(CurrentNumber, "headshot dmg"),
@@ -1805,6 +1828,7 @@ public sealed class ParameterViewModel : ObservableObject
         OnPropertyChanged(nameof(EffectiveDamageMultiplier));
         OnPropertyChanged(nameof(EffectiveDamageValue));
         OnPropertyChanged(nameof(EffectiveDetails));
+        OnPropertyChanged(nameof(CooldownTimes));
         OnPropertyChanged(nameof(ValueMeaning));
         OnPropertyChanged(nameof(PracticalQuantityDisplay));
     }
@@ -1888,6 +1912,7 @@ public sealed class ParameterViewModel : ObservableObject
         OnPropertyChanged(nameof(RangeMaxDisplay));
         OnPropertyChanged(nameof(EffectiveDisplay));
         OnPropertyChanged(nameof(EffectiveDetails));
+        OnPropertyChanged(nameof(CooldownTimes));
         OnPropertyChanged(nameof(IsModified));
         OnPropertyChanged(nameof(ReferenceLabel));
         OnPropertyChanged(nameof(ReferenceChoiceIndex));
@@ -2138,6 +2163,7 @@ public sealed class ParameterViewModel : ObservableObject
         OnPropertyChanged(nameof(RangeMaxDisplay));
         OnPropertyChanged(nameof(EffectiveDisplay));
         OnPropertyChanged(nameof(EffectiveDetails));
+        OnPropertyChanged(nameof(CooldownTimes));
         OnPropertyChanged(nameof(IsModified));
         OnPropertyChanged(nameof(IsOwnValueModified));
         OnPropertyChanged(nameof(ValueMeaning));

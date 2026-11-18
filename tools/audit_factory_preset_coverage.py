@@ -42,6 +42,10 @@ ZONE = json.loads((ROOT / "tools/factory_preset_zone_weather_2026_11_18.json").r
 NEW_IDS |= {"environment.emissionFrequency", "environment.stormFrequency",
             "environment.emissionWarning", "economy.traderRestockHours"}
 
+# 2026-11-18: SUMMON RATE role values (absent = vanilla 1×).
+SUMMONS = json.loads((ROOT / "tools/factory_preset_summons_2026_11_18.json").read_text(encoding="utf-8"))
+NEW_IDS |= {"combat.mutantSummonRate"}
+
 presets = sorted((APP / "Presets").glob("*.json"))
 assert len(presets) == 12, len(presets)
 for path in presets:
@@ -54,6 +58,7 @@ for path in presets:
     role = dict(THEMATIC["values"][data["name"]] if data["name"] in THEMATIC["values"] else THEMATIC["values"][path.stem])
     role.update(LAIR["values"][path.stem])
     role.update(ZONE["values"][path.stem])
+    role.update(SUMMONS["values"][path.stem])
     assert set(role) <= set(by_id), (path.name, set(role) - set(by_id))
     for pid in NEW_IDS | set(role):
         p = by_id[pid]
@@ -88,6 +93,9 @@ for _name, _hash in LAIR["previousStockBlobsBeforeRefill"].items():
 assert pds.count("PreLairRespawnTimeFactoryBlobs") == 3
 assert pds.count("PreZoneWeatherFactoryBlobs") == 3
 assert pds.count("PrePseudodogAbilityFactoryBlobs") == 3 and '["Hardcore"] = "3bc16c0d89a73d5b5c8a4bc6a01c8d4221c0a7c4"' in pds
+assert pds.count("PreSummonRateFactoryBlobs") == 3
+for _name, _hash in SUMMONS["previousStockBlobs"].items():
+    assert f'["{_name}"] = "{_hash}"' in pds, _name
 for _name, _hash in ZONE["previousStockBlobs"].items():
     assert f'["{_name}"] = "{_hash}"' in pds, _name
 for _name, _hash in LAIR["previousStockBlobsBeforeRespawnTime"].items():

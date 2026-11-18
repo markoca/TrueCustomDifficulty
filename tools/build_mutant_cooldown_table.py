@@ -72,6 +72,7 @@ def main():
            "the difficulty halves the tags it lists for the family's main agent (`AgentCooldownMultipliers` 0.5).",
            "* A family's ATTACKS or ABILITIES knob at rate *r* divides every time in that group by *r* "
            "(2× = half the wait). On Master the knob's vanilla is 2× where the game already halves.",
+           "* **SUMMON RATE** rows follow the global SUMMON RATE knob (rate *r* divides the time by *r*).",
            "* **Not covered** rows are not reached by any knob yet "
            "(see `MUTANT-ABILITIES-CATALOG.md`).",
            "* Special and story variants (phantoms, Prologue, Mist, `Collar` psy, DLC1 bosses, "
@@ -85,7 +86,9 @@ def main():
         lines = []
         for tag, rs in by[key].items():
             full = tag
-            group = ("ATTACKS" if tag in f["attack"] else "ABILITIES" if tag in f["ability"] else "not covered")
+            group = ("ATTACKS" if tag in f["attack"] else "ABILITIES" if tag in f["ability"]
+                     else "SUMMON RATE" if tag in ("CombatSummon", "RetreatSummon") and key in ("pseudodog", "bayun", "deer")
+                     else "not covered")
             normal = sorted({r["dur"] for r in rs if not SPECIAL.search(r["ability"]) and r["src"] == "base"})
             special = sorted({(r["dur"], r["ability"]) for r in rs if SPECIAL.search(r["ability"]) or r["src"] == "dlc"})
             if not normal:
@@ -94,7 +97,7 @@ def main():
             n = " / ".join(fmt(x) + " s" for x in normal)
             m = " / ".join(fmt(x * (0.5 if full in f["master"] else 1)) + " s" for x in normal)
             var = "; ".join(f"{a} {fmt(d)} s" for d, a in special if d not in normal)
-            order = {"ATTACKS": 0, "ABILITIES": 1, "not covered": 2}[group]
+            order = {"ATTACKS": 0, "ABILITIES": 1, "SUMMON RATE": 2, "not covered": 3}[group]
             lines.append((order, normal[0] if normal else 0, f"| {group} | {MOVE.get(tag, tag)} | `{tag}` | {n} | "
                                                              f"{m if m != n else '='} | {var} |"))
         out += [x[2] for x in sorted(lines)] + [""]

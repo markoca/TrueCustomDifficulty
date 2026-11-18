@@ -1,6 +1,6 @@
 # Mutant abilities: catalog of controllable levers
 
-Status 2026-11-18: **catalog only.** Nothing in this document is wired to the UI or writer yet,
+Status 2026-11-18: SUMMONS is done (`combat.mutantSummonRate`, see MUTANT-AGGRESSION.md); Pseudodog ABILITIES is its howl. The rest is a **catalog only.** Nothing in this document is wired to the UI or writer yet,
 except what section 1 lists as covered. It is the reference for choosing the next mutant controls.
 
 Sources: `GameData/AbilityPrototypes.cfg` (base), `DLC1/AbilityPrototypes.cfg`,
@@ -127,7 +127,7 @@ area levers first.
 
 ## 5. Recommended shortlist
 
-1. **SUMMONS** (frequency): 0–3× multiplier on summon tags. Reuses the existing writer.
+1. **SUMMONS** (frequency): done 2026-11-18 as SUMMON RATE, 0.25–3×.
 2. **PACK CALLS** (frequency): 0–3× multiplier on howl, squeal, grunt and sound tricks. Reuses the existing writer.
 3. **PSY WARNING** (window): Controller `FocusDuration`, 0.5–3 s.
 4. **BLOODSUCKER CLOAK** (window): fade-in and fade-out times as one 0.5–2× scale.

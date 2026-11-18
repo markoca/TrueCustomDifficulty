@@ -5,6 +5,7 @@ Do not edit by hand.
 
 * **Normal** = Novice, Stalker and Veteran. **Master** = what the game uses on Master: the difficulty halves the tags it lists for the family's main agent (`AgentCooldownMultipliers` 0.5).
 * A family's ATTACKS or ABILITIES knob at rate *r* divides every time in that group by *r* (2× = half the wait). On Master the knob's vanilla is 2× where the game already halves.
+* **SUMMON RATE** rows follow the global SUMMON RATE knob (rate *r* divides the time by *r*).
 * **Not covered** rows are not reached by any knob yet (see `MUTANT-ABILITIES-CATALOG.md`).
 * Special and story variants (phantoms, Prologue, Mist, `Collar` psy, DLC1 bosses, `ShootingSpecial`, `NoCooldowns`) are listed under *Variants* and never set the family value.
 
@@ -19,9 +20,9 @@ Do not edit by hand.
 | ATTACKS | fly-through | `FlyThrough` | 10 s | = |  |
 | ABILITIES | teleport | `BlinkTeleport` | 12 s | 6 s |  |
 | ABILITIES | growl | `Growl` | 60 s | 30 s |  |
+| SUMMON RATE | summon | `CombatSummon` | 10 s | = |  |
 | not covered | mimic sound | `TrickSound.Mimicry` | 8 s | = |  |
 | not covered | mocking sound | `TrickSound.Mockery` | 8 s | = |  |
-| not covered | summon | `CombatSummon` | 10 s | = |  |
 | not covered | ambush sound | `TrickSound.Ambush` | 20 s | = | TrickSoundAmbush_Bayun_E10_MQ01 10 s |
 
 ## Blind Dog
@@ -98,7 +99,7 @@ Do not edit by hand.
 | ATTACKS | claw / turn swipe | `ClawAttack` | 4 s | = |  |
 | ATTACKS | leap | `JumpAttack` | 8 s | 4 s |  |
 | ATTACKS | charge | `Charge` | 10 s | 5 s |  |
-| not covered | summon | `CombatSummon` | 20 s | = |  |
+| SUMMON RATE | summon | `CombatSummon` | 20 s | = |  |
 | not covered | roar | `Roar` | 3000 s | = |  |
 
 ## Flesh
@@ -125,9 +126,9 @@ Do not edit by hand.
 |---|---|---|---|---|---|
 | ATTACKS | bite | `BiteAttack` | 5 s / 6 s / 7 s | 2.5 s / 3 s / 3.5 s |  |
 | ATTACKS | running attack | `RunAttack` | 5 s / 6 s | 2.5 s / 3 s |  |
-| ABILITIES | retreat summon | `RetreatSummon` | 10 s | = |  |
-| ABILITIES | summon | `CombatSummon` | 20 s | = |  |
 | ABILITIES | howl | `Howl` | 30 s | = |  |
+| SUMMON RATE | retreat summon | `RetreatSummon` | 10 s | = |  |
+| SUMMON RATE | summon | `CombatSummon` | 20 s | = |  |
 | not covered | alert reaction | `Alerted` | 3 s | = |  |
 
 ## Pseudogiant

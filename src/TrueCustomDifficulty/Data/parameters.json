@@ -2495,7 +2495,7 @@
         ]
       },
       "rationale": "How often Pseudodogs use their attacks — bites and running bites. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its howls and phantom summons are ABILITIES.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its howl is ABILITIES; its phantoms are SUMMON RATE.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2992,7 +2992,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Pseudodog Ability Rate",
-      "description": "How often a Pseudodog can use its abilities: howls and phantom summons. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Pseudodog variant on the selected difficulty.",
+      "description": "How often a Pseudodog can howl. Rate r writes cooldown multiplier 1/r on its howl cooldown on the selected difficulty. Its phantom summons are SUMMON RATE.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -3029,9 +3029,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Pseudodogs howl and summon phantom dogs. Vanilla: 1×; summon every 20 s, retreat summon every 10 s, howl every 30 s. Higher = more phantoms in the fight.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its basic attacks (bites and running bites) are ATTACKS.",
-      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "How often Pseudodogs howl to rally the pack. Vanilla: 1×; howl every 30 s. Higher = more howls.",
+      "logic": "2× halves the pause between howls; 0.5× doubles it.",
+      "interaction": "Its phantom summons are SUMMON RATE. SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special move.",
       "exposeInUi": false
     },
     {
@@ -3179,6 +3179,53 @@
       "rationale": "How often mutants in a fight get to use their special and knockdown moves — growls, shields, knockdown leaps and charges. Vanilla: Novice–Veteran 1× (8–12 s pause after each one), Master 2× (4–6 s).",
       "logic": "Higher = shorter pauses between special moves (8–12 s at 1×); lower = more time to recover.",
       "interaction": "Each mutant's ATTACK RATE still sets how soon it can attack again.",
+      "exposeInUi": false
+    },
+    {
+      "id": "combat.mutantSummonRate",
+      "tab": "combat",
+      "group": "Mutant Health",
+      "label": "Summon Rate",
+      "description": "How often summoning mutants call help: Pseudodog phantoms (20 s, 10 s on retreat), Bayun clones (10 s) and Deer blind dogs (20 s). Rate r writes cooldown multiplier 1/r on the CombatSummon / RetreatSummon tags of those agents on the selected difficulty.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Summon rate"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "referenceDifficulty"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/DifficultyPrototypes.cfg",
+          "prototype": "{Easy|Medium|Hard|Stalker}",
+          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[PseudoDog|Bayun|Bayun_Collar|Bayun_E10_MQ01|Deer|Controller_Deer].CooldownMultipliers[CombatSummon|RetreatSummon]",
+          "operation": "set 1/x"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Same AgentCooldownMultipliers list as ATTACKS / ABILITIES; the writer replaces the whole list.",
+          "Story Faust and the DLC1 Jaded Chimera summons are not touched.",
+          "Phantom, clone and dog counts per summon stay vanilla (5 / 4 / 5 / 3)."
+        ]
+      },
+      "rationale": "How often mutants call in help: Pseudodog phantoms, Bayun clones and Deer blind dogs. Vanilla: 1×; phantoms every 20 s (10 s while fleeing), clones every 10 s, dogs every 20 s.",
+      "logic": "Higher = shorter wait between summons; 2× halves it, 0.5× doubles it. How many arrive per summon stays the same.",
+      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may start a special move. Pseudodog ABILITIES is its howl.",
       "exposeInUi": false
     },
     {

@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.1",
-  "supportedParameterCount": 422,
+  "supportedParameterCount": 423,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -48360,7 +48360,7 @@
       "expectedProfiles": 86
     },
     "mutantAggression": {
-      "note": "Per family two rates over its own cooldown tags (ATTACKS / ABILITIES, all variants): rate r writes 1/r into [difficulty].MutantCombatDifficulty.AgentCooldownMultipliers (full list); a group at its difficulty vanilla keeps the game's Master entries (0.5). SPECIAL ABILITY RATE scales CombatSynchronizer FilterGroups [3]/[4].",
+      "note": "Per family two rates over its own cooldown tags (ATTACKS / ABILITIES, all variants): rate r writes 1/r into [difficulty].MutantCombatDifficulty.AgentCooldownMultipliers (full list); a group at its difficulty vanilla keeps the game's Master entries (0.5). SPECIAL ABILITY RATE scales CombatSynchronizer FilterGroups [3]/[4]. SUMMON RATE writes 1/r on the CombatSummon / RetreatSummon tags of PseudoDog, Bayun (incl. Collar, E10_MQ01), Deer and Controller_Deer in the same list.",
       "parameterIds": [
         "combat.mutantAttackRate.bayun",
         "combat.mutantAttackRate.blinddog",
@@ -48385,7 +48385,8 @@
         "combat.mutantAbilityRate.poltergeist",
         "combat.mutantAbilityRate.pseudodog",
         "combat.mutantAbilityRate.pseudogiant",
-        "combat.mutantAbilityRate.snork"
+        "combat.mutantAbilityRate.snork",
+        "combat.mutantSummonRate"
       ],
       "parameterId": "combat.mutantSpecialAbilityRate",
       "difficultyFile": "GameData/DifficultyPrototypes.cfg",

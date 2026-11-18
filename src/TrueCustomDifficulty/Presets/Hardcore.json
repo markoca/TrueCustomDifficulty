@@ -1640,6 +1640,10 @@
       "kind": "slider",
       "number": 2
     },
+    "combat.mutantSummonRate": {
+      "kind": "slider",
+      "number": 1
+    },
     "loot.genericCorpseReduction": {
       "kind": "slider",
       "number": 0

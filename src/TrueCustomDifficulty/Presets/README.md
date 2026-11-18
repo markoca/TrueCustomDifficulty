@@ -157,3 +157,5 @@ All 12 shipped profile files now include **247 parameter IDs** (34 more than the
 **2026-11-18 — REFILL SPEED → LAIR RESPAWN TIME:** profiles now store `alife.lairRespawnTime` (higher = longer). The values are Hardcore+ 0.65, Hardcore and Mutant Hunter 0.8, Mercenary and Tactical 0.85, Outcast 0.9, Anomaly Runner and Scavenger 1.2, Wanderer 1.35; the others stay at 1×.
 
 **2026-11-18 — ZONE WEATHER + TRADER RESTOCK:** every profile stores EMISSIONS, STORMS, EMISSION WARNING and RESTOCK EVERY. The non-vanilla values are Hardcore+ 1.5 / 1.5 / 40 s / 16 h, Hardcore 50 s / 12 h, Anomaly Runner emissions 1.25, Immersive storms 1.25, Wanderer emissions 1.15 and warning 75 s, Tactical storms 1.15, Scavenger 16 h, Outcast 12 h, Smuggler 6 h. Everything else follows the reference difficulty.
+
+**2026-11-18 — SUMMON RATE:** every profile stores SUMMON RATE (Pseudodog phantoms, Bayun clones, Deer blind dogs). Non-vanilla: Hardcore+ and Mutant Hunter 1.5×, Outcast and Wanderer 1.25×. Pseudodog ABILITIES is its howl; stock Hardcore stores it at 1×.

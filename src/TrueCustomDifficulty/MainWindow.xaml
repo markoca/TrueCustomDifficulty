@@ -1189,6 +1189,37 @@
                                             </StackPanel>
                                         </Border>
 
+                                        <!-- Mutant ATTACKS / ABILITIES / SUMMON RATE: every move in real
+                                             seconds at the current value. Only changed numbers turn gold. -->
+                                        <Border BorderThickness="0"
+                                                Padding="0"
+                                                Margin="0,14,0,0">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding SelectedParameter.PanelHasCooldownTimes}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <StackPanel>
+                                                <TextBlock Text="COOLDOWNS"
+                                                           Foreground="{StaticResource MutedTextBrush}"
+                                                           FontSize="10"
+                                                           FontWeight="Bold"
+                                                           Margin="0,0,0,5" />
+                                                <TextBlock controls:NumberRuns.Text="{Binding SelectedParameter.CooldownTimes}"
+                                                           controls:NumberRuns.Highlight="{Binding SelectedParameter.IsModified}"
+                                                           controls:NumberRuns.Accent="{StaticResource AccentBrush}"
+                                                           Foreground="{StaticResource TextBrush}"
+                                                           FontSize="10"
+                                                           TextWrapping="Wrap"
+                                                           LineHeight="16" />
+                                            </StackPanel>
+                                        </Border>
+
                                         <!-- One compact, player-facing controls guide after every
                                              gameplay meaning/result section, before the muted footer. -->
                                         <StackPanel Margin="0,17,0,3">

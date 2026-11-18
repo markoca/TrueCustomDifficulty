@@ -320,3 +320,9 @@ The 12 profiles now store `alife.lairPopulation.human` / `.mutant` (417 catalog 
 ## 2026-11-18 — ZONE WEATHER + TRADER RESTOCK
 
 The 12 profiles now store the four new controls (422 catalog controls each). The matrix is in `ZONE-WEATHER-AND-RESTOCK.md` and `tools/factory_preset_zone_weather_2026_11_18.json`; stock files upgrade only when byte-identical (`PreZoneWeatherFactoryBlobs`).
+
+## 2026-11-18 — SUMMON RATE; Pseudodog ABILITIES is its howl
+
+* Every profile stores SUMMON RATE. Non-vanilla: Hardcore+ 1.5×, Mutant Hunter 1.5×, Outcast 1.25×, Wanderer 1.25×; the rest 1×.
+* Pseudodog ABILITIES now scales its howl only (phantoms are SUMMON RATE). Stock Hardcore stores 1× (was 2×, the old Master reference of a knob that did nothing).
+* Untouched older stock copies upgrade by blob hash (`PreSummonRateFactoryBlobs`, `PrePseudodogAbilityFactoryBlobs`); edited copies are never overwritten.

@@ -28,6 +28,7 @@ public static class MutantAggressionPolicy
     public const string Prefix = "combat.mutantAttackRate.";
     public const string AbilityPrefix = "combat.mutantAbilityRate.";
     public const string SpecialAbilityRateId = "combat.mutantSpecialAbilityRate";
+    public const string SummonRateId = "combat.mutantSummonRate";
 
     public enum Group { Attacks, Abilities }
 
@@ -125,9 +126,9 @@ public static class MutantAggressionPolicy
             },
             // The game's Master list names ShockwaveAttack for PseudoDog, but no pseudodog
             // ability uses that tag (a no-op entry); it rides with ATTACKS so the list stays
-            // covered. Real abilities: howl 30 s, combat summon 20 s, retreat summon 10 s.
+            // covered. Its phantom summons belong to SUMMON RATE, so ABILITIES is the howl.
             T("RunAttack", "BiteAttack", "ShockwaveAttack"),
-            T("Howl", "CombatSummon", "RetreatSummon"), ("bite", 7), ("summon", 20)),
+            T("Howl"), ("bite", 7), ("howl", 30)),
         new("pseudogiant", "Pseudogiant", new[]
             {
                 A("Pseudogiant", "ShockwaveAttack", "RunAttack", "Charge"), A("Pseudogiant_Collar")
@@ -148,7 +149,90 @@ public static class MutantAggressionPolicy
             .ToArray();
 
     public static IReadOnlyList<string> ParameterIds { get; } =
-        RateParameterIds.Append(SpecialAbilityRateId).ToArray();
+        RateParameterIds.Append(SpecialAbilityRateId).Append(SummonRateId).ToArray();
+
+    // ---- Moves in real seconds (docs/combat/MUTANT-COOLDOWNS.md) -----------
+    /// <summary>One move of the family's main agent: name, own cooldown tag, vanilla seconds.</summary>
+    public sealed record Move(string Name, string Tag, double Seconds);
+
+    private static Move M(string name, string tag, double seconds)
+        => new(name, tag.StartsWith("Abilities.", StringComparison.Ordinal) ? tag : "Ability.Cooldown." + tag, seconds);
+
+    /// <summary>Every move a group's knob reaches, in base CFG seconds (main agent, special variants left out).</summary>
+    public static IReadOnlyList<Move> Moves(Family family, Group group) => (family.Key, group) switch
+    {
+        ("bayun", Group.Attacks) => new[] { M("dodge", "Evasion", 1), M("claw", "ClawAttack", 5), M("jump in", "JumpToEnemy", 6),
+            M("leap", "JumpAttack", 8), M("fly-through", "FlyThrough", 10) },
+        ("bayun", Group.Abilities) => new[] { M("teleport", "BlinkTeleport", 12), M("growl", "Growl", 60) },
+        ("blinddog", Group.Attacks) => new[] { M("bite", "BiteAttack", 5), M("running bite", "RunAttack", 7),
+            M("bite from any angle", "BiteAttackAnyAngle", 16) },
+        ("blinddog", Group.Abilities) => new[] { M("shield", "Shield", 25) },
+        ("bloodsucker", Group.Attacks) => new[] { M("turn swipe", "ClawAttack", 5), M("claw", "ClawAttack", 6),
+            M("running attack", "RunAttack", 6), M("leap", "JumpAttack", 20) },
+        ("bloodsucker", Group.Abilities) => new[] { M("spawn anomaly", "ActivateAnomaly", 3), M("Ashy roar", "Roar", 60) },
+        ("boar", Group.Attacks) => new[] { M("running attack", "RunAttack", 5), M("gore", "ClawAttack", 10), M("charge", "Charge", 12) },
+        ("burer", Group.Attacks) => new[] { M("claw", "ClawAttack", 8) },
+        ("burer", Group.Abilities) => new[] { M("grenade throws", "ThrowGrenade", 0.5), M("disarm", "WeaponDrag", 8),
+            M("throw", "Throw", 10), M("raise weapons", "WeaponRiseAndShoot", 10), M("shield", "Shield", 17) },
+        ("chimera", Group.Attacks) => new[] { M("claw", "ClawAttack", 0), M("dodge", "Evasion", 0), M("long leap", "LongJumpAttack", 5),
+            M("running attack", "RunAttack", 5), M("jump in", "JumpToEnemy", 6), M("short leap", "ShortJumpAttack", 8),
+            M("fly-through", "FlyThrough", 10) },
+        ("chimera", Group.Abilities) => new[] { M("growl", "Growl", 60) },
+        ("controller", Group.Attacks) => new[] { M("claw", "ClawAttack", 10) },
+        ("controller", Group.Abilities) => new[] { M("roar", "Roar", 7), M("psy strike", "Abilities.PSYAttack", 12),
+            M("raise corpse", "Abilities.RaiseDeadBody", 15), M("zombify", "Abilities.ZombifyNPC", 15) },
+        ("deer", Group.Attacks) => new[] { M("claw", "ClawAttack", 4), M("leap", "JumpAttack", 8), M("charge", "Charge", 10) },
+        ("flesh", Group.Attacks) => new[] { M("claw", "ClawAttack", 3), M("leap", "JumpAttack", 4), M("turn swipe", "ClawAttack", 5) },
+        ("poltergeist", Group.Attacks) => new[] { M("area burst", "AOEAttack", 3) },
+        ("poltergeist", Group.Abilities) => new[] { M("spawn anomaly", "ActivateAnomaly", 3), M("throw", "Throw", 10),
+            M("shield", "Shield", 20) },
+        ("pseudodog", Group.Attacks) => new[] { M("turn bite", "BiteAttack", 5), M("running attack", "RunAttack", 6),
+            M("bite", "BiteAttack", 7) },
+        ("pseudodog", Group.Abilities) => new[] { M("howl", "Howl", 30) },
+        ("pseudogiant", Group.Attacks) => new[] { M("stomp", "ClawAttack", 5), M("running attack", "RunAttack", 5),
+            M("charge", "Charge", 10) },
+        ("pseudogiant", Group.Abilities) => new[] { M("shockwave", "ShockwaveAttack", 8), M("throw", "Throw", 10),
+            M("roar", "Roar", 60) },
+        ("snork", Group.Attacks) => new[] { M("claw", "ClawAttack", 5), M("kick", "KickAttack", 7), M("dodge", "Evasion", 7),
+            M("leap", "JumpAttack", 12), M("jump in", "JumpToEnemy", 12), M("fly-through", "FlyThrough", 14) },
+        ("snork", Group.Abilities) => new[] { M("growl", "Growl", 120) },
+        ("tushkan", Group.Attacks) => new[] { M("claw", "ClawAttack", 3), M("leap", "JumpAttack", 8) },
+        _ => Array.Empty<Move>()
+    };
+
+    /// <summary>Panel lines, e.g. "psy strike 6 s": every move of the group at this rate.</summary>
+    public static string MoveTimes(Family family, Group group, double rate, double reference)
+        => string.Join("\n", Moves(family, group).Select(m =>
+            $"{m.Name} {Seconds(m.Seconds * Multiplier(family.Agents[0], m.Tag, rate, reference))}"));
+
+    private static string Seconds(double seconds)
+        => seconds.ToString(seconds < 10 ? "0.##" : "0.#", CultureInfo.InvariantCulture) + " s";
+
+    // ---- SUMMON RATE --------------------------------------------------------
+    /// <summary>A summon of one mutant: who calls it, what arrives, its own tag and vanilla seconds.</summary>
+    public sealed record Summon(string Name, string Tag, double Seconds, IReadOnlyList<string> Agents);
+
+    /// <summary>Every summon SUMMON RATE scales (story Faust and DLC1 Jaded Chimera left out).</summary>
+    public static IReadOnlyList<Summon> Summons { get; } = new[]
+    {
+        new Summon("pseudodog phantoms", "Ability.Cooldown.CombatSummon", 20, new[] { "PseudoDog" }),
+        new Summon("pseudodog phantoms on retreat", "Ability.Cooldown.RetreatSummon", 10, new[] { "PseudoDog" }),
+        new Summon("bayun clones", "Ability.Cooldown.CombatSummon", 10,
+            new[] { "Bayun", "Bayun_Collar", "Bayun_E10_MQ01" }),
+        new Summon("deer blind dogs", "Ability.Cooldown.CombatSummon", 20, new[] { "Deer", "Controller_Deer" })
+    };
+
+    /// <summary>Summon tags of one agent (empty when it summons nothing).</summary>
+    public static IReadOnlyList<string> SummonTags(string agentSid)
+        => Summons.Where(x => x.Agents.Contains(agentSid)).Select(x => x.Tag).Distinct().ToArray();
+
+    /// <summary>Card value, e.g. "phantoms 20 s · clones 10 s · dogs 20 s".</summary>
+    public static string SummonDisplay(double rate)
+        => $"phantoms {Seconds(20 / rate)} · clones {Seconds(10 / rate)} · dogs {Seconds(20 / rate)}";
+
+    /// <summary>Panel lines: every summon at this rate.</summary>
+    public static string SummonTimes(double rate)
+        => string.Join("\n", Summons.Select(x => $"{x.Name} {Seconds(x.Seconds / rate)}"));
 
     /// <summary>Vanilla Master multiplier of the listed agents/tags.</summary>
     public const double VanillaMasterCooldownMultiplier = 0.5;
@@ -169,14 +253,10 @@ public static class MutantAggressionPolicy
         return 1.0 / rate;
     }
 
-    /// <summary>Panel text, e.g. "2x · psy every 6 s" (rate + the family's headline cooldown).</summary>
+    /// <summary>Panel text in real seconds, e.g. "psy every 6 s" (the family's headline cooldown).</summary>
     public static string RateDisplay(Family family, Group group, double rate, double reference)
-    {
-        var text = $"{rate.ToString("0.##", CultureInfo.InvariantCulture)}×";
-        return CooldownDisplay(family, group, rate, reference) is { } cooldown
-            ? text + " · " + cooldown
-            : text + (group == Group.Attacks ? " attacks" : " abilities");
-    }
+        => CooldownDisplay(family, group, rate, reference)
+            ?? $"{rate.ToString("0.##", CultureInfo.InvariantCulture)}× " + (group == Group.Attacks ? "attacks" : "abilities");
 
     /// <summary>Card text, e.g. "psy every 6 s": the time between two uses of
     /// the headline move. Null when the group has no moves (e.g. Boar abilities).</summary>
@@ -206,7 +286,7 @@ public static class MutantAggressionPolicy
             => "Ability.Cooldown.Shield",
         ("bloodsucker", Group.Abilities) => "Ability.Cooldown.ActivateAnomaly",
         ("chimera", Group.Abilities) or ("snork", Group.Abilities) => "Ability.Cooldown.Growl",
-        ("pseudodog", Group.Abilities) => "Ability.Cooldown.CombatSummon",
+        ("pseudodog", Group.Abilities) => "Ability.Cooldown.Howl",
         ("controller", Group.Abilities) => "Abilities.PSYAttack",
         ("pseudogiant", Group.Abilities) => "Ability.Cooldown.ShockwaveAttack",
         _ => string.Empty

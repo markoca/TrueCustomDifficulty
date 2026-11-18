@@ -12,6 +12,8 @@ namespace TrueCustomDifficulty.Services;
 // MUTANT AGGRESSION (docs/combat/MUTANT-AGGRESSION.md):
 //  * ATTACKS / ABILITIES per family → DifficultyPrototypes [difficulty]
 //    .MutantCombatDifficulty.AgentCooldownMultipliers (full list, non-bpatch).
+//  * SUMMON RATE → the same list: 1/rate on the summon tags of the
+//    summoning agents (Pseudodog, Bayun, Deer, Controller_Deer).
 //  * SPECIAL ABILITY RATE → CombatSynchronizationPrototypes
 //    CombatSynchronizer{difficulty}.{rank}.FilterGroups[3|4] cooldowns
 //    (full rank tables, because Novice–Veteran inherit Default).
@@ -33,9 +35,16 @@ public sealed partial class CfgPatchWriterService
         var groups = new[] { MutantAggressionPolicy.Group.Attacks, MutantAggressionPolicy.Group.Abilities };
 
         // ---- ATTACKS / ABILITIES: AgentCooldownMultipliers -------------------
-        var changed = MutantAggressionPolicy.RateParameterIds
+        var changed = MutantAggressionPolicy.RateParameterIds.Append(MutantAggressionPolicy.SummonRateId)
             .Where(id => modifiedById.TryGetValue(id, out var p) && p.IsValueModifiedFromReference())
             .ToArray();
+        var summonRate = 1.0;
+        if (allById.TryGetValue(MutantAggressionPolicy.SummonRateId, out var summonParameter))
+        {
+            summonRate = summonParameter.CurrentNumber;
+            if (!double.IsFinite(summonRate) || summonRate <= 0.0)
+                throw new InvalidDataException("Invalid mutant summon rate: " + MutantAggressionPolicy.SummonRateId);
+        }
         if (changed.Length > 0)
         {
             var document = GetDocument(documents, "GameData/DifficultyPrototypes.cfg");
@@ -84,6 +93,10 @@ public sealed partial class CfgPatchWriterService
                             continue;
                         entries.AddRange(family.Tags(group).Select(tag => (tag, 1.0 / r.Rate)));
                     }
+                    // SUMMON RATE: summon tags are in no family group (vanilla 1× everywhere).
+                    if (Math.Abs(summonRate - 1.0) >= 0.0000001)
+                        entries.AddRange(MutantAggressionPolicy.SummonTags(agent.Sid)
+                            .Select(tag => (tag, 1.0 / summonRate)));
                     if (entries.Count == 0)
                         continue;
 
