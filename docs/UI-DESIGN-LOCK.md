@@ -1,3 +1,11 @@
+## CURRENT 2026-11-18 — Presets: every control saved, loaded and checked
+
+* No UI change. SAVE writes the full state of every editor control (`AllParameters`), including the 53 mutant move knobs, SPECIAL MOVES, FALL DAMAGE, LAIR POPULATION, ZONE WEATHER, TRADER RESTOCK and REMOVE LOOSE ARTIFACTS. LOAD first resets every control to the preset's base difficulty, so a control missing from an older preset lands on vanilla.
+* All 12 factory presets hold all 452 catalog ids. Duration values above the base range come with `drinkDurationOverride` ON (the extended 270 s / 900 s editor range).
+* `MainViewModel.CreatePresetFile` (what SAVE writes) and `ApplyPresetFromPath` (LOAD without a dialog) are split out unchanged. AllControls now runs:
+  * **SAVE → LOAD** with every control off vanilla, at Veteran, Master and Novice; every value must come back exactly;
+  * a load of all 12 factory presets with no silent value change.
+
 ## CURRENT 2026-11-18 — Windows writer contracts green: 13 PASS / 0 FAIL
 
 * First complete green `writer --wine` run (debb67e) for v0.9.27.0: Combat 62, Health/Stamina 56, Survival 130, Economy 48, Equipment 50, Environment 94, A-Life 92, Loot direct 117, Loot special 63+3, World removals 27, World placement 26, All controls 429/429, RC signal 13. The remaining NOT RUN are the source-ZIP audits (green earlier today with the ZIPs: 45 PASS) and manual in-game acceptance.

@@ -1775,6 +1775,48 @@ public sealed class MainViewModel : ObservableObject
         return !Version.TryParse(toolVersion, out var parsed) || parsed < new Version(0, 4, 7);
     }
 
+    /// <summary>
+    /// The complete preset the SAVE button writes: every control in the editor
+    /// (AllParameters), not only modified ones, plus the board-level settings.
+    /// </summary>
+    public PresetFile CreatePresetFile(string name)
+    {
+        NormalizeEditorConstraints();
+        return new PresetFile
+        {
+            PresetFormatVersion = PresetService.CurrentPresetVersion,
+            Name = name,
+            ToolVersion = AppVersion,
+            GameVersion = GameVersion,
+            ReferenceDifficulty = SelectedReferenceDifficulty,
+            TraderItemOverrides = TraderItemOverrides,
+            TraderSellOdds = TraderSellOdds.ToPreset(),
+            GenericNpcRareGearEnabled = GenericNpcRareGearEnabled,
+            GenericNpcRareGearChance = GenericNpcRareGearChance,
+            WorldModItemsRemoval = WorldModItemsRemoval,
+            CorpseModItemsRemoval = CorpseModItemsRemoval,
+            WorldModItemsEnabled = WorldModItemsEnabled,
+            CorpseModItemsEnabled = CorpseModItemsEnabled,
+            // The multiplier is retained when the sole SMART LOOT master is OFF.
+            CorpseSmartLootNeedBoost = Math.Abs(CorpseSmartLootNeedBoost - 1.0) > 0.000001
+                ? CorpseSmartLootNeedBoost : null,
+            StashPresence = StashPresence.ToPreset(),
+            NpcConsumableChances = NpcConsumableItems.ToDictionary(
+                item => item.Sid, item => item.ToPreset(), StringComparer.Ordinal),
+            DrinkDurationOverride = AllParameters.First(p =>
+                p.Id == "survival.waterInstantStaminaRestore").DrinkDurationOverrideEnabled,
+            MedicalOverride = AllParameters.First(p =>
+                p.Id == "health.bandageHealing").MedicalOverrideEnabled,
+            SavedAtUtc = DateTimeOffset.UtcNow,
+            // Save the complete control state, not only modified values.
+            // This makes a preset deterministic when loaded into a fresh session.
+            Values = AllParameters.ToDictionary(
+                p => p.Id,
+                p => p.ToPresetValue(),
+                StringComparer.Ordinal)
+        };
+    }
+
     private void SavePreset()
     {
         NormalizeEditorConstraints();
@@ -1808,39 +1850,7 @@ public sealed class MainViewModel : ObservableObject
         if (dialog.ShowDialog() != true)
             return;
 
-        var preset = new PresetFile
-        {
-            PresetFormatVersion = PresetService.CurrentPresetVersion,
-            Name = Path.GetFileNameWithoutExtension(dialog.FileName),
-            ToolVersion = AppVersion,
-            GameVersion = GameVersion,
-            ReferenceDifficulty = SelectedReferenceDifficulty,
-            TraderItemOverrides = TraderItemOverrides,
-            TraderSellOdds = TraderSellOdds.ToPreset(),
-            GenericNpcRareGearEnabled = GenericNpcRareGearEnabled,
-            GenericNpcRareGearChance = GenericNpcRareGearChance,
-            WorldModItemsRemoval = WorldModItemsRemoval,
-            CorpseModItemsRemoval = CorpseModItemsRemoval,
-            WorldModItemsEnabled = WorldModItemsEnabled,
-            CorpseModItemsEnabled = CorpseModItemsEnabled,
-            // The multiplier is retained when the sole SMART LOOT master is OFF.
-            CorpseSmartLootNeedBoost = Math.Abs(CorpseSmartLootNeedBoost - 1.0) > 0.000001
-                ? CorpseSmartLootNeedBoost : null,
-            StashPresence = StashPresence.ToPreset(),
-            NpcConsumableChances = NpcConsumableItems.ToDictionary(
-                item => item.Sid, item => item.ToPreset(), StringComparer.Ordinal),
-            DrinkDurationOverride = AllParameters.First(p =>
-                p.Id == "survival.waterInstantStaminaRestore").DrinkDurationOverrideEnabled,
-            MedicalOverride = AllParameters.First(p =>
-                p.Id == "health.bandageHealing").MedicalOverrideEnabled,
-            SavedAtUtc = DateTimeOffset.UtcNow,
-            // Save the complete control state, not only modified values.
-            // This makes a preset deterministic when loaded into a fresh session.
-            Values = AllParameters.ToDictionary(
-                p => p.Id,
-                p => p.ToPresetValue(),
-                StringComparer.Ordinal)
-        };
+        var preset = CreatePresetFile(Path.GetFileNameWithoutExtension(dialog.FileName));
 
         try
         {
@@ -1875,6 +1885,25 @@ public sealed class MainViewModel : ObservableObject
     private void LoadPresetFromPath(string path)
     {
         try
+        {
+            ApplyPresetFromPath(path);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+        {
+            MessageBox.Show(
+                $"Preset could not be loaded.\n\n{ex.Message}",
+                AppName,
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+        }
+    }
+
+    /// <summary>
+    /// Loads a preset file into the editor exactly like LOAD, but throws on a
+    /// bad file instead of showing a dialog (used by the round-trip contract).
+    /// </summary>
+    public void ApplyPresetFromPath(string path)
+    {
         {
             var preset = _presetService.Load(path);
 
@@ -2215,14 +2244,6 @@ public sealed class MainViewModel : ObservableObject
                 ? Path.GetFileNameWithoutExtension(path)
                 : preset.Name;
             SelectPresetPath(path);
-        }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
-        {
-            MessageBox.Show(
-                $"Preset could not be loaded.\n\n{ex.Message}",
-                AppName,
-                MessageBoxButton.OK,
-                MessageBoxImage.Error);
         }
     }
 

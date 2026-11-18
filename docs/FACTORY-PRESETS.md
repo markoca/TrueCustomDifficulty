@@ -349,3 +349,7 @@ The 12 profiles now store the four new controls (422 catalog controls each). The
 ## 2026-11-18 — Controller DOGS knob removed
 
 * 451 controls per profile; the Controller dog summon (one-off `Controller_Deer` variant) stays vanilla. Untouched older stock copies upgrade by blob hash (`PreControllerDogsFactoryBlobs`).
+
+## Save / load contract (2026-11-18)
+
+SAVE writes every editor control, not only the changed ones. LOAD resets every control to the preset's base difficulty, then applies the saved values; older presets that lack a newer control get vanilla for it. `AllControlsPatchContract` checks a full SAVE → LOAD round trip at three difficulties. It also checks that all 12 factory presets load with no silent value change.

@@ -91,6 +91,8 @@ internal static partial class Program
             VerifyDormantNpcAmmoNotCounted();
             VerifyNpcSmartLootMasterToggle();
             VerifySingletonCfgPatchAndFileAccounting();
+            VerifyPresetRoundTrip();
+            VerifyFactoryPresetsLoadUnchanged();
             var executed = 0;
             var failed = new List<string>();
             foreach (var id in tested)
@@ -484,6 +486,116 @@ internal static partial class Program
             if (Directory.Exists(dir)) Directory.Delete(dir, true);
         }
     }
+
+    // SAVE -> LOAD must restore every editor control exactly (new controls
+    // included), at three difficulties, with every control moved off vanilla.
+    private static void VerifyPresetRoundTrip()
+    {
+        var retired = (IReadOnlySet<string>)typeof(MainViewModel).GetField("RetiredHiddenPresetIds",
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!.GetValue(null)!;
+        var dir = Path.Combine(Path.GetTempPath(), "TCD_PresetRoundTrip", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(dir);
+        try
+        {
+            var service = new PresetService();
+            var mustContain = new[] {
+                "combat.mutantSpecialAbilityRate", "combat.mutantMoveRate.bloodsucker.leap",
+                "combat.mutantMoveRate.pseudogiant.shockwave", "health.fallDamage",
+                "alife.lairPopulation.human", "alife.lairPopulation.mutant", "alife.lairRespawnTime",
+                "environment.emissionFrequency", "environment.stormFrequency",
+                "environment.emissionWarning", "economy.traderRestockHours",
+                "loot.looseArtifactsRemoved" };
+            var checkedValues = 0;
+            foreach (var (difficulty, high) in new[] { ("Veteran", true), ("Master", false), ("Novice", true) })
+            {
+                var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = difficulty };
+                foreach (var p in vm.AllParameters.Where(p => !retired.Contains(p.Id)))
+                    SetEnd(p, high);
+                var saved = vm.CreatePresetFile("round-trip");
+                var moveKnobs = vm.AllParameters.Count(p => p.Id.StartsWith("combat.mutantMoveRate.", StringComparison.Ordinal));
+                Check(moveKnobs == 53 && mustContain.All(saved.Values.ContainsKey)
+                      && saved.Values.Count == vm.AllParameters.Count,
+                    "Preset save does not contain every editor control (" + saved.Values.Count + "/" + vm.AllParameters.Count + ")");
+                var path = Path.Combine(dir, difficulty + ".json");
+                service.Save(saved, path);
+                var fresh = new MainViewModel(Catalog);
+                fresh.ApplyPresetFromPath(path);
+                Check(fresh.SelectedReferenceDifficulty == difficulty, "Preset base difficulty did not round-trip: " + difficulty);
+                var loaded = fresh.CreatePresetFile("round-trip");
+                var diffs = new List<string>();
+                foreach (var (id, value) in saved.Values)
+                {
+                    if (retired.Contains(id)) continue;
+                    if (!loaded.Values.TryGetValue(id, out var back) || !SamePresetValue(value, back))
+                        diffs.Add(id + ": saved " + Describe(value) + " loaded " + (back is null ? "<missing>" : Describe(back)));
+                    checkedValues++;
+                }
+                Check(diffs.Count == 0, difficulty + " preset round-trip changed controls:\n" + string.Join("\n", diffs.Take(40)));
+            }
+            Console.WriteLine($"PASS preset SAVE -> LOAD: {checkedValues} control values at 3 difficulties restored exactly (53 mutant move knobs, SPECIAL MOVES, FALL DAMAGE, LAIR, ZONE WEATHER, TRADER RESTOCK, LOOSE ARTIFACTS included)");
+        }
+        finally
+        {
+            try { Directory.Delete(dir, true); } catch (IOException) { }
+        }
+    }
+
+    // Every embedded factory preset loads without a silent value change.
+    private static void VerifyFactoryPresetsLoadUnchanged()
+    {
+        var assembly = typeof(MainViewModel).Assembly;
+        var names = assembly.GetManifestResourceNames()
+            .Where(n => n.StartsWith("TrueCustomDifficulty.Presets.", StringComparison.Ordinal)
+                && n.EndsWith(".json", StringComparison.Ordinal)).OrderBy(n => n, StringComparer.Ordinal).ToArray();
+        Check(names.Length == 12, "Expected 12 embedded factory presets, found " + names.Length);
+        var dir = Path.Combine(Path.GetTempPath(), "TCD_FactoryPresetLoad", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(dir);
+        try
+        {
+            var problems = new List<string>();
+            var checkedValues = 0;
+            foreach (var name in names)
+            {
+                var path = Path.Combine(dir, name);
+                using (var resource = assembly.GetManifestResourceStream(name)!)
+                using (var file = File.Create(path))
+                    resource.CopyTo(file);
+                var file0 = new PresetService().Load(path);
+                Check(file0.Values.Count == Catalog.Parameters.Count, name + ": factory preset is missing controls");
+                var vm = new MainViewModel(Catalog);
+                vm.ApplyPresetFromPath(path);
+                var loaded = vm.CreatePresetFile("factory");
+                foreach (var (id, back) in loaded.Values)
+                {
+                    if (!file0.Values.TryGetValue(id, out var value)) { problems.Add(name + " " + id + ": missing in file"); continue; }
+                    if (!SamePresetValue(value, back))
+                        problems.Add(name + " " + id + ": file " + Describe(value) + " loaded " + Describe(back));
+                    checkedValues++;
+                }
+            }
+            Check(problems.Count == 0, "Factory presets change on load:\n" + string.Join("\n", problems.Take(40)));
+            Console.WriteLine($"PASS 12 factory presets: {checkedValues} control values load unchanged");
+        }
+        finally
+        {
+            try { Directory.Delete(dir, true); } catch (IOException) { }
+        }
+    }
+
+    private static bool SamePresetValue(PresetValue a, PresetValue b)
+    {
+        static bool Num(double? x, double? y)
+            => (x is null && y is null)
+            || (x is not null && y is not null && Math.Abs(x.Value - y.Value) < 1e-6);
+        return string.Equals(a.Kind, b.Kind, StringComparison.Ordinal)
+            && Num(a.Number, b.Number) && Num(a.MinNumber, b.MinNumber) && Num(a.MaxNumber, b.MaxNumber)
+            && a.Boolean == b.Boolean
+            && string.Equals(a.Text ?? string.Empty, b.Text ?? string.Empty, StringComparison.Ordinal);
+    }
+
+    private static string Describe(PresetValue v)
+        => v.Kind + "(" + (v.Number?.ToString("R", System.Globalization.CultureInfo.InvariantCulture)
+            ?? v.Boolean?.ToString() ?? (v.MinNumber is not null ? v.MinNumber + "–" + v.MaxNumber : v.Text ?? "")) + ")";
 
     private static void SetEnd(ParameterViewModel p, bool high)
     {
