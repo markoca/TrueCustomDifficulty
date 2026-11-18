@@ -1,3 +1,7 @@
+## CURRENT 2026-11-18 — Mutant abilities catalog (no UI change)
+
+* `docs/combat/MUTANT-ABILITIES-CATALOG.md` lists every mutant-ability lever in the game CFG: cooldowns, reaction windows, area, counts and strength, with vanilla values. It also covers the cooldown tags that ATTACKS, ABILITIES and SPECIAL ABILITY RATE do not reach yet (summons, howls, squeals, sound tricks), dependencies, excluded boss and story agents, and a recommended shortlist. No board, writer or preset changes yet.
+
 ## CURRENT 2026-11-18 — Enlarged center hero knobs: ARTIFACT HUNTING / ZONE WEATHER
 
 * ARTIFACT HUNTING: exactly **SPAWN CHANCE | PER SPAWN | RARE+ ARTIFACT CHANCE** in the existing compact 620-DIP frameless three-knob bank. The middle PER SPAWN knob alone uses `prominent: true`, matching the 1.18× combat hero arc with the raised caption. Outer knobs retain their native size and percentages (base spawn odds, conditional Master-zone Rare+ share), PER SPAWN keeps its integer ARTIFACT(S) unit. Keep the RARITY BY ZONE display intact.
