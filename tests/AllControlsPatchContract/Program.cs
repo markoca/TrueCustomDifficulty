@@ -92,6 +92,7 @@ internal static partial class Program
             VerifyNpcSmartLootMasterToggle();
             VerifySingletonCfgPatchAndFileAccounting();
             VerifyPresetRoundTrip();
+            VerifyFactoryFineStepPresetValues();
             VerifyFactoryPresetsLoadUnchanged();
             var executed = 0;
             var failed = new List<string>();
@@ -538,6 +539,42 @@ internal static partial class Program
         {
             try { Directory.Delete(dir, true); } catch (IOException) { }
         }
+    }
+
+    // Source-native factory role tuning uses 0.05x values on these two sliders.
+    // Exercise the actual preset import and serializer, not a JSON-only check;
+    // a 0.10x editor grid silently changed 0.85x to 0.8x on load.
+    private static void VerifyFactoryFineStepPresetValues()
+    {
+        var ids = new[] { "combat.npcHealth", "combat.psySpawnCycleDelay" };
+        var fineStops = new[] { 0.55, 0.65, 0.75, 0.85, 0.95 };
+        foreach (var id in ids)
+        {
+            var source = Catalog.Parameters.Single(p => p.Id == id);
+            Check(source.Slider is { Min: 0.25, Max: 2, Step: 0.05, StepMode: "absolute" },
+                id + ": factory fractions must be reachable on the source editor grid");
+        }
+        var tested = 0;
+        foreach (var difficulty in new[] { "Novice", "Stalker", "Veteran", "Master" })
+        {
+            var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = difficulty };
+            foreach (var id in ids)
+            {
+                var parameter = vm.AllParameters.Single(p => p.Id == id);
+                foreach (var value in fineStops)
+                {
+                    parameter.ApplyPresetValue(new PresetValue { Kind = "slider", Number = value });
+                    Check(Math.Abs(parameter.CurrentNumber - value) < 1e-9,
+                        $"{difficulty} {id}: importing {value:0.00}x rounded to {parameter.CurrentNumber:0.00}x");
+                    var snapshot = vm.CreatePresetFile("factory-step-check");
+                    Check(snapshot.Values.TryGetValue(id, out var saved)
+                        && saved.Number.HasValue && Math.Abs(saved.Number.Value - value) < 1e-9,
+                        $"{difficulty} {id}: save silently changed {value:0.00}x");
+                    tested++;
+                }
+            }
+        }
+        Console.WriteLine($"PASS factory 0.05x steps: {tested} native slider/preset import-save checks");
     }
 
     // Every embedded factory preset loads without a silent value change.

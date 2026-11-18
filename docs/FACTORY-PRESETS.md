@@ -1,3 +1,8 @@
+## 2026-11-18 — CURRENT: factory preset 0.05× fidelity for human HP and phantom waves
+
+* **HUMAN ENEMY HP** (`combat.npcHealth`) and global **PHANTOM SPAWN INTERVAL** (`combat.psySpawnCycleDelay`) use the native `0.25×–2×` editor with **0.05× steps** rather than the old 0.10× grid. All twelve factory role profiles deliberately contain values such as 0.55× / 0.65× / 0.85× / 0.95×. Previously, loading rounded these values silently (e.g. 0.85× → 0.8×), changing actual gameplay. The catalog UI step and the preset normalizer now agree. No preset files, source CFG targets, role intent, value ranges, other combat controls or writers change.
+* `AllControlsPatchContract.VerifyFactoryFineStepPresetValues` asserts 40 cross-difficulty 0.05× import/save cases and the exact catalog bounds; the existing twelve-factory-profile unchanged-load contract checks all original stored values. A static source assertion is not a substitute for the user's Windows/Wine test.
+
 ## 2026-11-17 — CURRENT: thematic tuning of the newest controls
 
 The controls added after the last factory pass (HUMAN TACTICS / HUMAN AWARENESS, MUTANT AGGRESSION, ARTIFACT HUNTING, STASH SMART LOOT, NPC SMART LOOT, REMOVE ARMORS / LOOSE ARTIFACTS, Army Medkit in medical boxes, HEAL TIME, weapon/armor weight) and the TRADER STOCK / RARE GEAR sidecars now carry role values. Source of truth: `tools/factory_preset_thematic_2026_11_17.json` (absent ids = reference-difficulty vanilla); gate: `tools/audit_factory_preset_coverage.py`.

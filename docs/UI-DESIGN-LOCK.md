@@ -1,3 +1,7 @@
+## CURRENT 2026-11-18 — Preset-accurate 0.05× combat control steps
+
+* HUMAN ENEMY HP and global PHANTOM SPAWN INTERVAL keep their existing compact sliders and Stamina Usage-style caption/number positions, but use catalog-native **0.05×** step sizes across the existing **0.25×–2×** range. This makes all factory-role fine-tuning values selectable and exactly restorable (including 0.55×, 0.65×, 0.85× and 0.95×); 0.10× previously rounded them on import. All other combat steps, CFG writers, default values, preset semantics, hover, right-click reset and reference markers remain unchanged. Do not insert new Base/Vanilla text or widen the controls.
+
 ## CURRENT 2026-11-18 — Presets: every control saved, loaded and checked
 
 * No UI change. SAVE writes the full state of every editor control (`AllParameters`), including the 53 mutant move knobs, SPECIAL MOVES, FALL DAMAGE, LAIR POPULATION, ZONE WEATHER, TRADER RESTOCK and REMOVE LOOSE ARTIFACTS. LOAD first resets every control to the preset's base difficulty, so a control missing from an older preset lands on vanilla.

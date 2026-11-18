@@ -1,3 +1,7 @@
+## CURRENT 2026-11-18 — Factory fine-step sliders
+
+* The existing HUMAN ENEMY HP and PHANTOM SPAWN INTERVAL controls have a source catalog tick of **0.05×** within **0.25×–2×** (not 0.10×), so 12 unmodified factory role presets do not drift when loaded. The same catalog step drives click, drag, keyboard, wheel, import, rendering and serializable values; right-click reset uses the correct difficulty reference. Preserve compact Stamina Usage alignment, single readout, unchanged-label neutral text and accent only on edited digits. No additional controls, outlines or stretched sliders.
+
 ## CURRENT 2026-11-18 — Presets: every control saved, loaded and checked
 
 * No UI change. SAVE writes the full state of every editor control (`AllParameters`), including the 53 mutant move knobs, SPECIAL MOVES, FALL DAMAGE, LAIR POPULATION, ZONE WEATHER, TRADER RESTOCK and REMOVE LOOSE ARTIFACTS. LOAD first resets every control to the preset's base difficulty, so a control missing from an older preset lands on vanilla.
