@@ -65,6 +65,8 @@ FORMAT = [
     (r"(?<![\w.])\d+(?:\.\d+)?x\b", "multiplier sign is ×"),
     (r"\b\d+(?:\.\d+)?-\d+(?:\.\d+)?\b", "numeric range uses an en dash"),
     (r"->", "use →"),
+    (r"\b\d+(?:\.\d+)? (?:seconds?|minutes?)\b", "time after a number is s / min (45 s, 5 min)"),
+    (r"Vanilla:[^.]*\b(?:Novice|Stalker|Veteran) and (?:Stalker|Veteran|Master)\b", "neighbouring difficulties merge with an en dash (Novice–Stalker)"),
     (r"(?<![\w\-])\d+(?:\.\d+)?s\b", "space before the unit: 45 s"),
     (r"\n", "WHAT IT DOES is one paragraph"),
     (r"[Vv]anilla[^.]*\bon (?:every|all) difficult", "Vanilla: X. (no 'on every difficulty')"),

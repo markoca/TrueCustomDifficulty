@@ -29,7 +29,7 @@ public static class NpcLootCards
         new NpcLootCard[]
         {
             new(Packs, Anchor, "BONUS PACKS", "Bonus Packs",
-                "Smart loot on bodies: a dead stalker may carry a bonus pack of what you are short on. MED = bandages and medkits, AMMO = rounds for your gun, WATER = a bottle of water. Vanilla: Novice MED + AMMO, Stalker WATER, Veteran and Master none. Any mix is allowed.",
+                "Smart loot on bodies: a dead stalker may carry a bonus pack of what you are short on. MED = bandages and medkits, AMMO = rounds for your gun, WATER = a bottle of water. Vanilla: Novice MED + AMMO, Stalker WATER, Veteran–Master none. Any mix is allowed.",
                 "Click a chip to switch that pack on or off. Right-click a chip to restore the base difficulty's packs."),
             new(NeedBoost, Anchor, "NEED BOOST", "Need Boost",
                 "How hard the bonus packs react to what you are missing: about 10% with full pockets, up to 70–90% when you are out of that item. Vanilla: 1×. FLAT keeps a flat 10% no matter what you carry; 2× makes the packs step in much harder when you are short. Needs SMART LOOT ON and at least one bonus pack.",

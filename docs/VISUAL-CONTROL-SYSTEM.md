@@ -1,3 +1,9 @@
+## 2026-11-18 — CURRENT: Vanilla clause format — en-dash pairs, `s` / `min`
+
+* Neighbouring difficulties merge with an en dash in every `Vanilla:` clause, pairs included: `Novice–Stalker 1×`, `Stalker–Veteran 1×` and `Veteran–Master 0.75×` (was *Novice and Stalker …*). This covers 13 texts: explosions, your weapon damage, healed hits, bleeding severity, HP regen strength, bonus packs (card too), Rare coupons, trader buy / sell, and upgrades.
+* Times after a number are `s` / `min`, as on the boards. 16 texts changed, among them `Vanilla: 1× (30 s)`, `5 s`, `300 s (5 min)` and `ON allows up to 30 min`.
+* The style gate enforces both (`\d seconds|minutes` and `Novice and Stalker`-style pairs inside `Vanilla:`).
+
 ## 2026-11-18 — CURRENT: `Vanilla:` always second, no repeated Higher = in WHAT IT DOES
 
 * There are 20 rationales where `Vanilla:` used to come later and now follows the first sentence: combat damages and health, headshots, hit protection, Psy waves and phantoms, five mutant health cards, hunger and fatigue rate, radiation build-up and bleeding severity. Sentences that repeated WORKS WITH were dropped (*Pair it with WEAPON DAMAGE…*, *Headshots get an extra boost…*, *Mutant toughness is set separately…*, *Works together with PEAK HIT PROTECTION*, *Combine with a short spawn interval…*).

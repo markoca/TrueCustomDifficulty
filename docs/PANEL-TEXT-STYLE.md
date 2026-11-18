@@ -23,7 +23,7 @@ How often <thing happens to you>. Vanilla: <value>. Higher = <feel>; lower = <fe
 
 ## 2. Format rules
 
-* **Vanilla**: `Vanilla: X.` when equal on every difficulty; otherwise `Vanilla: Novice a, Stalker b, Veteran c, Master d.` with equal neighbours merged (`Novice–Veteran 1×, Master 2×`). Stated once — never repeated in HIGHER / LOWER.
+* **Vanilla**: `Vanilla: X.` when equal on every difficulty; otherwise `Vanilla: Novice a, Stalker b, Veteran c, Master d.` with equal neighbours merged by an en dash, pairs too (`Novice–Veteran 1×, Master 2×`, `Novice–Stalker 1×`), never *and*. Times are `s` / `min`: `Vanilla: 1× (30 s)`, `300 s (5 min)`. Stated once — never repeated in HIGHER / LOWER.
 * **Units = the control's readout**: `×` for multipliers (never the letter x), `%` for percentages, plain numbers for raw values; a real-world amount may follow in brackets — `Vanilla: 1× (500 HP)`. Endpoints carry the unit too: `0% removes it`, `0× = never`.
 * Space before units: `45 s`, `12 m`, `0.015 pts/s`, `1 HP/s`. Captions abbreviate without a dot: `MIN`, `MAX`.
 * **Unit case**: a unit right after a number is lower case — `80 kg`, `12 pts`, `0.5 pts/s`, `130 cm`, `45 s` (`HP` stays `HP`). A unit on its own caption line under a dial is a CAPS word: `BLEED POINTS`, `PSI POINTS`, `PER SECOND`, `SECONDS`. Vault height shows `cm` (the game's unit), never `uu`. Times: `1h 5m 20s`, single unit `45 s`.

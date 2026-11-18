@@ -341,7 +341,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How deadly grenades and other blasts are — both yours and the enemy's. Vanilla: Novice 0.25×, Stalker and Veteran 1×, Master 1.2×. Raise it if you want grenades to feel lethal, lower it to survive the odd F1 at your feet.",
+      "rationale": "How deadly grenades and other blasts are — both yours and the enemy's. Vanilla: Novice 0.25×, Stalker–Veteran 1×, Master 1.2×. Raise it if you want grenades to feel lethal, lower it to survive the odd F1 at your feet.",
       "logic": "",
       "interaction": "Only the difficulty boost. Each explosive keeps its own base damage."
     },
@@ -957,7 +957,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "The damage your own guns deal on a normal body hit. Vanilla: Novice 1.3×, Stalker 1×, Veteran and Master 0.75×. Lower values mean more bullets per kill and more ammo burned.",
+      "rationale": "The damage your own guns deal on a normal body hit. Vanilla: Novice 1.3×, Stalker 1×, Veteran–Master 0.75×. Lower values mean more bullets per kill and more ammo burned.",
       "logic": "",
       "interaction": "HEADSHOT DAMAGE multiplies headshots on top. HUMAN ENEMY HP also changes the time-to-kill."
     },
@@ -1214,7 +1214,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Whether hits you already healed still count against your burst protection. Vanilla: Novice and Stalker OFF, Veteran and Master ON. ON = patching up mid-fight doesn't reset the safety net; OFF is more forgiving.",
+      "rationale": "Whether hits you already healed still count against your burst protection. Vanilla: Novice–Stalker OFF, Veteran–Master ON. ON = patching up mid-fight doesn't reset the safety net; OFF is more forgiving.",
       "logic": "OFF = Novice and Stalker behaviour, ON = Veteran and Master. Healing always restores HP; this only decides whether PEAK / MINIMUM HIT PROTECTION still counts the healed damage.",
       "interaction": "Works with PEAK HIT PROTECTION. Healing still restores HP even while past hits count."
     },
@@ -4400,7 +4400,7 @@
           "Minimum main Water multiplier is exactly 5/30 so its optional regeneration cannot exceed the main duration."
         ]
       },
-      "rationale": "How long water's stamina-saving effect lasts after drinking. Vanilla: 1× (30 seconds). Its shorter bonus can never outlast this.",
+      "rationale": "How long water's stamina-saving effect lasts after drinking. Vanilla: 1× (30 s). Its shorter bonus can never outlast this.",
       "logic": "Higher = cheaper actions last longer. The short +25% bonus can't outlast it.",
       "interaction": "WATER STAMINA GAIN controls the instant refill separately."
     },
@@ -4499,7 +4499,7 @@
           "Source-confirmed Energy Drink variants: EnergeticStaminaPerAction1 gives -30% stamina action cost for 15 s; EnergeticStaminaPerAction2 gives -100% stamina action cost for 5 s. Energetic_Limited is a separate variant, and MeleeButstock participates in the source effect coverage. Engine stacking is handled by the original game effect system; duration controls retain separate prototype ownership."
         ]
       },
-      "rationale": "How long an energy drink keeps boosting your stamina regeneration. Vanilla: 1× (45 seconds, for both the normal and the Limited drink).",
+      "rationale": "How long an energy drink keeps boosting your stamina regeneration. Vanilla: 1× (45 s, for both the normal and the Limited drink).",
       "logic": "1× keeps the 45-second regeneration for normal and Limited drinks. The shorter no-cost (5 s) and -30% cost (15 s) effects can't outlast it.",
       "interaction": "ENERGY DRINK STAMINA GAIN and FATIGUE RELIEF are separate controls."
     },
@@ -4545,7 +4545,7 @@
           "Uses EEffectType::Stamina; Water's 30s stamina-cost effect is a distinct source."
         ]
       },
-      "rationale": "How long water's +25% max-stamina bonus lasts. Vanilla: 5 seconds — a short burst for a sprint.",
+      "rationale": "How long water's +25% max-stamina bonus lasts. Vanilla: 5 s — a short burst for a sprint.",
       "logic": "Higher = the bonus lasts longer, up to the drink's main effect.",
       "interaction": "Can't outlast the drink's main effect.",
       "exposeInUi": false
@@ -4592,7 +4592,7 @@
           "Inherited eight stamina-action types; the effect is shared by regular and Limited Energy Drink."
         ]
       },
-      "rationale": "How long an energy drink makes actions cost no stamina at all. Vanilla: 5 seconds.",
+      "rationale": "How long an energy drink makes actions cost no stamina at all. Vanilla: 5 s.",
       "logic": "Higher = free actions last longer, up to the drink's main effect.",
       "interaction": "Can't outlast the drink's main effect.",
       "exposeInUi": false
@@ -4639,7 +4639,7 @@
           "Ordinary Energy Drink has both -30% and -100% effects; stacking is not runtime-proven."
         ]
       },
-      "rationale": "How long an energy drink makes actions cost 30% less stamina. Vanilla: 15 seconds.",
+      "rationale": "How long an energy drink makes actions cost 30% less stamina. Vanilla: 15 s.",
       "logic": "Higher = cheaper actions last longer, up to the drink's main effect.",
       "interaction": "Can't outlast the drink's main effect.",
       "exposeInUi": false
@@ -4684,7 +4684,7 @@
           "Drunkenness duration is intentionally excluded until Drunkness/OverDrunkness mechanics are fully audited."
         ]
       },
-      "rationale": "How long vodka's stamina drain lasts after you drink it. Vanilla: 1× (20 seconds). Its radiation removal is set separately.",
+      "rationale": "How long vodka's stamina drain lasts after you drink it. Vanilla: 1× (20 s). Its radiation removal is set separately.",
       "logic": "1× keeps the 20 s vanilla stamina-drain penalty.",
       "interaction": "Only the duration. VODKA RADIATION REMOVAL sets how much radiation it clears."
     },
@@ -4728,7 +4728,7 @@
           "Drunkenness duration is intentionally excluded until Drunkness/OverDrunkness mechanics are fully audited."
         ]
       },
-      "rationale": "How long beer's stamina drain lasts after you drink it. Vanilla: 1× (20 seconds). Its radiation removal is set separately.",
+      "rationale": "How long beer's stamina drain lasts after you drink it. Vanilla: 1× (20 s). Its radiation removal is set separately.",
       "logic": "1× keeps the 20 s vanilla stamina-drain penalty.",
       "interaction": "Only the duration. BEER RADIATION REMOVAL sets how much radiation it clears."
     },
@@ -4772,7 +4772,7 @@
           "Magic Vodka drunkenness is intentionally excluded from this duration control."
         ]
       },
-      "rationale": "How long Magic Vodka (Dvupalov) shields you from psy attacks. Vanilla: 1× (90 seconds) — longer means more time to deal with Controllers and psy zones.",
+      "rationale": "How long Magic Vodka (Dvupalov) shields you from psy attacks. Vanilla: 1× (90 s) — longer means more time to deal with Controllers and psy zones.",
       "logic": "1× keeps the 90 s vanilla psi-protection duration.",
       "interaction": "Only the duration. A special quest drink; RADIATION REMOVAL doesn't touch it."
     },
@@ -4864,9 +4864,9 @@
           "Existing UI-only duration override expands this source's editor cap to 1800 seconds; CFG field remains unchanged."
         ]
       },
-      "rationale": "How long Vinca's bleeding recovery lasts. Vanilla: 180 seconds.",
+      "rationale": "How long Vinca's bleeding recovery lasts. Vanilla: 180 s.",
       "logic": "Set in real seconds.",
-      "interaction": "OVERRIDE LIMITS OFF caps it at the game's own maximum; ON allows up to 30 minutes. Strength and the other medicines stay separate.",
+      "interaction": "OVERRIDE LIMITS OFF caps it at the game's own maximum; ON allows up to 30 min. Strength and the other medicines stay separate.",
       "exposeInUi": false
     },
     {
@@ -4973,9 +4973,9 @@
           "Existing UI-only duration override expands this source's editor cap to 1800 seconds; CFG field remains unchanged."
         ]
       },
-      "rationale": "How long a Hercules pill keeps you stronger. Vanilla: 300 seconds (5 minutes).",
+      "rationale": "How long a Hercules pill keeps you stronger. Vanilla: 300 s (5 min).",
       "logic": "Set in real seconds.",
-      "interaction": "OVERRIDE LIMITS OFF caps it at the game's own maximum; ON allows up to 30 minutes. Strength and the other medicines stay separate.",
+      "interaction": "OVERRIDE LIMITS OFF caps it at the game's own maximum; ON allows up to 30 min. Strength and the other medicines stay separate.",
       "exposeInUi": false
     },
     {
@@ -5066,9 +5066,9 @@
           "Existing UI-only duration override expands this source's editor cap to 1800 seconds; CFG field remains unchanged."
         ]
       },
-      "rationale": "How long a Psi Block pill lasts. Vanilla: 60 seconds.",
+      "rationale": "How long a Psi Block pill lasts. Vanilla: 60 s.",
       "logic": "Set in real seconds.",
-      "interaction": "OVERRIDE LIMITS OFF caps it at the game's own maximum; ON allows up to 30 minutes. Strength and the other medicines stay separate.",
+      "interaction": "OVERRIDE LIMITS OFF caps it at the game's own maximum; ON allows up to 30 min. Strength and the other medicines stay separate.",
       "exposeInUi": false
     },
     {
@@ -5546,7 +5546,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How bad bleeding wounds are overall. Vanilla: Novice 0.25×, Stalker and Veteran 1×, Master 1.5×.",
+      "rationale": "How bad bleeding wounds are overall. Vanilla: Novice 0.25×, Stalker–Veteran 1×, Master 1.5×.",
       "logic": "Higher = every bleed hurts more; lower = bleeding is gentler.",
       "interaction": "LOW / MEDIUM / SEVERE BLEEDING DAMAGE set the HP lost per stage; NATURAL BLEEDING RECOVERY and meds decide how fast it stops."
     },
@@ -5731,7 +5731,7 @@
           "The field explicitly uses seconds; the exact set of regeneration sources that honor it requires runtime validation."
         ]
       },
-      "rationale": "How long after taking damage your health starts coming back. Vanilla: 5 seconds. Only matters if something is actually healing you, so with PASSIVE HP REGEN at 0 you may not notice it.",
+      "rationale": "How long after taking damage your health starts coming back. Vanilla: 5 s. Only matters if something is actually healing you, so with PASSIVE HP REGEN at 0 you may not notice it.",
       "logic": "Higher = HP regen waits longer after you get hurt; lower = it starts sooner.",
       "interaction": "Only matters while PASSIVE HP REGEN or another heal-over-time effect is active."
     },
@@ -5775,7 +5775,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How strong all health recovery over time is. Vanilla: Novice and Stalker 100%, Veteran 75%, Master 50%. Doesn't start healing by itself — it boosts or weakens healing that is already running.",
+      "rationale": "How strong all health recovery over time is. Vanilla: Novice–Stalker 100%, Veteran 75%, Master 50%. Doesn't start healing by itself — it boosts or weakens healing that is already running.",
       "logic": "100% keeps healing-over-time effects at full strength; lower weakens them, higher strengthens them.",
       "interaction": "PASSIVE HP REGEN is 0 in vanilla, so this matters mainly when another effect is already restoring health, such as low-health recovery."
     },
@@ -6799,7 +6799,7 @@
       "group": "Exhaustion & Recovery",
       "label": "Exhaustion Regen Delay",
       "description": "Seconds before stamina regeneration resumes after sprint exhaustion.",
-      "rationale": "How long you stand there gasping after sprinting yourself out before stamina starts coming back. Vanilla: 1 second.",
+      "rationale": "How long you stand there gasping after sprinting yourself out before stamina starts coming back. Vanilla: 1 s.",
       "logic": "Higher = a longer pause before stamina refills after you run dry; lower = shorter.",
       "interaction": "Only after you run dry. SPRINT STOPS BELOW sets when sprint locks.",
       "control": "slider",
@@ -6936,7 +6936,7 @@
       "group": "Exhaustion & Recovery",
       "label": "Boost Duration",
       "description": "Seconds that the conditional low-stamina stamina regeneration boost remains active (4 seconds originally).",
-      "rationale": "How long the second wind lasts once it kicks in. Vanilla: 4 seconds.",
+      "rationale": "How long the second wind lasts once it kicks in. Vanilla: 4 s.",
       "logic": "Higher = the second wind lasts longer; lower = it ends sooner.",
       "interaction": "BOOST STARTS BELOW sets the trigger; BOOST STRENGTH sets how strong it is.",
       "control": "slider",
@@ -7870,7 +7870,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Which bonus packs bodies can carry: MED, AMMO and WATER, in any mix. Vanilla: Novice MED + AMMO, Stalker WATER, Veteran and Master none.",
+      "rationale": "Which bonus packs bodies can carry: MED, AMMO and WATER, in any mix. Vanilla: Novice MED + AMMO, Stalker WATER, Veteran–Master none.",
       "logic": "Each chip adds one pack; a pack shows up more often when you're short of that item.",
       "interaction": "AMMO PACK SIZE sets how big the ammo pack is; MED DROPS is separate."
     },
@@ -10929,7 +10929,7 @@
           "Runtime CFG uses 0.20 on Easy/Medium and 0.10 on Hard/Stalker for the Progression-Rank-matched MoneyCommon/Rare/Epic/Legendary entry."
         ]
       },
-      "rationale": "Chance a Rare stash pays out coupons (money). Vanilla: Novice and Stalker 20%, Veteran and Master 10%. How much you get still follows the game's progression.",
+      "rationale": "Chance a Rare stash pays out coupons (money). Vanilla: Novice–Stalker 20%, Veteran–Master 10%. How much you get still follows the game's progression.",
       "logic": "Only changes whether coupons appear, not which coupon tier (Common to Legendary) you get.",
       "interaction": "Only the coupon reward inside a Rare stash; it doesn't change how often you find Rare stashes.",
       "exposeInUi": true,
@@ -11024,7 +11024,7 @@
         "status": "runtime_test_required",
         "notes": []
       },
-      "rationale": "How much traders pay you when you sell. Vanilla: Novice and Stalker 1×, Veteran 0.65×, Master 0.55×.",
+      "rationale": "How much traders pay you when you sell. Vanilla: Novice–Stalker 1×, Veteran 0.65×, Master 0.55×.",
       "logic": "Higher = traders pay more when you sell; lower = less. Each trader still adds their own markup.",
       "interaction": "BROKEN GEAR VALUE and item condition also affect what you can sell and for how much."
     },
@@ -11068,7 +11068,7 @@
         "status": "runtime_test_required",
         "notes": []
       },
-      "rationale": "How much traders charge you when you buy. Vanilla: Novice and Stalker 1×, Veteran 1.25×, Master 1.65×.",
+      "rationale": "How much traders charge you when you buy. Vanilla: Novice–Stalker 1×, Veteran 1.25×, Master 1.65×.",
       "logic": "Higher = buying costs more; lower = cheaper. Each trader still adds their own markup.",
       "interaction": "ITEM VALUES changes underlying prices; PRICES TRADERS PAY applies when you sell instead."
     },
@@ -11705,7 +11705,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Price of weapon and armor upgrades. Vanilla: Novice and Stalker 1×, Veteran 1.25×, Master 1.5×. Which upgrades exist doesn't change.",
+      "rationale": "Price of weapon and armor upgrades. Vanilla: Novice–Stalker 1×, Veteran 1.25×, Master 1.5×. Which upgrades exist doesn't change.",
       "logic": "",
       "interaction": "Each upgrade keeps its own base price, so relative costs stay the same."
     },
@@ -12607,7 +12607,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Seconds between starvation hits. Vanilla: 10 seconds. Only works while STARVATION MECHANICS is ON.",
+      "rationale": "Seconds between starvation hits. Vanilla: 10 s. Only works while STARVATION MECHANICS is ON.",
       "logic": "Lower = the same damage comes more often; higher = it's spread out.",
       "interaction": "Stacks with STARVATION DAMAGE: together they set how fast starving hurts.",
       "requiresToggle": "advanced.starvationMechanics"
@@ -12664,7 +12664,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Grace period before the starvation penalties kick in. Vanilla: 3 seconds. Only works while STARVATION MECHANICS is ON.",
+      "rationale": "Grace period before the starvation penalties kick in. Vanilla: 3 s. Only works while STARVATION MECHANICS is ON.",
       "logic": "Lower = the penalties hit sooner once you're starving; higher = a longer grace period.",
       "interaction": "STARVATION MECHANICS turns the penalties on; this only sets the grace period before they start.",
       "requiresToggle": "advanced.starvationMechanics"
