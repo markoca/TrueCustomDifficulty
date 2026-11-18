@@ -378,7 +378,14 @@ internal static partial class Program
                     && (snapshot.Value($"loot.stash{row.ItemSid}MinCount", 0) > 0
                         || snapshot.Value($"loot.stash{row.ItemSid}MaxCount", 0) > 0))
                     .ToArray();
-                if (affected.Length == 0) continue;
+                // SMART LOOT NEED (and supply reduction) move only the group's
+                // spawn endpoints, so a group with no affected item still counts
+                // when its endpoints change.
+                var spawn = group.EffectiveSpawn(snapshot);
+                var endpointsChanged = (group.MinSpawnChance.Length > 0 && spawn.Min != group.MinSpawnChance)
+                    || (group.MaxSpawnChance.Length > 0 && spawn.Max != group.MaxSpawnChance)
+                    || (group.ItemSetCount.Length > 0 && spawn.Sets != group.ItemSetCount);
+                if (affected.Length == 0 && !endpointsChanged) continue;
                 checkedSmartGroups++;
                 foreach (var row in affected)
                 {
@@ -411,7 +418,6 @@ internal static partial class Program
 
                 // Group spawn endpoints: same rule as the writer
                 // (SmartGroupEndpointFactor x supply), emitted only when changed.
-                var spawn = group.EffectiveSpawn(snapshot);
                 foreach (var (field, original, predicted) in new[]
                 {
                     ("MinSpawnChance", group.MinSpawnChance, spawn.Min),

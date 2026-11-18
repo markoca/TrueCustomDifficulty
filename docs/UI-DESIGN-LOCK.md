@@ -1,3 +1,7 @@
+## CURRENT 2026-11-18 — Fourth Wine contract run: 12 PASS / 1 FAIL
+
+* No UI or writer change. LootSpecialGenerators `smart-need-half` changes only SMART LOOT NEED, which moves every Smart group's spawn endpoints but no item odds. The check skipped every group whose items were unchanged and counted nothing. Groups whose endpoints change are now checked too, against the writer's own endpoint rule.
+
 ## CURRENT 2026-11-18 — Third Wine contract run: 12 PASS / 1 FAIL
 
 * No UI or writer change. The last failure was an old LootSpecialGenerators check written before the MEDICAL COMPOSITION kept-share rule. A SmartLoot Weight group's spawn chance scales by the kept share Σw·k / Σw, so each item keeps exactly its own k of vanilla odds. The check now asserts that rule: Medkit 0%, Army Medkit 100% → share 1/6, applied to the source endpoints. It uses the UI maximum of 100% instead of an unreachable 2×.
