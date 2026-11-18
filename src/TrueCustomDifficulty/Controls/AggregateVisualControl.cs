@@ -922,71 +922,113 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
     }
 
-    // LAIR POPULATION: how many inhabitants a world lair holds (HUMAN CAMPS /
-    // MUTANT NESTS, one real lair under each, LairPopulationPolicy.Scale) and
-    // how long lairs take to fill back up (RESPAWN TIME, the ordinary
-    // 180 / 480 s timers under it, LairPopulationPolicy.ScaleTimer).
-    private const double LairCardPitch = 108.0;
+    // LAIR POPULATION: three frameless source-backed rotary controls.
+    // Percentages scale lair capacities; the larger central respawn knob
+    // shows the typical full-refill time instead of an abstract multiplier.
+    private const double LairCardPitch = 108.0; // Trader Restock uses this.
+    private const double LairPreviewGap = 12.0;
+    private const double LairPreviewHeight = 44.0;
 
     private static double LairPopulationBoardHeight(double width)
-    {
-        var rows = (3 + EconomyColumns(width) - 1) / EconomyColumns(width);
-        return 48.0 + rows * LairCardPitch + 6.0;
-    }
+        => ArtifactKnobTop + ArtifactKnobHeight + LairPreviewGap + LairPreviewHeight + 10.0;
 
     private void DrawLairPopulationBoard(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
         DrawCenteredText(dc, "LAIR POPULATION",
-            new Point(ActualWidth / 2.0, 21.0), VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
+            new Point(ActualWidth / 2.0, 21.0),
+            VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
 
-        var cards = new (string Id, string Label, string Example, string Prototype, string Faction)[]
+        // Keep the two capacities on the outside; RESPAWN TIME is the
+        // prominent center control with the native combat hero sizing.
+        var knobs = new (string Id, string Label, string Example, string Prototype, string Faction)[]
         {
             (LairPopulationPolicy.HumanId, "HUMAN CAMPS", "BANDIT CAMP", "Bandits", "Bandits"),
-            (LairPopulationPolicy.MutantId, "MUTANT NESTS", "TUSHKAN NEST", "Tushkan", "Tushkan"),
-            (LairPopulationPolicy.RespawnTimeId, "RESPAWN TIME", "", "", "")
+            (LairPopulationPolicy.RespawnTimeId, "RESPAWN TIME", "", "", ""),
+            (LairPopulationPolicy.MutantId, "MUTANT NESTS", "TUSHKAN NEST", "Tushkan", "Tushkan")
         };
         var ranks = new[] { "Newbie", "Experienced", "Veteran", "Master" };
-        var columns = EconomyColumns(ActualWidth);
-        var cardWidth = EconomyCardWidth(ActualWidth, columns);
-        const double gap = 12.0;
-        var bankWidth = columns * cardWidth + (columns - 1) * gap;
-        var left = (ActualWidth - bankWidth) / 2.0;
+        var rankLabels = new[] { "N", "E", "V", "M" };
+        var (left, _, cellWidth) = ArtifactKnobBank(ActualWidth);
+        var previewTop = ArtifactKnobTop + ArtifactKnobHeight + LairPreviewGap;
 
-        for (var i = 0; i < cards.Length; i++)
+        for (var i = 0; i < knobs.Length; i++)
         {
-            var rect = new Rect(left + (i % columns) * (cardWidth + gap),
-                48.0 + (i / columns) * LairCardPitch, cardWidth, 80.0);
-            var parameter = P(cards[i].Id);
-            DrawEconomyCard(dc, parameter, cards[i].Label, rect, text, muted, border, accent, panel);
+            var source = knobs[i];
+            var parameter = P(source.Id);
+            var area = new Rect(left + i * (cellWidth + ArtifactKnobGap),
+                ArtifactKnobTop, cellWidth, ArtifactKnobHeight);
+            var isRespawn = source.Id == LairPopulationPolicy.RespawnTimeId;
+
+            // Same native control, 270-degree arc, source step and reset.
+            // No outer knob card/rectangular border.
+            DrawSourceKnob(dc, parameter, source.Label, area,
+                text, muted, border, accent, panel,
+                percentageReadout: !isRespawn,
+                prominent: isRespawn,
+                secondaryReadout: isRespawn ? "FULL AGAIN" : "LAIR CAPACITY",
+                valueFormatter: isRespawn
+                    ? value => LairTime(LairPopulationPolicy.ScaleTimer(
+                        LairPopulationPolicy.TypicalTimers[1], value))
+                    : null);
+
             if (parameter is null)
                 continue;
 
-            if (cards[i].Id == LairPopulationPolicy.RespawnTimeId)
+            var previewWidth = Math.Max(1.0, area.Width - 8.0);
+            string title;
+            FormattedText detail;
+            if (isRespawn)
             {
-                var multiplier = parameter.CurrentNumber;
-                var half = LairPopulationPolicy.ScaleTimer(LairPopulationPolicy.TypicalTimers[0], multiplier);
-                var full = LairPopulationPolicy.ScaleTimer(LairPopulationPolicy.TypicalTimers[1], multiplier);
-                var refillLine = $"HALF FULL IN {LairTime(half)} · FULL IN {LairTime(full)}";
-                var refillText = CreateText(refillLine, 9.6,
+                var half = LairPopulationPolicy.ScaleTimer(
+                    LairPopulationPolicy.TypicalTimers[0], parameter.CurrentNumber);
+                var wiped = LairPopulationPolicy.ScaleTimer(
+                    LairPopulationPolicy.TypicalTimers[2], parameter.CurrentNumber);
+                title = "TYPICAL LAIR TIMERS";
+                var summary = $"HALF {LairTime(half)} · WIPE {LairTime(wiped)}";
+                detail = CreateText(summary, 9.4,
                     !parameter.IsControlEnabled ? muted
-                        : parameter.IsValueModifiedFromReference() ? ReadoutInk.Numbers(accent, muted) : muted,
-                    FontWeights.SemiBold, Math.Max(1.0, rect.Width - 8.0));
-                dc.DrawText(refillText, new Point(rect.Left + 4.0, rect.Bottom + 6.0));
-                continue;
+                        : parameter.IsValueModifiedFromReference()
+                            ? ReadoutInk.Numbers(accent, text) : text,
+                    FontWeights.SemiBold, previewWidth);
+            }
+            else
+            {
+                title = $"{source.Example} BY RANK";
+                var examples = ranks.Select(rank => LairPopulationPolicy.Example(
+                    source.Prototype, source.Faction, rank, parameter.CurrentNumber)).ToArray();
+                var parts = examples.Select((count, index) =>
+                    $"{rankLabels[index]} {count.Current}").ToArray();
+                var summary = string.Join(" · ", parts);
+                detail = CreateText(summary, 9.4,
+                    parameter.IsControlEnabled ? text : muted,
+                    FontWeights.SemiBold, previewWidth);
+                // Only the rank counts that actually change after the
+                // source's half-up rounding become gold.
+                if (parameter.IsControlEnabled)
+                {
+                    var offset = 0;
+                    for (var rank = 0; rank < examples.Length; rank++)
+                    {
+                        if (examples[rank].Current != examples[rank].Vanilla)
+                            ReadoutInk.Mark(detail, accent,
+                                offset + rankLabels[rank].Length + 1,
+                                examples[rank].Current.ToString(CultureInfo.InvariantCulture).Length,
+                                9.4);
+                        offset += parts[rank].Length + (rank < parts.Length - 1 ? 3 : 0);
+                    }
+                }
             }
 
-            // One real lair, by your rank (Newbie / Experienced / Veteran / Master).
-            var counts = ranks.Select(rank => LairPopulationPolicy.Example(
-                cards[i].Prototype, cards[i].Faction, rank, parameter.CurrentNumber)).ToArray();
-            var changed = counts.Any(c => c.Current != c.Vanilla);
-            var line = $"{cards[i].Example} BY RANK  "
-                + string.Join(" / ", counts.Select(c => c.Current.ToString(CultureInfo.InvariantCulture)));
-            var readout = CreateText(line, 9.6,
-                !parameter.IsControlEnabled ? muted : changed ? ReadoutInk.Numbers(accent, muted) : muted,
-                FontWeights.SemiBold, Math.Max(1.0, rect.Width - 8.0));
-            dc.DrawText(readout, new Point(rect.Left + 4.0, rect.Bottom + 6.0));
+            var heading = CreateText(title, 8.5, muted,
+                FontWeights.SemiBold, previewWidth);
+            dc.DrawText(heading, new Point(
+                area.Left + (area.Width - heading.WidthIncludingTrailingWhitespace) / 2.0,
+                previewTop));
+            dc.DrawText(detail, new Point(
+                area.Left + (area.Width - detail.WidthIncludingTrailingWhitespace) / 2.0,
+                previewTop + 16.0));
         }
     }
 

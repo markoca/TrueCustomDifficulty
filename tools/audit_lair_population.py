@@ -109,10 +109,32 @@ def main():
     ui = (APP / "Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
     for token in ('case "LairPopulation":', '"LairPopulation" => LairPopulationBoardHeight(width)',
                   '"LairPopulation" => LairPopulationPolicy.ParameterIds', '"LAIR POPULATION"',
-                  '"HUMAN CAMPS"', '"MUTANT NESTS"', '"RESPAWN TIME"', "LairPopulationPolicy.Example(",
-                  "LairPopulationPolicy.ScaleTimer(LairPopulationPolicy.TypicalTimers[0], multiplier)",
-                  "(3 + EconomyColumns(width) - 1) / EconomyColumns(width)"):
+                  '"HUMAN CAMPS"', '"MUTANT NESTS"', '"RESPAWN TIME"',
+                  "ArtifactKnobBank(ActualWidth)", "LairPopulationPolicy.Example(",
+                  "LairPopulationPolicy.TypicalTimers[0]", "LairPopulationPolicy.TypicalTimers[1]",
+                  "LairPopulationPolicy.TypicalTimers[2]",
+                  'percentageReadout: !isRespawn', 'prominent: isRespawn',
+                  'secondaryReadout: isRespawn ? "FULL AGAIN" : "LAIR CAPACITY"'):
         check(token in ui, "board drifted: " + token)
+    board = ui[ui.index('    private void DrawLairPopulationBoard('):
+               ui.index('    // ZONE WEATHER: three frameless source dials')]
+    check('DrawEconomyCard(' not in board and 'DrawTrackedRoundedRectangle(' not in board,
+          "lair population knobs have no rectangular card frames")
+    check(board.count('DrawSourceKnob(') == 1
+          and 'new (string Id, string Label, string Example, string Prototype, string Faction)[]' in board,
+          "three native source-backed knobs share a compact renderer")
+    check(board.index('(LairPopulationPolicy.HumanId, "HUMAN CAMPS"')
+          < board.index('(LairPopulationPolicy.RespawnTimeId, "RESPAWN TIME"')
+          < board.index('(LairPopulationPolicy.MutantId, "MUTANT NESTS"'),
+          "the larger RESPAWN TIME knob is centered")
+    check('value => LairTime(LairPopulationPolicy.ScaleTimer(' in board
+          and 'LairPopulationPolicy.TypicalTimers[1], value))' in board,
+          "central knob and endpoints show full-refill time rather than × multiplier")
+    check('examples[rank].Current != examples[rank].Vanilla' in board
+          and 'ReadoutInk.Mark(detail, accent,' in board,
+          "preview uses real lair counts and highlights only changed ranks")
+    check('ArtifactKnobTop + ArtifactKnobHeight + LairPreviewGap + LairPreviewHeight' in ui,
+          "compact preview included in board height")
     mvm = (APP / "ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
     check("LairPopulationPolicy.ParameterIds.Contains(p.Id)" in mvm, "hidden member has no view model")
 
