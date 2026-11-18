@@ -6,7 +6,8 @@ Two control groups on the Mutant board (*MUTANT DAMAGE, HEALTH AND AGGRESSION*):
 |---|---|---|---|
 | ATTACKS per family (14) | `combat.mutantAttackRate.{family}` | 0.25×–3×, step 0.25 | 1×; **2× on Master** for Bayun, Bloodsucker, Burer, Chimera, Controller, Deer, Pseudodog, Pseudogiant |
 | ABILITIES per family (10) | `combat.mutantAbilityRate.{family}` | 0.25×–3×, step 0.25 | 1×; **2× on Master** for Bayun, Bloodsucker, Burer, Chimera, Controller, Pseudogiant |
-| SUMMON RATE (global) | `combat.mutantSummonRate` | 0.25×–3×, step 0.25 | 1× on every difficulty |
+| ABILITIES Deer (2026-11-18) | `combat.mutantAbilityRate.deer` | 0.25×–3×, step 0.25 | 1× (blind dog summon) |
+| One knob per move (68) | `combat.mutantMoveRate.{family}.{move}` | 0.25×–3×, step 0.25 | 1× |
 | SPECIAL ABILITY RATE (global) | `combat.mutantSpecialAbilityRate` | 0.25×–3×, step 0.25 | 1× Novice / Stalker / Veteran, 2× Master |
 
 All are `runtime_test_required`. Source: S.T.A.L.K.E.R. 2 2.1 base dump.
@@ -31,8 +32,10 @@ All are `runtime_test_required`. Source: S.T.A.L.K.E.R. 2 2.1 base dump.
   TurnAttack, Charge, JumpToEnemy, FlyThrough, Evasion, AOEAttack (Poltergeist burst). Pseudodog ATTACKS also carry
   `ShockwaveAttack`: the game's Master list names it for PseudoDog, but no pseudodog ability uses it (no-op).
 * **ABILITIES**: Abilities.PSYAttack / RaiseDeadBody / ZombifyNPC, Roar, Growl, BlinkTeleport, Shield, Throw,
-  ThrowGrenade, WeaponDrag, WeaponRiseAndShoot, ActivateAnomaly, ShockwaveAttack (Pseudogiant); Pseudodog: Howl
-  (vanilla 1× on every difficulty; 2026-11-18 fix, the old psi-wave tag did nothing; its phantoms are SUMMON RATE). Boar, Deer, Flesh and Tushkan
+  ThrowGrenade, WeaponDrag, WeaponRiseAndShoot, ActivateAnomaly, ShockwaveAttack (Pseudogiant); Pseudodog: Howl,
+  CombatSummon, RetreatSummon (vanilla 1× on every difficulty; 2026-11-18 fix, the old psi-wave tag did nothing).
+  Summons belong to their mutant's ABILITIES: Bayun clones, Deer blind dogs (new Deer ABILITIES slider) and the
+  Deer controller's dogs (`Controller_Deer` uses `CombatSummonAbility_Deer`). Boar, Deer, Flesh and Tushkan
   have none, so they have no ABILITIES track.
 * Agents (exact SIDs, 38): every base-game variant of the family — e.g. Bloodsucker, MistBloodsucker,
   Bloodsucker_Collar, AshyBloodsucker, PrologueBloodsucker; Poltergeist + Electro/Toxic/Fire/YanivToxicRozliv/
@@ -46,21 +49,25 @@ All are `runtime_test_required`. Source: S.T.A.L.K.E.R. 2 2.1 base dump.
   (2026-11-18 fix; the card used to say 30 s and 20 s). At the vanilla value it shows the game's effective time (e.g. Master Controller psy 6 s).
 * `Mutant_AttackCooldown` (1.0 on all difficulties) is not touched.
 
-## SUMMON RATE → the same `AgentCooldownMultipliers` list (2026-11-18)
+## One knob per move (2026-11-18)
 
-* Rate *r* writes **1/r** on the summon tags of the summoning agents, next to their ATTACKS / ABILITIES entries:
-  `PseudoDog` (CombatSummon 20 s: 5 phantoms; RetreatSummon 10 s: 4 phantoms), `Bayun`, `Bayun_Collar`,
-  `Bayun_E10_MQ01` (CombatSummon 10 s: 5 clones), `Deer`, `Controller_Deer` (CombatSummon 20 s: 3 blind dogs).
-* No difficulty lists a summon tag, so vanilla is 1× everywhere and 1× writes nothing.
-* Story `Faust_CombatSummonAbility` and the DLC1 Jaded Chimera summon are not touched. Counts per summon stay vanilla.
-* Board: the second global row is split, SPECIAL ABILITY RATE left and SUMMON RATE right
-  (`phantoms 20 s · clones 10 s · dogs 20 s`).
+* Under each ATTACKS / ABILITIES slider sits one knob per move (one per cooldown tag of the family), 68 in all:
+  `combat.mutantMoveRate.{family}.{move}`, 0.25–3× step 0.25, vanilla 1×. The list, captions and vanilla seconds
+  are `MutantAggressionPolicy.Moves` (main agent, base CFG; checked against `AbilityPrototypes.cfg` by the audit).
+* Writer: per agent and tag the multiplier is **group × 1/knob** (group = the game's Master 0.5 at its vanilla,
+  else 1/rate). Tags that end at exactly 1 are not written. Same full `AgentCooldownMultipliers` list.
+* Moves with no cooldown in the CFG (Chimera claw and dodge, 0 s) get no knob.
+* The global SUMMON RATE of the same morning is retired: each summon is a knob of its own mutant
+  (Pseudodog PHANTOMS 20 s and RETREAT 10 s, Bayun CLONES 10 s, Deer DOGS 20 s, Controller DOGS 20 s).
+  The preset values it had moved onto those knobs.
+* Board: species cards are 146 px with a knob row (54 px) under each half. A knob shows a short CAPS caption and
+  the move's real wait in seconds (`2.5 s`); drag up / right, wheel, arrow keys, right-click or R reset.
 
 ## Real seconds on the board and in the panel (2026-11-18)
 
-* Card halves and panel values show the time between two uses in seconds (`claw every 2.5 s`), never a × factor.
+* Slider halves carry no value text (the knobs show every move); panel values are seconds (`claw every 2.5 s`), never a × factor.
 * The panel's **COOLDOWNS** block lists every move the selected knob reaches, in seconds at its current value
-  (`MutantAggressionPolicy.Moves`, `SummonTimes`). Only changed numbers turn gold.
+  (`MutantAggressionPolicy.Moves`: slider × knob). Only changed numbers turn gold.
 * Values come from `MUTANT-COOLDOWNS.md` (main agent, base CFG). With `TCD_BASE_DUMP` set, the audit checks each
   second against `AbilityPrototypes.cfg`.
 

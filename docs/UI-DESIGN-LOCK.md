@@ -1,3 +1,11 @@
+## CURRENT 2026-11-18 — One knob per mutant move, under its own slider
+
+* Every species card on the mutant board is 146 px tall. Under the ATTACKS slider and under the ABILITIES slider sits a row of small 270° knobs, one per move of that group (68 in all), spread evenly across the half. Each knob: arc and reference tick, pointer, a short CAPS caption (≤9 letters, 8 pt) below, then the move's real wait in seconds (`2.5 s`, 9 pt). Only changed digits turn gold and grow.
+* The knob's wait already includes its slider: seconds = vanilla × slider × knob. The slider halves carry no value text any more.
+* Each summon is a knob of its own mutant: Pseudodog PHANTOMS / RETREAT, Bayun CLONES, Deer DOGS (new Deer ABILITIES slider), Controller DOGS. The global SUMMON RATE card is gone; SPECIAL ABILITY RATE is full width again.
+* Knobs: drag up or right, mouse wheel, arrow keys when selected, right-click or R reset. Click selects the knob; the panel's COOLDOWNS block shows its move, and for a slider every move of the group with its knob.
+* No knob for moves with no cooldown (Chimera claw and dodge).
+
 ## CURRENT 2026-11-18 — SUMMON RATE and mutant cooldowns in seconds
 
 * Mutant board, second global row split in two equal cards: **SPECIAL ABILITY RATE** left, **SUMMON RATE** right. Same track grammar, markers, drag/wheel/keyboard, right-click and R reset. Board height unchanged.

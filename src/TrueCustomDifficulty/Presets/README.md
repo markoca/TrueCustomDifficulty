@@ -159,3 +159,5 @@ All 12 shipped profile files now include **247 parameter IDs** (34 more than the
 **2026-11-18 — ZONE WEATHER + TRADER RESTOCK:** every profile stores EMISSIONS, STORMS, EMISSION WARNING and RESTOCK EVERY. The non-vanilla values are Hardcore+ 1.5 / 1.5 / 40 s / 16 h, Hardcore 50 s / 12 h, Anomaly Runner emissions 1.25, Immersive storms 1.25, Wanderer emissions 1.15 and warning 75 s, Tactical storms 1.15, Scavenger 16 h, Outcast 12 h, Smuggler 6 h. Everything else follows the reference difficulty.
 
 **2026-11-18 — SUMMON RATE:** every profile stores SUMMON RATE (Pseudodog phantoms, Bayun clones, Deer blind dogs). Non-vanilla: Hardcore+ and Mutant Hunter 1.5×, Outcast and Wanderer 1.25×. Pseudodog ABILITIES is its howl; stock Hardcore stores it at 1×.
+
+**2026-11-18 — Mutant move knobs:** SUMMON RATE is retired. Every profile stores one knob per mutant move (68) and Deer ABILITIES, all 1× except the summon knobs: Hardcore+ and Mutant Hunter 1.5×, Outcast and Wanderer 1.25× (Pseudodog phantoms, Bayun clones, Deer and Controller dogs).

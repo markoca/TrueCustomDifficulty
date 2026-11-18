@@ -326,3 +326,8 @@ The 12 profiles now store the four new controls (422 catalog controls each). The
 * Every profile stores SUMMON RATE. Non-vanilla: Hardcore+ 1.5×, Mutant Hunter 1.5×, Outcast 1.25×, Wanderer 1.25×; the rest 1×.
 * Pseudodog ABILITIES now scales its howl only (phantoms are SUMMON RATE). Stock Hardcore stores 1× (was 2×, the old Master reference of a knob that did nothing).
 * Untouched older stock copies upgrade by blob hash (`PreSummonRateFactoryBlobs`, `PrePseudodogAbilityFactoryBlobs`); edited copies are never overwritten.
+
+## 2026-11-18 — Mutant move knobs replace SUMMON RATE
+
+* Every profile stores the 68 move knobs and Deer ABILITIES (491 controls). All are 1× except the summon knobs, which keep SUMMON RATE's role values: Hardcore+ and Mutant Hunter 1.5×, Outcast and Wanderer 1.25× on Pseudodog PHANTOMS and RETREAT, Bayun CLONES, Deer DOGS and Controller DOGS.
+* Untouched older stock copies upgrade by blob hash (`PreMoveKnobFactoryBlobs`); edited copies keep their values, and a stored SUMMON RATE is ignored.

@@ -256,24 +256,56 @@ public sealed class ParameterViewModel : ObservableObject
     public bool PanelHasEffectiveDamage => _panelCard is null && HasEffectiveDamage;
     public bool PanelHasCooldownTimes => _panelCard is null && CooldownTimes.Length > 0;
 
-    /// <summary>Mutant ATTACKS / ABILITIES / SUMMON RATE: every move in real seconds at the current value.</summary>
+    /// <summary>Mutant board siblings (group slider ↔ move knobs), set by MainViewModel.</summary>
+    public Func<string, ParameterViewModel?>? MutantSiblingLookup { get; set; }
+
+    private double SiblingNumber(string id)
+        => MutantSiblingLookup?.Invoke(id) is { } sibling ? sibling.CurrentNumber : 1.0;
+
+    private double SiblingReference(string id)
+        => MutantSiblingLookup?.Invoke(id) is { } sibling ? sibling.ReferenceNumber : 1.0;
+
+    /// <summary>Mutant ATTACKS / ABILITIES slider or move knob: every move in real seconds.</summary>
     public string CooldownTimes
     {
         get
         {
-            if (Id == MutantAggressionPolicy.SummonRateId)
-                return MutantAggressionPolicy.SummonTimes(CurrentNumber);
             foreach (var family in MutantAggressionPolicy.Families)
             {
-                if (Id == family.ParameterId)
-                    return MutantAggressionPolicy.MoveTimes(family, MutantAggressionPolicy.Group.Attacks,
-                        CurrentNumber, ReferenceNumber);
-                if (Id == family.AbilityParameterId)
-                    return MutantAggressionPolicy.MoveTimes(family, MutantAggressionPolicy.Group.Abilities,
-                        CurrentNumber, ReferenceNumber);
+                foreach (var group in new[] { MutantAggressionPolicy.Group.Attacks, MutantAggressionPolicy.Group.Abilities })
+                {
+                    var groupId = MutantAggressionPolicy.ParameterId(family, group);
+                    var moves = MutantAggressionPolicy.Moves(family, group);
+                    if (Id == groupId)
+                        return string.Join("\n", moves.Select(m => m.Name + " " + MutantAggressionPolicy.Seconds(
+                            MutantAggressionPolicy.MoveSeconds(family, m, CurrentNumber, ReferenceNumber,
+                                SiblingNumber(MutantAggressionPolicy.MoveId(family, m))))));
+                    foreach (var move in moves)
+                    {
+                        if (Id == MutantAggressionPolicy.MoveId(family, move))
+                            return move.Name + " " + MutantAggressionPolicy.Seconds(MutantAggressionPolicy.MoveSeconds(
+                                family, move, SiblingNumber(groupId), SiblingReference(groupId), CurrentNumber));
+                    }
+                }
             }
             return string.Empty;
         }
+    }
+
+    /// <summary>Panel value of a move knob, e.g. "claw every 2.5 s".</summary>
+    private string? MutantMoveDisplay()
+    {
+        if (!Id.StartsWith(MutantAggressionPolicy.MovePrefix, StringComparison.Ordinal))
+            return null;
+        foreach (var (family, group, move) in MutantAggressionPolicy.MoveKnobs)
+        {
+            if (Id != MutantAggressionPolicy.MoveId(family, move))
+                continue;
+            var groupId = MutantAggressionPolicy.ParameterId(family, group);
+            return move.Name + " every " + MutantAggressionPolicy.Seconds(MutantAggressionPolicy.MoveSeconds(
+                family, move, SiblingNumber(groupId), SiblingReference(groupId), CurrentNumber));
+        }
+        return null;
     }
 
     private void RaisePanelChanged()
@@ -1221,7 +1253,7 @@ public sealed class ParameterViewModel : ObservableObject
             "combat.npcWeaponDamage" => Times(CurrentNumber, "gun dmg"),
             "combat.mutantDamage" => Times(CurrentNumber, "hit dmg"),
             MutantAggressionPolicy.SpecialAbilityRateId => MutantAggressionPolicy.SpecialAbilityDisplay(CurrentNumber),
-            MutantAggressionPolicy.SummonRateId => MutantAggressionPolicy.SummonDisplay(CurrentNumber),
+            _ when MutantMoveDisplay() is { } moveDisplay => moveDisplay,
             _ when MutantRateDisplay() is { } mutantRate => mutantRate,
             "combat.playerWeaponDamage" => Times(CurrentNumber, "weapon dmg"),
             "combat.playerHeadshotMultiplier" => Times(CurrentNumber, "headshot dmg"),

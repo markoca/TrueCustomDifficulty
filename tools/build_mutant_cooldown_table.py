@@ -72,7 +72,8 @@ def main():
            "the difficulty halves the tags it lists for the family's main agent (`AgentCooldownMultipliers` 0.5).",
            "* A family's ATTACKS or ABILITIES knob at rate *r* divides every time in that group by *r* "
            "(2× = half the wait). On Master the knob's vanilla is 2× where the game already halves.",
-           "* **SUMMON RATE** rows follow the global SUMMON RATE knob (rate *r* divides the time by *r*).",
+           "* Every covered row also has its own knob under its slider (`combat.mutantMoveRate.{family}.{move}`); "
+           "the time is divided by slider × knob. Moves at 0 s have no knob.",
            "* **Not covered** rows are not reached by any knob yet "
            "(see `MUTANT-ABILITIES-CATALOG.md`).",
            "* Special and story variants (phantoms, Prologue, Mist, `Collar` psy, DLC1 bosses, "
@@ -87,7 +88,6 @@ def main():
         for tag, rs in by[key].items():
             full = tag
             group = ("ATTACKS" if tag in f["attack"] else "ABILITIES" if tag in f["ability"]
-                     else "SUMMON RATE" if tag in ("CombatSummon", "RetreatSummon") and key in ("pseudodog", "bayun", "deer")
                      else "not covered")
             normal = sorted({r["dur"] for r in rs if not SPECIAL.search(r["ability"]) and r["src"] == "base"})
             special = sorted({(r["dur"], r["ability"]) for r in rs if SPECIAL.search(r["ability"]) or r["src"] == "dlc"})

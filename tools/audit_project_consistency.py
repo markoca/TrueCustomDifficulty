@@ -829,7 +829,9 @@ else:
             fail(f"Mutant Health source not loaded in MainViewModel: {_id}")
     if _mhr_text.count('new("combat.mutantHealth.') != 14:
         fail("MutantHealthRadar must show exactly 14 real mutant groups")
-    if ("DesiredHeight = 905.0" not in _mhr_text
+    # 2026-11-18: species cards grew to hold a knob row per ATTACKS / ABILITIES slider.
+    if ("DesiredHeight = SpeciesTop + 7 * SpeciesRowPitch + 8.0;" not in _mhr_text
+        or "SpeciesCardHeight = 146.0;" not in _mhr_text
         or "MaxContentWidth = 1080.0" not in _mhr_text
         or 'var cardWidth = (content.Width - ColumnGap) / 2.0;' not in _mhr_text):
         fail("MutantHealthRadar compact 2-column geometry drifted")

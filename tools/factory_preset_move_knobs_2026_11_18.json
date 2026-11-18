@@ -1,0 +1,56 @@
+{
+  "date": "2026-11-18",
+  "note": "Mutant move knobs (one per attack / ability, summons owned by their mutant) and Deer ABILITIES; replaces the one-hour global SUMMON RATE. Absent = vanilla 1×.",
+  "previousStockBlobs": {
+    "Anomaly Runner": "4bd5750a0a03a989e7e2e91b62c136828df5843d",
+    "Field Medic": "a58b445ebfdcd8fea491841386783604262f0984",
+    "Hardcore+": "be88a24c484ce827be44272612c13d8ffb5ee23a",
+    "Hardcore": "3e9d003f08da823597997fb7cc614dcaa42a48ba",
+    "Immersive": "39d0160a5cefe0baf1704dd4ac57a03826945f46",
+    "Mercenary": "d91cb070755e80f28d84f1dc115fc95785f09fda",
+    "Mutant Hunter": "447b1473d669b1ec075d6ab4ba57a19c95891719",
+    "Outcast": "82efad519f89c5f28ac6d0e9d1a5df8c70ddbed3",
+    "Scavenger": "c9eae6a8b899201d16f6dfd78d94c7b3491fc034",
+    "Smuggler": "978879a7075884fc64847ad860ddd27e45a6e9b2",
+    "Tactical": "4dad9804a774fa036c1e91277a3de0df934c8e07",
+    "Wanderer": "ef6483c22ba7a023b3619e41ea048c640ce9c7f2"
+  },
+  "values": {
+    "Anomaly Runner": {},
+    "Field Medic": {},
+    "Hardcore+": {
+      "combat.mutantMoveRate.pseudodog.phantoms": 1.5,
+      "combat.mutantMoveRate.pseudodog.retreatPhantoms": 1.5,
+      "combat.mutantMoveRate.bayun.clones": 1.5,
+      "combat.mutantMoveRate.deer.dogs": 1.5,
+      "combat.mutantMoveRate.controller.dogs": 1.5
+    },
+    "Hardcore": {},
+    "Immersive": {},
+    "Mercenary": {},
+    "Mutant Hunter": {
+      "combat.mutantMoveRate.pseudodog.phantoms": 1.5,
+      "combat.mutantMoveRate.pseudodog.retreatPhantoms": 1.5,
+      "combat.mutantMoveRate.bayun.clones": 1.5,
+      "combat.mutantMoveRate.deer.dogs": 1.5,
+      "combat.mutantMoveRate.controller.dogs": 1.5
+    },
+    "Outcast": {
+      "combat.mutantMoveRate.pseudodog.phantoms": 1.25,
+      "combat.mutantMoveRate.pseudodog.retreatPhantoms": 1.25,
+      "combat.mutantMoveRate.bayun.clones": 1.25,
+      "combat.mutantMoveRate.deer.dogs": 1.25,
+      "combat.mutantMoveRate.controller.dogs": 1.25
+    },
+    "Scavenger": {},
+    "Smuggler": {},
+    "Tactical": {},
+    "Wanderer": {
+      "combat.mutantMoveRate.pseudodog.phantoms": 1.25,
+      "combat.mutantMoveRate.pseudodog.retreatPhantoms": 1.25,
+      "combat.mutantMoveRate.bayun.clones": 1.25,
+      "combat.mutantMoveRate.deer.dogs": 1.25,
+      "combat.mutantMoveRate.controller.dogs": 1.25
+    }
+  }
+}

@@ -58,8 +58,8 @@ check(len(families) == 14 and list(families) == sorted(families), f"14 alphabeti
 agent_count = sum(len(f["agents"]) for f in families.values())
 check(agent_count == 38, f"38 agent SIDs ({agent_count})")
 ability_families = sorted(k for k, f in families.items() if f["ability"])
-check(ability_families == ["bayun", "blinddog", "bloodsucker", "burer", "chimera", "controller",
-                           "poltergeist", "pseudodog", "pseudogiant", "snork"], f"10 ability families {ability_families}")
+check(ability_families == ["bayun", "blinddog", "bloodsucker", "burer", "chimera", "controller", "deer",
+                           "poltergeist", "pseudodog", "pseudogiant", "snork"], f"11 ability families {ability_families}")
 for key, f in families.items():
     check(f["attack"] and not set(f["attack"]) & set(f["ability"]), f"{key}: ATTACKS / ABILITIES disjoint")
     for sid, vtags in f["agents"].items():
@@ -76,17 +76,43 @@ def master(key: str, group: str) -> bool:
 # ---- source-correct headlines and pseudodog abilities (2026-11-18) ------------
 check('("growl", 60)),' in policy and '("growl", 120)),' in policy,
       "Chimera growl 60 s and Snork growl 120 s headlines")
-check(families["pseudodog"]["ability"] in (["Howl"], ["Ability.Cooldown.Howl"]),
-      f"pseudodog ABILITIES are its howl (phantoms are SUMMON RATE) {families['pseudodog']['ability']}")
+check(families["pseudodog"]["ability"] == ["Ability.Cooldown.Howl", "Ability.Cooldown.CombatSummon",
+                                           "Ability.Cooldown.RetreatSummon"],
+      f"pseudodog ABILITIES: howl and both phantom summons {families['pseudodog']['ability']}")
+for _key in ("bayun", "controller", "deer"):
+    check("Ability.Cooldown.CombatSummon" in families[_key]["ability"], f"{_key} owns its summon in ABILITIES")
+check("SummonRate" not in policy and "combat.mutantSummonRate" not in by_id, "no global SUMMON RATE (owned per mutant)")
 cooldowns = ROOT / "docs" / "combat" / "MUTANT-COOLDOWNS.md"
-check(cooldowns.exists() and "| SUMMON RATE | summon | `CombatSummon` | 20 s |" in cooldowns.read_text(encoding="utf-8"),
+check(cooldowns.exists() and "| ABILITIES | summon | `CombatSummon` | 20 s |" in cooldowns.read_text(encoding="utf-8"),
       "generated MUTANT-COOLDOWNS.md is current")
 
 # ---- catalog ------------------------------------------------------------------
 ids = [f"combat.mutantAttackRate.{k}" for k in families] + \
-      [f"combat.mutantAbilityRate.{k}" for k in ability_families] + ["combat.mutantSummonRate",
-                                                                      "combat.mutantSpecialAbilityRate"]
-check(len(ids) == 26 and all(i in by_id for i in ids), "all 26 aggression ids are in parameters.json")
+      [f"combat.mutantAbilityRate.{k}" for k in ability_families] + ["combat.mutantSpecialAbilityRate"]
+check(len(ids) == 26 and all(i in by_id for i in ids), "all 26 aggression sliders are in parameters.json")
+
+# ---- one knob per move ------------------------------------------------------------
+moves_src = policy[policy.index("public static IReadOnlyList<Move> Moves("):policy.index("public static IReadOnlyList<(Family Family")]
+move_rows = []
+for _key, _group, _body in re.findall(r'\("(\w+)", Group\.(\w+)\) => new\[\] \{(.*?)\},\n', moves_src, re.S):
+    for _slug, _label, _name, _tag, _secs in re.findall(
+            r'M\("(\w+)", "([^"]+)", "([^"]+)", "([\w.]+)", ([\d.]+)\)', _body):
+        move_rows.append((_key, _group, _slug, _label, _tag, float(_secs)))
+check(len(move_rows) == 68, f"68 move knobs ({len(move_rows)})")
+move_ids = [f"combat.mutantMoveRate.{k}.{slug}" for k, _, slug, *_ in move_rows]
+check(len(set(move_ids)) == 68 and all(i in by_id for i in move_ids), "every move knob id is in parameters.json")
+check(sorted(r["id"] for r in catalog if r["id"].startswith("combat.mutantMoveRate.")) == sorted(move_ids),
+      "no catalog move knob without a policy move")
+for _key, _group, _slug, _label, _tag, _secs in move_rows:
+    _full = _tag if _tag.startswith("Abilities.") else "Ability.Cooldown." + _tag
+    _own = families[_key]["attack" if _group == "Attacks" else "ability"]
+    check(_full in _own, f"{_key}.{_slug}: tag {_full} belongs to its {_group} slider")
+    check(_secs > 0 and len(_label) <= 9 and _label == _label.upper(), f"{_key}.{_slug}: cooldown > 0, short CAPS caption")
+    _row = by_id[f"combat.mutantMoveRate.{_key}.{_slug}"]
+    check(_row.get("vanilla") == {"All": 1} and _row.get("exposeInUi") is False
+          and (_row["slider"]["min"], _row["slider"]["max"], _row["slider"]["step"]) == (0.25, 3, 0.25),
+          f"{_key}.{_slug}: vanilla 1×, board member, 0.25–3× step 0.25")
+check(len({(k, t) for k, _, _, _, t, _ in move_rows}) == 68, "one knob per cooldown tag per family")
 check(not [r["id"] for r in catalog if r["id"].startswith("combat.mutantAbilityRate.")
            and r["id"].split(".")[-1] not in ability_families], "no ability rate for families without abilities")
 for key, f in families.items():
@@ -102,13 +128,6 @@ for key, f in families.items():
         s = row.get("slider", {})
         check((s.get("min"), s.get("max"), s.get("step")) == (0.25, 3, 0.25), f"{prefix}{key}: slider")
         check(row["support"]["status"] == "runtime_test_required", f"{prefix}{key}: runtime_test_required")
-summon = by_id["combat.mutantSummonRate"]
-check(summon.get("vanilla") == {"All": 1} and summon.get("exposeInUi") is False
-      and (summon["slider"]["min"], summon["slider"]["max"], summon["slider"]["step"]) == (0.25, 3, 0.25),
-      "SUMMON RATE: vanilla 1×, board member, 0.25–3× step 0.25")
-check('"PseudoDog"' in policy and '"Bayun_Collar"' in policy and '"Controller_Deer"' in policy
-      and "Faust" not in policy.split("Summons { get; }")[1].split("};")[0],
-      "SUMMON RATE agents: PseudoDog, Bayun (+Collar, E10_MQ01), Deer, Controller_Deer; no story Faust")
 check(by_id["combat.mutantSpecialAbilityRate"].get("vanilla") == {"Novice": 1, "Stalker": 1, "Veteran": 1, "Master": 2},
       "special vanilla N/S/V 1, Master 2")
 
@@ -128,19 +147,20 @@ check("combat-synchronization-2.1.json" in csproj, "csproj embeds combat-synchro
 # ---- writer -------------------------------------------------------------------
 check("WriteMutantAggression(" in main_writer and "MutantAggressionPolicy.ParameterIds" in main_writer,
       "main writer calls WriteMutantAggression and supports the ids")
-for token in ('GetOrAddChild("AgentCooldownMultipliers", useBpatch: false)', "1.0 / r.Rate",
+for token in ('GetOrAddChild("AgentCooldownMultipliers", useBpatch: false)',
               "agent.VanillaMasterTags", "MutantAggressionPolicy.Reference(family, group, difficultySid)",
-              "MutantAggressionPolicy.SummonTags(agent.Sid)", "1.0 / summonRate",
+              "MutantAggressionPolicy.Multiplier(agent, tag, r.Rate, r.Reference)",
+              "MutantAggressionPolicy.MoveId(family, move)", "/ (knobs.TryGetValue(tag, out var k) ? k : 1.0)",
               "LoadCombatSynchronizationTables", '"CombatSynchronizerStalker" : "Default"'):
     check(token in writer, f"writer token {token}")
 entry = baseline["special"].get("mutantAggression", {})
-check(sorted(entry.get("parameterIds", [])) == sorted(ids[:-1])
+check(sorted(entry.get("parameterIds", [])) == sorted(ids[:-1] + move_ids)
       and entry.get("parameterId") == "combat.mutantSpecialAbilityRate", "baseline special.mutantAggression")
 
 # ---- UI -----------------------------------------------------------------------
-for token in ("MUTANT DAMAGE, HEALTH AND AGGRESSION", "SPECIAL ABILITY RATE", '"SUMMON RATE"',
-              "MutantAggressionPolicy.SummonDisplay(", '"ATTACKS"', '"ABILITIES"',
-              "DrawRateHalf(", "MutantAggressionPolicy.RateDisplay(", "AbilityRowBase", "ReferenceMagnet"):
+for token in ("MUTANT DAMAGE, HEALTH AND AGGRESSION", "SPECIAL ABILITY RATE",
+              "DrawKnobRow(", "DrawMoveKnob(", "MutantAggressionPolicy.MoveSeconds(", "OnMouseWheel(", '"ATTACKS"', '"ABILITIES"',
+              "DrawRateHalf(", "AbilityRowBase", "ReferenceMagnet"):
     check(token in radar, f"radar token {token}")
 
 # ---- optional dump cross-check -----------------------------------------------
@@ -161,20 +181,12 @@ if dump:
     dlc_ability = Path(os.environ.get("TCD_DLC_DUMP", "")) / "AbilityPrototypes.cfg"
     cfg = _extract(str(gd / "AbilityPrototypes.cfg"),
                    str(dlc_ability if dlc_ability.is_file() else gd / "AbilityPrototypes.cfg"))
+    # Controller_Deer (a Controller) uses CombatSummonAbility_Deer: blind dogs every 20 s.
     cfg_secs = {(r["fam"], r["tag"], r["dur"]) for r in cfg} | {("bloodsucker", "Roar", 6000.0)}
-    moves_src = policy[policy.index("public static IReadOnlyList<Move> Moves("):policy.index("public static string MoveTimes(")]
-    wrong = []
-    for key, body in re.findall(r'\("(\w+)", Group\.\w+\) => new\[\] \{(.*?)\}', moves_src, re.S):
-        for name, tag, secs in re.findall(r'M\("([^"]+)", "([\w.]+)", ([\d.]+)\)', body):
-            if (key, tag, float(secs)) not in cfg_secs:
-                wrong.append(f"{key} {name} {tag} {secs}")
+    cfg_secs |= {("controller", "CombatSummon", d) for f, t, d in cfg_secs if (f, t) == ("deer", "CombatSummon")}
+    wrong = [f"{k} {slug} {t} {sec}" for k, _, slug, _, t, sec in move_rows
+             if (k, t, sec) not in cfg_secs]
     check(not wrong, f"COOLDOWNS panel seconds match AbilityPrototypes {wrong}")
-    summon_src = policy[policy.index("Summons { get; }"):policy.index("public static IReadOnlyList<string> SummonTags(")]
-    fam_of = {"pseudodog": "pseudodog", "bayun": "bayun", "deer": "deer"}
-    bad_summons = [f"{n} {t} {sec}" for n, t, sec in
-                   re.findall(r'new Summon\("([^"]+)", "Ability\.Cooldown\.(\w+)", ([\d.]+)', summon_src)
-                   if (fam_of[n.split()[0]], t, float(sec)) not in cfg_secs]
-    check(not bad_summons, f"SUMMON RATE seconds match AbilityPrototypes {bad_summons}")
     missing = [sid for f in families.values() for sid in f["agents"]
                if not re.search(r"^" + sid + r" : struct\.begin", obj, re.M)]
     check(not missing, f"every agent SID exists in ObjPrototypes {missing}")

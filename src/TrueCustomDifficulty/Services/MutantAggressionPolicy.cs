@@ -17,6 +17,7 @@ namespace TrueCustomDifficulty.Services;
 ///  * ATTACKS — claws, bites, runs, leaps, kicks, charges, evasions;
 ///  * ABILITIES — psi attacks, shields, throws, shockwaves, roars, teleports.
 /// Rate r writes 1/r on every tag of the group for every agent of the family.
+/// Each move also has its own knob (rate k): the move's tag gets 1/(r·k).
 /// At the difficulty's vanilla value the game's own entries are written back.
 ///
 /// SPECIAL ABILITY RATE scales the shared group token cooldowns
@@ -28,7 +29,6 @@ public static class MutantAggressionPolicy
     public const string Prefix = "combat.mutantAttackRate.";
     public const string AbilityPrefix = "combat.mutantAbilityRate.";
     public const string SpecialAbilityRateId = "combat.mutantSpecialAbilityRate";
-    public const string SummonRateId = "combat.mutantSummonRate";
 
     public enum Group { Attacks, Abilities }
 
@@ -70,7 +70,7 @@ public static class MutantAggressionPolicy
                 A("Bayun_E10_MQ01", "ClawAttack", "JumpAttack", "Growl", "JumpToEnemy", "BlinkTeleport")
             },
             T("ClawAttack", "JumpAttack", "ShortJumpAttack", "LongJumpAttack", "JumpToEnemy", "FlyThrough", "Evasion"),
-            T("Growl", "BlinkTeleport"), ("claw", 5), ("teleport", 12)),
+            T("Growl", "BlinkTeleport", "CombatSummon"), ("claw", 5), ("teleport", 12)),
         new("blinddog", "Blind Dog", new[] { A("Blinddog"), A("Blinddog_Collar"), A("MoldyBlinddog") },
             T("RunAttack", "BiteAttack", "BiteAttackAnyAngle"),
             T("Shield"), ("bite", 5), ("shield", 25)),
@@ -105,10 +105,11 @@ public static class MutantAggressionPolicy
                 A("Controller_Deer")
             },
             T("ClawAttack"),
-            T("Abilities.PSYAttack", "Roar", "Abilities.RaiseDeadBody", "Abilities.ZombifyNPC"), ("claw", 10), ("psy", 12)),
+            // CombatSummon: Controller_Deer calls blind dogs (CombatSummonAbility_Deer).
+            T("Abilities.PSYAttack", "Roar", "Abilities.RaiseDeadBody", "Abilities.ZombifyNPC", "CombatSummon"), ("claw", 10), ("psy", 12)),
         new("deer", "Deer", new[] { A("Deer", "RunAttack", "JumpAttack", "Charge") },
             T("RunAttack", "JumpAttack", "ClawAttack", "TurnAttack", "Charge"),
-            Array.Empty<string>(), ("claw", 4), null),
+            T("CombatSummon"), ("claw", 4), ("dogs", 20)),
         new("flesh", "Flesh", new[] { A("Flesh"), A("BoggyFlesh") },
             T("JumpAttack", "ClawAttack"),
             Array.Empty<string>(), ("claw", 3), null),
@@ -126,9 +127,9 @@ public static class MutantAggressionPolicy
             },
             // The game's Master list names ShockwaveAttack for PseudoDog, but no pseudodog
             // ability uses that tag (a no-op entry); it rides with ATTACKS so the list stays
-            // covered. Its phantom summons belong to SUMMON RATE, so ABILITIES is the howl.
+            // covered. ABILITIES: howl and the two phantom summons.
             T("RunAttack", "BiteAttack", "ShockwaveAttack"),
-            T("Howl"), ("bite", 7), ("howl", 30)),
+            T("Howl", "CombatSummon", "RetreatSummon"), ("bite", 7), ("howl", 30)),
         new("pseudogiant", "Pseudogiant", new[]
             {
                 A("Pseudogiant", "ShockwaveAttack", "RunAttack", "Charge"), A("Pseudogiant_Collar")
@@ -148,91 +149,94 @@ public static class MutantAggressionPolicy
             .Concat(Families.Where(f => f.HasAbilities).Select(f => f.AbilityParameterId))
             .ToArray();
 
-    public static IReadOnlyList<string> ParameterIds { get; } =
-        RateParameterIds.Append(SpecialAbilityRateId).Append(SummonRateId).ToArray();
 
-    // ---- Moves in real seconds (docs/combat/MUTANT-COOLDOWNS.md) -----------
-    /// <summary>One move of the family's main agent: name, own cooldown tag, vanilla seconds.</summary>
-    public sealed record Move(string Name, string Tag, double Seconds);
+    // ---- One knob per move (docs/combat/MUTANT-COOLDOWNS.md) ---------------
+    /// <param name="Slug">Id suffix: combat.mutantMoveRate.{family}.{slug}.</param>
+    /// <param name="Label">Knob caption (short, CAPS on the board).</param>
+    /// <param name="Name">Panel name of the move.</param>
+    /// <param name="Seconds">Vanilla cooldown of the family's main agent, base CFG.</param>
+    public sealed record Move(string Slug, string Label, string Name, string Tag, double Seconds);
 
-    private static Move M(string name, string tag, double seconds)
-        => new(name, tag.StartsWith("Abilities.", StringComparison.Ordinal) ? tag : "Ability.Cooldown." + tag, seconds);
+    public const string MovePrefix = "combat.mutantMoveRate.";
 
-    /// <summary>Every move a group's knob reaches, in base CFG seconds (main agent, special variants left out).</summary>
+    public static string MoveId(Family family, Move move) => MovePrefix + family.Key + "." + move.Slug;
+
+    private static Move M(string slug, string label, string name, string tag, double seconds)
+        => new(slug, label, name, tag.StartsWith("Abilities.", StringComparison.Ordinal) ? tag : "Ability.Cooldown." + tag, seconds);
+
+    /// <summary>
+    /// Every move that gets its own knob under its group's slider, one per cooldown tag,
+    /// in board order (shortest vanilla wait first). Moves with no cooldown in the CFG
+    /// (Chimera claw and dodge, 0 s) have no knob: nothing to scale.
+    /// </summary>
     public static IReadOnlyList<Move> Moves(Family family, Group group) => (family.Key, group) switch
     {
-        ("bayun", Group.Attacks) => new[] { M("dodge", "Evasion", 1), M("claw", "ClawAttack", 5), M("jump in", "JumpToEnemy", 6),
-            M("leap", "JumpAttack", 8), M("fly-through", "FlyThrough", 10) },
-        ("bayun", Group.Abilities) => new[] { M("teleport", "BlinkTeleport", 12), M("growl", "Growl", 60) },
-        ("blinddog", Group.Attacks) => new[] { M("bite", "BiteAttack", 5), M("running bite", "RunAttack", 7),
-            M("bite from any angle", "BiteAttackAnyAngle", 16) },
-        ("blinddog", Group.Abilities) => new[] { M("shield", "Shield", 25) },
-        ("bloodsucker", Group.Attacks) => new[] { M("turn swipe", "ClawAttack", 5), M("claw", "ClawAttack", 6),
-            M("running attack", "RunAttack", 6), M("leap", "JumpAttack", 20) },
-        ("bloodsucker", Group.Abilities) => new[] { M("spawn anomaly", "ActivateAnomaly", 3), M("Ashy roar", "Roar", 60) },
-        ("boar", Group.Attacks) => new[] { M("running attack", "RunAttack", 5), M("gore", "ClawAttack", 10), M("charge", "Charge", 12) },
-        ("burer", Group.Attacks) => new[] { M("claw", "ClawAttack", 8) },
-        ("burer", Group.Abilities) => new[] { M("grenade throws", "ThrowGrenade", 0.5), M("disarm", "WeaponDrag", 8),
-            M("throw", "Throw", 10), M("raise weapons", "WeaponRiseAndShoot", 10), M("shield", "Shield", 17) },
-        ("chimera", Group.Attacks) => new[] { M("claw", "ClawAttack", 0), M("dodge", "Evasion", 0), M("long leap", "LongJumpAttack", 5),
-            M("running attack", "RunAttack", 5), M("jump in", "JumpToEnemy", 6), M("short leap", "ShortJumpAttack", 8),
-            M("fly-through", "FlyThrough", 10) },
-        ("chimera", Group.Abilities) => new[] { M("growl", "Growl", 60) },
-        ("controller", Group.Attacks) => new[] { M("claw", "ClawAttack", 10) },
-        ("controller", Group.Abilities) => new[] { M("roar", "Roar", 7), M("psy strike", "Abilities.PSYAttack", 12),
-            M("raise corpse", "Abilities.RaiseDeadBody", 15), M("zombify", "Abilities.ZombifyNPC", 15) },
-        ("deer", Group.Attacks) => new[] { M("claw", "ClawAttack", 4), M("leap", "JumpAttack", 8), M("charge", "Charge", 10) },
-        ("flesh", Group.Attacks) => new[] { M("claw", "ClawAttack", 3), M("leap", "JumpAttack", 4), M("turn swipe", "ClawAttack", 5) },
-        ("poltergeist", Group.Attacks) => new[] { M("area burst", "AOEAttack", 3) },
-        ("poltergeist", Group.Abilities) => new[] { M("spawn anomaly", "ActivateAnomaly", 3), M("throw", "Throw", 10),
-            M("shield", "Shield", 20) },
-        ("pseudodog", Group.Attacks) => new[] { M("turn bite", "BiteAttack", 5), M("running attack", "RunAttack", 6),
-            M("bite", "BiteAttack", 7) },
-        ("pseudodog", Group.Abilities) => new[] { M("howl", "Howl", 30) },
-        ("pseudogiant", Group.Attacks) => new[] { M("stomp", "ClawAttack", 5), M("running attack", "RunAttack", 5),
-            M("charge", "Charge", 10) },
-        ("pseudogiant", Group.Abilities) => new[] { M("shockwave", "ShockwaveAttack", 8), M("throw", "Throw", 10),
-            M("roar", "Roar", 60) },
-        ("snork", Group.Attacks) => new[] { M("claw", "ClawAttack", 5), M("kick", "KickAttack", 7), M("dodge", "Evasion", 7),
-            M("leap", "JumpAttack", 12), M("jump in", "JumpToEnemy", 12), M("fly-through", "FlyThrough", 14) },
-        ("snork", Group.Abilities) => new[] { M("growl", "Growl", 120) },
-        ("tushkan", Group.Attacks) => new[] { M("claw", "ClawAttack", 3), M("leap", "JumpAttack", 8) },
+        ("bayun", Group.Attacks) => new[] { M("dodge", "DODGE", "dodge", "Evasion", 1), M("claw", "CLAW", "claw", "ClawAttack", 5),
+            M("jumpIn", "JUMP IN", "jump in", "JumpToEnemy", 6), M("leap", "LEAP", "leap", "JumpAttack", 8),
+            M("flyThrough", "FLY-BY", "fly-through", "FlyThrough", 10) },
+        ("bayun", Group.Abilities) => new[] { M("clones", "CLONES", "clone summon", "CombatSummon", 10),
+            M("teleport", "BLINK", "teleport", "BlinkTeleport", 12), M("growl", "GROWL", "growl", "Growl", 60) },
+        ("blinddog", Group.Attacks) => new[] { M("bite", "BITE", "bite", "BiteAttack", 5), M("runBite", "RUN BITE", "running bite", "RunAttack", 7),
+            M("anyAngleBite", "SPIN BITE", "bite from any angle", "BiteAttackAnyAngle", 16) },
+        ("blinddog", Group.Abilities) => new[] { M("shield", "SHIELD", "shield", "Shield", 25) },
+        ("bloodsucker", Group.Attacks) => new[] { M("claw", "CLAW", "claw", "ClawAttack", 6), M("run", "RUN", "running attack", "RunAttack", 6),
+            M("leap", "LEAP", "leap", "JumpAttack", 20) },
+        ("bloodsucker", Group.Abilities) => new[] { M("anomaly", "ANOMALY", "spawn anomaly", "ActivateAnomaly", 3),
+            M("roar", "ROAR", "roar (Ashy)", "Roar", 60) },
+        ("boar", Group.Attacks) => new[] { M("run", "RUN", "running attack", "RunAttack", 5), M("gore", "GORE", "gore", "ClawAttack", 10),
+            M("charge", "CHARGE", "charge", "Charge", 12) },
+        ("burer", Group.Attacks) => new[] { M("claw", "CLAW", "claw", "ClawAttack", 8) },
+        ("burer", Group.Abilities) => new[] { M("grenades", "GRENADES", "grenade throws", "ThrowGrenade", 0.5),
+            M("disarm", "DISARM", "disarm", "WeaponDrag", 8), M("throw", "THROW", "throw", "Throw", 10),
+            M("weapons", "WEAPONS", "raise weapons", "WeaponRiseAndShoot", 10), M("shield", "SHIELD", "shield", "Shield", 17) },
+        ("chimera", Group.Attacks) => new[] { M("longLeap", "LUNGE", "long leap", "LongJumpAttack", 5),
+            M("run", "RUN", "running attack", "RunAttack", 5), M("jumpIn", "JUMP IN", "jump in", "JumpToEnemy", 6),
+            M("shortLeap", "HOP", "short leap", "ShortJumpAttack", 8), M("flyThrough", "FLY-BY", "fly-through", "FlyThrough", 10) },
+        ("chimera", Group.Abilities) => new[] { M("growl", "GROWL", "growl", "Growl", 60) },
+        ("controller", Group.Attacks) => new[] { M("claw", "CLAW", "claw", "ClawAttack", 10) },
+        ("controller", Group.Abilities) => new[] { M("roar", "ROAR", "roar", "Roar", 7), M("psy", "PSY", "psy strike", "Abilities.PSYAttack", 12),
+            M("corpse", "CORPSE", "raise corpse", "Abilities.RaiseDeadBody", 15), M("zombify", "ZOMBIFY", "zombify", "Abilities.ZombifyNPC", 15),
+            M("dogs", "DOGS", "blind dog summon (Deer controller)", "CombatSummon", 20) },
+        ("deer", Group.Attacks) => new[] { M("claw", "CLAW", "claw", "ClawAttack", 4), M("leap", "LEAP", "leap", "JumpAttack", 8),
+            M("charge", "CHARGE", "charge", "Charge", 10) },
+        ("deer", Group.Abilities) => new[] { M("dogs", "DOGS", "blind dog summon", "CombatSummon", 20) },
+        ("flesh", Group.Attacks) => new[] { M("claw", "CLAW", "claw", "ClawAttack", 3), M("leap", "LEAP", "leap", "JumpAttack", 4) },
+        ("poltergeist", Group.Attacks) => new[] { M("burst", "BURST", "area burst", "AOEAttack", 3) },
+        ("poltergeist", Group.Abilities) => new[] { M("anomaly", "ANOMALY", "spawn anomaly", "ActivateAnomaly", 3),
+            M("throw", "THROW", "throw", "Throw", 10), M("shield", "SHIELD", "shield", "Shield", 20) },
+        ("pseudodog", Group.Attacks) => new[] { M("run", "RUN", "running attack", "RunAttack", 6), M("bite", "BITE", "bite", "BiteAttack", 7) },
+        ("pseudodog", Group.Abilities) => new[] { M("retreatPhantoms", "RETREAT", "phantom summon while fleeing", "RetreatSummon", 10),
+            M("phantoms", "PHANTOMS", "phantom summon", "CombatSummon", 20), M("howl", "HOWL", "howl", "Howl", 30) },
+        ("pseudogiant", Group.Attacks) => new[] { M("stomp", "STOMP", "stomp", "ClawAttack", 5), M("run", "RUN", "running attack", "RunAttack", 5),
+            M("charge", "CHARGE", "charge", "Charge", 10) },
+        ("pseudogiant", Group.Abilities) => new[] { M("shockwave", "WAVE", "shockwave", "ShockwaveAttack", 8),
+            M("throw", "THROW", "throw", "Throw", 10), M("roar", "ROAR", "roar", "Roar", 60) },
+        ("snork", Group.Attacks) => new[] { M("claw", "CLAW", "claw", "ClawAttack", 5), M("kick", "KICK", "kick", "KickAttack", 7),
+            M("dodge", "DODGE", "dodge", "Evasion", 7), M("leap", "LEAP", "leap", "JumpAttack", 12),
+            M("jumpIn", "JUMP IN", "jump in", "JumpToEnemy", 12), M("flyThrough", "FLY-BY", "fly-through", "FlyThrough", 14) },
+        ("snork", Group.Abilities) => new[] { M("growl", "GROWL", "growl", "Growl", 120) },
+        ("tushkan", Group.Attacks) => new[] { M("claw", "CLAW", "claw", "ClawAttack", 3), M("leap", "LEAP", "leap", "JumpAttack", 8) },
         _ => Array.Empty<Move>()
     };
 
-    /// <summary>Panel lines, e.g. "psy strike 6 s": every move of the group at this rate.</summary>
-    public static string MoveTimes(Family family, Group group, double rate, double reference)
-        => string.Join("\n", Moves(family, group).Select(m =>
-            $"{m.Name} {Seconds(m.Seconds * Multiplier(family.Agents[0], m.Tag, rate, reference))}"));
+    /// <summary>Every move knob: family, group, move.</summary>
+    public static IReadOnlyList<(Family Family, Group Group, Move Move)> MoveKnobs { get; } =
+        Families.SelectMany(f => new[] { Group.Attacks, Group.Abilities }
+            .SelectMany(g => Moves(f, g).Select(m => (f, g, m)))).ToArray();
 
-    private static string Seconds(double seconds)
+    public static IReadOnlyList<string> MoveParameterIds { get; } =
+        MoveKnobs.Select(k => MoveId(k.Family, k.Move)).ToArray();
+
+    // Declared after MoveParameterIds: static initializers run in text order.
+    public static IReadOnlyList<string> ParameterIds { get; } =
+        RateParameterIds.Append(SpecialAbilityRateId).Concat(MoveParameterIds).ToArray();
+
+    /// <summary>Real seconds of one move: vanilla × its group's slider × its own knob.</summary>
+    public static double MoveSeconds(Family family, Move move, double groupRate, double groupReference, double moveRate)
+        => move.Seconds * Multiplier(family.Agents[0], move.Tag, groupRate, groupReference) / moveRate;
+
+    public static string Seconds(double seconds)
         => seconds.ToString(seconds < 10 ? "0.##" : "0.#", CultureInfo.InvariantCulture) + " s";
-
-    // ---- SUMMON RATE --------------------------------------------------------
-    /// <summary>A summon of one mutant: who calls it, what arrives, its own tag and vanilla seconds.</summary>
-    public sealed record Summon(string Name, string Tag, double Seconds, IReadOnlyList<string> Agents);
-
-    /// <summary>Every summon SUMMON RATE scales (story Faust and DLC1 Jaded Chimera left out).</summary>
-    public static IReadOnlyList<Summon> Summons { get; } = new[]
-    {
-        new Summon("pseudodog phantoms", "Ability.Cooldown.CombatSummon", 20, new[] { "PseudoDog" }),
-        new Summon("pseudodog phantoms on retreat", "Ability.Cooldown.RetreatSummon", 10, new[] { "PseudoDog" }),
-        new Summon("bayun clones", "Ability.Cooldown.CombatSummon", 10,
-            new[] { "Bayun", "Bayun_Collar", "Bayun_E10_MQ01" }),
-        new Summon("deer blind dogs", "Ability.Cooldown.CombatSummon", 20, new[] { "Deer", "Controller_Deer" })
-    };
-
-    /// <summary>Summon tags of one agent (empty when it summons nothing).</summary>
-    public static IReadOnlyList<string> SummonTags(string agentSid)
-        => Summons.Where(x => x.Agents.Contains(agentSid)).Select(x => x.Tag).Distinct().ToArray();
-
-    /// <summary>Card value, e.g. "phantoms 20 s · clones 10 s · dogs 20 s".</summary>
-    public static string SummonDisplay(double rate)
-        => $"phantoms {Seconds(20 / rate)} · clones {Seconds(10 / rate)} · dogs {Seconds(20 / rate)}";
-
-    /// <summary>Panel lines: every summon at this rate.</summary>
-    public static string SummonTimes(double rate)
-        => string.Join("\n", Summons.Select(x => $"{x.Name} {Seconds(x.Seconds / rate)}"));
 
     /// <summary>Vanilla Master multiplier of the listed agents/tags.</summary>
     public const double VanillaMasterCooldownMultiplier = 0.5;
@@ -287,6 +291,7 @@ public static class MutantAggressionPolicy
         ("bloodsucker", Group.Abilities) => "Ability.Cooldown.ActivateAnomaly",
         ("chimera", Group.Abilities) or ("snork", Group.Abilities) => "Ability.Cooldown.Growl",
         ("pseudodog", Group.Abilities) => "Ability.Cooldown.Howl",
+        ("deer", Group.Abilities) => "Ability.Cooldown.CombatSummon",
         ("controller", Group.Abilities) => "Abilities.PSYAttack",
         ("pseudogiant", Group.Abilities) => "Ability.Cooldown.ShockwaveAttack",
         _ => string.Empty

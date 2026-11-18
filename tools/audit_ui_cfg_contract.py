@@ -165,8 +165,8 @@ def main():
     if not EXPECTED_HIDDEN_NON_UI.issubset(hidden_ids):
         fail(f"declared non-UI controls became visible or vanished: {sorted(EXPECTED_HIDDEN_NON_UI-hidden_ids)}")
     # +3 weather knobs and +4 per-item HEAL TIME bars (2026-11-17).
-    # +3 LAIR POPULATION, +4 ZONE WEATHER / TRADER RESTOCK, +1 SUMMON RATE (2026-11-18).
-    if len(effective_ui_ids) != 406 or len(backing_ids) != 193:
+    # +3 LAIR POPULATION, +4 ZONE WEATHER / TRADER RESTOCK, +68 mutant move knobs, +1 Deer ABILITIES (2026-11-18).
+    if len(effective_ui_ids) != 474 or len(backing_ids) != 261:
         fail(f"active source dimension count drifted: {len(effective_ui_ids)} / {len(backing_ids)} backing")
 
     # Named legacy aggregate cohorts are evidence, not the complete editor
@@ -196,7 +196,7 @@ def main():
                           if f'"{pid}"' not in rendered_text and pid not in TRADER_BUY_IDS and pid not in TRADER_SELL_IDS
                           and not (mutant_dynamic and pid.startswith(
                               ("combat.mutantAttackRate.", "combat.mutantAbilityRate.", "combat.mutantSpecialAbilityRate",
-                               "combat.mutantSummonRate"))))
+                               "combat.mutantMoveRate."))))
     # The matrix keys are constructed from canonical role/category names in C#;
     # enforce those exact source dimensions and active control linkage.
     if (not set(TRADER_BUY_IDS).issubset(all_ids)

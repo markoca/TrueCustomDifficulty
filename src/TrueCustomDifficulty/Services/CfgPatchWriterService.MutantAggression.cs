@@ -12,14 +12,23 @@ namespace TrueCustomDifficulty.Services;
 // MUTANT AGGRESSION (docs/combat/MUTANT-AGGRESSION.md):
 //  * ATTACKS / ABILITIES per family → DifficultyPrototypes [difficulty]
 //    .MutantCombatDifficulty.AgentCooldownMultipliers (full list, non-bpatch).
-//  * SUMMON RATE → the same list: 1/rate on the summon tags of the
-//    summoning agents (Pseudodog, Bayun, Deer, Controller_Deer).
+//  * One knob per move → the same list: the move's tag gets group × 1/knob.
 //  * SPECIAL ABILITY RATE → CombatSynchronizationPrototypes
 //    CombatSynchronizer{difficulty}.{rank}.FilterGroups[3|4] cooldowns
 //    (full rank tables, because Novice–Veteran inherit Default).
 public sealed partial class CfgPatchWriterService
 {
     private const string CombatSyncResource = "TrueCustomDifficulty.Data.combat-synchronization-2.1.json";
+
+    private static double PositiveRate(IReadOnlyDictionary<string, ParameterViewModel> allById, string id)
+    {
+        if (!allById.TryGetValue(id, out var parameter))
+            throw new InvalidDataException("Missing mutant rate source: " + id);
+        var rate = parameter.CurrentNumber;
+        if (!double.IsFinite(rate) || rate <= 0.0)
+            throw new InvalidDataException("Invalid mutant rate: " + id);
+        return rate;
+    }
 
     private static string FormatCooldownMultiplier(double value)
         => value.ToString("0.####", CultureInfo.InvariantCulture);
@@ -34,25 +43,19 @@ public sealed partial class CfgPatchWriterService
         var edits = 0;
         var groups = new[] { MutantAggressionPolicy.Group.Attacks, MutantAggressionPolicy.Group.Abilities };
 
-        // ---- ATTACKS / ABILITIES: AgentCooldownMultipliers -------------------
-        var changed = MutantAggressionPolicy.RateParameterIds.Append(MutantAggressionPolicy.SummonRateId)
+        // ---- ATTACKS / ABILITIES / move knobs: AgentCooldownMultipliers -----
+        var changed = MutantAggressionPolicy.RateParameterIds.Concat(MutantAggressionPolicy.MoveParameterIds)
             .Where(id => modifiedById.TryGetValue(id, out var p) && p.IsValueModifiedFromReference())
             .ToArray();
-        var summonRate = 1.0;
-        if (allById.TryGetValue(MutantAggressionPolicy.SummonRateId, out var summonParameter))
-        {
-            summonRate = summonParameter.CurrentNumber;
-            if (!double.IsFinite(summonRate) || summonRate <= 0.0)
-                throw new InvalidDataException("Invalid mutant summon rate: " + MutantAggressionPolicy.SummonRateId);
-        }
         if (changed.Length > 0)
         {
             var document = GetDocument(documents, "GameData/DifficultyPrototypes.cfg");
             var mutant = document.GetOrAddNode(difficultySid, new[] { "MutantCombatDifficulty" });
-            // The whole list is replaced. A group at its difficulty vanilla
-            // keeps the game's own entries (Master: 0.5 on the listed tags, in
-            // the game's order); a changed group lists every tag of every
-            // agent of the family with 1/rate; 1x writes nothing.
+            // The whole list is replaced. Per agent and tag the multiplier is
+            // group × knob: a group at its difficulty vanilla keeps the game's
+            // own value (Master: 0.5 on the listed tags), a changed group gives
+            // 1/rate; each move knob k then divides its own tag by k. Tags that
+            // end at exactly 1 are not written.
             mutant.RemoveAssignment("AgentCooldownMultipliers");
             mutant.RemoveChild("AgentCooldownMultipliers");
             var list = mutant.GetOrAddChild("AgentCooldownMultipliers", useBpatch: false);
@@ -61,42 +64,35 @@ public sealed partial class CfgPatchWriterService
             foreach (var family in MutantAggressionPolicy.Families)
             {
                 var rates = new Dictionary<MutantAggressionPolicy.Group, (double Rate, double Reference)>();
+                var knobs = new Dictionary<string, double>(StringComparer.Ordinal);
                 foreach (var group in groups)
                 {
                     if (family.Tags(group).Count == 0)
                         continue;
                     var id = MutantAggressionPolicy.ParameterId(family, group);
-                    if (!allById.TryGetValue(id, out var parameter))
-                        throw new InvalidDataException("Missing mutant rate source: " + id);
-                    var rate = parameter.CurrentNumber;
-                    if (!double.IsFinite(rate) || rate <= 0.0)
-                        throw new InvalidDataException("Invalid mutant rate: " + id);
-                    rates[group] = (rate, MutantAggressionPolicy.Reference(family, group, difficultySid));
+                    rates[group] = (PositiveRate(allById, id), MutantAggressionPolicy.Reference(family, group, difficultySid));
+                    foreach (var move in MutantAggressionPolicy.Moves(family, group))
+                        knobs[move.Tag] = PositiveRate(allById, MutantAggressionPolicy.MoveId(family, move));
                 }
 
                 foreach (var agent in family.Agents)
                 {
+                    // The game's own Master order first, then the rest of the family's tags.
+                    var tags = agent.VanillaMasterTags
+                        .Concat(groups.SelectMany(g => family.Tags(g)))
+                        .Distinct(StringComparer.Ordinal);
                     var entries = new List<(string Tag, double Multiplier)>();
-                    // Groups at vanilla: the game's own Master entries, in order.
-                    foreach (var tag in agent.VanillaMasterTags)
+                    foreach (var tag in tags)
                     {
                         var group = family.AttackTags.Contains(tag)
                             ? MutantAggressionPolicy.Group.Attacks : MutantAggressionPolicy.Group.Abilities;
-                        if (rates.TryGetValue(group, out var r) && Math.Abs(r.Rate - r.Reference) < 0.0000001
-                            && r.Reference > 1.0)
-                            entries.Add((tag, MutantAggressionPolicy.VanillaMasterCooldownMultiplier));
-                    }
-                    // Changed groups: every tag of the group.
-                    foreach (var (group, r) in rates)
-                    {
-                        if (Math.Abs(r.Rate - r.Reference) < 0.0000001 || Math.Abs(r.Rate - 1.0) < 0.0000001)
+                        if (!rates.TryGetValue(group, out var r))
                             continue;
-                        entries.AddRange(family.Tags(group).Select(tag => (tag, 1.0 / r.Rate)));
+                        var multiplier = MutantAggressionPolicy.Multiplier(agent, tag, r.Rate, r.Reference)
+                            / (knobs.TryGetValue(tag, out var k) ? k : 1.0);
+                        if (Math.Abs(multiplier - 1.0) >= 0.0000001)
+                            entries.Add((tag, multiplier));
                     }
-                    // SUMMON RATE: summon tags are in no family group (vanilla 1× everywhere).
-                    if (Math.Abs(summonRate - 1.0) >= 0.0000001)
-                        entries.AddRange(MutantAggressionPolicy.SummonTags(agent.Sid)
-                            .Select(tag => (tag, 1.0 / summonRate)));
                     if (entries.Count == 0)
                         continue;
 

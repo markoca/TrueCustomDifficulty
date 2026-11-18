@@ -22,7 +22,7 @@ NEW_IDS |= {"combat.mutantSpecialAbilityRate", "combat.npcGrenadeRate", "combat.
             "combat.npcFlankRate", "combat.npcPushRate", "combat.npcCamperPunishRate",
             "combat.npcAccuracy", "combat.npcSightRange", "combat.npcHearingRange",
             "combat.npcAlertMemory", "loot.genericCorpseReduction", "loot.genericStashReduction"}
-assert len(NEW_IDS) == 39, len(NEW_IDS)  # 40 before RESPAWN RATE retired
+assert len(NEW_IDS) == 40, len(NEW_IDS)  # 40 before RESPAWN RATE retired; +1 Deer ABILITIES (2026-11-18)
 # 2026-11-17: weather AI coefficients and per-item medical HEAL TIME seconds.
 NEW_IDS |= {"combat.npcFogVisibility", "combat.npcRainNoise", "combat.npcStormNoise",
             "health.bandageHealTime", "health.medkitHealTime", "health.armyMedkitHealTime",
@@ -44,7 +44,9 @@ NEW_IDS |= {"environment.emissionFrequency", "environment.stormFrequency",
 
 # 2026-11-18: SUMMON RATE role values (absent = vanilla 1×).
 SUMMONS = json.loads((ROOT / "tools/factory_preset_summons_2026_11_18.json").read_text(encoding="utf-8"))
-NEW_IDS |= {"combat.mutantSummonRate"}
+# 2026-11-18: SUMMON RATE retired the same day into per-move knobs (blobs kept for upgrades).
+MOVES = json.loads((ROOT / "tools/factory_preset_move_knobs_2026_11_18.json").read_text(encoding="utf-8"))
+NEW_IDS |= {pid for pid in by_id if pid.startswith("combat.mutantMoveRate.")}
 
 presets = sorted((APP / "Presets").glob("*.json"))
 assert len(presets) == 12, len(presets)
@@ -58,7 +60,7 @@ for path in presets:
     role = dict(THEMATIC["values"][data["name"]] if data["name"] in THEMATIC["values"] else THEMATIC["values"][path.stem])
     role.update(LAIR["values"][path.stem])
     role.update(ZONE["values"][path.stem])
-    role.update(SUMMONS["values"][path.stem])
+    role.update(MOVES["values"][path.stem])
     assert set(role) <= set(by_id), (path.name, set(role) - set(by_id))
     for pid in NEW_IDS | set(role):
         p = by_id[pid]
@@ -94,6 +96,9 @@ assert pds.count("PreLairRespawnTimeFactoryBlobs") == 3
 assert pds.count("PreZoneWeatherFactoryBlobs") == 3
 assert pds.count("PrePseudodogAbilityFactoryBlobs") == 3 and '["Hardcore"] = "3bc16c0d89a73d5b5c8a4bc6a01c8d4221c0a7c4"' in pds
 assert pds.count("PreSummonRateFactoryBlobs") == 3
+assert pds.count("PreMoveKnobFactoryBlobs") == 3
+for _name, _hash in MOVES["previousStockBlobs"].items():
+    assert f'["{_name}"] = "{_hash}"' in pds, _name
 for _name, _hash in SUMMONS["previousStockBlobs"].items():
     assert f'["{_name}"] = "{_hash}"' in pds, _name
 for _name, _hash in ZONE["previousStockBlobs"].items():
