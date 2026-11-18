@@ -27,8 +27,8 @@ def verify() -> None:
 
     # +25 MUTANT AGGRESSION, +9 HUMAN TACTICS / HUMAN AWARENESS (2026-11-16),
     # +3 weather AI coefficients FOG / RAIN / THUNDER (2026-11-17)
-    # +54 mutant move knobs, -10 ABILITIES sliders folded into knobs (2026-11-18)
-    assert len(combat) == 109, f"Combat catalog changed: {len(combat)}"
+    # +54 mutant move knobs, -24 group sliders folded into knobs (2026-11-18)
+    assert len(combat) == 95, f"Combat catalog changed: {len(combat)}"
     human_direct = {"combat.npcAccuracy", "combat.npcSightRange", "combat.npcHearingRange", "combat.npcAlertMemory",
                     "combat.npcFogVisibility"}
     weather_hearing = {"combat.npcRainNoise", "combat.npcStormNoise"}
@@ -68,7 +68,7 @@ def verify() -> None:
     aggression_ids = {pid for pid in special_ids
                       if pid.startswith(("combat.mutantAttackRate.", "combat.mutantAbilityRate.", "combat.mutantMoveRate."))
                       or pid == "combat.mutantSpecialAbilityRate"}
-    assert len(aggression_ids) == 69, aggression_ids
+    assert len(aggression_ids) == 55, aggression_ids
     special_ids -= aggression_ids
     assert len(special_ids) == 4
     assert special_ids == {"combat.psySpawnCycleDelay", "combat.psyPhantomCount",

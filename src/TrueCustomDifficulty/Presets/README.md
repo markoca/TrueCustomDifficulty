@@ -165,3 +165,5 @@ All 12 shipped profile files now include **247 parameter IDs** (34 more than the
 **2026-11-18 — Attack-only mutant knobs:** roars, growls, howls, dodges, teleports and shields have no control any more and stay vanilla. Every profile stores 54 attack knobs; Hardcore stores Bayun and Bloodsucker ABILITIES at 1×.
 
 **2026-11-18 — No ABILITIES sliders:** each ability knob holds its own value (the old slider was folded in). 466 controls per profile.
+
+**2026-11-18 — No mutant group sliders:** every attack and ability is its own knob (the old ATTACKS / ABILITIES slider values were folded in). 452 controls per profile.

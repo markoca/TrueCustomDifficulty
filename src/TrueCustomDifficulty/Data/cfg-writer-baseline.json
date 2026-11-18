@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.1",
-  "supportedParameterCount": 466,
+  "supportedParameterCount": 452,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -48360,22 +48360,8 @@
       "expectedProfiles": 86
     },
     "mutantAggression": {
-      "note": "Per family one ATTACKS rate over its own attack cooldown tags (all variants): rate r writes 1/r into [difficulty].MutantCombatDifficulty.AgentCooldownMultipliers (full list); at its difficulty vanilla it keeps the game's Master entries (0.5). Every attack also has its own knob (combat.mutantMoveRate.{family}.{move}): its tag gets slider × 1/knob. Each ability is a knob of its own (one-tag group, Master vanilla 2× where the game halves it). Roars, growls, howls, dodges, teleports and shields have no control: the game's Master 0.5 entries are written back. SPECIAL ABILITY RATE scales CombatSynchronizer FilterGroups [3]/[4].",
+      "note": "One knob per mutant attack and ability (combat.mutantMoveRate.{family}.{move}, all variants of the family): knob k writes 1/k on its own cooldown tag into [difficulty].MutantCombatDifficulty.AgentCooldownMultipliers (full list); at its difficulty vanilla (2× on Master where the game halves it) the game's entry stays. Roars, growls, howls, dodges, teleports and shields have no control: the game's Master 0.5 entries are written back. SPECIAL ABILITY RATE scales CombatSynchronizer FilterGroups [3]/[4].",
       "parameterIds": [
-        "combat.mutantAttackRate.bayun",
-        "combat.mutantAttackRate.blinddog",
-        "combat.mutantAttackRate.bloodsucker",
-        "combat.mutantAttackRate.boar",
-        "combat.mutantAttackRate.burer",
-        "combat.mutantAttackRate.chimera",
-        "combat.mutantAttackRate.controller",
-        "combat.mutantAttackRate.deer",
-        "combat.mutantAttackRate.flesh",
-        "combat.mutantAttackRate.poltergeist",
-        "combat.mutantAttackRate.pseudodog",
-        "combat.mutantAttackRate.pseudogiant",
-        "combat.mutantAttackRate.snork",
-        "combat.mutantAttackRate.tushkan",
         "combat.mutantMoveRate.bayun.claw",
         "combat.mutantMoveRate.bayun.jumpIn",
         "combat.mutantMoveRate.bayun.leap",

@@ -22,7 +22,7 @@ NEW_IDS |= {"combat.mutantSpecialAbilityRate", "combat.npcGrenadeRate", "combat.
             "combat.npcFlankRate", "combat.npcPushRate", "combat.npcCamperPunishRate",
             "combat.npcAccuracy", "combat.npcSightRange", "combat.npcHearingRange",
             "combat.npcAlertMemory", "loot.genericCorpseReduction", "loot.genericStashReduction"}
-assert len(NEW_IDS) == 29, len(NEW_IDS)  # 40 before RESPAWN RATE retired; ABILITIES sliders all folded into knobs (2026-11-18)
+assert len(NEW_IDS) == 15, len(NEW_IDS)  # 40 before RESPAWN RATE retired; ATTACKS / ABILITIES sliders all folded into knobs (2026-11-18)
 # 2026-11-17: weather AI coefficients and per-item medical HEAL TIME seconds.
 NEW_IDS |= {"combat.npcFogVisibility", "combat.npcRainNoise", "combat.npcStormNoise",
             "health.bandageHealTime", "health.medkitHealTime", "health.armyMedkitHealTime",
@@ -48,6 +48,7 @@ SUMMONS = json.loads((ROOT / "tools/factory_preset_summons_2026_11_18.json").rea
 MOVES = json.loads((ROOT / "tools/factory_preset_move_knobs_2026_11_18.json").read_text(encoding="utf-8"))
 NEW_IDS |= {pid for pid in by_id if pid.startswith("combat.mutantMoveRate.")}
 
+ATTACK_KNOBS = json.loads((ROOT / "tools/factory_preset_attack_knobs_2026_11_18.json").read_text(encoding="utf-8"))
 ABILITY_KNOBS = json.loads((ROOT / "tools/factory_preset_ability_knobs_2026_11_18.json").read_text(encoding="utf-8"))
 presets = sorted((APP / "Presets").glob("*.json"))
 assert len(presets) == 12, len(presets)
@@ -64,6 +65,7 @@ for path in presets:
     role.update(MOVES["values"][path.stem])
     # 2026-11-18: ABILITIES sliders folded into their knobs (knob × slider, Master 2× where halved).
     role.update({pid: new for stem, pid, _old, new in ABILITY_KNOBS["migrated"] if stem == path.stem})
+    role.update({pid: new for stem, pid, _old, new in ATTACK_KNOBS["migrated"] if stem == path.stem})
     # 2026-11-18 attack-only pass: role values of removed controls (roars, growls, ...) are gone.
     role = {k: v for k, v in role.items() if k in by_id}
     for pid in NEW_IDS | set(role):
@@ -104,6 +106,9 @@ assert pds.count("PreMoveKnobFactoryBlobs") == 3
 ATTACK_ONLY = json.loads((ROOT / "tools/factory_preset_attack_only_2026_11_18.json").read_text(encoding="utf-8"))
 assert pds.count("PreAttackOnlyFactoryBlobs") == 3
 assert pds.count("PreAbilityKnobFactoryBlobs") == 3
+assert pds.count("PreAttackKnobFactoryBlobs") == 3
+for _name, _hash in ATTACK_KNOBS["previousStockBlobs"].items():
+    assert f'["{_name}"] = "{_hash}"' in pds, _name
 for _name, _hash in ABILITY_KNOBS["previousStockBlobs"].items():
     assert f'["{_name}"] = "{_hash}"' in pds, _name
 for _name, _hash in ATTACK_ONLY["previousStockBlobs"].items():

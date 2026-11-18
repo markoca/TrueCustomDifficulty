@@ -1,11 +1,10 @@
-# MUTANT AGGRESSION — ATTACKS, ABILITIES and SPECIAL ABILITY RATE (2026-11-16)
+# MUTANT AGGRESSION — attack and ability knobs, SPECIAL ABILITY RATE (2026-11-16, knobs 2026-11-18)
 
 Two control groups on the Mutant board (*MUTANT DAMAGE, HEALTH AND AGGRESSION*):
 
 | Control | Ids | Range | Vanilla |
 |---|---|---|---|
-| ATTACKS per family (14) | `combat.mutantAttackRate.{family}` | 0.25×–3×, step 0.25 | 1×; **2× on Master** for Bayun, Bloodsucker, Burer, Chimera, Controller, Deer, Pseudodog, Pseudogiant |
-| One knob per move (54: 37 attacks, 17 abilities) | `combat.mutantMoveRate.{family}.{move}` | 0.25×–3×, step 0.25 | 1×; ability knobs **2× on Master** where the game halves them (Burer disarm / throw / weapons, Controller psy / corpse / zombify, Pseudogiant shockwave) |
+| One knob per move (54: 37 attacks, 17 abilities) | `combat.mutantMoveRate.{family}.{move}` | 0.25×–3×, step 0.25 | 1×; **2× on Master** for every move the game halves there (e.g. Bayun claw, Controller psy, Pseudogiant shockwave) |
 | SPECIAL ABILITY RATE (global) | `combat.mutantSpecialAbilityRate` | 0.25×–3×, step 0.25 | 1× Novice / Stalker / Veteran, 2× Master |
 
 All are `runtime_test_required`. Source: S.T.A.L.K.E.R. 2 2.1 base dump.
@@ -46,6 +45,17 @@ All are `runtime_test_required`. Source: S.T.A.L.K.E.R. 2 2.1 base dump.
   psy/shield/teleport/anomaly/growl/shockwave/summon for ABILITIES. Chimera growl is 60 s and Snork growl 120 s
   (2026-11-18 fix; the card used to say 30 s and 20 s). At the vanilla value it shows the game's effective time (e.g. Master Controller psy 6 s).
 * `Mutant_AttackCooldown` (1.0 on all difficulties) is not touched.
+
+## No group sliders (2026-11-18, fourth pass)
+
+* The ATTACKS sliders are gone as well: slider and knobs did the same thing. Every attack and ability is one knob,
+  a one-tag group in the writer with its own Master vanilla (`KnobReference`: 2× on Master where any agent of the
+  family has the tag in the game's Master list).
+* Presets folded each ATTACKS slider into its attack knobs the same way as the ABILITIES pass
+  (`tools/factory_preset_attack_knobs_2026_11_18.json`).
+* Attack tags that never had a knob (e.g. Bayun short / long leap, Deer run, Mist Bloodsucker bite, the Pseudodog
+  no-op shockwave) keep the game's own entry.
+* Board: under the health track, `ATTACKS` and `ABILITIES` captions over one five-column knob grid; card 140 px.
 
 ## No ABILITIES sliders (2026-11-18, third pass)
 

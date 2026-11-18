@@ -70,10 +70,9 @@ def main():
            "Do not edit by hand.", "",
            "* **Normal** = Novice, Stalker and Veteran. **Master** = what the game uses on Master: "
            "the difficulty halves the tags it lists for the family's main agent (`AgentCooldownMultipliers` 0.5).",
-           "* A family's ATTACKS slider at rate *r* divides every attack time by *r* (2× = half the wait). "
-           "ABILITIES have no slider: each ability is its own knob. On Master a vanilla is 2× where the game already halves.",
-           "* Every covered row also has its own knob under its slider (`combat.mutantMoveRate.{family}.{move}`); "
-           "an attack's time is divided by slider × knob, an ability's by its knob. Moves at 0 s have no knob.",
+           "* There are no group sliders: every ATTACKS / ABILITIES row is its own knob at rate *k* and divides that time by *k* "
+           "(2× = half the wait). On Master a knob's vanilla is 2× where the game already halves.",
+           "* Knob ids: `combat.mutantMoveRate.{family}.{move}`. Moves at 0 s have no knob.",
            "* **Vanilla only** rows have no control: roars, growls, howls, dodges, teleports, shields, alert sounds and moves the game never triggers "
            "(see `MUTANT-ABILITIES-CATALOG.md`).",
            "* Special and story variants (phantoms, Prologue, Mist, `Collar` psy, DLC1 bosses, "

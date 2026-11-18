@@ -10,7 +10,7 @@ using TrueCustomDifficulty.ViewModels;
 namespace TrueCustomDifficulty.Services;
 
 // MUTANT AGGRESSION (docs/combat/MUTANT-AGGRESSION.md):
-//  * ATTACKS / ABILITIES per family → DifficultyPrototypes [difficulty]
+//  * One knob per attack / ability → DifficultyPrototypes [difficulty]
 //    .MutantCombatDifficulty.AgentCooldownMultipliers (full list, non-bpatch).
 //  * One knob per move → the same list: the move's tag gets group × 1/knob.
 //  * SPECIAL ABILITY RATE → CombatSynchronizationPrototypes
@@ -44,18 +44,16 @@ public sealed partial class CfgPatchWriterService
         var groups = new[] { MutantAggressionPolicy.Group.Attacks, MutantAggressionPolicy.Group.Abilities };
 
         // ---- ATTACKS / ABILITIES / move knobs: AgentCooldownMultipliers -----
-        var changed = MutantAggressionPolicy.RateParameterIds.Concat(MutantAggressionPolicy.MoveParameterIds)
+        var changed = MutantAggressionPolicy.MoveParameterIds
             .Where(id => modifiedById.TryGetValue(id, out var p) && p.IsValueModifiedFromReference())
             .ToArray();
         if (changed.Length > 0)
         {
             var document = GetDocument(documents, "GameData/DifficultyPrototypes.cfg");
             var mutant = document.GetOrAddNode(difficultySid, new[] { "MutantCombatDifficulty" });
-            // The whole list is replaced. Attacks: ATTACKS slider × knob (the
-            // slider at its difficulty vanilla keeps the game's own value, Master
-            // 0.5 on the listed tags, else 1/rate; the knob k divides its tag by k).
-            // Abilities: the knob alone, as a one-tag group with its own Master
-            // vanilla. Tags that end at exactly 1 are not written.
+            // The whole list is replaced. Every attack and ability is a knob k:
+            // at its difficulty vanilla the game's own value (Master 0.5 on the
+            // listed tags), else 1/k. Tags that end at exactly 1 are not written.
             mutant.RemoveAssignment("AgentCooldownMultipliers");
             mutant.RemoveChild("AgentCooldownMultipliers");
             var list = mutant.GetOrAddChild("AgentCooldownMultipliers", useBpatch: false);
@@ -63,43 +61,27 @@ public sealed partial class CfgPatchWriterService
             var index = 0;
             foreach (var family in MutantAggressionPolicy.Families)
             {
-                var attackRate = PositiveRate(allById, family.ParameterId);
-                var attackReference = MutantAggressionPolicy.Reference(family, MutantAggressionPolicy.Group.Attacks, difficultySid);
-                var knobs = new Dictionary<string, (double Rate, double Reference, bool Ability)>(StringComparer.Ordinal);
+                var knobs = new Dictionary<string, (double Rate, double Reference)>(StringComparer.Ordinal);
                 foreach (var group in groups)
                 {
                     foreach (var move in MutantAggressionPolicy.Moves(family, group))
                         knobs[move.Tag] = (PositiveRate(allById, MutantAggressionPolicy.MoveId(family, move)),
-                            MutantAggressionPolicy.KnobReference(family, group, move, difficultySid),
-                            group == MutantAggressionPolicy.Group.Abilities);
+                            MutantAggressionPolicy.KnobReference(family, move, difficultySid));
                 }
 
                 foreach (var agent in family.Agents)
                 {
-                    // The game's own Master order first, then the rest of the family's tags.
-                    var tags = agent.VanillaMasterTags
-                        .Concat(groups.SelectMany(g => family.Tags(g)))
-                        .Distinct(StringComparer.Ordinal);
+                    // The game's own Master order first, then the knob tags.
+                    var tags = agent.VanillaMasterTags.Concat(knobs.Keys).Distinct(StringComparer.Ordinal);
                     var entries = new List<(string Tag, double Multiplier)>();
                     foreach (var tag in tags)
                     {
-                        // Roars, growls, howls, dodges, teleports and shields have no
-                        // control: the game's own Master entry is written back unchanged.
-                        if (!family.AttackTags.Contains(tag) && !family.AbilityTags.Contains(tag))
-                        {
-                            if (difficultySid == "Stalker")
-                                entries.Add((tag, MutantAggressionPolicy.VanillaMasterCooldownMultiplier));
-                            continue;
-                        }
-                        double multiplier;
-                        if (family.AttackTags.Contains(tag))
-                            multiplier = MutantAggressionPolicy.Multiplier(agent, tag, attackRate, attackReference)
-                                / (knobs.TryGetValue(tag, out var k) ? k.Rate : 1.0);
-                        else if (knobs.TryGetValue(tag, out var ability))
-                            // An ability knob is its own group of one tag (Master vanilla 2× → 0.5).
-                            multiplier = MutantAggressionPolicy.Multiplier(agent, tag, ability.Rate, ability.Reference);
-                        else
-                            multiplier = difficultySid == "Stalker" && agent.VanillaMasterTags.Contains(tag)
+                        // A knob is a one-tag group with its own Master vanilla. Tags
+                        // without a knob (roars, growls, howls, dodges, teleports,
+                        // shields) keep the game's own Master entry.
+                        var multiplier = knobs.TryGetValue(tag, out var knob)
+                            ? MutantAggressionPolicy.Multiplier(agent, tag, knob.Rate, knob.Reference)
+                            : difficultySid == "Stalker" && agent.VanillaMasterTags.Contains(tag)
                                 ? MutantAggressionPolicy.VanillaMasterCooldownMultiplier : 1.0;
                         if (Math.Abs(multiplier - 1.0) >= 0.0000001)
                             entries.Add((tag, multiplier));

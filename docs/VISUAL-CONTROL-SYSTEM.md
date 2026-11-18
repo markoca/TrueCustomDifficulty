@@ -1,3 +1,8 @@
+## CURRENT 2026-11-18 — Mutant cards: knobs only
+
+* No ATTACKS slider either: under the health track only the captions `ATTACKS` (left) and `ABILITIES` (over the right-aligned ability knobs, with the thin divider), then the five-column knob grid. Card 140 px.
+* Knob size, captions, seconds, alignment and interaction unchanged. A knob's vanilla tick sits at 2× on Master for every move the game halves there.
+
 ## CURRENT 2026-11-18 — Mutant cards: one five-column knob grid, larger knobs, no overlap
 
 * Species card 156 px. `ATTACKS` caption with its slider runs across the whole card (same width logic as the health track). Below it, one knob grid of five equal columns spanning the card (no mutant has more than five moves): attacks from the left, abilities right-aligned under a small `ABILITIES` header, separated by a thin vertical divider. Columns line up across cards.

@@ -16,8 +16,9 @@ namespace TrueCustomDifficulty.Services;
 /// its abilities, all variants included):
 ///  * ATTACKS — claws, bites, runs, leaps, kicks, charges, evasions;
 ///  * ABILITIES — psi attacks, shields, throws, shockwaves, roars, teleports.
-/// Rate r writes 1/r on every tag of the group for every agent of the family.
-/// Each move also has its own knob (rate k): the move's tag gets 1/(r·k).
+/// Since 2026-11-18 there are no group sliders: each attack and ability is a knob
+/// (rate k) and writes 1/k on its own tag for every agent of the family; at its
+/// difficulty vanilla (2× on Master where the game halves it) the game's entry stays.
 /// At the difficulty's vanilla value the game's own entries are written back.
 ///
 /// SPECIAL ABILITY RATE scales the shared group token cooldowns
@@ -143,10 +144,8 @@ public static class MutantAggressionPolicy
             Array.Empty<string>(), ("claw", 3), null)
     };
 
-    // ATTACKS sliders only. ABILITIES have no slider: each ability is its own knob
-    // (2026-11-18), carrying the game's Master vanilla itself.
-    public static IReadOnlyList<string> RateParameterIds { get; } =
-        Families.Select(f => f.ParameterId).ToArray();
+    // No group sliders (2026-11-18): every attack and ability is its own knob,
+    // carrying the game's Master vanilla itself.
 
 
     // ---- One knob per move (docs/combat/MUTANT-COOLDOWNS.md) ---------------
@@ -225,22 +224,15 @@ public static class MutantAggressionPolicy
 
     // Declared after MoveParameterIds: static initializers run in text order.
     public static IReadOnlyList<string> ParameterIds { get; } =
-        RateParameterIds.Append(SpecialAbilityRateId).Concat(MoveParameterIds).ToArray();
+        new[] { SpecialAbilityRateId }.Concat(MoveParameterIds).ToArray();
 
-    /// <summary>Difficulty vanilla of a move knob: an ability the game halves on Master is 2× there.</summary>
-    public static double KnobReference(Family family, Group group, Move move, string difficultySid)
-        => group == Group.Abilities && difficultySid == "Stalker"
-            && family.Agents.Any(a => a.VanillaMasterTags.Contains(move.Tag)) ? 2.0 : 1.0;
+    /// <summary>Difficulty vanilla of a move knob: a move the game halves on Master is 2× there.</summary>
+    public static double KnobReference(Family family, Move move, string difficultySid)
+        => difficultySid == "Stalker" && family.Agents.Any(a => a.VanillaMasterTags.Contains(move.Tag)) ? 2.0 : 1.0;
 
-    /// <summary>
-    /// Real seconds of one move. Attacks: vanilla × ATTACKS slider × own knob.
-    /// Abilities: vanilla × own knob alone (the knob holds the Master vanilla).
-    /// </summary>
-    public static double MoveSeconds(Family family, Group group, Move move,
-        double attackRate, double attackReference, double knob, double knobReference)
-        => group == Group.Attacks
-            ? move.Seconds * Multiplier(family.Agents[0], move.Tag, attackRate, attackReference) / knob
-            : move.Seconds * Multiplier(family.Agents[0], move.Tag, knob, knobReference);
+    /// <summary>Real seconds of one move: vanilla × its own knob (the knob holds the Master vanilla).</summary>
+    public static double MoveSeconds(Family family, Move move, double knob, double knobReference)
+        => move.Seconds * Multiplier(family.Agents[0], move.Tag, knob, knobReference);
 
     public static string Seconds(double seconds)
         => seconds.ToString(seconds < 10 ? "0.##" : "0.#", CultureInfo.InvariantCulture) + " s";
@@ -263,43 +255,6 @@ public static class MutantAggressionPolicy
                 ? VanillaMasterCooldownMultiplier : 1.0;
         return 1.0 / rate;
     }
-
-    /// <summary>Panel text in real seconds, e.g. "psy every 6 s" (the family's headline cooldown).</summary>
-    public static string RateDisplay(Family family, Group group, double rate, double reference)
-        => CooldownDisplay(family, group, rate, reference)
-            ?? $"{rate.ToString("0.##", CultureInfo.InvariantCulture)}× " + (group == Group.Attacks ? "attacks" : "abilities");
-
-    /// <summary>Card text, e.g. "psy every 6 s": the time between two uses of
-    /// the headline move. Null when the group has no moves (e.g. Boar abilities).</summary>
-    public static string? CooldownDisplay(Family family, Group group, double rate, double reference)
-    {
-        var headline = group == Group.Attacks ? family.AttackHeadline : family.AbilityHeadline;
-        if (headline is not { } h)
-            return null;
-        var tag = HeadlineTag(family, group);
-        var multiplier = Multiplier(family.Agents[0], tag, rate, reference);
-        return $"{h.Name} every {(h.Seconds * multiplier).ToString("0.#", CultureInfo.InvariantCulture)} s";
-    }
-
-    // Tag behind each headline (first agent decides the vanilla Master case).
-    private static string HeadlineTag(Family family, Group group) => (family.Key, group) switch
-    {
-        ("bayun", Group.Attacks) or ("bloodsucker", Group.Attacks) or ("burer", Group.Attacks)
-            or ("controller", Group.Attacks) or ("deer", Group.Attacks) or ("flesh", Group.Attacks)
-            or ("pseudogiant", Group.Attacks) or ("tushkan", Group.Attacks) => "Ability.Cooldown.ClawAttack",
-        ("blinddog", Group.Attacks) or ("pseudodog", Group.Attacks) => "Ability.Cooldown.BiteAttack",
-        ("boar", Group.Attacks) => "Ability.Cooldown.ClawAttack",
-        ("chimera", Group.Attacks) => "Ability.Cooldown.LongJumpAttack",
-        ("snork", Group.Attacks) => "Ability.Cooldown.KickAttack",
-        ("poltergeist", Group.Attacks) => "Ability.Cooldown.AOEAttack",
-        ("bayun", Group.Abilities) or ("pseudodog", Group.Abilities) or ("deer", Group.Abilities)
-            => "Ability.Cooldown.CombatSummon",
-        ("burer", Group.Abilities) => "Ability.Cooldown.WeaponDrag",
-        ("bloodsucker", Group.Abilities) or ("poltergeist", Group.Abilities) => "Ability.Cooldown.ActivateAnomaly",
-        ("controller", Group.Abilities) => "Abilities.PSYAttack",
-        ("pseudogiant", Group.Abilities) => "Ability.Cooldown.ShockwaveAttack",
-        _ => string.Empty
-    };
 
     /// <summary>Board and panel value of SPECIAL ABILITY RATE (writer rounding).</summary>
     public static string SpecialAbilityDisplay(double rate)

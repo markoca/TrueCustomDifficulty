@@ -341,3 +341,7 @@ The 12 profiles now store the four new controls (422 catalog controls each). The
 
 * 466 controls per profile. Each ability knob took over its old slider's value (knob × slider; at the slider's vanilla the Master 2× where the game halves that ability). Hardcore keeps vanilla Master pacing; Hardcore+, Mutant Hunter, Outcast and Wanderer keep their faster abilities (Hardcore+ clone, phantom and dog summons capped at 3×).
 * Untouched older stock copies upgrade by blob hash (`PreAbilityKnobFactoryBlobs`).
+
+## 2026-11-18 — ATTACKS sliders folded into their knobs
+
+* 452 controls per profile. Each attack knob took over its family's ATTACKS slider (knob × slider; at the slider's vanilla the Master 2× where the game halves that attack). Untouched older stock copies upgrade by blob hash (`PreAttackKnobFactoryBlobs`).

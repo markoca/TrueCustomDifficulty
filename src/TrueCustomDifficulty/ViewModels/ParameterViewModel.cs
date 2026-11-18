@@ -259,40 +259,16 @@ public sealed class ParameterViewModel : ObservableObject
     /// <summary>Mutant board siblings (group slider ↔ move knobs), set by MainViewModel.</summary>
     public Func<string, ParameterViewModel?>? MutantSiblingLookup { get; set; }
 
-    private double SiblingNumber(string id)
-        => MutantSiblingLookup?.Invoke(id) is { } sibling ? sibling.CurrentNumber : 1.0;
-
-    private double SiblingReference(string id)
-        => MutantSiblingLookup?.Invoke(id) is { } sibling ? sibling.ReferenceNumber : 1.0;
-
-    /// <summary>Seconds of one move knob with its ATTACKS slider (abilities: the knob alone).</summary>
-    private double KnobSeconds(MutantAggressionPolicy.Family family, MutantAggressionPolicy.Group group,
-        MutantAggressionPolicy.Move move, double knob, double knobReference)
-        => MutantAggressionPolicy.MoveSeconds(family, group, move,
-            SiblingNumber(family.ParameterId), SiblingReference(family.ParameterId), knob, knobReference);
-
-    /// <summary>Mutant ATTACKS slider or move knob: every move in real seconds.</summary>
+    /// <summary>Mutant move knob: its move in real seconds.</summary>
     public string CooldownTimes
     {
         get
         {
-            foreach (var family in MutantAggressionPolicy.Families)
-            {
-                if (Id == family.ParameterId)
-                    return string.Join("\n", MutantAggressionPolicy.Moves(family, MutantAggressionPolicy.Group.Attacks)
-                        .Select(m =>
-                        {
-                            var knob = MutantSiblingLookup?.Invoke(MutantAggressionPolicy.MoveId(family, m));
-                            return m.Name + " " + MutantAggressionPolicy.Seconds(MutantAggressionPolicy.MoveSeconds(
-                                family, MutantAggressionPolicy.Group.Attacks, m, CurrentNumber, ReferenceNumber,
-                                knob?.CurrentNumber ?? 1.0, knob?.ReferenceNumber ?? 1.0));
-                        }));
-            }
-            foreach (var (family, group, move) in MutantAggressionPolicy.MoveKnobs)
+            foreach (var (family, _, move) in MutantAggressionPolicy.MoveKnobs)
             {
                 if (Id == MutantAggressionPolicy.MoveId(family, move))
                     return move.Name + " " + MutantAggressionPolicy.Seconds(
-                        KnobSeconds(family, group, move, CurrentNumber, ReferenceNumber));
+                        MutantAggressionPolicy.MoveSeconds(family, move, CurrentNumber, ReferenceNumber));
             }
             return string.Empty;
         }
@@ -303,11 +279,11 @@ public sealed class ParameterViewModel : ObservableObject
     {
         if (!Id.StartsWith(MutantAggressionPolicy.MovePrefix, StringComparison.Ordinal))
             return null;
-        foreach (var (family, group, move) in MutantAggressionPolicy.MoveKnobs)
+        foreach (var (family, _, move) in MutantAggressionPolicy.MoveKnobs)
         {
             if (Id == MutantAggressionPolicy.MoveId(family, move))
                 return move.Name + " every " + MutantAggressionPolicy.Seconds(
-                    KnobSeconds(family, group, move, CurrentNumber, ReferenceNumber));
+                    MutantAggressionPolicy.MoveSeconds(family, move, CurrentNumber, ReferenceNumber));
         }
         return null;
     }
@@ -1258,7 +1234,6 @@ public sealed class ParameterViewModel : ObservableObject
             "combat.mutantDamage" => Times(CurrentNumber, "hit dmg"),
             MutantAggressionPolicy.SpecialAbilityRateId => MutantAggressionPolicy.SpecialAbilityDisplay(CurrentNumber),
             _ when MutantMoveDisplay() is { } moveDisplay => moveDisplay,
-            _ when MutantRateDisplay() is { } mutantRate => mutantRate,
             "combat.playerWeaponDamage" => Times(CurrentNumber, "weapon dmg"),
             "combat.playerHeadshotMultiplier" => Times(CurrentNumber, "headshot dmg"),
             "combat.weaponJamming" => Times(CurrentNumber, "jam rate"),
@@ -1408,18 +1383,6 @@ public sealed class ParameterViewModel : ObservableObject
 
     private static string Times(double value, string meaning)
         => $"{value:0.##}× {meaning}";
-
-    // Mutant ATTACKS / ABILITIES: rate plus the resulting headline cooldown.
-    private string? MutantRateDisplay()
-    {
-        foreach (var family in MutantAggressionPolicy.Families)
-        {
-            if (Id == family.ParameterId)
-                return MutantAggressionPolicy.RateDisplay(family, MutantAggressionPolicy.Group.Attacks,
-                    CurrentNumber, ReferenceNumber);
-        }
-        return null;
-    }
 
     // Board and panel: the resulting base + bonus spawn chance.
     private static string SignedPercent(double value, string meaning)

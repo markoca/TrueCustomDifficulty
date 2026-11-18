@@ -84,8 +84,8 @@ def master(key: str, group: str) -> bool:
 # ---- source-correct headlines and pseudodog abilities (2026-11-18) ------------
 check(families["pseudodog"]["ability"] == ["Ability.Cooldown.CombatSummon", "Ability.Cooldown.RetreatSummon"],
       f"pseudodog ABILITIES: both phantom summons {families['pseudodog']['ability']}")
-check('if (!family.AttackTags.Contains(tag) && !family.AbilityTags.Contains(tag))' in writer
-      and 'if (difficultySid == "Stalker")' in writer, "uncontrolled Master tags written back at 0.5")
+check('difficultySid == "Stalker" && agent.VanillaMasterTags.Contains(tag)' in writer
+      and "MutantAggressionPolicy.VanillaMasterCooldownMultiplier" in writer, "uncontrolled Master tags written back at 0.5")
 for _key in ("bayun", "controller", "deer"):
     check("Ability.Cooldown.CombatSummon" in families[_key]["ability"], f"{_key} owns its summon in ABILITIES")
 check("SummonRate" not in policy and "combat.mutantSummonRate" not in by_id, "no global SUMMON RATE (owned per mutant)")
@@ -94,10 +94,8 @@ check(cooldowns.exists() and "| ABILITIES | summon | `CombatSummon` | 20 s |" in
       "generated MUTANT-COOLDOWNS.md is current")
 
 # ---- catalog ------------------------------------------------------------------
-ids = [f"combat.mutantAttackRate.{k}" for k in families] + ["combat.mutantSpecialAbilityRate"]
-check(len(ids) == 15 and all(i in by_id for i in ids), "all 15 aggression sliders are in parameters.json")
-check(not [r["id"] for r in catalog if r["id"].startswith("combat.mutantAbilityRate.")],
-      "no ABILITIES slider: each ability is its own knob")
+ids = ["combat.mutantSpecialAbilityRate"]
+check(all(i in by_id for i in ids), "SPECIAL ABILITY RATE is in parameters.json")
 
 # ---- one knob per move ------------------------------------------------------------
 moves_src = policy[policy.index("public static IReadOnlyList<Move> Moves("):policy.index("public static IReadOnlyList<(Family Family")]
@@ -117,27 +115,14 @@ for _key, _group, _slug, _label, _tag, _secs in move_rows:
     check(_full in _own, f"{_key}.{_slug}: tag {_full} belongs to its {_group} slider")
     check(_secs > 0 and len(_label) <= 9 and _label == _label.upper(), f"{_key}.{_slug}: cooldown > 0, short CAPS caption")
     _row = by_id[f"combat.mutantMoveRate.{_key}.{_slug}"]
-    _listed = _group == "Abilities" and any(_full in v for v in families[_key]["agents"].values())
+    _listed = any(_full in v for v in families[_key]["agents"].values())
     _want = {"Novice": 1, "Stalker": 1, "Veteran": 1, "Master": 2} if _listed else {"All": 1}
     check(_row.get("vanilla") == _want and _row.get("exposeInUi") is False
           and (_row["slider"]["min"], _row["slider"]["max"], _row["slider"]["step"]) == (0.25, 3, 0.25),
           f"{_key}.{_slug}: vanilla {_want}, board member, 0.25–3× step 0.25")
 check(len({(k, t) for k, _, _, _, t, _ in move_rows}) == 54, "one knob per cooldown tag per family")
-check(not [r["id"] for r in catalog if r["id"].startswith("combat.mutantAbilityRate.")
-           and r["id"].split(".")[-1] not in ability_families], "no ability rate for families without abilities")
-for key, f in families.items():
-    for group, prefix, word in (("attack", "combat.mutantAttackRate.", "Attack"),
-                                ("ability", "combat.mutantAbilityRate.", "Ability")):
-        row = by_id.get(prefix + key)
-        if not row:
-            continue
-        expected = {"Novice": 1, "Stalker": 1, "Veteran": 1, "Master": 2} if master(key, group) else {"All": 1}
-        check(row.get("vanilla") == expected, f"{prefix}{key}: vanilla {row.get('vanilla')}")
-        check(row.get("label") == f"{f['label']} {word} Rate", f"{prefix}{key}: label")
-        check(row.get("exposeInUi") is False and row.get("group") == "Mutant Health", f"{prefix}{key}: board member")
-        s = row.get("slider", {})
-        check((s.get("min"), s.get("max"), s.get("step")) == (0.25, 3, 0.25), f"{prefix}{key}: slider")
-        check(row["support"]["status"] == "runtime_test_required", f"{prefix}{key}: runtime_test_required")
+check(not [r["id"] for r in catalog if r["id"].startswith(("combat.mutantAbilityRate.", "combat.mutantAttackRate."))],
+      "no ATTACKS / ABILITIES sliders: every move is its own knob")
 check(by_id["combat.mutantSpecialAbilityRate"].get("vanilla") == {"Novice": 1, "Stalker": 1, "Veteran": 1, "Master": 2},
       "special vanilla N/S/V 1, Master 2")
 
@@ -158,15 +143,13 @@ check("combat-synchronization-2.1.json" in csproj, "csproj embeds combat-synchro
 check("WriteMutantAggression(" in main_writer and "MutantAggressionPolicy.ParameterIds" in main_writer,
       "main writer calls WriteMutantAggression and supports the ids")
 for token in ('GetOrAddChild("AgentCooldownMultipliers", useBpatch: false)',
-              "agent.VanillaMasterTags", "MutantAggressionPolicy.Reference(family, MutantAggressionPolicy.Group.Attacks, difficultySid)",
-              "MutantAggressionPolicy.Multiplier(agent, tag, attackRate, attackReference)",
-              "MutantAggressionPolicy.Multiplier(agent, tag, ability.Rate, ability.Reference)",
-              "MutantAggressionPolicy.KnobReference(family, group, move, difficultySid)",
-              "MutantAggressionPolicy.MoveId(family, move)", "/ (knobs.TryGetValue(tag, out var k) ? k.Rate : 1.0)",
+              "agent.VanillaMasterTags", "MutantAggressionPolicy.Multiplier(agent, tag, knob.Rate, knob.Reference)",
+              "MutantAggressionPolicy.KnobReference(family, move, difficultySid)",
+              "MutantAggressionPolicy.MoveId(family, move)",
               "LoadCombatSynchronizationTables", '"CombatSynchronizerStalker" : "Default"'):
     check(token in writer, f"writer token {token}")
 entry = baseline["special"].get("mutantAggression", {})
-check(sorted(entry.get("parameterIds", [])) == sorted(ids[:-1] + move_ids)
+check(sorted(entry.get("parameterIds", [])) == sorted(move_ids)
       and entry.get("parameterId") == "combat.mutantSpecialAbilityRate", "baseline special.mutantAggression")
 
 # ---- UI -----------------------------------------------------------------------
