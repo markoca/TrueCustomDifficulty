@@ -17,7 +17,7 @@ remain unchanged.
   changed by rounding become yellow.
 * RESPAWN TIME displays the representative **time until full** (8 min at 1×,
   2–32 min across 0.25×–4×) and the caption FULL AGAIN. The separate unframed
-  preview says TYPICAL LAIR TIMERS / HALF 3 min · WIPE 8 min at 1×.
+  preview says AFTER A FIGHT / HALF BACK IN 3 min / WIPED OUT: RESTARTS IN 8 min at 1× (two lines: a thinned-out lair is half full again after the first timer; a lair killed to the last one restarts after the wipe timer).
   The underlying three source timers still scale together, including the
   special shorter 6 / 30 / 30-second lairs; the central readout is a *typical*
   time, not a universal promise.

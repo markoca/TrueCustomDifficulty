@@ -1,3 +1,7 @@
+## CURRENT 2026-11-18 — LAIR POPULATION: respawn preview in plain words
+
+* Under RESPAWN TIME the preview reads `AFTER A FIGHT` and two centred lines: `HALF BACK IN 3 min` (a thinned-out lair is half full again) and `WIPED OUT: RESTARTS IN 8 min` (a lair killed to the last one). Only changed numbers turn gold. Preview block 58 DIP for the second line; knobs and other previews unchanged.
+
 ## CURRENT 2026-11-18 — Mutant knob CFG writer gate
 
 * New gate `mutant-cooldown-cfg` (and `mutant-aggression` now in pre-release): the knob writer's `AgentCooldownMultipliers` list is re-derived and checked against the game files. No UI change.

@@ -927,7 +927,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     // shows the typical full-refill time instead of an abstract multiplier.
     private const double LairCardPitch = 108.0; // Trader Restock uses this.
     private const double LairPreviewGap = 12.0;
-    private const double LairPreviewHeight = 44.0;
+    private const double LairPreviewHeight = 58.0;   // RESPAWN TIME preview has two lines
 
     private static double LairPopulationBoardHeight(double width)
         => ArtifactKnobTop + ArtifactKnobHeight + LairPreviewGap + LairPreviewHeight + 10.0;
@@ -979,18 +979,19 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             var previewWidth = Math.Max(1.0, area.Width - 8.0);
             string title;
             FormattedText detail;
+            FormattedText? secondLine = null;
             if (isRespawn)
             {
                 var half = LairPopulationPolicy.ScaleTimer(
                     LairPopulationPolicy.TypicalTimers[0], parameter.CurrentNumber);
                 var wiped = LairPopulationPolicy.ScaleTimer(
                     LairPopulationPolicy.TypicalTimers[2], parameter.CurrentNumber);
-                title = "TYPICAL LAIR TIMERS";
-                var summary = $"HALF {LairTime(half)} · WIPE {LairTime(wiped)}";
-                detail = CreateText(summary, 9.4,
-                    !parameter.IsControlEnabled ? muted
-                        : parameter.IsValueModifiedFromReference()
-                            ? ReadoutInk.Numbers(accent, text) : text,
+                // Plain words: thinned out → half back; killed to the last → restart delay.
+                title = "AFTER A FIGHT";
+                var ink = !parameter.IsControlEnabled ? muted
+                    : parameter.IsValueModifiedFromReference() ? ReadoutInk.Numbers(accent, text) : text;
+                detail = CreateText($"HALF BACK IN {LairTime(half)}", 9.4, ink, FontWeights.SemiBold, previewWidth);
+                secondLine = CreateText($"WIPED OUT: RESTARTS IN {LairTime(wiped)}", 9.4, ink,
                     FontWeights.SemiBold, previewWidth);
             }
             else
@@ -1029,6 +1030,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             dc.DrawText(detail, new Point(
                 area.Left + (area.Width - detail.WidthIncludingTrailingWhitespace) / 2.0,
                 previewTop + 16.0));
+            if (secondLine is not null)
+                dc.DrawText(secondLine, new Point(
+                    area.Left + (area.Width - secondLine.WidthIncludingTrailingWhitespace) / 2.0,
+                    previewTop + 31.0));
         }
     }
 
