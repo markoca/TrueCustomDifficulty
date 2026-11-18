@@ -1,6 +1,50 @@
 # True Custom Difficulty — kompletna ručna QA checklista
 
-> **Counts here are a dated snapshot.** The live census is `tools/catalog_census.py` (2026-11-17: 406 catalog IDs, 202 visible, 204 hidden, 2,819 direct edit points).
+## CURRENT 2026-11-18 — nove kontrole za release (V / I / P / B / G)
+
+**Census:** 452 kontrola u katalogu, 214 vidljivih, 2831 direktna edit tačka (`tools/catalog_census.py`).
+
+**A-LIFE → LAIR POPULATION** (tri knoba, srednji veći):
+- [ ] HUMAN CAMPS `alife.lairPopulation.human`: V[ ] I[ ] P[ ] B[ ] G[ ] — primer BANDIT CAMP po ranku se menja, žute samo promenjene cifre
+- [ ] RESPAWN TIME `alife.lairRespawnTime`: V[ ] I[ ] P[ ] B[ ] G[ ] — `8 min / FULL AGAIN`; ispod AFTER A FIGHT: HALF BACK IN / WIPED OUT: RESTARTS IN
+- [ ] MUTANT NESTS `alife.lairPopulation.mutant`: V[ ] I[ ] P[ ] B[ ] G[ ]
+
+**ENVIRONMENT → ZONE WEATHER** (STORMS | TIME TO FIND COVER | EMISSIONS + ONE EMISSION timeline):
+- [ ] STORMS `environment.stormFrequency`: V[ ] I[ ] P[ ] B[ ] G[ ]
+- [ ] TIME TO FIND COVER `environment.emissionWarning` (10–60 s): V[ ] I[ ] P[ ] B[ ] G[ ] — timeline se pomera
+- [ ] EMISSIONS `environment.emissionFrequency` (0 = bez nasumičnih): V[ ] I[ ] P[ ] B[ ] G[ ]
+
+**ECONOMY → EXPENSES**: TRADER RESTOCK ispod SERVICE PRICES u desnoj koloni
+- [ ] RESTOCK EVERY `economy.traderRestockHours`: V[ ] I[ ] P[ ] B[ ] G[ ] — uzak prozor: TRADER STOCK / SERVICE PRICES / TRADER RESTOCK jedno ispod drugog
+
+**HEALTH → FALL DAMAGE** (jedan veći knob):
+- [ ] DAMAGE TAKEN `health.fallDamage` (0–100%): V[ ] I[ ] P[ ] B[ ] G[ ] — B: samo `Player.Protection.Fall`; G: isti skok na 50% ≈ pola HP-a
+
+**COMBAT → MUTANT DAMAGE, HEALTH AND AGGRESSION** (bez ATTACKS/ABILITIES slajdera; mreža od 5 kolona):
+- [ ] SPECIAL MOVES `combat.mutantSpecialAbilityRate`: V[ ] I[ ] P[ ] B[ ] G[ ] — `one every 8–12 s`; pomeranje pomera stop-crticu na 5 knockdown knobova i vraća ih ispod nje
+- [ ] Knob grid: bez preklapanja natpisa, kolone poravnate kroz kartice, abilities desno uz tanku liniju; točkić, strelice, desni klik, R: V[ ] I[ ]
+- [ ] Panel za svaki knob: rečenica o potezu, Vanilla sekunde, 2× / 3× / 0.5×, Tip; COOLDOWNS blok: V[ ]
+- [ ] bayun: Claw, Jump In, Leap, Fly-by, Clones — P[ ] B[ ] G[ ]
+- [ ] blinddog: Bite, Run Bite, Spin Bite — P[ ] B[ ] G[ ]
+- [ ] bloodsucker: Claw, Run, Leap, Anomaly — P[ ] B[ ] G[ ]
+- [ ] boar: Run, Gore, Charge — P[ ] B[ ] G[ ]
+- [ ] burer: Claw, Grenades, Disarm, Throw, Weapons — P[ ] B[ ] G[ ]
+- [ ] chimera: Lunge, Run, Jump In, Fly-by — P[ ] B[ ] G[ ]
+- [ ] controller: Claw, Psy, Corpse, Zombify — P[ ] B[ ] G[ ]
+- [ ] deer: Claw, Leap, Charge, Dogs — P[ ] B[ ] G[ ]
+- [ ] flesh: Claw, Leap — P[ ] B[ ] G[ ]
+- [ ] poltergeist: Burst, Anomaly, Throw — P[ ] B[ ] G[ ]
+- [ ] pseudodog: Run, Bite, Retreat, Phantoms — P[ ] B[ ] G[ ]
+- [ ] pseudogiant: Stomp, Run, Charge, Wave, Throw — P[ ] B[ ] G[ ]
+- [ ] snork: Claw, Kick, Leap, Jump In, Fly-by — P[ ] B[ ] G[ ]
+- [ ] tushkan: Claw, Leap — P[ ] B[ ] G[ ]
+- [ ] Master na vanilli + promena samo Tushkan CLAW: ostale porodice ostaju vanilla Master (B: lista = igrina lista + jedna izmena): B[ ] G[ ]
+- [ ] Knockdown granica: Pseudogiant WAVE ne ide preko crtice na SPECIAL MOVES 1×; posle 2× ide do 2×: I[ ] B[ ]
+
+**Preseti:** svih 12 učitati, sačuvati, ponovo učitati bez razlike; stara netaknuta stock kopija se sama nadogradi: P[ ]
+
+
+> **Counts here are a dated snapshot.** The live census is `tools/catalog_census.py` (2026-11-18: 452 catalog IDs, 214 visible, 238 hidden, 2,831 direct edit points).
 
 ## CURRENT 2026-10-16 — 8 new medical stash source controls
 
