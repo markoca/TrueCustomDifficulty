@@ -123,6 +123,8 @@ for p in CATALOG:
     elif r and len(re.findall(r"[.!?](?:\s|$)", r[:r.find("Vanilla")])) != 1:
         hits.append((p["id"], "rationale", "'Vanilla:' must follow the first sentence"))
     logic = p.get("logic") or ""
+    if not logic.strip():
+        hits.append((p["id"], "logic", "HIGHER / LOWER is empty; say what higher / lower does"))
     if logic and not re.match(LOGIC_OPENERS, logic):
         hits.append((p["id"], "logic", "HIGHER / LOWER must open with a direction (Higher = / Lower = / a value / OFF / ON)"))
     inter = p.get("interaction") or ""

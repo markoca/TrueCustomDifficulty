@@ -251,8 +251,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How many bullets a human enemy can soak up before going down. Vanilla: Novice 1×, Stalker 1.2×, Veteran 1×, Master 1.5×. Higher = longer, more ammo-hungry firefights; lower = enemies drop fast.",
-      "logic": "",
+      "rationale": "How many bullets a human enemy can soak up before going down. Vanilla: Novice 1×, Stalker 1.2×, Veteran 1×, Master 1.5×.",
+      "logic": "Higher = longer, more ammo-hungry firefights; lower = enemies drop fast.",
       "interaction": "WEAPON DAMAGE affects the same time-to-kill from the opposite side. Raising enemy health while lowering your weapon damage compounds the effect."
     },
     {
@@ -296,8 +296,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much it hurts when a human enemy shoots you. Vanilla: Novice 0.17×, Stalker 0.85×, Veteran 1.02×, Master 1.35×. Low values let you tank a burst; high values make every exposed second dangerous.",
-      "logic": "",
+      "rationale": "How much it hurts when a human enemy shoots you. Vanilla: Novice 0.17×, Stalker 0.85×, Veteran 1.02×, Master 1.35×.",
+      "logic": "Higher = every exposed second is dangerous; lower = you can tank a burst.",
       "interaction": "HUMAN ENEMY HP sets how long enemies survive; this sets how dangerous their shots are. PEAK / MIN HIT PROTECTION also soften sustained fire."
     },
     {
@@ -341,8 +341,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How deadly grenades and other blasts are — both yours and the enemy's. Vanilla: Novice 0.25×, Stalker–Veteran 1×, Master 1.2×. Raise it if you want grenades to feel lethal, lower it to survive the odd F1 at your feet.",
-      "logic": "",
+      "rationale": "How deadly grenades and other blasts are — both yours and the enemy's. Vanilla: Novice 0.25×, Stalker–Veteran 1×, Master 1.2×.",
+      "logic": "Higher = grenades feel lethal; lower = you survive the odd F1 at your feet.",
       "interaction": "Only the difficulty boost. Each explosive keeps its own base damage."
     },
     {
@@ -957,8 +957,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "The damage your own guns deal on a normal body hit. Vanilla: Novice 1.3×, Stalker 1×, Veteran–Master 0.75×. Lower values mean more bullets per kill and more ammo burned.",
-      "logic": "",
+      "rationale": "The damage your own guns deal on a normal body hit. Vanilla: Novice 1.3×, Stalker 1×, Veteran–Master 0.75×.",
+      "logic": "Higher = fewer bullets per kill; lower = more bullets and more ammo burned.",
       "interaction": "HEADSHOT DAMAGE multiplies headshots on top. HUMAN ENEMY HP also changes the time-to-kill."
     },
     {
@@ -1045,8 +1045,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How often worn guns jam on you. Vanilla: Novice–Veteran 1×, Master 1.5×. Higher = keeping your gun repaired matters much more; 0.5× halves jams. A gun in good condition still rarely jams.",
-      "logic": "",
+      "rationale": "How often worn guns jam on you. Vanilla: Novice–Veteran 1×, Master 1.5×. A gun in good condition still rarely jams.",
+      "logic": "Higher = worn guns jam more, so repairs matter more; 0.5× halves jams.",
       "interaction": "Stacks with weapon condition and each gun's own jam behavior."
     },
     {
@@ -1091,7 +1091,7 @@
         "notes": []
       },
       "rationale": "How hard mutants hit when they reach you — bites, claws and charges. Vanilla: Novice 0.35×, Stalker 1×, Veteran 1.35×, Master 1.5×.",
-      "logic": "",
+      "logic": "Higher = every bite and charge hurts more; lower = mutants hit softer.",
       "interaction": "Only damage mutants deal to you. MUTANT HEALTH sets how much they can take."
     },
     {
@@ -1283,8 +1283,8 @@
           "Variants with their own MaxHP follow the same multiplier: AshyBloodsucker, PrologueBloodsucker. Collar variants inherit from the base prototype; illusion clones (Bayun clone, Pseudodog phantoms) are not scaled."
         ]
       },
-      "rationale": "How tough Bloodsuckers are — the invisible stalkers of the Zone. Vanilla: 1× (500 HP). Includes the Mist, Ashy and prologue variants. Higher values mean longer, scarier close-range fights.",
-      "logic": "",
+      "rationale": "How tough Bloodsuckers are — the invisible stalkers of the Zone. Vanilla: 1× (500 HP). Includes the Mist, Ashy and prologue variants.",
+      "logic": "Higher = more bullets to put it down; lower = it drops faster.",
       "interaction": "Only Bloodsucker health. Other combat settings are separate.",
       "exposeInUi": true
     },
@@ -1331,7 +1331,7 @@
         ]
       },
       "rationale": "How tough the Chimera is — the two-headed leaping apex predator. Vanilla: 1× (1400 HP), the second toughest mutant in the game. Lowering it makes a Chimera encounter survivable with mid-game gear.",
-      "logic": "",
+      "logic": "Higher = more bullets to put it down; lower = it drops faster.",
       "interaction": "Only Chimera health. Other combat settings are separate.",
       "exposeInUi": false
     },
@@ -1378,7 +1378,7 @@
         ]
       },
       "rationale": "How tough the Deer mutant is. Vanilla: 1× (600 HP) — tougher than a Bloodsucker.",
-      "logic": "",
+      "logic": "Higher = more bullets to put it down; lower = it drops faster.",
       "interaction": "Only Deer health. Other combat settings are separate.",
       "exposeInUi": false
     },
@@ -1425,7 +1425,7 @@
         ]
       },
       "rationale": "How tough the Pseudogiant is — the stomping tank of the Zone. Vanilla: 1× (2500 HP), by far the highest of any mutant. At 2× you'll want an entire backpack of ammo; at 0.5× a good rifle can drop it in one magazine or two.",
-      "logic": "",
+      "logic": "Higher = more bullets to put it down; lower = it drops faster.",
       "interaction": "Only Pseudogiant health. Other combat settings are separate.",
       "exposeInUi": false
     },
@@ -1472,7 +1472,7 @@
         ]
       },
       "rationale": "How tough Pseudodogs are — big, fast dogs that hit harder than Blind Dogs. Vanilla: 1× (300 HP).",
-      "logic": "",
+      "logic": "Higher = more bullets to put it down; lower = it drops faster.",
       "interaction": "Only Pseudodog health. Other combat settings are separate.",
       "exposeInUi": false
     },
@@ -1526,7 +1526,7 @@
         ]
       },
       "rationale": "How tough the Burer is — the telekinetic that rips weapons from your hands. Vanilla: 1× (400 HP).",
-      "logic": "",
+      "logic": "Higher = more bullets to put it down; lower = it drops faster.",
       "interaction": "Only Burer health. Other combat settings are separate.",
       "exposeInUi": false
     },
@@ -1573,7 +1573,7 @@
         ]
       },
       "rationale": "How tough the Bayun is. Vanilla: 1× (400 HP), the same as a Burer.",
-      "logic": "",
+      "logic": "Higher = more bullets to put it down; lower = it drops faster.",
       "interaction": "Only Bayun health. Other combat settings are separate.",
       "exposeInUi": false
     },
@@ -1627,7 +1627,8 @@
       },
       "exposeInUi": false,
       "rationale": "How tough Blind Dogs are — the pack hunters you meet from the first hour. Vanilla: 1× (63 HP), so even a pistol handles them. Includes the Moldy variant. Raising it makes early packs a real threat.",
-      "interaction": "Only Blind Dog health. Other combat settings are separate."
+      "interaction": "Only Blind Dog health. Other combat settings are separate.",
+      "logic": "Higher = more bullets to put it down; lower = it drops faster."
     },
     {
       "id": "combat.mutantHealth.boar",
@@ -1686,7 +1687,8 @@
       },
       "exposeInUi": false,
       "rationale": "How tough Boars are — charging bullet sponges. Vanilla: 1× (300 HP). Includes the Helmed and Porcupine variants.",
-      "interaction": "Only Boar health. Other combat settings are separate."
+      "interaction": "Only Boar health. Other combat settings are separate.",
+      "logic": "Higher = more bullets to put it down; lower = it drops faster."
     },
     {
       "id": "combat.mutantHealth.flesh",
@@ -1738,7 +1740,8 @@
       },
       "exposeInUi": false,
       "rationale": "How tough Flesh are — the clumsy mutated pigs. Vanilla: 1× (280 HP). Includes the Boggy variant.",
-      "interaction": "Only Flesh health. Other combat settings are separate."
+      "interaction": "Only Flesh health. Other combat settings are separate.",
+      "logic": "Higher = more bullets to put it down; lower = it drops faster."
     },
     {
       "id": "combat.mutantHealth.poltergeist",
@@ -1818,7 +1821,8 @@
       },
       "exposeInUi": false,
       "rationale": "How tough Poltergeists are — invisible spirits that throw objects at you. Vanilla: 1× (400 HP). Includes the electro, toxic, fire and explosive variants.",
-      "interaction": "Only Poltergeist health. Other combat settings are separate."
+      "interaction": "Only Poltergeist health. Other combat settings are separate.",
+      "logic": "Higher = more bullets to put it down; lower = it drops faster."
     },
     {
       "id": "combat.mutantHealth.snork",
@@ -1862,7 +1866,8 @@
       },
       "exposeInUi": false,
       "rationale": "How tough Snorks are — the leaping gas-mask mutants. Vanilla: 1× (150 HP).",
-      "interaction": "Only Snork health. Other combat settings are separate."
+      "interaction": "Only Snork health. Other combat settings are separate.",
+      "logic": "Higher = more bullets to put it down; lower = it drops faster."
     },
     {
       "id": "combat.mutantHealth.tushkan",
@@ -1906,7 +1911,8 @@
       },
       "exposeInUi": false,
       "rationale": "How tough Tushkans are — the small, fast rat-like swarmers. Vanilla: 1× (19 HP), one hit usually does it.",
-      "interaction": "Only Tushkan health. Other combat settings are separate."
+      "interaction": "Only Tushkan health. Other combat settings are separate.",
+      "logic": "Higher = more bullets to put it down; lower = it drops faster."
     },
     {
       "id": "combat.mutantHealth.controller",
@@ -1951,7 +1957,7 @@
         ]
       },
       "rationale": "How tough the Controller is — the psychic that scrambles your mind from a distance. Vanilla: 1× (500 HP).",
-      "logic": "",
+      "logic": "Higher = more bullets to put it down; lower = it drops faster.",
       "interaction": "Only Controller health. Other combat settings are separate.",
       "exposeInUi": false
     },
@@ -3422,8 +3428,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How fast your stomach empties while you roam. Vanilla: 0.015 pts/s. Higher = you need to eat more often and carry more food; lower = food lasts much longer.",
-      "logic": "",
+      "rationale": "How fast your stomach empties while you roam. Vanilla: 0.015 pts/s.",
+      "logic": "Higher = you eat more often and carry more food; lower = food lasts much longer.",
       "interaction": "FOOD HUNGER RELIEF sets how much each meal fills you; the hunger thresholds decide when penalties start."
     },
     {
@@ -3795,7 +3801,7 @@
         "notes": []
       },
       "rationale": "How much moderate hunger slows your stamina coming back. Vanilla: −33% recovery. Actions don't cost more — you just catch your breath slower.",
-      "logic": "",
+      "logic": "Higher = stamina comes back slower while hungry; 0 removes the penalty.",
       "interaction": "Only stamina regen. Sprint, jump and melee costs are separate."
     },
     {
@@ -3835,8 +3841,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much severe hunger slows your stamina coming back. Vanilla: −70% recovery, so a starving stalker barely recovers between sprints. Master starvation can add more on top.",
-      "logic": "",
+      "rationale": "How much severe hunger slows your stamina coming back. Vanilla: −70% recovery, so a starving stalker barely recovers between sprints.",
+      "logic": "Higher = stamina comes back slower while starving; 0 removes the penalty.",
       "interaction": "STARVATION MECHANICS can add more stamina drain on top of this severe-hunger penalty."
     },
     {
@@ -3877,8 +3883,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How fast you get tired while awake. Vanilla: 0.01 pts/s. Higher = fatigue penalties (slower aim and reloads) and the need to sleep arrive sooner.",
-      "logic": "",
+      "rationale": "How fast you get tired while awake. Vanilla: 0.01 pts/s.",
+      "logic": "Higher = fatigue penalties and the need to sleep come sooner; lower = you stay fresh longer.",
       "interaction": "Fatigue stages still start at the vanilla points. Energy drinks clear fatigue separately."
     },
     {
@@ -5302,7 +5308,7 @@
         "notes": []
       },
       "rationale": "The shortest sleep you can pick. Vanilla: 7 hours. It doesn't change how much sleep heals you.",
-      "logic": "",
+      "logic": "Higher = longer forced sleeps; lower = quick naps are allowed.",
       "interaction": "Only the time needed. SLEEP HP RESTORE and SLEEP STAMINA RESTORE set what sleep gives."
     },
     {
@@ -5345,8 +5351,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How fast radiation builds up while you stand in contaminated areas. Vanilla: Novice 0.6×, Stalker 1×, Veteran 1.5×, Master 1.85×. Higher = hotspots become deadly quickly.",
-      "logic": "",
+      "rationale": "How fast radiation builds up while you stand in contaminated areas. Vanilla: Novice 0.6×, Stalker 1×, Veteran 1.5×, Master 1.85×.",
+      "logic": "Higher = hotspots turn deadly fast; lower = you can linger longer.",
       "interaction": "RADIATION RECOVERY controls passive reduction separately. RADIATION STAMINA PENALTY can add a stamina cost at high radiation."
     },
     {
@@ -5389,7 +5395,7 @@
         "notes": []
       },
       "rationale": "How fast radiation drains away on its own without anti-rad or vodka. Vanilla: 0.05 pts/s — slow, so meds still matter.",
-      "logic": "",
+      "logic": "Higher = radiation fades faster on its own; lower = you lean on anti-rads more.",
       "interaction": "Only how fast radiation fades. RADIATION ACCUMULATION sets how fast it builds."
     },
     {
@@ -5589,8 +5595,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How fast bleeding stops on its own without bandages. Vanilla: 0.3 pts/s. Raise it to shrug off scratches; lower it to make every wound need treatment.",
-      "logic": "",
+      "rationale": "How fast bleeding stops on its own without bandages. Vanilla: 0.3 pts/s.",
+      "logic": "Higher = scratches stop bleeding on their own; lower = every wound needs treatment.",
       "interaction": "Only passive recovery. Bandages and medkits stop bleeding separately."
     },
     {
@@ -5641,8 +5647,8 @@
           "Direct MaxHP field is confirmed; broader assumptions about the 100-point HP scale require runtime validation."
         ]
       },
-      "rationale": "Your total health pool. Vanilla: 100 HP. More HP lets you survive more hits; healing items still restore the same flat amount, so each medkit covers a smaller share of a bigger pool.",
-      "logic": "",
+      "rationale": "Your total health pool. Vanilla: 100 HP. Healing items still restore the same flat HP.",
+      "logic": "Higher = you survive more hits, but each medkit fills less of the bar.",
       "interaction": "The low-health warning still starts at the vanilla point. Very high values may act oddly in game."
     },
     {
@@ -5817,8 +5823,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "The small comeback heal the game gives you when you're almost dead. Vanilla: 1 HP/s. 0 removes it, so near-death means near-death; LOW HEALTH MECHANICS can cut it further.",
-      "logic": "",
+      "rationale": "The small comeback heal the game gives you when you're almost dead. Vanilla: 1 HP/s.",
+      "logic": "Higher = a stronger comeback when nearly dead; 0 = near-death means near-death.",
       "interaction": "HEALTH REGEN STRENGTH scales it, and LOW HEALTH MECHANICS can cut it further."
     },
     {
@@ -5938,7 +5944,7 @@
         "notes": []
       },
       "rationale": "How much health one bandage gives back. Vanilla: 20 HP — a patch-up, not a full heal. Its bleed-stopping power is a separate setting.",
-      "logic": "",
+      "logic": "Higher = each bandage heals more HP; lower = it heals less.",
       "interaction": "Bleed stop is separate. With HEALING ITEM EFFICIENCY REDUCTION ON, MASTER BANDAGE HEALING further changes the final heal.",
       "exposeInUi": true
     },
@@ -6174,7 +6180,7 @@
         "notes": []
       },
       "rationale": "How much health a regular medkit gives back. Vanilla: 70 HP — most of a vanilla health bar.",
-      "logic": "",
+      "logic": "Higher = each medkit heals more HP; lower = it heals less.",
       "interaction": "Bleeding treatment is separate. With HEALING ITEM EFFICIENCY REDUCTION ON, MASTER MEDKIT HEALING further changes the final heal.",
       "exposeInUi": false
     },
@@ -6218,7 +6224,7 @@
         "notes": []
       },
       "rationale": "How much health an army medkit gives back. Vanilla: 85 HP.",
-      "logic": "",
+      "logic": "Higher = each army medkit heals more HP; lower = it heals less.",
       "interaction": "Bleeding treatment is separate. With HEALING ITEM EFFICIENCY REDUCTION ON, MASTER ARMY MEDKIT HEALING further changes the final heal.",
       "exposeInUi": false
     },
@@ -6262,7 +6268,7 @@
         "notes": []
       },
       "rationale": "How much health a scientific medkit gives back. Vanilla: 100 HP — a full vanilla bar in one go.",
-      "logic": "",
+      "logic": "Higher = each scientific medkit heals more HP; lower = it heals less.",
       "interaction": "Its bleed and radiation treatment are separate. Master's healing cut never applies to Scientific Medkits.",
       "exposeInUi": false
     },
@@ -6356,7 +6362,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much of a bandage's heal you keep under Master's weaker meds. Vanilla: 25% — about 5 HP from a 20 HP bandage. Only works while HEALING ITEM EFFICIENCY REDUCTION is ON.",
+      "rationale": "How much of a bandage's heal you keep. Vanilla: 25% — about 5 HP from a 20 HP bandage. Only works while HEALING ITEM EFFICIENCY REDUCTION is ON.",
       "logic": "100% = no Master healing cut; lower = the bandage heals less.",
       "interaction": "Multiplies with the base heal, so changing both stacks.",
       "requiresToggle": "advanced.masterEffectModifierMechanics"
@@ -6398,7 +6404,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much of a medkit's heal you keep under Master's weaker meds. Vanilla: 71% — about 50 HP from a 70 HP medkit. Only works while HEALING ITEM EFFICIENCY REDUCTION is ON.",
+      "rationale": "How much of a medkit's heal you keep. Vanilla: 71% — about 50 HP from a 70 HP medkit. Only works while HEALING ITEM EFFICIENCY REDUCTION is ON.",
       "logic": "100% = no Master healing cut; lower = the medkit heals less.",
       "interaction": "Multiplies with the base heal, so changing both stacks.",
       "requiresToggle": "advanced.masterEffectModifierMechanics"
@@ -6440,7 +6446,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much of an army medkit's heal you keep under Master's weaker meds. Vanilla: 82% — about 70 HP from an 85 HP army medkit. Only works while HEALING ITEM EFFICIENCY REDUCTION is ON.",
+      "rationale": "How much of an army medkit's heal you keep. Vanilla: 82% — about 70 HP from an 85 HP army medkit. Only works while HEALING ITEM EFFICIENCY REDUCTION is ON.",
       "logic": "100% = no Master healing cut; lower = the army medkit heals less.",
       "interaction": "Multiplies with the base heal, so changing both stacks.",
       "requiresToggle": "advanced.masterEffectModifierMechanics"
@@ -6484,8 +6490,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much bleeding one bandage stops. Vanilla: 100 bleed pts — it fully stops any bleed. Lower it and a bad wound needs more than one bandage.",
-      "logic": "",
+      "rationale": "How much bleeding one bandage stops. Vanilla: 100 bleed pts — it fully stops any bleed.",
+      "logic": "Higher = each bandage stops more bleeding; lower = a bad wound needs more of them.",
       "interaction": "Only this item. NATURAL BLEEDING RECOVERY and bleed damage are separate."
     },
     {
@@ -6528,7 +6534,7 @@
         "notes": []
       },
       "rationale": "How much bleeding a regular medkit stops. Vanilla: 15 bleed pts — barely a dent, so you still want a bandage for a real bleed.",
-      "logic": "",
+      "logic": "Higher = each medkit stops more bleeding; lower = a bad wound needs more of them.",
       "interaction": "Only this item. NATURAL BLEEDING RECOVERY and bleed damage are separate."
     },
     {
@@ -6571,7 +6577,7 @@
         "notes": []
       },
       "rationale": "How much bleeding an army medkit stops. Vanilla: 35 bleed pts.",
-      "logic": "",
+      "logic": "Higher = each army medkit stops more bleeding; lower = a bad wound needs more of them.",
       "interaction": "Only this item. NATURAL BLEEDING RECOVERY and bleed damage are separate."
     },
     {
@@ -6614,7 +6620,7 @@
         "notes": []
       },
       "rationale": "How much bleeding a scientific medkit stops. Vanilla: 25 bleed pts.",
-      "logic": "",
+      "logic": "Higher = each scientific medkit stops more bleeding; lower = a bad wound needs more of them.",
       "interaction": "Only this item. NATURAL BLEEDING RECOVERY and bleed damage are separate."
     },
     {
@@ -6657,7 +6663,7 @@
         "notes": []
       },
       "rationale": "How much radiation a scientific medkit clears on top of healing. Vanilla: 60 rad pts — handy after a trip through a hot zone.",
-      "logic": "",
+      "logic": "Higher = it clears more radiation; lower = heavy doses need more.",
       "interaction": "Only this item. RADIATION ACCUMULATION and natural radiation recovery are separate."
     },
     {
@@ -6699,8 +6705,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much radiation one anti-rad clears. Vanilla: 100 rad pts — a full cleanse. Lower it and heavy doses need more than one shot.",
-      "logic": "",
+      "rationale": "How much radiation one anti-rad clears. Vanilla: 100 rad pts — a full cleanse.",
+      "logic": "Higher = each shot clears more radiation; lower = heavy doses need more than one.",
       "interaction": "Only this item. RADIATION ACCUMULATION and natural radiation recovery are separate."
     },
     {
@@ -6709,8 +6715,8 @@
       "group": "Core Stamina",
       "label": "Max Stamina",
       "description": "Vanilla maximum stamina is 100. This changes the size of your stamina pool, not how fast it recovers or how much actions cost.",
-      "rationale": "The size of your stamina bar. Vanilla: 100. A bigger bar lets you sprint, jump and swing longer before you're winded; recovery speed and action costs don't change.",
-      "logic": "",
+      "rationale": "The size of your stamina bar. Vanilla: 100. Recovery speed and action costs don't change.",
+      "logic": "Higher = you sprint, jump and swing longer before you're winded.",
       "interaction": "Action costs stay fixed, so a bigger MAX STAMINA fits more actions into one bar.",
       "control": "slider",
       "valueKind": "raw",
@@ -7304,8 +7310,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How fast your stamina refills when you ease off. Vanilla: 5 stamina/s. Higher = shorter breathers between sprints.",
-      "logic": "",
+      "rationale": "How fast your stamina refills when you ease off. Vanilla: 5 stamina/s.",
+      "logic": "Higher = shorter breathers between sprints; lower = longer ones.",
       "interaction": "Movement, hunger and fatigue can still slow it down."
     },
     {
@@ -7347,8 +7353,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much stamina sprinting burns. Vanilla: 5.25. Lower it to run further; raise it to make every dash count. Jump, vault and melee costs have their own bars.",
-      "logic": "",
+      "rationale": "How much stamina sprinting burns. Vanilla: 5.25. Jump, vault and melee costs have their own bars.",
+      "logic": "Higher = every dash counts; lower = you run further.",
       "interaction": "Only sprinting. Stamina regen is separate.",
       "exposeInUi": true
     },
@@ -7392,7 +7398,7 @@
         "notes": []
       },
       "rationale": "Stamina spent on every jump. Vanilla: 16 — about six jumps empty a full bar.",
-      "logic": "",
+      "logic": "Higher = fewer jumps per bar; lower = more.",
       "interaction": "Only the cost per jump. Stamina regen is separate.",
       "exposeInUi": false
     },
@@ -7436,7 +7442,7 @@
         "notes": []
       },
       "rationale": "Stamina spent on every vault over an obstacle. Vanilla: 12.",
-      "logic": "",
+      "logic": "Higher = fewer vaults per bar; lower = more.",
       "interaction": "Only vaulting. Jump cost is separate.",
       "exposeInUi": false
     },
@@ -7480,7 +7486,7 @@
         "notes": []
       },
       "rationale": "Stamina spent on each quick knife swing. Vanilla: 16.",
-      "logic": "",
+      "logic": "Higher = fewer quick swings per bar; lower = more.",
       "interaction": "Only normal melee. Strong melee and buttstock hits have their own costs.",
       "exposeInUi": false
     },
@@ -7524,7 +7530,7 @@
         "notes": []
       },
       "rationale": "Stamina spent on each heavy knife swing. Vanilla: 25 — four in a row and you're out of breath.",
-      "logic": "",
+      "logic": "Higher = fewer heavy swings per bar; lower = more.",
       "interaction": "Only the stamina cost. Melee damage is unchanged.",
       "exposeInUi": false
     },
@@ -7568,7 +7574,7 @@
         "notes": []
       },
       "rationale": "Stamina spent on each rifle-butt strike. Vanilla: 12.",
-      "logic": "",
+      "logic": "Higher = fewer rifle-butt strikes per bar; lower = more.",
       "interaction": "Only buttstock hits. Normal and strong melee have their own costs.",
       "exposeInUi": false
     },
@@ -7745,8 +7751,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much you can carry before you get slowed down. Vanilla: 80 kg. Raise it to haul more loot; lower it for a tighter backpack.",
-      "logic": "",
+      "rationale": "How much you can carry before you get slowed down. Vanilla: 80 kg.",
+      "logic": "Higher = you haul more loot; lower = a tighter backpack.",
       "interaction": "Overload starts before this limit, and gear carry bonuses add on top."
     },
     {
@@ -8173,7 +8179,7 @@
           "Quest, unique, DLC1 regular and Cabin/direct rows are outside this rule."
         ]
       },
-      "rationale": "How much of the vanilla odds for meds you keep in Basic stashes (the Basic MEDS cell). Vanilla: 100%. Food and drinks keep their own odds.",
+      "rationale": "How much of the vanilla odds for meds you keep in Basic stashes. Vanilla: 100%. Food and drinks keep their own odds.",
       "logic": "100% keeps vanilla meds odds; 50% halves them; 0% removes meds from Basic stashes. Other items are not affected.",
       "interaction": "Standard and Rare stashes have their own cells in ADJUST ODDS. MEDICAL COMPOSITION multiplies per item on top of this. Smart loot has its own SMART LOOT GIVES checkboxes (STASH SMART LOOT).",
       "exposeInUi": true
@@ -8227,7 +8233,7 @@
           "Quest, unique, DLC1 regular and Cabin/direct rows are outside this rule."
         ]
       },
-      "rationale": "How much of the vanilla odds for food you keep in Basic stashes (the Basic FOOD cell). Vanilla: 100%. Meds and drinks keep their own odds.",
+      "rationale": "How much of the vanilla odds for food you keep in Basic stashes. Vanilla: 100%. Meds and drinks keep their own odds.",
       "logic": "100% keeps vanilla food odds; 50% halves them; 0% removes food from Basic stashes. Other items are not affected.",
       "interaction": "Standard and Rare stashes have their own cells in ADJUST ODDS. Stack sizes stay separate. Smart loot has its own SMART LOOT GIVES checkboxes (STASH SMART LOOT).",
       "exposeInUi": true
@@ -8281,7 +8287,7 @@
           "Quest, unique, DLC1 regular and Cabin/direct rows are outside this rule."
         ]
       },
-      "rationale": "How much of the vanilla odds for drinks — water, energy drinks, milk and vodka — you keep in Basic stashes (the Basic DRINKS cell). Vanilla: 100%. Other items keep their own odds.",
+      "rationale": "How much of the vanilla odds for drinks — water, energy drinks, milk and vodka — you keep in Basic stashes. Vanilla: 100%. Other items keep their own odds.",
       "logic": "100% keeps vanilla drinks odds; 50% halves them; 0% removes drinks from Basic stashes. Other items are not affected.",
       "interaction": "Standard and Rare stashes have their own cells in ADJUST ODDS. Stack sizes stay separate. Smart loot has its own SMART LOOT GIVES checkboxes (STASH SMART LOOT).",
       "exposeInUi": true
@@ -8483,7 +8489,7 @@
           "Native chance rows can differ by tier/difficulty; this is a percentage-of-native control, not a single absolute drop chance."
         ]
       },
-      "rationale": "How much of the vanilla odds for bandages you keep in stashes (the BANDAGES cell in MEDICAL COMPOSITION). Vanilla: 100%. Other items keep their own odds.",
+      "rationale": "How much of the vanilla odds for bandages you keep in stashes. Vanilla: 100%. Other items keep their own odds.",
       "logic": "100% keeps vanilla Bandage odds; 50% halves them; 0% = never from these stashes.",
       "interaction": "Multiplies with the tier's MEDS cell in STASH LOOT MIX. Stack size (QUANTITY) stays separate.",
       "exposeInUi": true
@@ -8577,7 +8583,7 @@
           "Native chance rows can differ by tier/difficulty; this is a percentage-of-native control, not a single absolute drop chance."
         ]
       },
-      "rationale": "How much of the vanilla odds for medkits you keep in stashes (the MEDKITS cell in MEDICAL COMPOSITION). Vanilla: 100%. Other items keep their own odds.",
+      "rationale": "How much of the vanilla odds for medkits you keep in stashes. Vanilla: 100%. Other items keep their own odds.",
       "logic": "100% keeps vanilla Medkit odds; 50% halves them; 0% = never from these stashes.",
       "interaction": "Multiplies with the tier's MEDS cell in STASH LOOT MIX. Stack size (QUANTITY) stays separate.",
       "exposeInUi": true
@@ -8671,7 +8677,7 @@
           "Native chance rows can differ by tier/difficulty; this is a percentage-of-native control, not a single absolute drop chance."
         ]
       },
-      "rationale": "How much of the vanilla odds for army medkits you keep in stashes (the ARMY MEDKITS cell in MEDICAL COMPOSITION). Vanilla: 100%. Other items keep their own odds.",
+      "rationale": "How much of the vanilla odds for army medkits you keep in stashes. Vanilla: 100%. Other items keep their own odds.",
       "logic": "100% keeps vanilla Army Medkit odds; 50% halves them; 0% = never from these stashes.",
       "interaction": "Multiplies with the tier's MEDS cell in STASH LOOT MIX. Stack size (QUANTITY) stays separate.",
       "exposeInUi": true
@@ -8765,7 +8771,7 @@
           "Native chance rows can differ by tier/difficulty; this is a percentage-of-native control, not a single absolute drop chance."
         ]
       },
-      "rationale": "How much of the vanilla odds for anti-rads you keep in stashes (the ANTI-RAD cell in MEDICAL COMPOSITION). Vanilla: 100%. Other items keep their own odds.",
+      "rationale": "How much of the vanilla odds for anti-rads you keep in stashes. Vanilla: 100%. Other items keep their own odds.",
       "logic": "100% keeps vanilla Anti-Rad odds; 50% halves them; 0% = never from these stashes.",
       "interaction": "Multiplies with the tier's MEDS cell in STASH LOOT MIX. Stack size (QUANTITY) stays separate.",
       "exposeInUi": true
@@ -10981,7 +10987,7 @@
         ]
       },
       "rationale": "Coupons in your pocket when you start a new game. Vanilla: 0. Only affects new games, not existing saves.",
-      "logic": "",
+      "logic": "Higher = a richer start; 0 = you start broke.",
       "interaction": "Only a new game. Existing saves keep their coupons."
     },
     {
@@ -11292,8 +11298,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Base price of food, meds and other consumables. Vanilla: 1×. Affects both what you pay and what you get.",
-      "logic": "",
+      "rationale": "Base price of food, meds and other consumables. Vanilla: 1×.",
+      "logic": "Higher = consumables cost more to buy and sell for more.",
       "interaction": "PRICES TRADERS PAY and PRICES YOU PAY still apply on top.",
       "exposeInUi": true
     },
@@ -11706,7 +11712,7 @@
         "notes": []
       },
       "rationale": "Price of weapon and armor upgrades. Vanilla: Novice–Stalker 1×, Veteran 1.25×, Master 1.5×. Which upgrades exist doesn't change.",
-      "logic": "",
+      "logic": "Higher = upgrades cost more; lower = cheaper.",
       "interaction": "Each upgrade keeps its own base price, so relative costs stay the same."
     },
     {
@@ -11792,7 +11798,7 @@
         "notes": []
       },
       "rationale": "Base price of repairs at a technician. Vanilla: 0.7×. Your standing with the technician's faction still raises or lowers the final bill.",
-      "logic": "",
+      "logic": "Higher = repairs cost more; lower = cheaper.",
       "interaction": "Reputation still raises or lowers the final repair bill."
     },
     {
@@ -12000,7 +12006,7 @@
         "notes": []
       },
       "rationale": "Coupons you get for main story quests. Vanilla: Novice 1.35×, Stalker 1×, Veteran 0.75×, Master 0.55×.",
-      "logic": "",
+      "logic": "Higher = more coupons per story quest; lower = fewer.",
       "interaction": "SIDE QUEST COUPONS are adjusted independently. This does not change stash rewards or starting money."
     },
     {
@@ -12044,7 +12050,7 @@
         "notes": []
       },
       "rationale": "Coupons you get for side quests. Vanilla: Novice 1.35×, Stalker 1×, Veteran 0.75×, Master 0.55×.",
-      "logic": "",
+      "logic": "Higher = more coupons per side quest; lower = fewer.",
       "interaction": "MAIN QUEST COUPONS are adjusted independently. This does not change stash rewards or starting money."
     },
     {
@@ -12087,8 +12093,8 @@
         "status": "runtime_test_required",
         "notes": []
       },
-      "rationale": "How long your armor holds up before it's falling apart. Vanilla: Novice 1.35×, Stalker 1×, Veteran 0.9×, Master 0.6×. Higher = fewer repair trips; protection itself doesn't change.",
-      "logic": "",
+      "rationale": "How long your armor holds up before it's falling apart. Vanilla: Novice 1.35×, Stalker 1×, Veteran 0.9×, Master 0.6×. Protection itself doesn't change.",
+      "logic": "Higher = fewer repair trips; lower = armor falls apart faster.",
       "interaction": "Only how fast armor wears. Protection, weapon wear and jamming are separate."
     },
     {
@@ -12131,8 +12137,8 @@
           "Inherited ammo weights are resolved to their effective vanilla values and patched on the concrete child prototype so every ammo type follows the same multiplier."
         ]
       },
-      "rationale": "How heavy ammo is in your backpack. Vanilla: 1×. 0× = weightless; 2× = double. Heavy calibers stay heavier than light ones.",
-      "logic": "",
+      "rationale": "How heavy ammo is in your backpack. Vanilla: 1×. Heavy calibers stay heavier than light ones.",
+      "logic": "Higher = heavier ammo; 0× = weightless.",
       "interaction": "Carry capacity and overload stay separate; only the ammo itself gets lighter or heavier."
     },
     {
@@ -12182,8 +12188,8 @@
           "Inherited consumable weights are patched on the concrete prototype so quest/special variants keep the same multiplier instead of depending on parent inheritance."
         ]
       },
-      "rationale": "How heavy food and meds are in your backpack. Vanilla: 1×. 0× = weightless. Their effects don't change.",
-      "logic": "",
+      "rationale": "How heavy food and meds are in your backpack. Vanilla: 1×. Their effects don't change.",
+      "logic": "Higher = heavier food and meds; 0× = weightless.",
       "interaction": "Effect strength and duration don't change. DLC1 dry rations are included when DLC1 is installed."
     },
     {
@@ -12519,7 +12525,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much more stamina actions cost while you're starving under Master rules. Vanilla: +200% — three times the normal cost. Only works while STARVATION MECHANICS is ON.",
+      "rationale": "How much more stamina actions cost while you're starving. Vanilla: +200% — three times the normal cost. Only works while STARVATION MECHANICS is ON.",
       "logic": "100% means +100% extra stamina cost, not normal cost. 0% removes this extra starvation cost.",
       "interaction": "Only the extra cost per action. Severe hunger also slows stamina regen.",
       "requiresToggle": "advanced.starvationMechanics"
@@ -12563,9 +12569,9 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Health lost each time starvation hits under Master rules. Vanilla: 4 HP. Only works while STARVATION MECHANICS is ON.",
+      "rationale": "Health lost each time starvation hits. Vanilla: 4 HP. Only works while STARVATION MECHANICS is ON.",
       "logic": "Higher = each starvation hit takes more HP; 0 = no HP damage (the other penalties stay).",
-      "interaction": "STARVATION DAMAGE INTERVAL controls how often the charge repeats, while STARVATION PENALTY DELAY controls when this effect begins after activation.",
+      "interaction": "Stacks with STARVATION DAMAGE INTERVAL (how often it hits) and STARVATION PENALTY DELAY (when it starts).",
       "requiresToggle": "advanced.starvationMechanics"
     },
     {
@@ -12706,7 +12712,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much starving blocks your healing under Master rules. Vanilla: 100% — no healing at all. Only works while STARVATION MECHANICS is ON.",
+      "rationale": "How much starving blocks your healing. Vanilla: 100% — no healing at all. Only works while STARVATION MECHANICS is ON.",
       "logic": "Higher = health recovers less while starving; 0% removes this penalty.",
       "interaction": "Cuts healing, not direct damage. Stacks with STARVATION DAMAGE and the Health regen settings.",
       "requiresToggle": "advanced.starvationMechanics"
@@ -12997,7 +13003,7 @@
         "notes": []
       },
       "rationale": "How much stamina you wake up with after sleeping. Vanilla: a full bar (+100%).",
-      "logic": "",
+      "logic": "Lower = you wake up with less stamina; 0 = sleep doesn't refill it.",
       "interaction": "Only the refill after sleep. Passive stamina regen and action costs are separate."
     },
     {
@@ -13037,7 +13043,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much of your stamina bar you lose while exhausted under Master rules. Vanilla: 20%. Only works while SEVERE FATIGUE MECHANICS is ON.",
+      "rationale": "How much of your stamina bar you lose while exhausted. Vanilla: 20%. Only works while SEVERE FATIGUE MECHANICS is ON.",
       "logic": "Higher = an even smaller stamina bar while severely tired; 0% removes this penalty.",
       "interaction": "MAX STAMINA sets your normal bar; this loss only applies while you're severely tired.",
       "requiresToggle": "advanced.fatigueMechanics"
@@ -13086,7 +13092,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much carry capacity you lose while exhausted under Master rules. Vanilla: 20%. Only works while SEVERE FATIGUE MECHANICS is ON.",
+      "rationale": "How much carry capacity you lose while exhausted. Vanilla: 20%. Only works while SEVERE FATIGUE MECHANICS is ON.",
       "logic": "Higher = you can carry even less while severely tired; 0% removes this penalty.",
       "interaction": "Your normal carrying limit and equipment carry bonuses remain separate.",
       "requiresToggle": "advanced.fatigueMechanics"
@@ -13128,8 +13134,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much harder your guns kick while exhausted under Master rules. Vanilla: +55% recoil. 0% removes it. Only works while SEVERE FATIGUE MECHANICS is ON.",
-      "logic": "",
+      "rationale": "How much harder your guns kick while exhausted. Vanilla: +55% recoil. Only works while SEVERE FATIGUE MECHANICS is ON.",
+      "logic": "Higher = your guns kick harder; 0% removes it.",
       "interaction": "Stacks with other recoil. Reload and aim-time penalties are separate.",
       "requiresToggle": "advanced.fatigueMechanics"
     },
@@ -13177,8 +13183,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much more your sights wobble while exhausted under Master rules. Vanilla: +40%. 0% removes it. Only works while SEVERE FATIGUE MECHANICS is ON.",
-      "logic": "",
+      "rationale": "How much more your sights wobble while exhausted. Vanilla: +40%. Only works while SEVERE FATIGUE MECHANICS is ON.",
+      "logic": "Higher = your sights wobble more; 0% removes it.",
       "interaction": "Recoil and shot spread are separate penalties of SEVERE FATIGUE MECHANICS.",
       "requiresToggle": "advanced.fatigueMechanics"
     },
@@ -13219,8 +13225,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much wider your shots spread while exhausted under Master rules. Vanilla: +50%. 0% removes it. Only works while SEVERE FATIGUE MECHANICS is ON.",
-      "logic": "",
+      "rationale": "How much wider your shots spread while exhausted. Vanilla: +50%. Only works while SEVERE FATIGUE MECHANICS is ON.",
+      "logic": "Higher = your shots spread wider; 0% removes it.",
       "interaction": "Recoil and aim sway are separate penalties of SEVERE FATIGUE MECHANICS.",
       "requiresToggle": "advanced.fatigueMechanics"
     },
@@ -13261,7 +13267,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much more stamina actions cost while heavily irradiated under Master rules. Vanilla: +50%. Only works while RADIATION STAMINA PENALTY is ON.",
+      "rationale": "How much more stamina actions cost while heavily irradiated. Vanilla: +50%. Only works while RADIATION STAMINA PENALTY is ON.",
       "logic": "50% means +50% extra stamina cost. 0% removes this extra radiation cost.",
       "interaction": "Stacks with the normal action costs. RADIATION ACCUMULATION sets how fast you get there.",
       "requiresToggle": "advanced.radiationMechanics"
@@ -13400,7 +13406,7 @@
         "notes": []
       },
       "rationale": "Health lost per tick from a light bleed. Vanilla: 1 HP.",
-      "logic": "",
+      "logic": "Higher = a light bleed drains HP faster; lower = slower.",
       "interaction": "Applies while you bleed lightly. NATURAL BLEEDING RECOVERY decides how long it lasts."
     },
     {
@@ -13443,7 +13449,7 @@
         "notes": []
       },
       "rationale": "Health lost per tick from a moderate bleed. Vanilla: 1.5 HP.",
-      "logic": "",
+      "logic": "Higher = a moderate bleed drains HP faster; lower = slower.",
       "interaction": "Applies while you bleed moderately. Movement and sleep penalties are separate."
     },
     {
@@ -13486,7 +13492,7 @@
         "notes": []
       },
       "rationale": "Health lost per tick from a severe bleed. Vanilla: 2 HP — that adds up fast without a bandage.",
-      "logic": "",
+      "logic": "Higher = a severe bleed drains HP faster; lower = slower.",
       "interaction": "Applies while you bleed severely. BLEEDING SEVERITY changes how dangerous bleeding is overall."
     },
     {
@@ -14438,7 +14444,7 @@
         ]
       },
       "rationale": "Chance a dead blind dog leaves one part you can sell or use. Vanilla: 15% — most kills give nothing. Doesn't change how many blind dogs spawn.",
-      "logic": "",
+      "logic": "Higher = more parts to sell; 100% = every kill, 0% = never.",
       "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
@@ -14486,7 +14492,7 @@
         ]
       },
       "rationale": "Chance a dead bloodsucker leaves one part you can sell or use. Vanilla: 50%. Doesn't change how many bloodsuckers spawn.",
-      "logic": "",
+      "logic": "Higher = more parts to sell; 100% = every kill, 0% = never.",
       "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
@@ -14534,7 +14540,7 @@
         ]
       },
       "rationale": "Chance a dead boar leaves one part you can sell or use. Vanilla: 20% — most kills give nothing. Doesn't change how many boars spawn.",
-      "logic": "",
+      "logic": "Higher = more parts to sell; 100% = every kill, 0% = never.",
       "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
@@ -14582,7 +14588,7 @@
         ]
       },
       "rationale": "Chance a dead burer leaves one part you can sell or use. Vanilla: 100% — every kill pays out. Doesn't change how many burers spawn.",
-      "logic": "",
+      "logic": "Higher = more parts to sell; 100% = every kill, 0% = never.",
       "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
@@ -14630,7 +14636,7 @@
         ]
       },
       "rationale": "Chance a dead bayun leaves one part you can sell or use. Vanilla: 100% — every kill pays out. Doesn't change how many bayuns spawn.",
-      "logic": "",
+      "logic": "Higher = more parts to sell; 100% = every kill, 0% = never.",
       "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
@@ -14678,7 +14684,7 @@
         ]
       },
       "rationale": "Chance a dead chimera leaves one part you can sell or use. Vanilla: 100% — every kill pays out. Doesn't change how many chimeras spawn.",
-      "logic": "",
+      "logic": "Higher = more parts to sell; 100% = every kill, 0% = never.",
       "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
@@ -14726,7 +14732,7 @@
         ]
       },
       "rationale": "Chance a dead controller leaves one part you can sell or use. Vanilla: 100% — every kill pays out. Doesn't change how many controllers spawn.",
-      "logic": "",
+      "logic": "Higher = more parts to sell; 100% = every kill, 0% = never.",
       "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
@@ -14773,8 +14779,8 @@
           "Runtime CFG explicitly stores Chance = 1 and Count = 1 for DeerLootGenerator."
         ]
       },
-      "rationale": "Chance a dead deer leaves one part you can sell or use. Vanilla: 100% — every kill pays out. Doesn't change how many deers spawn.",
-      "logic": "",
+      "rationale": "Chance a dead deer leaves one part you can sell or use. Vanilla: 100% — every kill pays out. Doesn't change how many deer spawn.",
+      "logic": "Higher = more parts to sell; 100% = every kill, 0% = never.",
       "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
@@ -14821,8 +14827,8 @@
           "Runtime CFG explicitly stores Chance = 0.2 and Count = 1 for FleshLootGenerator."
         ]
       },
-      "rationale": "Chance a dead flesh leaves one part you can sell or use. Vanilla: 20% — most kills give nothing. Doesn't change how many fleshs spawn.",
-      "logic": "",
+      "rationale": "Chance a dead flesh leaves one part you can sell or use. Vanilla: 20% — most kills give nothing. Doesn't change how many flesh spawn.",
+      "logic": "Higher = more parts to sell; 100% = every kill, 0% = never.",
       "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
@@ -14870,7 +14876,7 @@
         ]
       },
       "rationale": "Chance a dead poltergeist leaves one part you can sell or use. Vanilla: 65%. Doesn't change how many poltergeists spawn.",
-      "logic": "",
+      "logic": "Higher = more parts to sell; 100% = every kill, 0% = never.",
       "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
@@ -14918,7 +14924,7 @@
         ]
       },
       "rationale": "Chance a dead pseudodog leaves one part you can sell or use. Vanilla: 100% — every kill pays out. Doesn't change how many pseudodogs spawn.",
-      "logic": "",
+      "logic": "Higher = more parts to sell; 100% = every kill, 0% = never.",
       "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
@@ -14966,7 +14972,7 @@
         ]
       },
       "rationale": "Chance a dead pseudogiant leaves one part you can sell or use. Vanilla: 100% — every kill pays out. Doesn't change how many pseudogiants spawn.",
-      "logic": "",
+      "logic": "Higher = more parts to sell; 100% = every kill, 0% = never.",
       "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
@@ -15014,7 +15020,7 @@
         ]
       },
       "rationale": "Chance a dead tushkan leaves one part you can sell or use. Vanilla: 10% — most kills give nothing. Doesn't change how many tushkans spawn.",
-      "logic": "",
+      "logic": "Higher = more parts to sell; 100% = every kill, 0% = never.",
       "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
@@ -15062,7 +15068,7 @@
         ]
       },
       "rationale": "Chance a dead snork leaves one part you can sell or use. Vanilla: 20% — most kills give nothing. Doesn't change how many snorks spawn.",
-      "logic": "",
+      "logic": "Higher = more parts to sell; 100% = every kill, 0% = never.",
       "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
@@ -15166,8 +15172,8 @@
           "Selection is random without replacement at Build time."
         ]
       },
-      "rationale": "Share of breakable ammo and RGD grenade boxes taken out of the world. Vanilla: 0% — every box stays. 50% = about half of them are gone.",
-      "logic": "",
+      "rationale": "Share of breakable ammo and RGD grenade boxes taken out of the world. Vanilla: 0% — every box stays.",
+      "logic": "Higher = more boxes gone; 0% keeps every box.",
       "interaction": "Only exploration boxes. Quest and story rewards are never removed.",
       "exposeInUi": true
     },

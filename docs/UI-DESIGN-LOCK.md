@@ -1,3 +1,19 @@
+## 2026-11-18 — CURRENT: every control has HIGHER / LOWER
+
+* 80 visible controls had no HIGHER / LOWER section, so the panel skipped it. All of them now have one, in the `Higher = …; lower = …` shape:
+  * combat damages and health, jams, and the 14 mutant health cards (`Higher = more bullets to put it down; lower = it drops faster.`);
+  * hunger, fatigue and radiation rates, natural bleed and radiation recovery, and minimum sleep;
+  * Max HP, comeback heal, healing / bleed / radiation treatment per item;
+  * Max stamina, stamina regen, every action cost and carry weight;
+  * starting money, prices, upgrades, repairs and quest rewards;
+  * armor durability and item weights;
+  * sleep stamina, the three severe-fatigue penalties and the three bleed stages;
+  * the 14 mutant part chances (`Higher = more parts to sell; 100% = every kill, 0% = never.`);
+  * ammo boxes removed.
+* Where WHAT IT DOES carried that sentence (*Raise it to haul more loot…*, *Lower it and a bad wound needs more than one bandage*, *Higher = shorter breathers…*), it moved to HIGHER / LOWER instead of being said twice.
+* WHAT IT DOES drops *under Master rules*, *under Master's weaker meds* and *(the … cell)*, because the master-switch sentence and the board already say that. *deers / fleshs* are now *deer / flesh*. Starvation damage WORKS WITH is now `Stacks with STARVATION DAMAGE INTERVAL (how often it hits) and STARVATION PENALTY DELAY (when it starts).`
+* The style gate requires a non-empty HIGHER / LOWER on every visible control.
+
 ## 2026-11-18 — CURRENT: rationale trim — no value mapping that HIGHER / LOWER already gives
 
 * **Mutant pack size** (14): `How many bloodsuckers show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 0 / 1 / 1 / 1). How often they spawn doesn't change. A vanilla 0 stays 0.` The text no longer says *2× = up to twice …* or *Each species has its own bar*. *deers* is now *deer*.
