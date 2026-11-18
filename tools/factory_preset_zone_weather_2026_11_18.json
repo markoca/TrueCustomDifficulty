@@ -49,7 +49,7 @@
     },
     "Wanderer": {
       "environment.emissionFrequency": 1.15,
-      "environment.emissionWarning": 75
+      "environment.emissionWarning": 60
     }
   }
 }

@@ -903,6 +903,14 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "7a7a00e33fce3d777d77857baa1691b91c934a5b",
     };
 
+    // Pre-range-limit stock Wanderer (75 s warning). Upgrade only an exact,
+    // untouched factory copy; never overwrite a user-customized preset.
+    private static readonly Dictionary<string, string> PreCoverRangeFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Wanderer"] = "d5a1637e0953a24b539b9d408513edbea38f00b1",
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -940,7 +948,8 @@ public sealed class PresetDirectoryService
             && !PreLairPopulationFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreLairRefillFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreLairRespawnTimeFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreZoneWeatherFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreZoneWeatherFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreCoverRangeFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -1024,7 +1033,9 @@ public sealed class PresetDirectoryService
                 || (PreLairRespawnTimeFactoryBlobs.TryGetValue(name, out var preLairRespawnHash)
                     && actual.Equals(preLairRespawnHash, StringComparison.OrdinalIgnoreCase))
                 || (PreZoneWeatherFactoryBlobs.TryGetValue(name, out var preZoneWeatherHash)
-                    && actual.Equals(preZoneWeatherHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preZoneWeatherHash, StringComparison.OrdinalIgnoreCase))
+                || (PreCoverRangeFactoryBlobs.TryGetValue(name, out var preCoverRangeHash)
+                    && actual.Equals(preCoverRangeHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

@@ -1,8 +1,12 @@
+## 2026-11-18 — CURRENT: TIME TO FIND COVER 10–60 s
+
+* The existing compact, frameless TIME TO FIND COVER source dial is bounded to **10–60 SECONDS**, in unchanged 5 s increments; 60 s is the vanilla/reference value. The same source range applies to wheel, drag, keyboard, native markers, right-click reset, presets, and CFG validation. No additional caption, frame, Base/Vanilla badge, or stretched control is introduced.
+* The ONE EMISSION board derives its full width from warning + 80 s (90–140 s overall); active emission remains 60 s and aftermath 20 s. The NPC leave-shelter tick is warning + 70 s (80–130 s). The original three compact dials and their alignment are preserved.
 
 ## 2026-11-18 — CURRENT: Frameless ZONE WEATHER dials and actual emission phases
 
 * The three source-backed dials keep the same compact `ArtifactKnobBank` positions and native ranges, but **no individual rounded-rectangle frames** are painted. Captions are **RANDOM EMISSIONS**, **STORMS**, and **TIME TO FIND COVER**. Both frequency dials show only a short second line (`OFF`, `NORMAL`, `LESS OFTEN`, `MORE OFTEN`) beneath their multiplier. The warning dial shows only its unsigned seconds value and `SECONDS` unit: no secondary `TO FIND COVER` drawn over it. Hover, 270° arcs, keyboard/wheel editing, disabled appearance, native ticks and reference markers stay unchanged.
-* The **ONE EMISSION** rail is **not** a 0–300 s representation of the independent weather window. Its full width now covers the exact Default emission stage sequence from 0 to `ZoneTimersPolicy.EmissionEnd(warning)` = warning + 80 s (110–260 s over the configured warning range), and three distinct continuous segments fill it: **FIND COVER** from 0 to warning, **EMISSION** from warning through warning + 60 s (the Active stage), **AFTERMATH** for the final 20 s. The separately sourced NPC AI `EmissionEnd` at warning + 70 s remains a contrasting white marker inside AFTERMATH. The stage values and 300 s weather selection duration in the CFG are **not changed**.
+* The **ONE EMISSION** rail is **not** a 0–300 s representation of the independent weather window. Its full width now covers the exact Default emission stage sequence from 0 to `ZoneTimersPolicy.EmissionEnd(warning)` = warning + 80 s (90–140 s over the configured 10–60 s warning range), and three distinct continuous segments fill it: **FIND COVER** from 0 to warning, **EMISSION** from warning through warning + 60 s (the Active stage), **AFTERMATH** for the final 20 s. The separately sourced NPC AI `EmissionEnd` at warning + 70 s remains a contrasting white marker inside AFTERMATH. The stage values and 300 s weather selection duration in the CFG are **not changed**.
 * Below the rail, compact gamer-facing readouts report time to hide, the real active-emission interval, when its stages end, and when NPCs leave shelter. No fake five-minute-empty-tail or misleading `CALM` phase is drawn. Only edited numbers are accented. All changes are presentation-only; original source edits, factory presets, native step sizes, and save compatibility remain intact.
 ## 2026-11-18 — CURRENT: ZONE WEATHER as knobs, with an emission timeline
 
@@ -20,13 +24,13 @@
 
 * New board **ZONE WEATHER** (Environment tab):
   * **EMISSIONS** and **STORMS** set how often random emissions and storms come (weather weights of the selected difficulty). Vanilla is Novice–Veteran 1×, Master 1.25×; 0 turns them off.
-  * **EMISSION WARNING** (30–180 s, vanilla 60 s) sets the time between the warning and the shock wave. The later stages and the NPCs' leave-cover moment move with it; story emissions keep their own timing. The line under it reads `SHOCK WAVE AT 60 s · OVER AT 140 s`.
+  * **EMISSION WARNING** (10–60 s, vanilla 60 s) sets the time between the warning and the shock wave. The later stages and the NPCs' leave-cover moment move with it; story emissions keep their own timing. The line under it reads `SHOCK WAVE AT 60 s · OVER AT 140 s`.
 * New board **TRADER RESTOCK** (Economy tab): **RESTOCK EVERY** (1–48 h, vanilla 8 h) applies to the 84 named traders. Stalkers you trade with follow the same ratio (vanilla 7 days), shown under the card.
 * Dependencies were checked in the game CFG and are written into WORKS WITH:
   * more emissions mean more artifacts (fields refill after each one) and more deaths outside (lairs refill on LAIR RESPAWN TIME);
   * storms are where RAIN / THUNDER NOISE hide you;
   * the restock conditions are used only by trade.
-* Factory presets: Hardcore+ 1.5 / 1.5 / 40 s / 16 h, Hardcore 50 s / 12 h, Anomaly Runner emissions 1.25, Immersive storms 1.25, Wanderer emissions 1.15 and warning 75 s, Tactical storms 1.15, Scavenger 16 h, Outcast 12 h, Smuggler 6 h.
+* Factory presets: Hardcore+ 1.5 / 1.5 / 40 s / 16 h, Hardcore 50 s / 12 h, Anomaly Runner emissions 1.25, Immersive storms 1.25, Wanderer emissions 1.15 and warning 60 s, Tactical storms 1.15, Scavenger 16 h, Outcast 12 h, Smuggler 6 h.
 * Gate `tools/audit_zone_timers.py` (in `pre_release.py`). Census is now 422 controls, 213 visible. Details: `docs/ZONE-WEATHER-AND-RESTOCK.md`.
 
 ## 2026-11-18 — CURRENT: REFILL SPEED → LAIR RESPAWN TIME

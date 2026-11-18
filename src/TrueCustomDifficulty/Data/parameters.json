@@ -14574,8 +14574,8 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 30,
-        "max": 180,
+        "min": 10,
+        "max": 60,
         "step": 5,
         "stepMode": "absolute"
       },
@@ -14592,13 +14592,13 @@
         "status": "runtime_test_required",
         "notes": [
           "World emission only (Default, also used by the EQ29 side quest). The five story emissions keep their own stages.",
-          "Stages after the warning move by the same seconds; their durations stay. The emission still ends inside its 300 s weather window (latest 260 s).",
+          "Stages after the warning move by the same seconds; their durations stay. The emission still ends inside its 300 s weather window (latest 140 s).",
           "NPC EmissionEnd (vanilla 130 s) moves too, so NPCs leave cover after the emission. Story emissions inherit it and are over by 61 s.",
           "The red-sky calm before an emission (120 s weather) is not changed."
         ]
       },
       "rationale": "Seconds to find shelter before an emission hits. Raise it for more time to hide, or shorten it for a tougher run. The actual blast lasts just as long.",
-      "logic": "30–180 seconds between the warning and the shock wave. Later world emission stages shift to match; the active emission still lasts 60 seconds.",
+      "logic": "10–60 seconds between the warning and the shock wave. Later world emission stages shift to match; the active emission still lasts 60 seconds.",
       "interaction": "Only the warning. The emission itself lasts as long as before, and NPCs still take cover with you.",
       "exposeInUi": false
     },

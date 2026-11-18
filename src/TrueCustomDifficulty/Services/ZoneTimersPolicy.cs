@@ -27,12 +27,12 @@ public static class ZoneTimersPolicy
     // EmissionPrototypes.cfg [0] (SID Default): the world emission (and the
     // EQ29 side quest). The story emissions [1]..[5] have their own Stages and
     // are never retimed. They inherit Default's AIEvents; the moved EmissionEnd
-    // (100–250 s) still comes after every story emission is over (≤ 61 s).
+    // (80–130 s) still comes after every story emission is over (≤ 61 s).
     public const string EmissionFile = "GameData/EmissionPrototypes.cfg";
     public const string EmissionDefault = "[0]";
     public const double VanillaWarningSeconds = 60.0;
-    public const double MinWarningSeconds = 30.0;
-    public const double MaxWarningSeconds = 180.0;
+    public const double MinWarningSeconds = 10.0;
+    public const double MaxWarningSeconds = 60.0;
     /// <summary>The Emission weather lasts 300 s; the stages must end inside it.</summary>
     public const double EmissionWeatherSeconds = 300.0;
 

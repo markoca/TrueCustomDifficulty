@@ -49,7 +49,7 @@ def main():
     check(catalog["environment.stormFrequency"].get("exposeInUi") is False
           and catalog["environment.emissionWarning"].get("exposeInUi") is False, "ZONE WEATHER members hidden")
     w = catalog["environment.emissionWarning"]
-    check(w["vanilla"] == {"All": 60} and w["slider"]["min"] == 30 and w["slider"]["max"] == 180
+    check(w["vanilla"] == {"All": 60} and w["slider"]["min"] == 10 and w["slider"]["max"] == 60
           and w["slider"]["step"] == 5, "EMISSION WARNING range")
     r = catalog["economy.traderRestockHours"]
     check(r["vanilla"] == {"All": 8} and r["slider"]["min"] == 1 and r["slider"]["max"] == 48
@@ -67,10 +67,12 @@ def main():
                   'GenericTraderCondition = "TradeRegenDaysPassed7"',
                   "VanillaRestockHours = 8", "VanillaGenericRestockDays = 7"):
         check(token in policy, "policy drifted: " + token)
+    check("MinWarningSeconds = 10.0;" in policy and "MaxWarningSeconds = 60.0;" in policy,
+          "writer policy range must match the catalog")
     # The longest warning still ends inside the 300 s emission weather, and the
     # shortest still lets NPCs leave cover only after every story emission.
-    check(140 + (180 - 60) <= 300, "max warning overruns the emission weather")
-    check(130 + (30 - 60) >= 61, "min warning lets NPCs leave cover during a story emission")
+    check(140 + (w["slider"]["max"] - 60) <= 300, "max warning overruns the emission weather")
+    check(130 + (w["slider"]["min"] - 60) >= 61, "min warning lets NPCs leave cover during a story emission")
     writer = (APP / "Services/CfgPatchWriterService.ZoneTimers.cs").read_text(encoding="utf-8")
     for token in ('"PhaseDuration", Seconds(seconds)', '"PhaseStartTime", Seconds(start + shift)',
                   '"AIEventStartTime", Seconds(ZoneTimersPolicy.VanillaAiEndSeconds + shift)',
@@ -104,7 +106,7 @@ def main():
           "active and aftermath endpoints share native source timing")
     check('"FIND COVER · EMISSION · AFTERMATH"' in weather_ui and 'TimeX(cover)' in weather_ui,
           "phase names and NPC shelter marker")
-    for warning in (30.0, 60.0, 180.0):
+    for warning in (10.0, 35.0, 60.0):
         event_end = warning + 80.0
         active_end = warning + 60.0
         npc_out = warning + 70.0
@@ -121,12 +123,14 @@ def main():
         values = json.loads(path.read_text(encoding="utf-8"))["values"]
         warn = values["environment.emissionWarning"]["number"]
         hours = values["economy.traderRestockHours"]["number"]
-        check(30 <= warn <= 180 and warn % 5 == 0, f"{path.name} warning off grid")
+        check(10 <= warn <= 60 and warn % 5 == 0, f"{path.name} warning off grid")
         check(1 <= hours <= 48 and float(hours).is_integer(), f"{path.name} restock off grid")
         for pid in ("environment.emissionFrequency", "environment.stormFrequency"):
             m = values[pid]["number"]
             check(0 <= m <= 3 and abs(round(m / 0.05) * 0.05 - m) < 1e-9, f"{path.name} {pid} off grid")
         check(set(zone["values"][path.stem]) <= set(catalog), f"{path.name} matrix ids")
+        for pid, expected in zone["values"][path.stem].items():
+            check(values[pid]["number"] == expected, f"{path.name} {pid} does not match factory matrix")
 
     if args.game:
         game = Path(args.game)

@@ -1667,7 +1667,7 @@
     },
     "environment.emissionWarning": {
       "kind": "slider",
-      "number": 75
+      "number": 60
     },
     "combat.npcFogVisibility": {
       "kind": "slider",

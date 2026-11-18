@@ -1,8 +1,13 @@
+## 2026-11-18 — CURRENT: Time to Find Cover limited to 10–60 seconds
+
+* TIME TO FIND COVER uses 10–60 s in 5 s steps, with 60 s as the unmodified game default. The knob, timeline preview and CFG patch validation use the same limits.
+* The full ONE EMISSION timeline lasts 90–140 s, NPCs leave cover at 80–130 s, and story emission timing stays unchanged. A warning of 10 s still places the shared NPC leave-cover event after the latest 61 s story emission.
+* The Wanderer factory preset's old 75 s is now 60 s, and the exact old stock file can migrate without replacing user edits. Custom old presets are clamped to the new valid control range when loaded.
 
 ## 2026-11-18 — CURRENT: Frameless ZONE WEATHER dials and actual emission phases
 
 * The three source-backed dials keep the same compact `ArtifactKnobBank` positions and native ranges, but **no individual rounded-rectangle frames** are painted. Captions are **RANDOM EMISSIONS**, **STORMS**, and **TIME TO FIND COVER**. Both frequency dials show only a short second line (`OFF`, `NORMAL`, `LESS OFTEN`, `MORE OFTEN`) beneath their multiplier. The warning dial shows only its unsigned seconds value and `SECONDS` unit: no secondary `TO FIND COVER` drawn over it. Hover, 270° arcs, keyboard/wheel editing, disabled appearance, native ticks and reference markers stay unchanged.
-* The **ONE EMISSION** rail is **not** a 0–300 s representation of the independent weather window. Its full width now covers the exact Default emission stage sequence from 0 to `ZoneTimersPolicy.EmissionEnd(warning)` = warning + 80 s (110–260 s over the configured warning range), and three distinct continuous segments fill it: **FIND COVER** from 0 to warning, **EMISSION** from warning through warning + 60 s (the Active stage), **AFTERMATH** for the final 20 s. The separately sourced NPC AI `EmissionEnd` at warning + 70 s remains a contrasting white marker inside AFTERMATH. The stage values and 300 s weather selection duration in the CFG are **not changed**.
+* The **ONE EMISSION** rail is **not** a 0–300 s representation of the independent weather window. Its full width now covers the exact Default emission stage sequence from 0 to `ZoneTimersPolicy.EmissionEnd(warning)` = warning + 80 s (90–140 s over the configured 10–60 s warning range), and three distinct continuous segments fill it: **FIND COVER** from 0 to warning, **EMISSION** from warning through warning + 60 s (the Active stage), **AFTERMATH** for the final 20 s. The separately sourced NPC AI `EmissionEnd` at warning + 70 s remains a contrasting white marker inside AFTERMATH. The stage values and 300 s weather selection duration in the CFG are **not changed**.
 * Below the rail, compact gamer-facing readouts report time to hide, the real active-emission interval, when its stages end, and when NPCs leave shelter. No fake five-minute-empty-tail or misleading `CALM` phase is drawn. Only edited numbers are accented. All changes are presentation-only; original source edits, factory presets, native step sizes, and save compatibility remain intact.
 # ZONE WEATHER and TRADER RESTOCK (2026-11-18)
 
@@ -39,8 +44,8 @@ Two new boards with four controls. Before building them, each source was checked
 
 Here Δ = warning − 60. ActivateQuest and the stage durations stay.
 
-- **Range 30–180 s.** At 180 s the emission ends at 260 s, inside the 300 s emission weather.
-- **Story emissions** (`[1]`–`[5]`) have their own Stages and are not retimed. They inherit Default's AIEvents, but the moved EmissionEnd (100–250 s) is still after every story emission ends (≤ 61 s). NPCs never leave cover in the middle of one.
+- **Range 10–60 s, step 5 s; vanilla 60 s.** At 10 s the emission ends at 90 s; at 60 s it ends at 140 s, both inside the 300 s emission weather.
+- **Story emissions** (`[1]`–`[5]`) have their own Stages and are not retimed. They inherit Default's AIEvents, but the moved EmissionEnd (80–130 s) is still after every story emission ends (≤ 61 s). NPCs never leave cover in the middle of one.
 - Default is also used by the A-Life emission trigger and the EQ29 side quest. Both get the same warning.
 - **Not changed:**
   - the red-sky calm before the emission (`CalmBeforeEmission`, 120 s);
@@ -79,13 +84,13 @@ Absent from the table = the preset's reference-difficulty vanilla.
 | Hardcore | – | – | 50 s | 12 h |
 | Anomaly Runner | 1.25× | – | – | – |
 | Immersive | – | 1.25× | – | – |
-| Wanderer | 1.15× | – | 75 s | – |
+| Wanderer | 1.15× | – | 60 s | – |
 | Tactical | – | 1.15× | – | – |
 | Scavenger | – | – | – | 16 h |
 | Outcast | – | – | – | 12 h |
 | Smuggler | – | – | – | 6 h |
 
-Older stock files upgrade only when byte-identical (`PreZoneWeatherFactoryBlobs`, `tools/factory_preset_zone_weather_2026_11_18.json`).
+Older stock files upgrade only when byte-identical (`PreZoneWeatherFactoryBlobs`, `PreCoverRangeFactoryBlobs`, `tools/factory_preset_zone_weather_2026_11_18.json`). Original Wanderer 75 s is capped at 60 s in the new factory profile; user-edited profiles are never overwritten (out-of-range values clamp on load).
 
 ## Gate
 
@@ -97,4 +102,4 @@ The .NET build, a Wine run and in-game behaviour have not been checked: how ofte
 
 ## 2026-11-18 — Board as knobs
 
-ZONE WEATHER uses three knobs (ARTIFACT HUNTING geometry) with short in-dial lines (`ZoneTimersPolicy.KnobText`). Below them, ONE EMISSION draws a 0–300 s bar: warning (light), storm = shock wave + active (gold), calm after it (grey), and a white tick for the NPC leave-cover moment. Two sentences explain it.
+ZONE WEATHER uses three knobs (ARTIFACT HUNTING geometry) with short in-dial lines (`ZoneTimersPolicy.KnobText`). Below them, ONE EMISSION draws a dynamic 0–(warning + 80) s bar: warning (light), storm = shock wave + active (gold), calm after it (grey), and a white tick for the NPC leave-cover moment. Two sentences explain it.
