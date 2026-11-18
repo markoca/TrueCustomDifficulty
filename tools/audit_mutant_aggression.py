@@ -126,6 +126,20 @@ check(not [r["id"] for r in catalog if r["id"].startswith(("combat.mutantAbility
 check(by_id["combat.mutantSpecialAbilityRate"].get("vanilla") == {"Novice": 1, "Stalker": 1, "Veteran": 1, "Master": 2},
       "special vanilla N/S/V 1, Master 2")
 
+# ---- knockdown knobs stop at the shared special-move pause (2026-11-18) ----------
+gated_src = policy[policy.index("PauseGatedMoveIds { get; }"):policy.index("public static double KnobCap(")]
+gated = set(re.findall(r'MovePrefix \+ "([\w.]+)"', gated_src))
+check(gated == {"bloodsucker.leap", "boar.charge", "deer.charge", "pseudogiant.charge", "pseudogiant.shockwave"},
+      f"5 knockdown knobs are pause-gated {sorted(gated)}")
+check("Math.Floor(move.Seconds * specialRate / SpecialPauseMin * 4.0 + 1e-9) / 4.0" in policy
+      and "Math.Max(cap, knobReference)" in policy, "cap: wait ≥ 8 s ÷ SPECIAL MOVES, vanilla always allowed")
+check("MutantAggressionPolicy.KnobCap(family, move, specialRate, double.MaxValue, reference)" in writer,
+      "writer caps gated knobs")
+_mvm = (SRC / "ViewModels" / "MainViewModel.cs").read_text(encoding="utf-8")
+check("MutantAggressionPolicy.KnobCap(family, move, specialMoves.CurrentNumber," in _mvm,
+      "MainViewModel clamps gated knobs when either control moves")
+check(by_id["combat.mutantSpecialAbilityRate"]["label"] == "Special Moves", "SPECIAL MOVES label")
+
 # ---- embedded synchronization tables -------------------------------------------
 bad = []
 for sid, (lo, hi) in {"Default": ("8.f", "12.f"), "CombatSynchronizerStalker": ("4.f", "6.f")}.items():
@@ -153,7 +167,7 @@ check(sorted(entry.get("parameterIds", [])) == sorted(move_ids)
       and entry.get("parameterId") == "combat.mutantSpecialAbilityRate", "baseline special.mutantAggression")
 
 # ---- UI -----------------------------------------------------------------------
-for token in ("MUTANT DAMAGE, HEALTH AND AGGRESSION", "SPECIAL ABILITY RATE",
+for token in ("MUTANT DAMAGE, HEALTH AND AGGRESSION", '"SPECIAL MOVES"', "PauseGatedMoveIds",
               "DrawKnobCells(", "DrawMoveKnob(", "MutantAggressionPolicy.MoveSeconds(", "OnMouseWheel(", '"ATTACKS"', '"ABILITIES"',
               "ReferenceMagnet"):
     check(token in radar, f"radar token {token}")
@@ -189,6 +203,17 @@ if dump:
                               for sid in f["agents"])) for k, f in families.items()}
     _missing = [f"{k}.{slug}" for k, _, slug, _, t, _ in move_rows if t not in _have[k]]
     check(not _missing, f"every knob's move exists on an agent of its family {_missing}")
+    # Gated set == every knob whose ObjPrototypes action syncs on TokenTag.Ability.Knockdown.
+    _obj = (gd / "ObjPrototypes.cfg").read_text(encoding="utf-8", errors="replace")
+    _knock = set()
+    for _top, _blk in re.findall(r"^(\w+) : struct\.begin.*?$(.*?)^struct\.end", _obj, re.M | re.S):
+        for _data in re.findall(r"^   (\w+Data) : struct\.begin(.*?)^   struct\.end", _blk, re.M | re.S):
+            if "TokenTag.Ability.Knockdown" in _data[1]:
+                _knock.add((_top, _data[0]))
+    _fam_of = {sid: k for k, f in families.items() for sid in f["agents"]}
+    _map = {"JumpAttackData": "leap", "ChargeActionData": "charge", "ShockwaveAttackData": "shockwave"}
+    _found = {f"{_fam_of[t]}.{_map[b]}" for t, b in _knock if t in _fam_of and b in _map}
+    check(_found == gated, f"knockdown-synced moves in ObjPrototypes == gated knobs {sorted(_found ^ gated)}")
     missing = [sid for f in families.values() for sid in f["agents"]
                if not re.search(r"^" + sid + r" : struct\.begin", obj, re.M)]
     check(not missing, f"every agent SID exists in ObjPrototypes {missing}")

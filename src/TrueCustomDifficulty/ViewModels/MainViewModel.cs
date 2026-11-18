@@ -660,11 +660,38 @@ public sealed class MainViewModel : ObservableObject
             TraderSellsPolicy.AnchorId,
             TraderSellsPolicy.EditableParameterIds.OrderBy(id => id, StringComparer.Ordinal)
                 .Append("economy.traderAmmoStock").Append("economy.medicStock").ToArray());
-        // Mutant board: a group slider and its move knobs read each other for real seconds.
-        foreach (var mutantId in MutantAggressionPolicy.ParameterIds)
+        // Mutant board: knockdown knobs may not go faster than the shared
+        // special-move pause (SPECIAL MOVES). Clamp them whenever either moves.
+        if (parametersById.TryGetValue(MutantAggressionPolicy.SpecialAbilityRateId, out var specialMoves))
         {
-            if (parametersById.TryGetValue(mutantId, out var mutantParameter))
-                mutantParameter.MutantSiblingLookup = id => parametersById.TryGetValue(id, out var sibling) ? sibling : null;
+            var gated = MutantAggressionPolicy.MoveKnobs
+                .Where(k => MutantAggressionPolicy.PauseGatedMoveIds.Contains(MutantAggressionPolicy.MoveId(k.Family, k.Move)))
+                .Select(k => (k.Family, k.Move, Parameter: parametersById.TryGetValue(
+                    MutantAggressionPolicy.MoveId(k.Family, k.Move), out var p) ? p : null))
+                .Where(k => k.Parameter is not null)
+                .ToArray();
+            void Clamp()
+            {
+                foreach (var (family, move, knob) in gated)
+                {
+                    var cap = MutantAggressionPolicy.KnobCap(family, move, specialMoves.CurrentNumber,
+                        knob!.Maximum, knob.ReferenceNumber);
+                    if (knob.CurrentNumber > cap + 1e-9)
+                        knob.CurrentNumber = cap;
+                }
+            }
+            specialMoves.PropertyChanged += (_, args) =>
+            {
+                if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
+                    Clamp();
+            };
+            foreach (var (_, _, knob) in gated)
+                knob!.PropertyChanged += (_, args) =>
+                {
+                    if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
+                        Clamp();
+                };
+            Clamp();
         }
         // A removed category (toggle off) owns 0%; drop any partial odds.
         foreach (var sellId in TraderSellsPolicy.ParameterIds)

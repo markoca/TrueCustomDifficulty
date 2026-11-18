@@ -256,9 +256,6 @@ public sealed class ParameterViewModel : ObservableObject
     public bool PanelHasEffectiveDamage => _panelCard is null && HasEffectiveDamage;
     public bool PanelHasCooldownTimes => _panelCard is null && CooldownTimes.Length > 0;
 
-    /// <summary>Mutant board siblings (group slider ↔ move knobs), set by MainViewModel.</summary>
-    public Func<string, ParameterViewModel?>? MutantSiblingLookup { get; set; }
-
     /// <summary>Mutant move knob: its move in real seconds.</summary>
     public string CooldownTimes
     {

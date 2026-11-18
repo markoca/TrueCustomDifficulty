@@ -46,6 +46,18 @@ All are `runtime_test_required`. Source: S.T.A.L.K.E.R. 2 2.1 base dump.
   (2026-11-18 fix; the card used to say 30 s and 20 s). At the vanilla value it shows the game's effective time (e.g. Master Controller psy 6 s).
 * `Mutant_AttackCooldown` (1.0 on all difficulties) is not touched.
 
+## SPECIAL MOVES caps the knockdown knobs (2026-11-18)
+
+* SPECIAL ABILITY RATE is shown as **SPECIAL MOVES** (`one every 8–12 s`): the fight-wide token pause of
+  `CombatSynchronization` `[3]` `TokenTag.Ability` and `[4]` `TokenTag.Ability.Knockdown`. Growls / roars
+  (`TokenTag.Ability.Growl`), shields and knockdown attacks wait for it; one mutant at a time.
+* The five knockdown knobs (ObjPrototypes `JumpAttackData` / `ChargeActionData` / `ShockwaveAttackData` synced on
+  `TokenTag.Ability.Knockdown`: Bloodsucker LEAP, Boar / Deer / Pseudogiant CHARGE, Pseudogiant WAVE) may not be
+  faster than that pause: `KnobCap` = ⌊seconds × SPECIAL ÷ 8 s⌋ on the 0.25 grid, never below the knob's vanilla.
+  Caps at 1× SPECIAL: WAVE 1×, CHARGE 1.25× (Deer, Pseudogiant) / 1.5× (Boar), LEAP 2.5×.
+* MainViewModel clamps those knobs whenever SPECIAL MOVES or the knob moves; the writer applies the same cap; the
+  board draws a bright stop tick on their arc. The audit checks the gated set against ObjPrototypes.
+
 ## CFG writer check (2026-11-18)
 
 `tools/audit_mutant_cooldown_cfg.py` (pre-release gate; with `--game <GameData>` or `TCD_BASE_DUMP` it also reads

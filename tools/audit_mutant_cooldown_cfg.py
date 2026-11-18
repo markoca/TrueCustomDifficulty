@@ -86,8 +86,24 @@ def multiplier(listed, rate, ref):
     return 1.0 / rate
 
 
-def simulate(difficulty, values):
+GATED_SECS = {"combat.mutantMoveRate.bloodsucker.leap": 20, "combat.mutantMoveRate.boar.charge": 12,
+              "combat.mutantMoveRate.deer.charge": 10, "combat.mutantMoveRate.pseudogiant.charge": 10,
+              "combat.mutantMoveRate.pseudogiant.shockwave": 8}
+
+
+def cap(pid, special, kref):
+    # MutantAggressionPolicy.KnobCap: wait ≥ 8 s ÷ SPECIAL MOVES, vanilla always allowed.
+    if pid not in GATED_SECS:
+        return float("inf")
+    import math
+    c = math.floor(GATED_SECS[pid] * special / 8.0 * 4.0 + 1e-9) / 4.0
+    return min(max(c, kref, 0.25), 3.0)
+
+
+def simulate(difficulty, values, special=None):
     """Ordered [(agent, [(tag, multiplier)])] exactly as the C# writer emits it."""
+    if special is None:
+        special = 2.0 if difficulty == "Stalker" else 1.0
     out = []
     for key, agents in families.items():
         kn = {}
@@ -97,7 +113,7 @@ def simulate(difficulty, values):
             check_ref = reference(pid, difficulty)
             if abs(kref - check_ref) > 1e-9:
                 failures.append(f"{pid}: catalog vanilla {check_ref} != writer reference {kref}")
-            kn[tag] = (values.get(pid, check_ref), kref)
+            kn[tag] = (min(values.get(pid, check_ref), cap(pid, special, kref)), kref)
         for sid, master in agents:
             entries = []
             for tag in dict.fromkeys(master + list(kn)):
@@ -149,6 +165,14 @@ lst = dict(simulate("Stalker", {"combat.mutantMoveRate.bayun.claw": 1.0}))
 check(dict(lst["Bayun"]).get("Ability.Cooldown.ClawAttack") is None
       and dict(lst["Bayun"]).get("Ability.Cooldown.Growl") == 0.5,
       "Master: Bayun CLAW turned down to 1× drops its 0.5, the uncontrolled growl keeps 0.5")
+wave = "combat.mutantMoveRate.pseudogiant.shockwave"
+check(simulate("Medium", {wave: 3.0}) == [],
+      "Medium: WAVE 3× with SPECIAL MOVES 1× is capped at the 8 s pause (= vanilla, nothing written)")
+_w = dict(simulate("Medium", {wave: 3.0}, special=2.0)).get("Pseudogiant", [])
+check(dict(_w).get("Ability.Cooldown.ShockwaveAttack") == 0.5,
+      "Medium: WAVE 3× with SPECIAL MOVES 2× caps at 2× (wait 4 s = the 4 s pause)")
+check("MutantAggressionPolicy.KnobCap(family, move, specialRate, double.MaxValue, reference)" in writer,
+      "writer token: gated knobs capped by SPECIAL MOVES")
 sample = render("Stalker", simulate("Stalker", {one: 3.0, "combat.mutantMoveRate.pseudodog.phantoms": 2.0}))
 
 # ---- game-file checks -----------------------------------------------------------

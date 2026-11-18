@@ -210,7 +210,7 @@ public sealed class MutantHealthRadar : FrameworkElement
                 new Rect(content.Left, 43.0, content.Width, GlobalCardHeight),
                 text, muted, border, accent, panel);
         if (_special is { } special)
-            DrawGlobalTrack(dc, special, SpecialRow, "SPECIAL ABILITY RATE",
+            DrawGlobalTrack(dc, special, SpecialRow, "SPECIAL MOVES",
                 HumanCombatPolicy.WithoutFactor(MutantAggressionPolicy.SpecialAbilityDisplay(special.CurrentNumber)),
                 new Rect(content.Left, 43.0 + GlobalCardHeight + 8.0, content.Width, GlobalCardHeight),
                 text, muted, border, accent, panel);
@@ -392,6 +392,20 @@ public sealed class MutantHealthRadar : FrameworkElement
         var referenceAngle = KnobStartAngle + KnobSweepAngle * reference;
         dc.DrawLine(new Pen(muted, 1.6), KnobPoint(center, radius - 5.0, referenceAngle),
             KnobPoint(center, radius + 3.5, referenceAngle));
+        // Knockdown moves stop at the shared special-move pause: a short bright
+        // stop tick marks the fastest the knob may go (SPECIAL MOVES moves it).
+        if (_special is { } special
+            && MutantAggressionPolicy.PauseGatedMoveIds.Contains(MutantAggressionPolicy.MoveId(family, move)))
+        {
+            var cap = MutantAggressionPolicy.KnobCap(family, move, special.CurrentNumber,
+                knob.Maximum, knob.ReferenceNumber);
+            if (cap < knob.Maximum - Epsilon)
+            {
+                var capAngle = KnobStartAngle + KnobSweepAngle * Math.Clamp((cap - knob.Minimum) / range, 0.0, 1.0);
+                dc.DrawLine(new Pen(text, 2.0), KnobPoint(center, radius - 2.5, capAngle),
+                    KnobPoint(center, radius + 4.5, capAngle));
+            }
+        }
         var angle = KnobStartAngle + KnobSweepAngle * ratio;
         dc.DrawLine(new Pen(accent, selected || hovered ? 2.6 : 2.0),
             KnobPoint(center, 2.5, angle), KnobPoint(center, radius - 5.5, angle));

@@ -1,3 +1,8 @@
+## CURRENT 2026-11-18 — SPECIAL MOVES caps the knockdown knobs
+
+* The second global card is titled **SPECIAL MOVES** with the value `one every 8–12 s` (Master `4–6 s`).
+* Five knockdown knobs (Bloodsucker LEAP; Boar, Deer, Pseudogiant CHARGE; Pseudogiant WAVE) cannot turn faster than that pause. A short bright stop tick on their arc marks the limit; it moves with SPECIAL MOVES, and lowering SPECIAL MOVES pulls those knobs back. Other knobs unchanged.
+
 ## CURRENT 2026-11-18 — LAIR POPULATION vs GROUP SIZE explained in the panels
 
 * Panel interaction texts of HUMAN CAMPS, MUTANT NESTS, RESPAWN TIME, HUMAN SQUAD SIZE (4 ranks) and MUTANT GROUP SIZE (15 species) now say which population each one moves (camp and nest residents vs roaming squads and packs) and where they meet (lairs A-Life sends squads to take). Text only.

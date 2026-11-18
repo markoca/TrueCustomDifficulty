@@ -1965,14 +1965,14 @@
       "id": "combat.mutantSpecialAbilityRate",
       "tab": "combat",
       "group": "Mutant Health",
-      "label": "Special Ability Rate",
+      "label": "Special Moves",
       "description": "How often mutants in a fight may use special and knockdown moves (growls, shields, knockdown leaps and charges). Scales the shared TokenTag.Ability and TokenTag.Ability.Knockdown group cooldowns (8–12 s by default) for every player rank on the selected difficulty.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Special ability rate"
+        "valueLabel": "Special moves"
       },
       "vanilla": {
         "Novice": 1,
@@ -2006,9 +2006,9 @@
           "Human combat actions (flank, grenades) are untouched."
         ]
       },
-      "rationale": "How often mutants in a fight get to use their special and knockdown moves — growls, shields, knockdown leaps and charges. Vanilla: Novice–Veteran 1× (8–12 s pause after each one), Master 2× (4–6 s).",
-      "logic": "Higher = shorter pauses between special moves (8–12 s at 1×); lower = more time to recover.",
-      "interaction": "Each mutant's attack and ability knobs still set how soon that move can come again.",
+      "rationale": "The fight-wide queue for special moves: growls and roars, shields and knockdown attacks (leaps, charges, the Pseudogiant shockwave). Vanilla: Novice–Veteran 1× (one every 8–12 s), Master 2× (4–6 s). Only one mutant at a time gets one, then everybody waits.",
+      "logic": "Higher = shorter wait between special moves for the whole fight; lower = more time to recover.",
+      "interaction": "It caps the five knockdown knobs (Bloodsucker leap; Boar, Deer and Pseudogiant charge; Pseudogiant shockwave): they cannot go faster than this pause. Claws, bites, psy and summons ignore it.",
       "exposeInUi": false
     },
     {
@@ -2543,7 +2543,7 @@
       },
       "rationale": "The big pounce from mid range. Vanilla: Novice–Veteran 1× (every 20 s), Master 2× (every 10 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "interaction": "A knockdown move: it also waits for SPECIAL MOVES, so the knob stops at that pause (the bright tick on the arc). Raise SPECIAL MOVES to let it go faster.",
       "exposeInUi": false
     },
     {
@@ -2731,7 +2731,7 @@
       },
       "rationale": "The head-down charge that knocks you off your feet. Vanilla: 1×, every 12 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "interaction": "A knockdown move: it also waits for SPECIAL MOVES, so the knob stops at that pause (the bright tick on the arc). Raise SPECIAL MOVES to let it go faster.",
       "exposeInUi": false
     },
     {
@@ -3522,7 +3522,7 @@
       },
       "rationale": "The antler charge that throws you back. Vanilla: Novice–Veteran 1× (every 10 s), Master 2× (every 5 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "interaction": "A knockdown move: it also waits for SPECIAL MOVES, so the knob stops at that pause (the bright tick on the arc). Raise SPECIAL MOVES to let it go faster.",
       "exposeInUi": false
     },
     {
@@ -4145,7 +4145,7 @@
       },
       "rationale": "The full charge that bulldozes you. Vanilla: Novice–Veteran 1× (every 10 s), Master 2× (every 5 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "interaction": "A knockdown move: it also waits for SPECIAL MOVES, so the knob stops at that pause (the bright tick on the arc). Raise SPECIAL MOVES to let it go faster.",
       "exposeInUi": false
     },
     {
@@ -4195,7 +4195,7 @@
       },
       "rationale": "The ground-pound ring that hits you from range; jump it or stay outside it. Vanilla: Novice–Veteran 1× (every 8 s), Master 2× (every 4 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
+      "interaction": "A knockdown move: it also waits for SPECIAL MOVES, so the knob stops at that pause (the bright tick on the arc). Raise SPECIAL MOVES to let it go faster.",
       "exposeInUi": false
     },
     {

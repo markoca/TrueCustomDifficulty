@@ -59,14 +59,21 @@ public sealed partial class CfgPatchWriterService
             var list = mutant.GetOrAddChild("AgentCooldownMultipliers", useBpatch: false);
             list.Clear();
             var index = 0;
+            // Pause-gated knockdown moves may not beat the shared special-move pause.
+            var specialRate = PositiveRate(allById, MutantAggressionPolicy.SpecialAbilityRateId);
             foreach (var family in MutantAggressionPolicy.Families)
             {
                 var knobs = new Dictionary<string, (double Rate, double Reference)>(StringComparer.Ordinal);
                 foreach (var group in groups)
                 {
                     foreach (var move in MutantAggressionPolicy.Moves(family, group))
-                        knobs[move.Tag] = (PositiveRate(allById, MutantAggressionPolicy.MoveId(family, move)),
-                            MutantAggressionPolicy.KnobReference(family, move, difficultySid));
+                    {
+                        var id = MutantAggressionPolicy.MoveId(family, move);
+                        var reference = MutantAggressionPolicy.KnobReference(family, move, difficultySid);
+                        var rate = Math.Min(PositiveRate(allById, id),
+                            MutantAggressionPolicy.KnobCap(family, move, specialRate, double.MaxValue, reference));
+                        knobs[move.Tag] = (rate, reference);
+                    }
                 }
 
                 foreach (var agent in family.Agents)

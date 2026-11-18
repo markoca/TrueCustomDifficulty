@@ -234,6 +234,36 @@ public static class MutantAggressionPolicy
     public static double MoveSeconds(Family family, Move move, double knob, double knobReference)
         => move.Seconds * Multiplier(family.Agents[0], move.Tag, knob, knobReference);
 
+    // ---- Moves that wait for the shared special-move pause ------------------
+    /// <summary>Shortest shared special-move pause at 1× (CombatSynchronization [3]/[4]: 8–12 s).</summary>
+    public const double SpecialPauseMin = 8.0;
+
+    /// <summary>
+    /// Knockdown moves (ObjPrototypes SyncTag / AttackSyncTag = TokenTag.Ability.Knockdown):
+    /// they also wait for the fight-wide special-move pause, so their knob may not
+    /// go faster than that pause. Bloodsucker leap, Boar / Deer / Pseudogiant charge,
+    /// Pseudogiant shockwave.
+    /// </summary>
+    public static IReadOnlySet<string> PauseGatedMoveIds { get; } = new HashSet<string>(StringComparer.Ordinal)
+    {
+        MovePrefix + "bloodsucker.leap", MovePrefix + "boar.charge", MovePrefix + "deer.charge",
+        MovePrefix + "pseudogiant.charge", MovePrefix + "pseudogiant.shockwave"
+    };
+
+    /// <summary>
+    /// Fastest knob value of a pause-gated move: its wait may not drop below the
+    /// shortest special-move pause (8 s ÷ SPECIAL MOVES rate), on the 0.25 grid.
+    /// The knob's vanilla is always allowed (the game pairs it with its own pause).
+    /// Other moves: the knob's own maximum.
+    /// </summary>
+    public static double KnobCap(Family family, Move move, double specialRate, double knobMaximum, double knobReference)
+    {
+        if (!PauseGatedMoveIds.Contains(MoveId(family, move)) || specialRate <= 0.0)
+            return knobMaximum;
+        var cap = Math.Floor(move.Seconds * specialRate / SpecialPauseMin * 4.0 + 1e-9) / 4.0;
+        return Math.Clamp(Math.Max(cap, knobReference), 0.25, knobMaximum);
+    }
+
     public static string Seconds(double seconds)
         => seconds.ToString(seconds < 10 ? "0.##" : "0.#", CultureInfo.InvariantCulture) + " s";
 
@@ -259,7 +289,7 @@ public static class MutantAggressionPolicy
     /// <summary>Board and panel value of SPECIAL ABILITY RATE (writer rounding).</summary>
     public static string SpecialAbilityDisplay(double rate)
         => string.Create(CultureInfo.InvariantCulture,
-            $"{rate:0.##}× · special move every {8.0 / rate:0.##}–{12.0 / rate:0.##} s");
+            $"{rate:0.##}× · one every {8.0 / rate:0.##}–{12.0 / rate:0.##} s");
 
     // ---- SPECIAL ABILITY RATE --------------------------------------------
     public static IReadOnlyList<(string Index, string Tag, double Min, double Max)> AbilityTokenGroups { get; } =
