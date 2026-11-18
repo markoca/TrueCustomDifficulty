@@ -188,3 +188,7 @@ A new direct source mapping for `combat.npcFogVisibility` targets the original 2
 ## BPATCH USAGE GATE (2026-11-18)
 
 `tools/audit_bpatch_usage.py` checks that direct edit points go through `AddAssignment` → `GetOrAddNode` (all `{bpatch}`). It also checks that every edit-point operation has a writer case, and pins each non-bpatch site (whole list, refurl clone, removenode, new TCD definition) with its reason. Details: `CFG-BPATCH-USAGE-AUDIT-2026-11-18.md`.
+
+## REMOVE LOOSE ARTIFACTS file accounting (2026-11-18)
+
+`WriteLooseArtifactRemovals` writes one physical `removenode` file per spot. Its count now goes into the staged-file accounting, as it already does for the world armor, weapon and crate removals. Before this fix, Build Mod rejected the output.

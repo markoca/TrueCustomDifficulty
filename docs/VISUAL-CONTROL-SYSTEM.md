@@ -1,3 +1,14 @@
+## CURRENT 2026-11-18 — Writer fix from the Wine contract run
+
+* No UI change. **Bug fix:** with REMOVE LOOSE ARTIFACTS ON, Build Mod failed with "CFG output accounting mismatch". The writer staged its 4–5 `removenode` files but did not count them. They are now counted like the other per-actor removals.
+* Windows contracts corrected after the first real `writer --wine` run (6 PASS / 7 FAIL):
+  * Health/Stamina: 45 live controls, and FALL DAMAGE's `Protection.Fall` operation is checked.
+  * Economy: TRADER RESTOCK is a zone-timers writer.
+  * Environment: RARE+ ARTIFACT CHANCE and EMISSION WARNING are special writers; ARTIFACT SPAWN CHANCE uses `scaleClamp100`; 94 scenarios.
+  * A-Life: the 3 LAIR POPULATION controls are a special writer, so the direct cases cover 18 controls.
+  * LootWorldPlacement: catalog total is 452.
+  * LootSpecialGenerators: two C# CS0136 name clashes fixed.
+
 ## CURRENT 2026-11-18 — Audit: Windows contract pins and panel names
 
 * No UI change. The Windows C# writer contracts are back in step with the 452-control catalog. Fixed: ALife 22/21, Economy 95 (+6 TECHNICIAN source-only), Environment 23/21 and 74 points (artifacts, emission and storm; RARE+ ARTIFACT CHANCE and EMISSION WARNING are special writers), Health/Stamina 50 (10 source-only stamina ids), Loot 89 (40 Loot + 49 Stashes), 1557 direct points incl. 80 DLC1 weapon-condition rows and ARMY MEDKIT box odds, preset totals 452.

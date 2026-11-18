@@ -30,6 +30,7 @@ EXPECT = {
     "tests/LootDirectPatchContract/Program.cs": [f"catalog.Count == {pref('loot.')}", f"source.Length == {pts('loot.')}",
                                                  f'p.Tab == "loot") == {sum(p["tab"] == "loot" for p in P)}',
                                                  f'p.Tab == "stashes") == {sum(p["tab"] == "stashes" for p in P)}'],
+    "tests/LootWorldPlacementContract/Program.cs": [f"WriterBaseline.SupportedParameterCount=={len(ids)}"],
     "tests/SurvivalPatchContract/Program.cs": [f"cohort.Length == {pref('survival.')}", f"points.Length == {pts('survival.')}"],
 }
 bad = []

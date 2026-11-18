@@ -86,12 +86,12 @@ internal static partial class Program
                 if (StashEffectiveState.SmartCategoryId(categorySids[0]) is { } smartId)
                 {
                     // SMART LOOT GIVES checkbox: OFF = 0, ON = 1 (toggle values).
-                    var smartOff = NativeState(difficulty, (smartId, 0));
+                    var smartOffState = NativeState(difficulty, (smartId, 0));
                     var smartOn = NativeState(difficulty, (smartId, 1));
                     Check(categorySids.All(sid =>
-                            Math.Abs(smartOff.SmartFactor(sid)) < 1e-9
+                            Math.Abs(smartOffState.SmartFactor(sid)) < 1e-9
                             && Math.Abs(smartOn.SmartFactor(sid) - 1) < 1e-9
-                            && Math.Abs(smartOff.TierFactor(sid) - 1) < 1e-9),
+                            && Math.Abs(smartOffState.TierFactor(sid) - 1) < 1e-9),
                         smartId + ": SMART LOOT GIVES checkbox must own SmartLoot only");
                 }
             }

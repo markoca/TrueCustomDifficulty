@@ -42,13 +42,20 @@ internal static class Program
             Check(sourceOnly.SequenceEqual(new[] { "alife.mutantSpawn.generic" }),
                 "MutantGeneric must remain a hidden source-only mapping, not a normal UI control");
             Check(live.All(p => p.IsSlider && p.IsControlEnabled), "Missing enabled live A-Life sliders");
+            // LAIR POPULATION (human / mutant / respawn) has its own special writer
+            // and no direct MaxCount rows; everything below covers the 18 direct
+            // group-size controls only.
+            var lair = LairPopulationPolicy.ParameterIds.ToHashSet(StringComparer.Ordinal);
+            Check(lair.IsSubsetOf(ids), "LAIR POPULATION controls missing from the live VM");
+            live = live.Where(p => !lair.Contains(p.Id)).ToArray();
+            ids = ids.Where(id => !lair.Contains(id)).ToArray();
 
             var all = Baseline.EditPoints.Where(p => p.ParameterId.StartsWith("alife.", StringComparison.Ordinal))
                 .ToArray();
             Check(all.Length == 64 && all.All(p => p.Scope == "baseGame" && p.File == Source
                 && p.Prototype == "ALifeDirectorPreset" && p.Key == "MaxCount"),
                 "Expected 64 exactly scoped ALife Director MaxCount source rows");
-            Check(all.Select(p => p.ParameterId).ToHashSet(StringComparer.Ordinal).SetEquals(catalogIds),
+            Check(all.Select(p => p.ParameterId).ToHashSet(StringComparer.Ordinal).SetEquals(catalogIds.Except(lair, StringComparer.Ordinal)),
                 "A-Life catalog / direct writer point ID mismatch");
             Check(all.Count(p => p.Operation == "scaleIntegerHalfUp") == 4
                 && all.Count(p => p.Operation == "scaleIntegerHalfUpPreserveZero") == 60,

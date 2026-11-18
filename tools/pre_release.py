@@ -81,12 +81,12 @@ SOURCE = (
     ("loot-world-original-source-structures", "tools/audit_loot_world_source.py"),
 )
 WRITERS = (
-    ("combat-bpatch-writer", "CombatPatchContract", "combat-patch-fixtures", 84),
+    ("combat-bpatch-writer", "CombatPatchContract", "combat-patch-fixtures", 62),
     ("health-stamina-bpatch-writer", "HealthStaminaPatchContract", "health-stamina-patch-fixtures", 46),
-    ("survival-bpatch-writer", "SurvivalPatchContract", "survival-patch-fixtures", 94),
+    ("survival-bpatch-writer", "SurvivalPatchContract", "survival-patch-fixtures", 130),
     ("economy-bpatch-writer", "EconomyPatchContract", "economy-patch-fixtures", 34),
-    ("equipment-bpatch-writer", "EquipmentPatchContract", "equipment-patch-fixtures", 32),
-    ("environment-bpatch-writer", "EnvironmentPatchContract", "environment-patch-fixtures", 78),
+    ("equipment-bpatch-writer", "EquipmentPatchContract", "equipment-patch-fixtures", 50),
+    ("environment-bpatch-writer", "EnvironmentPatchContract", "environment-patch-fixtures", 94),
     ("alife-bpatch-writer", "ALifePatchContract", "alife-patch-fixtures", 92),
     ("loot-direct-bpatch-writer", "LootDirectPatchContract", "loot-direct-patch-fixtures", 117),
     ("loot-special-generators-writer", "LootSpecialGeneratorsContract", "loot-special-generators-fixtures", 63),

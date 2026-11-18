@@ -105,7 +105,10 @@ internal static class Program
             Check(effects.Where(p => p.ParameterId == "environment.psyAnomalyIntensity")
                 .All(p => p.Operation == "scale" && Num(p.SourceRaw) < 0), "negative PSY source");
             foreach (var diff in Diffs) CheckCase(diff, new Dictionary<string,double>(), "vanilla");
-            foreach (var id in active.Select(p => p.Id)) foreach (var diff in Diffs)
+            // RARE+ ARTIFACT CHANCE and EMISSION WARNING have their own special
+            // writers (no direct points); every other live control is direct.
+            var special = new[] { "environment.artifactRareLuck", "environment.emissionWarning" };
+            foreach (var id in active.Select(p => p.Id).Except(special, StringComparer.Ordinal)) foreach (var diff in Diffs)
             {
                 var p = new MainViewModel(Catalog) { SelectedReferenceDifficulty = diff }
                     .AllParameters.Single(x => x.Id == id);
@@ -134,7 +137,7 @@ internal static class Program
                 ("environment.chemicalAnomalyDamage",40.0,"environment.fireAnomalyDamage",90.0)
             })
                 CheckCase("Veteran",new(){{pair.Item1,pair.Item2},{pair.Item3,pair.Item4}},"pair");
-            Check(Passed == 78,"exact 78 live Environment scenarios; Diamond legacy IDs remain catalog-only");
+            Check(Passed == 94,"exact 94 live Environment scenarios; Diamond legacy IDs remain catalog-only");
             Console.WriteLine($"PASS: {Passed} Environment production writer scenarios");
             Console.WriteLine("NOT VERIFIED: Unreal merge semantics or effects in game");
             return 0;
@@ -203,6 +206,7 @@ internal static class Program
             "set"=>p.CurrentNumber,
             "scale"=>Num(field.SourceRaw)*p.CurrentNumber,
             "setDeltaFromRetainedFraction"=>p.CurrentNumber-1.0,
+            "scaleClamp100"=>Math.Clamp(Num(field.SourceRaw)*p.CurrentNumber,0.0,100.0),
             _=>throw new InvalidDataException("Unexpected environment operation")
         };
 

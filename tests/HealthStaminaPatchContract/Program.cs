@@ -54,11 +54,6 @@ internal static class Program
             // Pin the exclusion rather than inventing UI coverage for them.
             var internalOnly = new HashSet<string>(StringComparer.Ordinal)
             {
-                "stamina.sprintDisableThreshold",
-                "stamina.sprintRecoveryDelay",
-                "stamina.lowRecoveryThreshold",
-                "stamina.lowRecoveryStrength",
-                "stamina.lowRecoveryDuration",
                 "stamina.sprintUnderRunSpeedRegenCoef",
                 "stamina.joggingRegenCoef",
                 "stamina.slowRunRegenCoef",
@@ -74,8 +69,8 @@ internal static class Program
                 "Unexpected Health/Stamina app VM exclusions: "
                 + string.Join(", ", notLoaded.OrderBy(s => s)));
             var liveCohort = cohort.Where(p => liveIds.Contains(p.Id)).ToArray();
-            Check(liveCohort.Length == 40,
-                "Health/Stamina live VM count is not 40");
+            Check(liveCohort.Length == 45,
+                "Health/Stamina live VM count is not 45");
             foreach (var def in liveCohort)
             {
                 var diff = def.Id.StartsWith("health.master", StringComparison.Ordinal)
@@ -495,6 +490,10 @@ internal static class Program
                     // In particular, Player.VaultingParams may be inherited
                     // from the original [0] prototype. Test the generated
                     // structure; runtime semantics remain NOT VERIFIED.
+                    if (id == "health.fallDamage")
+                        Check(root.Name == "Player" && node.Name == "Protection"
+                              && point.Key == "Fall",
+                            label + ": inherited Protection.Fall path changed");
                     if (id == "stamina.vaultMaxHeight")
                         Check(root.Name == "Player" && node.Name == "VaultingParams"
                               && point.Key == "MaxObstacleHeight",
@@ -530,6 +529,8 @@ internal static class Program
             "set" => parameter.CurrentNumber,
             "negateSet" => -parameter.CurrentNumber,
             "toggleSourceOrZero" => parameter.CurrentBoolean ? ParseRaw(point.SourceRaw) : 0.0,
+            // FALL DAMAGE: fraction of fall damage taken -> Protection.Fall percent.
+            "setProtectionFromDamageFraction" => Math.Clamp((1.0 - parameter.CurrentNumber) * 100.0, 0.0, 100.0),
             _ => throw new InvalidDataException(
                 point.ParameterId + ": unexpected Health/Stamina operation " + point.Operation)
         };

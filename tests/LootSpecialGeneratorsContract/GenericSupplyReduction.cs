@@ -226,11 +226,11 @@ internal static partial class Program
                                 "100% corpse reduction did not remove optional bonus package");
                         else
                         {
-                            var smart = output["GameData/StashPrototypes.cfg"];
+                            var smartStash = output["GameData/StashPrototypes.cfg"];
                             var spawnKey = "TCD_Supply_NPC_Medicine_Smart"
                                 + "/ItemGenerators/[0]/SmartLootParams/"
                                 + "ConsumablesParams/[0]/MaxSpawnChance";
-                            Check(smart.TryGetValue(spawnKey, out var endpoint)
+                            Check(smartStash.TryGetValue(spawnKey, out var endpoint)
                                 && Math.Abs(Num(endpoint!) - .7 * .5) < 0.000001,
                                 "Corpse master did not scale optional medical spawn endpoint");
                         }

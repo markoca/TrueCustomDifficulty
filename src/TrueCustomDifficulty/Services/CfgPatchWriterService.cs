@@ -340,8 +340,10 @@ public sealed partial class CfgPatchWriterService
         editCount += worldArmorRemoval.EditCount;
 
         // Fixed unique artifact spots outside anomaly fields (Weird*, DLC1 WaterDrip).
-        editCount += WriteLooseArtifactRemovals(
+        // One physical removenode file per spot, so it also counts as files.
+        var looseArtifactFiles = WriteLooseArtifactRemovals(
             modifiedById, allById, hasDlc1, outputRoot, writtenParameters);
+        editCount += looseArtifactFiles;
 
         // Strictly allowlisted original regular weapon reward nodes disappear
         // only while the Extra Stash Gear master checkbox is enabled.
@@ -463,7 +465,7 @@ public sealed partial class CfgPatchWriterService
                 string.Join(Environment.NewLine, missing.Select(id => $"  - {id}")));
         }
 
-        var fileCount = f1BoxRemoval.FileCount + crateRemoval.FileCount + looseRemoval.FileCount + uniqueWeaponShuffle.FileCount + worldWeaponDistribution.FileCount + worldArmorRemoval.FileCount;
+        var fileCount = f1BoxRemoval.FileCount + crateRemoval.FileCount + looseRemoval.FileCount + uniqueWeaponShuffle.FileCount + worldWeaponDistribution.FileCount + worldArmorRemoval.FileCount + looseArtifactFiles;
         foreach (var pair in documents.OrderBy(p => p.Key, StringComparer.OrdinalIgnoreCase))
         {
             if (pair.Value.IsEmpty)

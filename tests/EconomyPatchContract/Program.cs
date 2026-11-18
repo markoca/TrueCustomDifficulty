@@ -34,15 +34,14 @@ internal static class Program
             var active = new MainViewModel(Catalog).AllParameters.Select(p => p.Id)
                 .ToHashSet(StringComparer.Ordinal);
             Check(defs.Where(p => !active.Contains(p.Id)).Select(p => p.Id)
-                .SequenceEqual(new[] { "economy.repairDifficultyCost",
-                    "economy.traderSells.technician.ammo", "economy.traderSells.technician.attachments",
-                    "economy.traderSells.technician.drinks", "economy.traderSells.technician.food",
-                    "economy.traderSells.technician.medical", "economy.traderSells.technician.weapons" }),
+                .SequenceEqual(new[] { "economy.repairDifficultyCost" }),
                 "Unexpected source-only Economy parameters");
             var points = Baseline.EditPoints.Where(p => p.ParameterId.StartsWith("economy.", StringComparison.Ordinal)).ToArray();
             Check(points.Length == 409, "Expected 409 direct Economy fields");
             Check(points.Select(p => p.ParameterId).ToHashSet(StringComparer.Ordinal)
                 .SetEquals(defs.Where(p => p.Id != "economy.traderMinBuyCondition"
+                    // TRADER RESTOCK is written by the zone-timers writer, not direct points.
+                    && p.Id != ZoneTimersPolicy.TraderRestockId
                     && !p.Id.StartsWith(TraderBuysPolicy.Prefix, StringComparison.Ordinal)
                     && !p.Id.StartsWith(TraderSellsPolicy.Prefix, StringComparison.Ordinal)).Select(p => p.Id)),
                 "Economy catalog / manifest mismatch");
@@ -52,6 +51,7 @@ internal static class Program
 
             foreach (var def in defs.Where(p => active.Contains(p.Id)
                 && p.Id != "economy.traderMinBuyCondition"
+                && p.Id != ZoneTimersPolicy.TraderRestockId
                 && !p.Id.StartsWith(TraderBuysPolicy.Prefix, StringComparison.Ordinal)
                 && !p.Id.StartsWith(TraderSellsPolicy.Prefix, StringComparison.Ordinal)))
                 TestDirect(def.Id, "Veteran");
