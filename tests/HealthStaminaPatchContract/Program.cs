@@ -46,7 +46,7 @@ internal static class Program
                          || p.Id.StartsWith("stamina.", StringComparison.Ordinal))
                 .OrderBy(p => p.Id, StringComparer.Ordinal)
                 .ToArray();
-            Check(cohort.Length == 45, "Health/Stamina catalog cohort is no longer 45 controls");
+            Check(cohort.Length == 50, "Health/Stamina catalog cohort is no longer 50 controls");
 
             // These five source-backed speed-state definitions are intentionally
             // excluded from MainViewModel. They are documented internal CFG
@@ -54,6 +54,11 @@ internal static class Program
             // Pin the exclusion rather than inventing UI coverage for them.
             var internalOnly = new HashSet<string>(StringComparer.Ordinal)
             {
+                "stamina.sprintDisableThreshold",
+                "stamina.sprintRecoveryDelay",
+                "stamina.lowRecoveryThreshold",
+                "stamina.lowRecoveryStrength",
+                "stamina.lowRecoveryDuration",
                 "stamina.sprintUnderRunSpeedRegenCoef",
                 "stamina.joggingRegenCoef",
                 "stamina.slowRunRegenCoef",

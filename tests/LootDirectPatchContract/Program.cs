@@ -116,18 +116,21 @@ internal static class Program
             .Select(x => x.Id).ToHashSet(StringComparer.Ordinal);
         var source = Baseline.EditPoints.Where(x => x.ParameterId.StartsWith("loot.", StringComparison.Ordinal))
             .ToArray();
-        Check(catalog.Count == 79
-            && Catalog.Parameters.Count(p => p.Tab == "loot") == 37
-            && Catalog.Parameters.Count(p => p.Tab == "stashes") == 42,
-            "Expected 79 loot.* IDs (37 Loot plus 42 Stashes), not just the Loot tab");
-        Check(source.Length == 320, "Expected 320 direct Loot source points");
-        var directIds = Mutants.Concat(new[] { Money, Condition }).ToHashSet(StringComparer.Ordinal);
+        Check(catalog.Count == 89
+            && Catalog.Parameters.Count(p => p.Tab == "loot") == 40
+            && Catalog.Parameters.Count(p => p.Tab == "stashes") == 49,
+            "Expected 89 loot.* IDs (40 Loot plus 49 Stashes), not just the Loot tab");
+        Check(source.Length == 1557, "Expected 1557 direct Loot source points");
+        var directIds = Mutants.Concat(new[] { Money, Condition, "loot.medicalBoxArmyMedkitWeight" }).ToHashSet(StringComparer.Ordinal);
         Check(source.Select(x => x.ParameterId).ToHashSet(StringComparer.Ordinal).SetEquals(directIds),
             "Loot direct ID inventory changed (special writer entries cannot be treated as direct)");
         Check(directIds.IsSubsetOf(catalog) && directIds.IsSubsetOf(live),
             "Mapped Loot source not present in actual UI-backed ViewModel");
-        Check(source.All(x => x.Scope == "baseGame" && x.File == Source),
-            "Unexpected DLC source in active direct loot manifest");
+        Check(source.All(x => x.Scope == "baseGame" ? x.File == Source
+                : x.ParameterId == Condition && x.Scope == "dlc1"
+                  && x.File == "DLCGameData/DLC1/ItemGeneratorPrototypes.cfg")
+            && source.Count(x => x.Scope == "dlc1") == 80,
+            "Unexpected DLC source in active direct loot manifest (only 80 DLC1 NPC weapon-condition rows)");
         Check(source.Count(x => Mutants.Contains(x.ParameterId, StringComparer.Ordinal)
             && x.Key == "Chance" && x.Operation == "set") == 14,
             "Expected 14 independent source mutant drop chances");

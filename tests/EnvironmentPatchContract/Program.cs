@@ -37,7 +37,7 @@ internal static class Program
             var legacyDiamond = new[] {
                 "environment.diamondHealthDamage", "environment.diamondBleeding"
             }.ToHashSet(StringComparer.Ordinal);
-            Check(ids.Length == 17 && active.Length == 15,
+            Check(ids.Length == 23 && active.Length == 21,
                 "Environment catalog/VM inventory drift: catalog=" + ids.Length +
                 " VM=" + active.Length);
             var inaccessible = active.Where(p => !p.IsSlider || !p.IsControlEnabled)
@@ -81,16 +81,18 @@ internal static class Program
                     Math.Abs(knob.TickFrequency - 0.01) < 0.0000001,
                     "Source-native special-effect knob range/step: " + id);
             }
-            Check(points.Length == 42 && points.All(p => p.Scope == "baseGame") &&
-                points.Select(p => p.ParameterId).ToHashSet(StringComparer.Ordinal).SetEquals(ids), "42 base source fields");
-            Check(points.All(p => p.Operation is "set" or "scale" or "setDeltaFromRetainedFraction"),
+            // RARE+ ARTIFACT CHANCE and EMISSION WARNING have special writers, no direct points.
+            Check(points.Length == 74 && points.All(p => p.Scope == "baseGame") &&
+                points.Select(p => p.ParameterId).ToHashSet(StringComparer.Ordinal).SetEquals(ids.Except(new[] {
+                    "environment.artifactRareLuck", "environment.emissionWarning" }, StringComparer.Ordinal)), "74 base source fields");
+            Check(points.All(p => p.Operation is "set" or "scale" or "setDeltaFromRetainedFraction" or "scaleClamp100"),
                 "supported Environment operation inventory");
             var global = points.Where(p => p.ParameterId == "environment.anomalyDamage").ToArray();
             Check(global.Length == 4 && global.All(p => p.Key == "Anomaly_Damage" &&
                 p.Operation == "set" && p.NodePath.SequenceEqual(new[]{"EnvironmentDifficulty"})) &&
                 global.Select(p => p.DifficultySid).ToHashSet(StringComparer.Ordinal)
                     .SetEquals(Catalog.DifficultyProfiles.Values.Select(p => p.Sid)), "four global difficulty sources");
-            var effects = points.Except(global).ToArray();
+            var effects = points.Where(p => p.File == "GameData/EffectPrototypes.cfg").ToArray();
             Check(effects.Length == 38 &&
                 effects.All(p => p.File == "GameData/EffectPrototypes.cfg" &&
                     p.NodePath.Count == 0 && p.Key is "ValueMin" or "ValueMax") &&

@@ -15796,7 +15796,7 @@
       },
       "rationale": "Odds that a field actually drops an artifact when it regrows. Vanilla: 1× (25% + 15% bonus). 2× = 50% (+30%); 0× = anomaly fields never grow artifacts.",
       "logic": "1× keeps the game's 25% / 15%. Each value is multiplied and capped at 100%. 0× removes world anomaly artifacts; quest and unique artifacts stay.",
-      "interaction": "RARE LUCK and PER SPAWN shape what you find. Fields still refill on the game's own schedule (after emissions)."
+      "interaction": "RARE+ ARTIFACT CHANCE and PER SPAWN shape what you find. Fields still refill on the game's own schedule (after emissions)."
     },
     {
       "id": "environment.artifactRareLuck",

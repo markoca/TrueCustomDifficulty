@@ -36,6 +36,7 @@ STATIC = (
     ("mutant-aggression", "tools/audit_mutant_aggression.py"),
     ("mutant-cooldown-cfg", "tools/audit_mutant_cooldown_cfg.py"),
     ("bpatch-usage", "tools/audit_bpatch_usage.py"),
+    ("test-contract-pins", "tools/audit_test_contract_pins.py"),
     ("rc-player-labels", "tools/audit_rc_player_labels.py"),
     ("current-stashes", "tools/audit_stashes_current.py"),
     ("stash-content-gear", "tools/audit_stash_content_gear.py"),

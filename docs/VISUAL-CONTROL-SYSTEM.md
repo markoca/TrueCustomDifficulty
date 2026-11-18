@@ -1,3 +1,9 @@
+## CURRENT 2026-11-18 — Audit: Windows contract pins and panel names
+
+* No UI change. The Windows C# writer contracts are back in step with the 452-control catalog. Fixed: ALife 22/21, Economy 95 (+6 TECHNICIAN source-only), Environment 23/21 and 74 points (artifacts, emission and storm; RARE+ ARTIFACT CHANCE and EMISSION WARNING are special writers), Health/Stamina 50 (10 source-only stamina ids), Loot 89 (40 Loot + 49 Stashes), 1557 direct points incl. 80 DLC1 weapon-condition rows and ARMY MEDKIT box odds, preset totals 452.
+* New static gate `test-contract-pins` (`tools/audit_test_contract_pins.py`): 17 catalog and edit-point counts in the C# contracts must match the catalog.
+* ARTIFACT SPAWN CHANCE panel: `RARE LUCK` → `RARE+ ARTIFACT CHANCE` (the label the board draws). Every other capitalised control name in panel texts matches a drawn label.
+
 ## CURRENT 2026-11-18 — v0.9.27.0: bpatch gate and gamer lines
 
 * Version 0.9.27.0. No layout change.

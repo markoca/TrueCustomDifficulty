@@ -761,3 +761,7 @@ STASH SUPPLY REDUCTION 50% on Veteran: Basic stashes give food / milk / bandages
 ## Trader stock odds and supply — in-game check
 
 Set General Traders · WEAPONS to 50% and AMMO SUPPLY to 0.5×, build, and refresh a general trader's stock (wait for the restock): fewer weapon offers, smaller ammo stacks. Repeat with a generic NPC trader (ammo and meds were not reachable before). Set a category to 0% and confirm it disappears. Check the patch: per-trader `TCD_TS_*` clones carry `Chance` / `MinCount` / `MaxCount` assignments; `DynamicTraderItemGenerator` clones carry an `ItemPrototypeSID = Empty` entry only when a Weapons/Armor rail is between 5% and 95%.
+
+## Windows writer contracts (2026-11-18)
+
+The C# contracts in `tests/` need .NET 10 and Wine: `python3 tools/pre_release.py writer --wine`. The static gate `test-contract-pins` keeps their catalog and edit-point counts in step with the catalog. Their runtime scenario counts (the `WRITERS` table in `tools/pre_release.py`) are only confirmed by a real run.

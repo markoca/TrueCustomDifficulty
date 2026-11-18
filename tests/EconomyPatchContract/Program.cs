@@ -30,11 +30,14 @@ internal static class Program
             }
             var defs = Catalog.Parameters.Where(p => p.Id.StartsWith("economy.", StringComparison.Ordinal))
                 .OrderBy(p => p.Id, StringComparer.Ordinal).ToArray();
-            Check(defs.Length == 94, "Expected 94 Economy catalog definitions (23 existing + 40 trader buys + 31 trader sells)");
+            Check(defs.Length == 95, "Expected 95 Economy catalog definitions (24 direct/special + 40 trader buys + 31 trader sells)");
             var active = new MainViewModel(Catalog).AllParameters.Select(p => p.Id)
                 .ToHashSet(StringComparer.Ordinal);
             Check(defs.Where(p => !active.Contains(p.Id)).Select(p => p.Id)
-                .SequenceEqual(new[] { "economy.repairDifficultyCost" }),
+                .SequenceEqual(new[] { "economy.repairDifficultyCost",
+                    "economy.traderSells.technician.ammo", "economy.traderSells.technician.attachments",
+                    "economy.traderSells.technician.drinks", "economy.traderSells.technician.food",
+                    "economy.traderSells.technician.medical", "economy.traderSells.technician.weapons" }),
                 "Unexpected source-only Economy parameters");
             var points = Baseline.EditPoints.Where(p => p.ParameterId.StartsWith("economy.", StringComparison.Ordinal)).ToArray();
             Check(points.Length == 409, "Expected 409 direct Economy fields");

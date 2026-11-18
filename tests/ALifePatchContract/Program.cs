@@ -38,7 +38,7 @@ internal static class Program
                 .ToArray();
             var ids = live.Select(p => p.Id).OrderBy(id => id, StringComparer.Ordinal).ToArray();
             var sourceOnly = catalogIds.Except(ids, StringComparer.Ordinal).ToArray();
-            Check(catalogIds.Count == 19 && ids.Length == 18, "Expected 19 catalog / 18 active A-Life sources");
+            Check(catalogIds.Count == 22 && ids.Length == 21, "Expected 22 catalog / 21 active A-Life sources");
             Check(sourceOnly.SequenceEqual(new[] { "alife.mutantSpawn.generic" }),
                 "MutantGeneric must remain a hidden source-only mapping, not a normal UI control");
             Check(live.All(p => p.IsSlider && p.IsControlEnabled), "Missing enabled live A-Life sliders");
@@ -203,7 +203,7 @@ internal static class Program
                 ?? throw new InvalidDataException("Missing embedded factory preset: " + name);
             var preset = JsonSerializer.Deserialize<PresetFile>(resource)
                 ?? throw new InvalidDataException("Cannot parse embedded factory preset: " + name);
-            Check(preset.Values.Count == 399 && Catalog.Parameters.Count == 399
+            Check(preset.Values.Count == 452 && Catalog.Parameters.Count == 452
                 && preset.Values.TryGetValue("loot.genericCorpseReduction", out var corpseReduction)
                 && corpseReduction.Number == 0.0
                 && preset.Values.TryGetValue("loot.genericStashReduction", out var stashReduction)
