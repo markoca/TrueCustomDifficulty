@@ -849,6 +849,24 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "74bc9e8b3b038f24c40b327f4ae91e03ed61489f",
     };
 
+    // Exact stock files with LAIR POPULATION but before REFILL SPEED (2026-11-18).
+    private static readonly Dictionary<string, string> PreLairRefillFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "02a886f73b3deb89d1291f879fe7419ab30c84b5",
+        ["Field Medic"] = "f9b9f4b6fbe79a9cbbcd63675efed62d2ff0acbc",
+        ["Hardcore+"] = "e42c2e31ca2fd02810e13766ecbb5e700a7842f0",
+        ["Hardcore"] = "2a63d9d3f708d53abb7e6027606f844cd41c0eb5",
+        ["Immersive"] = "111b8e426bfe9fdad7e8654c7be3fcb2c1e026e4",
+        ["Mercenary"] = "02888de727537613b5f1731cbc12d9973370fabd",
+        ["Mutant Hunter"] = "7cc81c5a41a464ddb4ae79b18fa09c9b1dae2efc",
+        ["Outcast"] = "d636a8b47403a2cb9c4d8e9732fee842ca34db0d",
+        ["Scavenger"] = "dd69ea8983f3016f97c6d40db9171ee2cf5a1672",
+        ["Smuggler"] = "8da1b84a9476a4e53071f9a18c7dff4c899b175e",
+        ["Tactical"] = "a91edf969bcf9f01781cbc37ce78af64fd9f12b1",
+        ["Wanderer"] = "65972c7817b0831368f24c632bef0070c895e455",
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -883,7 +901,8 @@ public sealed class PresetDirectoryService
             && !PreSmartOddsFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreSmartGivesFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreThematicFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreLairPopulationFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreLairPopulationFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreLairRefillFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -961,7 +980,9 @@ public sealed class PresetDirectoryService
                 || (PreThematicFactoryBlobs.TryGetValue(name, out var preThematicHash)
                     && actual.Equals(preThematicHash, StringComparison.OrdinalIgnoreCase))
                 || (PreLairPopulationFactoryBlobs.TryGetValue(name, out var preLairHash)
-                    && actual.Equals(preLairHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preLairHash, StringComparison.OrdinalIgnoreCase))
+                || (PreLairRefillFactoryBlobs.TryGetValue(name, out var preLairRefillHash)
+                    && actual.Equals(preLairRefillHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

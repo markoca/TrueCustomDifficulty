@@ -1,3 +1,12 @@
+## 2026-11-18 — CURRENT: LAIR POPULATION — REFILL SPEED
+
+* Third card on the LAIR POPULATION board: **REFILL SPEED** (`alife.lairRefillSpeed`, 0.25×–4×, vanilla 1×). It sets how fast camps and nests fill back up after you thin them out.
+  * Every eligible lair entry has three timers (back to half full, back to full, after a wipe). Each is divided by the speed, rounded to 0.1 s, and a 0 stays 0.
+  * Vanilla is 180 / 480 / 480 s, except 12 Newbie entries at 6 / 30 / 30 s, which keep their ratio.
+  * Under the card: `HALF FULL IN 3 min · FULL IN 8 min`; changed numbers turn gold.
+* Factory presets: Hardcore+ 1.5, Hardcore and Mutant Hunter 1.25, Mercenary and Tactical 1.15, Outcast 1.1, Anomaly Runner and Scavenger 0.85, Wanderer 0.75, the rest 1×. The first LAIR POPULATION stock files upgrade only when byte-identical (`PreLairRefillFactoryBlobs`).
+* Census is now 418 controls, 211 visible. Gate: `tools/audit_lair_population.py`.
+
 ## 2026-11-18 — CURRENT: LAIR POPULATION (A-Life)
 
 * New board **LAIR POPULATION** on the A-Life tab with two cards:

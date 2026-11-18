@@ -2631,7 +2631,7 @@ if (_alife_role_map.get("schemaVersion") != 1
     or set(_alife_caps_by_id) != {
         id for id in _factory_catalog if id.startswith("alife.")
         and id != "alife.mutantSpawn.generic"
-        and not id.startswith("alife.lairPopulation.")  # own audit (2026-11-18)
+        and not id.startswith(("alife.lairPopulation.", "alife.lairRefillSpeed"))  # own audit (2026-11-18)
     }
     or len(_alife_caps_by_id) != 18):
     _factory_errors.append("12-role A-Life mapping source coverage drift")

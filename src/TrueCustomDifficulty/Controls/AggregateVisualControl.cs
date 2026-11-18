@@ -914,14 +914,15 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
     }
 
-    // LAIR POPULATION: how many inhabitants a world lair holds. Two cards
-    // (HUMAN CAMPS / MUTANT NESTS) and one real lair per card that follows
-    // the writer's rounding (LairPopulationPolicy.Scale).
+    // LAIR POPULATION: how many inhabitants a world lair holds (HUMAN CAMPS /
+    // MUTANT NESTS, one real lair under each, LairPopulationPolicy.Scale) and
+    // how fast lairs fill back up (REFILL SPEED, the ordinary 180 / 480 s
+    // timers under it, LairPopulationPolicy.ScaleTimer).
     private const double LairCardPitch = 108.0;
 
     private static double LairPopulationBoardHeight(double width)
     {
-        var rows = (2 + EconomyColumns(width) - 1) / EconomyColumns(width);
+        var rows = (3 + EconomyColumns(width) - 1) / EconomyColumns(width);
         return 48.0 + rows * LairCardPitch + 6.0;
     }
 
@@ -935,7 +936,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var cards = new (string Id, string Label, string Example, string Prototype, string Faction)[]
         {
             (LairPopulationPolicy.HumanId, "HUMAN CAMPS", "BANDIT CAMP", "Bandits", "Bandits"),
-            (LairPopulationPolicy.MutantId, "MUTANT NESTS", "TUSHKAN NEST", "Tushkan", "Tushkan")
+            (LairPopulationPolicy.MutantId, "MUTANT NESTS", "TUSHKAN NEST", "Tushkan", "Tushkan"),
+            (LairPopulationPolicy.RefillSpeedId, "REFILL SPEED", "", "", "")
         };
         var ranks = new[] { "Newbie", "Experienced", "Veteran", "Master" };
         var columns = EconomyColumns(ActualWidth);
@@ -953,6 +955,20 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             if (parameter is null)
                 continue;
 
+            if (cards[i].Id == LairPopulationPolicy.RefillSpeedId)
+            {
+                var speed = parameter.CurrentNumber;
+                var half = LairPopulationPolicy.ScaleTimer(LairPopulationPolicy.TypicalTimers[0], speed);
+                var full = LairPopulationPolicy.ScaleTimer(LairPopulationPolicy.TypicalTimers[1], speed);
+                var refillLine = $"HALF FULL IN {LairTime(half)} · FULL IN {LairTime(full)}";
+                var refillText = CreateText(refillLine, 9.6,
+                    !parameter.IsControlEnabled ? muted
+                        : parameter.IsValueModifiedFromReference() ? ReadoutInk.Numbers(accent, muted) : muted,
+                    FontWeights.SemiBold, Math.Max(1.0, rect.Width - 8.0));
+                dc.DrawText(refillText, new Point(rect.Left + 4.0, rect.Bottom + 6.0));
+                continue;
+            }
+
             // One real lair, by your rank (Newbie / Experienced / Veteran / Master).
             var counts = ranks.Select(rank => LairPopulationPolicy.Example(
                 cards[i].Prototype, cards[i].Faction, rank, parameter.CurrentNumber)).ToArray();
@@ -965,6 +981,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             dc.DrawText(readout, new Point(rect.Left + 4.0, rect.Bottom + 6.0));
         }
     }
+
+    private static string LairTime(double seconds)
+        => seconds >= 60.0
+            ? (seconds / 60.0).ToString("0.#", CultureInfo.InvariantCulture) + " min"
+            : seconds.ToString("0", CultureInfo.InvariantCulture) + " s";
 
     // ARTIFACT HUNTING: three spawner knobs (spawn chance, rare luck,
     // artifacts per spawn) and a read-only rarity split per zone rank that

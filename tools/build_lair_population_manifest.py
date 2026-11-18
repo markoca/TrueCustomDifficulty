@@ -3,7 +3,8 @@
 game's LairPrototypes.cfg (base + DLC1).
 
 One row per eligible faction/rank MaxSpawnQuantity. HUMAN / MUTANT decides
-which LAIR POPULATION control scales it. Everything else is listed in the
+which LAIR POPULATION card scales it; the three
+refill timers are scaled by REFILL SPEED for every row. Everything else is listed in the
 EXCLUDED_* sets with the reason; see docs/ALIFE-LAIR-POPULATION.md.
 
 Usage: build_lair_population_manifest.py BASE_LairPrototypes.cfg DLC1_LairPrototypes.cfg
@@ -59,10 +60,12 @@ def main(base: str, dlc: str) -> None:
             group = "human" if r["faction"] in HUMAN else "mutant" if r["faction"] in MUTANT else None
             if group is None:
                 raise SystemExit(f"Unclassified lair faction {r['faction']} in {r['proto']}")
-            out.append([scope, file, r["proto"], r["node"], r["faction"], r["rank"], group, r["max"]])
+            out.append([scope, file, r["proto"], r["node"], r["faction"], r["rank"], group, r["max"],
+                        r["initial"], r["full"], r["wipe"]])
     with OUT.open("w", newline="", encoding="utf-8") as f:
         w = csv.writer(f, lineterminator="\n")
-        w.writerow(["Scope", "File", "Prototype", "FactionNode", "Faction", "Rank", "Group", "SourceMax"])
+        w.writerow(["Scope", "File", "Prototype", "FactionNode", "Faction", "Rank", "Group", "SourceMax",
+                    "InitialRespawnSeconds", "FullRespawnSeconds", "WipeRespawnSeconds"])
         w.writerows(out)
     print(f"{len(out)} rows -> {OUT.relative_to(ROOT)}")
 

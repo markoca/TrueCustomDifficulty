@@ -36,7 +36,7 @@ NEW_IDS |= {"combat.npcFogVisibility", "combat.npcRainNoise", "combat.npcStormNo
 THEMATIC = json.loads((ROOT / "tools/factory_preset_thematic_2026_11_17.json").read_text(encoding="utf-8"))
 # 2026-11-18: LAIR POPULATION role values (absent = vanilla 1×).
 LAIR = json.loads((ROOT / "tools/factory_preset_lair_population_2026_11_18.json").read_text(encoding="utf-8"))
-NEW_IDS |= {"alife.lairPopulation.human", "alife.lairPopulation.mutant"}
+NEW_IDS |= {"alife.lairPopulation.human", "alife.lairPopulation.mutant", "alife.lairRefillSpeed"}
 
 presets = sorted((APP / "Presets").glob("*.json"))
 assert len(presets) == 12, len(presets)
@@ -75,7 +75,10 @@ assert pds.count("PreNpcSmartLootFactoryBlobs") == 3
 assert pds.count("PreSmartOddsFactoryBlobs") == 3
 assert pds.count("PreThematicFactoryBlobs") == 3
 assert pds.count("PreLairPopulationFactoryBlobs") == 3
-for _name, _hash in LAIR["previousStockBlobs"].items():
+assert pds.count("PreLairRefillFactoryBlobs") == 3
+for _name, _hash in {**LAIR["previousStockBlobs"]}.items():
+    assert f'["{_name}"] = "{_hash}"' in pds, _name
+for _name, _hash in LAIR["previousStockBlobsBeforeRefill"].items():
     assert f'["{_name}"] = "{_hash}"' in pds, _name
 for _name, _hash in THEMATIC["previousStockBlobs"].items():
     assert f'["{_name}"] = "{_hash}"' in pds, _name

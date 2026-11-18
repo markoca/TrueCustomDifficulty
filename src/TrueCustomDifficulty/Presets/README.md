@@ -151,3 +151,5 @@ All 12 shipped profile files now include **247 parameter IDs** (34 more than the
 
 
 **2026-11-18 — LAIR POPULATION:** every profile stores HUMAN CAMPS / MUTANT NESTS (`alife.lairPopulation.human` / `.mutant`). The values are Hardcore+ 1.5 / 1.4, Hardcore 1.25 / 1.15, Mutant Hunter 1 / 1.3, Mercenary and Tactical 1.25 / 1, Outcast 1.15 / 1.1, Anomaly Runner 0.75 / 0.85, Scavenger 0.75 / 1, Wanderer 0.85 / 1; the others stay at 1×. Every non-1 value changes real lair caps (`tools/audit_lair_population.py`). Stock files upgrade only when byte-identical.
+
+**2026-11-18 — LAIR REFILL SPEED:** every profile stores `alife.lairRefillSpeed`. The values are Hardcore+ 1.5, Hardcore and Mutant Hunter 1.25, Mercenary and Tactical 1.15, Outcast 1.1, Anomaly Runner and Scavenger 0.85, Wanderer 0.75; the others stay at 1×.

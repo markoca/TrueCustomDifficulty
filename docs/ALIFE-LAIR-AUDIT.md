@@ -390,3 +390,7 @@ Removed the unreachable `HumanGroupSizeRadar.ValueToX` helper after source-level
 ## 2026-11-18 — Tier 1 implemented
 
 Human and Mutant Lair Population ship as the LAIR POPULATION board. See `ALIFE-LAIR-POPULATION.md` for the eligibility classification of the 75 base and 19 DLC1 prototypes. Lair Respawn Speed, Starting Lair Population and Encounter Frequency remain candidates.
+
+## 2026-11-18 — Tier 2 implemented
+
+Lair Respawn Speed ships as REFILL SPEED on the LAIR POPULATION board. One slider divides all three eligible timer families of the 1116 manifest entries. Starting Lair Population and Encounter Frequency remain candidates.

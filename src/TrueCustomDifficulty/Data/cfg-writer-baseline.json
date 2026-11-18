@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.1",
-  "supportedParameterCount": 417,
+  "supportedParameterCount": 418,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -48290,10 +48290,11 @@
       ]
     },
     "lairPopulation": {
-      "note": "Scales every eligible faction/rank MaxSpawnQuantity in LairPrototypes.cfg (base + DLC1) half-up; 0 stays 0, non-zero stays >= 1. Guard posts, friendly scientists, story prototypes and the empty test prototype are not in the manifest. Written by WriteLairPopulation (LairPopulationPolicy).",
+      "note": "Scales every eligible faction/rank MaxSpawnQuantity in LairPrototypes.cfg (base + DLC1) half-up; 0 stays 0, non-zero stays >= 1. Guard posts, friendly scientists, story prototypes and the empty test prototype are not in the manifest. REFILL SPEED divides the three refill timers of the same entries (rounded to 0.1 s, 0 stays 0). Written by WriteLairPopulation (LairPopulationPolicy).",
       "parameterIds": [
         "alife.lairPopulation.human",
-        "alife.lairPopulation.mutant"
+        "alife.lairPopulation.mutant",
+        "alife.lairRefillSpeed"
       ],
       "manifestResource": "TrueCustomDifficulty.Data.lair-population-manifest.csv",
       "expectedRows": 1116

@@ -251,7 +251,7 @@ def main():
     require(len(baseline["editPoints"]) == EDIT_POINTS and len(direct) == DIRECT_IDS,
             "direct writer point count drift")
     special = method_routes(baseline["special"])
-    require(len(special) == 186, "special writer route count drift")  # + loose artifacts, stash smart x3, NPC smart master
+    require(len(special) == 187, "special writer route count drift")  # + loose artifacts, stash smart x3, NPC smart master
     require(not set(direct).intersection(special), "direct/special parameter double ownership")
     # Weather hearing (RAIN / THUNDER NOISE) is written inline in Write()
     # (AISettings WeatherSettings[3..5].HearingDistanceCoef).
@@ -265,7 +265,7 @@ def main():
     require(not weather.intersection(direct) and not weather.intersection(special),
             "weather-hearing double ownership")
     require(set(direct) | set(special) | weather == set(definitions), "unrouted CFG IDs")
-    require(len(definitions) - len(NON_UI) == 394, "UI dimension count drift")  # +2 LAIR POPULATION (2026-11-18)
+    require(len(definitions) - len(NON_UI) == 395, "UI dimension count drift")  # +3 LAIR POPULATION board (2026-11-18)
     require(len(NON_UI) == 23 and NON_UI.issubset(definitions),
             "23 non-mounted catalog source IDs required")
     for pid in NON_UI:

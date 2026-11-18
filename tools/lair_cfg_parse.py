@@ -35,5 +35,8 @@ def rows(path):
                 mx=val(r,'MaxSpawnQuantity')
                 arch=get(r,'SpawnSettingsPerArchetypes')
                 mins=sum(int(float(val(a,'MinQuantityPerArchetype') or 0)) for a in kids(arch)) if arch else 0
-                out.append(dict(proto=name,node=fac[0],faction=faction,rank=r[0],max=mx,minsum=mins,sid=val(proto,'SID')))
+                out.append(dict(proto=name,node=fac[0],faction=faction,rank=r[0],max=mx,minsum=mins,sid=val(proto,'SID'),
+                    initial=val(r,'InitialSpawnQuantityRespawnTimeSeconds'),
+                    full=val(r,'MaxSpawnQuantityRespawnTimeSeconds'),
+                    wipe=val(r,'WipeRespawnTimeoutSeconds')))
     return out

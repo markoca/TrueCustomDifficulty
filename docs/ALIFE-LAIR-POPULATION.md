@@ -6,10 +6,13 @@ How many inhabitants a world lair can hold, on the A-Life tab next to GROUP SIZE
 |---|---|---|
 | HUMAN CAMPS (*Human Lair Population*) | `alife.lairPopulation.human` | 508 faction/rank entries: 17 human factions, 288 base + 220 DLC1 |
 | MUTANT NESTS (*Mutant Lair Population*) | `alife.lairPopulation.mutant` | 608 entries: 17 mutant and zombie species, 352 base + 256 DLC1 |
+| REFILL SPEED (*Lair Refill Speed*) | `alife.lairRefillSpeed` | the 3 refill timers of all 1116 entries |
 
 Range 0.25×–3× in steps of 0.05, vanilla 1×. Each eligible `MaxSpawnQuantity` (`LairPrototypes.cfg → <Lair>.Preset.PossibleInhabitantFactions.<Faction>.SpawnSettingsPerPlayerRanks.<Rank>`) is scaled with half-up rounding. A vanilla 0 stays 0, and a non-zero count never drops below 1, so no lair loses a faction. Rank and faction differences are kept.
 
-The board shows one real lair by your rank under each card:
+REFILL SPEED (0.25×–4×, vanilla 1×) divides `InitialSpawnQuantityRespawnTimeSeconds` (back to half full), `MaxSpawnQuantityRespawnTimeSeconds` (back to full) and `WipeRespawnTimeoutSeconds` (after the lair is wiped out). Each timer is rounded to 0.1 s and a 0 stays 0. Vanilla is 180 / 480 / 480 s in 1104 entries. The other 12 are Newbie entries (Diggers, IkarVarta, Sultan / Neutral bandits, zombie lairs) at 6 / 30 / 30 s, and they keep that ratio. Under the card: `HALF FULL IN 3 min · FULL IN 8 min`.
+
+The board shows one real lair by your rank under each population card:
 - `BANDIT CAMP BY RANK 6 / 6 / 7 / 8`
 - `TUSHKAN NEST BY RANK 14 / 16 / 20 / 24`
 
@@ -29,7 +32,7 @@ Each of these has a reason; `tools/build_lair_population_manifest.py` encodes th
 - friendly `Scientists` camps;
 - story / special prototypes: `SIRCAA_*`, `MALACHITE_*`, `Object68`, `FW_*` (DLC1), including their factions.
 
-Respawn timers (`…RespawnTimeSeconds`, `WipeRespawnTimeoutSeconds`), starting fill (`InitialSpawnQuantityPercent`) and the archetype mix (`MinQuantityPerArchetype`, `SpawnWeight`) are untouched. Vanilla already has entries where the archetype minimums exceed `MaxSpawnQuantity` (Freedom Newbie: 6 vs 7), so a lower cap is a state the game already handles.
+Starting fill (`InitialSpawnQuantityPercent`) and the archetype mix (`MinQuantityPerArchetype`, `SpawnWeight`) are untouched. Vanilla already has entries where the archetype minimums exceed `MaxSpawnQuantity` (Freedom Newbie: 6 vs 7), so a lower cap is a state the game already handles.
 
 ## Code
 
@@ -37,7 +40,7 @@ Respawn timers (`…RespawnTimeSeconds`, `WipeRespawnTimeoutSeconds`), starting 
 - `Services/LairPopulationPolicy.cs`: IDs, manifest loader with size and shape checks, `Scale`, and the board example.
 - `Services/CfgPatchWriterService.LairPopulation.cs`: BPatch assignments. A value that rounds every lair back to vanilla is refused at build time.
 - Board `LairPopulation` in `AggregateVisualControl` (two economy cards and an example line). Family wiring is in `ParameterViewModel` and `MainViewModel`.
-- Baseline `special.lairPopulation`, census 417 / 211 visible.
+- Baseline `special.lairPopulation` (3 IDs), census 418 / 211 visible.
 
 ## Factory presets
 
@@ -56,7 +59,9 @@ Absent from the table = 1×.
 | Wanderer | 0.85× | 1× |
 | Field Medic, Immersive, Smuggler | 1× | 1× |
 
-Older stock preset files upgrade only when byte-identical (`PreLairPopulationFactoryBlobs`; `tools/factory_preset_lair_population_2026_11_18.json`).
+REFILL SPEED: Hardcore+ 1.5×, Hardcore and Mutant Hunter 1.25×, Mercenary and Tactical 1.15×, Outcast 1.1×, Anomaly Runner and Scavenger 0.85×, Wanderer 0.75×, the rest 1×.
+
+Older stock preset files upgrade only when byte-identical (`PreLairPopulationFactoryBlobs`, and `PreLairRefillFactoryBlobs` for the first LAIR POPULATION stock; `tools/factory_preset_lair_population_2026_11_18.json`).
 
 ## Gate
 
@@ -64,4 +69,4 @@ Older stock preset files upgrade only when byte-identical (`PreLairPopulationFac
 
 ## Not yet verified
 
-The .NET build, a Wine run and in-game behaviour have not been checked: whether camps and nests actually fill to the new cap, and how fast they refill.
+The .NET build, a Wine run and in-game behaviour have not been checked: whether camps and nests actually fill to the new cap, and whether the new refill times feel right.
