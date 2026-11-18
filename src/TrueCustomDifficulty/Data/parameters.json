@@ -2056,9 +2056,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "Bayun's quick paw swipe when it is right on top of you. Vanilla: Novice–Veteran 1× (every 5 s), Master 2× (every 2.5 s). Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "Bayun's quick paw swipe once it is right on top of you. Vanilla: Novice–Veteran 1× (every 5 s), Master 2× (every 2.5 s). The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 2.5 s, 3× = every 1.7 s, 0.5× = every 10 s (Novice–Veteran; Master starts at 2×).",
+      "interaction": "Tip: Keep moving; the cat hits hardest when you stand still.",
       "exposeInUi": false
     },
     {
@@ -2106,9 +2106,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "The cat pounces from a few metres away straight onto you. Vanilla: Novice–Veteran 1× (every 6 s), Master 2× (every 3 s). Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "The pounce from a few metres out that lands the cat in your face. Vanilla: Novice–Veteran 1× (every 6 s), Master 2× (every 3 s). The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 3 s, 3× = every 2 s, 0.5× = every 12 s (Novice–Veteran; Master starts at 2×).",
+      "interaction": "Tip: Back up and shoot as it lands; it is open for a moment.",
       "exposeInUi": false
     },
     {
@@ -2156,9 +2156,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "A bounding strike that closes the gap in one jump. Vanilla: Novice–Veteran 1× (every 8 s), Master 2× (every 4 s). Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "A bounding strike that closes the gap in one jump. Vanilla: Novice–Veteran 1× (every 8 s), Master 2× (every 4 s). The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 4 s, 3× = every 2.7 s, 0.5× = every 16 s (Novice–Veteran; Master starts at 2×).",
+      "interaction": "Tip: Side-step the jump and punish the landing.",
       "exposeInUi": false
     },
     {
@@ -2203,9 +2203,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "Bayun dashes clean through you, clawing on the way past. Vanilla: 1×, every 10 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "Bayun dashes clean through you, clawing on the way past. Vanilla: 1×, every 10 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 5 s, 3× = every 3.3 s, 0.5× = every 20 s.",
+      "interaction": "Tip: Turn with it; it ends up behind you.",
       "exposeInUi": false
     },
     {
@@ -2250,9 +2250,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "Bayun splits into ghostly copies that swarm you; kill the real cat and they vanish. Vanilla: 1×, every 10 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
+      "rationale": "Bayun splits into ghostly copies that swarm you. Vanilla: 1×, every 10 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 5 s, 3× = every 3.3 s, 0.5× = every 20 s.",
+      "interaction": "Tip: Find the real cat; killing it clears every clone.",
       "exposeInUi": false
     },
     {
@@ -2297,9 +2297,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "The basic snap when a dog is in your face. Vanilla: 1×, every 5 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "The basic snap once a dog is in your face. Vanilla: 1×, every 5 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 2.5 s, 3× = every 1.7 s, 0.5× = every 10 s.",
+      "interaction": "Tip: Shotguns and melee clear a pack up close.",
       "exposeInUi": false
     },
     {
@@ -2344,9 +2344,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "A lunging bite on the run, the one that catches you while you backpedal. Vanilla: 1×, every 7 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "A lunging bite on the run, the one that catches you while you backpedal. Vanilla: 1×, every 7 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 3.5 s, 3× = every 2.3 s, 0.5× = every 14 s.",
+      "interaction": "Tip: Running away invites it; turn and fight.",
       "exposeInUi": false
     },
     {
@@ -2391,9 +2391,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "A twisting bite that lands even when the dog is beside or behind you. Vanilla: 1×, every 16 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "A twisting bite that lands even when the dog is beside or behind you. Vanilla: 1×, every 16 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 8 s, 3× = every 5.3 s, 0.5× = every 32 s.",
+      "interaction": "Tip: Watch your flanks; packs circle before they bite.",
       "exposeInUi": false
     },
     {
@@ -2441,9 +2441,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "Its claw and tentacle combo once it is on top of you. Vanilla: Novice–Veteran 1× (every 6 s), Master 2× (every 3 s). Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "Its claw and tentacle combo once it is on top of you. Vanilla: Novice–Veteran 1× (every 6 s), Master 2× (every 3 s). The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 3 s, 3× = every 2 s, 0.5× = every 12 s (Novice–Veteran; Master starts at 2×).",
+      "interaction": "Tip: Do not trade hits up close; back off and shoot.",
       "exposeInUi": false
     },
     {
@@ -2491,9 +2491,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "A charging swipe as it rushes you, often straight out of invisibility. Vanilla: Novice–Veteran 1× (every 6 s), Master 2× (every 3 s). Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "A charging swipe as it rushes you, often straight out of invisibility. Vanilla: Novice–Veteran 1× (every 6 s), Master 2× (every 3 s). The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 3 s, 3× = every 2 s, 0.5× = every 12 s (Novice–Veteran; Master starts at 2×).",
+      "interaction": "Tip: Listen for the breathing and shoot where it comes from.",
       "exposeInUi": false
     },
     {
@@ -2541,9 +2541,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "The big pounce from mid range. Vanilla: Novice–Veteran 1× (every 20 s), Master 2× (every 10 s). Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "A knockdown move: it also waits for SPECIAL MOVES, so the knob stops at that pause (the bright tick on the arc). Raise SPECIAL MOVES to let it go faster.",
+      "rationale": "The big pounce from mid range that knocks you around. Vanilla: Novice–Veteran 1× (every 20 s), Master 2× (every 10 s). The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 10 s, 3× = every 6.7 s, 0.5× = every 40 s (Novice–Veteran; Master starts at 2×).",
+      "interaction": "Tip: Dodge sideways when it crouches to jump. It also waits for SPECIAL MOVES, so the knob stops at that pause (the bright tick).",
       "exposeInUi": false
     },
     {
@@ -2588,9 +2588,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "It drops an anomaly right where you stand; move off the spot before it arms. Vanilla: 1×, every 3 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
+      "rationale": "It drops an anomaly right where you stand. Vanilla: 1×, every 3 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 1.5 s, 3× = every 1 s, 0.5× = every 6 s.",
+      "interaction": "Tip: Step off the spot as soon as it appears; it arms after a few seconds.",
       "exposeInUi": false
     },
     {
@@ -2635,9 +2635,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "A ramming bite at full speed. Vanilla: 1×, every 5 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "A ramming bite at full speed. Vanilla: 1×, every 5 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 2.5 s, 3× = every 1.7 s, 0.5× = every 10 s.",
+      "interaction": "Tip: Keep obstacles between you and the boar.",
       "exposeInUi": false
     },
     {
@@ -2682,9 +2682,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "Tusk gore up close. Vanilla: 1×, every 10 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "Tusk gore up close. Vanilla: 1×, every 10 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 5 s, 3× = every 3.3 s, 0.5× = every 20 s.",
+      "interaction": "Tip: Aim for the head; the snout soaks bullets.",
       "exposeInUi": false
     },
     {
@@ -2729,9 +2729,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "The head-down charge that knocks you off your feet. Vanilla: 1×, every 12 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "A knockdown move: it also waits for SPECIAL MOVES, so the knob stops at that pause (the bright tick on the arc). Raise SPECIAL MOVES to let it go faster.",
+      "rationale": "The head-down charge that knocks you off your feet. Vanilla: 1×, every 12 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 6 s, 3× = every 4 s, 0.5× = every 24 s.",
+      "interaction": "Tip: Side-step at the last moment; it cannot turn mid-charge. It also waits for SPECIAL MOVES, so the knob stops at that pause (the bright tick).",
       "exposeInUi": false
     },
     {
@@ -2779,9 +2779,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "A heavy slap when you get into melee range. Vanilla: Novice–Veteran 1× (every 8 s), Master 2× (every 4 s). Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "A heavy slap when you get into melee range. Vanilla: Novice–Veteran 1× (every 8 s), Master 2× (every 4 s). The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 4 s, 3× = every 2.7 s, 0.5× = every 16 s (Novice–Veteran; Master starts at 2×).",
+      "interaction": "Tip: Never let a burer reach you.",
       "exposeInUi": false
     },
     {
@@ -2826,9 +2826,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How fast it hurls grenades back at you, one after another. Vanilla: 1×, every 0.5 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
+      "rationale": "It catches your grenades and hurls them back, one after another. Vanilla: 1×, every 0.5 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 0.25 s, 3× = every 0.17 s, 0.5× = every 1 s.",
+      "interaction": "Tip: Do not throw grenades at a burer.",
       "exposeInUi": false
     },
     {
@@ -2876,9 +2876,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "The telekinetic yank that tears the gun out of your hands. Vanilla: Novice–Veteran 1× (every 8 s), Master 2× (every 4 s). Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
+      "rationale": "The telekinetic yank that tears the gun out of your hands. Vanilla: Novice–Veteran 1× (every 8 s), Master 2× (every 4 s). The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 4 s, 3× = every 2.7 s, 0.5× = every 16 s (Novice–Veteran; Master starts at 2×).",
+      "interaction": "Tip: Keep a sidearm or knife ready and pick the gun back up.",
       "exposeInUi": false
     },
     {
@@ -2926,9 +2926,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "It flings debris and loose objects at you. Vanilla: Novice–Veteran 1× (every 10 s), Master 2× (every 5 s). Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
+      "rationale": "It flings debris and loose objects at you. Vanilla: Novice–Veteran 1× (every 10 s), Master 2× (every 5 s). The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 5 s, 3× = every 3.3 s, 0.5× = every 20 s (Novice–Veteran; Master starts at 2×).",
+      "interaction": "Tip: Fight it where little is lying around.",
       "exposeInUi": false
     },
     {
@@ -2976,9 +2976,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "It lifts guns lying around and fires them at you. Vanilla: Novice–Veteran 1× (every 10 s), Master 2× (every 5 s). Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
+      "rationale": "It lifts guns lying around and fires them at you. Vanilla: Novice–Veteran 1× (every 10 s), Master 2× (every 5 s). The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 5 s, 3× = every 3.3 s, 0.5× = every 20 s (Novice–Veteran; Master starts at 2×).",
+      "interaction": "Tip: Clear dropped weapons or break line of sight.",
       "exposeInUi": false
     },
     {
@@ -3026,9 +3026,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "Its signature long pounce across the room. Vanilla: Novice–Veteran 1× (every 5 s), Master 2× (every 2.5 s). Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "Its signature long pounce across the room. Vanilla: Novice–Veteran 1× (every 5 s), Master 2× (every 2.5 s). The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 2.5 s, 3× = every 1.7 s, 0.5× = every 10 s (Novice–Veteran; Master starts at 2×).",
+      "interaction": "Tip: Side-step the leap and shoot it as it lands.",
       "exposeInUi": false
     },
     {
@@ -3076,9 +3076,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "A charging swipe at full sprint. Vanilla: Novice–Veteran 1× (every 5 s), Master 2× (every 2.5 s). Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "A charging swipe at full sprint. Vanilla: Novice–Veteran 1× (every 5 s), Master 2× (every 2.5 s). The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 2.5 s, 3× = every 1.7 s, 0.5× = every 10 s (Novice–Veteran; Master starts at 2×).",
+      "interaction": "Tip: Keep cover between you; it is fast in the open.",
       "exposeInUi": false
     },
     {
@@ -3123,9 +3123,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "A short hop straight onto you. Vanilla: 1×, every 6 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "A short hop straight onto you. Vanilla: 1×, every 6 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 3 s, 3× = every 2 s, 0.5× = every 12 s.",
+      "interaction": "Tip: Back away while firing; do not stand still.",
       "exposeInUi": false
     },
     {
@@ -3173,9 +3173,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "It leaps through you, raking you as it passes. Vanilla: Novice–Veteran 1× (every 10 s), Master 2× (every 5 s). Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "It leaps through you, raking you as it passes. Vanilla: Novice–Veteran 1× (every 10 s), Master 2× (every 5 s). The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 5 s, 3× = every 3.3 s, 0.5× = every 20 s (Novice–Veteran; Master starts at 2×).",
+      "interaction": "Tip: Turn with it; it ends up behind you.",
       "exposeInUi": false
     },
     {
@@ -3223,9 +3223,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "A desperate slap when you get too close. Vanilla: Novice–Veteran 1× (every 10 s), Master 2× (every 5 s). Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "A desperate slap when you get too close. Vanilla: Novice–Veteran 1× (every 10 s), Master 2× (every 5 s). The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 5 s, 3× = every 3.3 s, 0.5× = every 20 s (Novice–Veteran; Master starts at 2×).",
+      "interaction": "Tip: Up close is the safe place: it cannot stare you down there.",
       "exposeInUi": false
     },
     {
@@ -3273,9 +3273,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "The psy stare: stay in its view and it fries your head, so break line of sight. Vanilla: Novice–Veteran 1× (every 12 s), Master 2× (every 6 s). Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
+      "rationale": "The psy stare: stay in its view and it fries your head. Vanilla: Novice–Veteran 1× (every 12 s), Master 2× (every 6 s). The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 6 s, 3× = every 4 s, 0.5× = every 24 s (Novice–Veteran; Master starts at 2×).",
+      "interaction": "Tip: Break line of sight the moment the screen warps.",
       "exposeInUi": false
     },
     {
@@ -3323,9 +3323,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "It raises a nearby corpse to fight for it. Vanilla: Novice–Veteran 1× (every 15 s), Master 2× (every 7.5 s). Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
+      "rationale": "It raises a nearby corpse to fight for it. Vanilla: Novice–Veteran 1× (every 15 s), Master 2× (every 7.5 s). The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 7.5 s, 3× = every 5 s, 0.5× = every 30 s (Novice–Veteran; Master starts at 2×).",
+      "interaction": "Tip: Kill the controller first; its puppets drop with it.",
       "exposeInUi": false
     },
     {
@@ -3373,9 +3373,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "It turns a living stalker into its puppet. Vanilla: Novice–Veteran 1× (every 15 s), Master 2× (every 7.5 s). Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
+      "rationale": "It turns a living stalker into its puppet. Vanilla: Novice–Veteran 1× (every 15 s), Master 2× (every 7.5 s). The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 7.5 s, 3× = every 5 s, 0.5× = every 30 s (Novice–Veteran; Master starts at 2×).",
+      "interaction": "Tip: Clear the area of allies or take the controller out fast.",
       "exposeInUi": false
     },
     {
@@ -3420,9 +3420,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "Hoof and antler strike up close. Vanilla: 1×, every 4 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "Hoof and antler strike up close. Vanilla: 1×, every 4 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 2 s, 3× = every 1.3 s, 0.5× = every 8 s.",
+      "interaction": "Tip: Keep a little distance and shoot.",
       "exposeInUi": false
     },
     {
@@ -3470,9 +3470,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "A bounding strike from mid range. Vanilla: Novice–Veteran 1× (every 8 s), Master 2× (every 4 s). Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "A bounding strike from mid range. Vanilla: Novice–Veteran 1× (every 8 s), Master 2× (every 4 s). The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 4 s, 3× = every 2.7 s, 0.5× = every 16 s (Novice–Veteran; Master starts at 2×).",
+      "interaction": "Tip: Side-step and punish the landing.",
       "exposeInUi": false
     },
     {
@@ -3520,9 +3520,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "The antler charge that throws you back. Vanilla: Novice–Veteran 1× (every 10 s), Master 2× (every 5 s). Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "A knockdown move: it also waits for SPECIAL MOVES, so the knob stops at that pause (the bright tick on the arc). Raise SPECIAL MOVES to let it go faster.",
+      "rationale": "The antler charge that throws you back. Vanilla: Novice–Veteran 1× (every 10 s), Master 2× (every 5 s). The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 5 s, 3× = every 3.3 s, 0.5× = every 20 s (Novice–Veteran; Master starts at 2×).",
+      "interaction": "Tip: Step aside at the last moment. It also waits for SPECIAL MOVES, so the knob stops at that pause (the bright tick).",
       "exposeInUi": false
     },
     {
@@ -3567,9 +3567,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "It calls a pack of blind dogs to its side. Vanilla: 1×, every 20 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
+      "rationale": "It calls a pack of blind dogs to its side. Vanilla: 1×, every 20 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 10 s, 3× = every 6.7 s, 0.5× = every 40 s.",
+      "interaction": "Tip: Drop the deer before the pack arrives.",
       "exposeInUi": false
     },
     {
@@ -3614,9 +3614,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "A clumsy headbutt and hoof swing. Vanilla: 1×, every 3 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "A clumsy headbutt and hoof swing. Vanilla: 1×, every 3 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 1.5 s, 3× = every 1 s, 0.5× = every 6 s.",
+      "interaction": "Tip: Easy to out-pace; keep moving.",
       "exposeInUi": false
     },
     {
@@ -3661,9 +3661,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "A short hop into you. Vanilla: 1×, every 4 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "A short hop into you. Vanilla: 1×, every 4 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 2 s, 3× = every 1.3 s, 0.5× = every 8 s.",
+      "interaction": "Tip: Back off and shoot while it recovers.",
       "exposeInUi": false
     },
     {
@@ -3708,9 +3708,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "The invisible damage zone it pulses around itself. Vanilla: 1×, every 3 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "The invisible damage zone it pulses around itself. Vanilla: 1×, every 3 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 1.5 s, 3× = every 1 s, 0.5× = every 6 s.",
+      "interaction": "Tip: Stay out of its close range and shoot.",
       "exposeInUi": false
     },
     {
@@ -3755,9 +3755,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "Elemental poltergeists spawn an electro, fire or toxic anomaly where you stand. Vanilla: 1×, every 3 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
+      "rationale": "Elemental poltergeists spawn an electro, fire or toxic anomaly where you stand. Vanilla: 1×, every 3 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 1.5 s, 3× = every 1 s, 0.5× = every 6 s.",
+      "interaction": "Tip: Keep moving; never fight it from one spot.",
       "exposeInUi": false
     },
     {
@@ -3802,9 +3802,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "It flings crates, barrels and junk at you. Vanilla: 1×, every 10 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
+      "rationale": "It flings crates, barrels and junk at you. Vanilla: 1×, every 10 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 5 s, 3× = every 3.3 s, 0.5× = every 20 s.",
+      "interaction": "Tip: Fight it where little is lying around.",
       "exposeInUi": false
     },
     {
@@ -3852,9 +3852,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "A running bite on the charge. Vanilla: Novice–Veteran 1× (every 6 s), Master 2× (every 3 s). Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "A running bite on the charge. Vanilla: Novice–Veteran 1× (every 6 s), Master 2× (every 3 s). The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 3 s, 3× = every 2 s, 0.5× = every 12 s (Novice–Veteran; Master starts at 2×).",
+      "interaction": "Tip: Turn and fight; running invites it.",
       "exposeInUi": false
     },
     {
@@ -3902,9 +3902,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "The bite up close. Vanilla: Novice–Veteran 1× (every 7 s), Master 2× (every 3.5 s). Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "The bite up close. Vanilla: Novice–Veteran 1× (every 7 s), Master 2× (every 3.5 s). The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 3.5 s, 3× = every 2.3 s, 0.5× = every 14 s (Novice–Veteran; Master starts at 2×).",
+      "interaction": "Tip: Shotguns and melee work at this range.",
       "exposeInUi": false
     },
     {
@@ -3949,9 +3949,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "When hurt and fleeing it leaves psy phantom dogs behind to cover its escape. Vanilla: 1×, every 10 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
+      "rationale": "When hurt and fleeing it leaves psy phantom dogs behind to cover its escape. Vanilla: 1×, every 10 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 5 s, 3× = every 3.3 s, 0.5× = every 20 s.",
+      "interaction": "Tip: Chase the real one; the phantoms are only psy.",
       "exposeInUi": false
     },
     {
@@ -3996,9 +3996,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "Mid-fight it calls a pack of psy phantom dogs; kill the real one and they fade. Vanilla: 1×, every 20 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
+      "rationale": "Mid-fight it calls a pack of psy phantom dogs. Vanilla: 1×, every 20 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 10 s, 3× = every 6.7 s, 0.5× = every 40 s.",
+      "interaction": "Tip: Kill the real pseudodog; its phantoms fade with it.",
       "exposeInUi": false
     },
     {
@@ -4043,9 +4043,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "A crushing stomp up close. Vanilla: 1×, every 5 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "A crushing stomp up close. Vanilla: 1×, every 5 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 2.5 s, 3× = every 1.7 s, 0.5× = every 10 s.",
+      "interaction": "Tip: Never stand next to it.",
       "exposeInUi": false
     },
     {
@@ -4093,9 +4093,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "A running stomp as it barrels in. Vanilla: Novice–Veteran 1× (every 5 s), Master 2× (every 2.5 s). Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "A running stomp as it barrels in. Vanilla: Novice–Veteran 1× (every 5 s), Master 2× (every 2.5 s). The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 2.5 s, 3× = every 1.7 s, 0.5× = every 10 s (Novice–Veteran; Master starts at 2×).",
+      "interaction": "Tip: Keep cover between you and back away.",
       "exposeInUi": false
     },
     {
@@ -4143,9 +4143,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "The full charge that bulldozes you. Vanilla: Novice–Veteran 1× (every 10 s), Master 2× (every 5 s). Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "A knockdown move: it also waits for SPECIAL MOVES, so the knob stops at that pause (the bright tick on the arc). Raise SPECIAL MOVES to let it go faster.",
+      "rationale": "The full charge that bulldozes you. Vanilla: Novice–Veteran 1× (every 10 s), Master 2× (every 5 s). The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 5 s, 3× = every 3.3 s, 0.5× = every 20 s (Novice–Veteran; Master starts at 2×).",
+      "interaction": "Tip: Step aside at the last moment; it cannot turn. It also waits for SPECIAL MOVES, so the knob stops at that pause (the bright tick).",
       "exposeInUi": false
     },
     {
@@ -4193,9 +4193,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "The ground-pound ring that hits you from range; jump it or stay outside it. Vanilla: Novice–Veteran 1× (every 8 s), Master 2× (every 4 s). Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
-      "interaction": "A knockdown move: it also waits for SPECIAL MOVES, so the knob stops at that pause (the bright tick on the arc). Raise SPECIAL MOVES to let it go faster.",
+      "rationale": "The ground-pound ring that hits you from range. Vanilla: Novice–Veteran 1× (every 8 s), Master 2× (every 4 s). The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 4 s, 3× = every 2.7 s, 0.5× = every 16 s (Novice–Veteran; Master starts at 2×).",
+      "interaction": "Tip: Jump the ring or stay outside it. It also waits for SPECIAL MOVES, so the knob stops at that pause (the bright tick).",
       "exposeInUi": false
     },
     {
@@ -4240,9 +4240,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "It hurls heavy objects at you (electrocollar variant only). Vanilla: 1×, every 10 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
+      "rationale": "It hurls heavy objects at you; only the electrocollar variant does this. Vanilla: 1×, every 10 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 5 s, 3× = every 3.3 s, 0.5× = every 20 s.",
+      "interaction": "Tip: Break line of sight between throws.",
       "exposeInUi": false
     },
     {
@@ -4287,9 +4287,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "A scrappy claw swipe up close. Vanilla: 1×, every 5 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "A scrappy claw swipe up close. Vanilla: 1×, every 5 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 2.5 s, 3× = every 1.7 s, 0.5× = every 10 s.",
+      "interaction": "Tip: Keep it at range.",
       "exposeInUi": false
     },
     {
@@ -4334,9 +4334,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "The two-legged kick that knocks you back. Vanilla: 1×, every 7 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "The two-legged kick that knocks you back. Vanilla: 1×, every 7 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 3.5 s, 3× = every 2.3 s, 0.5× = every 14 s.",
+      "interaction": "Tip: Shoot it when it rears up to kick.",
       "exposeInUi": false
     },
     {
@@ -4381,9 +4381,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "The long pounce from range. Vanilla: 1×, every 12 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "The long pounce from range. Vanilla: 1×, every 12 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 6 s, 3× = every 4 s, 0.5× = every 24 s.",
+      "interaction": "Tip: Side-step and punish the landing.",
       "exposeInUi": false
     },
     {
@@ -4428,9 +4428,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "A short jump straight onto you. Vanilla: 1×, every 12 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "A short jump straight onto you. Vanilla: 1×, every 12 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 6 s, 3× = every 4 s, 0.5× = every 24 s.",
+      "interaction": "Tip: Back away while firing.",
       "exposeInUi": false
     },
     {
@@ -4475,9 +4475,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "It leaps through you, clawing as it passes. Vanilla: 1×, every 14 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "It leaps through you, clawing as it passes. Vanilla: 1×, every 14 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 7 s, 3× = every 4.7 s, 0.5× = every 28 s.",
+      "interaction": "Tip: Turn with it; it ends up behind you.",
       "exposeInUi": false
     },
     {
@@ -4522,9 +4522,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "The rat's quick bite. Vanilla: 1×, every 3 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "The rat's quick bite. Vanilla: 1×, every 3 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 1.5 s, 3× = every 1 s, 0.5× = every 6 s.",
+      "interaction": "Tip: Single rats die fast; do not panic.",
       "exposeInUi": false
     },
     {
@@ -4569,9 +4569,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "It jumps at you, usually with the whole swarm. Vanilla: 1×, every 8 s. Turn it up and it comes more often; turn it down for more room to react.",
-      "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "It jumps at you, usually with the whole swarm. Vanilla: 1×, every 8 s. The knob sets the wait before it can do this again: turn it right and it comes back sooner, left and you get longer gaps.",
+      "logic": "2× = every 4 s, 3× = every 2.7 s, 0.5× = every 16 s.",
+      "interaction": "Tip: Back into a corridor so they come one at a time.",
       "exposeInUi": false
     },
     {

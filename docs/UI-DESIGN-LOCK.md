@@ -1,3 +1,7 @@
+## CURRENT 2026-11-18 — Mutant knob panels rewritten for players
+
+* Every one of the 53 knob panels: one line on what the move does in a fight, `Vanilla:` with its wait in seconds (and Master), how turning the knob changes the wait; WHAT IT DOES lists the waits at 2×, 3× and 0.5×; the tips line says how to counter the move (and, for the five knockdown moves, that SPECIAL MOVES caps them). Text only.
+
 ## CURRENT 2026-11-18 — TRADER RESTOCK under SERVICE PRICES
 
 * EXPENSES: the right column of the trader row is SERVICE PRICES, then (10 DIP gap) TRADER RESTOCK at the same width, filling the space beside TRADER STOCK. The standalone TRADER RESTOCK card below the row is gone. Narrow windows stack TRADER STOCK, SERVICE PRICES, TRADER RESTOCK. Board content unchanged.
