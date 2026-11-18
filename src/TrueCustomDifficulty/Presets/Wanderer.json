@@ -588,6 +588,10 @@
       "kind": "slider",
       "number": 0.75
     },
+    "health.fallDamage": {
+      "kind": "slider",
+      "number": 1
+    },
     "advanced.lowHealthMechanics": {
       "kind": "toggle",
       "boolean": true

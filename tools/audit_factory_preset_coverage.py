@@ -109,6 +109,10 @@ assert pds.count("PreAbilityKnobFactoryBlobs") == 3
 assert pds.count("PreAttackKnobFactoryBlobs") == 3
 CONTROLLER_DOGS = json.loads((ROOT / "tools/factory_preset_controller_dogs_2026_11_18.json").read_text(encoding="utf-8"))
 assert pds.count("PreControllerDogsFactoryBlobs") == 3
+FALL = json.loads((ROOT / "tools/factory_preset_fall_damage_2026_11_18.json").read_text(encoding="utf-8"))
+assert pds.count("PreFallDamageFactoryBlobs") == 3
+for _name, _hash in FALL["previousStockBlobs"].items():
+    assert f'["{_name}"] = "{_hash}"' in pds, _name
 for _name, _hash in CONTROLLER_DOGS["previousStockBlobs"].items():
     assert f'["{_name}"] = "{_hash}"' in pds, _name
 for _name, _hash in ATTACK_KNOBS["previousStockBlobs"].items():

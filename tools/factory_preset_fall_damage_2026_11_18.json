@@ -1,0 +1,32 @@
+{
+  "date": "2026-11-18",
+  "note": "FALL DAMAGE added; every profile stores vanilla 100%.",
+  "previousStockBlobs": {
+    "Anomaly Runner": "fd5197a3c847e6db91e653353d1efcef8487facb",
+    "Field Medic": "9671e2efa65d49972dd74057454080867f6a6e81",
+    "Hardcore+": "6a93abb0ff9951e7e4f53f5e7660e0c2f0f68c15",
+    "Hardcore": "f91168284cdbee813ab06bcd1b8d75e93b3a9196",
+    "Immersive": "3d1efa37061735c6c2cd8542c12540549105c68d",
+    "Mercenary": "4f935fadd463da1839f04d2072c8a8c6cf6f9a29",
+    "Mutant Hunter": "f26c01db94a003e27e9bc37ba9ae99852d9cdf70",
+    "Outcast": "c1b8a42a4009965af086350fd35bcac2a04eafa3",
+    "Scavenger": "f32c253de40ffbcb86a6d2c687902ac0af9468a8",
+    "Smuggler": "449d02d93d717ad385a63f4965282e826482af15",
+    "Tactical": "eefdfbb770d8596ec37d317644189a2c638fe545",
+    "Wanderer": "e8dd1db5f280af68842555dd3fe9796e259c0577"
+  },
+  "values": {
+    "Anomaly Runner": {},
+    "Field Medic": {},
+    "Hardcore+": {},
+    "Hardcore": {},
+    "Immersive": {},
+    "Mercenary": {},
+    "Mutant Hunter": {},
+    "Outcast": {},
+    "Scavenger": {},
+    "Smuggler": {},
+    "Tactical": {},
+    "Wanderer": {}
+  }
+}

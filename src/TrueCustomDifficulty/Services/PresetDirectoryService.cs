@@ -1027,6 +1027,24 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "0dc80072cf5c0d277c7bce01d5e928545b970bd5",
     };
 
+    // Exact stock files before FALL DAMAGE (2026-11-18).
+    private static readonly Dictionary<string, string> PreFallDamageFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "fd5197a3c847e6db91e653353d1efcef8487facb",
+        ["Field Medic"] = "9671e2efa65d49972dd74057454080867f6a6e81",
+        ["Hardcore+"] = "6a93abb0ff9951e7e4f53f5e7660e0c2f0f68c15",
+        ["Hardcore"] = "f91168284cdbee813ab06bcd1b8d75e93b3a9196",
+        ["Immersive"] = "3d1efa37061735c6c2cd8542c12540549105c68d",
+        ["Mercenary"] = "4f935fadd463da1839f04d2072c8a8c6cf6f9a29",
+        ["Mutant Hunter"] = "f26c01db94a003e27e9bc37ba9ae99852d9cdf70",
+        ["Outcast"] = "c1b8a42a4009965af086350fd35bcac2a04eafa3",
+        ["Scavenger"] = "f32c253de40ffbcb86a6d2c687902ac0af9468a8",
+        ["Smuggler"] = "449d02d93d717ad385a63f4965282e826482af15",
+        ["Tactical"] = "eefdfbb770d8596ec37d317644189a2c638fe545",
+        ["Wanderer"] = "e8dd1db5f280af68842555dd3fe9796e259c0577",
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -1072,7 +1090,8 @@ public sealed class PresetDirectoryService
             && !PreAttackOnlyFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreAbilityKnobFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreAttackKnobFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreControllerDogsFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreControllerDogsFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreFallDamageFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -1172,7 +1191,9 @@ public sealed class PresetDirectoryService
                 || (PreAttackKnobFactoryBlobs.TryGetValue(name, out var preAttackKnobHash)
                     && actual.Equals(preAttackKnobHash, StringComparison.OrdinalIgnoreCase))
                 || (PreControllerDogsFactoryBlobs.TryGetValue(name, out var preControllerDogsHash)
-                    && actual.Equals(preControllerDogsHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preControllerDogsHash, StringComparison.OrdinalIgnoreCase))
+                || (PreFallDamageFactoryBlobs.TryGetValue(name, out var preFallDamageHash)
+                    && actual.Equals(preFallDamageHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

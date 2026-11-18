@@ -500,7 +500,7 @@ else:
 # Non-generator normal-UI coverage gate (v0.2.43).
 _non_gen_expected = {
     "combat": (27, 11, 16),  # + HUMAN TACTICS / HUMAN AWARENESS (9) + weather FOG / RAIN / THUNDER (3)
-    "health": (13, 10, 3),
+    "health": (14, 10, 4),  # +FALL DAMAGE (runtime) 2026-11-18
     "stamina": (7, 6, 1),
     # Equipment is a separate tab again; CFG sources and total visibility are unchanged.
     "survival": (35, 29, 6),  # + 4 food satiety
@@ -1434,10 +1434,10 @@ _health_points = [e for e in baseline.get("editPoints", []) if e.get("parameterI
 _treatment_points = [e for e in baseline.get("editPoints", []) if e.get("parameterId") in _treatment_ids]
 _treatment_catalog = [p for p in _health_ui if p.get("id") in _treatment_ids]
 _vm_source = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "MainViewModel.cs").read_text(encoding="utf-8")
-if len(_health_ui) != 13 or len(_health_confirmed) != 10 or len(_health_runtime) != 3:
-    fail(f"health deep audit status split drifted: total={len(_health_ui)} confirmed={len(_health_confirmed)} runtime={len(_health_runtime)}; expected 13/10/3")
-elif len(_health_points) != 46:  # + 4 per-item HEAL TIME Duration points
-    fail(f"health writer surface drifted: {len(_health_points)} edit points; expected 46")
+if len(_health_ui) != 14 or len(_health_confirmed) != 10 or len(_health_runtime) != 4:
+    fail(f"health deep audit status split drifted: total={len(_health_ui)} confirmed={len(_health_confirmed)} runtime={len(_health_runtime)}; expected 14/10/4")
+elif len(_health_points) != 47:  # + 4 per-item HEAL TIME Duration points, +1 FALL DAMAGE
+    fail(f"health writer surface drifted: {len(_health_points)} edit points; expected 47")
 elif len(_treatment_points) != 12 or any(e.get("operation") != "negateSet" for e in _treatment_points):
     fail("health treatment signed-delta boundary drifted: expected 12 negateSet edit points")
 elif len(_treatment_catalog) != 6 or any((p.get("slider") or {}).get("min") != 0.0 for p in _treatment_catalog) or any(next(iter((p.get("vanilla") or {}).values())) <= 0 for p in _treatment_catalog):
@@ -3914,7 +3914,7 @@ for _row in _global_visible:
     _global_tab_counts[_tab] = _global_tab_counts.get(_tab, 0) + 1
 _global_expected_tabs = {
     "combat": 27,       # + HUMAN TACTICS / HUMAN AWARENESS + weather knobs
-    "health": 13,
+    "health": 14,  # +FALL DAMAGE 2026-11-18
     "stamina": 7,
     "survival": 35,
     "economy": 19,      # + TRADER STOCK anchor, + TRADER RESTOCK (2026-11-18)
@@ -4090,10 +4090,10 @@ if (len(parameters) != _CENSUS_CATALOG or len(_global_visible) != _CENSUS_VISIBL
     fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected {_CENSUS_CATALOG}/{_CENSUS_VISIBLE}/{_CENSUS_HIDDEN}")
 elif _global_tab_counts != _global_expected_tabs:
     fail(f"global visible tab counts drifted: {_global_tab_counts}; expected {_global_expected_tabs}")
-elif _global_confirmed != 117 or _global_runtime != 96:  # +1 LAIR POPULATION, +2 ZONE WEATHER / TRADER RESTOCK (2026-11-18)
-    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 117/96")
-elif _global_control_counts != {"slider": 189, "toggle": 22, "choiceSlider": 1, "range": 1}:  # +1 LAIR POPULATION, +2 ZONE WEATHER / TRADER RESTOCK
-    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 189 sliders / 22 toggles / 1 choiceSlider / 1 range")
+elif _global_confirmed != 117 or _global_runtime != 97:  # +1 LAIR POPULATION, +2 ZONE WEATHER / TRADER RESTOCK, +1 FALL DAMAGE (2026-11-18)
+    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 117/97")
+elif _global_control_counts != {"slider": 190, "toggle": 22, "choiceSlider": 1, "range": 1}:  # +1 LAIR POPULATION, +2 ZONE WEATHER / TRADER RESTOCK, +1 FALL DAMAGE
+    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 190 sliders / 22 toggles / 1 choiceSlider / 1 range")
 elif _global_duplicate_labels:
     fail(f"duplicate player-facing labels detected: {_global_duplicate_labels}")
 elif _global_out_of_range:

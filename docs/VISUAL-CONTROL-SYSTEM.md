@@ -1,3 +1,7 @@
+## CURRENT 2026-11-18 — FALL DAMAGE on the Health tab
+
+* New plain slider card **FALL DAMAGE** (group Fall Damage) after the low-health recovery controls: 0–100 % in 5 % steps, vanilla 100 %, percentage readout like the other Health sliders. Only changed numbers turn gold.
+
 ## CURRENT 2026-11-18 — Mutant knob panels rewritten for players
 
 * Every one of the 53 knob panels: one line on what the move does in a fight, `Vanilla:` with its wait in seconds (and Master), how turning the knob changes the wait; WHAT IT DOES lists the waits at 2×, 3× and 0.5×; the tips line says how to counter the move (and, for the five knockdown moves, that SPECIAL MOVES caps them). Text only.

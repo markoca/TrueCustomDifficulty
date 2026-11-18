@@ -16,7 +16,7 @@ from catalog_census import CATALOG, VISIBLE, HIDDEN, EDIT_POINTS, DIRECT_IDS
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "src/TrueCustomDifficulty/Data"
 EXPECTED = {
-    "combat": 165, "survival": 153, "health": 51, "stamina": 26,
+    "combat": 165, "survival": 153, "health": 52, "stamina": 26,
     "economy": 409, "equipment": 331, "environment": 74,
     "loot": 1557, "alife": 64,
 }

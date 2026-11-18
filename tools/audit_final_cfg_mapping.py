@@ -29,7 +29,7 @@ OPERATIONS = {
     "set", "toggleSourceOrZero", "negateSet", "inverseScale", "scale",
     "scaleNonZero", "scaleClamp01", "setRangeBound", "scaleIntegerHalfUp",
     "scaleIntegerHalfUpPreserveZero", "setDeltaFromRetainedFraction",
-    "scaleClamp100",
+    "scaleClamp100", "setProtectionFromDamageFraction",
 }
 NON_UI = {
     "economy.repairDifficultyCost", "alife.mutantSpawn.generic",
@@ -266,7 +266,7 @@ def main():
     require(not weather.intersection(direct) and not weather.intersection(special),
             "weather-hearing double ownership")
     require(set(direct) | set(special) | weather == set(definitions), "unrouted CFG IDs")
-    require(len(definitions) - len(NON_UI) == 428, "UI dimension count drift")  # +3 LAIR POPULATION, +4 ZONE WEATHER / RESTOCK, +53 move knobs, -24 group sliders (2026-11-18)
+    require(len(definitions) - len(NON_UI) == 429, "UI dimension count drift")  # +3 LAIR POPULATION, +4 ZONE WEATHER / RESTOCK, +53 move knobs, -24 group sliders, +1 FALL DAMAGE (2026-11-18)
     require(len(NON_UI) == 23 and NON_UI.issubset(definitions),
             "23 non-mounted catalog source IDs required")
     for pid in NON_UI:

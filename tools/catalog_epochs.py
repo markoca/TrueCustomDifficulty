@@ -16,6 +16,8 @@ POST_361_PREFIXES = ("combat.mutantAttackRate.", "combat.mutantAbilityRate.", "c
                      "environment.emissionWarning", "economy.traderRestockHours")
 POST_361_IDS = frozenset({
     "combat.mutantSpecialAbilityRate",
+    # 2026-11-18: FALL DAMAGE (Player.Protection.Fall).
+    "health.fallDamage",
     "combat.npcGrenadeRate", "combat.npcSuppressionRate", "combat.npcFlankRate",
     "combat.npcPushRate", "combat.npcCamperPunishRate", "combat.npcAccuracy",
     "combat.npcSightRange", "combat.npcHearingRange", "combat.npcAlertMemory",

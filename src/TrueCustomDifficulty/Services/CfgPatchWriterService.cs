@@ -656,6 +656,9 @@ public sealed partial class CfgPatchWriterService
             "scaleIntegerHalfUp" => ScaleIntegerHalfUp(parameter, point.SourceRaw, preserveZero: false),
             "scaleIntegerHalfUpPreserveZero" => ScaleIntegerHalfUp(parameter, point.SourceRaw, preserveZero: true),
             "setDeltaFromRetainedFraction" => FormatLikeSource(parameter.CurrentNumber - 1.0, point.SourceRaw),
+            // FALL DAMAGE: fraction of fall damage taken → percent protection (0–100).
+            "setProtectionFromDamageFraction" => FormatLikeSource(
+                Math.Clamp((1.0 - parameter.CurrentNumber) * 100.0, 0.0, 100.0), point.SourceRaw),
             _ => throw new InvalidDataException(
                 $"Unsupported concrete CFG writer operation '{point.Operation}' for {parameter.Id}.")
         };

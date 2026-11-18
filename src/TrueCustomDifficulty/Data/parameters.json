@@ -7218,6 +7218,52 @@
       "interaction": "HEALTH REGEN STRENGTH scales it, and LOW HEALTH MECHANICS can cut it further."
     },
     {
+      "id": "health.fallDamage",
+      "tab": "health",
+      "group": "Fall Damage",
+      "label": "Fall Damage",
+      "description": "How much damage you take from falls. Writes the player's own fall protection (ObjPrototypes Player.Protection.Fall = 100 − value %); NPCs and mutants are untouched.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0.00×",
+        "valueLabel": "Fall damage taken"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ObjPrototypes.cfg",
+          "prototype": "Player",
+          "path": "Protection.Fall",
+          "operation": "setProtectionFromDamageFraction"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Protection.Fall is a percent: the LESS FALL DAMAGE 50 mod sets 50 for half damage.",
+          "In 2.1 the Player prototype has no Protection block of its own and inherits [0] (all 0). The bpatch adds Player.Protection.Fall only; the [0] template and every NPC / mutant keep theirs (Guards 90).",
+          "Limp after landing (CoreVariables thresholds) follows the damage actually taken."
+        ]
+      },
+      "rationale": "How hard falls and bad landings hurt you. Vanilla: 100%, no fall protection. At 50% a drop that would cost 40 HP costs 20; at 0% falls never hurt.",
+      "logic": "Lower = less damage from every fall, so short drops stop hurting and long ones stop killing; 100% is the game's own damage.",
+      "interaction": "Only you. Armor and exoskeletons give no fall protection in vanilla; limping after a landing still follows the damage you actually take.",
+      "exposeInUi": true
+    },
+    {
       "id": "advanced.lowHealthMechanics",
       "tab": "master",
       "group": "Low Health",
