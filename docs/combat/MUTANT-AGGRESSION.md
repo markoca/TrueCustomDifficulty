@@ -54,8 +54,8 @@ All are `runtime_test_required`. Source: S.T.A.L.K.E.R. 2 2.1 base dump.
   lists the tag on Master). Attacks keep the ATTACKS slider × knob.
 * Presets folded the old slider into each ability knob: knob × slider, or knob × its Master 2× when the slider sat
   at its vanilla (`tools/factory_preset_ability_knobs_2026_11_18.json`).
-* Board: ATTACKS caption and slider share one line; ABILITIES is a caption only. Knobs are 15 px radius on a fixed
-  five-column grid per half, so they line up across cards; caption 9 pt, seconds 10.5 pt bold.
+* Board: ATTACKS caption and slider across the card; one five-column knob grid below (attacks left, abilities
+  right-aligned under an ABILITIES header with a divider). Knobs 18 px radius; caption 9.4 pt, seconds 11 pt bold.
 
 ## Attacks only (2026-11-18, second pass)
 

@@ -41,19 +41,18 @@ public sealed class MutantHealthRadar : FrameworkElement
     private const int RateRowBase = 16;
     // Move knobs: one row id per knob, from KnobRowBase in MoveKnobs order.
     private const int KnobRowBase = 100;
-    private const double GroupRowTop = 47.0;       // ATTACKS caption + slider, ABILITIES caption
-    private const double KnobRowTop = 66.0;        // knob grid below
-    private const double KnobRowHeight = 70.0;
-    private const double KnobRadius = 15.0;
-    private const int KnobColumns = 5;              // most moves in one group (Snork attacks)
+    private const double GroupRowTop = 47.0;       // ATTACKS caption + slider
+    private const double AbilityHeaderTop = 66.0;  // ABILITIES header over its knobs
+    private const double KnobRowTop = 80.0;        // knob grid below
+    private const double KnobRadius = 18.0;
+    private const int KnobColumns = 5;              // most moves on one mutant (attacks + abilities)
     private const double KnobStartAngle = 135.0;
     private const double KnobSweepAngle = 270.0;
     private const double KnobDragPixelsPerStep = 8.0;
     private const double GlobalCardHeight = 71.0;
     private const double SpeciesTop = 205.0;
-    private const double SpeciesCardHeight = 138.0;
-    private const double SpeciesRowPitch = 145.0;
-    private const double HalfTrackGap = 18.0;
+    private const double SpeciesCardHeight = 156.0;
+    private const double SpeciesRowPitch = 163.0;
     private const double MaxContentWidth = 1080.0;
     private const double ColumnGap = 12.0;
 
@@ -335,46 +334,53 @@ public sealed class MutantHealthRadar : FrameworkElement
         DrawSpeciesTrack(dc, parameter, row, new Rect(card.Left + 12.0, card.Top + 30.0,
             Math.Max(1.0, card.Width - 24.0), 10.0), muted, border, accent, panel);
 
-        // ATTACKS: caption and slider on one line; ABILITIES: caption only (each
-        // ability is its own knob). Below both, one knob per move on a fixed
-        // column grid, so knobs line up across every card.
+        // ATTACKS: caption and slider across the card. Below, every move as a
+        // knob on one five-column grid spanning the card (no mutant has more
+        // than five): attacks from the left, abilities from the right under an
+        // ABILITIES header with a thin divider. Columns line up across cards.
         var family = MutantAggressionPolicy.Families[row];
-        var halfWidth = Math.Max(1.0, (card.Width - 24.0 - HalfTrackGap) / 2.0);
-        var leftHalf = new Rect(card.Left + 12.0, card.Top + GroupRowTop, halfWidth, 14.0);
-        var rightHalf = new Rect(leftHalf.Right + HalfTrackGap, card.Top + GroupRowTop, halfWidth, 14.0);
+        var inner = new Rect(card.Left + 12.0, card.Top, Math.Max(1.0, card.Width - 24.0), card.Height);
         if (_rates[row] is { } attackRate)
         {
             var caption = CreateText("ATTACKS", 9.4, muted, FontWeights.Bold);
-            dc.DrawText(caption, new Point(leftHalf.Left - 1.0, leftHalf.Top));
-            var trackLeft = leftHalf.Left + caption.Width + 12.0;
+            dc.DrawText(caption, new Point(inner.Left - 1.0, card.Top + GroupRowTop));
+            var trackLeft = inner.Left + caption.Width + 12.0;
             DrawSpeciesTrack(dc, attackRate, RateRowBase + row,
-                new Rect(trackLeft, leftHalf.Top + 2.0, Math.Max(1.0, leftHalf.Right - trackLeft), 10.0),
+                new Rect(trackLeft, card.Top + GroupRowTop + 2.0, Math.Max(1.0, inner.Right - trackLeft), 10.0),
                 muted, border, accent, panel);
         }
-        if (MutantAggressionPolicy.Moves(family, MutantAggressionPolicy.Group.Abilities).Count > 0)
-            DrawText(dc, "ABILITIES", new Point(rightHalf.Left - 1.0, rightHalf.Top), 9.4, muted, FontWeights.Bold);
 
+        var attacks = MutantAggressionPolicy.Moves(family, MutantAggressionPolicy.Group.Attacks);
+        var abilities = MutantAggressionPolicy.Moves(family, MutantAggressionPolicy.Group.Abilities);
+        var cell = inner.Width / KnobColumns;
         var knobTop = card.Top + KnobRowTop;
-        DrawKnobRow(dc, family, MutantAggressionPolicy.Group.Attacks, _rates[row],
-            new Rect(leftHalf.Left, knobTop, halfWidth, KnobRowHeight), text, muted, border, accent, panel);
-        DrawKnobRow(dc, family, MutantAggressionPolicy.Group.Abilities, _rates[row],
-            new Rect(rightHalf.Left, knobTop, halfWidth, KnobRowHeight), text, muted, border, accent, panel);
+        if (_rates[row] is not null)
+            DrawKnobCells(dc, family, MutantAggressionPolicy.Group.Attacks, attacks, _rates[row], inner.Left, cell,
+                knobTop, text, muted, border, accent, panel);
+        if (abilities.Count > 0)
+        {
+            var abilityLeft = inner.Left + cell * (KnobColumns - abilities.Count);
+            DrawText(dc, "ABILITIES", new Point(abilityLeft + 6.0, card.Top + AbilityHeaderTop), 9.4, muted, FontWeights.Bold);
+            if (attacks.Count > 0)
+                dc.DrawLine(new Pen(CloneWithOpacity(border, 0.8), 1.0),
+                    new Point(abilityLeft, card.Top + AbilityHeaderTop + 2.0),
+                    new Point(abilityLeft, card.Bottom - 8.0));
+            DrawKnobCells(dc, family, MutantAggressionPolicy.Group.Abilities, abilities, _rates[row], abilityLeft, cell,
+                knobTop, text, muted, border, accent, panel);
+        }
     }
 
-    private void DrawKnobRow(DrawingContext dc, MutantAggressionPolicy.Family family,
-        MutantAggressionPolicy.Group group, ParameterViewModel? attackRate, Rect area,
+    private void DrawKnobCells(DrawingContext dc, MutantAggressionPolicy.Family family,
+        MutantAggressionPolicy.Group group, IReadOnlyList<MutantAggressionPolicy.Move> moves,
+        ParameterViewModel? attackRate, double left, double cell, double top,
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
-        var moves = MutantAggressionPolicy.Moves(family, group);
-        if (moves.Count == 0 || (group == MutantAggressionPolicy.Group.Attacks && attackRate is null))
-            return;
-        var cell = area.Width / KnobColumns;
         for (var i = 0; i < moves.Count; i++)
         {
             var index = KnobIndex(family, moves[i]);
             if (index < 0 || _knobs[index] is not { } knob)
                 continue;
-            var center = new Point(area.Left + cell * (i + 0.5), area.Top + KnobRadius + 3.0);
+            var center = new Point(left + cell * (i + 0.5), top + KnobRadius + 3.0);
             DrawMoveKnob(dc, family, group, moves[i], attackRate, knob, KnobRowBase + index, center, cell,
                 text, muted, border, accent, panel);
         }
@@ -398,7 +404,7 @@ public sealed class MutantHealthRadar : FrameworkElement
         ParameterViewModel knob, int row, Point center, double cell,
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
-        var radius = Math.Min(KnobRadius, Math.Max(9.0, cell / 2.0 - 6.0));
+        var radius = Math.Min(KnobRadius, Math.Max(10.0, cell / 2.0 - 8.0));
         var range = Math.Max(Epsilon, knob.Maximum - knob.Minimum);
         var ratio = Math.Clamp((knob.CurrentNumber - knob.Minimum) / range, 0.0, 1.0);
         var reference = Math.Clamp((knob.ReferenceNumber - knob.Minimum) / range, 0.0, 1.0);
@@ -406,9 +412,9 @@ public sealed class MutantHealthRadar : FrameworkElement
         var selected = row == _selectedRow;
 
         ControlHoverGlow.Draw(dc, center, accent, hovered);
-        dc.DrawEllipse(CloneWithOpacity(panel, 0.96), new Pen(border, 1.0), center, radius - 4.5, radius - 4.5);
-        DrawKnobArc(dc, center, radius, KnobSweepAngle, new Pen(border, 3.2));
-        DrawKnobArc(dc, center, radius, KnobSweepAngle * ratio, new Pen(accent, 3.2));
+        dc.DrawEllipse(CloneWithOpacity(panel, 0.96), new Pen(border, 1.0), center, radius - 5.0, radius - 5.0);
+        DrawKnobArc(dc, center, radius, KnobSweepAngle, new Pen(border, 3.6));
+        DrawKnobArc(dc, center, radius, KnobSweepAngle * ratio, new Pen(accent, 3.6));
         var referenceAngle = KnobStartAngle + KnobSweepAngle * reference;
         dc.DrawLine(new Pen(muted, 1.6), KnobPoint(center, radius - 5.0, referenceAngle),
             KnobPoint(center, radius + 3.5, referenceAngle));
@@ -417,7 +423,7 @@ public sealed class MutantHealthRadar : FrameworkElement
             KnobPoint(center, 2.5, angle), KnobPoint(center, radius - 5.5, angle));
         dc.DrawEllipse(accent, null, center, 2.0, 2.0);
 
-        var caption = CreateText(move.Label, 9.0, muted, FontWeights.Bold);
+        var caption = CreateText(move.Label, 9.4, muted, FontWeights.Bold);
         dc.DrawText(caption, new Point(center.X - caption.Width / 2.0, center.Y + radius + 4.0));
         var rate = attackRate?.CurrentNumber ?? 1.0;
         var rateReference = attackRate?.ReferenceNumber ?? 1.0;
@@ -426,12 +432,12 @@ public sealed class MutantHealthRadar : FrameworkElement
         var vanilla = MutantAggressionPolicy.MoveSeconds(family, group, move, rateReference, rateReference,
             knob.ReferenceNumber, knob.ReferenceNumber);
         var changed = Math.Abs(seconds - vanilla) > 0.0001;
-        var value = CreateText(MutantAggressionPolicy.Seconds(seconds), 10.5,
+        var value = CreateText(MutantAggressionPolicy.Seconds(seconds), 11.0,
             changed ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
-        dc.DrawText(value, new Point(center.X - value.Width / 2.0, center.Y + radius + 16.0));
+        dc.DrawText(value, new Point(center.X - value.Width / 2.0, center.Y + radius + 17.0));
 
         _targets[row] = new HitTarget(
-            new Rect(center.X - cell / 2.0 + 1.0, center.Y - radius - 4.0, cell - 2.0, radius * 2.0 + 36.0),
+            new Rect(center.X - cell / 2.0 + 1.0, center.Y - radius - 4.0, cell - 2.0, radius * 2.0 + 38.0),
             Rect.Empty);
     }
 

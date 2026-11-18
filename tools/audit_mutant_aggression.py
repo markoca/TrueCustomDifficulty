@@ -171,7 +171,7 @@ check(sorted(entry.get("parameterIds", [])) == sorted(ids[:-1] + move_ids)
 
 # ---- UI -----------------------------------------------------------------------
 for token in ("MUTANT DAMAGE, HEALTH AND AGGRESSION", "SPECIAL ABILITY RATE",
-              "DrawKnobRow(", "DrawMoveKnob(", "MutantAggressionPolicy.MoveSeconds(", "OnMouseWheel(", '"ATTACKS"', '"ABILITIES"',
+              "DrawKnobCells(", "DrawMoveKnob(", "MutantAggressionPolicy.MoveSeconds(", "OnMouseWheel(", '"ATTACKS"', '"ABILITIES"',
               "ReferenceMagnet"):
     check(token in radar, f"radar token {token}")
 
