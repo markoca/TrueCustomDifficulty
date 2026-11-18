@@ -23,3 +23,4 @@ audit/final-cfg-mapping/
 audit/stashes-cfg-route-delta.csv
 tools/__pycache__/lair_cfg_parse.cpython-*.pyc
 tools/__pycache__/mutant_cooldown_extract*.pyc
+tools/__pycache__/build_mutant_cooldown_table*.pyc
