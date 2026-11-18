@@ -83,7 +83,7 @@ def main():
     check("WriteZoneTimers(modifiedById, documents, writtenParameters)" in main_writer, "WriteZoneTimers not called")
     ui = (APP / "Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
     for token in ('case "ZoneWeather":', 'case "TraderRestock":', '"ZONE WEATHER"', '"TRADER RESTOCK"',
-                  '"EMISSIONS"', '"STORMS"', '"EMISSION WARNING"', '"RESTOCK EVERY"',
+                  '"EMISSIONS"', '"STORMS"', '"TIME TO FIND COVER"', '"RESTOCK EVERY"',
                   "ZoneTimersPolicy.EmissionEnd(warning)", "ZoneTimersPolicy.GenericRestockDays("):
         check(token in ui, "board drifted: " + token)
     # Source-backed, collision-free weather UI: validate the scoped renderer,
@@ -94,10 +94,17 @@ def main():
           "no rectangular frame around the three weather knobs")
     check('DrawSourceKnob(dc, parameter, knobs[i].Label, knobCard' in weather_ui,
           "weather uses the native source dials")
-    check('"RANDOM EMISSIONS"' in weather_ui and '"TIME TO FIND COVER"' in weather_ui,
-          "gamer-facing weather knob titles")
-    check('parameter is null || isWarning ? null' in weather_ui and 'positivePrefix: false' in weather_ui,
-          "warning dial has only the SECONDS unit, no overlapping secondary phrase or artificial plus")
+    check('"STORMS"' in weather_ui and '"EMISSIONS"' in weather_ui
+      and '"TIME TO FIND COVER"' in weather_ui, "gamer-facing weather knob titles")
+check(weather_ui.index('(ZoneTimersPolicy.StormFrequencyId, "STORMS")')
+      < weather_ui.index('(ZoneTimersPolicy.EmissionFrequencyId, "EMISSIONS")')
+      < weather_ui.index('(ZoneTimersPolicy.EmissionWarningId, "TIME TO FIND COVER")'),
+      "ZONE WEATHER knobs are STORMS, EMISSIONS, TIME TO FIND COVER")
+    check('percentageReadout: !isWarning' in weather_ui
+      and 'secondaryReadout: isWarning ? null : "FREQUENCY"' in weather_ui,
+      "weather weight reads as a percentage with only FREQUENCY beneath")
+check('positivePrefix: false' in weather_ui and 'nativeUnit: isWarning ? "SECONDS" : null' in weather_ui,
+      "warning dial has only the SECONDS unit, no artificial plus")
     check('seconds / Math.Max(1.0, end)' in weather_ui and
           'seconds / ZoneTimersPolicy.EmissionWeatherSeconds' not in weather_ui,
           "event bar ends with the actual emission stages, not the 300 s weather slot")

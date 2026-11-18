@@ -1008,8 +1008,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             new Point(ActualWidth / 2.0, 21.0), VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
         var knobs = new (string Id, string Label)[]
         {
-            (ZoneTimersPolicy.EmissionFrequencyId, "RANDOM EMISSIONS"),
             (ZoneTimersPolicy.StormFrequencyId, "STORMS"),
+            (ZoneTimersPolicy.EmissionFrequencyId, "EMISSIONS"),
             (ZoneTimersPolicy.EmissionWarningId, "TIME TO FIND COVER")
         };
         var (left, bankWidth, cellWidth) = ArtifactKnobBank(ActualWidth);
@@ -1023,10 +1023,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             var isWarning = knobs[i].Id == ZoneTimersPolicy.EmissionWarningId;
             DrawSourceKnob(dc, parameter, knobs[i].Label, knobCard,
                 text, muted, border, accent, panel,
+                percentageReadout: !isWarning,
                 rawReadout: isWarning, positivePrefix: false,
                 nativeUnit: isWarning ? "SECONDS" : null,
-                secondaryReadout: parameter is null || isWarning ? null
-                    : ZoneTimersPolicy.KnobText(parameter.Id, parameter.CurrentNumber, parameter.ReferenceNumber));
+                secondaryReadout: isWarning ? null : "FREQUENCY");
         }
 
         // One complete Default emission from warning to the end of its
@@ -1101,9 +1101,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             ? (seconds / 60.0).ToString("0.#", CultureInfo.InvariantCulture) + " min"
             : seconds.ToString("0", CultureInfo.InvariantCulture) + " s";
 
-    // ARTIFACT HUNTING: three spawner knobs (spawn chance, rare luck,
-    // artifacts per spawn) and a read-only rarity split per zone rank that
-    // follows RARE LUCK (ArtifactSpawnPolicy, same as the writer).
+    // ARTIFACT HUNTING: three source-backed frameless spawner knobs. Display
+    // derived base spawn odds and the Rare+ share among Master-zone finds,
+    // without mislabeling source multipliers as absolute probabilities.
+    // The read-only per-zone rarity strip uses the same source math as the writer.
     private const double ArtifactRarityRowPitch = 22.0;
     private const double ArtifactKnobTop = 48.0;
     private const double ArtifactKnobHeight = 181.0;
@@ -1132,7 +1133,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var controls = new (string Id, string Label)[]
         {
             (ArtifactSpawnPolicy.SpawnChanceId, "SPAWN CHANCE"),
-            (ArtifactSpawnPolicy.RareLuckId, "RARE LUCK"),
+            (ArtifactSpawnPolicy.RareLuckId, "RARE+ ARTIFACT CHANCE"),
             (ArtifactSpawnPolicy.CountId, "PER SPAWN")
         };
         var (left, bankWidth, cellWidth) = ArtifactKnobBank(ActualWidth);
@@ -1141,17 +1142,20 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             var parameter = P(controls[i].Id);
             var knobCard = new Rect(left + i * (cellWidth + ArtifactKnobGap),
                 ArtifactKnobTop, cellWidth, ArtifactKnobHeight);
-            dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9), knobCard, 4.0, 4.0, parameter);
+            // The source arc, ticks and hover glow are the only dial chrome.
+            // Do not add an inner rectangular card around these knobs.
             var isCount = controls[i].Id == ArtifactSpawnPolicy.CountId;
+            var isSpawn = controls[i].Id == ArtifactSpawnPolicy.SpawnChanceId;
             DrawSourceKnob(dc, parameter, controls[i].Label, knobCard,
                 text, muted, border, accent, panel,
-                rawReadout: isCount,
+                rawReadout: isCount, positivePrefix: false,
                 nativeUnit: isCount
                     ? (parameter?.CurrentNumber ?? 1.0) >= 1.5 ? "ARTIFACTS" : "ARTIFACT"
                     : null,
-                secondaryReadout: parameter is null || isCount
-                    ? null : ArtifactSpawnPolicy.KnobText(parameter.Id, parameter.CurrentNumber),
-                secondaryModified: parameter?.IsValueModifiedFromReference() == true);
+                secondaryReadout: isCount ? null
+                    : isSpawn ? "BASE ODDS" : "MASTER ZONES",
+                valueFormatter: isCount ? null
+                    : value => ArtifactSpawnPolicy.KnobPercentage(controls[i].Id, value));
         }
 
         // Rarity split per zone rank (Common / Uncommon / Rare / Epic).
@@ -3453,7 +3457,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         bool positivePrefix = true, string? secondaryReadout = null,
         bool inlineNativeUnit = false, bool secondaryModified = false,
         Brush? dialAccent = null, double dialScale = 1.0,
-        double? visualMaximum = null)
+        double? visualMaximum = null, Func<double, string>? valueFormatter = null)
     {
         // All larger hero dials (Headshot, Starvation HP and Radiation HP)
         // raise ONLY the caption by 9 DIP to restore the ordinary knob's
@@ -3554,7 +3558,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // Source-native rates and medicine amounts display the actual stat
         // value plus its physical/gameplay unit, never a fictitious 1x scalar.
         // A two-line center keeps both readable inside the compact dial.
-        var currentLabel = rateReadout ? $"{parameter.CurrentNumber:0.00}"
+        var currentLabel = valueFormatter is not null ? valueFormatter(parameter.CurrentNumber)
+            : rateReadout ? $"{parameter.CurrentNumber:0.00}"
             : percentageReadout ? Percent(parameter.CurrentNumber)
             : rawReadout
                 ? $"{(positivePrefix && nativeUnit is not null && parameter.CurrentNumber > Epsilon ? "+" : "")}{parameter.CurrentNumber:0.#}"
@@ -3616,14 +3621,16 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 new Point(center.X, center.Y + 5.0),
                 8.3, muted, FontWeights.SemiBold);
         DrawCenteredText(dc,
-            rateReadout ? $"{parameter.Minimum:0.00}"
+            valueFormatter is not null ? valueFormatter(parameter.Minimum)
+                : rateReadout ? $"{parameter.Minimum:0.00}"
                 : percentageReadout ? Percent(parameter.Minimum)
                 : rawReadout ? $"{parameter.Minimum:0.#}"
                 : $"{parameter.Minimum:0.##}×",
             new Point(center.X - radius * .80, card.Bottom - KnobTypography.EndpointInsetFromBottom),
             KnobTypography.EndpointSize, Brushes.White, FontWeights.SemiBold);
         DrawCenteredText(dc,
-            rateReadout ? $"{parameter.Maximum:0.00}"
+            valueFormatter is not null ? valueFormatter(dialMaximum)
+                : rateReadout ? $"{parameter.Maximum:0.00}"
                 : percentageReadout ? Percent(dialMaximum)
                 : rawReadout ? $"{dialMaximum:0.#}"
                 : $"{dialMaximum:0.##}×",

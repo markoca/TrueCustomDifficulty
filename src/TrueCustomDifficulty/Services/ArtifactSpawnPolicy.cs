@@ -101,16 +101,19 @@ public static class ArtifactSpawnPolicy
     };
 
     /// <summary>
-    /// Short in-dial line for the knobs: "25% CHANCE" (base spawn chance),
-    /// "25% RARE+" (Master zone Rare+Epic share). Null for other ids.
+    /// Derived on-dial percentages, not user-facing multipliers. SPAWN CHANCE
+    /// is the base chance per attempt (the 15% bonus scales separately).
+    /// RARE+ is the conditional Rare+Epic share of Master-zone artifact finds;
+    /// other zone ranks remain visible in the rarity breakdown below.
+    /// Source factor values and their native steps remain unchanged.
     /// </summary>
-    public static string? KnobText(string id, double value) => id switch
+    public static string KnobPercentage(string id, double value) => id switch
     {
         SpawnChanceId => string.Create(System.Globalization.CultureInfo.InvariantCulture,
-            $"{SpawnChance(value).Base:0.#}% CHANCE"),
+            $"{SpawnChance(value).Base:0.#}%"),
         RareLuckId => string.Create(System.Globalization.CultureInfo.InvariantCulture,
-            $"{RarePlusShare(3, value):0.#}% RARE+"),
-        _ => null
+            $"{RarePlusShare(3, value):0.#}%"),
+        _ => throw new ArgumentOutOfRangeException(nameof(id))
     };
 
     private static string SpawnChanceText(double factor)

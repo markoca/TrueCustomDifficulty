@@ -108,8 +108,23 @@ for token in ('case "ArtifactHunting":', 'DrawArtifactHunting(', '"ARTIFACT HUNT
               '"ArtifactHunting" => ArtifactHuntingHeight(width)', '"ArtifactHunting" => ArtifactSpawnPolicy.ParameterIds',
               'ArtifactSpawnPolicy.CardText(parameter.Id, value)',
               'ArtifactKnobBank(ActualWidth)', 'DrawSourceKnob(dc, parameter, controls[i].Label, knobCard,',
-              'ArtifactSpawnPolicy.KnobText(parameter.Id, parameter.CurrentNumber)'):
+              'ArtifactSpawnPolicy.KnobPercentage(controls[i].Id, value)'):
     check(token in ui, f"UI token {token}")
+artifact_ui = ui[ui.index('    private void DrawArtifactHunting('):
+                 ui.index('    // This native-axis graph uses', ui.index('    private void DrawArtifactHunting('))]
+check('dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9), knobCard' not in artifact_ui,
+      "ARTIFACT HUNTING source knobs have no rectangular card frames")
+check('"RARE+ ARTIFACT CHANCE"' in artifact_ui and '"BASE ODDS"' in artifact_ui
+      and '"MASTER ZONES"' in artifact_ui, "artifact dials explain actual source-backed odds")
+check('valueFormatter: isCount ? null' in artifact_ui
+      and 'valueFormatter is not null ? valueFormatter(parameter.CurrentNumber)' in ui
+      and 'valueFormatter is not null ? valueFormatter(parameter.Minimum)' in ui
+      and 'valueFormatter is not null ? valueFormatter(dialMaximum)' in ui,
+      "current, min and max all display effective percent with native rate editing")
+check('public static string KnobPercentage(string id, double value)' in policy
+      and 'RarePlusShare(3, value)' in policy and 'SpawnChance(value).Base' in policy,
+      "effective percentages come from shared writer policy")
+check(by_id[IDS[1]]["label"] == "Rare+ Artifact Chance", "catalog defines exact Rare+ terminology")
 check(all(f'["{pid}"] = "ArtifactHunting"' in pvm for pid in IDS)
       and '["ArtifactHunting"] = "environment.artifactSpawnChance"' in pvm
       and '"ArtifactHunting" =>' in pvm, "family map, anchor and CONTROLS help")

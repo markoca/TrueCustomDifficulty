@@ -1,14 +1,30 @@
+## CURRENT 2026-11-18 — Frameless artifact odds and explicit Rare+ meaning
+
+The UI shows actual base-spawn odds and conditional Rare+ odds for Master-zone finds,
+not exposed rate multipliers. The visual percentages are **not** a single unconditional
+probability of receiving a Rare artifact: the spawn attempt still has its separate
+base/bonus chance. No game CFG, source range, rarity distribution or spawn rate was
+changed by this visual adjustment.
+
 # ARTIFACT HUNTING (2026-11-16)
 
-Anomalies tab → **ARTIFACT HUNTING** board: three source knobs (YOUR WEAPONS geometry, 181-DIP cards,
-bank ≤ 620 DIP) and a read-only RARITY BY ZONE strip. Knob centres: SPAWN CHANCE / RARE LUCK show the
-factor with a short in-dial line (`25% CHANCE`, `25% RARE+` = Master zone Rare+Epic); PER SPAWN shows
-`1 ARTIFACT` / `2 ARTIFACTS`. Only changed digits turn gold (2026-11-17).
+Anomalies tab → **ARTIFACT HUNTING** board: three compact, frameless 270° source dials
+(181 DIP high, total bank ≤ 620 DIP) and a read-only RARITY BY ZONE strip. There are
+no rectangular knob cards. SPAWN CHANCE shows the actual **SpawnChanceBase** (e.g. at
+2.6× source scaling: `65%` with `BASE ODDS` beneath), not its internal factor.
+RARE+ ARTIFACT CHANCE shows the actual **Rare + Epic share among spawned artifacts**
+for Master-zone fields (at 2.5× source scaling: `45.5%` with `MASTER ZONES` beneath).
+RARITY BY ZONE shows the other area ranks, including Newbie's permanent 0% rare+.
+The source sliders still edit multiplicative weights, and SpawnChanceBonus scales
+with the base chance (15% at vanilla, separately capped at 100%). PER SPAWN reads
+`1 ARTIFACT` / `2 ARTIFACTS`, never `+1`. Numeric endpoints on the two odds
+dials also show derived percentages; pointer position and snap grid still follow
+native source values. Only changed digits turn gold; dial subtitles stay neutral.
 
 | Card | Id | Range | Vanilla | CFG |
 |---|---|---|---|---|
-| SPAWN CHANCE | `environment.artifactSpawnChance` | 0x–4x / 0.1 | 1x (25% +15%) | `SpawnChanceBase` 25, `SpawnChanceBonus` 15 × factor, capped at 100 (`scaleClamp100`) |
-| RARE LUCK | `environment.artifactRareLuck` | 0.25x–4x / 0.25 | 1x | `RarityChance`: Rare and Epic × k, all four renormalised to 100 (special writer) |
+| SPAWN CHANCE | `environment.artifactSpawnChance` | 0×–4× / 0.1 | 1× (25% + 15% bonus) | `SpawnChanceBase` 25, `SpawnChanceBonus` 15 × factor, capped at 100 (`scaleClamp100`) |
+| RARE+ ARTIFACT CHANCE | `environment.artifactRareLuck` | 0.25×–4× / 0.25 | 1× (25% Rare+ in Master zones) | `RarityChance`: Rare and Epic × k, all four renormalised to 100 (special writer) |
 | PER SPAWN | `environment.artifactCount` | 1–3 | 1 | `Count` (`set`) |
 
 All three are `runtime_test_required` and independent of the selected difficulty.
@@ -32,7 +48,7 @@ All three are `runtime_test_required` and independent of the selected difficulty
 | Veteran | 30 | 59 | 10 | 1 |
 | Master | 10 | 65 | 20 | 5 |
 
-* RARE LUCK keeps Newbie areas without rare artifacts (as in the game). Example Master at 2x:
+* RARE+ ARTIFACT CHANCE keeps Newbie areas without rare artifacts (as in the game). Example Master at 2×:
   Rare 32 / Epic 8 (40% rare+, was 25%).
 * **RESPAWN RATE retired (2026-11-17).** It scaled `MinCooldown`/`MaxCooldown` (5400), but fields
   refill on the game's own schedule (after emissions), so the cooldown has no proven in-game effect.
@@ -48,4 +64,4 @@ All three are `runtime_test_required` and independent of the selected difficulty
 * `tools/audit_cfg_source_values.py --parameter-prefix environment.artifact` → 40/40 exact.
 * Factory presets do not store these ids yet; they load at 1x.
 
-**Card texts (2026-11-17):** `fields regrow at game pace` / `2× faster` / `4× slower`; `artifact chance 25% (+15% bonus)` (`0% · fields stay empty` at 0); `25% rare finds in Master zones`; `1 artifact per spawn`. Track ends show the figure at each slider limit.
+**Historical card texts (2026-11-17):** `fields regrow at game pace` / `2× faster` / `4× slower`; `artifact chance 25% (+15% bonus)` (`0% · fields stay empty` at 0); `25% rare finds in Master zones`; `1 artifact per spawn`. Track ends show the figure at each slider limit.

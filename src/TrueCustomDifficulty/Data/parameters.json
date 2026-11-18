@@ -14366,14 +14366,14 @@
       "id": "environment.artifactRareLuck",
       "tab": "environment",
       "group": "Artifacts",
-      "label": "Rare Artifact Luck",
-      "description": "Multiplies the Rare and Epic share of the artifact rarity split in every zone rank and renormalises Common/Uncommon/Rare/Epic back to 100%.",
+      "label": "Rare+ Artifact Chance",
+      "description": "Changes what fraction of spawned artifacts are Rare or Epic, by scaling those rarity weights for every zone rank. Does not change whether an artifact spawns.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Rare luck"
+        "valueLabel": "Rare+ artifact share"
       },
       "vanilla": {
         "All": 1
@@ -14404,9 +14404,9 @@
           "Vanilla split (Common/Uncommon/Rare/Epic): Newbie 80/20/0/0, Experienced 50/48/1.9/0.1, Veteran 30/59/10/1, Master 10/65/20/5. Newbie areas have no rare artifacts and stay unchanged."
         ]
       },
-      "rationale": "How often a find is rare or epic. Vanilla: 1× (25% in Master zones, 11% in Veteran). 2× roughly doubles that; 0.5× makes a top-tier artifact a real event. Newbie zones never drop rare ones.",
-      "logic": "Higher = more Rare and Epic artifacts, fewer common ones. Newbie areas never grow rare artifacts, and still don't.",
-      "interaction": "Only the rarity. ARTIFACT SPAWN CHANCE and PER SPAWN set how many appear."
+      "rationale": "Among artifacts that spawn, how often you find a Rare or Epic one. Master zones start at 25% Rare+; Veteran at 11%. The knob shows Master-zone odds, while RARITY BY ZONE shows every area. Newbie zones still have none.",
+      "logic": "Higher shifts the existing rarity distribution toward Rare and Epic, with total odds normalised to 100%. Does not increase the number of artifact spawn attempts.",
+      "interaction": "Only the rarity of a successful artifact spawn. SPAWN CHANCE controls whether it happens; PER SPAWN controls how many artifacts appear."
     },
     {
       "id": "environment.artifactCount",

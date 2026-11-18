@@ -1,3 +1,13 @@
+## CURRENT 2026-11-18 — Weather knob order and readable percentages
+
+The ZONE WEATHER knob row is STORMS → EMISSIONS → TIME TO FIND COVER.
+The first two show their source-relative weather weights as percentages
+(100% = numeric weight 1×, 125% = numeric weight 1.25×); these are not
+absolute weather occurrence probabilities. A single neutral `FREQUENCY`
+caption sits below the number. The warning dial still uses raw seconds
+(10–60 s, with 5 s native snapping). The existing emission-stage timeline
+and CFG writer are not modified by this presentation change.
+
 ## 2026-11-18 — CURRENT: Time to Find Cover limited to 10–60 seconds
 
 * TIME TO FIND COVER uses 10–60 s in 5 s steps, with 60 s as the unmodified game default. The knob, timeline preview and CFG patch validation use the same limits.
