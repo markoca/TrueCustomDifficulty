@@ -1,3 +1,7 @@
+## CURRENT 2026-11-18 — Sixth Wine contract run: 12 PASS / 1 FAIL
+
+* No UI or writer change. LootSpecialGenerators `stash-medical-zero` still assumed that the Basic MEDS / FOOD / DRINKS cells are Weight-only. Since the stash consistency pass (4a52c2c), those cells also keep their share of Basic Chance rows (Bandage / Medkit / Vodka; `TierChanceParameterId`). The check now expects source Chance × cell. The Basic RGD-5 Chance stays with BASIC GRENADES CHANCE.
+
 ## CURRENT 2026-11-18 — Fifth Wine contract run: 12 PASS / 1 FAIL
 
 * No UI change. The NPC LOOT board height pins in LootSpecialGenerators still had the pre-redesign values (470 / 470 / 568). The three-tier board from 2026-11-16/17 measures 510 at 920 and 860 DIP, and 706 at 600 DIP (compact stack), computed from `LayoutNpcLoot`.

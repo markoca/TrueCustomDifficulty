@@ -775,3 +775,5 @@ Third run (2026-11-18, 108ab49): 12 PASS / 1 FAIL. The one failure (LootSpecialG
 Fourth run (2026-11-18, e7be19a): 12 PASS / 1 FAIL. LootSpecialGenerators `smart-need-half` never counted endpoint-only groups; the check is fixed.
 
 Fifth run (2026-11-18, 4c23dcf): 12 PASS / 1 FAIL. The NPC LOOT board height pins were updated to 510 / 510 / 706.
+
+Sixth run (2026-11-18, b978bdd): 12 PASS / 1 FAIL. `stash-medical-zero` now expects Basic Chance rows to follow the Basic cell.

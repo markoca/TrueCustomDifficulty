@@ -334,9 +334,15 @@ internal static partial class Program
             }
             else
             {
+                // Basic MEDS / FOOD / DRINKS cells also scale Basic Chance rows
+                // (Bandage / Medkit / Vodka), keep-odds rule (4a52c2c). The Basic
+                // RGD-5 Chance belongs to BASIC GRENADES CHANCE, not this cell.
+                var keptChance = expectedSource == "Grenades"
+                    ? Num(item.SourceRaw)
+                    : Math.Clamp(Num(item.SourceRaw) * value, 0.0, 1.0);
                 Check(group.Field == "Chance"
-                    && Math.Abs(Num(actual!) - Num(item.SourceRaw)) < 1e-7,
-                    name + ": Weight-only control changed native Chance " + path);
+                    && Math.Abs(Num(actual!) - keptChance) < 1e-7,
+                    name + ": Basic cell did not keep its share of native Chance " + path);
                 preservedChanceRows++;
             }
         }
