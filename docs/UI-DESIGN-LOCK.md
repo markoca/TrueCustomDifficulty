@@ -1,3 +1,7 @@
+## CURRENT 2026-11-18 — Profile-vibe-only factory balance
+
+* All 12 shipped profiles now give the existing 53 per-move mutant controls source-valid, species-specific rates and distinct role philosophies; 437 of the 636 rates actually change. Human tactics, weather, artifact odds, lair density/refill, trader restock and fall damage are selectively retuned without creating, expanding or duplicating any UI control. Every control retains its original design-catalog dimensions, hover glow, reference marker, reset and yellow-only-changed-numbers treatment. No new Base/Vanilla labels, wide sliders or extra cards. See `tools/factory_preset_vibe_2026_11_18.json` and `docs/FACTORY-PRESETS.md`.
+
 ## CURRENT 2026-11-18 — Preset-accurate 0.05× combat control steps
 
 * HUMAN ENEMY HP and global PHANTOM SPAWN INTERVAL keep their existing compact sliders and Stamina Usage-style caption/number positions, but use catalog-native **0.05×** step sizes across the existing **0.25×–2×** range. This makes all factory-role fine-tuning values selectable and exactly restorable (including 0.55×, 0.65×, 0.85× and 0.95×); 0.10× previously rounded them on import. All other combat steps, CFG writers, default values, preset semantics, hover, right-click reset and reference markers remain unchanged. Do not insert new Base/Vanilla text or widen the controls.

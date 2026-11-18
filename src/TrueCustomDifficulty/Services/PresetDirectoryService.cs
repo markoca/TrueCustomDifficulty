@@ -1045,6 +1045,24 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "e8dd1db5f280af68842555dd3fe9796e259c0577",
     };
 
+    // 2026-11-18 role-first vibe rework: 12 immediately preceding, byte-identical
+    // factory presets. Never migrate player-edited copies or custom files.
+    private static readonly Dictionary<string, string> PreVibeFactoryBlobs = new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "dc621d344a680b96dedc29b1d6fd15a106ab552a",
+        ["Field Medic"] = "6d85f11321181a2bc782b9525a45068ad21dab2c",
+        ["Hardcore+"] = "0691ba45acaa0fe786d57c45676ec4ba1e222c67",
+        ["Hardcore"] = "7f5582fd23df602ac9d036996e90d7d38bf627f8",
+        ["Immersive"] = "0ecaa94d5e42e3f3970364170a724df26e366fbc",
+        ["Mercenary"] = "3882ed3f7cd01581b58d99e3e190f4b22fe13dd3",
+        ["Mutant Hunter"] = "eab512b14001507a8a6abc99c7a9eb5599584754",
+        ["Outcast"] = "c6e29480191e15d3559700cdff5ce06a15db6fbe",
+        ["Scavenger"] = "46c514692049270fc355e82610d5c4b5e7ab4fd9",
+        ["Smuggler"] = "3dd69178ef8eb739910cab13685be51f8da1383a",
+        ["Tactical"] = "6f5df933eb205187cadc6c7df6d1f125fdc4f8bf",
+        ["Wanderer"] = "cf8f627b52d5acb09aa18dc2425b1585d54ce351",
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -1091,7 +1109,8 @@ public sealed class PresetDirectoryService
             && !PreAbilityKnobFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreAttackKnobFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreControllerDogsFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreFallDamageFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreFallDamageFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreVibeFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -1193,7 +1212,9 @@ public sealed class PresetDirectoryService
                 || (PreControllerDogsFactoryBlobs.TryGetValue(name, out var preControllerDogsHash)
                     && actual.Equals(preControllerDogsHash, StringComparison.OrdinalIgnoreCase))
                 || (PreFallDamageFactoryBlobs.TryGetValue(name, out var preFallDamageHash)
-                    && actual.Equals(preFallDamageHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preFallDamageHash, StringComparison.OrdinalIgnoreCase))
+                || (PreVibeFactoryBlobs.TryGetValue(name, out var preVibeHash)
+                    && actual.Equals(preVibeHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

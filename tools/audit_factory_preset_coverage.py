@@ -49,6 +49,10 @@ MOVES = json.loads((ROOT / "tools/factory_preset_move_knobs_2026_11_18.json").re
 NEW_IDS |= {pid for pid in by_id if pid.startswith("combat.mutantMoveRate.")}
 
 ATTACK_KNOBS = json.loads((ROOT / "tools/factory_preset_attack_knobs_2026_11_18.json").read_text(encoding="utf-8"))
+VIBE = json.loads((ROOT / "tools/factory_preset_vibe_2026_11_18.json").read_text(encoding="utf-8"))
+assert set(VIBE["values"]) == {p.stem for p in (APP / "Presets").glob("*.json")}
+assert len(VIBE["previousStockBlobs"]) == 12
+
 ABILITY_KNOBS = json.loads((ROOT / "tools/factory_preset_ability_knobs_2026_11_18.json").read_text(encoding="utf-8"))
 presets = sorted((APP / "Presets").glob("*.json"))
 assert len(presets) == 12, len(presets)
@@ -66,6 +70,12 @@ for path in presets:
     # 2026-11-18: ABILITIES sliders folded into their knobs (knob × slider, Master 2× where halved).
     role.update({pid: new for stem, pid, _old, new in ABILITY_KNOBS["migrated"] if stem == path.stem})
     role.update({pid: new for stem, pid, _old, new in ATTACK_KNOBS["migrated"] if stem == path.stem})
+    # Current role-vibe overlay supersedes the historical upgrade snapshots.
+    # Check all 53 native mutant move rates per profile, not merely non-vanilla keys.
+    vibe = VIBE["values"][path.stem]
+    assert sum(pid.startswith("combat.mutantMoveRate.") for pid in vibe) == 53, path.stem
+    assert VIBE["referenceDifficulty"][path.stem] == ref, path.stem
+    role.update(vibe)
     # 2026-11-18 attack-only pass: role values of removed controls (roars, growls, ...) are gone.
     role = {k: v for k, v in role.items() if k in by_id}
     for pid in NEW_IDS | set(role):
@@ -111,6 +121,9 @@ CONTROLLER_DOGS = json.loads((ROOT / "tools/factory_preset_controller_dogs_2026_
 assert pds.count("PreControllerDogsFactoryBlobs") == 3
 FALL = json.loads((ROOT / "tools/factory_preset_fall_damage_2026_11_18.json").read_text(encoding="utf-8"))
 assert pds.count("PreFallDamageFactoryBlobs") == 3
+assert pds.count("PreVibeFactoryBlobs") == 3
+for _name, _hash in VIBE["previousStockBlobs"].items():
+    assert f'["{_name}"] = "{_hash}"' in pds, _name
 for _name, _hash in FALL["previousStockBlobs"].items():
     assert f'["{_name}"] = "{_hash}"' in pds, _name
 for _name, _hash in CONTROLLER_DOGS["previousStockBlobs"].items():
@@ -133,4 +146,4 @@ for _name, _hash in THEMATIC["previousStockBlobs"].items():
     assert f'["{_name}"] = "{_hash}"' in pds, _name
 assert len(pds.split("PreNewControlsFactoryBlobs =", 1)[1].split("};", 1)[0].split('"] = "')) == 13
 
-print(f"PASS: 12 factory presets store all {len(by_id)} controls; the newest controls follow the 2026-11-17 thematic matrix; stock upgrade hashes kept")
+print(f"PASS: 12 role-first factory profiles / {len(by_id)} source controls / 53 individual mutant move rates per profile; 2026-11-18 vibe overrides current, older matrix epochs preserved")

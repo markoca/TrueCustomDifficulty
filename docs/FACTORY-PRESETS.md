@@ -1,3 +1,26 @@
+## 2026-11-18 — CURRENT: 12 distinct factory vibes (452-control source-aware rework)
+
+**Source of truth:** `tools/factory_preset_vibe_2026_11_18.json`, applied *after* the historical `factory_preset_*_2026_11_17/18.json` epoch snapshots. All **12 profiles** retain all **452** native catalog values, original base difficulty and player-preset JSON format. This pass makes **539 individual existing numeric-control edits**, including **437 actual changes** among the 636 per-species mutant move values (53 × 12). The 53 monster rate knobs were examined individually per role: some deliberately remain at their difficulty's source default, rather than forcing a cosmetic non-vanilla value. Rebalanced source targets include tactical human moves, special move pacing, artifact appearance and rarity (not per-spawn artifact count), weather/emission pressure, lair population/refill, trader restock and fall damage. All old per-role health/healing, loot category, weapon/economy and trader buy/sell decisions are retained; no retired or unavailable controls are reintroduced.
+
+| Role | Identity | Signature mutant move | Distinct Zone/gameplay trade-off |
+|---|---|---|---|
+| Anomaly Runner | Anomaly/psi specialist | Poltergeist anomaly/throw 1.75×; ordinary wild dogs 0.75× | Faster trader restock 6 h; fall damage 75%; storms 1.15×; 55 s cover |
+| Field Medic | Care and recovery | Blind Dog bites 0.75×; telekinetic and psi pressures remain | Special moves 0.75×; supplies refill 6 h; fall damage 80%; milder emissions |
+| Hardcore+ | Extreme hostility | Bloodsucker leap and Burer disarm 3×; even minor fauna dangerous | Special moves 2.75×; 35 s cover; trader restock 20 h; no fall relief |
+| Hardcore | Punishing but readable | Chimera long leap 2.75×; Pseudogiant shockwave 2.25× | Special moves 2.25×; storms 1.35×; trader restock 14 h |
+| Immersive | Believable ecosystem | Bloodsucker leap 1.5×; flesh attacks 0.75× | Mature ecology: slower lair refill 1.15×, artifacts rarer, traders 10 h |
+| Mercenary | Professional fire-and-maneuver | Burer disarm 1.75×; elite predators stronger | Humans use 1.5× grenades/flanks/suppression; resupply 5 h |
+| Mutant Hunter | Dangerous trophy hunting | Pseudodog phantom summons 2.25×; predators 1.5–2× | Mutant lair density 1.5×, refill 0.75×, trader restock 6 h |
+| Outcast | Hostile exile | Controller psy 1.75×, varied hard mutant moves | Enemy flanks/pushes 1.5×; traders 16 h; rare artifacts and bad weather |
+| Scavenger | Cautious scarcity scavenging | Blind Dog running bite 0.5×, elite psi still dangerous | Less alert patrols, trader restock 18 h, fewer rare artifacts |
+| Smuggler | Stealth courier | Controller psy 1.5×, common fauna slower | Enemy alert memory 0.65×, traders 4 h, softer falls; storm cover |
+| Tactical | Disciplined combat | Sharp mutant rushes, moderate elite threats | Human flanks/suppression/grenades 1.75×, memory 1.75×, accuracy 1.3× |
+| Wanderer | Lone Zone exploration | Poltergeist throws 1.75×, wildlife uneven | Fewer human lairs 0.8×; trader restock 12 h; falls 65%; rare luck 1.25× |
+
+**Meaning of the balance:** A higher individual mutant **move rate** means a shorter cooldown between uses of that *specific* native move; a higher **lair respawn time multiplier** means longer waits for the same lair refill. Higher **artifact spawn chance** means more likely native artifact rolls, not extra artifacts per spawn; `environment.artifactCount=1` across all twelve roles. More intense Hardcore+ and Mutant Hunter encounters do not grant additional loot by themselves. Reduced fall damage is reserved for travel/courier/field recovery profiles; Hardcore remains at the native 100%.
+
+**Migration and validation:** `PresetDirectoryService.PreVibeFactoryBlobs` contains the twelve exact Git-blob SHA-1 hashes of the immediately preceding stock profiles, so an untouched installed factory profile upgrades automatically. **User-edited factory-named profiles and custom profiles are never overwritten.** The `tools/audit_factory_preset_coverage.py` matrix audit validates every tuned value and all 53 monster rates per role; `AllControlsPatchContract` checks individual role signatures, a complete 452-setting load/save, and the existing 12-factory no-drift contract. Actual in-game behavior and AI cooldown semantics remain runtime-validation work, not proven by these static edits.
+
 ## 2026-11-18 — CURRENT: factory preset 0.05× fidelity for human HP and phantom waves
 
 * **HUMAN ENEMY HP** (`combat.npcHealth`) and global **PHANTOM SPAWN INTERVAL** (`combat.psySpawnCycleDelay`) use the native `0.25×–2×` editor with **0.05× steps** rather than the old 0.10× grid. All twelve factory role profiles deliberately contain values such as 0.55× / 0.65× / 0.85× / 0.95×. Previously, loading rounded these values silently (e.g. 0.85× → 0.8×), changing actual gameplay. The catalog UI step and the preset normalizer now agree. No preset files, source CFG targets, role intent, value ranges, other combat controls or writers change.

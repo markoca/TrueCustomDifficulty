@@ -1,3 +1,7 @@
+## CURRENT 2026-11-18 — Source-native role tuning, unchanged UI grammar
+
+* Different factory roles now select species-by-species values for existing 53 mutant move knobs rather than using one blanket attack multiplier. Role-specific special-move, human awareness/tactics, weather, artifact odds, lair, restock and fall-damage values also come from existing sources. This is a **preset-data change**, not a new control family: preserve the matched catalog knob/rail geometry, compact 16:9 card layout, hover, reset, native snap steps, text spacing and accent-only-modified-digits rules. The UI must not show hidden baselines or use full-width knobs merely because values vary by preset.
+
 ## CURRENT 2026-11-18 — Factory fine-step sliders
 
 * The existing HUMAN ENEMY HP and PHANTOM SPAWN INTERVAL controls have a source catalog tick of **0.05×** within **0.25×–2×** (not 0.10×), so 12 unmodified factory role presets do not drift when loaded. The same catalog step drives click, drag, keyboard, wheel, import, rendering and serializable values; right-click reset uses the correct difficulty reference. Preserve compact Stamina Usage alignment, single readout, unchanged-label neutral text and accent only on edited digits. No additional controls, outlines or stretched sliders.

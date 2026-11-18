@@ -599,6 +599,32 @@ internal static partial class Program
                     resource.CopyTo(file);
                 var file0 = new PresetService().Load(path);
                 Check(file0.Values.Count == Catalog.Parameters.Count, name + ": factory preset is missing controls");
+                // One source-specific signature per role ensures these twelve
+                // profiles are genuinely differentiated, not 53 uniform 1x
+                // mutant knobs copied from the generic source baseline.
+                var signatures = new Dictionary<string, (string Id, double Value)>(StringComparer.Ordinal)
+                {
+                    ["Anomaly Runner"] = ("combat.mutantMoveRate.poltergeist.throw", 1.75),
+                    ["Field Medic"] = ("combat.mutantMoveRate.blinddog.bite", 0.75),
+                    ["Hardcore+"] = ("combat.mutantMoveRate.bloodsucker.leap", 3.0),
+                    ["Hardcore"] = ("combat.mutantMoveRate.chimera.longLeap", 2.75),
+                    ["Immersive"] = ("combat.mutantMoveRate.bloodsucker.leap", 1.5),
+                    ["Mercenary"] = ("combat.mutantMoveRate.burer.disarm", 1.75),
+                    ["Mutant Hunter"] = ("combat.mutantMoveRate.pseudodog.phantoms", 2.25),
+                    ["Outcast"] = ("combat.mutantMoveRate.controller.psy", 1.75),
+                    ["Scavenger"] = ("combat.mutantMoveRate.blinddog.runBite", 0.5),
+                    ["Smuggler"] = ("combat.mutantMoveRate.controller.psy", 1.5),
+                    ["Tactical"] = ("combat.npcFlankRate", 1.75),
+                    ["Wanderer"] = ("combat.mutantMoveRate.poltergeist.throw", 1.75)
+                };
+                Check(signatures.TryGetValue(file0.Name, out var signature)
+                    && file0.Values.TryGetValue(signature.Id, out var sourceValue)
+                    && sourceValue.Number.HasValue
+                    && Math.Abs(sourceValue.Number.Value - signature.Value) < 1e-9,
+                    name + ": failed role-specific 2026-11-18 vibe signature");
+                Check(file0.Values.Keys.Count(id => id.StartsWith("combat.mutantMoveRate.", StringComparison.Ordinal)) == 53
+                    && file0.Values["environment.artifactCount"].Number == 1,
+                    name + ": 53 native mutant controls and one-artifact-spawn invariant");
                 var vm = new MainViewModel(Catalog);
                 vm.ApplyPresetFromPath(path);
                 var loaded = vm.CreatePresetFile("factory");

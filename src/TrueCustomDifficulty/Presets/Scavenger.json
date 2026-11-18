@@ -48,15 +48,15 @@
     },
     "combat.npcSightRange": {
       "kind": "slider",
-      "number": 0.9
+      "number": 0.85
     },
     "combat.npcHearingRange": {
       "kind": "slider",
-      "number": 0.9
+      "number": 0.85
     },
     "combat.npcAlertMemory": {
       "kind": "slider",
-      "number": 1
+      "number": 0.85
     },
     "combat.npcFogVisibility": {
       "kind": "slider",
@@ -156,23 +156,23 @@
     },
     "combat.mutantSpecialAbilityRate": {
       "kind": "slider",
-      "number": 1
+      "number": 0.75
     },
     "combat.mutantMoveRate.bayun.claw": {
       "kind": "slider",
-      "number": 1.0
+      "number": 0.75
     },
     "combat.mutantMoveRate.bayun.jumpIn": {
       "kind": "slider",
-      "number": 1.0
+      "number": 0.75
     },
     "combat.mutantMoveRate.bayun.leap": {
       "kind": "slider",
-      "number": 1.0
+      "number": 0.75
     },
     "combat.mutantMoveRate.bayun.flyThrough": {
       "kind": "slider",
-      "number": 1.0
+      "number": 0.75
     },
     "combat.mutantMoveRate.bayun.clones": {
       "kind": "slider",
@@ -180,39 +180,39 @@
     },
     "combat.mutantMoveRate.blinddog.bite": {
       "kind": "slider",
-      "number": 1.0
+      "number": 0.75
     },
     "combat.mutantMoveRate.blinddog.runBite": {
       "kind": "slider",
-      "number": 1.0
+      "number": 0.5
     },
     "combat.mutantMoveRate.blinddog.anyAngleBite": {
       "kind": "slider",
-      "number": 1.0
+      "number": 0.75
     },
     "combat.mutantMoveRate.bloodsucker.claw": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1.25
     },
     "combat.mutantMoveRate.bloodsucker.run": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1.25
     },
     "combat.mutantMoveRate.bloodsucker.leap": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1.5
     },
     "combat.mutantMoveRate.bloodsucker.anomaly": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1.25
     },
     "combat.mutantMoveRate.boar.run": {
       "kind": "slider",
-      "number": 1.0
+      "number": 0.75
     },
     "combat.mutantMoveRate.boar.gore": {
       "kind": "slider",
-      "number": 1.0
+      "number": 0.75
     },
     "combat.mutantMoveRate.boar.charge": {
       "kind": "slider",
@@ -228,7 +228,7 @@
     },
     "combat.mutantMoveRate.burer.disarm": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1.25
     },
     "combat.mutantMoveRate.burer.throw": {
       "kind": "slider",
@@ -236,39 +236,39 @@
     },
     "combat.mutantMoveRate.burer.weapons": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1.25
     },
     "combat.mutantMoveRate.chimera.longLeap": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1.5
     },
     "combat.mutantMoveRate.chimera.run": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1.25
     },
     "combat.mutantMoveRate.chimera.jumpIn": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1.25
     },
     "combat.mutantMoveRate.chimera.flyThrough": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1.25
     },
     "combat.mutantMoveRate.controller.claw": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1.25
     },
     "combat.mutantMoveRate.controller.psy": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1.5
     },
     "combat.mutantMoveRate.controller.corpse": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1.25
     },
     "combat.mutantMoveRate.controller.zombify": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1.25
     },
     "combat.mutantMoveRate.deer.claw": {
       "kind": "slider",
@@ -288,31 +288,31 @@
     },
     "combat.mutantMoveRate.flesh.claw": {
       "kind": "slider",
-      "number": 1.0
+      "number": 0.75
     },
     "combat.mutantMoveRate.flesh.leap": {
       "kind": "slider",
-      "number": 1.0
+      "number": 0.75
     },
     "combat.mutantMoveRate.poltergeist.burst": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1.25
     },
     "combat.mutantMoveRate.poltergeist.anomaly": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1.25
     },
     "combat.mutantMoveRate.poltergeist.throw": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1.5
     },
     "combat.mutantMoveRate.pseudodog.run": {
       "kind": "slider",
-      "number": 1.0
+      "number": 0.75
     },
     "combat.mutantMoveRate.pseudodog.bite": {
       "kind": "slider",
-      "number": 1.0
+      "number": 0.75
     },
     "combat.mutantMoveRate.pseudodog.retreatPhantoms": {
       "kind": "slider",
@@ -344,7 +344,7 @@
     },
     "combat.mutantMoveRate.snork.claw": {
       "kind": "slider",
-      "number": 1.0
+      "number": 0.75
     },
     "combat.mutantMoveRate.snork.kick": {
       "kind": "slider",
@@ -352,19 +352,19 @@
     },
     "combat.mutantMoveRate.snork.leap": {
       "kind": "slider",
-      "number": 1.0
+      "number": 0.75
     },
     "combat.mutantMoveRate.snork.jumpIn": {
       "kind": "slider",
-      "number": 1.0
+      "number": 0.75
     },
     "combat.mutantMoveRate.snork.flyThrough": {
       "kind": "slider",
-      "number": 1.0
+      "number": 0.75
     },
     "combat.mutantMoveRate.tushkan.claw": {
       "kind": "slider",
-      "number": 1.0
+      "number": 0.75
     },
     "combat.mutantMoveRate.tushkan.leap": {
       "kind": "slider",
@@ -592,7 +592,7 @@
     },
     "health.fallDamage": {
       "kind": "slider",
-      "number": 1
+      "number": 0.8
     },
     "advanced.lowHealthMechanics": {
       "kind": "toggle",
@@ -1045,7 +1045,7 @@
     },
     "economy.traderRestockHours": {
       "kind": "slider",
-      "number": 16
+      "number": 18
     },
     "economy.consumableCost": {
       "kind": "slider",
@@ -1313,11 +1313,11 @@
     },
     "environment.artifactSpawnChance": {
       "kind": "slider",
-      "number": 1
+      "number": 0.8
     },
     "environment.artifactRareLuck": {
       "kind": "slider",
-      "number": 1
+      "number": 0.75
     },
     "environment.artifactCount": {
       "kind": "slider",
@@ -1325,11 +1325,11 @@
     },
     "environment.emissionFrequency": {
       "kind": "slider",
-      "number": 1
+      "number": 0.95
     },
     "environment.stormFrequency": {
       "kind": "slider",
-      "number": 1
+      "number": 1.05
     },
     "environment.emissionWarning": {
       "kind": "slider",
@@ -1529,11 +1529,11 @@
     },
     "alife.lairPopulation.mutant": {
       "kind": "slider",
-      "number": 1
+      "number": 0.9
     },
     "alife.lairRespawnTime": {
       "kind": "slider",
-      "number": 1.2
+      "number": 1.25
     },
     "economy.traderBuys.general.weapon": {
       "kind": "toggle",
