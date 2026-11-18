@@ -77,9 +77,10 @@ internal static partial class Program
         var nonePackage = string.Empty;
         foreach (var (option, wide, middle, narrow) in new[]
         {
-            (ammoPackage, 470.0, 470.0, 568.0),
-            (waterPackage, 470.0, 470.0, 568.0),
-            (nonePackage, 470.0, 470.0, 568.0)
+            // Three-tier NPC LOOT board (2026-11-16/17): smart card, modifier row, items.
+            (ammoPackage, 510.0, 510.0, 706.0),
+            (waterPackage, 510.0, 510.0, 706.0),
+            (nonePackage, 510.0, 510.0, 706.0)
         })
         {
             smart.CurrentText = option;

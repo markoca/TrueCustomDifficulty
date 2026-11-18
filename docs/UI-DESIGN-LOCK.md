@@ -1,3 +1,7 @@
+## CURRENT 2026-11-18 — Fifth Wine contract run: 12 PASS / 1 FAIL
+
+* No UI change. The NPC LOOT board height pins in LootSpecialGenerators still had the pre-redesign values (470 / 470 / 568). The three-tier board from 2026-11-16/17 measures 510 at 920 and 860 DIP, and 706 at 600 DIP (compact stack), computed from `LayoutNpcLoot`.
+
 ## CURRENT 2026-11-18 — Fourth Wine contract run: 12 PASS / 1 FAIL
 
 * No UI or writer change. LootSpecialGenerators `smart-need-half` changes only SMART LOOT NEED, which moves every Smart group's spawn endpoints but no item odds. The check skipped every group whose items were unchanged and counted nothing. Groups whose endpoints change are now checked too, against the writer's own endpoint rule.

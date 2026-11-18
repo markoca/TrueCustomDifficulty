@@ -773,3 +773,5 @@ Second run (2026-11-18, 862626c): 9 PASS / 4 FAIL. All four failures were stale 
 Third run (2026-11-18, 108ab49): 12 PASS / 1 FAIL. The one failure (LootSpecialGenerators, SmartLoot endpoints) was a pre-kept-share expectation and is fixed. Economy now runs 48 scenarios and AllControls 429/429.
 
 Fourth run (2026-11-18, e7be19a): 12 PASS / 1 FAIL. LootSpecialGenerators `smart-need-half` never counted endpoint-only groups; the check is fixed.
+
+Fifth run (2026-11-18, 4c23dcf): 12 PASS / 1 FAIL. The NPC LOOT board height pins were updated to 510 / 510 / 706.
