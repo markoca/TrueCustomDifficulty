@@ -1,3 +1,7 @@
+## CURRENT 2026-11-18 — LAIR POPULATION vs GROUP SIZE explained in the panels
+
+* Panel interaction texts of HUMAN CAMPS, MUTANT NESTS, RESPAWN TIME, HUMAN SQUAD SIZE (4 ranks) and MUTANT GROUP SIZE (15 species) now say which population each one moves (camp and nest residents vs roaming squads and packs) and where they meet (lairs A-Life sends squads to take). Text only.
+
 ## CURRENT 2026-11-18 — LAIR POPULATION: respawn preview in plain words
 
 * Under RESPAWN TIME the preview reads `AFTER A FIGHT` and two centred lines: `HALF BACK IN 3 min` (a thinned-out lair is half full again) and `WIPED OUT: RESTARTS IN 8 min` (a lair killed to the last one). Only changed numbers turn gold. Preview block 58 DIP for the second line; knobs and other previews unchanged.

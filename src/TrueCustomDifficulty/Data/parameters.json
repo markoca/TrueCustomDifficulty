@@ -17428,7 +17428,7 @@
       },
       "rationale": "How big human squads get while you're a Newbie. Vanilla: 1× (3 NPC). How often squads show up doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
-      "interaction": "Only squads at this player rank. Other ranks keep their own size.",
+      "interaction": "Only squads A-Life sends around you at this rank, including squads sent to attack a lair. Other ranks keep their own size; people living in camps are HUMAN CAMPS under LAIR POPULATION.",
       "exposeInUi": true
     },
     {
@@ -17475,7 +17475,7 @@
       },
       "rationale": "How big human squads get while you're Experienced. Vanilla: 1× (4 NPC). How often squads show up doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
-      "interaction": "Only squads at this player rank. Other ranks keep their own size.",
+      "interaction": "Only squads A-Life sends around you at this rank, including squads sent to attack a lair. Other ranks keep their own size; people living in camps are HUMAN CAMPS under LAIR POPULATION.",
       "exposeInUi": false
     },
     {
@@ -17522,7 +17522,7 @@
       },
       "rationale": "How big human squads get while you're a Veteran. Vanilla: 1× (5 NPC).",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
-      "interaction": "Only squads at this player rank. Other ranks keep their own size.",
+      "interaction": "Only squads A-Life sends around you at this rank, including squads sent to attack a lair. Other ranks keep their own size; people living in camps are HUMAN CAMPS under LAIR POPULATION.",
       "exposeInUi": false
     },
     {
@@ -17569,7 +17569,7 @@
       },
       "rationale": "How big human squads get while you're a Master. Vanilla: 1× (6 NPC) — late-game firefights get crowded.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
-      "interaction": "Only squads at this player rank. Other ranks keep their own size.",
+      "interaction": "Only squads A-Life sends around you at this rank, including squads sent to attack a lair. Other ranks keep their own size; people living in camps are HUMAN CAMPS under LAIR POPULATION.",
       "exposeInUi": false
     },
     {
@@ -17705,7 +17705,7 @@
       },
       "rationale": "How many bloodsuckers show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 0 / 1 / 1 / 1). How often they spawn doesn't change. A vanilla 0 stays 0.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
-      "interaction": "Only Bloodsucker packs. Other mutants keep their own size.",
+      "interaction": "Only roaming Bloodsucker packs that A-Life sends your way, including groups sent to attack a lair. Bloodsuckers living in nests are MUTANT NESTS under LAIR POPULATION.",
       "exposeInUi": true
     },
     {
@@ -17773,7 +17773,7 @@
       },
       "rationale": "How many blind dogs show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 4 / 6 / 8 / 12). How often they spawn doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
-      "interaction": "Only Blind Dog packs. Other mutants keep their own size.",
+      "interaction": "Only roaming Blind Dog packs that A-Life sends your way, including groups sent to attack a lair. Blind Dogs living in nests are MUTANT NESTS under LAIR POPULATION.",
       "exposeInUi": false
     },
     {
@@ -17841,7 +17841,7 @@
       },
       "rationale": "How many fleshs show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 2 / 3 / 5 / 6). How often they spawn doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
-      "interaction": "Only Flesh packs. Other mutants keep their own size.",
+      "interaction": "Only roaming Flesh packs that A-Life sends your way, including groups sent to attack a lair. Fleshs living in nests are MUTANT NESTS under LAIR POPULATION.",
       "exposeInUi": false
     },
     {
@@ -17909,7 +17909,7 @@
       },
       "rationale": "How many controllers show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 0 / 1 / 1 / 1). How often they spawn doesn't change. A vanilla 0 stays 0.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
-      "interaction": "Only Controller packs. Other mutants keep their own size.",
+      "interaction": "Only roaming Controller packs that A-Life sends your way, including groups sent to attack a lair. Controllers living in nests are MUTANT NESTS under LAIR POPULATION.",
       "exposeInUi": false
     },
     {
@@ -17977,7 +17977,7 @@
       },
       "rationale": "How many poltergeists show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 1 / 1 / 2 / 2). How often they spawn doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
-      "interaction": "Only Poltergeist packs. Other mutants keep their own size.",
+      "interaction": "Only roaming Poltergeist packs that A-Life sends your way, including groups sent to attack a lair. Poltergeists living in nests are MUTANT NESTS under LAIR POPULATION.",
       "exposeInUi": false
     },
     {
@@ -18045,7 +18045,7 @@
       },
       "rationale": "How many snorks show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 1 / 3 / 4 / 6). How often they spawn doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
-      "interaction": "Only Snork packs. Other mutants keep their own size.",
+      "interaction": "Only roaming Snork packs that A-Life sends your way, including groups sent to attack a lair. Snorks living in nests are MUTANT NESTS under LAIR POPULATION.",
       "exposeInUi": false
     },
     {
@@ -18113,7 +18113,7 @@
       },
       "rationale": "How many boars show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 2 / 3 / 5 / 6). How often they spawn doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
-      "interaction": "Only Boar packs. Other mutants keep their own size.",
+      "interaction": "Only roaming Boar packs that A-Life sends your way, including groups sent to attack a lair. Boars living in nests are MUTANT NESTS under LAIR POPULATION.",
       "exposeInUi": false
     },
     {
@@ -18181,7 +18181,7 @@
       },
       "rationale": "How many chimeras show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 1). How often they spawn doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
-      "interaction": "Only Chimera packs. Other mutants keep their own size.",
+      "interaction": "Only roaming Chimera packs that A-Life sends your way, including groups sent to attack a lair. Chimeras living in nests are MUTANT NESTS under LAIR POPULATION.",
       "exposeInUi": false
     },
     {
@@ -18249,7 +18249,7 @@
       },
       "rationale": "How many bayuns show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 2). How often they spawn doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
-      "interaction": "Only Bayun packs. Other mutants keep their own size.",
+      "interaction": "Only roaming Bayun packs that A-Life sends your way, including groups sent to attack a lair. Bayuns living in nests are MUTANT NESTS under LAIR POPULATION.",
       "exposeInUi": false
     },
     {
@@ -18317,7 +18317,7 @@
       },
       "rationale": "How many tushkans show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 6 / 8 / 12 / 16). How often they spawn doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
-      "interaction": "Only Tushkan packs. Other mutants keep their own size.",
+      "interaction": "Only roaming Tushkan packs that A-Life sends your way, including groups sent to attack a lair. Tushkans living in nests are MUTANT NESTS under LAIR POPULATION.",
       "exposeInUi": false
     },
     {
@@ -18385,7 +18385,7 @@
       },
       "rationale": "How many rat swarms show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 1). How often they spawn doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
-      "interaction": "Only Rat Swarm packs. Other mutants keep their own size.",
+      "interaction": "Only roaming Rat Swarm packs that A-Life sends your way, including groups sent to attack a lair. Rat Swarms living in nests are MUTANT NESTS under LAIR POPULATION.",
       "exposeInUi": false
     },
     {
@@ -18453,7 +18453,7 @@
       },
       "rationale": "How many burers show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 2). How often they spawn doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
-      "interaction": "Only Burer packs. Other mutants keep their own size.",
+      "interaction": "Only roaming Burer packs that A-Life sends your way, including groups sent to attack a lair. Burers living in nests are MUTANT NESTS under LAIR POPULATION.",
       "exposeInUi": false
     },
     {
@@ -18521,7 +18521,7 @@
       },
       "rationale": "How many pseudodogs show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 1). How often they spawn doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
-      "interaction": "Only Pseudodog packs. Other mutants keep their own size.",
+      "interaction": "Only roaming Pseudodog packs that A-Life sends your way, including groups sent to attack a lair. Pseudodogs living in nests are MUTANT NESTS under LAIR POPULATION.",
       "exposeInUi": false
     },
     {
@@ -18589,7 +18589,7 @@
       },
       "rationale": "How many deer show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 1). How often they spawn doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
-      "interaction": "Only Deer packs. Other mutants keep their own size.",
+      "interaction": "Only roaming Deer packs that A-Life sends your way, including groups sent to attack a lair. Deers living in nests are MUTANT NESTS under LAIR POPULATION.",
       "exposeInUi": false
     },
     {
@@ -18644,7 +18644,7 @@
       },
       "rationale": "How many people a human camp or base can hold. Vanilla: 1× (a bandit camp holds 6 / 6 / 7 / 8 by your rank). Respawn speed doesn't change.",
       "logic": "Higher = fuller camps and bigger fights at bases; lower = emptier camps.",
-      "interaction": "Separate from HUMAN SQUAD SIZE, which sets how many show up together. MUTANT LAIR POPULATION is separate.",
+      "interaction": "Only people living in camps. Squads on the road are HUMAN SQUAD SIZE; RESPAWN TIME sets the refill. When A-Life sends a squad to take a camp, SQUAD SIZE sets the attackers and this how full it then gets.",
       "exposeInUi": true
     },
     {
@@ -18699,7 +18699,7 @@
       },
       "rationale": "How many mutants a nest can hold. Vanilla: 1× (a blind dog nest holds 9; a tushkan nest 14 / 16 / 20 / 24 by your rank). Respawn speed doesn't change.",
       "logic": "Higher = bigger packs around nests; lower = thinner nests. A nest of 1 stays at least 1.",
-      "interaction": "Separate from MUTANT GROUP SIZE, which sets how many show up together. HUMAN LAIR POPULATION is separate.",
+      "interaction": "Only mutants living in nests. Roaming packs are MUTANT GROUP SIZE; RESPAWN TIME sets the refill. When A-Life sends a pack to take a lair, GROUP SIZE sets the attackers and this how full it then gets.",
       "exposeInUi": false
     },
     {
@@ -18753,7 +18753,7 @@
       },
       "rationale": "How long camps and nests take to fill back up after you thin them out. Vanilla: 1× (half full again in 3 min, full in 8 min, 8 min after you wipe one out).",
       "logic": "Higher = cleared lairs stay quiet longer; lower = they come back sooner.",
-      "interaction": "Only the respawn timers. HUMAN CAMPS and MUTANT NESTS set how many come back.",
+      "interaction": "Only lair refills. HUMAN CAMPS and MUTANT NESTS set how many come back; roaming squads and packs (HUMAN SQUAD SIZE, MUTANT GROUP SIZE) have their own spawn pauses.",
       "exposeInUi": false
     },
     {

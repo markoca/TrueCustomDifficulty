@@ -99,3 +99,10 @@ The .NET build, a Wine run and in-game behaviour have not been checked: whether 
 ## 2026-11-18 — REFILL SPEED renamed to RESPAWN TIME
 
 The third card was first shipped as REFILL SPEED (`alife.lairRefillSpeed`, timer ÷ speed). It is now **RESPAWN TIME** (`alife.lairRespawnTime`, timer × multiplier), so the name and the direction match: higher = longer. Factory values were inverted onto the 0.05 grid (1.5 → 0.65, 1.25 → 0.8, 1.15 → 0.85, 1.1 → 0.9, 0.85 → 1.2, 0.75 → 1.35). A preset saved with the old key loads that card at vanilla 1×.
+
+## 2026-11-18 — LAIR POPULATION vs GROUP SIZE (two separate systems)
+
+* LAIR POPULATION scales `LairPrototypes.cfg` `MaxSpawnQuantity`: who lives in a fixed camp or nest, refilled on the RESPAWN TIME timers.
+* HUMAN SQUAD SIZE / MUTANT GROUP SIZE scale `ALifeDirectorScenarioPrototypes.cfg` `ALifeScenarioNPCArchetypesLimitsPerPlayerRank` `MaxCount`: the cap of squads and packs the A-Life director spawns around the player (roaming, humans vs mutants, lair attacks). Neither touches the other's file.
+* They meet at the 55 lairs with `IsALifePoint = true`: the director's `CaptureLairs` scenarios send squads there (size from GROUP SIZE); a taken lair then fills to its LAIR POPULATION cap.
+* The interaction text of every one of these controls now names the other one.
