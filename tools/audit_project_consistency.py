@@ -2196,6 +2196,14 @@ if _factory_service_text.count('PreWaterSplitFactoryBlobs.TryGetValue(name,') !=
 
 # Scarcity-first playstyle tuning locks: actual CFG sources, not an invented
 # universal percentage or gameplay simulation. No fabricated "overall loot" mode.
+# Historical 2026-10-15 matrix keeps its authored epoch values. Later
+# deliberate scarcity overrides supersede only their matching source IDs.
+# Do not rewrite old evidence or silently exempt the rest of its contracts.
+_current_scarcity = json.loads((ROOT / "tools/factory_preset_scarcity_refine_2026_11_18.json").read_text(encoding="utf-8"))
+_current_scarcity_roles = _current_scarcity["roles"]
+if (set(_current_scarcity_roles) != set(_factory_preset_names)
+    or len(_current_scarcity.get("priorCurrentStockBlobs", {})) != 12):
+    _factory_errors.append("scarcity refinement current role matrix/upgrade census missing")
 _balance_matrix = json.loads((ROOT / "tools/factory_preset_scarcity_balance.json").read_text(encoding="utf-8"))
 _balance_groups = _balance_matrix["groups"]
 _balance_profiles = _balance_matrix["profiles"]
@@ -2218,6 +2226,7 @@ for _name in _factory_preset_names:
             _factory_errors.append(f"{_name}: {_group} balance vector length drifted")
             continue
         for _pid, _target in zip(_source_ids, _vectors[_group_idx]):
+            _target = _current_scarcity_roles[_name]["changes"].get(_pid, _target)
             _definition = _factory_catalog[_pid]
             _stored = _entries.get(_pid, {})
             _kind = "toggle" if _definition["control"] == "toggle" else "slider"
@@ -2311,6 +2320,9 @@ for _role, _signature in _role_matrix.get("profiles", {}).items():
         if not _definition or not _stored or _definition["control"] != "slider":
             _factory_errors.append(f"{_role}: unknown/non-native source {_pid}")
             continue
+        # Only source IDs deliberately superseded by the newest scarcity pass
+        # use that value; every untouched historical role decision remains pinned.
+        _target = _current_scarcity_roles[_role]["changes"].get(_pid, _target)
         if _stored.get("kind") != "slider" or _stored.get("number") != _target:
             _factory_errors.append(f"{_role}: authored role drift {_pid}")
         _bound = _definition["slider"]

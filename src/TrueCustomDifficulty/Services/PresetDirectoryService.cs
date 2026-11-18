@@ -1063,6 +1063,25 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "cf8f627b52d5acb09aa18dc2425b1585d54ce351",
     };
 
+    // 2026-11-18: exact stock profiles before role-specific scarcity
+    // refinement. Player-edited factory names and custom presets are never replaced.
+    private static readonly Dictionary<string, string> PreScarcityRefineFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "55d9446c972a108ae0f5c59d03bf774c95177a84",
+        ["Field Medic"] = "21a45512782ff2efe9b3cbc074036f385c79fc96",
+        ["Hardcore+"] = "10d601b0d60afa40c7a282591b0864f7eeaf8e6a",
+        ["Hardcore"] = "d363f2ac77e1bb5626aaab7a371b1adc23ad8d2d",
+        ["Immersive"] = "8d886d85d407acdf05b9517b61529c595bbed9d8",
+        ["Mercenary"] = "785969dd4c770aca6e14c3f7c4b0a0f219315072",
+        ["Mutant Hunter"] = "92f06e2e8deb99e8a88ed9c52d6a4a03f40af615",
+        ["Outcast"] = "ebd9ac6f94efc6feb60f2f2230903912b378507b",
+        ["Scavenger"] = "4f7e361bed496642f8aff368a5cfd1e18e0b1aca",
+        ["Smuggler"] = "76c7e535dc3a1e59f3ab49fc345f20ca38fbb353",
+        ["Tactical"] = "282bca62e4c7ed26668c7a4de7bc13077b9bbcbd",
+        ["Wanderer"] = "f4166a7791858bcf98600aa3b1ae1822ace65041",
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -1110,7 +1129,8 @@ public sealed class PresetDirectoryService
             && !PreAttackKnobFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreControllerDogsFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreFallDamageFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreVibeFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreVibeFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreScarcityRefineFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -1214,7 +1234,9 @@ public sealed class PresetDirectoryService
                 || (PreFallDamageFactoryBlobs.TryGetValue(name, out var preFallDamageHash)
                     && actual.Equals(preFallDamageHash, StringComparison.OrdinalIgnoreCase))
                 || (PreVibeFactoryBlobs.TryGetValue(name, out var preVibeHash)
-                    && actual.Equals(preVibeHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preVibeHash, StringComparison.OrdinalIgnoreCase))
+                || (PreScarcityRefineFactoryBlobs.TryGetValue(name, out var preScarcityRefineHash)
+                    && actual.Equals(preScarcityRefineHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

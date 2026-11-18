@@ -50,6 +50,10 @@ NEW_IDS |= {pid for pid in by_id if pid.startswith("combat.mutantMoveRate.")}
 
 ATTACK_KNOBS = json.loads((ROOT / "tools/factory_preset_attack_knobs_2026_11_18.json").read_text(encoding="utf-8"))
 VIBE = json.loads((ROOT / "tools/factory_preset_vibe_2026_11_18.json").read_text(encoding="utf-8"))
+# Current later pass: scarce-but-survivable source budgets, not a simulated RNG rate.
+SCARCITY = json.loads((ROOT / "tools/factory_preset_scarcity_refine_2026_11_18.json").read_text(encoding="utf-8"))
+assert set(SCARCITY["roles"]) == set(VIBE["values"])
+assert set(SCARCITY["priorCurrentStockBlobs"]) == set(VIBE["values"])
 assert set(VIBE["values"]) == {p.stem for p in (APP / "Presets").glob("*.json")}
 assert len(VIBE["previousStockBlobs"]) == 12
 
@@ -76,6 +80,9 @@ for path in presets:
     assert sum(pid.startswith("combat.mutantMoveRate.") for pid in vibe) == 53, path.stem
     assert VIBE["referenceDifficulty"][path.stem] == ref, path.stem
     role.update(vibe)
+    # Source-native 2026-11-18 scarcity/refinement overlay wins over old balance
+    # epoch matrices. These previous matrices stay immutable historical evidence.
+    role.update(SCARCITY["roles"][path.stem]["changes"])
     # 2026-11-18 attack-only pass: role values of removed controls (roars, growls, ...) are gone.
     role = {k: v for k, v in role.items() if k in by_id}
     for pid in NEW_IDS | set(role):
@@ -84,6 +91,32 @@ for path in presets:
         want = ({"kind": "toggle", "boolean": expected} if p.get("control") == "toggle"
                 else {"kind": "slider", "number": expected})
         assert values[pid] == want, (path.name, pid, values[pid])
+    # Supply masters now affect genuine generic human/stash chance sources.
+    # Their source percentages stack with per-item and tier chance cuts, so
+    # keep them modest: no wholesale 100% deletion of a second loot domain.
+    def amount(pid):
+        return values[pid]["number"]
+    def enabled(pid):
+        return values[pid]["boolean"]
+    assert .05 <= amount("loot.genericCorpseReduction") <= .20, path.name
+    assert .10 <= amount("loot.genericStashReduction") <= .15, path.name
+    assert amount("loot.looseWorldLootRemoved") >= .5, path.name
+    assert amount("loot.worldWeaponDensity") <= .7, path.name
+    assert amount("environment.artifactCount") == 1, path.name
+    assert amount("economy.traderAmmoStock") >= .25, path.name
+    assert amount("loot.npcMedicalChance") > 0, path.name
+    if enabled("loot.stashSmartLootEnabled"):
+        assert 0 <= amount("loot.stashSmartStockedChance") <= .30, path.name
+        assert 0 < amount("loot.stashSmartShortChance") <= .65, path.name
+        assert amount("loot.stashSmartStockedChance") <= amount("loot.stashSmartShortChance"), path.name
+        assert any(enabled("loot.stashSmart" + category) for category in
+                   ("Meds", "Ammo", "FoodDrinks", "Grenades")), path.name
+    else:
+        assert not any(pid.startswith("loot.stashSmart") for pid in
+                       SCARCITY["roles"][path.stem]["changes"]), path.name
+    if not enabled("loot.stashGearEnabled"):
+        assert not any(pid.startswith("loot.stashGear") for pid in
+                       SCARCITY["roles"][path.stem]["changes"]), path.name
     side = THEMATIC["sidecars"].get(path.stem, {})
     for key in ("traderSellOdds", "genericNpcRareGearEnabled", "genericNpcRareGearChance"):
         assert data.get(key) == side.get(key), (path.name, key, data.get(key))
@@ -122,6 +155,9 @@ assert pds.count("PreControllerDogsFactoryBlobs") == 3
 FALL = json.loads((ROOT / "tools/factory_preset_fall_damage_2026_11_18.json").read_text(encoding="utf-8"))
 assert pds.count("PreFallDamageFactoryBlobs") == 3
 assert pds.count("PreVibeFactoryBlobs") == 3
+assert pds.count("PreScarcityRefineFactoryBlobs") == 3
+for _name, _hash in SCARCITY["priorCurrentStockBlobs"].items():
+    assert f'["{_name}"] = "{_hash}"' in pds, _name
 for _name, _hash in VIBE["previousStockBlobs"].items():
     assert f'["{_name}"] = "{_hash}"' in pds, _name
 for _name, _hash in FALL["previousStockBlobs"].items():
@@ -146,4 +182,6 @@ for _name, _hash in THEMATIC["previousStockBlobs"].items():
     assert f'["{_name}"] = "{_hash}"' in pds, _name
 assert len(pds.split("PreNewControlsFactoryBlobs =", 1)[1].split("};", 1)[0].split('"] = "')) == 13
 
-print(f"PASS: 12 role-first factory profiles / {len(by_id)} source controls / 53 individual mutant move rates per profile; 2026-11-18 vibe overrides current, older matrix epochs preserved")
+assert sum(len(role["changes"]) for role in SCARCITY["roles"].values()) == 140
+assert all(role.get("intent") for role in SCARCITY["roles"].values())
+print(f"PASS: 12 factory profiles × {len(by_id)} values; 53 mutant moves per role; 140 source-native role scarcity edits, all supply gates and exact-stock upgrade hashes")

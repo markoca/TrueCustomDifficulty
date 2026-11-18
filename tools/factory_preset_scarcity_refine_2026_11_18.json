@@ -1,0 +1,229 @@
+{
+  "version": 1,
+  "date": "2026-11-18",
+  "source": "STALKER 2.1 native catalog and shipped factory role snapshots",
+  "rationale": "The base game has excessive distributed supplies. This overlay closes real corpse/stash and Smart Loot paths without using dormant NPC bonus pack switches or stacking maximal reductions.",
+  "priorCurrentStockBlobs": {
+    "Anomaly Runner": "55d9446c972a108ae0f5c59d03bf774c95177a84",
+    "Field Medic": "21a45512782ff2efe9b3cbc074036f385c79fc96",
+    "Hardcore+": "10d601b0d60afa40c7a282591b0864f7eeaf8e6a",
+    "Hardcore": "d363f2ac77e1bb5626aaab7a371b1adc23ad8d2d",
+    "Immersive": "8d886d85d407acdf05b9517b61529c595bbed9d8",
+    "Mercenary": "785969dd4c770aca6e14c3f7c4b0a0f219315072",
+    "Mutant Hunter": "92f06e2e8deb99e8a88ed9c52d6a4a03f40af615",
+    "Outcast": "ebd9ac6f94efc6feb60f2f2230903912b378507b",
+    "Scavenger": "4f7e361bed496642f8aff368a5cfd1e18e0b1aca",
+    "Smuggler": "76c7e535dc3a1e59f3ab49fc345f20ca38fbb353",
+    "Tactical": "282bca62e4c7ed26668c7a4de7bc13077b9bbcbd",
+    "Wanderer": "f4166a7791858bcf98600aa3b1ae1822ace65041"
+  },
+  "roles": {
+    "Anomaly Runner": {
+      "intent": "Artifacts remain more likely than normal but less lucrative than before; corpse/stash supplies are reduced, and artifact hunting no longer showers the runner with supplemental ammo and drinks.",
+      "changes": {
+        "loot.genericCorpseReduction": 0.1,
+        "loot.genericStashReduction": 0.1,
+        "loot.stashSmartStockedChance": 0.3,
+        "loot.stashSmartShortChance": 0.6,
+        "loot.stashSmartAmmo": false,
+        "loot.npcMedicalChance": 0.5,
+        "loot.stashMixFood": 0.8,
+        "loot.stashMixDrinks": 0.8,
+        "loot.mediumStashDrinksChance": 0.75,
+        "loot.expensiveStashFoodChance": 0.75,
+        "loot.expensiveStashDrinksChance": 0.75,
+        "loot.stashGearCoveragePercent": 10,
+        "loot.stashGearBonusChance": 20,
+        "environment.artifactSpawnChance": 1.3,
+        "environment.artifactRareLuck": 1.25
+      }
+    },
+    "Field Medic": {
+      "intent": "Keep the highest direct NPC-med chance and privileged trader-medic stock among all roles while reducing nonmedical stash abundance and free ammo/grenades; six-hour restock preserves the care specialization.",
+      "changes": {
+        "loot.genericCorpseReduction": 0.05,
+        "loot.genericStashReduction": 0.1,
+        "loot.stashSmartStockedChance": 0.25,
+        "loot.stashSmartShortChance": 0.65,
+        "loot.stashSmartAmmo": false,
+        "loot.stashSmartGrenades": false,
+        "loot.npcMedicalChance": 0.8,
+        "loot.stashMixFood": 0.8,
+        "loot.stashMixDrinks": 0.8,
+        "loot.mediumStashDrinksChance": 0.75,
+        "loot.expensiveStashMedicalChance": 0.9,
+        "loot.expensiveStashFoodChance": 0.75,
+        "loot.expensiveStashDrinksChance": 0.75,
+        "economy.medicStock": 1,
+        "loot.worldMedicalCratesRemoved": 0.35
+      }
+    },
+    "Hardcore+": {
+      "intent": "Already has 81% world loose removal, scarce ammo and all stash Smart Loot OFF. Add only modest source-based reductions to generic bodies/stashes and excess food, never another blanket supply wipe.",
+      "changes": {
+        "loot.genericCorpseReduction": 0.15,
+        "loot.genericStashReduction": 0.15,
+        "loot.stashMixFood": 0.55,
+        "loot.stashMixDrinks": 0.65,
+        "loot.expensiveStashFoodChance": 0.5,
+        "loot.expensiveStashDrinksChance": 0.5,
+        "loot.expensiveStashMedicalChance": 0.5
+      }
+    },
+    "Hardcore": {
+      "intent": "Scarce native Master world remains survivable: modest additional generic reductions, rescue loot when low but not when stocked, and less free food from loot bonuses.",
+      "changes": {
+        "loot.genericCorpseReduction": 0.1,
+        "loot.genericStashReduction": 0.1,
+        "loot.stashSmartShortChance": 0.45,
+        "loot.stashSmartFoodDrinks": false,
+        "loot.stashMixFood": 0.65,
+        "loot.expensiveStashFoodChance": 0.65,
+        "loot.expensiveStashDrinksChance": 0.65
+      }
+    },
+    "Immersive": {
+      "intent": "Realistic reward density: ordinary items, grenades and trader bullets become less frequent, while modest Smart Loot rescue and regular organic drops still exist.",
+      "changes": {
+        "loot.genericCorpseReduction": 0.1,
+        "loot.genericStashReduction": 0.15,
+        "loot.stashSmartStockedChance": 0.2,
+        "loot.stashSmartShortChance": 0.5,
+        "loot.stashSmartGrenades": false,
+        "loot.npcMedicalChance": 0.5,
+        "loot.stashMixFood": 0.85,
+        "loot.stashMixDrinks": 0.8,
+        "loot.expensiveStashAmmoChance": 0.8,
+        "loot.expensiveStashMedicalChance": 0.8,
+        "loot.expensiveStashFoodChance": 0.8,
+        "loot.expensiveStashDrinksChance": 0.8,
+        "loot.expensiveStashGrenadesChance": 0.65,
+        "economy.traderAmmoStock": 0.5,
+        "loot.worldWeaponDensity": 0.55
+      }
+    },
+    "Mercenary": {
+      "intent": "Contracts and fast supply are purchased, not free: professional merchants retain comparatively better ammo stock, but world crates, stash bundles and bonus gear are rarer.",
+      "changes": {
+        "loot.genericCorpseReduction": 0.15,
+        "loot.genericStashReduction": 0.1,
+        "loot.stashSmartStockedChance": 0.15,
+        "loot.stashSmartShortChance": 0.5,
+        "loot.stashSmartFoodDrinks": false,
+        "loot.npcMedicalChance": 0.45,
+        "loot.expensiveStashAmmoChance": 0.8,
+        "loot.expensiveStashGrenadesChance": 0.8,
+        "economy.traderAmmoStock": 1,
+        "economy.medicStock": 0.5,
+        "loot.stashGearCoveragePercent": 10,
+        "loot.stashGearBonusChance": 25,
+        "loot.worldAmmoCratesRemoved": 0.6
+      }
+    },
+    "Mutant Hunter": {
+      "intent": "High mutant density spends ammo; preserve above-average trader ammunition and some rescue chances while suppressing unsolicited grenades, corpse goods and excessive rare stash rewards.",
+      "changes": {
+        "loot.genericCorpseReduction": 0.1,
+        "loot.genericStashReduction": 0.1,
+        "loot.stashSmartStockedChance": 0.2,
+        "loot.stashSmartShortChance": 0.6,
+        "loot.stashSmartGrenades": false,
+        "loot.npcMedicalChance": 0.45,
+        "loot.expensiveStashAmmoChance": 0.8,
+        "loot.expensiveStashGrenadesChance": 0.75,
+        "loot.stashGearCoveragePercent": 8,
+        "loot.stashGearBonusChance": 20,
+        "loot.worldAmmoCratesRemoved": 0.65
+      }
+    },
+    "Outcast": {
+      "intent": "Heavy hostile-territory scarcity with small generic penalties, reduced food and limited emergency stash help; keep enough rare stash medical/ammo to avoid an accidental softlock.",
+      "changes": {
+        "loot.genericCorpseReduction": 0.15,
+        "loot.genericStashReduction": 0.15,
+        "loot.stashSmartShortChance": 0.35,
+        "loot.stashSmartFoodDrinks": false,
+        "loot.stashSmartGrenades": false,
+        "loot.expensiveStashFoodChance": 0.55,
+        "loot.expensiveStashDrinksChance": 0.55
+      }
+    },
+    "Scavenger": {
+      "intent": "Rare goods stay exciting, found bodies remain relatively useful (only 5% extra reduction), stashes are scarcer and the Smart Loot safety net does not auto-replenish a well-stocked player.",
+      "changes": {
+        "loot.genericCorpseReduction": 0.05,
+        "loot.genericStashReduction": 0.15,
+        "loot.stashSmartStockedChance": 0.1,
+        "loot.stashSmartShortChance": 0.45,
+        "loot.stashSmartAmmo": false,
+        "loot.stashSmartGrenades": false,
+        "loot.npcMedicalChance": 0.3,
+        "loot.stashMixFood": 0.75,
+        "loot.stashMixDrinks": 0.75,
+        "loot.expensiveStashFoodChance": 0.65,
+        "loot.expensiveStashDrinksChance": 0.7,
+        "loot.worldAmmoCratesRemoved": 0.7
+      }
+    },
+    "Smuggler": {
+      "intent": "Profitable mobility and rapid restock remain, but free meds/grenades and rich stash rolls are cut; equipment comes from trade, not ordinary corpse farming.",
+      "changes": {
+        "loot.genericCorpseReduction": 0.2,
+        "loot.genericStashReduction": 0.1,
+        "loot.stashSmartStockedChance": 0.15,
+        "loot.stashSmartShortChance": 0.5,
+        "loot.stashSmartMeds": false,
+        "loot.stashSmartGrenades": false,
+        "loot.npcMedicalChance": 0.35,
+        "loot.stashMixFood": 0.75,
+        "loot.stashMixDrinks": 0.85,
+        "loot.expensiveStashFoodChance": 0.7,
+        "loot.expensiveStashDrinksChance": 0.8,
+        "loot.stashGearCoveragePercent": 10,
+        "loot.stashGearBonusChance": 20
+      }
+    },
+    "Tactical": {
+      "intent": "Combat produces ammo demand; retain 75% trader ammunition stock but eliminate frequent free food and reduce ordinary bullets/grenades in stashes and world crates.",
+      "changes": {
+        "loot.genericCorpseReduction": 0.15,
+        "loot.genericStashReduction": 0.1,
+        "loot.stashSmartStockedChance": 0.15,
+        "loot.stashSmartShortChance": 0.5,
+        "loot.stashSmartFoodDrinks": false,
+        "loot.npcMedicalChance": 0.45,
+        "loot.expensiveStashAmmoChance": 0.85,
+        "loot.expensiveStashGrenadesChance": 0.8,
+        "loot.expensiveStashFoodChance": 0.8,
+        "economy.traderAmmoStock": 0.75,
+        "loot.worldAmmoCratesRemoved": 0.65
+      }
+    },
+    "Wanderer": {
+      "intent": "Food and water remain accessible but no longer guaranteed in every stash; less free ammo/grenades, some needy-player rescue, and fewer world ammo boxes preserve long-haul exploration.",
+      "changes": {
+        "loot.genericCorpseReduction": 0.1,
+        "loot.genericStashReduction": 0.1,
+        "loot.stashSmartStockedChance": 0.25,
+        "loot.stashSmartShortChance": 0.65,
+        "loot.stashSmartAmmo": false,
+        "loot.stashSmartGrenades": false,
+        "loot.npcMedicalChance": 0.45,
+        "loot.stashMixFood": 0.85,
+        "loot.stashMixDrinks": 0.85,
+        "loot.mediumStashDrinksChance": 0.85,
+        "loot.expensiveStashFoodChance": 0.9,
+        "loot.expensiveStashDrinksChance": 0.9,
+        "loot.worldWeaponDensity": 0.55,
+        "loot.worldAmmoCratesRemoved": 0.7
+      }
+    }
+  },
+  "warnings": [
+    "Corpse and stash supply reductions stack with independently tuned item chances. Percentages are controls, not measured final drop rates.",
+    "On Veteran/Master, NPC Smart Loot optional bonus packs are already empty; changing the toggle would be cosmetic.",
+    "No values are changed on disabled stash Smart Loot or bonus gear controls.",
+    "User-edited factory-named presets and custom presets are protected by exact stock SHA matching.",
+    "Actual in-game delivery must still be tested with fresh spawns and stashes."
+  ]
+}

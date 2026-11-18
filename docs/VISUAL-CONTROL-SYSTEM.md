@@ -1,3 +1,8 @@
+## CURRENT 2026-11-18 — Preset scarcity tuning follows existing native UI grammar
+
+* The 12 factory profiles use existing, source-aligned CORPSE SCARCITY, STASH SUPPLY REDUCTION and STASH SMART LOOT source controls rather than inventing new domain-wide percentages. Native 5% grid for generic corpse/stash reductions, 0.05× Smart Loot chance steps, compact sibling knob/slider geometry, no extra frames, no superfluous Base/Vanilla labels, readable numbers and units, shared hover and reset semantics, accent only on modified digits. All values remain controlled by the same data catalog and reference difficulty.
+* Loaded stock profiles keep their original role identifiers and now choose supply reduction only where its active item-generator domain is audited. Avoid showing inactive bonus settings as meaningful edits; the player still controls the same catalogued sources and no new UI width is required. No UI code changes in the scarcity pass.
+
 ## CURRENT 2026-11-18 — Source-native role tuning, unchanged UI grammar
 
 * Different factory roles now select species-by-species values for existing 53 mutant move knobs rather than using one blanket attack multiplier. Role-specific special-move, human awareness/tactics, weather, artifact odds, lair, restock and fall-damage values also come from existing sources. This is a **preset-data change**, not a new control family: preserve the matched catalog knob/rail geometry, compact 16:9 card layout, hover, reset, native snap steps, text spacing and accent-only-modified-digits rules. The UI must not show hidden baselines or use full-width knobs merely because values vary by preset.

@@ -766,7 +766,7 @@
     },
     "loot.genericCorpseReduction": {
       "kind": "slider",
-      "number": 0
+      "number": 0.05
     },
     "loot.npcSmartLootEnabled": {
       "kind": "toggle",
@@ -778,7 +778,7 @@
     },
     "loot.npcMedicalChance": {
       "kind": "slider",
-      "number": 0.95
+      "number": 0.8
     },
     "loot.npcWeaponAmmoSupply": {
       "kind": "slider",
@@ -791,7 +791,7 @@
     },
     "loot.genericStashReduction": {
       "kind": "slider",
-      "number": 0
+      "number": 0.1
     },
     "loot.stashMixAmmo": {
       "kind": "slider",
@@ -803,11 +803,11 @@
     },
     "loot.stashMixFood": {
       "kind": "slider",
-      "number": 1
+      "number": 0.8
     },
     "loot.stashMixDrinks": {
       "kind": "slider",
-      "number": 1
+      "number": 0.8
     },
     "loot.stashMixGrenades": {
       "kind": "slider",
@@ -871,11 +871,11 @@
     },
     "loot.stashSmartStockedChance": {
       "kind": "slider",
-      "number": 1
+      "number": 0.25
     },
     "loot.stashSmartShortChance": {
       "kind": "slider",
-      "number": 1
+      "number": 0.65
     },
     "loot.stashSmartMeds": {
       "kind": "toggle",
@@ -883,7 +883,7 @@
     },
     "loot.stashSmartAmmo": {
       "kind": "toggle",
-      "boolean": true
+      "boolean": false
     },
     "loot.stashSmartFoodDrinks": {
       "kind": "toggle",
@@ -891,7 +891,7 @@
     },
     "loot.stashSmartGrenades": {
       "kind": "toggle",
-      "boolean": true
+      "boolean": false
     },
     "loot.stashGearEnabled": {
       "kind": "toggle",
@@ -983,7 +983,7 @@
     },
     "loot.mediumStashDrinksChance": {
       "kind": "slider",
-      "number": 0.95
+      "number": 0.75
     },
     "loot.mediumStashCouponsChance": {
       "kind": "slider",
@@ -995,15 +995,15 @@
     },
     "loot.expensiveStashMedicalChance": {
       "kind": "slider",
-      "number": 1
+      "number": 0.9
     },
     "loot.expensiveStashFoodChance": {
       "kind": "slider",
-      "number": 0.9
+      "number": 0.75
     },
     "loot.expensiveStashDrinksChance": {
       "kind": "slider",
-      "number": 0.9
+      "number": 0.75
     },
     "loot.expensiveStashGrenadesChance": {
       "kind": "slider",
@@ -1039,7 +1039,7 @@
     },
     "economy.medicStock": {
       "kind": "slider",
-      "number": 1.25
+      "number": 1.0
     },
     "economy.traderRestockHours": {
       "kind": "slider",
@@ -1407,7 +1407,7 @@
     },
     "loot.worldMedicalCratesRemoved": {
       "kind": "slider",
-      "number": 0.25
+      "number": 0.35
     },
     "loot.looseWorldLootRemoved": {
       "kind": "slider",

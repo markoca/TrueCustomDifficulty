@@ -766,7 +766,7 @@
     },
     "loot.genericCorpseReduction": {
       "kind": "slider",
-      "number": 0
+      "number": 0.1
     },
     "loot.npcSmartLootEnabled": {
       "kind": "toggle",
@@ -778,7 +778,7 @@
     },
     "loot.npcMedicalChance": {
       "kind": "slider",
-      "number": 0.6
+      "number": 0.5
     },
     "loot.npcWeaponAmmoSupply": {
       "kind": "slider",
@@ -791,7 +791,7 @@
     },
     "loot.genericStashReduction": {
       "kind": "slider",
-      "number": 0
+      "number": 0.15
     },
     "loot.stashMixAmmo": {
       "kind": "slider",
@@ -803,11 +803,11 @@
     },
     "loot.stashMixFood": {
       "kind": "slider",
-      "number": 0.9
+      "number": 0.85
     },
     "loot.stashMixDrinks": {
       "kind": "slider",
-      "number": 0.9
+      "number": 0.8
     },
     "loot.stashMixGrenades": {
       "kind": "slider",
@@ -871,11 +871,11 @@
     },
     "loot.stashSmartStockedChance": {
       "kind": "slider",
-      "number": 0.5
+      "number": 0.2
     },
     "loot.stashSmartShortChance": {
       "kind": "slider",
-      "number": 0.8
+      "number": 0.5
     },
     "loot.stashSmartMeds": {
       "kind": "toggle",
@@ -891,7 +891,7 @@
     },
     "loot.stashSmartGrenades": {
       "kind": "toggle",
-      "boolean": true
+      "boolean": false
     },
     "loot.stashGearEnabled": {
       "kind": "toggle",
@@ -991,23 +991,23 @@
     },
     "loot.expensiveStashAmmoChance": {
       "kind": "slider",
-      "number": 0.9
+      "number": 0.8
     },
     "loot.expensiveStashMedicalChance": {
       "kind": "slider",
-      "number": 0.9
+      "number": 0.8
     },
     "loot.expensiveStashFoodChance": {
       "kind": "slider",
-      "number": 0.9
+      "number": 0.8
     },
     "loot.expensiveStashDrinksChance": {
       "kind": "slider",
-      "number": 0.9
+      "number": 0.8
     },
     "loot.expensiveStashGrenadesChance": {
       "kind": "slider",
-      "number": 0.8
+      "number": 0.65
     },
     "loot.expensiveStashMoneyChance": {
       "kind": "slider",
@@ -1035,7 +1035,7 @@
     },
     "economy.traderAmmoStock": {
       "kind": "slider",
-      "number": 0.75
+      "number": 0.5
     },
     "economy.medicStock": {
       "kind": "slider",
@@ -1423,7 +1423,7 @@
     },
     "loot.worldWeaponDensity": {
       "kind": "slider",
-      "number": 0.6
+      "number": 0.55
     },
     "loot.worldAttachmentShuffle": {
       "kind": "toggle",

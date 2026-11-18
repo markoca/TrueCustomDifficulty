@@ -1,3 +1,7 @@
+## CURRENT 2026-11-18 — Factory preset usage and the danger of stacked scarcity
+
+Factory presets now apply small but nonzero native `loot.genericCorpseReduction` (5–20%) and `loot.genericStashReduction` (10–15%) alongside the previous 50–81% ordinary loose-world-loot removal and per-item/per-category chance cuts. These controls affect distinct **guarded generic generator endpoints**; they are not a guarantee that a certain percentage of all real game items disappears. The combined difficulty cannot be estimated by adding the percentages. Source-native optional NPC bonus packages are empty in all twelve current factory presets, so changing only `loot.npcSmartLootEnabled` would not control the remaining direct NPC consumable chance; the latter is already independently tuned. Disabled stash Smart Loot and disabled extra gear stay untouched. Exact per-profile changes in `tools/factory_preset_scarcity_refine_2026_11_18.json`; in-game acceptance needs fresh NPC corpses and newly generated stashes.
+
 # Generic loot reduction — two-control architecture proposal (S.T.A.L.K.E.R. 2.1)
 
 ## 2026-11-16 — CURRENT: two native generic supply-reduction controls

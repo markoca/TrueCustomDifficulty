@@ -766,7 +766,7 @@
     },
     "loot.genericCorpseReduction": {
       "kind": "slider",
-      "number": 0
+      "number": 0.15
     },
     "loot.npcSmartLootEnabled": {
       "kind": "toggle",
@@ -778,7 +778,7 @@
     },
     "loot.npcMedicalChance": {
       "kind": "slider",
-      "number": 0.5
+      "number": 0.45
     },
     "loot.npcWeaponAmmoSupply": {
       "kind": "slider",
@@ -791,7 +791,7 @@
     },
     "loot.genericStashReduction": {
       "kind": "slider",
-      "number": 0
+      "number": 0.1
     },
     "loot.stashMixAmmo": {
       "kind": "slider",
@@ -871,11 +871,11 @@
     },
     "loot.stashSmartStockedChance": {
       "kind": "slider",
-      "number": 0.5
+      "number": 0.15
     },
     "loot.stashSmartShortChance": {
       "kind": "slider",
-      "number": 0.75
+      "number": 0.5
     },
     "loot.stashSmartMeds": {
       "kind": "toggle",
@@ -887,7 +887,7 @@
     },
     "loot.stashSmartFoodDrinks": {
       "kind": "toggle",
-      "boolean": true
+      "boolean": false
     },
     "loot.stashSmartGrenades": {
       "kind": "toggle",
@@ -991,7 +991,7 @@
     },
     "loot.expensiveStashAmmoChance": {
       "kind": "slider",
-      "number": 0.95
+      "number": 0.85
     },
     "loot.expensiveStashMedicalChance": {
       "kind": "slider",
@@ -999,7 +999,7 @@
     },
     "loot.expensiveStashFoodChance": {
       "kind": "slider",
-      "number": 0.85
+      "number": 0.8
     },
     "loot.expensiveStashDrinksChance": {
       "kind": "slider",
@@ -1007,7 +1007,7 @@
     },
     "loot.expensiveStashGrenadesChance": {
       "kind": "slider",
-      "number": 0.95
+      "number": 0.8
     },
     "loot.expensiveStashMoneyChance": {
       "kind": "slider",
@@ -1035,7 +1035,7 @@
     },
     "economy.traderAmmoStock": {
       "kind": "slider",
-      "number": 1
+      "number": 0.75
     },
     "economy.medicStock": {
       "kind": "slider",
@@ -1395,7 +1395,7 @@
     },
     "loot.worldAmmoCratesRemoved": {
       "kind": "slider",
-      "number": 0.62
+      "number": 0.65
     },
     "loot.worldF1GrenadeBoxes": {
       "kind": "slider",

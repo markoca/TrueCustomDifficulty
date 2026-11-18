@@ -770,7 +770,7 @@
     },
     "loot.genericCorpseReduction": {
       "kind": "slider",
-      "number": 0
+      "number": 0.15
     },
     "loot.npcSmartLootEnabled": {
       "kind": "toggle",
@@ -795,7 +795,7 @@
     },
     "loot.genericStashReduction": {
       "kind": "slider",
-      "number": 0
+      "number": 0.15
     },
     "loot.stashMixAmmo": {
       "kind": "slider",
@@ -879,7 +879,7 @@
     },
     "loot.stashSmartShortChance": {
       "kind": "slider",
-      "number": 0.5
+      "number": 0.35
     },
     "loot.stashSmartMeds": {
       "kind": "toggle",
@@ -891,11 +891,11 @@
     },
     "loot.stashSmartFoodDrinks": {
       "kind": "toggle",
-      "boolean": true
+      "boolean": false
     },
     "loot.stashSmartGrenades": {
       "kind": "toggle",
-      "boolean": true
+      "boolean": false
     },
     "loot.stashGearEnabled": {
       "kind": "toggle",
@@ -1003,11 +1003,11 @@
     },
     "loot.expensiveStashFoodChance": {
       "kind": "slider",
-      "number": 0.6
+      "number": 0.55
     },
     "loot.expensiveStashDrinksChance": {
       "kind": "slider",
-      "number": 0.6
+      "number": 0.55
     },
     "loot.expensiveStashGrenadesChance": {
       "kind": "slider",

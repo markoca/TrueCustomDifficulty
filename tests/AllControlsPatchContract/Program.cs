@@ -625,6 +625,38 @@ internal static partial class Program
                 Check(file0.Values.Keys.Count(id => id.StartsWith("combat.mutantMoveRate.", StringComparison.Ordinal)) == 53
                     && file0.Values["environment.artifactCount"].Number == 1,
                     name + ": 53 native mutant controls and one-artifact-spawn invariant");
+                // Role-accurate scarcity signatures on the same actual shipped files.
+                // Checking two independent source endpoints prevents an off-by-one
+                // or disabled smart-loot knob from masquerading as successful tuning.
+                var scarcity = new Dictionary<string, (double Corpse, double Stash)>(StringComparer.Ordinal)
+                {
+                    ["Anomaly Runner"] = (0.10, 0.10),
+                    ["Field Medic"] = (0.05, 0.10),
+                    ["Hardcore+"] = (0.15, 0.15),
+                    ["Hardcore"] = (0.10, 0.10),
+                    ["Immersive"] = (0.10, 0.15),
+                    ["Mercenary"] = (0.15, 0.10),
+                    ["Mutant Hunter"] = (0.10, 0.10),
+                    ["Outcast"] = (0.15, 0.15),
+                    ["Scavenger"] = (0.05, 0.15),
+                    ["Smuggler"] = (0.20, 0.10),
+                    ["Tactical"] = (0.15, 0.10),
+                    ["Wanderer"] = (0.10, 0.10)
+                };
+                Check(scarcity.TryGetValue(file0.Name, out var expectedSupply)
+                    && Math.Abs(file0.Values["loot.genericCorpseReduction"].Number!.Value - expectedSupply.Corpse) < 1e-9
+                    && Math.Abs(file0.Values["loot.genericStashReduction"].Number!.Value - expectedSupply.Stash) < 1e-9,
+                    name + ": generic corpse/stash scarcity not aligned with role");
+                var stashSmartEnabled = file0.Values["loot.stashSmartLootEnabled"].Boolean == true;
+                var stockedChance = file0.Values["loot.stashSmartStockedChance"].Number!.Value;
+                var lowChance = file0.Values["loot.stashSmartShortChance"].Number!.Value;
+                Check(!stashSmartEnabled || (stockedChance <= 0.30 + 1e-9
+                      && lowChance <= 0.65 + 1e-9 && stockedChance <= lowChance
+                      && lowChance > 0),
+                    name + ": stash Smart Loot remains too generous or inverted");
+                Check(file0.Values["loot.npcCorpseBonus"].Text == string.Empty
+                      && file0.Values["environment.artifactCount"].Number == 1,
+                    name + ": a phantom NPC bonus pack or multi-artifact payout was introduced");
                 var vm = new MainViewModel(Catalog);
                 vm.ApplyPresetFromPath(path);
                 var loaded = vm.CreatePresetFile("factory");
