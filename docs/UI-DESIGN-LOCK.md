@@ -1,3 +1,16 @@
+## 2026-11-18 — CURRENT: ZONE WEATHER and TRADER RESTOCK
+
+* New board **ZONE WEATHER** (Environment tab):
+  * **EMISSIONS** and **STORMS** set how often random emissions and storms come (weather weights of the selected difficulty). Vanilla is Novice–Veteran 1×, Master 1.25×; 0 turns them off.
+  * **EMISSION WARNING** (30–180 s, vanilla 60 s) sets the time between the warning and the shock wave. The later stages and the NPCs' leave-cover moment move with it; story emissions keep their own timing. The line under it reads `SHOCK WAVE AT 60 s · OVER AT 140 s`.
+* New board **TRADER RESTOCK** (Economy tab): **RESTOCK EVERY** (1–48 h, vanilla 8 h) applies to the 84 named traders. Stalkers you trade with follow the same ratio (vanilla 7 days), shown under the card.
+* Dependencies were checked in the game CFG and are written into WORKS WITH:
+  * more emissions mean more artifacts (fields refill after each one) and more deaths outside (lairs refill on LAIR RESPAWN TIME);
+  * storms are where RAIN / THUNDER NOISE hide you;
+  * the restock conditions are used only by trade.
+* Factory presets: Hardcore+ 1.5 / 1.5 / 40 s / 16 h, Hardcore 50 s / 12 h, Anomaly Runner emissions 1.25, Immersive storms 1.25, Wanderer emissions 1.15 and warning 75 s, Tactical storms 1.15, Scavenger 16 h, Outcast 12 h, Smuggler 6 h.
+* Gate `tools/audit_zone_timers.py` (in `pre_release.py`). Census is now 422 controls, 213 visible. Details: `docs/ZONE-WEATHER-AND-RESTOCK.md`.
+
 ## 2026-11-18 — CURRENT: REFILL SPEED → LAIR RESPAWN TIME
 
 * The third LAIR POPULATION card is now **RESPAWN TIME** (`alife.lairRespawnTime`, *Lair Respawn Time*). It multiplies the three respawn timers instead of dividing them, so a higher value means a longer wait: `Higher = cleared lairs stay quiet longer; lower = they come back sooner.` The line under the card is unchanged (`HALF FULL IN 3 min · FULL IN 8 min`).

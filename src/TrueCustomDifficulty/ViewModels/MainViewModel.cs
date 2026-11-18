@@ -445,6 +445,7 @@ public sealed class MainViewModel : ObservableObject
                 || mutantHealthParameterIds.Contains(p.Id)
                 || humanGroupSizeParameterIds.Contains(p.Id)
                 || LairPopulationPolicy.ParameterIds.Contains(p.Id)
+                || ZoneTimersPolicy.WeatherIds.Contains(p.Id)
                 || mutantGroupSizeParameterIds.Contains(p.Id)
                 || traderBuysParameterIds.Contains(p.Id)
                 || traderSellsParameterIds.Contains(p.Id))
@@ -698,6 +699,9 @@ public sealed class MainViewModel : ObservableObject
         WireVisualAggregate(
             LairPopulationPolicy.HumanId,
             LairPopulationPolicy.ParameterIds.ToArray());
+        WireVisualAggregate(
+            ZoneTimersPolicy.EmissionFrequencyId,
+            ZoneTimersPolicy.WeatherIds.ToArray());
         WireVisualAggregate(
             HumanCombatPolicy.GrenadeRateId,
             HumanCombatPolicy.TacticsBoardIds.ToArray());

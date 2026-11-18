@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "src/TrueCustomDifficulty/Data"
 EXPECTED = {
     "combat": 165, "survival": 153, "health": 51, "stamina": 26,
-    "economy": 409, "equipment": 331, "environment": 66,
+    "economy": 409, "equipment": 331, "environment": 74,
     "loot": 1557, "alife": 64,
 }
 SELL_RESOURCE = "TrueCustomDifficulty.Data.trader-sells-2.1-runtime.csv"
@@ -51,7 +51,7 @@ def main() -> int:
     assert baseline["gameVersion"] == catalog["source"]["gameVersion"] == "2.1", (
         "2.1 source-target metadata mismatch; legacy 2.0.5 fallback is not supported."
     )
-    assert len(baseline["special"]) == 33  # + weatherHearing, looseArtifactsRemoved, stashSmartNeed, lairPopulation
+    assert len(baseline["special"]) == 34  # + weatherHearing, looseArtifactsRemoved, stashSmartNeed, lairPopulation, zoneTimers
     sell = baseline["special"]["traderSells"]
     assert len(sell["parameterIds"]) == 31 and sell["expectedSourceRows"] == 2939
     assert sell["expectedProfiles"] == 86

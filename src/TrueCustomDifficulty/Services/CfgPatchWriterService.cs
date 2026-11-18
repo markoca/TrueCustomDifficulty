@@ -322,6 +322,9 @@ public sealed partial class CfgPatchWriterService
         // LAIR POPULATION: how many inhabitants each world lair can hold.
         editCount += WriteLairPopulation(modifiedById, hasDlc1, documents, writtenParameters);
 
+        // EMISSION WARNING and TRADER RESTOCK: coupled timer edits.
+        editCount += WriteZoneTimers(modifiedById, documents, writtenParameters);
+
         var worldWeaponDistribution = WriteWorldWeaponDistribution(
             modifiedById,
             allById,
@@ -571,6 +574,8 @@ public sealed partial class CfgPatchWriterService
         supported.UnionWith(MutantAggressionPolicy.ParameterIds);
         supported.Add(ArtifactSpawnPolicy.RareLuckId);
         supported.UnionWith(LairPopulationPolicy.ParameterIds);
+        supported.Add(ZoneTimersPolicy.EmissionWarningId);
+        supported.Add(ZoneTimersPolicy.TraderRestockId);
         supported.UnionWith(HumanCombatPolicy.TacticIds);
         supported.Add(HumanCombatPolicy.RainNoiseId);
         supported.Add(HumanCombatPolicy.StormNoiseId);

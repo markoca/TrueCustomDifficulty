@@ -504,7 +504,7 @@ _non_gen_expected = {
     "stamina": (7, 6, 1),
     # Equipment is a separate tab again; CFG sources and total visibility are unchanged.
     "survival": (35, 29, 6),  # + 4 food satiety
-    "economy": (18, 12, 6),  # TRADER STOCK anchor runtime-test-required; TECHNICIAN hidden.
+    "economy": (19, 12, 7),  # TRADER STOCK + TRADER RESTOCK anchors runtime-test-required; TECHNICIAN hidden.
     "equipment": (6, 5, 1),
 }
 _non_gen_doc = DOCS / "NON-GENERATOR-CONTROL-VERIFICATION.md"
@@ -1573,7 +1573,8 @@ _economy_rows = {p.get("id"): p for p in _economy_all}
 _economy_confirmed = [p for p in _economy_ui if p.get("support", {}).get("status") == "confirmed"]
 _economy_runtime = [p for p in _economy_ui if p.get("support", {}).get("status") == "runtime_test_required"]
 _economy_runtime_expected = {"economy.buyCondition", "economy.sellCondition", "economy.medicStock", "economy.traderAmmoStock", "economy.traderMinBuyCondition",
-                             "economy.traderSells.general.weapons"}  # TRADER STOCK board anchor
+                             "economy.traderSells.general.weapons",  # TRADER STOCK board anchor
+                             "economy.traderRestockHours"}  # TRADER RESTOCK (2026-11-18)
 _economy_ids = {p.get("id") for p in _economy_all if p.get("id") != "economy.repairDifficultyCost"}
 _economy_points = [e for e in baseline.get("editPoints", []) if e.get("parameterId") in _economy_ids]
 _economy_runtime_actual = {p.get("id") for p in _economy_runtime}
@@ -1602,8 +1603,8 @@ for _pid in sorted(_economy_diff_ids):
     if _actual != _expected:
         _economy_diff_mismatch.append((_pid, _actual, _expected))
 
-if len(_economy_ui) != 18 or len(_economy_confirmed) != 12 or len(_economy_runtime) != 6 or _economy_runtime_actual != _economy_runtime_expected:
-    fail(f"economy deep audit status split drifted: total={len(_economy_ui)} confirmed={len(_economy_confirmed)} runtime={sorted(_economy_runtime_actual)}; expected 18/12/6")
+if len(_economy_ui) != 19 or len(_economy_confirmed) != 12 or len(_economy_runtime) != 7 or _economy_runtime_actual != _economy_runtime_expected:
+    fail(f"economy deep audit status split drifted: total={len(_economy_ui)} confirmed={len(_economy_confirmed)} runtime={sorted(_economy_runtime_actual)}; expected 19/12/7")
 elif len(_economy_points) != 405:
     fail(f"economy writer surface drifted: {len(_economy_points)} edit points; expected 405")
 elif _economy_buy.get("label") != "Prices Traders Pay" or _economy_sell.get("label") != "Prices You Pay":
@@ -3914,10 +3915,10 @@ _global_expected_tabs = {
     "health": 13,
     "stamina": 7,
     "survival": 35,
-    "economy": 18,      # + TRADER STOCK anchor
+    "economy": 19,      # + TRADER STOCK anchor, + TRADER RESTOCK (2026-11-18)
     "equipment": 6,
     "master": 20,
-    "environment": 9,  # ARTIFACT HUNTING (3 after RESPAWN RATE retired)
+    "environment": 10,  # ARTIFACT HUNTING (3 after RESPAWN RATE retired), + ZONE WEATHER
     "loot": 31,  # + NPC SMART LOOT master         # + corpse supply reduction, loose artifacts
     "stashes": 42,      # + stash supply reduction
     "alife": 3,
@@ -4087,10 +4088,10 @@ if (len(parameters) != _CENSUS_CATALOG or len(_global_visible) != _CENSUS_VISIBL
     fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected {_CENSUS_CATALOG}/{_CENSUS_VISIBLE}/{_CENSUS_HIDDEN}")
 elif _global_tab_counts != _global_expected_tabs:
     fail(f"global visible tab counts drifted: {_global_tab_counts}; expected {_global_expected_tabs}")
-elif _global_confirmed != 117 or _global_runtime != 94:  # +1 LAIR POPULATION (2026-11-18)
-    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 117/94")
-elif _global_control_counts != {"slider": 187, "toggle": 22, "choiceSlider": 1, "range": 1}:  # +1 LAIR POPULATION
-    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 187 sliders / 22 toggles / 1 choiceSlider / 1 range")
+elif _global_confirmed != 117 or _global_runtime != 96:  # +1 LAIR POPULATION, +2 ZONE WEATHER / TRADER RESTOCK (2026-11-18)
+    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 117/96")
+elif _global_control_counts != {"slider": 189, "toggle": 22, "choiceSlider": 1, "range": 1}:  # +1 LAIR POPULATION, +2 ZONE WEATHER / TRADER RESTOCK
+    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 189 sliders / 22 toggles / 1 choiceSlider / 1 range")
 elif _global_duplicate_labels:
     fail(f"duplicate player-facing labels detected: {_global_duplicate_labels}")
 elif _global_out_of_range:
@@ -5855,7 +5856,7 @@ _visual_boards = {
     "MutantDropRadar.cs": 1,
     "WorldLootRemovalRadar.cs": 1,
     "AnomalyDamageRadar.cs": 1,
-    "AggregateVisualControl.cs": 8,  # GLOBAL ANOMALY DAMAGE board removed 2026-11-17; +LAIR POPULATION 2026-11-18
+    "AggregateVisualControl.cs": 10,  # GLOBAL ANOMALY DAMAGE board removed 2026-11-17; +LAIR POPULATION, ZONE WEATHER, TRADER RESTOCK 2026-11-18
 }
 for _file, _expected in _visual_boards.items():
     _source = (_visual_dir / _file).read_text(encoding="utf-8")

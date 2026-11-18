@@ -86,7 +86,7 @@ def main():
 
     baseline = json.loads(BASELINE.read_text(encoding="utf-8"))
     special = baseline["special"]
-    assert len(special) == 33, "Special CFG writer group census drift"  # + weatherHearing, looseArtifactsRemoved, stashSmartNeed, lairPopulation
+    assert len(special) == 34, "Special CFG writer group census drift"  # + weatherHearing, looseArtifactsRemoved, stashSmartNeed, lairPopulation, zoneTimers
     assert ACTOR_DEPENDENT <= set(special), "Actor-dependent writer group removed"
     assert baseline["gameVersion"] == "2.1", "2.1 target/source metadata mismatch"
     assert "GameData/SpawnActorPrototypes.cfg" not in SOURCES

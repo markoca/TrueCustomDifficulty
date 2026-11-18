@@ -61,7 +61,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private void RaiseParameterSelected(ParameterViewModel parameter)
     {
         if (Family is "FlycatcherSlowdown" or "AnomalySpecialEffects" or "ServiceCostsBoard"
-            or "CouponFlow" or "ItemWeightBoard" or "LairPopulation" or "ArtifactHunting" or "StashSmartLoot" or "HumanTactics" or "HumanAwareness" or "EquipmentWearBalance"
+            or "CouponFlow" or "ItemWeightBoard" or "LairPopulation" or "ZoneWeather" or "TraderRestock" or "ArtifactHunting" or "StashSmartLoot" or "HumanTactics" or "HumanAwareness" or "EquipmentWearBalance"
             or "StashContentMix" or "StashMedicalComposition"
             or "StashGear" or "NpcLootLoadout" or "HumanCombatProfile" or "PlayerWeaponProfile"
             or "StarvationTimeline" or "SevereFatiguePenaltyBoard"
@@ -383,6 +383,12 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             case "LairPopulation":
                 DrawLairPopulationBoard(dc, text, muted, border, accent, panel);
                 break;
+            case "ZoneWeather":
+                DrawZoneWeatherBoard(dc, text, muted, border, accent, panel);
+                break;
+            case "TraderRestock":
+                DrawTraderRestockBoard(dc, text, muted, border, accent, panel);
+                break;
             case "ArtifactHunting":
                 DrawArtifactHunting(dc, text, muted, border, accent, panel);
                 break;
@@ -674,6 +680,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         => parameter.Id switch
         {
             "economy.startingMoney" => value.ToString("N0", CultureInfo.InvariantCulture),
+            ZoneTimersPolicy.EmissionWarningId => $"{value:0} s",
+            ZoneTimersPolicy.TraderRestockId => $"{value:0} h",
             "economy.repairCostBase" or "economy.traderMinBuyCondition" or "economy.itemValueFloor"
                 or "environment.flycatcherMovementSpeed" or "environment.flycatcherTurnSpeed" => $"{value * 100.0:0.#}%",
             _ => $"{value:0.##}×"
@@ -980,6 +988,67 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 FontWeights.SemiBold, Math.Max(1.0, rect.Width - 8.0));
             dc.DrawText(readout, new Point(rect.Left + 4.0, rect.Bottom + 6.0));
         }
+    }
+
+    // ZONE WEATHER: how often emissions and storms come (weather weights of
+    // the selected difficulty) and how long the emission warning lasts; the
+    // line under EMISSION WARNING follows ZoneTimersPolicy like the writer.
+    private void DrawZoneWeatherBoard(
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush accent, Brush panel)
+    {
+        DrawCenteredText(dc, "ZONE WEATHER",
+            new Point(ActualWidth / 2.0, 21.0), VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
+        var cards = new (string Id, string Label)[]
+        {
+            (ZoneTimersPolicy.EmissionFrequencyId, "EMISSIONS"),
+            (ZoneTimersPolicy.StormFrequencyId, "STORMS"),
+            (ZoneTimersPolicy.EmissionWarningId, "EMISSION WARNING")
+        };
+        var columns = EconomyColumns(ActualWidth);
+        var cardWidth = EconomyCardWidth(ActualWidth, columns);
+        const double gap = 12.0;
+        var bankWidth = columns * cardWidth + (columns - 1) * gap;
+        var left = (ActualWidth - bankWidth) / 2.0;
+        for (var i = 0; i < cards.Length; i++)
+        {
+            var rect = new Rect(left + (i % columns) * (cardWidth + gap),
+                48.0 + (i / columns) * LairCardPitch, cardWidth, 80.0);
+            var parameter = P(cards[i].Id);
+            DrawEconomyCard(dc, parameter, cards[i].Label, rect, text, muted, border, accent, panel);
+            if (parameter is null || cards[i].Id != ZoneTimersPolicy.EmissionWarningId)
+                continue;
+            var warning = Math.Round(parameter.CurrentNumber);
+            var line = $"SHOCK WAVE AT {warning:0} s · OVER AT {ZoneTimersPolicy.EmissionEnd(warning):0} s";
+            var readout = CreateText(line, 9.6,
+                !parameter.IsControlEnabled ? muted
+                    : parameter.IsValueModifiedFromReference() ? ReadoutInk.Numbers(accent, muted) : muted,
+                FontWeights.SemiBold, Math.Max(1.0, rect.Width - 8.0));
+            dc.DrawText(readout, new Point(rect.Left + 4.0, rect.Bottom + 6.0));
+        }
+    }
+
+    // TRADER RESTOCK: one card (named traders, in-game hours) and the
+    // generic stalker traders that follow the same ratio.
+    private void DrawTraderRestockBoard(
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush accent, Brush panel)
+    {
+        DrawCenteredText(dc, "TRADER RESTOCK",
+            new Point(ActualWidth / 2.0, 21.0), VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
+        var cardWidth = EconomyCardWidth(ActualWidth, 1);
+        var rect = new Rect((ActualWidth - cardWidth) / 2.0, 48.0, cardWidth, 80.0);
+        var parameter = P(ZoneTimersPolicy.TraderRestockId);
+        DrawEconomyCard(dc, parameter, "RESTOCK EVERY", rect, text, muted, border, accent, panel);
+        if (parameter is null)
+            return;
+        var days = ZoneTimersPolicy.GenericRestockDays((int)Math.Round(parameter.CurrentNumber));
+        var line = $"STALKERS YOU TRADE WITH: EVERY {days} {(days == 1 ? "DAY" : "DAYS")}";
+        var readout = CreateText(line, 9.6,
+            !parameter.IsControlEnabled ? muted
+                : days != ZoneTimersPolicy.VanillaGenericRestockDays ? ReadoutInk.Numbers(accent, muted) : muted,
+            FontWeights.SemiBold, Math.Max(1.0, rect.Width - 8.0));
+        dc.DrawText(readout, new Point(rect.Left + 4.0, rect.Bottom + 6.0));
     }
 
     private static string LairTime(double seconds)
@@ -8188,6 +8257,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "ServiceCostsBoard" => ServicePriceBoardHeight(width),
             "ItemWeightBoard" => EconomyBoardHeight(width, 4),
             "LairPopulation" => LairPopulationBoardHeight(width),
+            "ZoneWeather" => LairPopulationBoardHeight(width),
+            "TraderRestock" => 48.0 + LairCardPitch + 6.0,
             "ArtifactHunting" => ArtifactHuntingHeight(width),
             "HumanTactics" => HumanTacticsHeight(width),
             "HumanAwareness" => HumanAwarenessHeight(width),
@@ -8277,6 +8348,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "HumanTactics" => HumanCombatPolicy.TacticsBoardIds,
             "HumanAwareness" => HumanCombatPolicy.AwarenessIds,
             "LairPopulation" => LairPopulationPolicy.ParameterIds,
+            "ZoneWeather" => ZoneTimersPolicy.WeatherIds,
+            "TraderRestock" => new[] { ZoneTimersPolicy.TraderRestockId },
             "ItemWeightBoard" => new[]
             {
                 "equipment.ammoWeight",

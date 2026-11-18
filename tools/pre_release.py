@@ -32,6 +32,7 @@ STATIC = (
     ("panel-text-style", "tools/audit_panel_text_style.py"),
     ("number-ink", "tools/audit_number_ink.py"),
     ("lair-population", "tools/audit_lair_population.py"),
+    ("zone-timers", "tools/audit_zone_timers.py"),
     ("rc-player-labels", "tools/audit_rc_player_labels.py"),
     ("current-stashes", "tools/audit_stashes_current.py"),
     ("stash-content-gear", "tools/audit_stash_content_gear.py"),

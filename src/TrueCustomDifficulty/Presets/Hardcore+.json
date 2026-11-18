@@ -402,6 +402,10 @@
       "kind": "slider",
       "number": 0.25
     },
+    "economy.traderRestockHours": {
+      "kind": "slider",
+      "number": 16
+    },
     "economy.consumableCost": {
       "kind": "slider",
       "number": 1.65
@@ -1661,6 +1665,18 @@
     "environment.artifactCount": {
       "kind": "slider",
       "number": 1
+    },
+    "environment.emissionFrequency": {
+      "kind": "slider",
+      "number": 1.5
+    },
+    "environment.stormFrequency": {
+      "kind": "slider",
+      "number": 1.5
+    },
+    "environment.emissionWarning": {
+      "kind": "slider",
+      "number": 40
     },
     "combat.npcFogVisibility": {
       "kind": "slider",

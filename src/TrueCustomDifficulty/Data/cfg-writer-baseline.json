@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.1",
-  "supportedParameterCount": 418,
+  "supportedParameterCount": 422,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -43809,6 +43809,118 @@
       "operation": "scale",
       "role": "",
       "difficultySid": ""
+    },
+    {
+      "parameterId": "environment.emissionFrequency",
+      "scope": "baseGame",
+      "file": "GameData/DifficultyPrototypes.cfg",
+      "prototype": "Easy",
+      "nodePath": [
+        "EnvironmentDifficulty"
+      ],
+      "key": "Weather_Emission_Weight",
+      "sourceRaw": "1.0",
+      "operation": "set",
+      "role": "",
+      "difficultySid": "Easy"
+    },
+    {
+      "parameterId": "environment.emissionFrequency",
+      "scope": "baseGame",
+      "file": "GameData/DifficultyPrototypes.cfg",
+      "prototype": "Medium",
+      "nodePath": [
+        "EnvironmentDifficulty"
+      ],
+      "key": "Weather_Emission_Weight",
+      "sourceRaw": "1.0",
+      "operation": "set",
+      "role": "",
+      "difficultySid": "Medium"
+    },
+    {
+      "parameterId": "environment.emissionFrequency",
+      "scope": "baseGame",
+      "file": "GameData/DifficultyPrototypes.cfg",
+      "prototype": "Hard",
+      "nodePath": [
+        "EnvironmentDifficulty"
+      ],
+      "key": "Weather_Emission_Weight",
+      "sourceRaw": "1.0",
+      "operation": "set",
+      "role": "",
+      "difficultySid": "Hard"
+    },
+    {
+      "parameterId": "environment.emissionFrequency",
+      "scope": "baseGame",
+      "file": "GameData/DifficultyPrototypes.cfg",
+      "prototype": "Stalker",
+      "nodePath": [
+        "EnvironmentDifficulty"
+      ],
+      "key": "Weather_Emission_Weight",
+      "sourceRaw": "1.25",
+      "operation": "set",
+      "role": "",
+      "difficultySid": "Stalker"
+    },
+    {
+      "parameterId": "environment.stormFrequency",
+      "scope": "baseGame",
+      "file": "GameData/DifficultyPrototypes.cfg",
+      "prototype": "Easy",
+      "nodePath": [
+        "EnvironmentDifficulty"
+      ],
+      "key": "Weather_Storm_Weight",
+      "sourceRaw": "1.0",
+      "operation": "set",
+      "role": "",
+      "difficultySid": "Easy"
+    },
+    {
+      "parameterId": "environment.stormFrequency",
+      "scope": "baseGame",
+      "file": "GameData/DifficultyPrototypes.cfg",
+      "prototype": "Medium",
+      "nodePath": [
+        "EnvironmentDifficulty"
+      ],
+      "key": "Weather_Storm_Weight",
+      "sourceRaw": "1.0",
+      "operation": "set",
+      "role": "",
+      "difficultySid": "Medium"
+    },
+    {
+      "parameterId": "environment.stormFrequency",
+      "scope": "baseGame",
+      "file": "GameData/DifficultyPrototypes.cfg",
+      "prototype": "Hard",
+      "nodePath": [
+        "EnvironmentDifficulty"
+      ],
+      "key": "Weather_Storm_Weight",
+      "sourceRaw": "1.0",
+      "operation": "set",
+      "role": "",
+      "difficultySid": "Hard"
+    },
+    {
+      "parameterId": "environment.stormFrequency",
+      "scope": "baseGame",
+      "file": "GameData/DifficultyPrototypes.cfg",
+      "prototype": "Stalker",
+      "nodePath": [
+        "EnvironmentDifficulty"
+      ],
+      "key": "Weather_Storm_Weight",
+      "sourceRaw": "1.25",
+      "operation": "set",
+      "role": "",
+      "difficultySid": "Stalker"
     }
   ],
   "special": {
@@ -48298,6 +48410,15 @@
       ],
       "manifestResource": "TrueCustomDifficulty.Data.lair-population-manifest.csv",
       "expectedRows": 1116
+    },
+    "zoneTimers": {
+      "note": "EMISSION WARNING retimes the world emission (EmissionPrototypes.cfg [0] Default: BeforeTheStorm duration, later stage starts and AIEvents EmissionEnd move together). TRADER RESTOCK sets TradeRegenHoursPassed8.Hours (84 traders) and TradeRegenDaysPassed7.Days (generic stalker traders, same ratio) in BoolProviderPrototypes.cfg. Written by WriteZoneTimers (ZoneTimersPolicy).",
+      "parameterIds": [
+        "environment.emissionWarning",
+        "economy.traderRestockHours"
+      ],
+      "emissionFile": "GameData/EmissionPrototypes.cfg",
+      "restockFile": "GameData/BoolProviderPrototypes.cfg"
     },
     "humanTactics": {
       "note": "GRENADES / SUPPRESSION / FLANKING / PUSH / CAMPING PENALTY scale CombatSynchronizer FilterGroups cooldowns (source x reference / rate) in the full rank tables of the selected difficulty, written together with SPECIAL ABILITY RATE by one writer.",

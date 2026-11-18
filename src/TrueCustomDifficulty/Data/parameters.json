@@ -11259,6 +11259,61 @@
       "interaction": "Rank unlocks and restock timing stay vanilla. The MEDICAL rail of each trader type sets how often meds are offered."
     },
     {
+      "id": "economy.traderRestockHours",
+      "tab": "economy",
+      "group": "Trader Restock",
+      "label": "Trader Restock Time",
+      "description": "Hours of the shared TradeRegenHoursPassed8 refresh condition (84 named traders, base + DLC1); TradeRegenDaysPassed7 (generic stalker traders) follows the same ratio.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0",
+        "unit": "h",
+        "valueLabel": "Restock time"
+      },
+      "vanilla": {
+        "All": 8
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 1,
+        "max": 48,
+        "step": 1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/BoolProviderPrototypes.cfg",
+          "prototype": "TradeRegenHoursPassed8",
+          "path": "Hours",
+          "operation": "setTraderRestock"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/BoolProviderPrototypes.cfg",
+          "prototype": "TradeRegenDaysPassed7",
+          "path": "Days",
+          "operation": "setTraderRestock"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Both conditions are used only by TradePrototypes.cfg (base + DLC1): 84 traders on 8 h, 4 generic stalker trade profiles (BasicTrader, TraderNPC, AllTraderNPC, RC_TraderNPC) on 7 days.",
+          "Generic traders: days = 7 × hours / 8, at least 1. Test and template profiles (TradeRegenDaysPassed1) are not changed.",
+          "Game hours: sleeping and waiting count."
+        ]
+      },
+      "rationale": "How many in-game hours until traders restock their shelves. Vanilla: 8 h; stalkers you trade with restock every 7 days. Sleeping counts.",
+      "logic": "Higher = longer waits for fresh stock; lower = shelves refill sooner. Stalkers you trade with follow the same ratio.",
+      "interaction": "Only how often shelves refill. TRADER STOCK and AMMO / MEDICAL SUPPLY decide what comes back.",
+      "exposeInUi": true
+    },
+    {
       "id": "economy.consumableCost",
       "tab": "economy",
       "group": "Item Values",
@@ -14398,6 +14453,154 @@
       "rationale": "How many artifacts drop at once when a field spawns. Vanilla: 1. More turns a well-searched field into a jackpot.",
       "logic": "1 = vanilla, one artifact per spawn; 2 or 3 = that many.",
       "interaction": "Multiplies every artifact that spawns; SPAWN CHANCE decides how often that happens."
+    },
+    {
+      "id": "environment.emissionFrequency",
+      "tab": "environment",
+      "group": "Zone Weather",
+      "label": "Emission Frequency",
+      "description": "Sets EnvironmentDifficulty.Weather_Emission_Weight of the selected difficulty: the weight the weather system gives this weather when it picks the next one.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Emission frequency"
+      },
+      "vanilla": {
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
+        "Master": 1.25
+      },
+      "default": {
+        "mode": "referenceDifficulty"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/DifficultyPrototypes.cfg",
+          "prototype": "$selectedDifficultySID",
+          "path": "EnvironmentDifficulty.Weather_Emission_Weight",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Vanilla Novice–Veteran 1.0, Master 1.25 (Xbox variants not edited).",
+          "A weight in the weather pick, not a fixed timer: 2× is roughly twice as often. Story emissions are triggered by quests and do not depend on it.",
+          "Artifact fields refill after emissions, so more emissions also mean more artifacts."
+        ]
+      },
+      "rationale": "How often a random emission sweeps the Zone. Vanilla: Novice–Veteran 1×, Master 1.25×. Story emissions still happen on their own.",
+      "logic": "Higher = more emissions and more runs for cover; 0 = no random emissions.",
+      "interaction": "Artifact fields refill after an emission, so this also feeds ARTIFACT HUNTING. Emissions kill anyone caught outside; LAIR RESPAWN TIME sets how fast lairs fill back up.",
+      "exposeInUi": true
+    },
+    {
+      "id": "environment.stormFrequency",
+      "tab": "environment",
+      "group": "Zone Weather",
+      "label": "Storm Frequency",
+      "description": "Sets EnvironmentDifficulty.Weather_Storm_Weight of the selected difficulty: the weight the weather system gives this weather when it picks the next one.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Storm frequency"
+      },
+      "vanilla": {
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
+        "Master": 1.25
+      },
+      "default": {
+        "mode": "referenceDifficulty"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/DifficultyPrototypes.cfg",
+          "prototype": "$selectedDifficultySID",
+          "path": "EnvironmentDifficulty.Weather_Storm_Weight",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Vanilla Novice–Veteran 1.0, Master 1.25 (Xbox variants not edited).",
+          "A weight in the weather pick: more storms leave less room for clear and cloudy weather."
+        ]
+      },
+      "rationale": "How often storms hit the Zone. Vanilla: Novice–Veteran 1×, Master 1.25×.",
+      "logic": "Higher = more storms, fewer clear days; 0 = no storms.",
+      "interaction": "RAIN NOISE and THUNDER NOISE set how much the weather hides your noise from enemies. EMISSION FREQUENCY is separate.",
+      "exposeInUi": false
+    },
+    {
+      "id": "environment.emissionWarning",
+      "tab": "environment",
+      "group": "Zone Weather",
+      "label": "Emission Warning",
+      "description": "Length of the world emission's BeforeTheStorm stage (EmissionPrototypes.cfg Default). ShockWave, Active, AfterTheStorm and the NPC EmissionEnd AI event move with it.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0",
+        "unit": "s",
+        "valueLabel": "Warning time"
+      },
+      "vanilla": {
+        "All": 60
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 30,
+        "max": 180,
+        "step": 5,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EmissionPrototypes.cfg",
+          "prototype": "[0] (SID Default)",
+          "path": "Stages.[0].PhaseDuration; Stages.[2..4].PhaseStartTime; AIEvents.[3].AIEventStartTime",
+          "operation": "shiftEmissionWarning"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "World emission only (Default, also used by the EQ29 side quest). The five story emissions keep their own stages.",
+          "Stages after the warning move by the same seconds; their durations stay. The emission still ends inside its 300 s weather window (latest 260 s).",
+          "NPC EmissionEnd (vanilla 130 s) moves too, so NPCs leave cover after the emission. Story emissions inherit it and are over by 61 s.",
+          "The red-sky calm before an emission (120 s weather) is not changed."
+        ]
+      },
+      "rationale": "How long you get to find cover between the emission warning and the shock wave. Vanilla: 60 s. The red sky before it doesn't change.",
+      "logic": "Higher = more time to reach shelter; lower = you need cover close by.",
+      "interaction": "Only the warning. The emission itself lasts as long as before, and NPCs still take cover with you.",
+      "exposeInUi": false
     },
     {
       "id": "loot.mutant.blindDogChance",

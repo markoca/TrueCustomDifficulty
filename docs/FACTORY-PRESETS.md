@@ -316,3 +316,7 @@ Existing unmodified twelve-profile JSONs are automatically replaced when the app
 ## 2026-11-18 — LAIR POPULATION
 
 The 12 profiles now store `alife.lairPopulation.human` / `.mutant` (417 catalog controls each). The matrix is in `ALIFE-LAIR-POPULATION.md` and `tools/factory_preset_lair_population_2026_11_18.json`; stock files upgrade only when byte-identical (`PreLairPopulationFactoryBlobs`).
+
+## 2026-11-18 — ZONE WEATHER + TRADER RESTOCK
+
+The 12 profiles now store the four new controls (422 catalog controls each). The matrix is in `ZONE-WEATHER-AND-RESTOCK.md` and `tools/factory_preset_zone_weather_2026_11_18.json`; stock files upgrade only when byte-identical (`PreZoneWeatherFactoryBlobs`).

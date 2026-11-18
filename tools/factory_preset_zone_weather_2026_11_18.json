@@ -1,0 +1,55 @@
+{
+  "date": "2026-11-18",
+  "note": "ZONE WEATHER + TRADER RESTOCK thematic values; absent = the preset's reference-difficulty vanilla.",
+  "previousStockBlobs": {
+    "Anomaly Runner": "6c9b5c6d5935d8b4e9d5cb0dcdfc1e9fe54cdac2",
+    "Field Medic": "d9624820555dded65c8f75bb5daba7a9c95a35af",
+    "Hardcore+": "306fe171288363bdbe34f180e8213d058cba998b",
+    "Hardcore": "da147615c54b400742aaaee37ea7be79773dd69c",
+    "Immersive": "b9c9a79166063c55848eadf9659d38595c3d7d9e",
+    "Mercenary": "789dfac6c8f46e77324d4391dcf79cb8251f3ab2",
+    "Mutant Hunter": "a0ec1892c2a3d5cb5e552e886a0a9e3e65647b08",
+    "Outcast": "3d6837047b82dc91cf0a4f33f49401076113053b",
+    "Scavenger": "e1b1b15102560efbe4af1d4a293c91f895883af7",
+    "Smuggler": "01ab977303f9e405c6aef94c609fd026fd56532c",
+    "Tactical": "7afb493af3365d8550c5bbb44c5c54aac584ff82",
+    "Wanderer": "7a7a00e33fce3d777d77857baa1691b91c934a5b"
+  },
+  "values": {
+    "Anomaly Runner": {
+      "environment.emissionFrequency": 1.25
+    },
+    "Field Medic": {},
+    "Hardcore+": {
+      "environment.emissionFrequency": 1.5,
+      "environment.stormFrequency": 1.5,
+      "environment.emissionWarning": 40,
+      "economy.traderRestockHours": 16
+    },
+    "Hardcore": {
+      "environment.emissionWarning": 50,
+      "economy.traderRestockHours": 12
+    },
+    "Immersive": {
+      "environment.stormFrequency": 1.25
+    },
+    "Mercenary": {},
+    "Mutant Hunter": {},
+    "Outcast": {
+      "economy.traderRestockHours": 12
+    },
+    "Scavenger": {
+      "economy.traderRestockHours": 16
+    },
+    "Smuggler": {
+      "economy.traderRestockHours": 6
+    },
+    "Tactical": {
+      "environment.stormFrequency": 1.15
+    },
+    "Wanderer": {
+      "environment.emissionFrequency": 1.15,
+      "environment.emissionWarning": 75
+    }
+  }
+}

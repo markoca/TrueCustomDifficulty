@@ -37,6 +37,10 @@ THEMATIC = json.loads((ROOT / "tools/factory_preset_thematic_2026_11_17.json").r
 # 2026-11-18: LAIR POPULATION role values (absent = vanilla 1×).
 LAIR = json.loads((ROOT / "tools/factory_preset_lair_population_2026_11_18.json").read_text(encoding="utf-8"))
 NEW_IDS |= {"alife.lairPopulation.human", "alife.lairPopulation.mutant", "alife.lairRespawnTime"}
+# 2026-11-18: ZONE WEATHER + TRADER RESTOCK role values (absent = reference vanilla).
+ZONE = json.loads((ROOT / "tools/factory_preset_zone_weather_2026_11_18.json").read_text(encoding="utf-8"))
+NEW_IDS |= {"environment.emissionFrequency", "environment.stormFrequency",
+            "environment.emissionWarning", "economy.traderRestockHours"}
 
 presets = sorted((APP / "Presets").glob("*.json"))
 assert len(presets) == 12, len(presets)
@@ -49,6 +53,7 @@ for path in presets:
     ref = data["referenceDifficulty"]
     role = dict(THEMATIC["values"][data["name"]] if data["name"] in THEMATIC["values"] else THEMATIC["values"][path.stem])
     role.update(LAIR["values"][path.stem])
+    role.update(ZONE["values"][path.stem])
     assert set(role) <= set(by_id), (path.name, set(role) - set(by_id))
     for pid in NEW_IDS | set(role):
         p = by_id[pid]
@@ -81,6 +86,9 @@ for _name, _hash in {**LAIR["previousStockBlobs"]}.items():
 for _name, _hash in LAIR["previousStockBlobsBeforeRefill"].items():
     assert f'["{_name}"] = "{_hash}"' in pds, _name
 assert pds.count("PreLairRespawnTimeFactoryBlobs") == 3
+assert pds.count("PreZoneWeatherFactoryBlobs") == 3
+for _name, _hash in ZONE["previousStockBlobs"].items():
+    assert f'["{_name}"] = "{_hash}"' in pds, _name
 for _name, _hash in LAIR["previousStockBlobsBeforeRespawnTime"].items():
     assert f'["{_name}"] = "{_hash}"' in pds, _name
 for _name, _hash in THEMATIC["previousStockBlobs"].items():

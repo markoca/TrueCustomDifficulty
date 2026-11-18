@@ -9,7 +9,10 @@ are excluded from those historical slices here.
 
 POST_361_PREFIXES = ("combat.mutantAttackRate.", "combat.mutantAbilityRate.", "environment.artifact",
                      # 2026-11-18: LAIR POPULATION (own audit).
-                     "alife.lairPopulation.", "alife.lairRespawnTime")
+                     "alife.lairPopulation.", "alife.lairRespawnTime",
+                     # 2026-11-18: ZONE WEATHER + TRADER RESTOCK (own audit).
+                     "environment.emissionFrequency", "environment.stormFrequency",
+                     "environment.emissionWarning", "economy.traderRestockHours")
 POST_361_IDS = frozenset({
     "combat.mutantSpecialAbilityRate",
     "combat.npcGrenadeRate", "combat.npcSuppressionRate", "combat.npcFlankRate",
