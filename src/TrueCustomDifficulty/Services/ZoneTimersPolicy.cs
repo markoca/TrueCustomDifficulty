@@ -60,23 +60,19 @@ public static class ZoneTimersPolicy
     public static double EmissionEnd(double warningSeconds) => 140.0 + Shift(warningSeconds);
 
     /// <summary>
-    /// Short in-dial line in player words for the ZONE WEATHER knobs.
-    /// The weights are relative to the selected difficulty's vanilla.
+    /// Brief, gamer-facing frequency cues that fit INSIDE a 47-DIP dial.
+    /// No second caption on EMISSION WARNING: it displays only a number
+    /// and the native SECONDS unit, avoiding two overlapping lower lines.
+    /// The weather weights are relative, not a fixed event countdown.
     /// </summary>
     public static string? KnobText(string id, double value, double reference)
     {
         const double eps = 0.0001;
-        return id switch
-        {
-            EmissionFrequencyId => value <= eps ? "NO RANDOM EMISSIONS"
-                : Math.Abs(value - reference) < eps ? "VANILLA PACE"
-                : value < reference ? "RARER EMISSIONS" : "MORE EMISSIONS",
-            StormFrequencyId => value <= eps ? "NO STORMS"
-                : Math.Abs(value - reference) < eps ? "VANILLA PACE"
-                : value < reference ? "CLEARER SKIES" : "MORE RAIN & THUNDER",
-            EmissionWarningId => "TO FIND COVER",
-            _ => null
-        };
+        if (id is not (EmissionFrequencyId or StormFrequencyId))
+            return null;
+        return value <= eps ? "OFF"
+            : Math.Abs(value - reference) < eps ? "NORMAL"
+            : value < reference ? "LESS OFTEN" : "MORE OFTEN";
     }
 
     // ---- TRADER RESTOCK ------------------------------------------------

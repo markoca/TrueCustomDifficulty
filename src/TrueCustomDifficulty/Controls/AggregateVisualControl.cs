@@ -990,10 +990,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
     }
 
-    // ZONE WEATHER: three knobs (ARTIFACT HUNTING geometry) — how often
-    // random emissions and storms come (weather weights of the selected
-    // difficulty) and how long the emission warning lasts — and a timeline
-    // of one emission that follows ZoneTimersPolicy like the writer.
+    // ZONE WEATHER: three frameless source dials (Artifact Hunting geometry).
+    // Only short text is drawn inside their faces; the warning uses its
+    // native SECONDS unit, never a second overlapping descriptor.
+    // The event timeline uses actual emission stage duration (warning + 80 s),
+    // NOT the larger 300-second weather-selection window.
     private const double ZoneTimelineHeight = 92.0;
 
     private static double ZoneWeatherHeight(double width)
@@ -1007,9 +1008,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             new Point(ActualWidth / 2.0, 21.0), VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
         var knobs = new (string Id, string Label)[]
         {
-            (ZoneTimersPolicy.EmissionFrequencyId, "EMISSIONS"),
+            (ZoneTimersPolicy.EmissionFrequencyId, "RANDOM EMISSIONS"),
             (ZoneTimersPolicy.StormFrequencyId, "STORMS"),
-            (ZoneTimersPolicy.EmissionWarningId, "EMISSION WARNING")
+            (ZoneTimersPolicy.EmissionWarningId, "TIME TO FIND COVER")
         };
         var (left, bankWidth, cellWidth) = ArtifactKnobBank(ActualWidth);
         for (var i = 0; i < knobs.Length; i++)
@@ -1017,19 +1018,20 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             var parameter = P(knobs[i].Id);
             var knobCard = new Rect(left + i * (cellWidth + ArtifactKnobGap),
                 ArtifactKnobTop, cellWidth, ArtifactKnobHeight);
-            dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9), knobCard, 4.0, 4.0, parameter);
+            // No inner rectangular cards around weather knobs: native dial
+            // arcs, ticks and hover glow provide the only control chrome.
             var isWarning = knobs[i].Id == ZoneTimersPolicy.EmissionWarningId;
             DrawSourceKnob(dc, parameter, knobs[i].Label, knobCard,
                 text, muted, border, accent, panel,
-                rawReadout: isWarning,
+                rawReadout: isWarning, positivePrefix: false,
                 nativeUnit: isWarning ? "SECONDS" : null,
-                secondaryReadout: parameter is null ? null
-                    : ZoneTimersPolicy.KnobText(parameter.Id, parameter.CurrentNumber, parameter.ReferenceNumber),
-                secondaryModified: parameter?.IsValueModifiedFromReference() == true);
+                secondaryReadout: parameter is null || isWarning ? null
+                    : ZoneTimersPolicy.KnobText(parameter.Id, parameter.CurrentNumber, parameter.ReferenceNumber));
         }
 
-        // One emission, start to finish, on a fixed 0–300 s scale (the
-        // emission weather window): warning, shock wave + active, after.
+        // One complete Default emission from warning to the end of its
+        // AfterTheStorm stage, using source timing. The 300 s weather window
+        // continues past those stages and is not a phase of the emission.
         var warningParameter = P(ZoneTimersPolicy.EmissionWarningId);
         var warning = Math.Round(warningParameter?.CurrentNumber ?? ZoneTimersPolicy.VanillaWarningSeconds);
         var changed = warningParameter?.IsValueModifiedFromReference() == true;
@@ -1038,24 +1040,33 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0);
         DrawText(dc, "ONE EMISSION", new Point(card.Left + 12.0, card.Top + 8.0),
             10.0, text, FontWeights.Bold);
-        DrawRightAlignedText(dc, "WARNING · EMISSION · CALM",
+        DrawRightAlignedText(dc, "FIND COVER · EMISSION · AFTERMATH",
             new Point(card.Right - 12.0, card.Top + 9.0), 9.0, muted, FontWeights.Normal);
 
-        var bar = new Rect(card.Left + 12.0, card.Top + 32.0, Math.Max(1.0, card.Width - 24.0), 12.0);
-        double TimeX(double seconds) => bar.Left + bar.Width * Math.Clamp(seconds / ZoneTimersPolicy.EmissionWeatherSeconds, 0.0, 1.0);
-        var activeEnd = warning + 60.0;
+        var bar = new Rect(card.Left + 12.0, card.Top + 32.0,
+            Math.Max(1.0, card.Width - 24.0), 12.0);
         var end = ZoneTimersPolicy.EmissionEnd(warning);
-        dc.DrawRectangle(CloneWithOpacity(muted, .18), null, bar);
-        dc.DrawRectangle(CloneWithOpacity(accent, .35), null, new Rect(bar.Left, bar.Top, TimeX(warning) - bar.Left, bar.Height));
-        dc.DrawRectangle(accent, null, new Rect(TimeX(warning), bar.Top, TimeX(activeEnd) - TimeX(warning), bar.Height));
-        dc.DrawRectangle(CloneWithOpacity(muted, .55), null, new Rect(TimeX(activeEnd), bar.Top, TimeX(end) - TimeX(activeEnd), bar.Height));
+        var activeEnd = warning + ZoneTimersPolicy.Stages[3].Duration;
+        double TimeX(double seconds) => bar.Left + bar.Width
+            * Math.Clamp(seconds / Math.Max(1.0, end), 0.0, 1.0);
+        // Three actual stages fill the ENTIRE rail: waiting for the wave,
+        // surviving the active emission and its 20-second aftermath.
+        dc.DrawRectangle(CloneWithOpacity(accent, .32), null,
+            new Rect(bar.Left, bar.Top, TimeX(warning) - bar.Left, bar.Height));
+        dc.DrawRectangle(accent, null,
+            new Rect(TimeX(warning), bar.Top, TimeX(activeEnd) - TimeX(warning), bar.Height));
+        dc.DrawRectangle(CloneWithOpacity(muted, .65), null,
+            new Rect(TimeX(activeEnd), bar.Top, TimeX(end) - TimeX(activeEnd), bar.Height));
         dc.DrawRectangle(null, new Pen(CloneWithOpacity(border, .9), 0.8), bar);
+        // AIEvent EmissionEnd falls inside AfterTheStorm; it is not the
+        // moment when the full emission stage sequence finishes.
         var cover = ZoneTimersPolicy.VanillaAiEndSeconds + ZoneTimersPolicy.Shift(warning);
-        dc.DrawLine(new Pen(text, 1.2), new Point(TimeX(cover), bar.Top - 4.0), new Point(TimeX(cover), bar.Bottom + 4.0));
+        dc.DrawLine(new Pen(text, 1.6), new Point(TimeX(cover), bar.Top - 4.0),
+            new Point(TimeX(cover), bar.Bottom + 4.0));
 
         var ink = changed ? ReadoutInk.Numbers(accent, muted) : muted;
-        var line1 = $"You get {warning:0} s to find cover. The storm hits at {warning:0} s and is over at {activeEnd:0} s.";
-        var line2 = $"NPCs leave cover at {cover:0} s (white tick).";
+        var line1 = $"{warning:0} s to hide · Emission {warning:0}–{activeEnd:0} s · All clear at {end:0} s.";
+        var line2 = $"NPCs leave shelter at {cover:0} s (white marker).";
         dc.DrawText(CreateText(line1, 9.6, ink, FontWeights.SemiBold, Math.Max(1.0, card.Width - 24.0)),
             new Point(card.Left + 12.0, bar.Bottom + 10.0));
         dc.DrawText(CreateText(line2, 9.6, ink, FontWeights.SemiBold, Math.Max(1.0, card.Width - 24.0)),

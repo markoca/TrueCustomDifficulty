@@ -14459,7 +14459,7 @@
       "tab": "environment",
       "group": "Zone Weather",
       "label": "Emission Frequency",
-      "description": "Sets EnvironmentDifficulty.Weather_Emission_Weight of the selected difficulty: the weight the weather system gives this weather when it picks the next one.",
+      "description": "How often random emissions sweep the Zone. Higher weight means the weather system is more likely to pick one when emissions are allowed; 0× prevents random emission weather. Story emissions still happen.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -14499,8 +14499,8 @@
           "Artifact fields refill after emissions, so more emissions also mean more artifacts."
         ]
       },
-      "rationale": "How often a random emission sweeps the Zone. Vanilla: Novice–Veteran 1×, Master 1.25×. Story emissions still happen on their own.",
-      "logic": "Higher = more emissions and more runs for cover; 0 = no random emissions.",
+      "rationale": "More random emissions mean more sudden runs for shelter. Turn it down for a quieter Zone, or 0× to stop random ones. Story emissions stay.",
+      "logic": "Higher = random emissions are picked more often when eligible. This is not a countdown or fixed interval; 0× turns off random emission weather.",
       "interaction": "Artifact fields refill after an emission, so this also feeds ARTIFACT HUNTING. Emissions kill anyone caught outside; LAIR RESPAWN TIME sets how fast lairs fill back up.",
       "exposeInUi": true
     },
@@ -14509,7 +14509,7 @@
       "tab": "environment",
       "group": "Zone Weather",
       "label": "Storm Frequency",
-      "description": "Sets EnvironmentDifficulty.Weather_Storm_Weight of the selected difficulty: the weight the weather system gives this weather when it picks the next one.",
+      "description": "How often the weather system picks a storm. Higher values favor stormy weather; lower values mean fewer storms, and 0× turns this random weather type off. It is a relative weather weight, not a timer.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -14548,8 +14548,8 @@
           "A weight in the weather pick: more storms leave less room for clear and cloudy weather."
         ]
       },
-      "rationale": "How often storms hit the Zone. Vanilla: Novice–Veteran 1×, Master 1.25×.",
-      "logic": "Higher = more storms, fewer clear days; 0 = no storms.",
+      "rationale": "More storms bring more bad weather to the Zone. Turn it down for calmer skies, or 0× for no randomly selected storms.",
+      "logic": "Higher = more frequent storm selections at the expense of other weather; 0× = no random storm weather.",
       "interaction": "RAIN NOISE and THUNDER NOISE set how much the weather hides your noise from enemies. EMISSION FREQUENCY is separate.",
       "exposeInUi": false
     },
@@ -14558,7 +14558,7 @@
       "tab": "environment",
       "group": "Zone Weather",
       "label": "Emission Warning",
-      "description": "Length of the world emission's BeforeTheStorm stage (EmissionPrototypes.cfg Default). ShockWave, Active, AfterTheStorm and the NPC EmissionEnd AI event move with it.",
+      "description": "How many seconds you have to reach shelter after the emission warning and before the shock wave. Longer warning = more time to hide. The blast, aftermath and NPC leave-cover moment move later with it; story emission stage timing remains separate.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -14597,8 +14597,8 @@
           "The red-sky calm before an emission (120 s weather) is not changed."
         ]
       },
-      "rationale": "How long you get to find cover between the emission warning and the shock wave. Vanilla: 60 s. The red sky before it doesn't change.",
-      "logic": "Higher = more time to reach shelter; lower = you need cover close by.",
+      "rationale": "Seconds to find shelter before an emission hits. Raise it for more time to hide, or shorten it for a tougher run. The actual blast lasts just as long.",
+      "logic": "30–180 seconds between the warning and the shock wave. Later world emission stages shift to match; the active emission still lasts 60 seconds.",
       "interaction": "Only the warning. The emission itself lasts as long as before, and NPCs still take cover with you.",
       "exposeInUi": false
     },

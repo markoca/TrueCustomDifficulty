@@ -84,6 +84,35 @@ def main():
                   '"EMISSIONS"', '"STORMS"', '"EMISSION WARNING"', '"RESTOCK EVERY"',
                   "ZoneTimersPolicy.EmissionEnd(warning)", "ZoneTimersPolicy.GenericRestockDays("):
         check(token in ui, "board drifted: " + token)
+    # Source-backed, collision-free weather UI: validate the scoped renderer,
+    # not similarly-named card drawing in unrelated visual families.
+    weather_ui = ui[ui.index('    private void DrawZoneWeatherBoard('):
+                    ui.index('    private void DrawTraderRestockBoard(')]
+    check('dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9), knobCard' not in weather_ui,
+          "no rectangular frame around the three weather knobs")
+    check('DrawSourceKnob(dc, parameter, knobs[i].Label, knobCard' in weather_ui,
+          "weather uses the native source dials")
+    check('"RANDOM EMISSIONS"' in weather_ui and '"TIME TO FIND COVER"' in weather_ui,
+          "gamer-facing weather knob titles")
+    check('parameter is null || isWarning ? null' in weather_ui and 'positivePrefix: false' in weather_ui,
+          "warning dial has only the SECONDS unit, no overlapping secondary phrase or artificial plus")
+    check('seconds / Math.Max(1.0, end)' in weather_ui and
+          'seconds / ZoneTimersPolicy.EmissionWeatherSeconds' not in weather_ui,
+          "event bar ends with the actual emission stages, not the 300 s weather slot")
+    check('warning + ZoneTimersPolicy.Stages[3].Duration' in weather_ui and
+          'ZoneTimersPolicy.EmissionEnd(warning)' in weather_ui,
+          "active and aftermath endpoints share native source timing")
+    check('"FIND COVER · EMISSION · AFTERMATH"' in weather_ui and 'TimeX(cover)' in weather_ui,
+          "phase names and NPC shelter marker")
+    for warning in (30.0, 60.0, 180.0):
+        event_end = warning + 80.0
+        active_end = warning + 60.0
+        npc_out = warning + 70.0
+        check(0 < warning/event_end < active_end/event_end < npc_out/event_end < 1,
+              f"warning/active/AI/aftermath positions remain ordered at {warning}s")
+        check(abs(event_end/event_end-1) < 1e-9, "no empty tail after aftermath")
+    for phrase in ('"OFF"', '"NORMAL"', '"LESS OFTEN"', '"MORE OFTEN"'):
+        check(phrase in policy, "short in-dial weather state " + phrase)
     vm = (APP / "ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
     check("ZoneTimersPolicy.WeatherIds.Contains(p.Id)" in vm, "hidden ZONE WEATHER members have no view model")
 

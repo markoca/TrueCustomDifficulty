@@ -1,3 +1,9 @@
+
+## 2026-11-18 — CURRENT: Frameless ZONE WEATHER dials and actual emission phases
+
+* The three source-backed dials keep the same compact `ArtifactKnobBank` positions and native ranges, but **no individual rounded-rectangle frames** are painted. Captions are **RANDOM EMISSIONS**, **STORMS**, and **TIME TO FIND COVER**. Both frequency dials show only a short second line (`OFF`, `NORMAL`, `LESS OFTEN`, `MORE OFTEN`) beneath their multiplier. The warning dial shows only its unsigned seconds value and `SECONDS` unit: no secondary `TO FIND COVER` drawn over it. Hover, 270° arcs, keyboard/wheel editing, disabled appearance, native ticks and reference markers stay unchanged.
+* The **ONE EMISSION** rail is **not** a 0–300 s representation of the independent weather window. Its full width now covers the exact Default emission stage sequence from 0 to `ZoneTimersPolicy.EmissionEnd(warning)` = warning + 80 s (110–260 s over the configured warning range), and three distinct continuous segments fill it: **FIND COVER** from 0 to warning, **EMISSION** from warning through warning + 60 s (the Active stage), **AFTERMATH** for the final 20 s. The separately sourced NPC AI `EmissionEnd` at warning + 70 s remains a contrasting white marker inside AFTERMATH. The stage values and 300 s weather selection duration in the CFG are **not changed**.
+* Below the rail, compact gamer-facing readouts report time to hide, the real active-emission interval, when its stages end, and when NPCs leave shelter. No fake five-minute-empty-tail or misleading `CALM` phase is drawn. Only edited numbers are accented. All changes are presentation-only; original source edits, factory presets, native step sizes, and save compatibility remain intact.
 # ZONE WEATHER and TRADER RESTOCK (2026-11-18)
 
 Two new boards with four controls. Before building them, each source was checked for what else depends on it.
