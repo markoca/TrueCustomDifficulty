@@ -1,3 +1,26 @@
+## 2026-11-18 — CURRENT: medical treatment is a tactical commitment (5–10 s)
+
+**Authoritative timing overlay:** `tools/factory_preset_heal_time_2026_11_18.json`, applied after current scarcity/refinement values. All **48 factory medical-duration settings** now use native seconds from **5–10 s**, never the previously shipped 1–4 s arcade treatment. Even with scarce medicine, instantaneous combat healing would undermine survival. No new CFG IDs: four existing `Duration` targets, BandageHealing2, MedkitHealing3, ArmyMedkitHealing4 and EcoMedkitHealing4, via the unchanged writer. These sources configure healing-effect duration; they are not a proven change to the separate consumable-use animation or interruption rules, which require in-game testing.
+
+| Role | Bandage | Medkit | Army medkit | Eco medkit |
+|---|---:|---:|---:|---:|
+| Anomaly Runner | 6 s | 7 s | 8 s | 8 s |
+| Field Medic | 5 s | 6 s | 7 s | 7 s |
+| Hardcore+ | 8 s | 9 s | 10 s | 10 s |
+| Hardcore | 7 s | 8 s | 9 s | 9 s |
+| Immersive | 6 s | 7 s | 8 s | 8 s |
+| Mercenary | 5 s | 7 s | 7 s | 8 s |
+| Mutant Hunter | 6 s | 7 s | 8 s | 8 s |
+| Outcast | 8 s | 9 s | 10 s | 10 s |
+| Scavenger | 7 s | 8 s | 9 s | 9 s |
+| Smuggler | 5 s | 7 s | 8 s | 8 s |
+| Tactical | 6 s | 8 s | 8 s | 8 s |
+| Wanderer | 6 s | 7 s | 8 s | 8 s |
+
+**Balance:** Field Medic is quickest without instant healing; professional combat/courier roles retain deliberate but shorter treatment windows; tactical/hunter/explorer roles need a safe pause; Scavenger/Hardcore are slower; Hardcore+ and Outcast pay the greatest exposure cost. Bandages are never slower than kits. The **manual HEAL TIME control still permits 1–10 s** as explicitly specified for editing; 5 s is a *factory-preset balance policy*, not a new global UI restriction. The existing compact per-item vertical bars, Stamina Usage alignment, hover, right-click reset, modified-value highlights and catalog design remain unchanged.
+
+Only exact byte-identical prior stock profiles upgrade via `PresetDirectoryService.PreHealTimeFactoryBlobs`; modified stock-named files and all custom presets are preserved. Both Python factory audits and AllControls embedded-factory contract enforce all 48 values; local Wine and real in-game timings still need testing.
+
 ## 2026-11-18 — CURRENT: scarcity-first role refinement, 12-profile second pass
 
 **Authoritative overlay:** `tools/factory_preset_scarcity_refine_2026_11_18.json`. This supersedes only the listed values from older `factory_preset_*` ledgers, while leaving their dated source decisions as historical evidence. The first 2026-11-18 role-vibe pass remains active everywhere else. **140 actual preset edits**, including **16 Smart Loot category toggles**, in the existing **452 native controls per role**. No new control IDs or baseline difficulty changes.

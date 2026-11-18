@@ -1,0 +1,94 @@
+{
+  "version": 1,
+  "date": "2026-11-18",
+  "source": "STALKER 2.1 medical healing Duration source controls",
+  "rationale": "Healing takes tactical time in stock profiles. No stock profile uses a 1–4 second heal; manual 1–10 second editing remains available.",
+  "previousStockBlobs": {
+    "Anomaly Runner": "c51b0daa0f228ab4aade4f663c7f211d49d8b116",
+    "Field Medic": "3293a8996967f59eada054b0d5c4401a42650431",
+    "Hardcore+": "5aecc6080dcb2f8a8f062ccdaf57c5c1133bfdd7",
+    "Hardcore": "c448a2982c399ba75c56c819b003b8adbd72a982",
+    "Immersive": "c15555f62a5e1a68500e679a4f1c27dd3f0a2b36",
+    "Mercenary": "046015f798b29c937a05f1ae5018ef8acb065d57",
+    "Mutant Hunter": "ee8015e552d1771ebb245dfec4deb45495a6dee8",
+    "Outcast": "4686fdcf9f7770b52b416411af0b555da7d39ef2",
+    "Scavenger": "aadbdd82cc4bcbb1cb1ae211998cd9d316803605",
+    "Smuggler": "1afed671661ae01d3ed8839c2f8f94372458ce75",
+    "Tactical": "85ab6e1513789c4f794e8720c522e6dc83554dac",
+    "Wanderer": "e495c007cd6310ad00be8ce6b41fe7adf4a6b219"
+  },
+  "values": {
+    "Anomaly Runner": {
+      "health.bandageHealTime": 6,
+      "health.medkitHealTime": 7,
+      "health.armyMedkitHealTime": 8,
+      "health.ecoMedkitHealTime": 8
+    },
+    "Field Medic": {
+      "health.bandageHealTime": 5,
+      "health.medkitHealTime": 6,
+      "health.armyMedkitHealTime": 7,
+      "health.ecoMedkitHealTime": 7
+    },
+    "Hardcore+": {
+      "health.bandageHealTime": 8,
+      "health.medkitHealTime": 9,
+      "health.armyMedkitHealTime": 10,
+      "health.ecoMedkitHealTime": 10
+    },
+    "Hardcore": {
+      "health.bandageHealTime": 7,
+      "health.medkitHealTime": 8,
+      "health.armyMedkitHealTime": 9,
+      "health.ecoMedkitHealTime": 9
+    },
+    "Immersive": {
+      "health.bandageHealTime": 6,
+      "health.medkitHealTime": 7,
+      "health.armyMedkitHealTime": 8,
+      "health.ecoMedkitHealTime": 8
+    },
+    "Mercenary": {
+      "health.bandageHealTime": 5,
+      "health.medkitHealTime": 7,
+      "health.armyMedkitHealTime": 7,
+      "health.ecoMedkitHealTime": 8
+    },
+    "Mutant Hunter": {
+      "health.bandageHealTime": 6,
+      "health.medkitHealTime": 7,
+      "health.armyMedkitHealTime": 8,
+      "health.ecoMedkitHealTime": 8
+    },
+    "Outcast": {
+      "health.bandageHealTime": 8,
+      "health.medkitHealTime": 9,
+      "health.armyMedkitHealTime": 10,
+      "health.ecoMedkitHealTime": 10
+    },
+    "Scavenger": {
+      "health.bandageHealTime": 7,
+      "health.medkitHealTime": 8,
+      "health.armyMedkitHealTime": 9,
+      "health.ecoMedkitHealTime": 9
+    },
+    "Smuggler": {
+      "health.bandageHealTime": 5,
+      "health.medkitHealTime": 7,
+      "health.armyMedkitHealTime": 8,
+      "health.ecoMedkitHealTime": 8
+    },
+    "Tactical": {
+      "health.bandageHealTime": 6,
+      "health.medkitHealTime": 8,
+      "health.armyMedkitHealTime": 8,
+      "health.ecoMedkitHealTime": 8
+    },
+    "Wanderer": {
+      "health.bandageHealTime": 6,
+      "health.medkitHealTime": 7,
+      "health.armyMedkitHealTime": 8,
+      "health.ecoMedkitHealTime": 8
+    }
+  }
+}

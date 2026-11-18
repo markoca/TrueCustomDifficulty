@@ -52,6 +52,10 @@ ATTACK_KNOBS = json.loads((ROOT / "tools/factory_preset_attack_knobs_2026_11_18.
 VIBE = json.loads((ROOT / "tools/factory_preset_vibe_2026_11_18.json").read_text(encoding="utf-8"))
 # Current later pass: scarce-but-survivable source budgets, not a simulated RNG rate.
 SCARCITY = json.loads((ROOT / "tools/factory_preset_scarcity_refine_2026_11_18.json").read_text(encoding="utf-8"))
+HEAL_TIMES = json.loads((ROOT / "tools/factory_preset_heal_time_2026_11_18.json").read_text(encoding="utf-8"))
+HEAL_IDS = ("health.bandageHealTime", "health.medkitHealTime", "health.armyMedkitHealTime", "health.ecoMedkitHealTime")
+assert set(HEAL_TIMES["values"]) == set(VIBE["values"])
+assert set(HEAL_TIMES["previousStockBlobs"]) == set(VIBE["values"])
 assert set(SCARCITY["roles"]) == set(VIBE["values"])
 assert set(SCARCITY["priorCurrentStockBlobs"]) == set(VIBE["values"])
 assert set(VIBE["values"]) == {p.stem for p in (APP / "Presets").glob("*.json")}
@@ -83,6 +87,7 @@ for path in presets:
     # Source-native 2026-11-18 scarcity/refinement overlay wins over old balance
     # epoch matrices. These previous matrices stay immutable historical evidence.
     role.update(SCARCITY["roles"][path.stem]["changes"])
+    role.update(HEAL_TIMES["values"][path.stem])
     # 2026-11-18 attack-only pass: role values of removed controls (roars, growls, ...) are gone.
     role = {k: v for k, v in role.items() if k in by_id}
     for pid in NEW_IDS | set(role):
@@ -103,6 +108,9 @@ for path in presets:
     assert amount("loot.looseWorldLootRemoved") >= .5, path.name
     assert amount("loot.worldWeaponDensity") <= .7, path.name
     assert amount("environment.artifactCount") == 1, path.name
+    assert set(HEAL_TIMES["values"][path.stem]) == set(HEAL_IDS), path.name
+    assert all(5 <= amount(pid) <= 10 for pid in HEAL_IDS), path.name
+    assert amount(HEAL_IDS[0]) <= min(amount(pid) for pid in HEAL_IDS[1:]), path.name
     assert amount("economy.traderAmmoStock") >= .25, path.name
     assert amount("loot.npcMedicalChance") > 0, path.name
     if enabled("loot.stashSmartLootEnabled"):
@@ -156,6 +164,9 @@ FALL = json.loads((ROOT / "tools/factory_preset_fall_damage_2026_11_18.json").re
 assert pds.count("PreFallDamageFactoryBlobs") == 3
 assert pds.count("PreVibeFactoryBlobs") == 3
 assert pds.count("PreScarcityRefineFactoryBlobs") == 3
+assert pds.count("PreHealTimeFactoryBlobs") == 3
+for _name, _hash in HEAL_TIMES["previousStockBlobs"].items():
+    assert f'["{_name}"] = "{_hash}"' in pds, _name
 for _name, _hash in SCARCITY["priorCurrentStockBlobs"].items():
     assert f'["{_name}"] = "{_hash}"' in pds, _name
 for _name, _hash in VIBE["previousStockBlobs"].items():
@@ -184,4 +195,4 @@ assert len(pds.split("PreNewControlsFactoryBlobs =", 1)[1].split("};", 1)[0].spl
 
 assert sum(len(role["changes"]) for role in SCARCITY["roles"].values()) == 140
 assert all(role.get("intent") for role in SCARCITY["roles"].values())
-print(f"PASS: 12 factory profiles × {len(by_id)} values; 53 mutant moves per role; 140 source-native role scarcity edits, all supply gates and exact-stock upgrade hashes")
+print(f"PASS: 12 factory profiles × {len(by_id)} values; 48 native HEAL TIME durations >= 5 s; 53 mutant moves per role; 140 source-native scarcity edits, exact-stock upgrade hashes")

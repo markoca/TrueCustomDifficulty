@@ -2204,6 +2204,35 @@ _current_scarcity_roles = _current_scarcity["roles"]
 if (set(_current_scarcity_roles) != set(_factory_preset_names)
     or len(_current_scarcity.get("priorCurrentStockBlobs", {})) != 12):
     _factory_errors.append("scarcity refinement current role matrix/upgrade census missing")
+ 
+# Active 2026-11-18 HEAL TIME factory balance supersedes old 1–4 s roles;
+# 1–10 s is still available to manual custom presets.
+_current_heal = json.loads((ROOT / "tools/factory_preset_heal_time_2026_11_18.json").read_text(encoding="utf-8"))
+_heal_ids = ("health.bandageHealTime", "health.medkitHealTime",
+             "health.armyMedkitHealTime", "health.ecoMedkitHealTime")
+if (set(_current_heal.get("values", {})) != set(_factory_preset_names)
+        or set(_current_heal.get("previousStockBlobs", {})) != set(_factory_preset_names)):
+    _factory_errors.append("HEAL TIME overlay must cover all 12 roles and stock identities")
+else:
+    for _name, _target in _current_heal["values"].items():
+        _entries = json.loads((_factory_preset_dir / f"{_name}.json").read_text(encoding="utf-8"))["values"]
+        if set(_target) != set(_heal_ids):
+            _factory_errors.append(f"{_name}: incomplete per-item HEAL TIME mapping")
+            continue
+        for _id, _duration in _target.items():
+            _slider = _factory_catalog[_id]["slider"]
+            if (not 5 <= _duration <= 10 or _duration != int(_duration)
+                    or _duration < _slider["min"] or _duration > _slider["max"]
+                    or _entries[_id] != {"kind": "slider", "number": _duration}):
+                _factory_errors.append(f"{_name}: non-tactical HEAL TIME {_id}")
+        if _target[_heal_ids[0]] > min(_target[_id] for _id in _heal_ids[1:]):
+            _factory_errors.append(f"{_name}: bandage takes longer than medkits")
+    if _factory_service_text.count("PreHealTimeFactoryBlobs") != 3:
+        _factory_errors.append("exact-stock HEAL TIME migration is not wired")
+    for _name, _hash in _current_heal["previousStockBlobs"].items():
+        if f'["{_name}"] = "{_hash}"' not in _factory_service_text:
+            _factory_errors.append(f"{_name}: previous HEAL TIME factory hash missing")
+
 _balance_matrix = json.loads((ROOT / "tools/factory_preset_scarcity_balance.json").read_text(encoding="utf-8"))
 _balance_groups = _balance_matrix["groups"]
 _balance_profiles = _balance_matrix["profiles"]

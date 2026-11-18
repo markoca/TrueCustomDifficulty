@@ -1,3 +1,7 @@
+## 2026-11-18 — Healing time is part of every factory role
+
+All twelve shipped profiles now use **5–10 seconds** for their four native item HEAL TIME values. Field Medic remains quickest; Hardcore+ and Outcast expose the player longest. Previous 1–4 s factory heals are superseded. The manual catalog range remains **1–10 s** with unchanged compact UI. Existing exact-byte stock copies upgrade automatically; customized factory-named and user presets are never overwritten. Full role matrix and source notes: `docs/FACTORY-PRESETS.md` and `tools/factory_preset_heal_time_2026_11_18.json`.
+
 ## 2026-11-18 — Second role pass: scarcity matters
 
 All twelve shipped profiles now have source-backed, role-specific **Corpse Scarcity** and **Stash Supply Reduction** instead of the previous uniform zero. Extra supplies from stash Smart Loot are scaled down; if a role depends on medicines (Field Medic), paid ammunition (Mercenary and Mutant Hunter), body scavenging (Scavenger) or long journeys (Wanderer), it retains a modest useful source instead of completely eliminating one. Hardcore+ retains both Smart Loot masters OFF and its existing severe world-item removals. These edits never touch quest/unique loot or NPC equipped weapons. Actual changes by role are documented in `docs/FACTORY-PRESETS.md` and `tools/factory_preset_scarcity_refine_2026_11_18.json`. Unmodified factory files upgrade on restart; user-edited copies are never overwritten.

@@ -606,19 +606,19 @@
     },
     "health.bandageHealTime": {
       "kind": "slider",
-      "number": 1
+      "number": 5
     },
     "health.medkitHealTime": {
       "kind": "slider",
-      "number": 1
+      "number": 6
     },
     "health.armyMedkitHealTime": {
       "kind": "slider",
-      "number": 1
+      "number": 7
     },
     "health.ecoMedkitHealTime": {
       "kind": "slider",
-      "number": 1
+      "number": 7
     },
     "health.medkitHealing": {
       "kind": "slider",

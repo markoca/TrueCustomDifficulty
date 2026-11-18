@@ -1,3 +1,8 @@
+## CURRENT 2026-11-18 — Factory healing follows the native medical controls
+
+* Factory Bandage / Medkit / Army Medkit / Eco Medkit HEAL TIME values are now **5–10 s** with distinct roles, using the existing catalog's **1–10 s** source duration range and native 1 s step. No UI layout, range, control ID, renderer, frame or writer modification. Each existing medical vertical duration bar stays compact beside Healing and Bleeding, with the same hover/reset and numbers-only modified accent.
+* The 5 s minimum is factory preset policy and does not limit the editor. Source `Duration` is not proof of use-animation timing; test actual healing completion in STALKER 2. See `docs/FACTORY-PRESETS.md`.
+
 ## CURRENT 2026-11-18 — Preset scarcity tuning follows existing native UI grammar
 
 * The 12 factory profiles use existing, source-aligned CORPSE SCARCITY, STASH SUPPLY REDUCTION and STASH SMART LOOT source controls rather than inventing new domain-wide percentages. Native 5% grid for generic corpse/stash reductions, 0.05× Smart Loot chance steps, compact sibling knob/slider geometry, no extra frames, no superfluous Base/Vanilla labels, readable numbers and units, shared hover and reset semantics, accent only on modified digits. All values remain controlled by the same data catalog and reference difficulty.

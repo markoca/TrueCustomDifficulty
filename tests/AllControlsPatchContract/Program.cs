@@ -591,6 +591,21 @@ internal static partial class Program
         {
             var problems = new List<string>();
             var checkedValues = 0;
+            var healTimeByRole = new Dictionary<string, (int Bandage, int Medkit, int Army, int Eco)>(StringComparer.Ordinal)
+            {
+                ["Anomaly Runner"] = (6, 7, 8, 8),
+                ["Field Medic"] = (5, 6, 7, 7),
+                ["Hardcore+"] = (8, 9, 10, 10),
+                ["Hardcore"] = (7, 8, 9, 9),
+                ["Immersive"] = (6, 7, 8, 8),
+                ["Mercenary"] = (5, 7, 7, 8),
+                ["Mutant Hunter"] = (6, 7, 8, 8),
+                ["Outcast"] = (8, 9, 10, 10),
+                ["Scavenger"] = (7, 8, 9, 9),
+                ["Smuggler"] = (5, 7, 8, 8),
+                ["Tactical"] = (6, 8, 8, 8),
+                ["Wanderer"] = (6, 7, 8, 8),
+            };
             foreach (var name in names)
             {
                 var path = Path.Combine(dir, name);
@@ -647,6 +662,12 @@ internal static partial class Program
                     && Math.Abs(file0.Values["loot.genericCorpseReduction"].Number!.Value - expectedSupply.Corpse) < 1e-9
                     && Math.Abs(file0.Values["loot.genericStashReduction"].Number!.Value - expectedSupply.Stash) < 1e-9,
                     name + ": generic corpse/stash scarcity not aligned with role");
+                Check(healTimeByRole.TryGetValue(file0.Name, out var expectedHeal)
+                    && file0.Values["health.bandageHealTime"].Number == expectedHeal.Bandage
+                    && file0.Values["health.medkitHealTime"].Number == expectedHeal.Medkit
+                    && file0.Values["health.armyMedkitHealTime"].Number == expectedHeal.Army
+                    && file0.Values["health.ecoMedkitHealTime"].Number == expectedHeal.Eco,
+                    name + ": HEAL TIME differs from 5–10 s factory balance");
                 var stashSmartEnabled = file0.Values["loot.stashSmartLootEnabled"].Boolean == true;
                 var stockedChance = file0.Values["loot.stashSmartStockedChance"].Number!.Value;
                 var lowChance = file0.Values["loot.stashSmartShortChance"].Number!.Value;

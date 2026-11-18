@@ -1082,6 +1082,25 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "f4166a7791858bcf98600aa3b1ae1822ace65041",
     };
 
+    // 2026-11-18: factory healing times are tactical (5–10 s). Never overwrite
+    // user-edited factory names; upgrade only exact old stock Git blob identities.
+    private static readonly Dictionary<string, string> PreHealTimeFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "c51b0daa0f228ab4aade4f663c7f211d49d8b116",
+        ["Field Medic"] = "3293a8996967f59eada054b0d5c4401a42650431",
+        ["Hardcore+"] = "5aecc6080dcb2f8a8f062ccdaf57c5c1133bfdd7",
+        ["Hardcore"] = "c448a2982c399ba75c56c819b003b8adbd72a982",
+        ["Immersive"] = "c15555f62a5e1a68500e679a4f1c27dd3f0a2b36",
+        ["Mercenary"] = "046015f798b29c937a05f1ae5018ef8acb065d57",
+        ["Mutant Hunter"] = "ee8015e552d1771ebb245dfec4deb45495a6dee8",
+        ["Outcast"] = "4686fdcf9f7770b52b416411af0b555da7d39ef2",
+        ["Scavenger"] = "aadbdd82cc4bcbb1cb1ae211998cd9d316803605",
+        ["Smuggler"] = "1afed671661ae01d3ed8839c2f8f94372458ce75",
+        ["Tactical"] = "85ab6e1513789c4f794e8720c522e6dc83554dac",
+        ["Wanderer"] = "e495c007cd6310ad00be8ce6b41fe7adf4a6b219",
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -1130,7 +1149,8 @@ public sealed class PresetDirectoryService
             && !PreControllerDogsFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreFallDamageFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreVibeFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreScarcityRefineFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreScarcityRefineFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreHealTimeFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -1236,7 +1256,9 @@ public sealed class PresetDirectoryService
                 || (PreVibeFactoryBlobs.TryGetValue(name, out var preVibeHash)
                     && actual.Equals(preVibeHash, StringComparison.OrdinalIgnoreCase))
                 || (PreScarcityRefineFactoryBlobs.TryGetValue(name, out var preScarcityRefineHash)
-                    && actual.Equals(preScarcityRefineHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preScarcityRefineHash, StringComparison.OrdinalIgnoreCase))
+                || (PreHealTimeFactoryBlobs.TryGetValue(name, out var preHealTimeHash)
+                    && actual.Equals(preHealTimeHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {
