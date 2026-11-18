@@ -779,3 +779,5 @@ Fifth run (2026-11-18, 4c23dcf): 12 PASS / 1 FAIL. The NPC LOOT board height pin
 Sixth run (2026-11-18, b978bdd): 12 PASS / 1 FAIL. `stash-medical-zero` now expects Basic Chance rows to follow the Basic cell.
 
 Seventh run (2026-11-18, 2926ff9): 12 PASS / 1 FAIL. The GenericSupplyReduction NPC LOOT heights were updated to 510 / 706.
+
+Eighth run (2026-11-18, debb67e): **13 PASS / 0 FAIL**. Every Windows writer contract is green for v0.9.27.0.

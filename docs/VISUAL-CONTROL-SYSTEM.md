@@ -1,3 +1,7 @@
+## CURRENT 2026-11-18 — Windows writer contracts green: 13 PASS / 0 FAIL
+
+* First complete green `writer --wine` run (debb67e) for v0.9.27.0: Combat 62, Health/Stamina 56, Survival 130, Economy 48, Equipment 50, Environment 94, A-Life 92, Loot direct 117, Loot special 63+3, World removals 27, World placement 26, All controls 429/429, RC signal 13. The remaining NOT RUN are the source-ZIP audits (green earlier today with the ZIPs: 45 PASS) and manual in-game acceptance.
+
 ## CURRENT 2026-11-18 — Seventh Wine contract run: 12 PASS / 1 FAIL
 
 * No UI change. GenericSupplyReduction had the same five pre-redesign NPC LOOT height pins (470 / 568). They are now 510 / 706, like NpcConsumableChanceFirstPass. No other board-height pins remain in the C# contracts, apart from the Health ones, which pass. All three reflection targets (`IsNpcBonusSliderLocked`, `_currentBoolean`, `StashGearWeightShares`) still exist.
