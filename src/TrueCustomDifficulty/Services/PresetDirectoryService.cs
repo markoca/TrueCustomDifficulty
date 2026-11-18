@@ -903,6 +903,14 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "7a7a00e33fce3d777d77857baa1691b91c934a5b",
     };
 
+    // Stock Hardcore before Pseudodog ABILITIES moved to howl and summons (2026-11-18):
+    // it stored 2×, the old Master reference of a knob that did nothing.
+    private static readonly Dictionary<string, string> PrePseudodogAbilityFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Hardcore"] = "3bc16c0d89a73d5b5c8a4bc6a01c8d4221c0a7c4",
+    };
+
     // Pre-range-limit stock Wanderer (75 s warning). Upgrade only an exact,
     // untouched factory copy; never overwrite a user-customized preset.
     private static readonly Dictionary<string, string> PreCoverRangeFactoryBlobs =
@@ -949,7 +957,8 @@ public sealed class PresetDirectoryService
             && !PreLairRefillFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreLairRespawnTimeFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreZoneWeatherFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreCoverRangeFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreCoverRangeFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PrePseudodogAbilityFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -1035,7 +1044,9 @@ public sealed class PresetDirectoryService
                 || (PreZoneWeatherFactoryBlobs.TryGetValue(name, out var preZoneWeatherHash)
                     && actual.Equals(preZoneWeatherHash, StringComparison.OrdinalIgnoreCase))
                 || (PreCoverRangeFactoryBlobs.TryGetValue(name, out var preCoverRangeHash)
-                    && actual.Equals(preCoverRangeHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preCoverRangeHash, StringComparison.OrdinalIgnoreCase))
+                || (PrePseudodogAbilityFactoryBlobs.TryGetValue(name, out var prePseudodogHash)
+                    && actual.Equals(prePseudodogHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

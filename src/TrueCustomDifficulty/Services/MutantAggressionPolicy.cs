@@ -96,7 +96,7 @@ public static class MutantAggressionPolicy
                 A("Chimera", "RunAttack", "Growl", "ClawAttack", "ShortJumpAttack", "LongJumpAttack", "FlyThrough")
             },
             T("ClawAttack", "RunAttack", "ShortJumpAttack", "LongJumpAttack", "FlyThrough", "JumpToEnemy", "Evasion"),
-            T("Growl"), ("leap", 8), ("growl", 30)),
+            T("Growl"), ("leap", 8), ("growl", 60)),
         new("controller", "Controller", new[]
             {
                 A("Controller", "ClawAttack", "Abilities.PSYAttack", "Roar", "Abilities.RaiseDeadBody", "Abilities.ZombifyNPC"),
@@ -123,8 +123,11 @@ public static class MutantAggressionPolicy
                 A("PseudoDog", "ShockwaveAttack", "RunAttack", "BiteAttack"),
                 A("PseudoDogCombatSummon"), A("PseudoDogRetreatSummon")
             },
-            T("RunAttack", "BiteAttack"),
-            T("ShockwaveAttack"), ("bite", 7), null),
+            // The game's Master list names ShockwaveAttack for PseudoDog, but no pseudodog
+            // ability uses that tag (a no-op entry); it rides with ATTACKS so the list stays
+            // covered. Real abilities: howl 30 s, combat summon 20 s, retreat summon 10 s.
+            T("RunAttack", "BiteAttack", "ShockwaveAttack"),
+            T("Howl", "CombatSummon", "RetreatSummon"), ("bite", 7), ("summon", 20)),
         new("pseudogiant", "Pseudogiant", new[]
             {
                 A("Pseudogiant", "ShockwaveAttack", "RunAttack", "Charge"), A("Pseudogiant_Collar")
@@ -133,7 +136,7 @@ public static class MutantAggressionPolicy
             T("ShockwaveAttack", "Roar", "Throw"), ("stomp", 5), ("shockwave", 8)),
         new("snork", "Snork", new[] { A("Snork"), A("Snork_Collar") },
             T("ClawAttack", "KickAttack", "JumpAttack", "JumpToEnemy", "FlyThrough", "Evasion"),
-            T("Growl"), ("kick", 7), ("growl", 20)),
+            T("Growl"), ("kick", 7), ("growl", 120)),
         new("tushkan", "Tushkan", new[] { A("Tushkan") },
             T("JumpAttack", "ClawAttack"),
             Array.Empty<string>(), ("claw", 3), null)
@@ -203,6 +206,7 @@ public static class MutantAggressionPolicy
             => "Ability.Cooldown.Shield",
         ("bloodsucker", Group.Abilities) => "Ability.Cooldown.ActivateAnomaly",
         ("chimera", Group.Abilities) or ("snork", Group.Abilities) => "Ability.Cooldown.Growl",
+        ("pseudodog", Group.Abilities) => "Ability.Cooldown.CombatSummon",
         ("controller", Group.Abilities) => "Abilities.PSYAttack",
         ("pseudogiant", Group.Abilities) => "Ability.Cooldown.ShockwaveAttack",
         _ => string.Empty

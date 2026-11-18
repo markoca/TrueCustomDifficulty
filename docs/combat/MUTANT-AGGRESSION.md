@@ -27,9 +27,11 @@ All are `runtime_test_required`. Source: S.T.A.L.K.E.R. 2 2.1 base dump.
   Master tags. Navigation/passive tags (`Jump`, `EscapeIsolatedNavmesh`, `Abilities.Passive.Aura`) and the boar
   `Grunt` sound are left out.
 * **ATTACKS**: ClawAttack, BiteAttack, BiteAttackAnyAngle, RunAttack, JumpAttack, Short/LongJumpAttack, KickAttack,
-  TurnAttack, Charge, JumpToEnemy, FlyThrough, Evasion, AOEAttack (Poltergeist burst).
+  TurnAttack, Charge, JumpToEnemy, FlyThrough, Evasion, AOEAttack (Poltergeist burst). Pseudodog ATTACKS also carry
+  `ShockwaveAttack`: the game's Master list names it for PseudoDog, but no pseudodog ability uses it (no-op).
 * **ABILITIES**: Abilities.PSYAttack / RaiseDeadBody / ZombifyNPC, Roar, Growl, BlinkTeleport, Shield, Throw,
-  ThrowGrenade, WeaponDrag, WeaponRiseAndShoot, ActivateAnomaly, ShockwaveAttack. Boar, Deer, Flesh and Tushkan
+  ThrowGrenade, WeaponDrag, WeaponRiseAndShoot, ActivateAnomaly, ShockwaveAttack (Pseudogiant); Pseudodog: Howl,
+  CombatSummon, RetreatSummon (vanilla 1× on every difficulty; 2026-11-18 fix, the old psi-wave tag did nothing). Boar, Deer, Flesh and Tushkan
   have none, so they have no ABILITIES track.
 * Agents (exact SIDs, 38): every base-game variant of the family — e.g. Bloodsucker, MistBloodsucker,
   Bloodsucker_Collar, AshyBloodsucker, PrologueBloodsucker; Poltergeist + Electro/Toxic/Fire/YanivToxicRozliv/
@@ -39,8 +41,8 @@ All are `runtime_test_required`. Source: S.T.A.L.K.E.R. 2 2.1 base dump.
   (non-bpatch) as soon as any rate differs from its vanilla: a group at its vanilla keeps the game's own Master
   entries (0.5, same order); a group at 1× writes nothing.
 * The card shows one real cooldown per group (`2x · psy 6 s`): claw/bite/kick/leap/stomp/burst for ATTACKS,
-  psy/shield/teleport/anomaly/growl/shockwave for ABILITIES (Pseudodog's psi wave has no own duration in the CFG,
-  so only the rate is shown). At the vanilla value it shows the game's effective time (e.g. Master Controller psy 6 s).
+  psy/shield/teleport/anomaly/growl/shockwave/summon for ABILITIES. Chimera growl is 60 s and Snork growl 120 s
+  (2026-11-18 fix; the card used to say 30 s and 20 s). At the vanilla value it shows the game's effective time (e.g. Master Controller psy 6 s).
 * `Mutant_AttackCooldown` (1.0 on all difficulties) is not touched.
 
 ## SPECIAL ABILITY RATE → `CombatSynchronizationPrototypes`

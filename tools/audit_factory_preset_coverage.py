@@ -87,6 +87,7 @@ for _name, _hash in LAIR["previousStockBlobsBeforeRefill"].items():
     assert f'["{_name}"] = "{_hash}"' in pds, _name
 assert pds.count("PreLairRespawnTimeFactoryBlobs") == 3
 assert pds.count("PreZoneWeatherFactoryBlobs") == 3
+assert pds.count("PrePseudodogAbilityFactoryBlobs") == 3 and '["Hardcore"] = "3bc16c0d89a73d5b5c8a4bc6a01c8d4221c0a7c4"' in pds
 for _name, _hash in ZONE["previousStockBlobs"].items():
     assert f'["{_name}"] = "{_hash}"' in pds, _name
 for _name, _hash in LAIR["previousStockBlobsBeforeRespawnTime"].items():

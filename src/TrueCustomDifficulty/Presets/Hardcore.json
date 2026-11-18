@@ -1626,7 +1626,7 @@
     },
     "combat.mutantAbilityRate.pseudodog": {
       "kind": "slider",
-      "number": 2
+      "number": 1
     },
     "combat.mutantAbilityRate.pseudogiant": {
       "kind": "slider",

@@ -73,6 +73,18 @@ def master(key: str, group: str) -> bool:
     return any(t in f[group] for v in f["agents"].values() for t in v)
 
 
+# ---- source-correct headlines and pseudodog abilities (2026-11-18) ------------
+check('("growl", 60)),' in policy and '("growl", 120)),' in policy,
+      "Chimera growl 60 s and Snork growl 120 s headlines")
+check(families["pseudodog"]["ability"] == ["Ability.Cooldown.Howl", "Ability.Cooldown.CombatSummon",
+                                           "Ability.Cooldown.RetreatSummon"]
+      if families["pseudodog"]["ability"] and families["pseudodog"]["ability"][0].startswith("Ability.")
+      else families["pseudodog"]["ability"] == ["Howl", "CombatSummon", "RetreatSummon"],
+      f"pseudodog ABILITIES are its howl and summons, not the unused shockwave {families['pseudodog']['ability']}")
+cooldowns = ROOT / "docs" / "combat" / "MUTANT-COOLDOWNS.md"
+check(cooldowns.exists() and "| ABILITIES | summon | `CombatSummon` | 20 s |" in cooldowns.read_text(encoding="utf-8"),
+      "generated MUTANT-COOLDOWNS.md is current")
+
 # ---- catalog ------------------------------------------------------------------
 ids = [f"combat.mutantAttackRate.{k}" for k in families] + \
       [f"combat.mutantAbilityRate.{k}" for k in ability_families] + ["combat.mutantSpecialAbilityRate"]

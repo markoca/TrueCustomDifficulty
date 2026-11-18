@@ -2495,7 +2495,7 @@
         ]
       },
       "rationale": "How often Pseudodogs use their attacks — bites and running bites. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its abilities (psi shockwaves) are ABILITIES.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its howls and phantom summons are ABILITIES.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
     },
@@ -2992,7 +2992,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Pseudodog Ability Rate",
-      "description": "How often a Pseudodog can use its abilities: psi shockwaves. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Pseudodog variant on the selected difficulty.",
+      "description": "How often a Pseudodog can use its abilities: howls and phantom summons. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Pseudodog variant on the selected difficulty.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -3001,10 +3001,7 @@
         "valueLabel": "Ability rate"
       },
       "vanilla": {
-        "Novice": 1,
-        "Stalker": 1,
-        "Veteran": 1,
-        "Master": 2
+        "All": 1
       },
       "default": {
         "mode": "referenceDifficulty"
@@ -3032,7 +3029,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Pseudodogs use their abilities — psi shockwaves. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "rationale": "How often Pseudodogs howl and summon phantom dogs. Vanilla: 1×; summon every 20 s, retreat summon every 10 s, howl every 30 s. Higher = more phantoms in the fight.",
       "logic": "2× halves every pause between these moves; 0.5× doubles it. Its basic attacks (bites and running bites) are ATTACKS.",
       "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
