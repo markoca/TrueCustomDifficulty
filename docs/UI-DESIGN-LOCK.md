@@ -1,3 +1,8 @@
+## 2026-11-18 — CURRENT: REFILL SPEED → LAIR RESPAWN TIME
+
+* The third LAIR POPULATION card is now **RESPAWN TIME** (`alife.lairRespawnTime`, *Lair Respawn Time*). It multiplies the three respawn timers instead of dividing them, so a higher value means a longer wait: `Higher = cleared lairs stay quiet longer; lower = they come back sooner.` The line under the card is unchanged (`HALF FULL IN 3 min · FULL IN 8 min`).
+* Factory values were inverted: Hardcore+ 0.65, Hardcore and Mutant Hunter 0.8, Mercenary and Tactical 0.85, Outcast 0.9, Anomaly Runner and Scavenger 1.2, Wanderer 1.35, the rest 1×. The REFILL SPEED stock files upgrade only when byte-identical (`PreLairRespawnTimeFactoryBlobs`).
+
 ## 2026-11-18 — CURRENT: LAIR POPULATION — REFILL SPEED
 
 * Third card on the LAIR POPULATION board: **REFILL SPEED** (`alife.lairRefillSpeed`, 0.25×–4×, vanilla 1×). It sets how fast camps and nests fill back up after you thin them out.

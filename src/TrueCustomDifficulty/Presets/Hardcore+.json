@@ -882,9 +882,9 @@
       "kind": "slider",
       "number": 1.4
     },
-    "alife.lairRefillSpeed": {
+    "alife.lairRespawnTime": {
       "kind": "slider",
-      "number": 1.5
+      "number": 0.65
     },
     "survival.waterRegenDuration": {
       "kind": "slider",

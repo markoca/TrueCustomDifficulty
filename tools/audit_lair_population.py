@@ -53,15 +53,15 @@ def main():
                                    "FW_Duty", "FW_Freedom", "Object68"), f"excluded faction listed: {r['Faction']}")
         check(r["SourceMax"].isdigit(), f"non-integer source {r}")
         timers = (r["InitialRespawnSeconds"], r["FullRespawnSeconds"], r["WipeRespawnSeconds"])
-        check(timers in (("180.0", "480.0", "480.0"), ("6.0", "30.0", "30.0")), f"unexpected refill timers {r}")
+        check(timers in (("180.0", "480.0", "480.0"), ("6.0", "30.0", "30.0")), f"unexpected respawn timers {r}")
     check(sum((r["InitialRespawnSeconds"], r["FullRespawnSeconds"]) == ("180.0", "480.0") for r in rows) == 1104,
           "ordinary 180 / 480 / 480 s timers != 1104 entries")
 
     policy = (APP / "Services/LairPopulationPolicy.cs").read_text(encoding="utf-8")
     for token in ("ExpectedRows = 1116", "ExpectedBaseRows = 640", "ExpectedDlcRows = 476",
                   'HumanId = "alife.lairPopulation.human"', 'MutantId = "alife.lairPopulation.mutant"',
-                  'RefillSpeedId = "alife.lairRefillSpeed"',
-                  "sourceSeconds <= 0.0 ? 0.0 : Math.Round(sourceSeconds / speed, 1, MidpointRounding.AwayFromZero)",
+                  'RespawnTimeId = "alife.lairRespawnTime"',
+                  "sourceSeconds <= 0.0 ? 0.0 : Math.Round(sourceSeconds * multiplier, 1, MidpointRounding.AwayFromZero)",
                   '"InitialSpawnQuantityRespawnTimeSeconds"', '"MaxSpawnQuantityRespawnTimeSeconds"',
                   '"WipeRespawnTimeoutSeconds"',
                   "source <= 0 ? 0 : Math.Max(1, (int)Math.Floor(source * multiplier + 0.5))"):
@@ -71,7 +71,7 @@ def main():
                   '"SpawnSettingsPerPlayerRanks", row.Rank', '"MaxSpawnQuantity"',
                   "IsScopeApplicable(row.Scope, hasDlc1)", "if (changed == 0)",
                   "foreach (var id in LairPopulationPolicy.PopulationIds)",
-                  "LairPopulationPolicy.ScaleTimer(row.SourceTimers[t], speed)",
+                  "LairPopulationPolicy.ScaleTimer(row.SourceTimers[t], multiplier)",
                   'value.ToString("0.0", CultureInfo.InvariantCulture)'):
         check(token in writer, "writer drifted: " + token)
     main_writer = (APP / "Services/CfgPatchWriterService.cs").read_text(encoding="utf-8")
@@ -82,7 +82,7 @@ def main():
     check('LogicalName="TrueCustomDifficulty.Data.lair-population-manifest.csv"' in csproj, "manifest not embedded")
     baseline = json.loads((APP / "Data/cfg-writer-baseline.json").read_text(encoding="utf-8"))
     special = baseline["special"].get("lairPopulation", {})
-    check(special.get("parameterIds") == list(IDS) + ["alife.lairRefillSpeed"] and special.get("expectedRows") == 1116,
+    check(special.get("parameterIds") == list(IDS) + ["alife.lairRespawnTime"] and special.get("expectedRows") == 1116,
           "baseline special.lairPopulation drifted")
     check(not any(e["parameterId"].startswith("alife.lair") for e in baseline["editPoints"]),
           "lair controls have direct edit points")
@@ -96,21 +96,21 @@ def main():
             check(p["slider"] == {"min": 0.25, "max": 3, "step": 0.05, "stepMode": "absolute"}, pid + " slider")
     check(catalog["alife.lairPopulation.human"].get("exposeInUi") is True, "human card must be the board anchor")
     check(catalog["alife.lairPopulation.mutant"].get("exposeInUi") is False, "mutant card is a board member")
-    refill = catalog.get("alife.lairRefillSpeed", {})
-    check(refill.get("exposeInUi") is False and refill.get("vanilla") == {"All": 1}
-          and refill.get("slider") == {"min": 0.25, "max": 4, "step": 0.05, "stepMode": "absolute"},
-          "REFILL SPEED catalog entry drifted")
+    respawn = catalog.get("alife.lairRespawnTime", {})
+    check(respawn.get("exposeInUi") is False and respawn.get("vanilla") == {"All": 1}
+          and respawn.get("slider") == {"min": 0.25, "max": 4, "step": 0.05, "stepMode": "absolute"},
+          "RESPAWN TIME catalog entry drifted")
 
     vm = (APP / "ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
     check('["alife.lairPopulation.human"] = "LairPopulation"' in vm
           and '["alife.lairPopulation.mutant"] = "LairPopulation"' in vm
-          and '["alife.lairRefillSpeed"] = "LairPopulation"' in vm
+          and '["alife.lairRespawnTime"] = "LairPopulation"' in vm
           and '["LairPopulation"] = "alife.lairPopulation.human"' in vm, "board family wiring")
     ui = (APP / "Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
     for token in ('case "LairPopulation":', '"LairPopulation" => LairPopulationBoardHeight(width)',
                   '"LairPopulation" => LairPopulationPolicy.ParameterIds', '"LAIR POPULATION"',
-                  '"HUMAN CAMPS"', '"MUTANT NESTS"', '"REFILL SPEED"', "LairPopulationPolicy.Example(",
-                  "LairPopulationPolicy.ScaleTimer(LairPopulationPolicy.TypicalTimers[0], speed)",
+                  '"HUMAN CAMPS"', '"MUTANT NESTS"', '"RESPAWN TIME"', "LairPopulationPolicy.Example(",
+                  "LairPopulationPolicy.ScaleTimer(LairPopulationPolicy.TypicalTimers[0], multiplier)",
                   "(3 + EconomyColumns(width) - 1) / EconomyColumns(width)"):
         check(token in ui, "board drifted: " + token)
     mvm = (APP / "ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
@@ -127,10 +127,10 @@ def main():
             if m != 1:
                 check(any(scale(int(r["SourceMax"]), m) != int(r["SourceMax"]) for r in rows if r["Group"] == group),
                       f"{path.name} {pid} changes nothing")
-        speed = values["alife.lairRefillSpeed"]["number"]
-        check(abs(round((speed - 0.25) / 0.05) * 0.05 + 0.25 - speed) < 1e-9 and 0.25 <= speed <= 4,
-              f"{path.name} refill speed off grid")
-        check(lair["values"][path.stem].get("alife.lairRefillSpeed", 1) == speed, f"{path.name} refill != matrix")
+        respawn_time = values["alife.lairRespawnTime"]["number"]
+        check(abs(round((respawn_time - 0.25) / 0.05) * 0.05 + 0.25 - respawn_time) < 1e-9 and 0.25 <= respawn_time <= 4,
+              f"{path.name} respawn time off grid")
+        check(lair["values"][path.stem].get("alife.lairRespawnTime", 1) == respawn_time, f"{path.name} respawn time != matrix")
 
     if args.base and args.dlc:
         with tempfile.TemporaryDirectory() as tmp:
@@ -147,7 +147,7 @@ def main():
             print("FAIL", f)
         sys.exit(1)
     print("PASS lair population: 1116 eligible lair entries (640 base + 476 DLC1; 508 human / 608 mutant), "
-          "REFILL SPEED over 3 timers each, writer, board and 12 factory presets in step")
+          "RESPAWN TIME over 3 timers each, writer, board and 12 factory presets in step")
 
 
 if __name__ == "__main__":

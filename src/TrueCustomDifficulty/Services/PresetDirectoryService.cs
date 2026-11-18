@@ -867,6 +867,24 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "65972c7817b0831368f24c632bef0070c895e455",
     };
 
+    // Exact stock files with the short-lived REFILL SPEED key (2026-11-18).
+    private static readonly Dictionary<string, string> PreLairRespawnTimeFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "19cf294b0e0d76baacfedf5c833d21a80704e9d0",
+        ["Field Medic"] = "316ef0d7210e29c40c86d982deca9032e864362e",
+        ["Hardcore+"] = "01c28749eb0aa38d5f9e75bf9bec6d8eddd09b89",
+        ["Hardcore"] = "05c432c7c47a3aa802279d657eafd819d1cd87aa",
+        ["Immersive"] = "37388e42e9159bc65781d5ef0e3d60df45b6c1c6",
+        ["Mercenary"] = "d464f0c369e9935547434d7158dd2be5fa6d3698",
+        ["Mutant Hunter"] = "b2ac9b3eced7916103ae2f79d1e75cd5d24e65b4",
+        ["Outcast"] = "5fc800be5425a980038d13d7c5322edbbdf84a0b",
+        ["Scavenger"] = "a6953f15a176b297a2378880dc5a4b131cc748f4",
+        ["Smuggler"] = "17978ea82d548c0475d9e8e3edddd16c865a15b5",
+        ["Tactical"] = "c6a9c779ac5cbf74f3b7f0293e17b1287151939c",
+        ["Wanderer"] = "b22aaa1df4326fd35bc8fbeafee1c32e6e380348",
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -902,7 +920,8 @@ public sealed class PresetDirectoryService
             && !PreSmartGivesFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreThematicFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreLairPopulationFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreLairRefillFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreLairRefillFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreLairRespawnTimeFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -982,7 +1001,9 @@ public sealed class PresetDirectoryService
                 || (PreLairPopulationFactoryBlobs.TryGetValue(name, out var preLairHash)
                     && actual.Equals(preLairHash, StringComparison.OrdinalIgnoreCase))
                 || (PreLairRefillFactoryBlobs.TryGetValue(name, out var preLairRefillHash)
-                    && actual.Equals(preLairRefillHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preLairRefillHash, StringComparison.OrdinalIgnoreCase))
+                || (PreLairRespawnTimeFactoryBlobs.TryGetValue(name, out var preLairRespawnHash)
+                    && actual.Equals(preLairRespawnHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

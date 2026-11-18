@@ -916,8 +916,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
     // LAIR POPULATION: how many inhabitants a world lair holds (HUMAN CAMPS /
     // MUTANT NESTS, one real lair under each, LairPopulationPolicy.Scale) and
-    // how fast lairs fill back up (REFILL SPEED, the ordinary 180 / 480 s
-    // timers under it, LairPopulationPolicy.ScaleTimer).
+    // how long lairs take to fill back up (RESPAWN TIME, the ordinary
+    // 180 / 480 s timers under it, LairPopulationPolicy.ScaleTimer).
     private const double LairCardPitch = 108.0;
 
     private static double LairPopulationBoardHeight(double width)
@@ -937,7 +937,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         {
             (LairPopulationPolicy.HumanId, "HUMAN CAMPS", "BANDIT CAMP", "Bandits", "Bandits"),
             (LairPopulationPolicy.MutantId, "MUTANT NESTS", "TUSHKAN NEST", "Tushkan", "Tushkan"),
-            (LairPopulationPolicy.RefillSpeedId, "REFILL SPEED", "", "", "")
+            (LairPopulationPolicy.RespawnTimeId, "RESPAWN TIME", "", "", "")
         };
         var ranks = new[] { "Newbie", "Experienced", "Veteran", "Master" };
         var columns = EconomyColumns(ActualWidth);
@@ -955,11 +955,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             if (parameter is null)
                 continue;
 
-            if (cards[i].Id == LairPopulationPolicy.RefillSpeedId)
+            if (cards[i].Id == LairPopulationPolicy.RespawnTimeId)
             {
-                var speed = parameter.CurrentNumber;
-                var half = LairPopulationPolicy.ScaleTimer(LairPopulationPolicy.TypicalTimers[0], speed);
-                var full = LairPopulationPolicy.ScaleTimer(LairPopulationPolicy.TypicalTimers[1], speed);
+                var multiplier = parameter.CurrentNumber;
+                var half = LairPopulationPolicy.ScaleTimer(LairPopulationPolicy.TypicalTimers[0], multiplier);
+                var full = LairPopulationPolicy.ScaleTimer(LairPopulationPolicy.TypicalTimers[1], multiplier);
                 var refillLine = $"HALF FULL IN {LairTime(half)} · FULL IN {LairTime(full)}";
                 var refillText = CreateText(refillLine, 9.6,
                     !parameter.IsControlEnabled ? muted

@@ -1,6 +1,6 @@
 {
   "date": "2026-11-18",
-  "note": "LAIR POPULATION + REFILL SPEED thematic values; absent = vanilla 1\u00d7. previousStockBlobs = before LAIR POPULATION, previousStockBlobsBeforeRefill = the first LAIR POPULATION stock (c9421e9).",
+  "note": "LAIR POPULATION + RESPAWN TIME thematic values; absent = vanilla 1\u00d7. previousStockBlobs = before LAIR POPULATION; previousStockBlobsBeforeRefill = first LAIR POPULATION stock (c9421e9); previousStockBlobsBeforeRespawnTime = the REFILL SPEED stock (120176c).",
   "previousStockBlobs": {
     "Anomaly Runner": "a939727ded510f1a256139b96d42b7a96e6463dd",
     "Field Medic": "9a6724d7cf56221748e782234efa4c34e4374b96",
@@ -19,45 +19,45 @@
     "Anomaly Runner": {
       "alife.lairPopulation.human": 0.75,
       "alife.lairPopulation.mutant": 0.85,
-      "alife.lairRefillSpeed": 0.85
+      "alife.lairRespawnTime": 1.2
     },
     "Field Medic": {},
     "Hardcore+": {
       "alife.lairPopulation.human": 1.5,
       "alife.lairPopulation.mutant": 1.4,
-      "alife.lairRefillSpeed": 1.5
+      "alife.lairRespawnTime": 0.65
     },
     "Hardcore": {
       "alife.lairPopulation.human": 1.25,
       "alife.lairPopulation.mutant": 1.15,
-      "alife.lairRefillSpeed": 1.25
+      "alife.lairRespawnTime": 0.8
     },
     "Immersive": {},
     "Mercenary": {
       "alife.lairPopulation.human": 1.25,
-      "alife.lairRefillSpeed": 1.15
+      "alife.lairRespawnTime": 0.85
     },
     "Mutant Hunter": {
       "alife.lairPopulation.mutant": 1.3,
-      "alife.lairRefillSpeed": 1.25
+      "alife.lairRespawnTime": 0.8
     },
     "Outcast": {
       "alife.lairPopulation.human": 1.15,
       "alife.lairPopulation.mutant": 1.1,
-      "alife.lairRefillSpeed": 1.1
+      "alife.lairRespawnTime": 0.9
     },
     "Scavenger": {
       "alife.lairPopulation.human": 0.75,
-      "alife.lairRefillSpeed": 0.85
+      "alife.lairRespawnTime": 1.2
     },
     "Smuggler": {},
     "Tactical": {
       "alife.lairPopulation.human": 1.25,
-      "alife.lairRefillSpeed": 1.15
+      "alife.lairRespawnTime": 0.85
     },
     "Wanderer": {
       "alife.lairPopulation.human": 0.85,
-      "alife.lairRefillSpeed": 0.75
+      "alife.lairRespawnTime": 1.35
     }
   },
   "previousStockBlobsBeforeRefill": {
@@ -73,5 +73,19 @@
     "Smuggler": "8da1b84a9476a4e53071f9a18c7dff4c899b175e",
     "Tactical": "a91edf969bcf9f01781cbc37ce78af64fd9f12b1",
     "Wanderer": "65972c7817b0831368f24c632bef0070c895e455"
+  },
+  "previousStockBlobsBeforeRespawnTime": {
+    "Anomaly Runner": "19cf294b0e0d76baacfedf5c833d21a80704e9d0",
+    "Field Medic": "316ef0d7210e29c40c86d982deca9032e864362e",
+    "Hardcore+": "01c28749eb0aa38d5f9e75bf9bec6d8eddd09b89",
+    "Hardcore": "05c432c7c47a3aa802279d657eafd819d1cd87aa",
+    "Immersive": "37388e42e9159bc65781d5ef0e3d60df45b6c1c6",
+    "Mercenary": "d464f0c369e9935547434d7158dd2be5fa6d3698",
+    "Mutant Hunter": "b2ac9b3eced7916103ae2f79d1e75cd5d24e65b4",
+    "Outcast": "5fc800be5425a980038d13d7c5322edbbdf84a0b",
+    "Scavenger": "a6953f15a176b297a2378880dc5a4b131cc748f4",
+    "Smuggler": "17978ea82d548c0475d9e8e3edddd16c865a15b5",
+    "Tactical": "c6a9c779ac5cbf74f3b7f0293e17b1287151939c",
+    "Wanderer": "b22aaa1df4326fd35bc8fbeafee1c32e6e380348"
   }
 }

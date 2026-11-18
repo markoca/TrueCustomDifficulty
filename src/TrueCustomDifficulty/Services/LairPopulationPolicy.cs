@@ -13,8 +13,8 @@ namespace TrueCustomDifficulty.Services;
 /// How many inhabitants a world lair can hold: every eligible faction / rank
 /// <c>MaxSpawnQuantity</c> in <c>LairPrototypes.cfg</c> (base + DLC1),
 /// scaled half-up. A vanilla 0 stays 0 and a non-zero count never drops
-/// below 1, so no lair loses a faction. REFILL SPEED divides the three
-/// refill timers of the same entries (half-full, full, after a wipe).
+/// below 1, so no lair loses a faction. RESPAWN TIME multiplies the three
+/// respawn timers of the same entries (half-full, full, after a wipe).
 /// Separate from GROUP SIZE (the
 /// A-Life Director encounter caps). Story / special prototypes, settlement
 /// guard posts, friendly scientists and the empty test prototype are not in
@@ -24,7 +24,7 @@ public static class LairPopulationPolicy
 {
     public const string HumanId = "alife.lairPopulation.human";
     public const string MutantId = "alife.lairPopulation.mutant";
-    public const string RefillSpeedId = "alife.lairRefillSpeed";
+    public const string RespawnTimeId = "alife.lairRespawnTime";
     public const string Resource = "TrueCustomDifficulty.Data.lair-population-manifest.csv";
 
     public const int ExpectedRows = 1116;
@@ -35,9 +35,9 @@ public static class LairPopulationPolicy
     public static IReadOnlyList<string> PopulationIds { get; } = new[] { HumanId, MutantId };
 
     /// <summary>Every LAIR POPULATION board control.</summary>
-    public static IReadOnlyList<string> ParameterIds { get; } = new[] { HumanId, MutantId, RefillSpeedId };
+    public static IReadOnlyList<string> ParameterIds { get; } = new[] { HumanId, MutantId, RespawnTimeId };
 
-    /// <summary>The three refill timer keys, in manifest column order.</summary>
+    /// <summary>The three respawn timer keys, in manifest column order.</summary>
     public static IReadOnlyList<string> TimerKeys { get; } = new[]
     {
         "InitialSpawnQuantityRespawnTimeSeconds",
@@ -65,11 +65,11 @@ public static class LairPopulationPolicy
     public static int Scale(int source, double multiplier)
         => source <= 0 ? 0 : Math.Max(1, (int)Math.Floor(source * multiplier + 0.5));
 
-    /// <summary>Refill timer at a speed: faster = shorter. 0 stays 0.</summary>
-    public static double ScaleTimer(double sourceSeconds, double speed)
-        => sourceSeconds <= 0.0 ? 0.0 : Math.Round(sourceSeconds / speed, 1, MidpointRounding.AwayFromZero);
+    /// <summary>Respawn timer × multiplier: higher = longer. 0 stays 0.</summary>
+    public static double ScaleTimer(double sourceSeconds, double multiplier)
+        => sourceSeconds <= 0.0 ? 0.0 : Math.Round(sourceSeconds * multiplier, 1, MidpointRounding.AwayFromZero);
 
-    /// <summary>The ordinary refill timers (180 / 480 / 480 s in 1104 of 1116 entries).</summary>
+    /// <summary>The ordinary respawn timers (180 / 480 / 480 s in 1104 of 1116 entries).</summary>
     public static IReadOnlyList<double> TypicalTimers { get; } = new[] { 180.0, 480.0, 480.0 };
 
     /// <summary>Vanilla → scaled count for one example lair (board readout).</summary>
@@ -112,7 +112,7 @@ public static class LairPopulationPolicy
             for (var t = 0; t < 3; t++)
                 if (!double.TryParse(v[8 + t], NumberStyles.Float, CultureInfo.InvariantCulture, out timers[t])
                     || timers[t] < 0.0)
-                    throw new InvalidDataException("Unsafe lair refill timer: " + line);
+                    throw new InvalidDataException("Unsafe lair respawn timer: " + line);
             rows.Add(new Row(v[0], v[1], v[2], v[3], v[4], v[5], v[6], max, timers));
         }
         if (rows.Count != ExpectedRows

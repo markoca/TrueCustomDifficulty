@@ -17110,17 +17110,17 @@
       "exposeInUi": false
     },
     {
-      "id": "alife.lairRefillSpeed",
+      "id": "alife.lairRespawnTime",
       "tab": "alife",
       "group": "Lair Population",
-      "label": "Lair Refill Speed",
-      "description": "Divides the three refill timers (half-full, full, after a wipe) of every eligible lair entry in LairPrototypes.cfg, base game and DLC1.",
+      "label": "Lair Respawn Time",
+      "description": "Multiplies the three respawn timers (half-full, full, after a wipe) of every eligible lair entry in LairPrototypes.cfg, base game and DLC1.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Refill speed"
+        "valueLabel": "Respawn time"
       },
       "vanilla": {
         "All": 1
@@ -17140,14 +17140,14 @@
           "file": "GameData/LairPrototypes.cfg",
           "prototype": "eligible lairs (lair-population-manifest.csv)",
           "path": "Preset.PossibleInhabitantFactions.{Faction}.SpawnSettingsPerPlayerRanks.{Rank}.{InitialSpawnQuantityRespawnTimeSeconds|MaxSpawnQuantityRespawnTimeSeconds|WipeRespawnTimeoutSeconds}",
-          "operation": "divideLairRefillTimers"
+          "operation": "scaleLairRespawnTimers"
         },
         {
           "scope": "dlc1",
           "file": "DLCGameData/DLC1/LairPrototypes.cfg",
           "prototype": "eligible lairs (lair-population-manifest.csv)",
           "path": "Preset.PossibleInhabitantFactions.{Faction}.SpawnSettingsPerPlayerRanks.{Rank}.{InitialSpawnQuantityRespawnTimeSeconds|MaxSpawnQuantityRespawnTimeSeconds|WipeRespawnTimeoutSeconds}",
-          "operation": "divideLairRefillTimers"
+          "operation": "scaleLairRespawnTimers"
         }
       ],
       "support": {
@@ -17155,12 +17155,12 @@
         "notes": [
           "1116 eligible lair entries (same manifest as LAIR POPULATION), 3 timers each: InitialSpawnQuantityRespawnTimeSeconds, MaxSpawnQuantityRespawnTimeSeconds, WipeRespawnTimeoutSeconds.",
           "Vanilla 180 / 480 / 480 s in 1104 entries; 12 Newbie entries (Diggers, IkarVarta, Sultan / Neutral bandits and zombie lairs) use 6 / 30 / 30 s and keep that ratio.",
-          "Timer = source / speed, rounded to 0.1 s; 0 stays 0. Population caps, starting fill and archetype mix stay vanilla."
+          "Timer = source × multiplier, rounded to 0.1 s; 0 stays 0. Population caps, starting fill and archetype mix stay vanilla."
         ]
       },
-      "rationale": "How fast camps and nests fill back up after you thin them out. Vanilla: 1× (half full again in 3 min, full in 8 min, 8 min after you wipe one out).",
-      "logic": "Higher = cleared lairs come back sooner; lower = they stay quiet longer.",
-      "interaction": "Only the refill timers. HUMAN CAMPS and MUTANT NESTS set how many come back.",
+      "rationale": "How long camps and nests take to fill back up after you thin them out. Vanilla: 1× (half full again in 3 min, full in 8 min, 8 min after you wipe one out).",
+      "logic": "Higher = cleared lairs stay quiet longer; lower = they come back sooner.",
+      "interaction": "Only the respawn timers. HUMAN CAMPS and MUTANT NESTS set how many come back.",
       "exposeInUi": false
     },
     {

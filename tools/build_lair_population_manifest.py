@@ -4,7 +4,7 @@ game's LairPrototypes.cfg (base + DLC1).
 
 One row per eligible faction/rank MaxSpawnQuantity. HUMAN / MUTANT decides
 which LAIR POPULATION card scales it; the three
-refill timers are scaled by REFILL SPEED for every row. Everything else is listed in the
+respawn timers are scaled by RESPAWN TIME for every row. Everything else is listed in the
 EXCLUDED_* sets with the reason; see docs/ALIFE-LAIR-POPULATION.md.
 
 Usage: build_lair_population_manifest.py BASE_LairPrototypes.cfg DLC1_LairPrototypes.cfg

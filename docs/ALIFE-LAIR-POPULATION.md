@@ -6,11 +6,11 @@ How many inhabitants a world lair can hold, on the A-Life tab next to GROUP SIZE
 |---|---|---|
 | HUMAN CAMPS (*Human Lair Population*) | `alife.lairPopulation.human` | 508 faction/rank entries: 17 human factions, 288 base + 220 DLC1 |
 | MUTANT NESTS (*Mutant Lair Population*) | `alife.lairPopulation.mutant` | 608 entries: 17 mutant and zombie species, 352 base + 256 DLC1 |
-| REFILL SPEED (*Lair Refill Speed*) | `alife.lairRefillSpeed` | the 3 refill timers of all 1116 entries |
+| RESPAWN TIME (*Lair Respawn Time*) | `alife.lairRespawnTime` | the 3 respawn timers of all 1116 entries |
 
 Range 0.25×–3× in steps of 0.05, vanilla 1×. Each eligible `MaxSpawnQuantity` (`LairPrototypes.cfg → <Lair>.Preset.PossibleInhabitantFactions.<Faction>.SpawnSettingsPerPlayerRanks.<Rank>`) is scaled with half-up rounding. A vanilla 0 stays 0, and a non-zero count never drops below 1, so no lair loses a faction. Rank and faction differences are kept.
 
-REFILL SPEED (0.25×–4×, vanilla 1×) divides `InitialSpawnQuantityRespawnTimeSeconds` (back to half full), `MaxSpawnQuantityRespawnTimeSeconds` (back to full) and `WipeRespawnTimeoutSeconds` (after the lair is wiped out). Each timer is rounded to 0.1 s and a 0 stays 0. Vanilla is 180 / 480 / 480 s in 1104 entries. The other 12 are Newbie entries (Diggers, IkarVarta, Sultan / Neutral bandits, zombie lairs) at 6 / 30 / 30 s, and they keep that ratio. Under the card: `HALF FULL IN 3 min · FULL IN 8 min`.
+RESPAWN TIME (0.25×–4×, vanilla 1×) multiplies `InitialSpawnQuantityRespawnTimeSeconds` (back to half full), `MaxSpawnQuantityRespawnTimeSeconds` (back to full) and `WipeRespawnTimeoutSeconds` (after the lair is wiped out). Each timer is rounded to 0.1 s and a 0 stays 0. Vanilla is 180 / 480 / 480 s in 1104 entries. The other 12 are Newbie entries (Diggers, IkarVarta, Sultan / Neutral bandits, zombie lairs) at 6 / 30 / 30 s, and they keep that ratio. Under the card: `HALF FULL IN 3 min · FULL IN 8 min`.
 
 The board shows one real lair by your rank under each population card:
 - `BANDIT CAMP BY RANK 6 / 6 / 7 / 8`
@@ -59,9 +59,9 @@ Absent from the table = 1×.
 | Wanderer | 0.85× | 1× |
 | Field Medic, Immersive, Smuggler | 1× | 1× |
 
-REFILL SPEED: Hardcore+ 1.5×, Hardcore and Mutant Hunter 1.25×, Mercenary and Tactical 1.15×, Outcast 1.1×, Anomaly Runner and Scavenger 0.85×, Wanderer 0.75×, the rest 1×.
+RESPAWN TIME (lower = lairs come back sooner): Hardcore+ 0.65×, Hardcore and Mutant Hunter 0.8×, Mercenary and Tactical 0.85×, Outcast 0.9×, Anomaly Runner and Scavenger 1.2×, Wanderer 1.35×, the rest 1×.
 
-Older stock preset files upgrade only when byte-identical (`PreLairPopulationFactoryBlobs`, and `PreLairRefillFactoryBlobs` for the first LAIR POPULATION stock; `tools/factory_preset_lair_population_2026_11_18.json`).
+Older stock preset files upgrade only when byte-identical (`PreLairPopulationFactoryBlobs`, `PreLairRefillFactoryBlobs` for the first LAIR POPULATION stock and `PreLairRespawnTimeFactoryBlobs` for the short-lived REFILL SPEED stock; `tools/factory_preset_lair_population_2026_11_18.json`).
 
 ## Gate
 
@@ -70,3 +70,7 @@ Older stock preset files upgrade only when byte-identical (`PreLairPopulationFac
 ## Not yet verified
 
 The .NET build, a Wine run and in-game behaviour have not been checked: whether camps and nests actually fill to the new cap, and whether the new refill times feel right.
+
+## 2026-11-18 — REFILL SPEED renamed to RESPAWN TIME
+
+The third card was first shipped as REFILL SPEED (`alife.lairRefillSpeed`, timer ÷ speed). It is now **RESPAWN TIME** (`alife.lairRespawnTime`, timer × multiplier), so the name and the direction match: higher = longer. Factory values were inverted onto the 0.05 grid (1.5 → 0.65, 1.25 → 0.8, 1.15 → 0.85, 1.1 → 0.9, 0.85 → 1.2, 0.75 → 1.35). A preset saved with the old key loads that card at vanilla 1×.

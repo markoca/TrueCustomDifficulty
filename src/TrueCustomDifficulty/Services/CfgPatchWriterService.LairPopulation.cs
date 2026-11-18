@@ -7,8 +7,8 @@ using TrueCustomDifficulty.ViewModels;
 namespace TrueCustomDifficulty.Services;
 
 // LAIR POPULATION — eligible MaxSpawnQuantity per faction / rank in
-// LairPrototypes.cfg (base + DLC1), plus REFILL SPEED over the same entries'
-// three refill timers. See LairPopulationPolicy.
+// LairPrototypes.cfg (base + DLC1), plus RESPAWN TIME over the same entries'
+// three respawn timers. See LairPopulationPolicy.
 public sealed partial class CfgPatchWriterService
 {
     private static int WriteLairPopulation(
@@ -52,12 +52,12 @@ public sealed partial class CfgPatchWriterService
             edits += changed;
         }
 
-        if (modifiedById.TryGetValue(LairPopulationPolicy.RefillSpeedId, out var refill)
-            && refill.IsValueModifiedFromReference())
+        if (modifiedById.TryGetValue(LairPopulationPolicy.RespawnTimeId, out var respawn)
+            && respawn.IsValueModifiedFromReference())
         {
-            var speed = refill.CurrentNumber;
-            if (!double.IsFinite(speed) || speed <= 0.0)
-                throw new InvalidDataException("Invalid lair refill speed.");
+            var multiplier = respawn.CurrentNumber;
+            if (!double.IsFinite(multiplier) || multiplier <= 0.0)
+                throw new InvalidDataException("Invalid lair respawn time.");
             var changed = 0;
             foreach (var row in LairPopulationPolicy.Rows)
             {
@@ -66,7 +66,7 @@ public sealed partial class CfgPatchWriterService
                 var document = GetDocument(documents, row.File);
                 for (var t = 0; t < LairPopulationPolicy.TimerKeys.Count; t++)
                 {
-                    var value = LairPopulationPolicy.ScaleTimer(row.SourceTimers[t], speed);
+                    var value = LairPopulationPolicy.ScaleTimer(row.SourceTimers[t], multiplier);
                     if (Math.Abs(value - row.SourceTimers[t]) < 0.0001)
                         continue;
                     document.AddAssignment(row.Prototype,
@@ -79,8 +79,8 @@ public sealed partial class CfgPatchWriterService
             }
             if (changed == 0)
                 throw new InvalidDataException(
-                    "LAIR REFILL SPEED does not change any timer. Move it further from 1× or reset it.");
-            writtenParameters.Add(LairPopulationPolicy.RefillSpeedId);
+                    "LAIR RESPAWN TIME does not change any timer. Move it further from 1× or reset it.");
+            writtenParameters.Add(LairPopulationPolicy.RespawnTimeId);
             edits += changed;
         }
         return edits;
