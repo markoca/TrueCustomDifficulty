@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.1",
-  "supportedParameterCount": 452,
+  "supportedParameterCount": 451,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -48360,7 +48360,7 @@
       "expectedProfiles": 86
     },
     "mutantAggression": {
-      "note": "One knob per mutant attack and ability (combat.mutantMoveRate.{family}.{move}, all variants of the family): knob k writes 1/k on its own cooldown tag into [difficulty].MutantCombatDifficulty.AgentCooldownMultipliers (full list); at its difficulty vanilla (2× on Master where the game halves it) the game's entry stays. Roars, growls, howls, dodges, teleports and shields have no control: the game's Master 0.5 entries are written back. SPECIAL ABILITY RATE scales CombatSynchronizer FilterGroups [3]/[4].",
+      "note": "One knob per mutant attack and ability (combat.mutantMoveRate.{family}.{move}, all variants of the family): knob k writes 1/k on its own cooldown tag into [difficulty].MutantCombatDifficulty.AgentCooldownMultipliers (full list); at its difficulty vanilla (2× on Master where the game halves it) the game's entry stays. Roars, growls, the one-off Controller_Deer dog summon, howls, dodges, teleports and shields have no control: the game's Master 0.5 entries are written back. SPECIAL ABILITY RATE scales CombatSynchronizer FilterGroups [3]/[4].",
       "parameterIds": [
         "combat.mutantMoveRate.bayun.claw",
         "combat.mutantMoveRate.bayun.jumpIn",
@@ -48390,7 +48390,6 @@
         "combat.mutantMoveRate.controller.psy",
         "combat.mutantMoveRate.controller.corpse",
         "combat.mutantMoveRate.controller.zombify",
-        "combat.mutantMoveRate.controller.dogs",
         "combat.mutantMoveRate.deer.claw",
         "combat.mutantMoveRate.deer.leap",
         "combat.mutantMoveRate.deer.charge",

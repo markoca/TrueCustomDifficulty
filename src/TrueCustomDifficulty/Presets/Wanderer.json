@@ -268,10 +268,6 @@
       "kind": "slider",
       "number": 1.25
     },
-    "combat.mutantMoveRate.controller.dogs": {
-      "kind": "slider",
-      "number": 1.5
-    },
     "combat.mutantMoveRate.deer.claw": {
       "kind": "slider",
       "number": 1.25

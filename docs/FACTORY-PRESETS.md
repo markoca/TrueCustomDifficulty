@@ -345,3 +345,7 @@ The 12 profiles now store the four new controls (422 catalog controls each). The
 ## 2026-11-18 — ATTACKS sliders folded into their knobs
 
 * 452 controls per profile. Each attack knob took over its family's ATTACKS slider (knob × slider; at the slider's vanilla the Master 2× where the game halves that attack). Untouched older stock copies upgrade by blob hash (`PreAttackKnobFactoryBlobs`).
+
+## 2026-11-18 — Controller DOGS knob removed
+
+* 451 controls per profile; the Controller dog summon (one-off `Controller_Deer` variant) stays vanilla. Untouched older stock copies upgrade by blob hash (`PreControllerDogsFactoryBlobs`).

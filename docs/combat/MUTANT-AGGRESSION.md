@@ -4,7 +4,7 @@ Two control groups on the Mutant board (*MUTANT DAMAGE, HEALTH AND AGGRESSION*):
 
 | Control | Ids | Range | Vanilla |
 |---|---|---|---|
-| One knob per move (54: 37 attacks, 17 abilities) | `combat.mutantMoveRate.{family}.{move}` | 0.25×–3×, step 0.25 | 1×; **2× on Master** for every move the game halves there (e.g. Bayun claw, Controller psy, Pseudogiant shockwave) |
+| One knob per move (53: 37 attacks, 16 abilities) | `combat.mutantMoveRate.{family}.{move}` | 0.25×–3×, step 0.25 | 1×; **2× on Master** for every move the game halves there (e.g. Bayun claw, Controller psy, Pseudogiant shockwave) |
 | SPECIAL ABILITY RATE (global) | `combat.mutantSpecialAbilityRate` | 0.25×–3×, step 0.25 | 1× Novice / Stalker / Veteran, 2× Master |
 
 All are `runtime_test_required`. Source: S.T.A.L.K.E.R. 2 2.1 base dump.
@@ -45,6 +45,14 @@ All are `runtime_test_required`. Source: S.T.A.L.K.E.R. 2 2.1 base dump.
   psy/shield/teleport/anomaly/growl/shockwave/summon for ABILITIES. Chimera growl is 60 s and Snork growl 120 s
   (2026-11-18 fix; the card used to say 30 s and 20 s). At the vanilla value it shows the game's effective time (e.g. Master Controller psy 6 s).
 * `Mutant_AttackCooldown` (1.0 on all difficulties) is not touched.
+
+## Gamer rationales; Controller DOGS removed (2026-11-18, fifth pass)
+
+* Every knob's panel rationale says in player words what the move is and how to read it (e.g. psy strike: stay in
+  its view and it fries your head), then its vanilla seconds and Master value.
+* `Controller_Deer` is a one-off map variant (no CFG spawns it; only `Statistics.cfg` maps it to Controller) that
+  carries the Deer dog summon. Regular Controllers never call dogs, so the Controller DOGS knob is gone; that
+  summon stays vanilla. 53 knobs remain.
 
 ## No group sliders (2026-11-18, fourth pass)
 

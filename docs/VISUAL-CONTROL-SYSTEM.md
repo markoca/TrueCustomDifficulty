@@ -1,3 +1,8 @@
+## CURRENT 2026-11-18 — Mutant knob rationales in player words; no Controller DOGS
+
+* Each of the 53 knob panels opens with one plain sentence on what the move does in a fight, then `Vanilla:` with the seconds (and Master), then how to read turning it up or down. No layout change.
+* Controller ABILITIES are PSY, CORPSE and ZOMBIFY only (one empty grid column between CLAW and them).
+
 ## CURRENT 2026-11-18 — Mutant cards: knobs only
 
 * No ATTACKS slider either: under the health track only the captions `ATTACKS` (left) and `ABILITIES` (over the right-aligned ability knobs, with the thin divider), then the five-column knob grid. Card 140 px.

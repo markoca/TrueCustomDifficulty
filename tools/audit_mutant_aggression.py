@@ -86,7 +86,7 @@ check(families["pseudodog"]["ability"] == ["Ability.Cooldown.CombatSummon", "Abi
       f"pseudodog ABILITIES: both phantom summons {families['pseudodog']['ability']}")
 check('difficultySid == "Stalker" && agent.VanillaMasterTags.Contains(tag)' in writer
       and "MutantAggressionPolicy.VanillaMasterCooldownMultiplier" in writer, "uncontrolled Master tags written back at 0.5")
-for _key in ("bayun", "controller", "deer"):
+for _key in ("bayun", "deer"):
     check("Ability.Cooldown.CombatSummon" in families[_key]["ability"], f"{_key} owns its summon in ABILITIES")
 check("SummonRate" not in policy and "combat.mutantSummonRate" not in by_id, "no global SUMMON RATE (owned per mutant)")
 cooldowns = ROOT / "docs" / "combat" / "MUTANT-COOLDOWNS.md"
@@ -104,9 +104,9 @@ for _key, _group, _body in re.findall(r'\("(\w+)", Group\.(\w+)\) => new\[\] \{(
     for _slug, _label, _name, _tag, _secs in re.findall(
             r'M\("(\w+)", "([^"]+)", "([^"]+)", "([\w.]+)", ([\d.]+)\)', _body):
         move_rows.append((_key, _group, _slug, _label, _tag, float(_secs)))
-check(len(move_rows) == 54, f"54 attack knobs ({len(move_rows)})")
+check(len(move_rows) == 53, f"53 move knobs ({len(move_rows)})")
 move_ids = [f"combat.mutantMoveRate.{k}.{slug}" for k, _, slug, *_ in move_rows]
-check(len(set(move_ids)) == 54 and all(i in by_id for i in move_ids), "every move knob id is in parameters.json")
+check(len(set(move_ids)) == 53 and all(i in by_id for i in move_ids), "every move knob id is in parameters.json")
 check(sorted(r["id"] for r in catalog if r["id"].startswith("combat.mutantMoveRate.")) == sorted(move_ids),
       "no catalog move knob without a policy move")
 for _key, _group, _slug, _label, _tag, _secs in move_rows:
@@ -120,7 +120,7 @@ for _key, _group, _slug, _label, _tag, _secs in move_rows:
     check(_row.get("vanilla") == _want and _row.get("exposeInUi") is False
           and (_row["slider"]["min"], _row["slider"]["max"], _row["slider"]["step"]) == (0.25, 3, 0.25),
           f"{_key}.{_slug}: vanilla {_want}, board member, 0.25–3× step 0.25")
-check(len({(k, t) for k, _, _, _, t, _ in move_rows}) == 54, "one knob per cooldown tag per family")
+check(len({(k, t) for k, _, _, _, t, _ in move_rows}) == 53, "one knob per cooldown tag per family")
 check(not [r["id"] for r in catalog if r["id"].startswith(("combat.mutantAbilityRate.", "combat.mutantAttackRate."))],
       "no ATTACKS / ABILITIES sliders: every move is its own knob")
 check(by_id["combat.mutantSpecialAbilityRate"].get("vanilla") == {"Novice": 1, "Stalker": 1, "Veteran": 1, "Master": 2},

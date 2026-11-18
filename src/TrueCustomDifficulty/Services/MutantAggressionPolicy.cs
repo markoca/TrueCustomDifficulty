@@ -106,8 +106,9 @@ public static class MutantAggressionPolicy
                 A("Controller_Deer")
             },
             T("ClawAttack"),
-            // CombatSummon: Controller_Deer calls blind dogs (CombatSummonAbility_Deer).
-            T("Abilities.PSYAttack", "Abilities.RaiseDeadBody", "Abilities.ZombifyNPC", "CombatSummon"), ("claw", 10), ("psy", 12)),
+            // Controller_Deer (a one-off map variant, spawned by no CFG) also has the
+            // Deer dog summon; it stays vanilla, like every move without a knob.
+            T("Abilities.PSYAttack", "Abilities.RaiseDeadBody", "Abilities.ZombifyNPC"), ("claw", 10), ("psy", 12)),
         new("deer", "Deer", new[] { A("Deer", "RunAttack", "JumpAttack", "Charge") },
             T("RunAttack", "JumpAttack", "ClawAttack", "TurnAttack", "Charge"),
             T("CombatSummon"), ("claw", 4), ("dogs", 20)),
@@ -191,8 +192,7 @@ public static class MutantAggressionPolicy
             M("flyThrough", "FLY-BY", "fly-through", "FlyThrough", 10) },
         ("controller", Group.Attacks) => new[] { M("claw", "CLAW", "claw", "ClawAttack", 10) },
         ("controller", Group.Abilities) => new[] { M("psy", "PSY", "psy strike", "Abilities.PSYAttack", 12),
-            M("corpse", "CORPSE", "raise corpse", "Abilities.RaiseDeadBody", 15), M("zombify", "ZOMBIFY", "zombify", "Abilities.ZombifyNPC", 15),
-            M("dogs", "DOGS", "blind dog summon (Deer controller)", "CombatSummon", 20) },
+            M("corpse", "CORPSE", "raise corpse", "Abilities.RaiseDeadBody", 15), M("zombify", "ZOMBIFY", "zombify", "Abilities.ZombifyNPC", 15) },
         ("deer", Group.Attacks) => new[] { M("claw", "CLAW", "claw", "ClawAttack", 4), M("leap", "LEAP", "leap", "JumpAttack", 8),
             M("charge", "CHARGE", "charge", "Charge", 10) },
         ("deer", Group.Abilities) => new[] { M("dogs", "DOGS", "blind dog summon", "CombatSummon", 20) },

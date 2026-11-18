@@ -2056,7 +2056,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Bayuns use one attack: claw. Vanilla: Novice–Veteran 1× (every 5 s), Master 2× (every 2.5 s). The knob shows the real wait in seconds.",
+      "rationale": "Bayun's quick paw swipe when it is right on top of you. Vanilla: Novice–Veteran 1× (every 5 s), Master 2× (every 2.5 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2106,7 +2106,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Bayuns use one attack: jump in. Vanilla: Novice–Veteran 1× (every 6 s), Master 2× (every 3 s). The knob shows the real wait in seconds.",
+      "rationale": "The cat pounces from a few metres away straight onto you. Vanilla: Novice–Veteran 1× (every 6 s), Master 2× (every 3 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2156,7 +2156,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Bayuns use one attack: leap. Vanilla: Novice–Veteran 1× (every 8 s), Master 2× (every 4 s). The knob shows the real wait in seconds.",
+      "rationale": "A bounding strike that closes the gap in one jump. Vanilla: Novice–Veteran 1× (every 8 s), Master 2× (every 4 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2203,7 +2203,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Bayuns use one attack: fly-through. Vanilla: 1×, every 10 s. The knob shows the real wait in seconds.",
+      "rationale": "Bayun dashes clean through you, clawing on the way past. Vanilla: 1×, every 10 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2250,7 +2250,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Bayuns use one ability: clone summon. Vanilla: 1×, every 10 s. The knob shows the real wait in seconds.",
+      "rationale": "Bayun splits into ghostly copies that swarm you; kill the real cat and they vanish. Vanilla: 1×, every 10 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
       "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
       "exposeInUi": false
@@ -2297,7 +2297,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Blind Dogs use one attack: bite. Vanilla: 1×, every 5 s. The knob shows the real wait in seconds.",
+      "rationale": "The basic snap when a dog is in your face. Vanilla: 1×, every 5 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2344,7 +2344,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Blind Dogs use one attack: running bite. Vanilla: 1×, every 7 s. The knob shows the real wait in seconds.",
+      "rationale": "A lunging bite on the run, the one that catches you while you backpedal. Vanilla: 1×, every 7 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2391,7 +2391,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Blind Dogs use one attack: bite from any angle. Vanilla: 1×, every 16 s. The knob shows the real wait in seconds.",
+      "rationale": "A twisting bite that lands even when the dog is beside or behind you. Vanilla: 1×, every 16 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2441,7 +2441,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Bloodsuckers use one attack: claw. Vanilla: Novice–Veteran 1× (every 6 s), Master 2× (every 3 s). The knob shows the real wait in seconds.",
+      "rationale": "Its claw and tentacle combo once it is on top of you. Vanilla: Novice–Veteran 1× (every 6 s), Master 2× (every 3 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2491,7 +2491,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Bloodsuckers use one attack: running attack. Vanilla: Novice–Veteran 1× (every 6 s), Master 2× (every 3 s). The knob shows the real wait in seconds.",
+      "rationale": "A charging swipe as it rushes you, often straight out of invisibility. Vanilla: Novice–Veteran 1× (every 6 s), Master 2× (every 3 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2541,7 +2541,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Bloodsuckers use one attack: leap. Vanilla: Novice–Veteran 1× (every 20 s), Master 2× (every 10 s). The knob shows the real wait in seconds.",
+      "rationale": "The big pounce from mid range. Vanilla: Novice–Veteran 1× (every 20 s), Master 2× (every 10 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2588,7 +2588,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Bloodsuckers use one ability: spawn anomaly. Vanilla: 1×, every 3 s. The knob shows the real wait in seconds.",
+      "rationale": "It drops an anomaly right where you stand; move off the spot before it arms. Vanilla: 1×, every 3 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
       "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
       "exposeInUi": false
@@ -2635,7 +2635,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Boars use one attack: running attack. Vanilla: 1×, every 5 s. The knob shows the real wait in seconds.",
+      "rationale": "A ramming bite at full speed. Vanilla: 1×, every 5 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2682,7 +2682,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Boars use one attack: gore. Vanilla: 1×, every 10 s. The knob shows the real wait in seconds.",
+      "rationale": "Tusk gore up close. Vanilla: 1×, every 10 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2729,7 +2729,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Boars use one attack: charge. Vanilla: 1×, every 12 s. The knob shows the real wait in seconds.",
+      "rationale": "The head-down charge that knocks you off your feet. Vanilla: 1×, every 12 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2779,7 +2779,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Burers use one attack: claw. Vanilla: Novice–Veteran 1× (every 8 s), Master 2× (every 4 s). The knob shows the real wait in seconds.",
+      "rationale": "A heavy slap when you get into melee range. Vanilla: Novice–Veteran 1× (every 8 s), Master 2× (every 4 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -2826,7 +2826,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Burers use one ability: grenade throws. Vanilla: 1×, every 0.5 s. The knob shows the real wait in seconds.",
+      "rationale": "How fast it hurls grenades back at you, one after another. Vanilla: 1×, every 0.5 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
       "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
       "exposeInUi": false
@@ -2876,7 +2876,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Burers use one ability: disarm. Vanilla: Novice–Veteran 1× (every 8 s), Master 2× (every 4 s). The knob shows the real wait in seconds.",
+      "rationale": "The telekinetic yank that tears the gun out of your hands. Vanilla: Novice–Veteran 1× (every 8 s), Master 2× (every 4 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
       "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
       "exposeInUi": false
@@ -2926,7 +2926,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Burers use one ability: throw. Vanilla: Novice–Veteran 1× (every 10 s), Master 2× (every 5 s). The knob shows the real wait in seconds.",
+      "rationale": "It flings debris and loose objects at you. Vanilla: Novice–Veteran 1× (every 10 s), Master 2× (every 5 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
       "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
       "exposeInUi": false
@@ -2976,7 +2976,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Burers use one ability: raise weapons. Vanilla: Novice–Veteran 1× (every 10 s), Master 2× (every 5 s). The knob shows the real wait in seconds.",
+      "rationale": "It lifts guns lying around and fires them at you. Vanilla: Novice–Veteran 1× (every 10 s), Master 2× (every 5 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
       "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
       "exposeInUi": false
@@ -3026,7 +3026,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Chimeras use one attack: long leap. Vanilla: Novice–Veteran 1× (every 5 s), Master 2× (every 2.5 s). The knob shows the real wait in seconds.",
+      "rationale": "Its signature long pounce across the room. Vanilla: Novice–Veteran 1× (every 5 s), Master 2× (every 2.5 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -3076,7 +3076,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Chimeras use one attack: running attack. Vanilla: Novice–Veteran 1× (every 5 s), Master 2× (every 2.5 s). The knob shows the real wait in seconds.",
+      "rationale": "A charging swipe at full sprint. Vanilla: Novice–Veteran 1× (every 5 s), Master 2× (every 2.5 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -3123,7 +3123,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Chimeras use one attack: jump in. Vanilla: 1×, every 6 s. The knob shows the real wait in seconds.",
+      "rationale": "A short hop straight onto you. Vanilla: 1×, every 6 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -3173,7 +3173,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Chimeras use one attack: fly-through. Vanilla: Novice–Veteran 1× (every 10 s), Master 2× (every 5 s). The knob shows the real wait in seconds.",
+      "rationale": "It leaps through you, raking you as it passes. Vanilla: Novice–Veteran 1× (every 10 s), Master 2× (every 5 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -3223,7 +3223,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Controllers use one attack: claw. Vanilla: Novice–Veteran 1× (every 10 s), Master 2× (every 5 s). The knob shows the real wait in seconds.",
+      "rationale": "A desperate slap when you get too close. Vanilla: Novice–Veteran 1× (every 10 s), Master 2× (every 5 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -3273,7 +3273,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Controllers use one ability: psy strike. Vanilla: Novice–Veteran 1× (every 12 s), Master 2× (every 6 s). The knob shows the real wait in seconds.",
+      "rationale": "The psy stare: stay in its view and it fries your head, so break line of sight. Vanilla: Novice–Veteran 1× (every 12 s), Master 2× (every 6 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
       "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
       "exposeInUi": false
@@ -3323,7 +3323,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Controllers use one ability: raise corpse. Vanilla: Novice–Veteran 1× (every 15 s), Master 2× (every 7.5 s). The knob shows the real wait in seconds.",
+      "rationale": "It raises a nearby corpse to fight for it. Vanilla: Novice–Veteran 1× (every 15 s), Master 2× (every 7.5 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
       "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
       "exposeInUi": false
@@ -3373,54 +3373,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Controllers use one ability: zombify. Vanilla: Novice–Veteran 1× (every 15 s), Master 2× (every 7.5 s). The knob shows the real wait in seconds.",
-      "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
-      "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
-      "exposeInUi": false
-    },
-    {
-      "id": "combat.mutantMoveRate.controller.dogs",
-      "tab": "combat",
-      "group": "Mutant Health",
-      "label": "Controller Dogs Rate",
-      "description": "How often a Controller can use one ability: blind dog summon (Deer controller). Rate k writes cooldown multiplier 1/k on its cooldown for every Controller variant on the selected difficulty.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Dogs rate"
-      },
-      "vanilla": {
-        "All": 1
-      },
-      "default": {
-        "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0.25,
-        "max": 3,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "set1/x"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "Own cooldown tag Ability.Cooldown.CombatSummon; vanilla 20 s (main agent, base CFG).",
-          "Same AgentCooldownMultipliers list as ATTACKS; an ability knob is a one-tag group with its own Master vanilla.",
-          "Families and tags the game never lists on Master need an in-game check."
-        ]
-      },
-      "rationale": "How often Controllers use one ability: blind dog summon (Deer controller). Vanilla: 1×, every 20 s. The knob shows the real wait in seconds.",
+      "rationale": "It turns a living stalker into its puppet. Vanilla: Novice–Veteran 1× (every 15 s), Master 2× (every 7.5 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
       "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
       "exposeInUi": false
@@ -3467,7 +3420,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Deers use one attack: claw. Vanilla: 1×, every 4 s. The knob shows the real wait in seconds.",
+      "rationale": "Hoof and antler strike up close. Vanilla: 1×, every 4 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -3517,7 +3470,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Deers use one attack: leap. Vanilla: Novice–Veteran 1× (every 8 s), Master 2× (every 4 s). The knob shows the real wait in seconds.",
+      "rationale": "A bounding strike from mid range. Vanilla: Novice–Veteran 1× (every 8 s), Master 2× (every 4 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -3567,7 +3520,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Deers use one attack: charge. Vanilla: Novice–Veteran 1× (every 10 s), Master 2× (every 5 s). The knob shows the real wait in seconds.",
+      "rationale": "The antler charge that throws you back. Vanilla: Novice–Veteran 1× (every 10 s), Master 2× (every 5 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -3614,7 +3567,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Deers use one ability: blind dog summon. Vanilla: 1×, every 20 s. The knob shows the real wait in seconds.",
+      "rationale": "It calls a pack of blind dogs to its side. Vanilla: 1×, every 20 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
       "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
       "exposeInUi": false
@@ -3661,7 +3614,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Fleshs use one attack: claw. Vanilla: 1×, every 3 s. The knob shows the real wait in seconds.",
+      "rationale": "A clumsy headbutt and hoof swing. Vanilla: 1×, every 3 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -3708,7 +3661,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Fleshs use one attack: leap. Vanilla: 1×, every 4 s. The knob shows the real wait in seconds.",
+      "rationale": "A short hop into you. Vanilla: 1×, every 4 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -3755,7 +3708,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Poltergeists use one attack: area burst. Vanilla: 1×, every 3 s. The knob shows the real wait in seconds.",
+      "rationale": "The invisible damage zone it pulses around itself. Vanilla: 1×, every 3 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -3802,7 +3755,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Poltergeists use one ability: spawn anomaly. Vanilla: 1×, every 3 s. The knob shows the real wait in seconds.",
+      "rationale": "Elemental poltergeists spawn an electro, fire or toxic anomaly where you stand. Vanilla: 1×, every 3 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
       "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
       "exposeInUi": false
@@ -3849,7 +3802,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Poltergeists use one ability: throw. Vanilla: 1×, every 10 s. The knob shows the real wait in seconds.",
+      "rationale": "It flings crates, barrels and junk at you. Vanilla: 1×, every 10 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
       "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
       "exposeInUi": false
@@ -3899,7 +3852,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Pseudodogs use one attack: running attack. Vanilla: Novice–Veteran 1× (every 6 s), Master 2× (every 3 s). The knob shows the real wait in seconds.",
+      "rationale": "A running bite on the charge. Vanilla: Novice–Veteran 1× (every 6 s), Master 2× (every 3 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -3949,7 +3902,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Pseudodogs use one attack: bite. Vanilla: Novice–Veteran 1× (every 7 s), Master 2× (every 3.5 s). The knob shows the real wait in seconds.",
+      "rationale": "The bite up close. Vanilla: Novice–Veteran 1× (every 7 s), Master 2× (every 3.5 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -3996,7 +3949,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Pseudodogs use one ability: phantom summon while fleeing. Vanilla: 1×, every 10 s. The knob shows the real wait in seconds.",
+      "rationale": "When hurt and fleeing it leaves psy phantom dogs behind to cover its escape. Vanilla: 1×, every 10 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
       "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
       "exposeInUi": false
@@ -4043,7 +3996,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Pseudodogs use one ability: phantom summon. Vanilla: 1×, every 20 s. The knob shows the real wait in seconds.",
+      "rationale": "Mid-fight it calls a pack of psy phantom dogs; kill the real one and they fade. Vanilla: 1×, every 20 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
       "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
       "exposeInUi": false
@@ -4090,7 +4043,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Pseudogiants use one attack: stomp. Vanilla: 1×, every 5 s. The knob shows the real wait in seconds.",
+      "rationale": "A crushing stomp up close. Vanilla: 1×, every 5 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -4140,7 +4093,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Pseudogiants use one attack: running attack. Vanilla: Novice–Veteran 1× (every 5 s), Master 2× (every 2.5 s). The knob shows the real wait in seconds.",
+      "rationale": "A running stomp as it barrels in. Vanilla: Novice–Veteran 1× (every 5 s), Master 2× (every 2.5 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -4190,7 +4143,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Pseudogiants use one attack: charge. Vanilla: Novice–Veteran 1× (every 10 s), Master 2× (every 5 s). The knob shows the real wait in seconds.",
+      "rationale": "The full charge that bulldozes you. Vanilla: Novice–Veteran 1× (every 10 s), Master 2× (every 5 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -4240,7 +4193,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Pseudogiants use one ability: shockwave. Vanilla: Novice–Veteran 1× (every 8 s), Master 2× (every 4 s). The knob shows the real wait in seconds.",
+      "rationale": "The ground-pound ring that hits you from range; jump it or stay outside it. Vanilla: Novice–Veteran 1× (every 8 s), Master 2× (every 4 s). Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
       "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
       "exposeInUi": false
@@ -4287,7 +4240,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Pseudogiants use one ability: throw (electrocollar variant). Vanilla: 1×, every 10 s. The knob shows the real wait in seconds.",
+      "rationale": "It hurls heavy objects at you (electrocollar variant only). Vanilla: 1×, every 10 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this ability; 2× halves it, 0.5× doubles it.",
       "interaction": "Each ability is its own knob. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
       "exposeInUi": false
@@ -4334,7 +4287,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Snorks use one attack: claw. Vanilla: 1×, every 5 s. The knob shows the real wait in seconds.",
+      "rationale": "A scrappy claw swipe up close. Vanilla: 1×, every 5 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -4381,7 +4334,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Snorks use one attack: kick. Vanilla: 1×, every 7 s. The knob shows the real wait in seconds.",
+      "rationale": "The two-legged kick that knocks you back. Vanilla: 1×, every 7 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -4428,7 +4381,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Snorks use one attack: leap. Vanilla: 1×, every 12 s. The knob shows the real wait in seconds.",
+      "rationale": "The long pounce from range. Vanilla: 1×, every 12 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -4475,7 +4428,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Snorks use one attack: jump in. Vanilla: 1×, every 12 s. The knob shows the real wait in seconds.",
+      "rationale": "A short jump straight onto you. Vanilla: 1×, every 12 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -4522,7 +4475,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Snorks use one attack: fly-through. Vanilla: 1×, every 14 s. The knob shows the real wait in seconds.",
+      "rationale": "It leaps through you, clawing as it passes. Vanilla: 1×, every 14 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -4569,7 +4522,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Tushkans use one attack: claw. Vanilla: 1×, every 3 s. The knob shows the real wait in seconds.",
+      "rationale": "The rat's quick bite. Vanilla: 1×, every 3 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
@@ -4616,7 +4569,7 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Tushkans use one attack: leap. Vanilla: 1×, every 8 s. The knob shows the real wait in seconds.",
+      "rationale": "It jumps at you, usually with the whole swarm. Vanilla: 1×, every 8 s. Turn it up and it comes more often; turn it down for more room to react.",
       "logic": "Higher = shorter wait for this attack; 2× halves it, 0.5× doubles it.",
       "interaction": "Each attack is its own knob; there is no ATTACKS slider. How hard hits land is MUTANT HIT DAMAGE.",
       "exposeInUi": false
