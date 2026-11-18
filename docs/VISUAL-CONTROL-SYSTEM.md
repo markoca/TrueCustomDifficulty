@@ -1,3 +1,7 @@
+## CURRENT 2026-11-18 — Mutant knob CFG writer gate
+
+* New gate `mutant-cooldown-cfg` (and `mutant-aggression` now in pre-release): the knob writer's `AgentCooldownMultipliers` list is re-derived and checked against the game files. No UI change.
+
 ## CURRENT 2026-11-18 — Mutant knob rationales in player words; no Controller DOGS
 
 * Each of the 53 knob panels opens with one plain sentence on what the move does in a fight, then `Vanilla:` with the seconds (and Master), then how to read turning it up or down. No layout change.

@@ -46,6 +46,34 @@ All are `runtime_test_required`. Source: S.T.A.L.K.E.R. 2 2.1 base dump.
   (2026-11-18 fix; the card used to say 30 s and 20 s). At the vanilla value it shows the game's effective time (e.g. Master Controller psy 6 s).
 * `Mutant_AttackCooldown` (1.0 on all difficulties) is not touched.
 
+## CFG writer check (2026-11-18)
+
+`tools/audit_mutant_cooldown_cfg.py` (pre-release gate; with `--game <GameData>` or `TCD_BASE_DUMP` it also reads
+the game files) re-implements the knob writer and renders the same PatchNode shape:
+
+```
+Stalker : struct.begin {bpatch}
+    MutantCombatDifficulty : struct.begin {bpatch}
+        AgentCooldownMultipliers : struct.begin          // no {bpatch}: the whole list is replaced
+            [0] : struct.begin
+                AgentPrototypeSID = Bayun
+                CooldownMultipliers : struct.begin
+                    [0] : struct.begin
+                        CooldownMultiplier = 0.5
+                        CooldownTag = Ability.Cooldown.ClawAttack
+                    struct.end
+                    ...
+```
+
+* Master, every knob at vanilla: our list equals the game's own 14-agent list (same tags, same 0.5), so the
+  full-list replacement loses nothing (roars, growls, shields keep their 0.5).
+* One changed knob changes only its tag, on every agent of the family (e.g. Controller PSY 3× → 1/3 on Controller,
+  Controller_Collar, Controller_Deer); Novice–Veteran at vanilla write nothing.
+* All 38 agent SIDs exist in ObjPrototypes and all 27 tags in AbilityPrototypes; the render parses back balanced
+  with `[0..n]` indices. DLC1 has no DifficultyPrototypes override.
+* In-game effect is still `runtime_test_required` (the engine merge of an inherited `AgentCooldownMultipliers =`
+  on Easy / Medium / Hard follows the same pattern as the existing Mutant_BaseDamage edits there).
+
 ## Gamer rationales; Controller DOGS removed (2026-11-18, fifth pass)
 
 * Every knob's panel rationale says in player words what the move is and how to read it (e.g. psy strike: stay in

@@ -33,6 +33,8 @@ STATIC = (
     ("number-ink", "tools/audit_number_ink.py"),
     ("lair-population", "tools/audit_lair_population.py"),
     ("zone-timers", "tools/audit_zone_timers.py"),
+    ("mutant-aggression", "tools/audit_mutant_aggression.py"),
+    ("mutant-cooldown-cfg", "tools/audit_mutant_cooldown_cfg.py"),
     ("rc-player-labels", "tools/audit_rc_player_labels.py"),
     ("current-stashes", "tools/audit_stashes_current.py"),
     ("stash-content-gear", "tools/audit_stash_content_gear.py"),
