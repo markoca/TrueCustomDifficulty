@@ -104,6 +104,8 @@ for p in CATALOG:
     r = p.get("rationale") or ""
     if r and not re.search(r"\bVanilla\b", r):
         hits.append((p["id"], "rationale", "missing 'Vanilla:'"))
+    elif r and len(re.findall(r"[.!?](?:\s|$)", r[:r.find("Vanilla")])) != 1:
+        hits.append((p["id"], "rationale", "'Vanilla:' must follow the first sentence"))
     logic = p.get("logic") or ""
     if logic and not re.match(LOGIC_OPENERS, logic):
         hits.append((p["id"], "logic", "HIGHER / LOWER must open with a direction (Higher = / Lower = / a value / OFF / ON)"))
@@ -116,6 +118,8 @@ for p in CATALOG:
         hits.append((p["id"], "interaction", "UI how-to or jargon in WORKS WITH; mouse tips belong in CONTROLS"))
     if re.search(r"\b[Vv]anilla (?:base )?[+−-]?\d", logic) or re.search(r"\bvanilla (?:Master|Novice|Stalker|Veteran)\b", logic):
         hits.append((p["id"], "logic", "vanilla value belongs in WHAT IT DOES, not HIGHER / LOWER"))
+    if re.match(r"(Higher|Lower) =", logic) and re.search(r"(?:^|[.!?] )(Higher|Lower) = ", r):
+        hits.append((p["id"], "rationale", "'Higher = …' repeats HIGHER / LOWER; keep it there only"))
     master = p.get("requiresToggle")
     if master and master in by_id and "Only works while" not in r:
         hits.append((p["id"], "rationale", "missing 'Only works while … is ON.'"))

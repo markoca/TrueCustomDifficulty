@@ -251,7 +251,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How many bullets a human enemy can soak up before going down. Higher = longer, more ammo-hungry firefights; lower = enemies drop fast. Vanilla: Novice 1×, Stalker 1.2×, Veteran 1×, Master 1.5×. Pair it with WEAPON DAMAGE — together they set your time-to-kill.",
+      "rationale": "How many bullets a human enemy can soak up before going down. Vanilla: Novice 1×, Stalker 1.2×, Veteran 1×, Master 1.5×. Higher = longer, more ammo-hungry firefights; lower = enemies drop fast.",
       "logic": "",
       "interaction": "WEAPON DAMAGE affects the same time-to-kill from the opposite side. Raising enemy health while lowering your weapon damage compounds the effect."
     },
@@ -296,7 +296,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much it hurts when a human enemy shoots you. Low values let you tank a burst; high values make every exposed second dangerous. Vanilla: Novice 0.17×, Stalker 0.85×, Veteran 1.02×, Master 1.35×. Mutant bites and explosions have their own settings.",
+      "rationale": "How much it hurts when a human enemy shoots you. Vanilla: Novice 0.17×, Stalker 0.85×, Veteran 1.02×, Master 1.35×. Low values let you tank a burst; high values make every exposed second dangerous.",
       "logic": "",
       "interaction": "HUMAN ENEMY HP sets how long enemies survive; this sets how dangerous their shots are. PEAK / MINIMUM HIT PROTECTION also soften sustained fire."
     },
@@ -341,7 +341,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How deadly grenades and other blasts are — both yours and the enemy's. Raise it if you want grenades to feel lethal, lower it to survive the odd F1 at your feet. Vanilla: Novice 0.25×, Stalker and Veteran 1×, Master 1.2×.",
+      "rationale": "How deadly grenades and other blasts are — both yours and the enemy's. Vanilla: Novice 0.25×, Stalker and Veteran 1×, Master 1.2×. Raise it if you want grenades to feel lethal, lower it to survive the odd F1 at your feet.",
       "logic": "",
       "interaction": "Only the difficulty boost. Each explosive keeps its own base damage."
     },
@@ -957,7 +957,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "The damage your own guns deal on a normal body hit. Lower values mean more bullets per kill and more ammo burned. Vanilla: Novice 1.3×, Stalker 1×, Veteran and Master 0.75×. Headshots get an extra boost on top from HEADSHOT DAMAGE.",
+      "rationale": "The damage your own guns deal on a normal body hit. Vanilla: Novice 1.3×, Stalker 1×, Veteran and Master 0.75×. Lower values mean more bullets per kill and more ammo burned.",
       "logic": "",
       "interaction": "HEADSHOT DAMAGE multiplies headshots on top. HUMAN ENEMY HP also changes the time-to-kill."
     },
@@ -1001,7 +1001,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Extra punch for your headshots on top of normal weapon damage. 2× doubles the headshot bonus, rewarding careful aim over spraying. Vanilla: Novice–Veteran 1×, Master 2×.",
+      "rationale": "Extra punch for your headshots on top of normal weapon damage. Vanilla: Novice–Veteran 1×, Master 2×. 2× doubles the headshot bonus, rewarding careful aim over spraying.",
       "logic": "1.0× = the normal headshot multiplier; 2.0× doubles it. It multiplies, it doesn't add a flat bonus.",
       "interaction": "WEAPON DAMAGE sets the base hit; this multiplies headshots on top, so raising both stacks up."
     },
@@ -1090,7 +1090,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How hard mutants hit when they reach you — bites, claws and charges. Mutant toughness is set separately in the health cards. Vanilla: Novice 0.35×, Stalker 1×, Veteran 1.35×, Master 1.5×.",
+      "rationale": "How hard mutants hit when they reach you — bites, claws and charges. Vanilla: Novice 0.35×, Stalker 1×, Veteran 1.35×, Master 1.5×.",
       "logic": "",
       "interaction": "Only damage mutants deal to you. MUTANT HEALTH sets how much they can take."
     },
@@ -1135,7 +1135,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "The game quietly softens damage when many hits land at once, so you don't melt in a single burst. This is the strongest that safety net can get. Higher = more forgiving under heavy fire, lower = bursts hit closer to full damage. Vanilla: Novice 100%, Stalker 75%, Veteran 50%, Master 40%.",
+      "rationale": "The game softens damage when many hits land at once, and this is the strongest that safety net gets. Vanilla: Novice 100%, Stalker 75%, Veteran 50%, Master 40%.",
       "logic": "Higher = more protection when many hits land at once; lower = bursts hurt more. It's protection strength, not a straight damage cut.",
       "interaction": "MINIMUM HIT PROTECTION sets the weakest end. Enemy gun damage is separate."
     },
@@ -1180,7 +1180,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "The weakest end of the same hidden safety net against rapid hits. Raising it keeps some protection even in long, sustained fights. Vanilla: Novice 100%, Stalker 33%, Veteran 15%, Master 12%. Works together with PEAK HIT PROTECTION.",
+      "rationale": "The weakest end of the same hidden safety net against rapid hits. Vanilla: Novice 100%, Stalker 33%, Veteran 15%, Master 12%. Raising it keeps some protection even in long, sustained fights.",
       "logic": "Higher = more protection even in long firefights; lower = sustained fire hurts more. It's protection strength, not a straight damage cut.",
       "interaction": "PEAK HIT PROTECTION sets the strongest end. Enemy gun damage is separate."
     },
@@ -1283,7 +1283,7 @@
           "Variants with their own MaxHP follow the same multiplier: AshyBloodsucker, PrologueBloodsucker. Collar variants inherit from the base prototype; illusion clones (Bayun clone, Pseudodog phantoms) are not scaled."
         ]
       },
-      "rationale": "How tough Bloodsuckers are — the invisible stalkers of the Zone. Includes the Mist, Ashy and prologue variants. Vanilla: 1× (500 HP). Higher values mean longer, scarier close-range fights; every other mutant has its own card.",
+      "rationale": "How tough Bloodsuckers are — the invisible stalkers of the Zone. Vanilla: 1× (500 HP). Includes the Mist, Ashy and prologue variants. Higher values mean longer, scarier close-range fights.",
       "logic": "",
       "interaction": "Only Bloodsucker health. Other combat settings are separate.",
       "exposeInUi": true
@@ -1626,7 +1626,7 @@
         ]
       },
       "exposeInUi": false,
-      "rationale": "How tough Blind Dogs are — the pack hunters you meet from the first hour. Includes the Moldy variant. Vanilla: 1× (63 HP), so even a pistol handles them. Raising it makes early packs a real threat.",
+      "rationale": "How tough Blind Dogs are — the pack hunters you meet from the first hour. Vanilla: 1× (63 HP), so even a pistol handles them. Includes the Moldy variant. Raising it makes early packs a real threat.",
       "interaction": "Only Blind Dog health. Other combat settings are separate."
     },
     {
@@ -1685,7 +1685,7 @@
         ]
       },
       "exposeInUi": false,
-      "rationale": "How tough Boars are — charging bullet sponges. Includes the Helmed and Porcupine variants. Vanilla: 1× (300 HP).",
+      "rationale": "How tough Boars are — charging bullet sponges. Vanilla: 1× (300 HP). Includes the Helmed and Porcupine variants.",
       "interaction": "Only Boar health. Other combat settings are separate."
     },
     {
@@ -1737,7 +1737,7 @@
         ]
       },
       "exposeInUi": false,
-      "rationale": "How tough Flesh are — the clumsy mutated pigs. Includes the Boggy variant. Vanilla: 1× (280 HP).",
+      "rationale": "How tough Flesh are — the clumsy mutated pigs. Vanilla: 1× (280 HP). Includes the Boggy variant.",
       "interaction": "Only Flesh health. Other combat settings are separate."
     },
     {
@@ -1817,7 +1817,7 @@
         ]
       },
       "exposeInUi": false,
-      "rationale": "How tough Poltergeists are — invisible spirits that throw objects at you. Includes the electro, toxic, fire and explosive variants. Vanilla: 1× (400 HP).",
+      "rationale": "How tough Poltergeists are — invisible spirits that throw objects at you. Vanilla: 1× (400 HP). Includes the electro, toxic, fire and explosive variants.",
       "interaction": "Only Poltergeist health. Other combat settings are separate."
     },
     {
@@ -3173,7 +3173,7 @@
           "Human combat actions (flank, grenades) are untouched."
         ]
       },
-      "rationale": "How often mutants in a fight get to use their special and knockdown moves — growls, shields, knockdown leaps and charges. Vanilla: Novice–Veteran 1× (8–12 s pause after each one), Master 2× (4–6 s). Higher = one special move after another; lower = more time to recover.",
+      "rationale": "How often mutants in a fight get to use their special and knockdown moves — growls, shields, knockdown leaps and charges. Vanilla: Novice–Veteran 1× (8–12 s pause after each one), Master 2× (4–6 s).",
       "logic": "Higher = shorter pauses between special moves (8–12 s at 1×); lower = more time to recover.",
       "interaction": "Each mutant's ATTACK RATE still sets how soon it can attack again.",
       "exposeInUi": false
@@ -3228,7 +3228,7 @@
           "Novice/Stalker/Veteran contain no PsyPhantomNPCOverrides block; the UI represents absence as neutral 1.0 / Off. Creating equivalent overrides in Novice/Stalker/Veteran requires runtime validation."
         ]
       },
-      "rationale": "In the Psy encounters that Master makes harder, how long you get before the next wave of phantoms appears. Lower = less breathing room. Vanilla: Novice–Veteran 1×, Master 0.5×.",
+      "rationale": "In the Psy encounters that Master makes harder, how long you get before the next wave of phantoms appears. Vanilla: Novice–Veteran 1×, Master 0.5×.",
       "logic": "Lower = phantom waves come back sooner; higher = longer breaks.",
       "interaction": "Stacks with PSY PHANTOM COUNT: shorter waits plus more phantoms make a much harder fight."
     },
@@ -3282,7 +3282,7 @@
           "Novice/Stalker/Veteran contain no PsyPhantomNPCOverrides block; the UI represents absence as neutral 1.0 / Off. Creating equivalent overrides in Novice/Stalker/Veteran requires runtime validation."
         ]
       },
-      "rationale": "In those Master Psy encounters, how many phantoms come at you per wave. 2× doubles them. Vanilla: Novice–Veteran 1×, Master 2×. Combine with a short spawn interval for a real nightmare.",
+      "rationale": "In those Master Psy encounters, how many phantoms come at you per wave. Vanilla: Novice–Veteran 1×, Master 2×. 2× doubles them.",
       "logic": "Higher = more phantoms per wave; 1× keeps the normal count.",
       "interaction": "Stacks with PHANTOM SPAWN INTERVAL: that sets how soon a wave comes, this sets its size."
     },
@@ -3379,7 +3379,7 @@
           "Novice/Stalker/Veteran contain no PsyPhantomNPCOverrides block; the UI represents absence as neutral 1.0 / Off. Creating equivalent overrides in Novice/Stalker/Veteran requires runtime validation."
         ]
       },
-      "rationale": "How fast the Master Psy enemies chew through your armor and helmet condition. Their damage to your health is unchanged. Vanilla: Novice–Veteran 1×, Master 2×.",
+      "rationale": "How fast the Master Psy enemies chew through your armor and helmet condition. Vanilla: Novice–Veteran 1×, Master 2×. Their damage to your health is unchanged.",
       "logic": "Higher = your gear wears out faster; 1× keeps normal wear.",
       "interaction": "Psy health damage is unchanged. ARMOR DURABILITY still sets how fast your gear wears overall."
     },
@@ -3422,7 +3422,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How fast your stomach empties while you roam. Higher = you need to eat more often and carry more food; lower = food lasts much longer. Vanilla: 0.015 pts/s.",
+      "rationale": "How fast your stomach empties while you roam. Vanilla: 0.015 pts/s. Higher = you need to eat more often and carry more food; lower = food lasts much longer.",
       "logic": "",
       "interaction": "FOOD HUNGER RELIEF sets how much each meal fills you; the hunger thresholds decide when penalties start."
     },
@@ -3877,7 +3877,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How fast you get tired while awake. Higher = fatigue penalties (slower aim and reloads) and the need to sleep arrive sooner. Vanilla: 0.01 pts/s.",
+      "rationale": "How fast you get tired while awake. Vanilla: 0.01 pts/s. Higher = fatigue penalties (slower aim and reloads) and the need to sleep arrive sooner.",
       "logic": "",
       "interaction": "Fatigue stages still start at the vanilla points. Energy drinks clear fatigue separately."
     },
@@ -5258,7 +5258,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How tired you must be before the game lets you sleep. Vanilla: 50 pts on the 0–100 fatigue meter. Lower = nap whenever you like; higher = sleep only when exhausted.",
+      "rationale": "How tired you must be before the game lets you sleep. Vanilla: 50 pts on the 0–100 fatigue meter.",
       "logic": "Higher = you must be more tired before you can sleep; lower = you can sleep earlier.",
       "interaction": "Separate no-sleep effects from hunger, bleeding, radiation or Psy can still block sleep regardless of this threshold."
     },
@@ -5345,7 +5345,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How fast radiation builds up while you stand in contaminated areas. Higher = hotspots become deadly quickly. Vanilla: Novice 0.6×, Stalker 1×, Veteran 1.5×, Master 1.85×.",
+      "rationale": "How fast radiation builds up while you stand in contaminated areas. Vanilla: Novice 0.6×, Stalker 1×, Veteran 1.5×, Master 1.85×. Higher = hotspots become deadly quickly.",
       "logic": "",
       "interaction": "RADIATION RECOVERY controls passive reduction separately. RADIATION STAMINA PENALTY can add a stamina cost at high radiation."
     },
@@ -5546,7 +5546,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How bad bleeding wounds are overall. Higher = you bleed out faster and need bandages sooner. Vanilla: Novice 0.25×, Stalker and Veteran 1×, Master 1.5×.",
+      "rationale": "How bad bleeding wounds are overall. Vanilla: Novice 0.25×, Stalker and Veteran 1×, Master 1.5×.",
       "logic": "Higher = every bleed hurts more; lower = bleeding is gentler.",
       "interaction": "LOW / MEDIUM / SEVERE BLEEDING DAMAGE set the HP lost per stage; NATURAL BLEEDING RECOVERY and meds decide how fast it stops."
     },
@@ -7792,7 +7792,7 @@
           "Engine execution of new spawn endpoints requires fresh-NPC validation."
         ]
       },
-      "rationale": "Makes ordinary human bodies carry less food, drinks and meds. Vanilla: 0% — no change. Higher = leaner pickings, so you rely more on stashes and traders. Weapons, their loaded ammo, armor and quest/special NPCs are never touched.",
+      "rationale": "Makes ordinary human bodies carry less food, drinks and meds. Vanilla: 0% — no change. Weapons, their loaded ammo, armor and quest/special NPCs are never touched.",
       "logic": "Higher = leaner bodies: supplies and SMART LOOT bonus packs both thin out; 100% = no food, drinks or meds on ordinary bodies.",
       "interaction": "Doesn't change which SMART LOOT packs are picked, AMMO PACK SIZE, MOD ITEMS or the per-item chances on this board."
     },
@@ -11024,7 +11024,7 @@
         "status": "runtime_test_required",
         "notes": []
       },
-      "rationale": "How much traders pay you when you sell. Vanilla: Novice and Stalker 1×, Veteran 0.65×, Master 0.55×. Lower = selling loot earns less.",
+      "rationale": "How much traders pay you when you sell. Vanilla: Novice and Stalker 1×, Veteran 0.65×, Master 0.55×.",
       "logic": "Higher = traders pay more when you sell; lower = less. Each trader still adds their own markup.",
       "interaction": "BROKEN GEAR VALUE and item condition also affect what you can sell and for how much."
     },
@@ -11068,7 +11068,7 @@
         "status": "runtime_test_required",
         "notes": []
       },
-      "rationale": "How much traders charge you when you buy. Vanilla: Novice and Stalker 1×, Veteran 1.25×, Master 1.65×. Higher = everything in the shop costs more.",
+      "rationale": "How much traders charge you when you buy. Vanilla: Novice and Stalker 1×, Veteran 1.25×, Master 1.65×.",
       "logic": "Higher = buying costs more; lower = cheaper. Each trader still adds their own markup.",
       "interaction": "ITEM VALUES changes underlying prices; PRICES TRADERS PAY applies when you sell instead."
     },
@@ -11157,7 +11157,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "What a completely broken item is still worth. Vanilla: 10% of its price. Higher = wrecked gear still sells for something.",
+      "rationale": "What a completely broken item is still worth. Vanilla: 10% of its price.",
       "logic": "Higher = wrecked gear still sells for more; 0% = worthless when fully broken.",
       "interaction": "Only how much wear lowers the price. Trader markups still apply."
     },
@@ -11203,7 +11203,7 @@
           "AVOG in Trader_SovietAmmo_ItemGenerator has no authored count and keeps its native default."
         ]
       },
-      "rationale": "How much ammo every trader has on the shelf — shopkeepers, bartenders, stalkers you can trade with and DLC traders alike. Vanilla: 1×. Lower = smaller stacks, and where a stack is already 1 the offer turns up less often; higher = bigger stacks. Doesn't add new calibers.",
+      "rationale": "How much ammo every trader has on the shelf — shopkeepers, bartenders, stalkers you can trade with and DLC traders alike. Vanilla: 1×. Doesn't add new calibers.",
       "logic": "Lower = smaller stacks (never below 1), then the offer turns up less often; higher = only bigger stacks.",
       "interaction": "Doesn't add calibers, skip rank unlocks or change restock timing. The AMMO rail of each trader type sets how often ammo is offered."
     },
@@ -11248,7 +11248,7 @@
           "Since 2026-11-16 every Medical offer of every trader profile is also written as explicit source x factor counts in per-trader generator clones (trader-stock-entries-2.1.csv)."
         ]
       },
-      "rationale": "How many meds every trader has for sale — medics, shopkeepers and stalkers you can trade with alike. Vanilla: 1×. Lower = smaller stacks, and single meds turn up less often, so you can't restock everything in one visit; higher = bigger stacks.",
+      "rationale": "How many meds every trader has for sale — medics, shopkeepers and stalkers you can trade with alike. Vanilla: 1×.",
       "logic": "Lower = smaller stacks (never below 1), then the offer turns up less often — most meds sell one or two at a time; higher = only bigger stacks.",
       "interaction": "Rank unlocks and restock timing stay vanilla. The MEDICAL rail of each trader type sets how often meds are offered."
     },
@@ -12607,7 +12607,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Seconds between starvation hits. Vanilla: 10 seconds. Lower = the same damage comes faster. Only works while STARVATION MECHANICS is ON.",
+      "rationale": "Seconds between starvation hits. Vanilla: 10 seconds. Only works while STARVATION MECHANICS is ON.",
       "logic": "Lower = the same damage comes more often; higher = it's spread out.",
       "interaction": "Stacks with STARVATION DAMAGE: together they set how fast starving hurts.",
       "requiresToggle": "advanced.starvationMechanics"

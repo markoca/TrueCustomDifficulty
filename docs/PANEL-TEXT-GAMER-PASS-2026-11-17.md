@@ -96,6 +96,8 @@ The right-hand panel shows four sections for a selected control: **WHAT IT DOES*
 
 38. HIGHER / LOWER never states a vanilla number (`vanilla 5 s`, `vanilla Master`); WORKS WITH never gives UI instructions or engine terms (*yaw*, *particle*, *collision*, *child controls*).
 
+39. WHAT IT DOES never repeats a `Higher = …` sentence that HIGHER / LOWER already has; `Vanilla:` is always the second sentence (gate-enforced).
+
 ## Since 2026-11-18
 
 The rules above are consolidated in `docs/PANEL-TEXT-STYLE.md` and enforced by `tools/audit_panel_text_style.py`.

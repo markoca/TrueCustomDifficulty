@@ -1,3 +1,9 @@
+## 2026-11-18 — CURRENT: `Vanilla:` always second, no repeated Higher = in WHAT IT DOES
+
+* There are 20 rationales where `Vanilla:` used to come later and now follows the first sentence: combat damages and health, headshots, hit protection, Psy waves and phantoms, five mutant health cards, hunger and fatigue rate, radiation build-up and bleeding severity. Sentences that repeated WORKS WITH were dropped (*Pair it with WEAPON DAMAGE…*, *Headshots get an extra boost…*, *Mutant toughness is set separately…*, *Works together with PEAK HIT PROTECTION*, *Combine with a short spawn interval…*).
+* 12 rationales lose their `Higher = … / Lower = …` sentence, because HIGHER / LOWER already says it. These are hit protection, mutant special moves, Psy waves, sleep threshold, bleeding severity, corpse scarcity, trader buy / sell prices, broken item value, ammo and med stock, and starvation interval.
+* The style gate enforces both: `Vanilla:` after exactly one sentence, and no `Higher =` sentence in WHAT IT DOES when HIGHER / LOWER opens with one.
+
 ## 2026-11-18 — CURRENT: WORKS WITH second pass, no vanilla values in HIGHER / LOWER
 
 * ~65 more WORKS WITH texts rewritten to the *Only … / Stacks with … / Separate from … / Multiplies with …* shape. This covers stamina costs, melee and vault, water and energy drinks, alcohol, bleeding stages, fatigue, starvation, the Psy encounters, item weights, prices, ammo and grenade boxes, Flycatcher, Soap Bubble and Fireball, and the Psy drain.
