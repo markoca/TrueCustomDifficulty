@@ -1,3 +1,9 @@
+## 2026-11-18 — CURRENT: WORKS WITH names the scope and the partner
+
+* ~110 WORKS WITH texts rewritten to one shape: `Only <scope>. <CAPS control> is separate.` / `Stacks with …` / `Multiplies with …` — e.g. `Only Chimera health. Other combat settings are separate.`, `Only how fast radiation fades. RADIATION ACCUMULATION sets how fast it builds.`, `BONUS GEAR COVERAGE picks which stashes join; BONUS CHANCE checks each item. Rank limits still apply.`, `Only Snork packs. Other mutants keep their own size.`
+* Mouse tips moved out of WORKS WITH (heal-time *Drag this item's TIME column*, radar *right-click that point*) — CONTROLS already says them. *Affects eligible …* → `Only medical items in Standard stashes. …`; trader stock rows point to AMMO / MEDICAL SUPPLY.
+* `tools/audit_panel_text_style.py` enforces it (`WORKS_WITH_BAD` openers; *right-click*, *drag this*, *radar point*, *eligible*).
+
 ## 2026-11-18 — CURRENT: HIGHER / LOWER opens with the direction
 
 * Every HIGHER / LOWER text now opens with `Higher = …` / `Lower = …` or with the value that sets it (`0 = …`, `1× keeps …`, `100% = …`, `OFF …`) — ~60 rewritten: fatigue aim / reload penalties, Master healing cuts, water drains, Passive HP Regen, trader prices, satiety, drunkenness, heal times, vault height, sprint / aim regen, dropped weapon condition, medkit MIN / MAX, EXTRA STASH GEAR rows, repair-by-reputation, raw anomaly damages, artifact luck / count, human and mutant group sizes (*Higher = bigger groups can show up*; the vanilla caps stay in WHAT IT DOES), NPC sight / alert memory.

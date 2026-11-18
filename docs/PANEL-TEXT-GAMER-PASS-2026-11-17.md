@@ -88,6 +88,10 @@ The right-hand panel shows four sections for a selected control: **WHAT IT DOES*
 34. No system words in panel texts: *state*, *bundle*, *layer*, *component*, *actor-level*, *configured*. Describe the situation the player is in (*while you're severely tired*, *after you get hurt*).
 35. `Vanilla:` comes right after the first sentence.
 
+## Sixteenth pass (2026-11-18)
+
+36. WORKS WITH opens with the scope (`Only …`) or the partner control in CAPS; no *This …* openers, no mouse tips, no *eligible*.
+
 ## Since 2026-11-18
 
 The rules above are consolidated in `docs/PANEL-TEXT-STYLE.md` and enforced by `tools/audit_panel_text_style.py`.
