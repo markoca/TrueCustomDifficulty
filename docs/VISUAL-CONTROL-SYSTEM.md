@@ -1,3 +1,13 @@
+## 2026-11-18 — CURRENT: every WORKS WITH filled, CAPS names point at real controls
+
+* **No empty WORKS WITH**: 30 rows filled in the same shape. These are Healing Amount (bandage), Action Costs (sprint), Item Values, the Master radiation stamina cost, Bloodsucker / Newbie anchors, six mutant health rows and 14 mutant part chances. The four base-price rows drop *Same on every difficulty* (`PRICES TRADERS PAY and PRICES YOU PAY still apply on top.`).
+* **Medical smart-loot twins**: the label *{Item} Odds (weighted picks)* becomes *{Item} Odds (Smart Loot)*. The texts now say what the player sees: `The same BANDAGE ODDS cell, applied to Basic and smart loot stashes too…` / `Always equal to BANDAGE ODDS…`.
+* **CAPS names fixed**: *LOW-HP REGEN LOSS* → `LOW-HP RECOVERY RATE`. The energy drink regen now names `ENERGY DRINK STAMINA GAIN`, `ENERGY DRINK FATIGUE RELIEF` and `ENERGY DRINK REGEN DURATION` in full.
+* Style gate adds three rules:
+  * labels are linted too;
+  * WORKS WITH may not be empty;
+  * every CAPS name in a panel text must be a control label or a caption the UI draws (trailing ON / OFF allowed).
+
 ## 2026-11-18 — CURRENT: retired hidden settings load at vanilla; unit case on boards
 
 * **Retired hidden settings**: `loot.stashMixAmmo`, `loot.stashMixGrenades`, `loot.standardStashChanceScale` and `loot.rareStashChanceScale` have no control, so loading a preset now keeps them at vanilla 1× (`RetiredHiddenPresetIds`). Older preset values for them are ignored; factory presets were already 1×. See `docs/RETIRED-HIDDEN-SETTINGS.md`.

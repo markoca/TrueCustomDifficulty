@@ -117,8 +117,8 @@ assert 'target.Parameter.Id == "loot.stashMedicalAntiRadBias"' in ui
 anti = stash["loot.stashMedicalAntiRadBias"]
 # One MEDICAL COMPOSITION cell per item: Weight mirrors the Chance scale.
 assert anti["slider"] == {"min": 0, "max": 1, "step": 0.05, "stepMode": "absolute"}
-assert "ANTI-RAD cell" in anti["logic"]
-assert "Mirrored" in anti["interaction"]
+assert "anti-rads" in anti["logic"]
+assert "Always equal to ANTI-RAD ODDS" in anti["interaction"]
 assert "mirrors" in anti["description"]
 # Audited native game 2.0.5 groups, not a fabricated 4-item medicine pool.
 with (data / "smartloot-world-source-entries.csv").open(

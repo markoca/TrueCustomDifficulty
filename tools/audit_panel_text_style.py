@@ -97,7 +97,7 @@ by_id = {p["id"]: p for p in CATALOG}
 for p in CATALOG:
     if p["id"] in LEGACY or p["group"] in SKIP_GROUPS:
         continue
-    for kind in ("rationale", "logic", "interaction"):
+    for kind in ("label", "rationale", "logic", "interaction"):
         text = p.get(kind) or ""
         if text:
             hits += lint(p["id"], text, kind)
@@ -108,6 +108,8 @@ for p in CATALOG:
     if logic and not re.match(LOGIC_OPENERS, logic):
         hits.append((p["id"], "logic", "HIGHER / LOWER must open with a direction (Higher = / Lower = / a value / OFF / ON)"))
     inter = p.get("interaction") or ""
+    if not inter.strip():
+        hits.append((p["id"], "interaction", "WORKS WITH is empty; say what stacks or stays separate"))
     if inter and re.match(WORKS_WITH_BAD, inter):
         hits.append((p["id"], "interaction", "WORKS WITH must name what stacks / stays separate, not open with 'This …' or a UI how-to"))
     if re.search(r"\b(right-click|[Dd]rag this|radar point|eligible)\b", inter):
@@ -170,6 +172,21 @@ for f in UI_FILES:
     for n, line in enumerate(f.read_text().splitlines(), 1):
         if re.search(r'(\}|\d) (KG|PTS|PTS/S|RAD|SEC|UU|uu)"', line):
             hits.append((f"{f.name}:{n}", "ui", "unit after a number is lower case (kg, pts, pts/s, rad, s, cm)"))
+
+# CAPS names in panel texts must be something the player can find on screen:
+# a control label or a caption the UI code draws.
+_labels = {(p.get("label") or "").upper() for p in CATALOG}
+_ui_code = " ".join(f.read_text() for f in (APP).rglob("*.cs")).upper()
+for p in CATALOG:
+    if p["id"] in LEGACY or p["group"] in SKIP_GROUPS:
+        continue
+    for kind in ("rationale", "logic", "interaction"):
+        for name in re.findall(r"\b[A-Z][A-Z0-9\-'&/]+(?: [A-Z][A-Z0-9\-'&/]+)*\b", p.get(kind) or ""):
+            name = re.sub(r" (ON|OFF)$", "", name)
+            if len(name) < 4 or name in _labels or f'"{name}' in _ui_code \
+                    or f'{name}"' in _ui_code or f" {name} " in _ui_code:
+                continue
+            hits.append((p["id"], kind, f"CAPS name '{name}' is not a control or caption on screen"))
 
 if hits:
     for h in hits[:40]:

@@ -1626,7 +1626,8 @@
         ]
       },
       "exposeInUi": false,
-      "rationale": "How tough Blind Dogs are — the pack hunters you meet from the first hour. Includes the Moldy variant. Vanilla: 1× (63 HP), so even a pistol handles them. Raising it makes early packs a real threat."
+      "rationale": "How tough Blind Dogs are — the pack hunters you meet from the first hour. Includes the Moldy variant. Vanilla: 1× (63 HP), so even a pistol handles them. Raising it makes early packs a real threat.",
+      "interaction": "Only Blind Dog health. Other combat settings are separate."
     },
     {
       "id": "combat.mutantHealth.boar",
@@ -1684,7 +1685,8 @@
         ]
       },
       "exposeInUi": false,
-      "rationale": "How tough Boars are — charging bullet sponges. Includes the Helmed and Porcupine variants. Vanilla: 1× (300 HP)."
+      "rationale": "How tough Boars are — charging bullet sponges. Includes the Helmed and Porcupine variants. Vanilla: 1× (300 HP).",
+      "interaction": "Only Boar health. Other combat settings are separate."
     },
     {
       "id": "combat.mutantHealth.flesh",
@@ -1735,7 +1737,8 @@
         ]
       },
       "exposeInUi": false,
-      "rationale": "How tough Flesh are — the clumsy mutated pigs. Includes the Boggy variant. Vanilla: 1× (280 HP)."
+      "rationale": "How tough Flesh are — the clumsy mutated pigs. Includes the Boggy variant. Vanilla: 1× (280 HP).",
+      "interaction": "Only Flesh health. Other combat settings are separate."
     },
     {
       "id": "combat.mutantHealth.poltergeist",
@@ -1814,7 +1817,8 @@
         ]
       },
       "exposeInUi": false,
-      "rationale": "How tough Poltergeists are — invisible spirits that throw objects at you. Includes the electro, toxic, fire and explosive variants. Vanilla: 1× (400 HP)."
+      "rationale": "How tough Poltergeists are — invisible spirits that throw objects at you. Includes the electro, toxic, fire and explosive variants. Vanilla: 1× (400 HP).",
+      "interaction": "Only Poltergeist health. Other combat settings are separate."
     },
     {
       "id": "combat.mutantHealth.snork",
@@ -1857,7 +1861,8 @@
         ]
       },
       "exposeInUi": false,
-      "rationale": "How tough Snorks are — the leaping gas-mask mutants. Vanilla: 1× (150 HP)."
+      "rationale": "How tough Snorks are — the leaping gas-mask mutants. Vanilla: 1× (150 HP).",
+      "interaction": "Only Snork health. Other combat settings are separate."
     },
     {
       "id": "combat.mutantHealth.tushkan",
@@ -1900,7 +1905,8 @@
         ]
       },
       "exposeInUi": false,
-      "rationale": "How tough Tushkans are — the small, fast rat-like swarmers. Vanilla: 1× (19 HP), one hit usually does it."
+      "rationale": "How tough Tushkans are — the small, fast rat-like swarmers. Vanilla: 1× (19 HP), one hit usually does it.",
+      "interaction": "Only Tushkan health. Other combat settings are separate."
     },
     {
       "id": "combat.mutantHealth.controller",
@@ -4441,7 +4447,7 @@
       },
       "rationale": "How strongly an energy drink keeps refilling your stamina after the first gulp. Vanilla: 1×. 0× removes that boost, 2× doubles it.",
       "logic": "1× keeps the energy drink's stamina regeneration; 0 removes it; 2× doubles it.",
-      "interaction": "ENERGY DRINK STAMINA GAIN, FATIGUE RELIEF and REGEN DURATION are separate controls.",
+      "interaction": "Only the regen. ENERGY DRINK STAMINA GAIN, ENERGY DRINK FATIGUE RELIEF and ENERGY DRINK REGEN DURATION are separate.",
       "exposeInUi": false
     },
     {
@@ -5848,7 +5854,7 @@
       },
       "rationale": "Master's extra punishment for being badly hurt: your health barely recovers until you patch up. Vanilla: Novice–Veteran OFF, Master ON. The normal low-health system works either way.",
       "logic": "OFF = normal low-HP behaviour. ON = your health barely recovers while you're badly hurt.",
-      "interaction": "It starts at the same HP as vanilla; LOW-HP REGEN LOSS below sets how hard it bites."
+      "interaction": "It starts at the same HP as vanilla; LOW-HP RECOVERY RATE below sets how hard it bites."
     },
     {
       "id": "health.masterLowHealthPenalty",
@@ -5933,7 +5939,7 @@
       },
       "rationale": "How much health one bandage gives back. Vanilla: 20 HP — a patch-up, not a full heal. Its bleed-stopping power is a separate setting.",
       "logic": "",
-      "interaction": "",
+      "interaction": "Bleed stop is separate. With HEALING ITEM EFFICIENCY REDUCTION ON, MASTER BANDAGE HEALING further changes the final heal.",
       "exposeInUi": true
     },
     {
@@ -7343,7 +7349,7 @@
       },
       "rationale": "How much stamina sprinting burns. Vanilla: 5.25. Lower it to run further; raise it to make every dash count. Jump, vault and melee costs have their own bars.",
       "logic": "",
-      "interaction": "",
+      "interaction": "Only sprinting. Stamina regen is separate.",
       "exposeInUi": true
     },
     {
@@ -8392,7 +8398,7 @@
       "id": "loot.stashMedicalBandageBias",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Bandage Odds (weighted picks)",
+      "label": "Bandage Odds (Smart Loot)",
       "description": "Weighted-pick half of the BANDAGES cell: keeps X% of the vanilla odds for Bandage in the shared Basic pick and smart world stashes. Always mirrors Bandage Odds (one visible control per item); the removed share never goes to other items.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -8430,9 +8436,9 @@
           "Older presets above 100% are clamped to 100% on load."
         ]
       },
-      "rationale": "Follows the BANDAGES cell automatically: the same \"keep X% of the vanilla odds\" for bandages in Basic and smart world stashes. Vanilla: 100%.",
-      "logic": "Follows the BANDAGES cell: 100% keeps vanilla odds, 0% means stashes never give bandages this way.",
-      "interaction": "Mirrored both ways with BANDAGE ODDS; the last change (cell, preset or reset) wins.",
+      "rationale": "The same BANDAGE ODDS cell, applied to Basic and smart loot stashes too, so bandages keep one share everywhere. Vanilla: 100%.",
+      "logic": "100% keeps vanilla odds; 0% = stashes never give bandages.",
+      "interaction": "Always equal to BANDAGE ODDS; the last change (cell, preset or reset) wins.",
       "exposeInUi": true
     },
     {
@@ -8486,7 +8492,7 @@
       "id": "loot.stashMedicalMedkitBias",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Medkit Odds (weighted picks)",
+      "label": "Medkit Odds (Smart Loot)",
       "description": "Weighted-pick half of the MEDKITS cell: keeps X% of the vanilla odds for Medkit in smart world stashes. Always mirrors Medkit Odds (one visible control per item); the removed share never goes to other items.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -8524,9 +8530,9 @@
           "Older presets above 100% are clamped to 100% on load."
         ]
       },
-      "rationale": "Follows the MEDKITS cell automatically: the same \"keep X% of the vanilla odds\" for medkit in smart world stashes. Vanilla: 100%.",
-      "logic": "Follows the MEDKITS cell: 100% keeps vanilla odds, 0% means stashes never give medkits this way.",
-      "interaction": "Mirrored both ways with MEDKIT ODDS; the last change (cell, preset or reset) wins.",
+      "rationale": "The same MEDKIT ODDS cell, applied to smart loot stashes too, so medkits keep one share everywhere. Vanilla: 100%.",
+      "logic": "100% keeps vanilla odds; 0% = stashes never give medkits.",
+      "interaction": "Always equal to MEDKIT ODDS; the last change (cell, preset or reset) wins.",
       "exposeInUi": true
     },
     {
@@ -8580,7 +8586,7 @@
       "id": "loot.stashMedicalArmyMedkitBias",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Army Medkit Odds (weighted picks)",
+      "label": "Army Medkit Odds (Smart Loot)",
       "description": "Weighted-pick half of the ARMY MEDKITS cell: keeps X% of the vanilla odds for Army Medkit in smart world stashes. Always mirrors Army Medkit Odds (one visible control per item); the removed share never goes to other items.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -8618,9 +8624,9 @@
           "Older presets above 100% are clamped to 100% on load."
         ]
       },
-      "rationale": "Follows the ARMY MEDKITS cell automatically: the same \"keep X% of the vanilla odds\" for army medkit in smart world stashes. Vanilla: 100%.",
-      "logic": "Follows the ARMY MEDKITS cell: 100% keeps vanilla odds, 0% means stashes never give army medkits this way.",
-      "interaction": "Mirrored both ways with ARMY MEDKIT ODDS; the last change (cell, preset or reset) wins.",
+      "rationale": "The same ARMY MEDKIT ODDS cell, applied to smart loot stashes too, so army medkits keep one share everywhere. Vanilla: 100%.",
+      "logic": "100% keeps vanilla odds; 0% = stashes never give army medkits.",
+      "interaction": "Always equal to ARMY MEDKIT ODDS; the last change (cell, preset or reset) wins.",
       "exposeInUi": true
     },
     {
@@ -8674,7 +8680,7 @@
       "id": "loot.stashMedicalAntiRadBias",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Anti-Rad Odds (weighted picks)",
+      "label": "Anti-Rad Odds (Smart Loot)",
       "description": "Weighted-pick half of the ANTI-RAD cell: keeps X% of the vanilla odds for Anti-Rad in smart world stashes. Always mirrors Anti-Rad Odds (one visible control per item); the removed share never goes to other items.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -8712,9 +8718,9 @@
           "Older presets above 100% are clamped to 100% on load."
         ]
       },
-      "rationale": "Follows the ANTI-RAD cell automatically: the same \"keep X% of the vanilla odds\" for anti-rads in smart world stashes. Vanilla: 100%.",
-      "logic": "Follows the ANTI-RAD cell: 100% keeps vanilla odds, 0% means stashes never give anti-rads this way.",
-      "interaction": "Mirrored both ways with ANTI-RAD ODDS; the last change (cell, preset or reset) wins.",
+      "rationale": "The same ANTI-RAD ODDS cell, applied to smart loot stashes too, so anti-rads keep one share everywhere. Vanilla: 100%.",
+      "logic": "100% keeps vanilla odds; 0% = stashes never give anti-rads.",
+      "interaction": "Always equal to ANTI-RAD ODDS; the last change (cell, preset or reset) wins.",
       "exposeInUi": true
     },
     {
@@ -11288,7 +11294,7 @@
       },
       "rationale": "Base price of food, meds and other consumables. Vanilla: 1×. Affects both what you pay and what you get.",
       "logic": "",
-      "interaction": "",
+      "interaction": "PRICES TRADERS PAY and PRICES YOU PAY still apply on top.",
       "exposeInUi": true
     },
     {
@@ -11333,7 +11339,7 @@
       },
       "rationale": "Base price of ammo. Vanilla: 1×. Higher = every magazine costs more to buy and sells for more.",
       "logic": "1× keeps vanilla prices for this category; higher raises them, lower cuts them.",
-      "interaction": "Same on every difficulty. PRICES TRADERS PAY and PRICES YOU PAY still apply on top.",
+      "interaction": "PRICES TRADERS PAY and PRICES YOU PAY still apply on top.",
       "exposeInUi": false
     },
     {
@@ -11378,7 +11384,7 @@
       },
       "rationale": "Base price of armor. Vanilla: 1×.",
       "logic": "1× keeps vanilla prices for this category; higher raises them, lower cuts them.",
-      "interaction": "Same on every difficulty. PRICES TRADERS PAY and PRICES YOU PAY still apply on top.",
+      "interaction": "PRICES TRADERS PAY and PRICES YOU PAY still apply on top.",
       "exposeInUi": false
     },
     {
@@ -11423,7 +11429,7 @@
       },
       "rationale": "Base price of weapons. Vanilla: 1×. Lower = looted guns sell for less.",
       "logic": "1× keeps vanilla prices for this category; higher raises them, lower cuts them.",
-      "interaction": "Same on every difficulty. PRICES TRADERS PAY and PRICES YOU PAY still apply on top.",
+      "interaction": "PRICES TRADERS PAY and PRICES YOU PAY still apply on top.",
       "exposeInUi": false
     },
     {
@@ -11468,7 +11474,7 @@
       },
       "rationale": "Base price of artifacts. Vanilla: 1×. Higher = artifact hunting pays better.",
       "logic": "1× keeps vanilla prices for this category; higher raises them, lower cuts them.",
-      "interaction": "Same on every difficulty. PRICES TRADERS PAY and PRICES YOU PAY still apply on top.",
+      "interaction": "PRICES TRADERS PAY and PRICES YOU PAY still apply on top.",
       "exposeInUi": false
     },
     {
@@ -13257,7 +13263,7 @@
       },
       "rationale": "How much more stamina actions cost while heavily irradiated under Master rules. Vanilla: +50%. 0% removes it. Only works while RADIATION STAMINA PENALTY is ON.",
       "logic": "50% means +50% extra stamina cost. 0% removes this extra radiation cost.",
-      "interaction": "",
+      "interaction": "Stacks with the normal action costs. RADIATION ACCUMULATION sets how fast you get there.",
       "requiresToggle": "advanced.radiationMechanics"
     },
     {
@@ -14433,7 +14439,7 @@
       },
       "rationale": "Chance a dead blind dog leaves one part you can sell or use. Vanilla: 15% — most kills give nothing. Doesn't change how many blind dogs spawn.",
       "logic": "",
-      "interaction": ""
+      "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
       "id": "loot.mutant.bloodsuckerChance",
@@ -14481,7 +14487,7 @@
       },
       "rationale": "Chance a dead bloodsucker leaves one part you can sell or use. Vanilla: 50%. Doesn't change how many bloodsuckers spawn.",
       "logic": "",
-      "interaction": ""
+      "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
       "id": "loot.mutant.boarChance",
@@ -14529,7 +14535,7 @@
       },
       "rationale": "Chance a dead boar leaves one part you can sell or use. Vanilla: 20% — most kills give nothing. Doesn't change how many boars spawn.",
       "logic": "",
-      "interaction": ""
+      "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
       "id": "loot.mutant.burerChance",
@@ -14577,7 +14583,7 @@
       },
       "rationale": "Chance a dead burer leaves one part you can sell or use. Vanilla: 100% — every kill pays out. Doesn't change how many burers spawn.",
       "logic": "",
-      "interaction": ""
+      "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
       "id": "loot.mutant.catChance",
@@ -14625,7 +14631,7 @@
       },
       "rationale": "Chance a dead bayun leaves one part you can sell or use. Vanilla: 100% — every kill pays out. Doesn't change how many bayuns spawn.",
       "logic": "",
-      "interaction": ""
+      "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
       "id": "loot.mutant.chimeraChance",
@@ -14673,7 +14679,7 @@
       },
       "rationale": "Chance a dead chimera leaves one part you can sell or use. Vanilla: 100% — every kill pays out. Doesn't change how many chimeras spawn.",
       "logic": "",
-      "interaction": ""
+      "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
       "id": "loot.mutant.controllerChance",
@@ -14721,7 +14727,7 @@
       },
       "rationale": "Chance a dead controller leaves one part you can sell or use. Vanilla: 100% — every kill pays out. Doesn't change how many controllers spawn.",
       "logic": "",
-      "interaction": ""
+      "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
       "id": "loot.mutant.deerChance",
@@ -14769,7 +14775,7 @@
       },
       "rationale": "Chance a dead deer leaves one part you can sell or use. Vanilla: 100% — every kill pays out. Doesn't change how many deers spawn.",
       "logic": "",
-      "interaction": ""
+      "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
       "id": "loot.mutant.fleshChance",
@@ -14817,7 +14823,7 @@
       },
       "rationale": "Chance a dead flesh leaves one part you can sell or use. Vanilla: 20% — most kills give nothing. Doesn't change how many fleshs spawn.",
       "logic": "",
-      "interaction": ""
+      "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
       "id": "loot.mutant.poltergeistChance",
@@ -14865,7 +14871,7 @@
       },
       "rationale": "Chance a dead poltergeist leaves one part you can sell or use. Vanilla: 65%. Doesn't change how many poltergeists spawn.",
       "logic": "",
-      "interaction": ""
+      "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
       "id": "loot.mutant.pseudodogChance",
@@ -14913,7 +14919,7 @@
       },
       "rationale": "Chance a dead pseudodog leaves one part you can sell or use. Vanilla: 100% — every kill pays out. Doesn't change how many pseudodogs spawn.",
       "logic": "",
-      "interaction": ""
+      "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
       "id": "loot.mutant.pseudogiantChance",
@@ -14961,7 +14967,7 @@
       },
       "rationale": "Chance a dead pseudogiant leaves one part you can sell or use. Vanilla: 100% — every kill pays out. Doesn't change how many pseudogiants spawn.",
       "logic": "",
-      "interaction": ""
+      "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
       "id": "loot.mutant.tushkanChance",
@@ -15009,7 +15015,7 @@
       },
       "rationale": "Chance a dead tushkan leaves one part you can sell or use. Vanilla: 10% — most kills give nothing. Doesn't change how many tushkans spawn.",
       "logic": "",
-      "interaction": ""
+      "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
       "id": "loot.mutant.snorkChance",
@@ -15057,7 +15063,7 @@
       },
       "rationale": "Chance a dead snork leaves one part you can sell or use. Vanilla: 20% — most kills give nothing. Doesn't change how many snorks spawn.",
       "logic": "",
-      "interaction": ""
+      "interaction": "Only this mutant's drop chance. Other mutants keep their own."
     },
     {
       "id": "equipment.weaponWearPerShot",
@@ -15823,7 +15829,7 @@
       },
       "rationale": "How big human squads can get while you're a Newbie. Vanilla: 1× (3 NPC). 2× = up to twice as many per squad. How often squads show up doesn't change. Each rank has its own bar.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
-      "interaction": "",
+      "interaction": "Only squads at this player rank. Other ranks keep their own size.",
       "exposeInUi": true
     },
     {
@@ -16100,7 +16106,7 @@
       },
       "rationale": "How many bloodsuckers can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 0 / 1 / 1 / 1). 2× = up to twice as many per group; how often they spawn doesn't change. Each species has its own bar. A Newbie cap of 0 stays 0.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
-      "interaction": "",
+      "interaction": "Only Bloodsucker packs. Other mutants keep their own size.",
       "exposeInUi": true
     },
     {

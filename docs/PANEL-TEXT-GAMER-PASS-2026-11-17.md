@@ -92,6 +92,8 @@ The right-hand panel shows four sections for a selected control: **WHAT IT DOES*
 
 36. WORKS WITH opens with the scope (`Only …`) or the partner control in CAPS; no *This …* openers, no mouse tips, no *eligible*.
 
+37. WORKS WITH is never empty; CAPS names must exist on screen; labels follow the same tech-speak rules.
+
 ## Since 2026-11-18
 
 The rules above are consolidated in `docs/PANEL-TEXT-STYLE.md` and enforced by `tools/audit_panel_text_style.py`.
