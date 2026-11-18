@@ -767,3 +767,5 @@ Set General Traders · WEAPONS to 50% and AMMO SUPPLY to 0.5×, build, and refre
 The C# contracts in `tests/` need .NET 10 and Wine: `python3 tools/pre_release.py writer --wine`. The static gate `test-contract-pins` keeps their catalog and edit-point counts in step with the catalog. Their runtime scenario counts (the `WRITERS` table in `tools/pre_release.py`) are only confirmed by a real run.
 
 First real run (2026-11-18, 7f9cdc8): 6 PASS / 7 FAIL. Fixed in the next commit: the REMOVE LOOSE ARTIFACTS file-count bug in the production writer, plus stale contract expectations (see the CURRENT entry in UI-DESIGN-LOCK.md). A re-run is needed to confirm.
+
+Second run (2026-11-18, 862626c): 9 PASS / 4 FAIL. All four failures were stale test expectations (Selma/Ragman 0% in the combined trader case, loot taxonomy 89/17/72, WORLD LOOT board with 8 controls, the AllControls executed count). The REMOVE LOOSE ARTIFACTS writer fix passed every AllControls probe.

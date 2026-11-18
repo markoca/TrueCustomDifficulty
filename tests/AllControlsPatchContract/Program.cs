@@ -237,8 +237,8 @@ internal static partial class Program
                     failed.Add(id + ": " + string.Join(" | ", issues));
             }
             Check(failed.Count == 0, "Writer probe failures:\n" + string.Join("\n", failed));
-            Check(executed == 344, "Not every mounted editable source was executed");
-            Console.WriteLine($"PASS: {executed}/344 mounted editable source IDs produced production staged CFG output.");
+            Check(executed == tested.Length, $"Not every mounted editable source was executed ({executed}/{tested.Length})");
+            Console.WriteLine($"PASS: {executed}/{tested.Length} mounted editable source IDs produced production staged CFG output.");
             Console.WriteLine("NOT VERIFIED: in-game STALKER 2 CFG merge, UI interaction via Wine, or gameplay effects.");
             return 0;
         }

@@ -157,7 +157,7 @@ internal static partial class Program
                 "Weapon generator manifest misattributes nested upgrade/attachment values to the item: " + sid);
         }
         var ids=new[]{"loot.worldWeaponShuffle","loot.looseUniqueWeaponShuffle","loot.worldWeaponDensity",
-            "loot.worldAttachmentShuffle","loot.worldDetectors","loot.worldArmorRemoved","loot.blueprintShuffle"};
+            "loot.worldAttachmentShuffle","loot.worldDetectors","loot.worldArmorRemoved","loot.looseArtifactsRemoved","loot.blueprintShuffle"};
         var vm=new MainViewModel(Catalog);
         Check(ids.All(id=>vm.AllParameters.Any(p=>p.Id==id)),"World placement control missing from actual ViewModel");
         // UI regression: the original screenshot showed "World placement data unavailable"
@@ -166,12 +166,13 @@ internal static partial class Program
         var placementIds = new[] {
             "loot.worldWeaponShuffle", "loot.worldWeaponDensity",
             "loot.looseUniqueWeaponShuffle", "loot.worldAttachmentShuffle",
-            "loot.worldDetectors", "loot.worldArmorRemoved", "loot.blueprintShuffle"
+            "loot.worldDetectors", "loot.worldArmorRemoved", "loot.looseArtifactsRemoved",
+            "loot.blueprintShuffle"
         };
         var placement = vm.AllParameters.Where(p=>p.VisualAggregateFamily=="WorldLootLayout").ToList();
-        Check(placement.Count==7 &&
+        Check(placement.Count==8 &&
             placementIds.All(id=>placement.Count(p=>p.Id==id)==1),
-            "World Placement must materialize exactly seven live aggregate-backed controls");
+            "World Placement must materialize exactly eight live aggregate-backed controls");
         Check(placement.Count(p=>p.IsVisualAggregateAnchor && p.IsControlVisible)==1 &&
             placement.Single(p=>p.IsVisualAggregateAnchor).Id=="loot.worldWeaponShuffle" &&
             placement.Single(p=>p.Id=="loot.looseUniqueWeaponShuffle").IsToggle,
@@ -183,12 +184,12 @@ internal static partial class Program
         var field=typeof(TrueCustomDifficulty.Controls.AggregateVisualControl).GetField(
             "_parameters",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance);
         var bound=field?.GetValue(board) as Dictionary<string,ParameterViewModel>;
-        Check(bound is not null && bound.Count==7 &&
+        Check(bound is not null && bound.Count==8 &&
             placementIds.All(id=>bound.ContainsKey(id)),
-            "World Placement visual must bind all seven settings and never show data unavailable");
+            "World Placement visual must bind all eight settings and never show data unavailable");
         Check(ids.Where(id=>id!="loot.worldWeaponDensity").All(id=>
             vm.AllParameters.Single(p=>p.Id==id).IsToggle),
-            "All six world placement toggles must remain booleans");
+            "All world placement toggles must remain booleans");
         Check(vm.AllParameters.Single(p=>p.Id=="loot.worldWeaponDensity").IsSlider,
             "World weapon density must stay dependent slider");
         Check(WeaponPool.Select(p=>p[0]).Distinct(StringComparer.Ordinal).Count()==36 &&

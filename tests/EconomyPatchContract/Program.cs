@@ -538,7 +538,9 @@ internal static class Program
                 label + ": combined writer leaked sibling fields / other files");
 
             var manifest = TraderPolicyRows();
-            foreach (var row in manifest)
+            // Selma and Ragman keep their native 0% (see Veteran-Trader-MinBuy).
+            var nativeZeroSids = new[] { "SelmaTrader_TradePrototype", "Trader_Soviet_Rostok_TradePrototype" };
+            foreach (var row in manifest.Where(r => !nativeZeroSids.Contains(r[2], StringComparer.Ordinal)))
             {
                 var patch = Parse(File.ReadAllText(ExpectedFile(path, row[1])));
                 var root = patch.Get(row[2]);
@@ -555,7 +557,7 @@ internal static class Program
                         label + ": native one-item blacklist must become a removenode");
             }
             _passed++;
-            Console.WriteLine("PASS " + label + " (86 merged profiles; DLC1, Eger, empty list)");
+            Console.WriteLine("PASS " + label + " (84 merged profiles, Selma / Ragman untouched; DLC1, Eger, empty list)");
         }
         finally
         {

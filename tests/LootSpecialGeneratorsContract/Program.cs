@@ -930,9 +930,9 @@ internal static partial class Program
         var specials=defs.Where(x=>!direct.Contains(x.Id)).Select(x=>x.Id).ToHashSet(StringComparer.Ordinal);
         var ours=ScalarIds.Concat(new[]{"loot.npcCorpseBonus","loot.npcWeaponAmmoSupply"})
             .ToHashSet(StringComparer.Ordinal);
-        Check(defs.Length==79 && direct.Count==16 && specials.Count==63
+        Check(defs.Length==89 && direct.Count==17 && specials.Count==72
             && ours.IsSubsetOf(specials),
-            "Loot/Stashes taxonomy changed: expected 79 loot.* IDs, 16 direct and 63 special");
+            "Loot/Stashes taxonomy changed: expected 89 loot.* IDs, 17 direct and 72 special");
         var mounted=new MainViewModel(Catalog).AllParameters;
         Check(ours.All(id=>mounted.Any(x=>x.Id==id && x.IsControlEnabled)),
             "A generator source is not in the actual ViewModel");

@@ -1,3 +1,11 @@
+## CURRENT 2026-11-18 — Second Wine contract run: 9 PASS / 4 FAIL, all four expectations fixed
+
+* No UI or writer change; the four remaining failures were stale test expectations.
+  * Economy: the combined TRADER BUYS + MIN SELLABLE CONDITION case now skips Selma and Ragman, who keep their native 0%.
+  * LootSpecialGenerators: 89 loot ids, 17 direct, 72 special.
+  * LootWorldPlacement: the WORLD LOOT board has 8 controls, including REMOVE LOOSE ARTIFACTS.
+  * AllControls: all 429 probes ran; the stale 344 pin now follows the probe list.
+
 ## CURRENT 2026-11-18 — Writer fix from the Wine contract run
 
 * No UI change. **Bug fix:** with REMOVE LOOSE ARTIFACTS ON, Build Mod failed with "CFG output accounting mismatch". The writer staged its 4–5 `removenode` files but did not count them. They are now counted like the other per-actor removals.
