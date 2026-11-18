@@ -61,7 +61,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private void RaiseParameterSelected(ParameterViewModel parameter)
     {
         if (Family is "FlycatcherSlowdown" or "AnomalySpecialEffects" or "ServiceCostsBoard"
-            or "CouponFlow" or "ItemWeightBoard" or "LairPopulation" or "ZoneWeather" or "TraderRestock" or "ArtifactHunting" or "StashSmartLoot" or "HumanTactics" or "HumanAwareness" or "EquipmentWearBalance"
+            or "CouponFlow" or "ItemWeightBoard" or "LairPopulation" or "ZoneWeather" or "TraderRestock" or "FallDamage" or "ArtifactHunting" or "StashSmartLoot" or "HumanTactics" or "HumanAwareness" or "EquipmentWearBalance"
             or "StashContentMix" or "StashMedicalComposition"
             or "StashGear" or "NpcLootLoadout" or "HumanCombatProfile" or "PlayerWeaponProfile"
             or "StarvationTimeline" or "SevereFatiguePenaltyBoard"
@@ -388,6 +388,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 break;
             case "TraderRestock":
                 DrawTraderRestockBoard(dc, text, muted, border, accent, panel);
+                break;
+            case "FallDamage":
+                DrawFallDamageBoard(dc, text, muted, border, accent, panel);
                 break;
             case "ArtifactHunting":
                 DrawArtifactHunting(dc, text, muted, border, accent, panel);
@@ -1143,6 +1146,25 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 : days != ZoneTimersPolicy.VanillaGenericRestockDays ? ReadoutInk.Numbers(accent, muted) : muted,
             FontWeights.SemiBold, Math.Max(1.0, rect.Width - 8.0));
         dc.DrawText(readout, new Point(rect.Left + 4.0, rect.Bottom + 6.0));
+    }
+
+    // FALL DAMAGE: one frameless source knob, the share of fall damage you
+    // take (Player.Protection.Fall = 100 − value), in the ZONE WEATHER /
+    // LAIR POPULATION knob geometry. Hero sizing, percent readout.
+    private const string FallDamageId = "health.fallDamage";
+
+    private void DrawFallDamageBoard(
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush accent, Brush panel)
+    {
+        DrawCenteredText(dc, "FALL DAMAGE",
+            new Point(ActualWidth / 2.0, 21.0), VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
+        var (_, _, cellWidth) = ArtifactKnobBank(ActualWidth);
+        var area = new Rect((ActualWidth - cellWidth) / 2.0, ArtifactKnobTop, cellWidth, ArtifactKnobHeight);
+        DrawSourceKnob(dc, P(FallDamageId), "DAMAGE TAKEN", area,
+            text, muted, border, accent, panel,
+            percentageReadout: true, prominent: true,
+            secondaryReadout: "FROM FALLS");
     }
 
     private static string LairTime(double seconds)
@@ -7273,7 +7295,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
         var stashGraph = Family is "StashContentMix"
             or "StashMedicalComposition" or "StashGear";
-        if (!stashGraph && Family is not ("PlayerWeaponProfile" or "ZoneWeather" or "ArtifactHunting" or "StashSmartLoot" or "AmmoDistribution" or "ConsumableMixer" or "EquipmentWearBalance" or "ServiceCostsBoard" or "RadiationBalance" or "HumanCombatProfile" or "StarvationTimeline" or "FlycatcherSlowdown" or "AnomalySpecialEffects" or "NpcLootLoadout"))
+        if (!stashGraph && Family is not ("PlayerWeaponProfile" or "ZoneWeather" or "FallDamage" or "ArtifactHunting" or "StashSmartLoot" or "AmmoDistribution" or "ConsumableMixer" or "EquipmentWearBalance" or "ServiceCostsBoard" or "RadiationBalance" or "HumanCombatProfile" or "StarvationTimeline" or "FlycatcherSlowdown" or "AnomalySpecialEffects" or "NpcLootLoadout"))
             return;
 
         var target = FindTarget(e.GetPosition(this));
@@ -8361,6 +8383,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "LairPopulation" => LairPopulationBoardHeight(width),
             "ZoneWeather" => ZoneWeatherHeight(width),
             "TraderRestock" => 48.0 + LairCardPitch + 6.0,
+            "FallDamage" => ArtifactKnobTop + ArtifactKnobHeight + 10.0,
             "ArtifactHunting" => ArtifactHuntingHeight(width),
             "HumanTactics" => HumanTacticsHeight(width),
             "HumanAwareness" => HumanAwarenessHeight(width),
@@ -8452,6 +8475,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "LairPopulation" => LairPopulationPolicy.ParameterIds,
             "ZoneWeather" => ZoneTimersPolicy.WeatherIds,
             "TraderRestock" => new[] { ZoneTimersPolicy.TraderRestockId },
+            "FallDamage" => new[] { FallDamageId },
             "ItemWeightBoard" => new[]
             {
                 "equipment.ammoWeight",

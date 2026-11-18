@@ -5767,8 +5767,8 @@ note("Stamina casing: STAMINA headings, lowercase stamina/s and numeric units")
 # except changed numerical digits, including linked cross-tab source changes.
 _knob_source = (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
 # 3 stamina/Hercules call sites carry numbers and must pass secondaryModified;
-# LAIR POPULATION, ZONE WEATHER and ARTIFACT HUNTING loops pass number-free captions (2026-11-18).
-if _knob_source.count("secondaryReadout:") != 6 or _knob_source.count("secondaryModified:") != 3:
+# LAIR POPULATION, ZONE WEATHER, ARTIFACT HUNTING and FALL DAMAGE pass number-free captions (2026-11-18).
+if _knob_source.count("secondaryReadout:") != 7 or _knob_source.count("secondaryModified:") != 3:
     fail("All two-value knob call sites must supply reference-aware secondary readouts")
 for _needed in (
         "private void DrawKnobSecondaryReadout(",
@@ -5859,7 +5859,7 @@ _visual_boards = {
     "MutantDropRadar.cs": 1,
     "WorldLootRemovalRadar.cs": 1,
     "AnomalyDamageRadar.cs": 1,
-    "AggregateVisualControl.cs": 10,  # GLOBAL ANOMALY DAMAGE board removed 2026-11-17; +LAIR POPULATION, ZONE WEATHER, TRADER RESTOCK 2026-11-18
+    "AggregateVisualControl.cs": 11,  # GLOBAL ANOMALY DAMAGE board removed 2026-11-17; +LAIR POPULATION, ZONE WEATHER, TRADER RESTOCK, FALL DAMAGE 2026-11-18
 }
 for _file, _expected in _visual_boards.items():
     _source = (_visual_dir / _file).read_text(encoding="utf-8")

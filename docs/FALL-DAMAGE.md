@@ -15,3 +15,9 @@
 * Armor `Protection.Fall` is 0 on every item in vanilla; exoskeletons only stop the limp (`bPreventFromLimping`).
 * Not exposed: limp thresholds (25 / 65 damage → 2.5 / 4.5 s), `StaminaFallingDamageCoef` 0.5, falling velocities.
 * `runtime_test_required`: confirm in game that a fixed drop costs half the HP at 50 %.
+
+## Board (2026-11-18)
+
+* Health tab board **FALL DAMAGE**: one frameless hero knob (ZONE WEATHER / LAIR POPULATION geometry, `DrawSourceKnob`
+  with `prominent: true`), caption `DAMAGE TAKEN`, percent readout with `FROM FALLS` underneath, 0 % / 100 % endpoints.
+  Drag, wheel, keyboard, right-click / R reset and the vanilla tick as on every source knob.

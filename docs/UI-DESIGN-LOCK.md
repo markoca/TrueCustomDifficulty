@@ -1,3 +1,7 @@
+## CURRENT 2026-11-18 — FALL DAMAGE as a knob board
+
+* The plain FALL DAMAGE slider card is replaced by a board in the house style: centred title `FALL DAMAGE`, one frameless hero knob (same 270° source knob and 1.18× hero size as RESPAWN TIME / TIME TO FIND COVER), caption `DAMAGE TAKEN`, value `100%` with `FROM FALLS` beneath, endpoints `0%` and `100%`. Only changed digits turn gold. No frame, no Base/Vanilla text.
+
 ## CURRENT 2026-11-18 — FALL DAMAGE on the Health tab
 
 * New plain slider card **FALL DAMAGE** (group Fall Damage) after the low-health recovery controls: 0–100 % in 5 % steps, vanilla 100 %, percentage readout like the other Health sliders. Only changed numbers turn gold.
