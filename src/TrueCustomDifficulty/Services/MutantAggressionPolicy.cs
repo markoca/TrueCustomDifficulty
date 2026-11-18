@@ -12,23 +12,18 @@ namespace TrueCustomDifficulty.Services;
 /// Duration, seconds). The difficulty scales them per agent and per cooldown
 /// tag through <c>DifficultyPrototypes.cfg → [difficulty].MutantCombatDifficulty
 /// .AgentCooldownMultipliers</c>; vanilla Master (<c>Stalker</c>) lists 14 agents
-/// at 0.5. Each family has two rates over its own cooldown tags (collected from
-/// its abilities, all variants included):
-///  * ATTACKS — claws, bites, runs, leaps, kicks, charges, evasions;
-///  * ABILITIES — psi attacks, shields, throws, shockwaves, roars, teleports.
-/// Since 2026-11-18 there are no group sliders: each attack and ability is a knob
-/// (rate k) and writes 1/k on its own tag for every agent of the family; at its
-/// difficulty vanilla (2× on Master where the game halves it) the game's entry stays.
-/// At the difficulty's vanilla value the game's own entries are written back.
+/// at 0.5. Each family lists its ATTACKS and ABILITIES cooldown tags (all variants);
+/// each attack and ability that hurts or brings enemies is a knob (rate k) that
+/// writes 1/k on its own tag for every agent of the family; at its difficulty
+/// vanilla (2× on Master where the game halves it) the game's entry stays. Tags
+/// without a knob (roars, growls, dodges, shields ...) keep the game's Master 0.5.
 ///
-/// SPECIAL ABILITY RATE scales the shared group token cooldowns
+/// SPECIAL MOVES (SpecialAbilityRateId) scales the shared group token cooldowns
 /// <c>TokenTag.Ability</c> / <c>TokenTag.Ability.Knockdown</c> in
 /// <c>CombatSynchronizationPrototypes.cfg</c> (Default 8–12 s; Master 4–6 s).
 /// </summary>
 public static class MutantAggressionPolicy
 {
-    public const string Prefix = "combat.mutantAttackRate.";
-    public const string AbilityPrefix = "combat.mutantAbilityRate.";
     public const string SpecialAbilityRateId = "combat.mutantSpecialAbilityRate";
 
     public enum Group { Attacks, Abilities }
@@ -36,23 +31,11 @@ public static class MutantAggressionPolicy
     /// <param name="VanillaMasterTags">Tags the game lists for this agent on Master (0.5), in order.</param>
     public sealed record Agent(string Sid, IReadOnlyList<string> VanillaMasterTags);
 
-    /// <param name="Headline">Representative own cooldown per group: short name and vanilla seconds.</param>
+    /// <param name="AttackTags">The family's attack cooldown tags (all variants); documentation and audits.</param>
+    /// <param name="AbilityTags">The family's ability cooldown tags.</param>
     public sealed record Family(
         string Key, string Label, IReadOnlyList<Agent> Agents,
-        IReadOnlyList<string> AttackTags, IReadOnlyList<string> AbilityTags,
-        (string Name, double Seconds)? AttackHeadline,
-        (string Name, double Seconds)? AbilityHeadline)
-    {
-        public string ParameterId => Prefix + Key;
-        public string AbilityParameterId => AbilityPrefix + Key;
-        public bool HasAbilities => AbilityTags.Count > 0;
-
-        public IReadOnlyList<string> Tags(Group group) => group == Group.Attacks ? AttackTags : AbilityTags;
-
-        /// <summary>The game halves this group on Master (some agent lists one of its tags).</summary>
-        public bool HasVanillaMasterEntries(Group group)
-            => Agents.Any(a => a.VanillaMasterTags.Any(t => Tags(group).Contains(t)));
-    }
+        IReadOnlyList<string> AttackTags, IReadOnlyList<string> AbilityTags);
 
     private static string[] T(params string[] tags)
         => tags.Select(t => t.StartsWith("Abilities.", StringComparison.Ordinal)
@@ -71,10 +54,10 @@ public static class MutantAggressionPolicy
                 A("Bayun_E10_MQ01", "ClawAttack", "JumpAttack", "Growl", "JumpToEnemy", "BlinkTeleport")
             },
             T("ClawAttack", "JumpAttack", "ShortJumpAttack", "LongJumpAttack", "JumpToEnemy", "FlyThrough"),
-            T("CombatSummon"), ("claw", 5), ("clones", 10)),
+            T("CombatSummon")),
         new("blinddog", "Blind Dog", new[] { A("Blinddog"), A("Blinddog_Collar"), A("MoldyBlinddog") },
             T("RunAttack", "BiteAttack", "BiteAttackAnyAngle"),
-            Array.Empty<string>(), ("bite", 5), null),
+            Array.Empty<string>()),
         new("bloodsucker", "Bloodsucker", new[]
             {
                 A("Bloodsucker", "RunAttack", "JumpAttack", "ClawAttack", "Roar"),
@@ -82,23 +65,23 @@ public static class MutantAggressionPolicy
                 A("Bloodsucker_Collar"), A("AshyBloodsucker"), A("PrologueBloodsucker")
             },
             T("RunAttack", "JumpAttack", "ClawAttack", "BiteAttack"),
-            T("ActivateAnomaly"), ("claw", 6), ("anomaly", 3)),
+            T("ActivateAnomaly")),
         new("boar", "Boar", new[] { A("Boar"), A("HelmedBoar"), A("PorcupineBoar") },
             T("RunAttack", "ClawAttack", "Charge"),
-            Array.Empty<string>(), ("gore", 10), null),
+            Array.Empty<string>()),
         new("burer", "Burer", new[]
             {
                 A("Burer", "WeaponDrag", "WeaponRiseAndShoot", "Shield", "Throw", "ClawAttack", "WeaponDrag"),
                 A("Burer_ShootingSpecial", "WeaponDrag", "WeaponRiseAndShoot", "Shield", "Throw", "ClawAttack", "WeaponDrag")
             },
             T("ClawAttack"),
-            T("Throw", "ThrowGrenade", "WeaponDrag", "WeaponRiseAndShoot"), ("claw", 8), ("disarm", 8)),
+            T("Throw", "ThrowGrenade", "WeaponDrag", "WeaponRiseAndShoot")),
         new("chimera", "Chimera", new[]
             {
                 A("Chimera", "RunAttack", "Growl", "ClawAttack", "ShortJumpAttack", "LongJumpAttack", "FlyThrough")
             },
             T("ClawAttack", "RunAttack", "LongJumpAttack", "FlyThrough", "JumpToEnemy"),
-            Array.Empty<string>(), ("leap", 5), null),
+            Array.Empty<string>()),
         new("controller", "Controller", new[]
             {
                 A("Controller", "ClawAttack", "Abilities.PSYAttack", "Roar", "Abilities.RaiseDeadBody", "Abilities.ZombifyNPC"),
@@ -108,20 +91,20 @@ public static class MutantAggressionPolicy
             T("ClawAttack"),
             // Controller_Deer (a one-off map variant, spawned by no CFG) also has the
             // Deer dog summon; it stays vanilla, like every move without a knob.
-            T("Abilities.PSYAttack", "Abilities.RaiseDeadBody", "Abilities.ZombifyNPC"), ("claw", 10), ("psy", 12)),
+            T("Abilities.PSYAttack", "Abilities.RaiseDeadBody", "Abilities.ZombifyNPC")),
         new("deer", "Deer", new[] { A("Deer", "RunAttack", "JumpAttack", "Charge") },
             T("RunAttack", "JumpAttack", "ClawAttack", "TurnAttack", "Charge"),
-            T("CombatSummon"), ("claw", 4), ("dogs", 20)),
+            T("CombatSummon")),
         new("flesh", "Flesh", new[] { A("Flesh"), A("BoggyFlesh") },
             T("JumpAttack", "ClawAttack"),
-            Array.Empty<string>(), ("claw", 3), null),
+            Array.Empty<string>()),
         new("poltergeist", "Poltergeist", new[]
             {
                 A("Poltergeist"), A("Poltergeist_Electro"), A("Poltergeist_Toxic"), A("Poltergeist_Fire"),
                 A("Poltergeist_YanivToxicRozliv"), A("Poltergeist_Explosives")
             },
             T("AOEAttack"),
-            T("Throw", "ActivateAnomaly"), ("burst", 3), ("anomaly", 3)),
+            T("Throw", "ActivateAnomaly")),
         new("pseudodog", "Pseudodog", new[]
             {
                 A("PseudoDog", "ShockwaveAttack", "RunAttack", "BiteAttack"),
@@ -130,19 +113,19 @@ public static class MutantAggressionPolicy
             // The game's Master list names ShockwaveAttack for PseudoDog, but no pseudodog
             // ability uses that tag (a no-op entry, kept as the game has it). ABILITIES: phantoms.
             T("RunAttack", "BiteAttack"),
-            T("CombatSummon", "RetreatSummon"), ("bite", 7), ("phantoms", 20)),
+            T("CombatSummon", "RetreatSummon")),
         new("pseudogiant", "Pseudogiant", new[]
             {
                 A("Pseudogiant", "ShockwaveAttack", "RunAttack", "Charge"), A("Pseudogiant_Collar")
             },
             T("ClawAttack", "RunAttack", "Charge"),
-            T("ShockwaveAttack", "Throw"), ("stomp", 5), ("shockwave", 8)),
+            T("ShockwaveAttack", "Throw")),
         new("snork", "Snork", new[] { A("Snork"), A("Snork_Collar") },
             T("ClawAttack", "KickAttack", "JumpAttack", "JumpToEnemy", "FlyThrough"),
-            Array.Empty<string>(), ("kick", 7), null),
+            Array.Empty<string>()),
         new("tushkan", "Tushkan", new[] { A("Tushkan") },
             T("JumpAttack", "ClawAttack"),
-            Array.Empty<string>(), ("claw", 3), null)
+            Array.Empty<string>())
     };
 
     // No group sliders (2026-11-18): every attack and ability is its own knob,
@@ -270,13 +253,6 @@ public static class MutantAggressionPolicy
     /// <summary>Vanilla Master multiplier of the listed agents/tags.</summary>
     public const double VanillaMasterCooldownMultiplier = 0.5;
 
-    public static string ParameterId(Family family, Group group)
-        => group == Group.Attacks ? family.ParameterId : family.AbilityParameterId;
-
-    /// <summary>Difficulty vanilla of a group's rate: 2 on Master where the game lists the group.</summary>
-    public static double Reference(Family family, Group group, string difficultySid)
-        => difficultySid == "Stalker" && family.HasVanillaMasterEntries(group) ? 2.0 : 1.0;
-
     /// <summary>Cooldown multiplier the game ends up with for one tag of one agent.</summary>
     public static double Multiplier(Agent agent, string tag, double rate, double reference)
     {
@@ -286,12 +262,12 @@ public static class MutantAggressionPolicy
         return 1.0 / rate;
     }
 
-    /// <summary>Board and panel value of SPECIAL ABILITY RATE (writer rounding).</summary>
+    /// <summary>Board and panel value of SPECIAL MOVES (writer rounding).</summary>
     public static string SpecialAbilityDisplay(double rate)
         => string.Create(CultureInfo.InvariantCulture,
             $"{rate:0.##}× · one every {8.0 / rate:0.##}–{12.0 / rate:0.##} s");
 
-    // ---- SPECIAL ABILITY RATE --------------------------------------------
+    // ---- SPECIAL MOVES ------------------------------------------------------
     public static IReadOnlyList<(string Index, string Tag, double Min, double Max)> AbilityTokenGroups { get; } =
         new[]
         {

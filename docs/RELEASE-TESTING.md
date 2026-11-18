@@ -24,15 +24,15 @@
 * Inspect the built pak: `ArtifactSpawnerPrototypes` patches only `UniversalArtifactSpawner` and `LesserZoneMagneticShortDistance` (Newbie RarityChance never written).
 * `python3 tools/audit_artifact_hunting.py`.
 
-## 2026-11-16 — MUTANT AGGRESSION in-game checks (runtime_test_required)
+## 2026-11-18 — MUTANT move knobs, SPECIAL MOVES, FALL DAMAGE in-game checks (runtime_test_required)
 
-* **ATTACK RATE**: on Veteran set Bloodsucker 3× and Snork 3×, build, fight each: attacks/leaps clearly more frequent than at 1×. Then 0.25×: long pauses between attacks. Repeat Snork (a family vanilla never lists) — if it does not change, report it; the exact-SID entry is not honoured for that family.
-* **Mutant Health variants**: set Poltergeist and Boar health 2×, build, and check an elemental Poltergeist and a Helmed/Porcupine Boar take about twice the hits.
-* **ABILITIES**: on Veteran set Controller ABILITIES 3× (card `psy 4 s`) with ATTACKS at 1×: psy attacks clearly more often, claw swipes unchanged. Burer ABILITIES 0.25×: shield / telekinesis rare. Check one variant too (e.g. Ashy Bloodsucker or a Poltergeist variant).
-* On Master leave every family at its vanilla (2× / 1×) and change only Tushkan: the eight vanilla families must still behave as vanilla Master (written list keeps their 0.5 entries).
-* **SPECIAL ABILITY RATE**: on Stalker set 3× (`pause 2.67–4 s`): in a fight with several mutants (e.g. dog pack + pseudodog, or two bloodsuckers) special / knockdown moves follow each other faster; 0.5× (`pause 16–24 s`) clearly slower. Check that ordinary human combat pacing is unchanged (only [3]/[4] filter groups are edited).
-* Inspect the built pak: `DifficultyPrototypes` has the full `AgentCooldownMultipliers` list; `CombatSynchronizationPrototypes` has all four rank tables under `CombatSynchronizer{difficulty}` with only FilterGroups [3]/[4] cooldowns scaled.
-* `python3 tools/audit_mutant_aggression.py` (optionally `TCD_BASE_DUMP=<dump>/base`).
+* **Attack knob**: on Veteran set Bloodsucker CLAW 3× and Snork KICK 3×, build, fight each: those moves clearly more frequent than at 1×, other moves unchanged. Then 0.25×: long pauses. Snork is a family vanilla never lists on Master — if it does not change, report it (the exact-SID entry is not honoured for that family).
+* **Ability knob**: Controller PSY 3× (`4 s`): psy attacks clearly more often, claw unchanged. Burer DISARM 0.25×: disarms rare. Bayun CLONES / Pseudodog PHANTOMS 2×: summons twice as often (counts unchanged).
+* **Master lossless**: on Master leave every knob at vanilla and change only Tushkan CLAW: every other family still behaves as vanilla Master (the written list keeps the game's 0.5 entries, growls and shields included).
+* **SPECIAL MOVES**: on Stalker set 3× (`one every 2.67–4 s`): in a fight with several mutants special / knockdown moves follow each other faster; 0.5× clearly slower. Pseudogiant WAVE cannot be turned above its stop tick; raising SPECIAL MOVES moves the tick. Human combat pacing unchanged.
+* **FALL DAMAGE**: jump from the same height at 100 % and 50 %: the second costs about half the HP; at 0 % no damage. NPCs falling are unchanged.
+* Inspect the built pak: `DifficultyPrototypes` has the full `AgentCooldownMultipliers` list; `CombatSynchronizationPrototypes` has all four rank tables with only FilterGroups [3]/[4] scaled; `ObjPrototypes` patches only `Player.Protection.Fall`.
+* `python3 tools/audit_mutant_aggression.py`, `python3 tools/audit_mutant_cooldown_cfg.py --game <dump>/GameData`.
 
 ## 2026-10-20 — Windows startup: Presets README is best-effort
 

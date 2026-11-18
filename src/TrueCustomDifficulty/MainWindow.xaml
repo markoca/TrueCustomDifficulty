@@ -1195,7 +1195,7 @@
                                             </StackPanel>
                                         </Border>
 
-                                        <!-- Mutant ATTACKS / ABILITIES / SUMMON RATE: every move in real
+                                        <!-- Mutant move knobs: the move in real
                                              seconds at the current value. Only changed numbers turn gold. -->
                                         <Border BorderThickness="0"
                                                 Padding="0"

@@ -1092,7 +1092,7 @@
       },
       "rationale": "How hard mutants hit when they reach you — bites, claws and charges. Vanilla: Novice 0.35×, Stalker 1×, Veteran 1.35×, Master 1.5×.",
       "logic": "Higher = every bite and charge hurts more; lower = mutants hit softer.",
-      "interaction": "Only damage mutants deal to you. MUTANT HEALTH sets how much they can take."
+      "interaction": "Only damage mutants deal to you. Each mutant's health track on the same board sets how much they can take."
     },
     {
       "id": "combat.accumulatedDamageWeightMax",

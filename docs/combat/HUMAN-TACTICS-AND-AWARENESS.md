@@ -20,7 +20,7 @@ blocks (Newbie / Experienced / Veteran / Master = the enemy's rank).
 * Range 0.25×–3×. Rate r writes **source × reference / r** into the difficulty's own table, so the vanilla
   rate reproduces it exactly (Master 2× = the Master table). The card shows the resulting Newbie-rank pause,
   e.g. `2x · grenade every 10–17 s`.
-* One writer (`WriteCombatSynchronization`) handles these five and SPECIAL ABILITY RATE: when any is changed it
+* One writer (`WriteCombatSynchronization`) handles these five and SPECIAL MOVES (SPECIAL ABILITY RATE id): when any is changed it
   writes the four full rank tables (non-bpatch; Easy/Medium/Hard have no own ranks) with every controlled group
   scaled; the loader guards every group's tag.
 * `MaxScore` (how many may act at once) and the weapon-type `CombatSynchronizationScore` are not changed.

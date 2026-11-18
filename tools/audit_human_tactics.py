@@ -76,7 +76,7 @@ for token in ("private static int WriteCombatSynchronization(", "factors[index] 
               "(ParseNumber(value) * factor)"):
     check(token in writer, f"combat sync writer token {token}")
 check("writtenParameters.Add(MutantAggressionPolicy.SpecialAbilityRateId)" not in writer,
-      "SPECIAL ABILITY RATE goes through the shared writer")
+      "SPECIAL MOVES goes through the shared writer")
 
 # ---- accuracy / awareness direct points ----------------------------------------------
 pts = [p for p in baseline["editPoints"] if p["parameterId"] in

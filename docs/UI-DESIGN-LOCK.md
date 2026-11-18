@@ -1,3 +1,9 @@
+## CURRENT 2026-11-18 — Pre-release consistency pass
+
+* No UI layout change. Mutant board help text now describes knobs and SPECIAL MOVES (no ATTACKS / ABILITIES sliders); the MUTANT HIT DAMAGE panel points to the health tracks on the same board.
+* Source-mode gates run against the 2.1 base + DLC1 ZIPs: 44 PASS, 0 FAIL; the 13 NOT RUN are Windows/Wine writer contracts and archived snapshots. FALL DAMAGE's `Player.Protection.Fall` is traced to `[0]` (2.1 Player has no own Protection block).
+* Dead code removed (old group-slider ids, headlines, references); MUTANT-AGGRESSION.md rewritten to the current state; RELEASE-TESTING.md has the current in-game checks for move knobs, SPECIAL MOVES and FALL DAMAGE.
+
 ## CURRENT 2026-11-18 — FALL DAMAGE as a knob board
 
 * The plain FALL DAMAGE slider card is replaced by a board in the house style: centred title `FALL DAMAGE`, one frameless hero knob (same 270° source knob and 1.18× hero size as RESPAWN TIME / TIME TO FIND COVER), caption `DAMAGE TAKEN`, value `100%` with `FROM FALLS` beneath, endpoints `0%` and `100%`. Only changed digits turn gold. No frame, no Base/Vanilla text.

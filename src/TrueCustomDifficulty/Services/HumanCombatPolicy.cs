@@ -10,7 +10,7 @@ namespace TrueCustomDifficulty.Services;
 /// docs/combat/HUMAN-TACTICS-AND-AWARENESS.md).
 ///
 /// TACTICS scale group token cooldowns in <c>CombatSynchronizationPrototypes.cfg</c>
-/// (the same rank tables as SPECIAL ABILITY RATE): Easy/Medium/Hard inherit
+/// (the same rank tables as SPECIAL MOVES): Easy/Medium/Hard inherit
 /// <c>Default</c>, Master (<c>Stalker</c>) owns a table with about half the
 /// pauses. Rate r writes source × reference / r, so the difficulty's own table
 /// is reproduced exactly at its vanilla rate (2 on Master, 1 elsewhere).

@@ -191,8 +191,8 @@ public sealed class ParameterViewModel : ObservableObject
                 return "Drag a category's price track to tune its multiplier."
                     + Environment.NewLine + "Right-click one category to reset it; R resets the whole board.";
             if (IsMutantHealthMember)
-                return "Each species card has a health track (multiplier and resulting HP on its top line), then ATTACKS (claws, bites, leaps) and ABILITIES (psy, shields, throws, roars). Each shows the wait between two uses of one of its moves, e.g. \"gore every 10 s\"; drag right to shorten the wait (2× = twice as often). SPECIAL ABILITY RATE paces special and knockdown moves for all mutants."
-                    + Environment.NewLine + "Right-click one track to reset it; R resets the whole board.";
+                return "Each species card has a health track (multiplier and resulting HP on its top line), then one knob per attack and ability with its real wait in seconds. Drag a knob up or right, or use the wheel, to make that move come back sooner. SPECIAL MOVES paces growls, shields and knockdown attacks for the whole fight; the bright tick on a knockdown knob is its limit."
+                    + Environment.NewLine + "Right-click one track or knob to reset it; R resets the whole board.";
             if (IsHumanGroupSizeMember)
                 return "Drag NEWBIE, EXPERIENCED, VETERAN or MASTER to set that rank's maximum human squad size."
                     + Environment.NewLine + "Right-click one rank to reset it; R resets all four.";

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Validate 69 Health/Stamina direct CFG source routes against original ZIPs.
 
-Provenance-only: exactly 76 directly authored fields plus one value inherited
+Provenance-only: exactly 76 directly authored fields plus two values inherited
 through Player : struct.begin {refkey=[0]}. Not a UE runtime/BPatch test.
 """
 from __future__ import annotations
@@ -29,8 +29,8 @@ def run(base_zip: Path, dlc_zip: Path) -> dict:
         if p["parameterId"].startswith(("health.", "stamina."))
     ]
     by_domain = Counter(p["parameterId"].split(".")[0] for p in points)
-    # foodHealing covers 4 food items x 2; + 4 per-item HEAL TIME Duration points.
-    if dict(by_domain) != {"health": 51, "stamina": 26}:
+    # foodHealing covers 4 food items x 2; + 4 per-item HEAL TIME Duration points; + FALL DAMAGE (2026-11-18).
+    if dict(by_domain) != {"health": 52, "stamina": 26}:
         raise ValueError(f"Health/Stamina direct inventory drifted: {dict(by_domain)}")
     if any(p["scope"] != "baseGame" for p in points):
         raise ValueError("Health/Stamina direct CFG source scope drifted from baseGame")
@@ -72,9 +72,17 @@ def run(base_zip: Path, dlc_zip: Path) -> dict:
             "parameterId": "stamina.vaultMaxHeight",
             "reason": "Player VaultingParams must be physically traced to [0]"
         })
-    if totals.get("exact") != 76 or totals.get("inherited_exact") != 1:
+    fall_result = [r for r in results if r["parameterId"] == "health.fallDamage"]
+    if len(fall_result) != 1 or fall_result[0]["status"] != "inherited_exact" or (
+        fall_result[0].get("inheritedFrom"), fall_result[0].get("refkeyChain")
+    ) != ("[0]", ["[0]"]):
         failures.append({
-            "reason": "Expected 76 direct authored matches + 1 inherited exact",
+            "parameterId": "health.fallDamage",
+            "reason": "Player Protection.Fall must be physically traced to [0] (2.1 Player has no own Protection)"
+        })
+    if totals.get("exact") != 76 or totals.get("inherited_exact") != 2:
+        failures.append({
+            "reason": "Expected 76 direct authored matches + 2 inherited exact (VaultingParams, Protection.Fall)",
             "observedStatuses": dict(totals)
         })
 
@@ -125,7 +133,7 @@ def main() -> int:
     if report["findings"]:
         print("FAIL: original CFG sources require triage")
         return 1
-    print("PASS: 76 original direct matches; VaultingParams inherited from [0]")
+    print("PASS: 76 original direct matches; VaultingParams and Protection.Fall inherited from [0]")
     print("NOT RUN: in-game VaultingParams BPatch merge and gameplay acceptance")
     return 0
 

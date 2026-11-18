@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """MUTANT AGGRESSION contract (docs/combat/MUTANT-AGGRESSION.md).
 
-14 families x ATTACKS (+10 ABILITIES) + SPECIAL ABILITY RATE agree across
+14 families, 53 move knobs and SPECIAL MOVES agree across
 policy, catalog, writer, embedded CombatSynchronization tables, baseline and
 UI. Optional: TCD_BASE_DUMP=<dump>/base also checks agents, vanilla Master
 lists and tags against the 2.1 dump.
@@ -95,7 +95,7 @@ check(cooldowns.exists() and "| ABILITIES | summon | `CombatSummon` | 20 s |" in
 
 # ---- catalog ------------------------------------------------------------------
 ids = ["combat.mutantSpecialAbilityRate"]
-check(all(i in by_id for i in ids), "SPECIAL ABILITY RATE is in parameters.json")
+check(all(i in by_id for i in ids), "SPECIAL MOVES is in parameters.json")
 
 # ---- one knob per move ------------------------------------------------------------
 moves_src = policy[policy.index("public static IReadOnlyList<Move> Moves("):policy.index("public static IReadOnlyList<(Family Family")]

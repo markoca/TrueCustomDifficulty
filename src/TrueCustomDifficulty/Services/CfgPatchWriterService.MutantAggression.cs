@@ -13,7 +13,7 @@ namespace TrueCustomDifficulty.Services;
 //  * One knob per attack / ability → DifficultyPrototypes [difficulty]
 //    .MutantCombatDifficulty.AgentCooldownMultipliers (full list, non-bpatch).
 //  * One knob per move → the same list: the move's tag gets group × 1/knob.
-//  * SPECIAL ABILITY RATE → CombatSynchronizationPrototypes
+//  * SPECIAL MOVES → CombatSynchronizationPrototypes
 //    CombatSynchronizer{difficulty}.{rank}.FilterGroups[3|4] cooldowns
 //    (full rank tables, because Novice–Veteran inherit Default).
 public sealed partial class CfgPatchWriterService
@@ -113,7 +113,7 @@ public sealed partial class CfgPatchWriterService
             edits++;
         }
 
-        // ---- Group token cooldowns: SPECIAL ABILITY RATE + HUMAN TACTICS -----
+        // ---- Group token cooldowns: SPECIAL MOVES + HUMAN TACTICS --------------
         edits += WriteCombatSynchronization(modifiedById, allById, difficultySid, documents, writtenParameters);
 
         return edits;

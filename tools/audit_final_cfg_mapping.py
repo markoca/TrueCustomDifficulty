@@ -197,7 +197,7 @@ def method_routes(special):
     add("WriteLooseWorldLootRemovals", special["looseWorldLootProduction"]["parameterId"])
     add("WriteLooseUniqueWeaponShuffle", special["looseUniqueWeaponShuffle"]["parameterId"])
     # 2026-11-16: MUTANT AGGRESSION family rates; its entrypoint also runs the
-    # one CombatSynchronizer writer (SPECIAL ABILITY RATE + HUMAN TACTICS).
+    # one CombatSynchronizer writer (SPECIAL MOVES + HUMAN TACTICS).
     # ARTIFACT HUNTING rare luck has its own entrypoint.
     add("WriteMutantAggression", *special["mutantAggression"]["parameterIds"],
         special["mutantAggression"]["parameterId"], *special["humanTactics"]["parameterIds"])
