@@ -1,3 +1,11 @@
+## 2026-11-18 — CURRENT: WORKS WITH second pass, no vanilla values in HIGHER / LOWER
+
+* ~65 more WORKS WITH texts rewritten to the *Only … / Stacks with … / Separate from … / Multiplies with …* shape. This covers stamina costs, melee and vault, water and energy drinks, alcohol, bleeding stages, fatigue, starvation, the Psy encounters, item weights, prices, ammo and grenade boxes, Flycatcher, Soap Bubble and Fireball, and the Psy drain.
+* UI and tech talk is gone: *Horizontal / vertical handles*, *Moves in 1% steps*, *Set on the … board*, *yaw and pitch*, *particle behavior*, *collision checks*, *child controls*.
+* All seven raw anomaly damages now read `Multiplies with GLOBAL ANOMALY DAMAGE. Only this anomaly type changes.`
+* HIGHER / LOWER no longer repeats vanilla numbers. Examples: drink durations (`Higher = the bonus lasts longer, up to the drink's main effect.`), Vinca, beer and vodka strength, grenades per box, Psy wave timing, phantom count and gear wear, and the anomaly base damages; the per-difficulty figures stay in WHAT IT DOES.
+* The style gate now flags `vanilla <number>` / `vanilla Master` in HIGHER / LOWER, plus the new weak WORKS WITH openers (*Pair this*, *Use*, *Leave the*, *Sits beside*, *Set on*, *Moves in*, *Horizontal*, *Does not*).
+
 ## 2026-11-18 — CURRENT: every WORKS WITH filled, CAPS names point at real controls
 
 * **No empty WORKS WITH**: 30 rows filled in the same shape. These are Healing Amount (bandage), Action Costs (sprint), Item Values, the Master radiation stamina cost, Bloodsucker / Newbie anchors, six mutant health rows and 14 mutant part chances. The four base-price rows drop *Same on every difficulty* (`PRICES TRADERS PAY and PRICES YOU PAY still apply on top.`).

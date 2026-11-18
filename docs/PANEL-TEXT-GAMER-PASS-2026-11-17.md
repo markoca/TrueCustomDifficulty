@@ -94,6 +94,8 @@ The right-hand panel shows four sections for a selected control: **WHAT IT DOES*
 
 37. WORKS WITH is never empty; CAPS names must exist on screen; labels follow the same tech-speak rules.
 
+38. HIGHER / LOWER never states a vanilla number (`vanilla 5 s`, `vanilla Master`); WORKS WITH never gives UI instructions or engine terms (*yaw*, *particle*, *collision*, *child controls*).
+
 ## Since 2026-11-18
 
 The rules above are consolidated in `docs/PANEL-TEXT-STYLE.md` and enforced by `tools/audit_panel_text_style.py`.

@@ -343,7 +343,7 @@
       },
       "rationale": "How deadly grenades and other blasts are — both yours and the enemy's. Raise it if you want grenades to feel lethal, lower it to survive the odd F1 at your feet. Vanilla: Novice 0.25×, Stalker and Veteran 1×, Master 1.2×.",
       "logic": "",
-      "interaction": "Each explosive keeps its own base damage; this only scales the difficulty boost on top."
+      "interaction": "Only the difficulty boost. Each explosive keeps its own base damage."
     },
     {
       "id": "combat.npcGrenadeRate",
@@ -1047,7 +1047,7 @@
       },
       "rationale": "How often worn guns jam on you. Vanilla: Novice–Veteran 1×, Master 1.5×. Higher = keeping your gun repaired matters much more; 0.5× halves jams. A gun in good condition still rarely jams.",
       "logic": "",
-      "interaction": "Weapon condition and each weapon's own jam behavior still matter. Use this to make jams generally more or less common."
+      "interaction": "Stacks with weapon condition and each gun's own jam behavior."
     },
     {
       "id": "combat.mutantDamage",
@@ -1092,7 +1092,7 @@
       },
       "rationale": "How hard mutants hit when they reach you — bites, claws and charges. Mutant toughness is set separately in the health cards. Vanilla: Novice 0.35×, Stalker 1×, Veteran 1.35×, Master 1.5×.",
       "logic": "",
-      "interaction": "Mutant Health controls how much damage they can absorb; this control changes only damage dealt to the player."
+      "interaction": "Only damage mutants deal to you. MUTANT HEALTH sets how much they can take."
     },
     {
       "id": "combat.accumulatedDamageWeightMax",
@@ -1216,7 +1216,7 @@
       },
       "rationale": "Whether hits you already healed still count against your burst protection. Vanilla: Novice and Stalker OFF, Veteran and Master ON. ON = patching up mid-fight doesn't reset the safety net; OFF is more forgiving.",
       "logic": "OFF = Novice and Stalker behaviour, ON = Veteran and Master. Healing always restores HP; this only decides whether PEAK / MINIMUM HIT PROTECTION still counts the healed damage.",
-      "interaction": "Works with Minimum and PEAK HIT PROTECTION; healing always restores HP even when past hits remain counted."
+      "interaction": "Works with PEAK HIT PROTECTION. Healing still restores HP even while past hits count."
     },
     {
       "id": "combat.mutantHealth.bloodsucker",
@@ -3175,7 +3175,7 @@
       },
       "rationale": "How often mutants in a fight get to use their special and knockdown moves — growls, shields, knockdown leaps and charges. Vanilla: Novice–Veteran 1× (8–12 s pause after each one), Master 2× (4–6 s). Higher = one special move after another; lower = more time to recover.",
       "logic": "Higher = shorter pauses between special moves (8–12 s at 1×); lower = more time to recover.",
-      "interaction": "Each mutant's own ATTACK RATE still decides how soon that mutant can repeat its attacks.",
+      "interaction": "Each mutant's ATTACK RATE still sets how soon it can attack again.",
       "exposeInUi": false
     },
     {
@@ -3229,8 +3229,8 @@
         ]
       },
       "rationale": "In the Psy encounters that Master makes harder, how long you get before the next wave of phantoms appears. Lower = less breathing room. Vanilla: Novice–Veteran 1×, Master 0.5×.",
-      "logic": "Lower = phantom waves come back sooner. 1× is the normal wait; vanilla Master already uses 0.5×.",
-      "interaction": "Pair this with PSY PHANTOM COUNT: shorter waits plus more phantoms can make an encounter far more intense."
+      "logic": "Lower = phantom waves come back sooner; higher = longer breaks.",
+      "interaction": "Stacks with PSY PHANTOM COUNT: shorter waits plus more phantoms make a much harder fight."
     },
     {
       "id": "combat.psyPhantomCount",
@@ -3283,8 +3283,8 @@
         ]
       },
       "rationale": "In those Master Psy encounters, how many phantoms come at you per wave. 2× doubles them. Vanilla: Novice–Veteran 1×, Master 2×. Combine with a short spawn interval for a real nightmare.",
-      "logic": "1× keeps the normal count; 2× matches vanilla Master and doubles it.",
-      "interaction": "PHANTOM SPAWN INTERVAL changes how quickly another wave can happen; this setting changes the size of each wave."
+      "logic": "Higher = more phantoms per wave; 1× keeps the normal count.",
+      "interaction": "Stacks with PHANTOM SPAWN INTERVAL: that sets how soon a wave comes, this sets its size."
     },
     {
       "id": "combat.psyBleeding",
@@ -3380,7 +3380,7 @@
         ]
       },
       "rationale": "How fast the Master Psy enemies chew through your armor and helmet condition. Their damage to your health is unchanged. Vanilla: Novice–Veteran 1×, Master 2×.",
-      "logic": "1× keeps normal durability damage; 2× matches vanilla Master and doubles it.",
+      "logic": "Higher = your gear wears out faster; 1× keeps normal wear.",
       "interaction": "Psy health damage is unchanged. ARMOR DURABILITY still sets how fast your gear wears overall."
     },
     {
@@ -3612,7 +3612,7 @@
       },
       "rationale": "How filling a tin of condensed milk is. Vanilla: 100, it clears the whole hunger meter. Lower it to stop milk being the only food worth carrying.",
       "logic": "Higher = it fills you more; 0 = no hunger relief.",
-      "interaction": "Normal HP healing and Weird Kettle alternative effects stay separate.",
+      "interaction": "Only hunger. HP healing and Weird Kettle effects are separate.",
       "exposeInUi": true
     },
     {
@@ -3879,7 +3879,7 @@
       },
       "rationale": "How fast you get tired while awake. Higher = fatigue penalties (slower aim and reloads) and the need to sleep arrive sooner. Vanilla: 0.01 pts/s.",
       "logic": "",
-      "interaction": "Vanilla fatigue states still decide when their penalties become active. Energy drinks can reduce accumulated fatigue separately."
+      "interaction": "Fatigue stages still start at the vanilla points. Energy drinks clear fatigue separately."
     },
     {
       "id": "survival.sleepLowThreshold",
@@ -3924,7 +3924,7 @@
       },
       "rationale": "Where on the 0–100 fatigue meter you start feeling tired (slightly slower aiming). Vanilla: 50 pts.",
       "logic": "Keep LOW <= MEDIUM <= SEVERE.",
-      "interaction": "Horizontal movement changes stage timing; vertical AIM/RELOAD handles control penalty magnitude.",
+      "interaction": "Sets only where the stage starts. Aim and reload penalties are set separately.",
       "exposeInUi": false
     },
     {
@@ -3970,7 +3970,7 @@
       },
       "rationale": "Where moderate fatigue starts: slower aiming and reloads. Vanilla: 60 pts.",
       "logic": "Keep LOW <= MEDIUM <= SEVERE.",
-      "interaction": "The Medium reload penalty begins at this stage.",
+      "interaction": "Sets only where the stage starts. The medium reload penalty begins here.",
       "exposeInUi": false
     },
     {
@@ -4173,7 +4173,7 @@
       },
       "rationale": "How much stamina an energy drink gives back instantly. Vanilla: 50% of your stamina bar. Its longer regeneration boost is separate.",
       "logic": "50% is the vanilla refill; set 0–100% of maximum stamina directly, subject to the game stamina cap.",
-      "interaction": "Moves in 1% steps; the energy drink's regeneration and stamina-cost effects stay separate.",
+      "interaction": "Only the instant gain. The drink's regen and stamina-cost effects are separate.",
       "exposeInUi": false
     },
     {
@@ -4218,7 +4218,7 @@
       },
       "rationale": "Strength of water's short +25% stamina bonus. Vanilla: 1×. 0× removes it, 2× makes it +50%. The instant refill is a separate setting.",
       "logic": "0× removes this stamina bonus; 1× keeps +25%, 2× gives +50%. The instant 38% refill is a separate setting.",
-      "interaction": "Water cost cut and instant refill are separate independent controls.",
+      "interaction": "Only the bonus. Water's cost cut and instant refill are separate.",
       "exposeInUi": false
     },
     {
@@ -4262,8 +4262,8 @@
         ]
       },
       "rationale": "Water also makes running and other actions cost less stamina for a while. Vanilla: 1× (−10%). 0× removes it, 2× doubles it to −20%.",
-      "logic": "0× = actions cost the normal stamina; 1× = vanilla 10% cheaper; 2× = 20% cheaper.",
-      "interaction": "Water's +25% stamina bonus and its instant refill are separate settings.",
+      "logic": "Higher = actions get cheaper; 0× = no discount, 2× = twice the vanilla discount.",
+      "interaction": "Only the cost cut. Water's +25% bonus and instant refill are separate.",
       "exposeInUi": false
     },
     {
@@ -4310,7 +4310,7 @@
       },
       "rationale": "How much radiation one beer flushes out. Vanilla: 10 — a little help, not a cure. You still get drunk as usual.",
       "logic": "1× removes 10 radiation like vanilla; 0×–3× covers 0–30 radiation in steps of 5.",
-      "interaction": "Does not alter intoxication, drink duration or the other alcohol.",
+      "interaction": "Only radiation. Drunkenness, drink duration and vodka are separate.",
       "exposeInUi": false
     },
     {
@@ -4357,7 +4357,7 @@
       },
       "rationale": "How much radiation one bottle of vodka flushes out. Vanilla: 50 — the classic stalker remedy. You still get drunk as usual.",
       "logic": "Higher = each vodka clears more radiation; 0 = none.",
-      "interaction": "Does not alter intoxication, drink duration or the other alcohol.",
+      "interaction": "Only radiation. Drunkenness, drink duration and beer are separate.",
       "exposeInUi": false
     },
     {
@@ -4401,7 +4401,7 @@
         ]
       },
       "rationale": "How long water's stamina-saving effect lasts after drinking. Vanilla: 1× (30 seconds). Its shorter bonus can never outlast this.",
-      "logic": "1× = vanilla 30 seconds of cheaper actions; the short regeneration (5 s) can't outlast it.",
+      "logic": "Higher = cheaper actions last longer. The short +25% bonus can't outlast it.",
       "interaction": "WATER STAMINA GAIN controls the instant refill separately."
     },
     {
@@ -4546,7 +4546,7 @@
         ]
       },
       "rationale": "How long water's +25% max-stamina bonus lasts. Vanilla: 5 seconds — a short burst for a sprint.",
-      "logic": "From vanilla 5 s up to the length of the drink's main effect. Only the duration changes.",
+      "logic": "Higher = the bonus lasts longer, up to the drink's main effect.",
       "interaction": "Can't outlast the drink's main effect.",
       "exposeInUi": false
     },
@@ -4593,7 +4593,7 @@
         ]
       },
       "rationale": "How long an energy drink makes actions cost no stamina at all. Vanilla: 5 seconds.",
-      "logic": "From vanilla 5 s up to the length of the drink's main effect. Only the duration changes.",
+      "logic": "Higher = free actions last longer, up to the drink's main effect.",
       "interaction": "Can't outlast the drink's main effect.",
       "exposeInUi": false
     },
@@ -4640,7 +4640,7 @@
         ]
       },
       "rationale": "How long an energy drink makes actions cost 30% less stamina. Vanilla: 15 seconds.",
-      "logic": "From vanilla 15 s up to the length of the drink's main effect. Only the duration changes.",
+      "logic": "Higher = cheaper actions last longer, up to the drink's main effect.",
       "interaction": "Can't outlast the drink's main effect.",
       "exposeInUi": false
     },
@@ -4774,7 +4774,7 @@
       },
       "rationale": "How long Magic Vodka (Dvupalov) shields you from psy attacks. Vanilla: 1× (90 seconds) — longer means more time to deal with Controllers and psy zones.",
       "logic": "1× keeps the 90 s vanilla psi-protection duration.",
-      "interaction": "A quest/special drink; RADIATION REMOVAL doesn't change it."
+      "interaction": "Only the duration. A special quest drink; RADIATION REMOVAL doesn't touch it."
     },
     {
       "id": "survival.vincaBleedRecovery",
@@ -4818,7 +4818,7 @@
         ]
       },
       "rationale": "How much faster you stop bleeding while Vinca is active. Vanilla: +10 bleed pts — handy when you're out of bandages.",
-      "logic": "Set in bleed-recovery points (vanilla +10), not as a multiplier.",
+      "logic": "Higher = bleeding stops faster. Set in bleed points, not as a multiplier.",
       "interaction": "Separate from drinks and the other medicines; taking another dose still refreshes it like vanilla.",
       "exposeInUi": false
     },
@@ -5169,8 +5169,8 @@
         ]
       },
       "rationale": "How much one beer gets you drunk. Vanilla: 15 — tipsy on the 2nd beer, properly drunk by the 6th in a row. The chart shows exactly when each stage hits.",
-      "logic": "Higher = you get drunk faster. At vanilla strength, back-to-back beers make you tipsy on the 2nd and drunk on the 6th.",
-      "interaction": "Sits beside VODKA STRENGTH; the preview shows right away how many beers make you tipsy and drunk."
+      "logic": "Higher = you get drunk on fewer beers; lower = it takes more.",
+      "interaction": "Separate from VODKA STRENGTH. The preview shows how many beers make you tipsy and drunk."
     },
     {
       "id": "survival.vodkaDrunknessStrength",
@@ -5216,8 +5216,8 @@
         ]
       },
       "rationale": "How much one vodka gets you drunk. Vanilla: 30 — tipsy after the 1st bottle, drunk by the 3rd in a row.",
-      "logic": "Higher = you get drunk faster. At vanilla strength the 1st vodka makes you tipsy and the 3rd drunk.",
-      "interaction": "Sits beside BEER STRENGTH; the preview shows right away how many vodkas make you tipsy and drunk."
+      "logic": "Higher = you get drunk on fewer vodkas; lower = it takes more.",
+      "interaction": "Separate from BEER STRENGTH. The preview shows how many vodkas make you tipsy and drunk."
     },
     {
       "id": "survival.sleepEligibilityThreshold",
@@ -5504,7 +5504,7 @@
       },
       "rationale": "How much health radiation eats once it becomes dangerous. Vanilla: 1×. 2× doubles the damage; the warning levels stay where they are.",
       "logic": "1× keeps vanilla radiation damage; 0.5× halves it, 2× doubles it, up to 25×. The warning levels stay vanilla.",
-      "interaction": "Exposure determines how fast radiation builds up; recovery and Anti-Rad remove it. This setting only changes HP loss once radiation hurts."
+      "interaction": "Only HP loss from radiation. RADIATION ACCUMULATION sets how fast it builds; recovery and Anti-Rad clear it."
     },
     {
       "id": "survival.bleedingSeverity",
@@ -5591,7 +5591,7 @@
       },
       "rationale": "How fast bleeding stops on its own without bandages. Vanilla: 0.3 pts/s. Raise it to shrug off scratches; lower it to make every wound need treatment.",
       "logic": "",
-      "interaction": "Bandages and medkits apply direct bleeding removal independently of this passive rate."
+      "interaction": "Only passive recovery. Bandages and medkits stop bleeding separately."
     },
     {
       "id": "health.maxHP",
@@ -5643,7 +5643,7 @@
       },
       "rationale": "Your total health pool. Vanilla: 100 HP. More HP lets you survive more hits; healing items still restore the same flat amount, so each medkit covers a smaller share of a bigger pool.",
       "logic": "",
-      "interaction": "The low-health warning still starts where vanilla does. Very large values may behave oddly in game — test them."
+      "interaction": "The low-health warning still starts at the vanilla point. Very high values may act oddly in game."
     },
     {
       "id": "health.baseRegen",
@@ -5733,7 +5733,7 @@
       },
       "rationale": "How long after taking damage your health starts coming back. Vanilla: 5 seconds. Only matters if something is actually healing you, so with PASSIVE HP REGEN at 0 you may not notice it.",
       "logic": "Higher = HP regen waits longer after you get hurt; lower = it starts sooner.",
-      "interaction": "With PASSIVE HP REGEN at 0 you won't notice it unless another heal-over-time effect is active."
+      "interaction": "Only matters while PASSIVE HP REGEN or another heal-over-time effect is active."
     },
     {
       "id": "health.regenerationScalar",
@@ -6263,7 +6263,7 @@
       },
       "rationale": "How much health a scientific medkit gives back. Vanilla: 100 HP — a full vanilla bar in one go.",
       "logic": "",
-      "interaction": "Its bleeding and radiation treatment are separate. Master's healing cut never applies to Scientific Medkits.",
+      "interaction": "Its bleed and radiation treatment are separate. Master's healing cut never applies to Scientific Medkits.",
       "exposeInUi": false
     },
     {
@@ -6316,7 +6316,7 @@
       },
       "rationale": "Whether bread, fresh bread, canned food and sausage also heal you a bit. Vanilla: ON. Turn it OFF to make food only fix hunger, so medical items are your only way to heal.",
       "logic": "ON keeps vanilla food healing. OFF removes healing from the supported food items.",
-      "interaction": "Bandage healing remains controlled by the HEALING AMOUNT radar. Weird Kettle alternative food effects are deliberately outside this switch.",
+      "interaction": "Only food. Bandage healing is on the HEALING AMOUNT radar; Weird Kettle food effects are separate.",
       "exposeInUi": true
     },
     {
@@ -6711,7 +6711,7 @@
       "description": "Vanilla maximum stamina is 100. This changes the size of your stamina pool, not how fast it recovers or how much actions cost.",
       "rationale": "The size of your stamina bar. Vanilla: 100. A bigger bar lets you sprint, jump and swing longer before you're winded; recovery speed and action costs don't change.",
       "logic": "",
-      "interaction": "Action costs are fixed stamina amounts, so a bigger MAX STAMINA fits more actions into a full bar.",
+      "interaction": "Action costs stay fixed, so a bigger MAX STAMINA fits more actions into one bar.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -6756,7 +6756,7 @@
       "description": "Below this stamina value, sprinting is disabled. Default: 16.1 of the vanilla 100 stamina pool.",
       "rationale": "When your stamina drops below this, you can't sprint any more until it recovers. Vanilla: 16.1 out of 100. Lower it to squeeze out a longer final dash.",
       "logic": "Higher = sprint locks out earlier; lower = you can sprint deeper into the bar.",
-      "interaction": "Pairs with EXHAUSTION REGEN DELAY; sets sprint lockout, not sprint speed or stamina drain.",
+      "interaction": "Stacks with EXHAUSTION REGEN DELAY. Sprint speed and stamina drain are separate.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -6801,7 +6801,7 @@
       "description": "Seconds before stamina regeneration resumes after sprint exhaustion.",
       "rationale": "How long you stand there gasping after sprinting yourself out before stamina starts coming back. Vanilla: 1 second.",
       "logic": "Higher = a longer pause before stamina refills after you run dry; lower = shorter.",
-      "interaction": "Applies after sprint exhaustion; SPRINT STOPS BELOW determines the separate lockout threshold.",
+      "interaction": "Only after you run dry. SPRINT STOPS BELOW sets when sprint locks.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -6844,7 +6844,7 @@
       "description": "Below this stamina value, the separate low-stamina recovery boost becomes eligible. Default: 30 stamina.",
       "rationale": "When stamina falls below this, the game gives you a short second-wind boost. Vanilla: 30 out of 100.",
       "logic": "Higher = the second wind kicks in sooner; lower = only when you're nearly empty.",
-      "interaction": "Pairs with BOOST STRENGTH and BOOST DURATION, not with SPRINT STOPS BELOW.",
+      "interaction": "Stacks with BOOST STRENGTH and BOOST DURATION. SPRINT STOPS BELOW is separate.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -6981,7 +6981,7 @@
       "description": "Changes stamina recovery while you are sprinting but your movement speed is being limited. The game decides when this slower sprint state is active.",
       "rationale": "Stamina drain when you hold sprint but something slows you down (heavy load, injury). Vanilla: −0.65, the same as normal running.",
       "logic": "More negative = it drains faster; 0 = no extra drain; positive = you recover while doing it.",
-      "interaction": "Works alongside normal sprint stamina. Heavy load and other slowdowns decide when it kicks in.",
+      "interaction": "Stacks with normal sprint stamina. Heavy load and other slowdowns decide when it kicks in.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -7113,7 +7113,7 @@
       "description": "Changes the tallest obstacle you can vault over. The WAIST / EYES / ABOVE EYES markers are simple player-friendly height references.",
       "rationale": "The tallest obstacle you can climb over. Vanilla: 130 cm — the WAIST / EYES markers show what that means in-game. Raise it to vault fences and crates that used to block you.",
       "logic": "Higher = you can climb taller obstacles; lower = fewer things to climb. Jump distance doesn't change.",
-      "interaction": "Vault stamina cost, landing rules and collision checks remain independent.",
+      "interaction": "Only the height. Vault stamina cost is separate.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -7437,7 +7437,7 @@
       },
       "rationale": "Stamina spent on every vault over an obstacle. Vanilla: 12.",
       "logic": "",
-      "interaction": "The effect is independent of jump cost even though both affect traversal.",
+      "interaction": "Only vaulting. Jump cost is separate.",
       "exposeInUi": false
     },
     {
@@ -7481,7 +7481,7 @@
       },
       "rationale": "Stamina spent on each quick knife swing. Vanilla: 16.",
       "logic": "",
-      "interaction": "Strong melee and buttstock attacks have independent costs.",
+      "interaction": "Only normal melee. Strong melee and buttstock hits have their own costs.",
       "exposeInUi": false
     },
     {
@@ -7569,7 +7569,7 @@
       },
       "rationale": "Stamina spent on each rifle-butt strike. Vanilla: 12.",
       "logic": "",
-      "interaction": "Normal and strong melee use their own stamina values.",
+      "interaction": "Only buttstock hits. Normal and strong melee have their own costs.",
       "exposeInUi": false
     },
     {
@@ -7747,7 +7747,7 @@
       },
       "rationale": "How much you can carry before you get slowed down. Vanilla: 80 kg. Raise it to haul more loot; lower it for a tighter backpack.",
       "logic": "",
-      "interaction": "Encumbrance thresholds and equipment-derived carry-weight bonuses can affect how the load feels before the absolute maximum is reached."
+      "interaction": "Overload starts before this limit, and gear carry bonuses add on top."
     },
     {
       "id": "loot.genericCorpseReduction",
@@ -9980,7 +9980,7 @@
       },
       "rationale": "How many rounds you get from smashing an ammo box. Vanilla: 1×. Which calibers show up is a separate setting.",
       "logic": "0.5×–2× changes how many rounds breakable ammo boxes give. 1× keeps vanilla amounts.",
-      "interaction": "Works with AMMO BOX CONTENT DISTRIBUTION: this sets how many rounds you get, the distribution sets which calibers turn up more often.",
+      "interaction": "Stacks with AMMO BOX CONTENT DISTRIBUTION: this sets how many rounds, the distribution sets which calibers.",
       "lootHint": {
         "kind": "scaledCountEntries",
         "label": "Contents",
@@ -10069,7 +10069,7 @@
       },
       "rationale": "How often breakable ammo boxes give 9 mm pistol rounds (9×18 in SNG boxes, 9×19 in both box types). Vanilla: 1×. Together with the other calibers this sets the ammo mix, not the number of rounds.",
       "logic": "Higher = this caliber turns up more often in ammo boxes; 1× keeps the vanilla mix.",
-      "interaction": "AMMO PER BOX changes how many rounds appear, not which caliber families are favored.",
+      "interaction": "Separate from AMMO PER BOX, which sets how many rounds you get.",
       "exposeInUi": true
     },
     {
@@ -10114,7 +10114,7 @@
       },
       "rationale": "How often breakable ammo boxes give .45 ACP rounds. Vanilla: 1×. 0× removes them from the mix.",
       "logic": "1× keeps the vanilla chance. Lower settings make .45 ACP less common; higher settings make it more common.",
-      "interaction": "Set on the AMMO BOX CONTENT DISTRIBUTION board.",
+      "interaction": "Separate from AMMO PER BOX, which sets how many rounds you get.",
       "exposeInUi": false
     },
     {
@@ -10159,7 +10159,7 @@
       },
       "rationale": "How often breakable ammo boxes give 5.45 / 5.56 mm rifle rounds. Vanilla: 1×. 0× removes them from the mix.",
       "logic": "1× keeps the vanilla chance. Lower settings make 5.45 / 5.56 mm less common; higher settings make it more common.",
-      "interaction": "Set on the AMMO BOX CONTENT DISTRIBUTION board.",
+      "interaction": "Separate from AMMO PER BOX, which sets how many rounds you get.",
       "exposeInUi": false
     },
     {
@@ -10204,7 +10204,7 @@
       },
       "rationale": "How often breakable ammo boxes give 12 gauge shells. Vanilla: 1×. 0× removes them from the mix.",
       "logic": "1× keeps the vanilla chance. Lower settings make 12 Gauge less common; higher settings make it more common.",
-      "interaction": "Set on the AMMO BOX CONTENT DISTRIBUTION board.",
+      "interaction": "Separate from AMMO PER BOX, which sets how many rounds you get.",
       "exposeInUi": false
     },
     {
@@ -10298,8 +10298,8 @@
         ]
       },
       "rationale": "How many grenades you get from smashing a grenade box. Vanilla: 1×. F1 boxes still give F1s and RGD-5 boxes still give RGD-5s.",
-      "logic": "0.5×–2× in 0.5× steps. Vanilla 1–2 becomes 1–1 at 0.5×, 1–2 at 1×, 2–3 at 1.5× and 2–4 at 2×.",
-      "interaction": "Changes grenade amounts in breakable grenade boxes only. Normal stashes, corpse loot, and NPC grenade loadouts are unaffected.",
+      "logic": "Higher = more grenades per box; 2× turns 1–2 into 2–4, 0.5× gives 1.",
+      "interaction": "Only breakable grenade boxes. Stashes, corpses and NPC grenades are separate.",
       "lootHint": {
         "kind": "scaledCountEntries",
         "label": "Contents",
@@ -10700,7 +10700,7 @@
         }
       ],
       "logic": "100% keeps vanilla odds for each item; 50% halves them; 0% means it never turns up. It never fills a whole stash.",
-      "interaction": "Affects Rare stash ammo only. Ammo amount (AMMO AMOUNT) stays separate.",
+      "interaction": "Only ammo in Rare stashes. AMMO AMOUNT is separate.",
       "rationale": "How often Rare stashes have ammo. Vanilla: 100%. Lower = more Rare stashes without ammo; 0% = none at all."
     },
     {
@@ -11159,7 +11159,7 @@
       },
       "rationale": "What a completely broken item is still worth. Vanilla: 10% of its price. Higher = wrecked gear still sells for something.",
       "logic": "Higher = wrecked gear still sells for more; 0% = worthless when fully broken.",
-      "interaction": "Trader markups still apply; this only changes how much wear lowers the price."
+      "interaction": "Only how much wear lowers the price. Trader markups still apply."
     },
     {
       "id": "economy.traderAmmoStock",
@@ -11618,7 +11618,7 @@
       },
       "rationale": "Base price of mutant parts. Vanilla: 1×. Higher = hunting mutants pays better.",
       "logic": "1× = vanilla; 0.5× halves every part's price, 2× doubles it. Rare parts stay worth far more than common ones.",
-      "interaction": "Trader markups still apply on top. At 1× a Blind Dog part is worth 1,000 coupons and a Chimera part 18,000.",
+      "interaction": "Trader markups still apply on top.",
       "exposeInUi": false
     },
     {
@@ -11663,7 +11663,7 @@
       },
       "rationale": "What guides charge to take you to another area. Vanilla: 1×. Higher = fast travel hurts the wallet; 0× makes it free. Covers roaming guides too.",
       "logic": "1× keeps vanilla guide prices; 0.5× halves paid routes, 2× doubles them, 0× makes them free.",
-      "interaction": "Guide fees and their minimum price scale with this. Difficulty, reputation and region still shape the final price."
+      "interaction": "Guide fees and their minimum scale with it. Difficulty, reputation and region still shape the price."
     },
     {
       "id": "economy.upgradeCost",
@@ -11707,7 +11707,7 @@
       },
       "rationale": "Price of weapon and armor upgrades. Vanilla: Novice and Stalker 1×, Veteran 1.25×, Master 1.5×. Which upgrades exist doesn't change.",
       "logic": "",
-      "interaction": "Each upgrade still has its own base price. This setting makes upgrades generally cheaper or more expensive without changing their relative costs."
+      "interaction": "Each upgrade keeps its own base price, so relative costs stay the same."
     },
     {
       "id": "economy.repairDifficultyCost",
@@ -11793,7 +11793,7 @@
       },
       "rationale": "Base price of repairs at a technician. Vanilla: 0.7×. Your standing with the technician's faction still raises or lowers the final bill.",
       "logic": "",
-      "interaction": "Reputation-based repair prices still apply and can further raise or lower the final repair bill."
+      "interaction": "Reputation still raises or lowers the final repair bill."
     },
     {
       "id": "economy.repairEnemy",
@@ -12089,7 +12089,7 @@
       },
       "rationale": "How long your armor holds up before it's falling apart. Vanilla: Novice 1.35×, Stalker 1×, Veteran 0.9×, Master 0.6×. Higher = fewer repair trips; protection itself doesn't change.",
       "logic": "",
-      "interaction": "Changes armor condition durability only. It does not change armor protection values, weapon wear or jamming thresholds."
+      "interaction": "Only how fast armor wears. Protection, weapon wear and jamming are separate."
     },
     {
       "id": "equipment.ammoWeight",
@@ -12236,7 +12236,7 @@
       },
       "rationale": "How heavy weapons are in your backpack. Vanilla: 1×. Lower it to carry a spare rifle without being slowed down; damage and handling don't change.",
       "logic": "1× keeps vanilla weight. 0× makes them weightless; 2× doubles their weight.",
-      "interaction": "Items keep their weight differences. Does not change maximum carry weight or any equipment protection statistics."
+      "interaction": "Weapons keep their weight differences. MAXIMUM CARRY WEIGHT is separate."
     },
     {
       "id": "equipment.armorWeight",
@@ -12332,7 +12332,7 @@
       },
       "rationale": "How much all damaging anomalies hurt, on top of each anomaly's own damage. Vanilla: Novice 0.3×, Stalker 1×, Veteran 1.45×, Master 1.75×. Your suit's protection still applies after this.",
       "logic": "Higher = every damaging anomaly hits harder; lower = softer. Each anomaly's own BASE still applies.",
-      "interaction": "Individual anomaly damage and this global setting combine before armor and other protection."
+      "interaction": "Multiplies with each anomaly's own base damage, before armor and other protection."
     },
     {
       "id": "advanced.starvationMechanics",
@@ -12437,7 +12437,7 @@
       },
       "rationale": "Master's punishment for being exhausted: smaller stamina bar, less carry capacity, more recoil, more sway and wider spread. Vanilla: Novice–Veteran OFF, Master ON. Normal tiredness effects work either way.",
       "logic": "Once you're severely tired: −20% max stamina, −20% carry weight, +55% recoil, more sway and wider spread (vanilla values). OFF leaves only normal tiredness.",
-      "interaction": "The activation point stays vanilla. The child controls only change how strong each severe-fatigue penalty becomes."
+      "interaction": "Severe fatigue still starts at the vanilla point. The controls below set how hard each penalty hits."
     },
     {
       "id": "survival.wellFedStaminaRegen",
@@ -12521,7 +12521,7 @@
       },
       "rationale": "How much more stamina actions cost while you're starving under Master rules. Vanilla: +200% — three times the normal cost. 0% removes the extra. Only works while STARVATION MECHANICS is ON.",
       "logic": "100% means +100% extra stamina cost, not normal cost. 0% removes this extra starvation cost.",
-      "interaction": "Severe hunger also slows stamina recovery. This changes the extra cost of actions, not an ongoing drain.",
+      "interaction": "Only the extra cost per action. Severe hunger also slows stamina regen.",
       "requiresToggle": "advanced.starvationMechanics"
     },
     {
@@ -12609,7 +12609,7 @@
       },
       "rationale": "Seconds between starvation hits. Vanilla: 10 seconds. Lower = the same damage comes faster. Only works while STARVATION MECHANICS is ON.",
       "logic": "Lower = the same damage comes more often; higher = it's spread out.",
-      "interaction": "Practical starvation pressure depends on both this interval and STARVATION DAMAGE.",
+      "interaction": "Stacks with STARVATION DAMAGE: together they set how fast starving hurts.",
       "requiresToggle": "advanced.starvationMechanics"
     },
     {
@@ -12708,7 +12708,7 @@
       },
       "rationale": "How much starving blocks your healing under Master rules. Vanilla: 100% — no healing at all. 0% removes it. Only works while STARVATION MECHANICS is ON.",
       "logic": "Higher = health recovers less while starving; 0% removes this penalty.",
-      "interaction": "Cuts healing, not direct damage. Stacks with STARVATION DAMAGE and the Health tab regen settings.",
+      "interaction": "Cuts healing, not direct damage. Stacks with STARVATION DAMAGE and the Health regen settings.",
       "requiresToggle": "advanced.starvationMechanics"
     },
     {
@@ -13310,7 +13310,7 @@
       },
       "rationale": "Where on the bleeding meter a wound becomes a moderate bleed. Vanilla: 50.",
       "logic": "Keep MEDIUM below SEVERE. LOW bleeding still starts at the game's 0.1.",
-      "interaction": "Horizontal threshold handles change stage timing; vertical curve handles change HP damage per tick.",
+      "interaction": "Sets only where the stage starts. Bleed damage is separate.",
       "exposeInUi": false
     },
     {
@@ -13564,8 +13564,8 @@
         "notes": []
       },
       "rationale": "How hard electro anomalies hit you. Vanilla: 65 base damage, then scaled by GLOBAL ANOMALY DAMAGE (Stalker 1×). Each anomaly type has its own bar on this board. 0 makes them harmless.",
-      "logic": "EFFECTIVE = BASE × GLOBAL ANOMALY DAMAGE, before your protection. The vanilla base 65 gives about Novice 19.5, Stalker 65, Veteran 94.25, Master 113.75.",
-      "interaction": "Use GLOBAL ANOMALY DAMAGE to make every damaging anomaly stronger or weaker at once.",
+      "logic": "Higher = this anomaly hits harder; 0 makes it harmless. EFFECTIVE = BASE × GLOBAL ANOMALY DAMAGE, before your protection.",
+      "interaction": "Multiplies with GLOBAL ANOMALY DAMAGE. Only this anomaly type changes.",
       "exposeInUi": true
     },
     {
@@ -13608,8 +13608,8 @@
         "notes": []
       },
       "rationale": "How hard chemical anomalies hit you. Vanilla: 30 base damage, then scaled by GLOBAL ANOMALY DAMAGE (Stalker 1×). 0 makes them harmless.",
-      "logic": "EFFECTIVE = BASE × GLOBAL ANOMALY DAMAGE, before your protection. The vanilla base 30 gives about Novice 9, Stalker 30, Veteran 43.5, Master 52.5.",
-      "interaction": "Leave the vanilla base for that anomaly's usual balance, or change it to make just this hazard stronger or weaker. GLOBAL ANOMALY DAMAGE stacks with this setting.",
+      "logic": "Higher = this anomaly hits harder; 0 makes it harmless. EFFECTIVE = BASE × GLOBAL ANOMALY DAMAGE, before your protection.",
+      "interaction": "Multiplies with GLOBAL ANOMALY DAMAGE. Only this anomaly type changes.",
       "exposeInUi": false
     },
     {
@@ -13652,8 +13652,8 @@
         "notes": []
       },
       "rationale": "How hard fire anomalies hit you. Vanilla: 60 base damage, then scaled by GLOBAL ANOMALY DAMAGE (Stalker 1×). 0 makes them harmless.",
-      "logic": "EFFECTIVE = BASE × GLOBAL ANOMALY DAMAGE, before your protection. The vanilla base 60 gives about Novice 18, Stalker 60, Veteran 87, Master 105.",
-      "interaction": "Leave the vanilla base for that anomaly's usual balance, or change it to make just this hazard stronger or weaker. GLOBAL ANOMALY DAMAGE stacks with this setting.",
+      "logic": "Higher = this anomaly hits harder; 0 makes it harmless. EFFECTIVE = BASE × GLOBAL ANOMALY DAMAGE, before your protection.",
+      "interaction": "Multiplies with GLOBAL ANOMALY DAMAGE. Only this anomaly type changes.",
       "exposeInUi": false
     },
     {
@@ -13696,8 +13696,8 @@
         "notes": []
       },
       "rationale": "How hard carousel (gravity whirl) anomalies hit you. Vanilla: 105 base damage, then scaled by GLOBAL ANOMALY DAMAGE (Stalker 1×). The hardest-hitting of the group. 0 makes them harmless.",
-      "logic": "EFFECTIVE = BASE × GLOBAL ANOMALY DAMAGE, before your protection. The vanilla base 105 gives about Novice 31.5, Stalker 105, Veteran 152.25, Master 183.75.",
-      "interaction": "Leave the vanilla base for that anomaly's usual balance, or change it to make just this hazard stronger or weaker. GLOBAL ANOMALY DAMAGE stacks with this setting.",
+      "logic": "Higher = this anomaly hits harder; 0 makes it harmless. EFFECTIVE = BASE × GLOBAL ANOMALY DAMAGE, before your protection.",
+      "interaction": "Multiplies with GLOBAL ANOMALY DAMAGE. Only this anomaly type changes.",
       "exposeInUi": false
     },
     {
@@ -13740,8 +13740,8 @@
         "notes": []
       },
       "rationale": "How hard toxic cloud anomalies hit you. Vanilla: 25 base damage, then scaled by GLOBAL ANOMALY DAMAGE (Stalker 1×). 0 makes them harmless.",
-      "logic": "EFFECTIVE = BASE × GLOBAL ANOMALY DAMAGE, before your protection. The vanilla base 25 gives about Novice 7.5, Stalker 25, Veteran 36.25, Master 43.75.",
-      "interaction": "Leave the vanilla base for that anomaly's usual balance, or change it to make just this hazard stronger or weaker. GLOBAL ANOMALY DAMAGE stacks with this setting.",
+      "logic": "Higher = this anomaly hits harder; 0 makes it harmless. EFFECTIVE = BASE × GLOBAL ANOMALY DAMAGE, before your protection.",
+      "interaction": "Multiplies with GLOBAL ANOMALY DAMAGE. Only this anomaly type changes.",
       "exposeInUi": false
     },
     {
@@ -13784,8 +13784,8 @@
         "notes": []
       },
       "rationale": "How hard steam anomalies hit you. Vanilla: 60 base damage, then scaled by GLOBAL ANOMALY DAMAGE (Stalker 1×). 0 makes them harmless.",
-      "logic": "EFFECTIVE = BASE × GLOBAL ANOMALY DAMAGE, before your protection. The vanilla base 60 gives about Novice 18, Stalker 60, Veteran 87, Master 105.",
-      "interaction": "Leave the vanilla base for that anomaly's usual balance, or change it to make just this hazard stronger or weaker. GLOBAL ANOMALY DAMAGE stacks with this setting.",
+      "logic": "Higher = this anomaly hits harder; 0 makes it harmless. EFFECTIVE = BASE × GLOBAL ANOMALY DAMAGE, before your protection.",
+      "interaction": "Multiplies with GLOBAL ANOMALY DAMAGE. Only this anomaly type changes.",
       "exposeInUi": false
     },
     {
@@ -13879,7 +13879,7 @@
       },
       "rationale": "How fast you can still turn and look around inside a Flycatcher. Vanilla: 30% of normal. 100% = no slowdown.",
       "logic": "Higher = you turn more freely inside it; 100% = no slowdown; 0% = you can't turn.",
-      "interaction": "The same setting is applied to Flycatcher yaw and pitch so horizontal and vertical looking stay synchronized. Movement speed is controlled separately."
+      "interaction": "Only turning, both sideways and up/down. FLYCATCHER MOVEMENT SPEED is separate."
     },
     {
       "id": "environment.clickerHealthDamage",
@@ -14069,7 +14069,7 @@
       },
       "rationale": "How much health a Soap Bubble's chemical burn takes. Vanilla: 100. 0 removes the health damage only.",
       "logic": "Higher = Soap Bubble hurts more; 0 removes its health damage.",
-      "interaction": "Does not change particle behavior, spread, movement or other Soap Bubble effects.",
+      "interaction": "Only the damage. How the Soap Bubble moves and spreads stays vanilla.",
       "exposeInUi": false
     },
     {
@@ -14115,7 +14115,7 @@
       },
       "rationale": "How much health a Fireball's burn takes. Vanilla: 100. 0 removes the health damage only.",
       "logic": "Higher = Fireball hurts more; 0 removes its health damage.",
-      "interaction": "Does not change Fireball movement, trail, collision or other behavior.",
+      "interaction": "Only the damage. How the Fireball moves stays vanilla.",
       "exposeInUi": false
     },
     {
@@ -14253,7 +14253,7 @@
       },
       "rationale": "How fast psy anomalies drain your psy meter. Vanilla: 1×. 0× = they stop draining it; 2× = twice as fast.",
       "logic": "1× keeps vanilla psy drain; 0× removes it; 2× doubles it.",
-      "interaction": "Changes the continuous Psy drain only. Other Psy effects and thresholds remain unchanged."
+      "interaction": "Only the constant Psy drain. Other Psy effects stay vanilla."
     },
     {
       "id": "environment.artifactSpawnChance",
@@ -15588,7 +15588,7 @@
       },
       "rationale": "Mixes up where attachments lie in the world, every time you build. Vanilla: OFF. No extra copies are added.",
       "logic": "OFF keeps vanilla attachment placement. ON reshuffles world attachments across compatible locations without changing how many exist.",
-      "interaction": "Weapon and blueprint shuffles remain independent."
+      "interaction": "Separate from the weapon and blueprint shuffles."
     },
     {
       "id": "loot.worldDetectors",

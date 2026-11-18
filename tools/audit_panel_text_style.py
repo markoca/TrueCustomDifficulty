@@ -72,7 +72,7 @@ FORMAT = [
 ]
 # HIGHER / LOWER opens with the direction or the value that sets it (§1).
 LOGIC_OPENERS = (r"^(Higher|Lower) = |^Higher MIN|^[0-9.]+(?:×|%| HP| s|–|\b)|^OFF|^ON|^Follows|^Each |^EFFECTIVE|^Keep |^Only |^Set |^From |^Every |^Shown |^While |^Once |^100% |^More negative|^Negative|^Range")
-WORKS_WITH_BAD = r"^(This |These |How much|The game |Each radar|Drag |Affects eligible|Coverage decides|Changes only)"
+WORKS_WITH_BAD = r"^(This |These |How much|The game |Each radar|Drag |Affects eligible|Coverage decides|Changes only|Pair this|Use |Leave the|Sits beside|Set on|Moves in|Horizontal|Does not)"
 LIMITS = {"rationale": 300, "logic": 200, "interaction": 220}
 
 
@@ -114,6 +114,8 @@ for p in CATALOG:
         hits.append((p["id"], "interaction", "WORKS WITH must name what stacks / stays separate, not open with 'This …' or a UI how-to"))
     if re.search(r"\b(right-click|[Dd]rag this|radar point|eligible)\b", inter):
         hits.append((p["id"], "interaction", "UI how-to or jargon in WORKS WITH; mouse tips belong in CONTROLS"))
+    if re.search(r"\b[Vv]anilla (?:base )?[+−-]?\d", logic) or re.search(r"\bvanilla (?:Master|Novice|Stalker|Veteran)\b", logic):
+        hits.append((p["id"], "logic", "vanilla value belongs in WHAT IT DOES, not HIGHER / LOWER"))
     master = p.get("requiresToggle")
     if master and master in by_id and "Only works while" not in r:
         hits.append((p["id"], "rationale", "missing 'Only works while … is ON.'"))
