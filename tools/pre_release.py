@@ -84,7 +84,7 @@ WRITERS = (
     ("combat-bpatch-writer", "CombatPatchContract", "combat-patch-fixtures", 62),
     ("health-stamina-bpatch-writer", "HealthStaminaPatchContract", "health-stamina-patch-fixtures", 56),
     ("survival-bpatch-writer", "SurvivalPatchContract", "survival-patch-fixtures", 130),
-    ("economy-bpatch-writer", "EconomyPatchContract", "economy-patch-fixtures", 34),
+    ("economy-bpatch-writer", "EconomyPatchContract", "economy-patch-fixtures", 48),
     ("equipment-bpatch-writer", "EquipmentPatchContract", "equipment-patch-fixtures", 50),
     ("environment-bpatch-writer", "EnvironmentPatchContract", "environment-patch-fixtures", 94),
     ("alife-bpatch-writer", "ALifePatchContract", "alife-patch-fixtures", 92),

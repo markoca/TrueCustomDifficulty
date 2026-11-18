@@ -168,15 +168,27 @@ internal static partial class Program
             "ItemGenerators.[2].SmartLootParams.ConsumablesParams.[0].Items");
         var mixedState = NativeState("Easy",
             ("loot.stashMedicalMedkitBias", 0),
-            ("loot.stashMedicalArmyMedkitBias", 2));
+            ("loot.stashMedicalArmyMedkitBias", 1));
         var mixedSpawn = smartMixed.EffectiveSpawn(mixedState);
+        // Kept-share rule (MEDICAL COMPOSITION): a Weight group's spawn endpoints
+        // scale by Σw·k / Σw, so each item keeps exactly its own k of vanilla
+        // odds. Medkit (w 5) × 0 and Army Medkit (w 1) × 1 keep 1/6; the Army
+        // Medkit's own odds stay (1/6) · (1/1) = its vanilla 1/6.
+        var mixedWeights = smartMixed.Items.Select(i => StashEffectiveState.Number(i.SourceRaw)).ToArray();
+        var mixedFactors = smartMixed.Items.Select(i => mixedState.SmartSelectionFactor(i.ItemSid, "Weight")).ToArray();
+        var keptShare = StashEffectiveState.SmartKeptShare(new[] { (mixedWeights[0], mixedFactors[0]), (mixedWeights[1], mixedFactors[1]) });
         Check(smartMixed.Items.Count == 2
             && smartMixed.Items[0].ItemSid == "Medkit"
             && smartMixed.Items[1].ItemSid == "ArmyMedkit"
-            && mixedSpawn.Min == smartMixed.MinSpawnChance
-            && mixedSpawn.Max == smartMixed.MaxSpawnChance
+            && smartMixed.Field == "Weight"
+            && Math.Abs(mixedFactors[0]) < 1e-9 && Math.Abs(mixedFactors[1] - 1.0) < 1e-9
+            && Math.Abs(keptShare - 1.0 / 6.0) < 1e-9
+            && Math.Abs(StashEffectiveState.Number(mixedSpawn.Min)
+                - StashEffectiveState.Number(smartMixed.MinSpawnChance) * keptShare) < 1e-4
+            && Math.Abs(StashEffectiveState.Number(mixedSpawn.Max)
+                - StashEffectiveState.Number(smartMixed.MaxSpawnChance) * keptShare) < 1e-4
             && mixedSpawn.Sets == smartMixed.ItemSetCount,
-            "Heterogeneous SmartLoot item factors must not scale group endpoints.");
+            "Heterogeneous SmartLoot Weight factors must scale group endpoints by the kept share.");
         Check(smartMixed.EffectiveCount(Baseline, mixedState,
                 smartMixed.Items[0], "MinCount") == "0"
             && smartMixed.EffectiveCount(Baseline, mixedState,

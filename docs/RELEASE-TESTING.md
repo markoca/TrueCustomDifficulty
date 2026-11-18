@@ -769,3 +769,5 @@ The C# contracts in `tests/` need .NET 10 and Wine: `python3 tools/pre_release.p
 First real run (2026-11-18, 7f9cdc8): 6 PASS / 7 FAIL. Fixed in the next commit: the REMOVE LOOSE ARTIFACTS file-count bug in the production writer, plus stale contract expectations (see the CURRENT entry in UI-DESIGN-LOCK.md). A re-run is needed to confirm.
 
 Second run (2026-11-18, 862626c): 9 PASS / 4 FAIL. All four failures were stale test expectations (Selma/Ragman 0% in the combined trader case, loot taxonomy 89/17/72, WORLD LOOT board with 8 controls, the AllControls executed count). The REMOVE LOOSE ARTIFACTS writer fix passed every AllControls probe.
+
+Third run (2026-11-18, 108ab49): 12 PASS / 1 FAIL. The one failure (LootSpecialGenerators, SmartLoot endpoints) was a pre-kept-share expectation and is fixed. Economy now runs 48 scenarios and AllControls 429/429.
