@@ -114,6 +114,15 @@ artifact_ui = ui[ui.index('    private void DrawArtifactHunting('):
                  ui.index('    // This native-axis graph uses', ui.index('    private void DrawArtifactHunting('))]
 check('dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9), knobCard' not in artifact_ui,
       "ARTIFACT HUNTING source knobs have no rectangular card frames")
+check(artifact_ui.index('(ArtifactSpawnPolicy.SpawnChanceId, "SPAWN CHANCE")')
+      < artifact_ui.index('(ArtifactSpawnPolicy.CountId, "PER SPAWN")')
+      < artifact_ui.index('(ArtifactSpawnPolicy.RareLuckId, "RARE+ ARTIFACT CHANCE")'),
+      "ARTIFACT HUNTING order is SPAWN CHANCE, PER SPAWN, RARE+")
+check('prominent: isCount' in artifact_ui
+      and 'var isCount = controls[i].Id == ArtifactSpawnPolicy.CountId;' in artifact_ui,
+      "PER SPAWN is the only enlarged central knob")
+check(artifact_ui.count('DrawSourceKnob(dc, parameter, controls[i].Label, knobCard') == 1,
+      "all artifact knobs use the same compact native 270-degree source renderer")
 check('"RARE+ ARTIFACT CHANCE"' in artifact_ui and '"BASE ODDS"' in artifact_ui
       and '"MASTER ZONES"' in artifact_ui, "artifact dials explain actual source-backed odds")
 check('valueFormatter: isCount ? null' in artifact_ui

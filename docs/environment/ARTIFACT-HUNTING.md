@@ -1,3 +1,13 @@
+## CURRENT 2026-11-18 — Hero PER SPAWN in the center
+
+The compact, frameless knob row is strictly **SPAWN CHANCE | PER SPAWN | RARE+ ARTIFACT CHANCE**.
+PER SPAWN is the larger middle knob, using the existing Combat `prominent: true`
+270° dial styling (1.18× nominal radius and raised caption); the two outer knobs
+retain their standard size. Every source range, step, displayed percentage, neutral
+subtitle, hover/reset behavior and the RARITY BY ZONE chart remain unchanged.
+This is a presentation-only rearrangement; artifact spawn/count/rarity CFG
+mapping and the factory presets are unaffected.
+
 ## CURRENT 2026-11-18 — Frameless artifact odds and explicit Rare+ meaning
 
 The UI shows actual base-spawn odds and conditional Rare+ odds for Master-zone finds,

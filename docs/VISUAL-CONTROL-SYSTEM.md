@@ -1,3 +1,9 @@
+## CURRENT 2026-11-18 — Enlarged center hero knobs: ARTIFACT HUNTING / ZONE WEATHER
+
+* ARTIFACT HUNTING: exactly **SPAWN CHANCE | PER SPAWN | RARE+ ARTIFACT CHANCE** in the existing compact 620-DIP frameless three-knob bank. The middle PER SPAWN knob alone uses `prominent: true`, matching the 1.18× combat hero arc with the raised caption. Outer knobs retain their native size and percentages (base spawn odds, conditional Master-zone Rare+ share), PER SPAWN keeps its integer ARTIFACT(S) unit. Keep the RARITY BY ZONE display intact.
+* ZONE WEATHER: exactly **STORMS | TIME TO FIND COVER | EMISSIONS** in the same bank. The middle TIME TO FIND COVER knob alone uses `prominent: true`, with native 10–60 SECONDS at step 5. Outer dials remain normal size with percent frequency and neutral `FREQUENCY` caption. No knob gets a rectangular frame; no extra Base/Vanilla text.
+* Both boards preserve the original 270° control grammar, ticks, source value/step, drag/wheel/keyboard, hover glow, right-click/R reset and reference tick. The existing ONE EMISSION timeline, RARITY BY ZONE and CFG/preset values are unaffected.
+
 ## CURRENT 2026-11-18 — LAIR POPULATION: centered hero knob, no frames
 
 * A-Life LAIR POPULATION is exactly **HUMAN CAMPS | RESPAWN TIME | MUTANT NESTS** in a compact centered three-knob bank (≤620 DIP), with **no rectangular knob cards**. Use the shared source-native 270° `DrawSourceKnob`, including original interaction, wheel/keyboard step snapping, hover, native ticks and right-click reset. Central RESPAWN TIME uses `prominent: true` (combat's 1.18× hero dial, raised title); other two are standard-size.

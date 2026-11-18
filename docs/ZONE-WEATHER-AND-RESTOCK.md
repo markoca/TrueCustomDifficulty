@@ -1,6 +1,15 @@
+## CURRENT 2026-11-18 — Centered TIME TO FIND COVER hero
+
+The frameless, compact weather row is **STORMS | TIME TO FIND COVER | EMISSIONS**.
+The center knob is larger, using Combat's native `prominent: true` treatment
+(1.18× nominal radius and raised label). The outer frequency knobs remain
+standard-sized. Center still reads 10–60 s in steps of 5 s; STORMS and
+EMISSIONS still read relative source weights as percentages. Their native
+values, weather selection rules, and the ONE EMISSION timeline are untouched.
+
 ## CURRENT 2026-11-18 — Weather knob order and readable percentages
 
-The ZONE WEATHER knob row is STORMS → EMISSIONS → TIME TO FIND COVER.
+The ZONE WEATHER knob row is STORMS → TIME TO FIND COVER → EMISSIONS.
 The first two show their source-relative weather weights as percentages
 (100% = numeric weight 1×, 125% = numeric weight 1.25×); these are not
 absolute weather occurrence probabilities. A single neutral `FREQUENCY`

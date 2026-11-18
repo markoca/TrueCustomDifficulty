@@ -96,15 +96,18 @@ def main():
           "weather uses the native source dials")
     check('"STORMS"' in weather_ui and '"EMISSIONS"' in weather_ui
       and '"TIME TO FIND COVER"' in weather_ui, "gamer-facing weather knob titles")
-check(weather_ui.index('(ZoneTimersPolicy.StormFrequencyId, "STORMS")')
-      < weather_ui.index('(ZoneTimersPolicy.EmissionFrequencyId, "EMISSIONS")')
-      < weather_ui.index('(ZoneTimersPolicy.EmissionWarningId, "TIME TO FIND COVER")'),
-      "ZONE WEATHER knobs are STORMS, EMISSIONS, TIME TO FIND COVER")
+    check(weather_ui.index('(ZoneTimersPolicy.StormFrequencyId, "STORMS")')
+          < weather_ui.index('(ZoneTimersPolicy.EmissionWarningId, "TIME TO FIND COVER")')
+          < weather_ui.index('(ZoneTimersPolicy.EmissionFrequencyId, "EMISSIONS")'),
+          "ZONE WEATHER knobs are STORMS, TIME TO FIND COVER, EMISSIONS")
+    check('prominent: isWarning' in weather_ui
+          and 'var isWarning = knobs[i].Id == ZoneTimersPolicy.EmissionWarningId;' in weather_ui,
+          "TIME TO FIND COVER is the enlarged central hero")
     check('percentageReadout: !isWarning' in weather_ui
       and 'secondaryReadout: isWarning ? null : "FREQUENCY"' in weather_ui,
       "weather weight reads as a percentage with only FREQUENCY beneath")
-check('positivePrefix: false' in weather_ui and 'nativeUnit: isWarning ? "SECONDS" : null' in weather_ui,
-      "warning dial has only the SECONDS unit, no artificial plus")
+    check('positivePrefix: false' in weather_ui and 'nativeUnit: isWarning ? "SECONDS" : null' in weather_ui,
+          "warning dial has only the SECONDS unit, no artificial plus")
     check('seconds / Math.Max(1.0, end)' in weather_ui and
           'seconds / ZoneTimersPolicy.EmissionWeatherSeconds' not in weather_ui,
           "event bar ends with the actual emission stages, not the 300 s weather slot")

@@ -1032,7 +1032,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
     }
 
-    // ZONE WEATHER: three frameless source dials (Artifact Hunting geometry).
+    // ZONE WEATHER: frameless STORMS | TIME TO FIND COVER | EMISSIONS;
+    // the central warning dial is the enlarged combat-style hero.
     // Only short text is drawn inside their faces; the warning uses its
     // native SECONDS unit, never a second overlapping descriptor.
     // The event timeline uses actual emission stage duration (warning + 80 s),
@@ -1051,8 +1052,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var knobs = new (string Id, string Label)[]
         {
             (ZoneTimersPolicy.StormFrequencyId, "STORMS"),
-            (ZoneTimersPolicy.EmissionFrequencyId, "EMISSIONS"),
-            (ZoneTimersPolicy.EmissionWarningId, "TIME TO FIND COVER")
+            (ZoneTimersPolicy.EmissionWarningId, "TIME TO FIND COVER"),
+            (ZoneTimersPolicy.EmissionFrequencyId, "EMISSIONS")
         };
         var (left, bankWidth, cellWidth) = ArtifactKnobBank(ActualWidth);
         for (var i = 0; i < knobs.Length; i++)
@@ -1067,6 +1068,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 text, muted, border, accent, panel,
                 percentageReadout: !isWarning,
                 rawReadout: isWarning, positivePrefix: false,
+                prominent: isWarning,
                 nativeUnit: isWarning ? "SECONDS" : null,
                 secondaryReadout: isWarning ? null : "FREQUENCY");
         }
@@ -1170,13 +1172,13 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawCenteredText(dc, "ARTIFACT HUNTING",
             new Point(ActualWidth / 2.0, 21.0), VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
 
-        // Three source knobs (YOUR WEAPONS geometry). The centre shows the
-        // control value; the short in-dial line says what it means in game.
+        // Three frameless source knobs (YOUR WEAPONS geometry). PER SPAWN
+        // is the enlarged central hero, while the outer two show real odds.
         var controls = new (string Id, string Label)[]
         {
             (ArtifactSpawnPolicy.SpawnChanceId, "SPAWN CHANCE"),
-            (ArtifactSpawnPolicy.RareLuckId, "RARE+ ARTIFACT CHANCE"),
-            (ArtifactSpawnPolicy.CountId, "PER SPAWN")
+            (ArtifactSpawnPolicy.CountId, "PER SPAWN"),
+            (ArtifactSpawnPolicy.RareLuckId, "RARE+ ARTIFACT CHANCE")
         };
         var (left, bankWidth, cellWidth) = ArtifactKnobBank(ActualWidth);
         for (var i = 0; i < controls.Length; i++)
@@ -1191,6 +1193,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             DrawSourceKnob(dc, parameter, controls[i].Label, knobCard,
                 text, muted, border, accent, panel,
                 rawReadout: isCount, positivePrefix: false,
+                prominent: isCount,
                 nativeUnit: isCount
                     ? (parameter?.CurrentNumber ?? 1.0) >= 1.5 ? "ARTIFACTS" : "ARTIFACT"
                     : null,
