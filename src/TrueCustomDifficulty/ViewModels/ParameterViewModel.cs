@@ -1540,7 +1540,7 @@ public sealed class ParameterViewModel : ObservableObject
             "coefficient" => number,
             "regen rate" => $"{number} HP recovery rate",
             "HP-rate" => $"{number} HP recovery",
-            "uu" => $"{number} height units",
+            "uu" => $"{number} cm",
             _ => $"{number} {unit}"
         };
     }

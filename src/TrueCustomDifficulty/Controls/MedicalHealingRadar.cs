@@ -389,9 +389,9 @@ public sealed class MedicalHealingRadar : FrameworkElement
         var numeric = action switch
         {
             HitAction.Healing => $"{parameter.CurrentNumber:0.#} HP",
-            HitAction.Radiation => $"{parameter.CurrentNumber:0.#} RAD",
+            HitAction.Radiation => $"{parameter.CurrentNumber:0.#} rad",
             HitAction.HealTime => $"{parameter.CurrentNumber:0} s",
-            _ => $"{parameter.CurrentNumber:0.#} PTS"
+            _ => $"{parameter.CurrentNumber:0.#} pts"
         };
         // Only the digits turn gold when changed (ReadoutInk); units stay neutral.
         var label = CreateText(numeric, 10.8,

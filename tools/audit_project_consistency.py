@@ -3119,7 +3119,7 @@ _rad_medical_tokens = (
     'DrawCenteredText(dc, "RADIATION REMOVAL",',
     'DrawCenteredText(dc, "RAD", radAxisCenter,',
     "new RotateTransform(90.0,",
-    'HitAction.Radiation => $"{parameter.CurrentNumber:0.#} RAD",',
+    'HitAction.Radiation => $"{parameter.CurrentNumber:0.#} rad",',
     "DrawColumn(dc, i, HitAction.Radiation, _radiation[i],",
     "VerticalBarHandleChrome.Draw(dc, new Point(centerX, currentY)",
     "if (action == HitAction.Radiation)",
@@ -3304,7 +3304,7 @@ _hunger_required = (
     'void StageCaption(int index, string stageName,',
     'var narrow = stageWidth < 205.0 || CreateText(headline,',
     'var elapsed = StageOnsetEstimate(threshold.CurrentNumber, rate.CurrentNumber);',
-    'var thresholdText = $"{stageName} AT {threshold.CurrentNumber:0} PTS";',
+    'var thresholdText = $"{stageName} AT {threshold.CurrentNumber:0} pts";',
     'var timeText = $"AFTER {elapsed}";',
     'var headline = $"{thresholdText} {timeText}";',
     'VisualControlTypography.SurvivalStageSummary,',
@@ -3386,7 +3386,7 @@ _fatigue_block = (_fatigue_source[_fatigue_start:_fatigue_end]
 _fatigue_required = (
     "ParameterViewModel rate, ParameterViewModel low,",
     'var elapsed = StageOnsetEstimate(thresholds[i].CurrentNumber, rate.CurrentNumber);',
-    'var thresholdText = $"{stage} AT {thresholds[i].CurrentNumber:0} PTS";',
+    'var thresholdText = $"{stage} AT {thresholds[i].CurrentNumber:0} pts";',
     'var timeText = $"AFTER {elapsed}";',
     'var headline = $"{thresholdText} {timeText}";',
     "var wrap = cellWidth < 205.0",
@@ -3734,9 +3734,9 @@ if ("private static double ConsumableMedicineKnobTop(double width)" not in _dura
 # The source-native amount is displayed as real gamer-facing units,
 # not relative multiplier / percent or an unverified per-second rate.
 _native_medicine_units = {
-    "survival.vincaBleedRecovery": ("bleed pts", "BLEED PTS", "VINCA BLEED REGEN"),
-    "survival.herculesCarryBonus": ("kg", "KG", "HERCULES CARRY"),
-    "survival.psiBlockRecovery": ("psi pts", "PSI PTS", "PSI BLOCK PROTECTION"),
+    "survival.vincaBleedRecovery": ("bleed pts", "BLEED POINTS", "VINCA BLEED REGEN"),
+    "survival.herculesCarryBonus": ("kg", "kg", "HERCULES CARRY"),
+    "survival.psiBlockRecovery": ("psi pts", "PSI POINTS", "PSI BLOCK PROTECTION"),
 }
 for _pid, (_unit, _face, _title) in _native_medicine_units.items():
     if (next(p for p in parameters if p["id"] == _pid)["display"].get("unit") != _unit
@@ -4898,9 +4898,9 @@ for _required in (
     'DrawSourceKnob(dc, herculesStrength, "HERCULES CARRY",',
     'DrawSourceKnob(dc, psiStrength, "PSI BLOCK PROTECTION",',
     'rawReadout: true',
-    'nativeUnit: "BLEED PTS"',
-    'nativeUnit: "KG"',
-    'nativeUnit: "PSI PTS"',
+    'nativeUnit: "BLEED POINTS"',
+    'nativeUnit: "kg"',
+    'nativeUnit: "PSI POINTS"',
 ):
     if _required not in _consumer_medicines:
         _consumer_errors.append(f"medicine knob missing below effects: {_required}")
@@ -5533,7 +5533,7 @@ _bleed_required = (
     "405.0, stageCardWidth, 44.0)",
     "dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 1.0),",
     '"{currentValues[i]:0.##} HP/TICK · {100.0 * currentValues[i] / pool:0.#}% MAX HP"',
-    '"{labels[i]} AT {currentThresholds[i]:0.#} PTS"',
+    '"{labels[i]} AT {currentThresholds[i]:0.#} pts"',
     "_damageHitRects[i] = new Rect(",
     "_mediumThresholdHitRect = new Rect(",
     "_severeThresholdHitRect = new Rect(",

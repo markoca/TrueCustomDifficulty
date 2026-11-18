@@ -493,7 +493,7 @@ public sealed class BleedingCurveControl : FrameworkElement
             dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 1.0),
                 card, 3.0, 3.0, i == 1 ? _mediumThreshold : i == 2 ? _severeThreshold : null);
             DrawSourceNumber(dc,
-                $"{labels[i]} AT {currentThresholds[i]:0.#} PTS",
+                $"{labels[i]} AT {currentThresholds[i]:0.#} pts",
                 new Point(card.Left + card.Width / 2, card.Top + 5),
                 10.1, text, accent, FontWeights.Bold,
                 (i == 1 ? _mediumThreshold : i == 2 ? _severeThreshold : null)

@@ -7105,7 +7105,7 @@
       "group": "Traversal",
       "label": "Vault Height",
       "description": "Changes the tallest obstacle you can vault over. The WAIST / EYES / ABOVE EYES markers are simple player-friendly height references.",
-      "rationale": "The tallest obstacle you can climb over. Vanilla: 130 — the WAIST / EYES markers show what that means in-game. Raise it to vault fences and crates that used to block you.",
+      "rationale": "The tallest obstacle you can climb over. Vanilla: 130 cm — the WAIST / EYES markers show what that means in-game. Raise it to vault fences and crates that used to block you.",
       "logic": "Higher = you can climb taller obstacles; lower = fewer things to climb. Jump distance doesn't change.",
       "interaction": "Vault stamina cost, landing rules and collision checks remain independent.",
       "control": "slider",
@@ -8115,7 +8115,7 @@
       },
       "rationale": "Old preset setting for how much ammo stashes favor. Vanilla: 1×. Kept so older presets still load; the stash boards use their own ammo controls.",
       "logic": "Native Weight is relative within its own generator group. Multiplying all members of a single-category pool may leave its normalized ratios unchanged; independent Chance is never modified by this global control.",
-      "interaction": "Legacy preset compatibility only. Not an editable Basic mixer knob: does not change either displayed mixed native Weight group.",
+      "interaction": "Retired, no control. Loading any preset keeps it at vanilla 1×; older preset values are ignored.",
       "exposeInUi": false
     },
     {
@@ -8331,7 +8331,7 @@
       },
       "rationale": "Old preset setting for how much grenades show up in stashes. Vanilla: 1×. Kept so older presets still load.",
       "logic": "Native Weight is relative within its own generator group. Multiplying all members of a single-category pool may leave its normalized ratios unchanged; independent Chance is never modified by this global control.",
-      "interaction": "Legacy preset compatibility only. Not an editable Basic mixer knob: does not change either displayed mixed native Weight group.",
+      "interaction": "Retired, no control. Loading any preset keeps it at vanilla 1×; older preset values are ignored.",
       "exposeInUi": false
     },
     {
@@ -10463,7 +10463,7 @@
       },
       "rationale": "Scales every item chance in Standard stashes at once. Vanilla: 1×. Lower = emptier Standard stashes; higher = fuller. Items that were rarer stay rarer.",
       "logic": "One multiplier per tier is applied after legacy per-category modifiers to the authored native per-entry Chance. Results are clamped 0–1; no global stash drop chance is invented.",
-      "interaction": "Legacy compatibility-only: no visible control; older presets can still set it. It scales independent native per-entry Chance, never whole-stash drop odds; the ADJUST ODDS cells are the visible per-category controls.",
+      "interaction": "Retired, no control. Loading any preset keeps it at vanilla 1×; older preset values are ignored.",
       "exposeInUi": false
     },
     {
@@ -10510,7 +10510,7 @@
       },
       "rationale": "Scales every item chance in Rare stashes at once. Vanilla: 1×. Lower = less exciting Rare finds; higher = more generous ones.",
       "logic": "One multiplier per tier is applied after legacy per-category modifiers to the authored native per-entry Chance. Results are clamped 0–1; no global stash drop chance is invented.",
-      "interaction": "Legacy compatibility-only: no visible control; older presets can still set it. It scales independent native per-entry Chance, never whole-stash drop odds; the ADJUST ODDS cells are the visible per-category controls.",
+      "interaction": "Retired, no control. Loading any preset keeps it at vanilla 1×; older preset values are ignored.",
       "exposeInUi": false
     },
     {

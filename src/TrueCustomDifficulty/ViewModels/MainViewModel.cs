@@ -1978,6 +1978,10 @@ public sealed class MainViewModel : ObservableObject
                 {
                     if (!parametersById.TryGetValue(pair.Key, out var parameter))
                         continue;
+                    // Retired settings with no control load at vanilla 1×:
+                    // nothing may change the game that the player cannot see.
+                    if (RetiredHiddenPresetIds.Contains(pair.Key))
+                        continue;
 
                     if (migratePositiveTreatmentMagnitude
                         && IsPositiveTreatmentMagnitudeParameter(pair.Key)
@@ -2180,6 +2184,15 @@ public sealed class MainViewModel : ObservableObject
                 MessageBoxImage.Error);
         }
     }
+
+    // Old presets could set these; no board shows them any more, so loading
+    // a preset keeps them at vanilla 1× (see docs/RETIRED-HIDDEN-SETTINGS.md).
+    internal static readonly IReadOnlySet<string> RetiredHiddenPresetIds =
+        new HashSet<string>(StringComparer.Ordinal)
+        {
+            "loot.stashMixAmmo", "loot.stashMixGrenades",
+            "loot.standardStashChanceScale", "loot.rareStashChanceScale"
+        };
 
     private async Task BuildAsync()
     {

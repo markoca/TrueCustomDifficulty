@@ -165,6 +165,12 @@ if REPORT:
         print(" | ".join(h))
     print(f"{len(hits)} style hits")
     sys.exit(0)
+# Units next to a number are lower case (HP stays HP): 80 kg, 12 pts, 0.5 pts/s, 130 cm.
+for f in UI_FILES:
+    for n, line in enumerate(f.read_text().splitlines(), 1):
+        if re.search(r'(\}|\d) (KG|PTS|PTS/S|RAD|SEC|UU|uu)"', line):
+            hits.append((f"{f.name}:{n}", "ui", "unit after a number is lower case (kg, pts, pts/s, rad, s, cm)"))
+
 if hits:
     for h in hits[:40]:
         print("FAIL", " | ".join(h))

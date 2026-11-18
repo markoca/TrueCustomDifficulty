@@ -732,4 +732,11 @@ assert "STASH-PHASE-5-CFG-PARITY-AND-ACCEPTANCE-2026-10-16.md" in (
     root / "docs/generators/STASH-GENERATOR-BRANCH-ARCHITECTURE-2026-10-16.md"
 ).read_text()
 print("PASS: Phase 5 six-category global parity and emitted-CFG guard harness wired")
+# Retired hidden stash settings: preset load keeps them at vanilla 1×.
+_retired = main_vm_source.split("RetiredHiddenPresetIds =", 1)[1].split("};", 1)[0]
+for _id in ("loot.stashMixAmmo", "loot.stashMixGrenades",
+            "loot.standardStashChanceScale", "loot.rareStashChanceScale"):
+    assert f'"{_id}"' in _retired, _id
+assert "if (RetiredHiddenPresetIds.Contains(pair.Key))\n                        continue;" in main_vm_source
+print("PASS: retired hidden stash settings load at vanilla 1×")
 print("PENDING: cross-compiled .NET 10, Wine suite, wide/narrow visual and STALKER 2 gameplay")

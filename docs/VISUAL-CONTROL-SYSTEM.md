@@ -1,3 +1,11 @@
+## 2026-11-18 — CURRENT: retired hidden settings load at vanilla; unit case on boards
+
+* **Retired hidden settings**: `loot.stashMixAmmo`, `loot.stashMixGrenades`, `loot.standardStashChanceScale` and `loot.rareStashChanceScale` have no control, so loading a preset now keeps them at vanilla 1× (`RetiredHiddenPresetIds`). Older preset values for them are ignored; factory presets were already 1×. See `docs/RETIRED-HIDDEN-SETTINGS.md`.
+* **Unit case**: a unit right after a number is lower case: `80 kg` (carry ruler, HERCULES CARRY), `12 pts` (healing radar), `40 rad`, `fatigue pts` / `0 pts – 100 pts` (SLEEP THRESHOLD), `MEDIUM AT 40 pts` (stage captions), `SLEEP AVAILABLE 60 pts`. A unit on its own line under a dial is a CAPS word: `BLEED POINTS`, `PSI POINTS`, `PER SECOND` (was `BLEED PTS`, `PSI PTS`, `PTS/S`).
+* Vault height shows **cm**, the game's unit (was `uu` / *height units*); `Vanilla: 130 cm`.
+* Times: `~1h 5m 20s` with spaces; a single unit is `45 s`.
+* The style gate flags upper-case units after a number in UI code.
+
 ## 2026-11-18 — CURRENT: WORKS WITH names the scope and the partner
 
 * ~110 WORKS WITH texts rewritten to one shape: `Only <scope>. <CAPS control> is separate.` / `Stacks with …` / `Multiplies with …` — e.g. `Only Chimera health. Other combat settings are separate.`, `Only how fast radiation fades. RADIATION ACCUMULATION sets how fast it builds.`, `BONUS GEAR COVERAGE picks which stashes join; BONUS CHANCE checks each item. Rank limits still apply.`, `Only Snork packs. Other mutants keep their own size.`

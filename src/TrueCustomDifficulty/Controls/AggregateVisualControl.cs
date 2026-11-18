@@ -2206,7 +2206,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             FontWeights.Bold, Math.Max(1.0, card.Width - 26.0));
         if (enabled && parameter.IsValueModifiedFromReference())
         {
-            // Changed number only; the real uu/KG unit stays neutral.
+            // Changed number only; the cm / kg unit stays neutral.
             var digits = value.IndexOf(' ');
             if (digits > 0)
             {
@@ -2356,11 +2356,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawText(dc, "MOVEMENT LIMITS", new Point(19.0, 173.0),
             10.2, muted, FontWeights.Bold);
         DrawMovementLimitRuler(dc, P("stamina.vaultMaxHeight"),
-            "VAULT HEIGHT", "uu",
+            "VAULT HEIGHT", "cm",
             new Rect(16.0, 191.0, cell, 116.0),
             text, muted, border, accent, panel, vaultHeight: true);
         DrawMovementLimitRuler(dc, P("stamina.maxCarryWeight"),
-            "MAXIMUM CARRY WEIGHT", "KG",
+            "MAXIMUM CARRY WEIGHT", "kg",
             new Rect(16.0 + cell + gap, 191.0, cell, 116.0),
             text, muted, border, accent, panel, vaultHeight: false);
     }
@@ -2454,7 +2454,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // extra fatigue stage or a draggable threshold.
         var sleepGate = Linked("survival.sleepEligibilityThreshold");
         if (sleepGate is not null)
-            DrawDerivedRight(dc, $"SLEEP AVAILABLE {sleepGate.CurrentNumber:0} PTS",
+            DrawDerivedRight(dc, $"SLEEP AVAILABLE {sleepGate.CurrentNumber:0} pts",
                 new Point(profile.Right - 12.0, profile.Top + 15.0),
                 9.0, muted, accent, FontWeights.SemiBold);
 
@@ -2627,7 +2627,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             dc.PushClip(new RectangleGeometry(cell));
             var cx = cell.Left + cell.Width / 2.0;
             var stage = new[] { "LOW", "MEDIUM", "SEVERE" }[i];
-            var thresholdText = $"{stage} AT {thresholds[i].CurrentNumber:0} PTS";
+            var thresholdText = $"{stage} AT {thresholds[i].CurrentNumber:0} pts";
             var elapsed = StageOnsetEstimate(thresholds[i].CurrentNumber, rate.CurrentNumber);
             var timeText = $"AFTER {elapsed}";
             var headline = $"{thresholdText} {timeText}";
@@ -3426,7 +3426,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 Math.Max(1.0, card.Width - 12.0),
                 muted, accent, active && secondaryModified);
         if (rateReadout)
-            DrawCenteredText(dc, "PTS/S",
+            DrawCenteredText(dc, "PER SECOND",
                 new Point(center.X, center.Y + 5.0),
                 9.0, muted, FontWeights.SemiBold);
         else if (nativeUnit is not null && !inlineNativeUnit)
@@ -4210,7 +4210,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawSourceKnob(dc, vincaStrength, "VINCA BLEED REGEN",
             new Rect(medicineLeft, medicineKnobTop, medicineSideWidth, 181.0),
             text, muted, border, accent, panel,
-            rawReadout: true, nativeUnit: "BLEED PTS");
+            rawReadout: true, nativeUnit: "BLEED POINTS");
         var carryWeight = Linked("stamina.maxCarryWeight");
         var baseCarry = carryWeight?.CurrentNumber ?? 80.0;
         var referenceCarry = carryWeight?.ReferenceNumber ?? 80.0;
@@ -4218,7 +4218,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             new Rect(medicineLeft + medicineSideWidth + knobGap,
                 medicineKnobTop, medicineHeroWidth, 188.0),
             text, muted, border, accent, panel,
-            rawReadout: true, nativeUnit: "KG", inlineNativeUnit: true,
+            rawReadout: true, nativeUnit: "kg", inlineNativeUnit: true,
             secondaryReadout: $"{baseCarry + herculesStrength.CurrentNumber:0.#} WITH BUFF",
             secondaryModified: Math.Abs(baseCarry + herculesStrength.CurrentNumber
                 - referenceCarry - herculesStrength.ReferenceNumber) > Epsilon,
@@ -4227,7 +4227,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             new Rect(medicineLeft + 2.0 * (medicineSideWidth + knobGap) + medicineHeroExtra,
                 medicineKnobTop, medicineSideWidth, 181.0),
             text, muted, border, accent, panel,
-            rawReadout: true, nativeUnit: "PSI PTS");
+            rawReadout: true, nativeUnit: "PSI POINTS");
 
     }
 
@@ -4253,8 +4253,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var width = Math.Min(740.0, ActualWidth - 34.0);
         var left = (ActualWidth - width) / 2.0;
         DrawCompactTrack(dc, threshold, "SLEEP THRESHOLD",
-            $"{threshold.CurrentNumber:0} FATIGUE PTS",
-            $"{threshold.Minimum:0} PTS", $"{threshold.Maximum:0} PTS",
+            $"{threshold.CurrentNumber:0} fatigue pts",
+            $"{threshold.Minimum:0} pts", $"{threshold.Maximum:0} pts",
             new Rect(left, 54.0, width, 82.0),
             text, muted, border, accent, panel);
 
@@ -4623,7 +4623,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             dc.PushClip(new RectangleGeometry(cell));
             var cx = cell.Left + cell.Width / 2.0;
             var elapsed = StageOnsetEstimate(threshold.CurrentNumber, rate.CurrentNumber);
-            var thresholdText = $"{stageName} AT {threshold.CurrentNumber:0} PTS";
+            var thresholdText = $"{stageName} AT {threshold.CurrentNumber:0} pts";
             var timeText = $"AFTER {elapsed}";
             var headline = $"{thresholdText} {timeText}";
             // Match Fatigue's stage type size. Wrap once the measured headline
@@ -4742,8 +4742,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var minutes = totalSeconds % 3600 / 60;
         var seconds = totalSeconds % 60;
         return hours > 0
-            ? $"~{hours}h{minutes}m{seconds}s"
-            : $"~{minutes}m{seconds}s";
+            ? $"~{hours}h {minutes}m {seconds}s"
+            : $"~{minutes}m {seconds}s";
     }
 
     // A source-grounded tick schedule plus hypothetical raw full-health
@@ -5010,7 +5010,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     {
         if (!double.IsFinite(seconds) || seconds < 0.0) return "N/A";
         if (seconds < 60.0)
-            return seconds.ToString("0.#", CultureInfo.InvariantCulture) + "s";
+            return seconds.ToString("0.#", CultureInfo.InvariantCulture) + " s";
         var min = (long)Math.Floor(seconds / 60.0);
         if (min < 60)
             return min.ToString(CultureInfo.InvariantCulture) + "m "
