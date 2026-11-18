@@ -1,3 +1,8 @@
+## CURRENT 2026-11-18 — Mutant knobs: attacks only
+
+* The knob rows hold only moves that hurt or bring enemies (54). No ROAR, GROWL, HOWL, DODGE, BLINK or SHIELD knob, and no HOP (Chimera never short-leaps). Blind Dog, Chimera and Snork have no ABILITIES half any more: their card shows only the ATTACKS slider and its knob row on the left.
+* Bayun ABILITIES is CLONES; Bloodsucker ANOMALY; Burer GRENADES, DISARM, THROW, WEAPONS; Controller PSY, CORPSE, ZOMBIFY, DOGS; Poltergeist ANOMALY, THROW; Pseudodog RETREAT, PHANTOMS; Pseudogiant WAVE, THROW. Layout, sizes and interaction are unchanged.
+
 ## CURRENT 2026-11-18 — One knob per mutant move, under its own slider
 
 * Every species card on the mutant board is 146 px tall. Under the ATTACKS slider and under the ABILITIES slider sits a row of small 270° knobs, one per move of that group (68 in all), spread evenly across the half. Each knob: arc and reference tick, pointer, a short CAPS caption (≤9 letters, 8 pt) below, then the move's real wait in seconds (`2.5 s`, 9 pt). Only changed digits turn gold and grow.

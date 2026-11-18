@@ -1966,7 +1966,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Bayun Attack Rate",
-      "description": "How often a Bayun can use its attacks: claw swipes, leaps, pounces and dodges. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Bayun variant on the selected difficulty.",
+      "description": "How often a Bayun can use its attacks: claw, jump in, leap and fly-through. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Bayun variant on the selected difficulty.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -2006,9 +2006,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Bayuns use their attacks — claw swipes, leaps, pounces and dodges. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its abilities (growls and blink teleports) are ABILITIES.",
-      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "How often Bayuns use their attacks — claw, jump in, leap and fly-through. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Roars, growls, howls, dodges, teleports and shields stay vanilla.",
+      "interaction": "Each knob under the slider fine-tunes one move on its own. SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
       "exposeInUi": false
     },
     {
@@ -2016,7 +2016,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Blind Dog Attack Rate",
-      "description": "How often a Blind Dog can use its attacks: bites and running bites. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Blind Dog variant on the selected difficulty.",
+      "description": "How often a Blind Dog can use its attacks: bite, running bite and bite from any angle. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Blind Dog variant on the selected difficulty.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -2053,9 +2053,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Blind Dogs use their attacks — bites and running bites. Vanilla: 1×. Higher = less breathing room between them.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its abilities (the pack's shield) are ABILITIES.",
-      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "How often Blind Dogs use their attacks — bite, running bite and bite from any angle. Vanilla: 1×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Roars, growls, howls, dodges, teleports and shields stay vanilla.",
+      "interaction": "Each knob under the slider fine-tunes one move on its own. SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
       "exposeInUi": false
     },
     {
@@ -2063,7 +2063,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Bloodsucker Attack Rate",
-      "description": "How often a Bloodsucker can use its attacks: claw slashes, running attacks, leaps and bites. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Bloodsucker variant on the selected difficulty.",
+      "description": "How often a Bloodsucker can use its attacks: claw, running attack and leap. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Bloodsucker variant on the selected difficulty.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -2103,9 +2103,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Bloodsuckers use their attacks — claw slashes, running attacks, leaps and bites. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its abilities (roars and anomaly spawning) are ABILITIES.",
-      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "How often Bloodsuckers use their attacks — claw, running attack and leap. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Roars, growls, howls, dodges, teleports and shields stay vanilla.",
+      "interaction": "Each knob under the slider fine-tunes one move on its own. SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
       "exposeInUi": false
     },
     {
@@ -2113,7 +2113,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Boar Attack Rate",
-      "description": "How often a Boar can use its attacks: gores, running rams and charges. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Boar variant on the selected difficulty.",
+      "description": "How often a Boar can use its attacks: running attack, gore and charge. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Boar variant on the selected difficulty.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -2150,9 +2150,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Boars use their attacks — gores, running rams and charges. Vanilla: 1×. Higher = less breathing room between them.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it. It has no special abilities.",
-      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "How often Boars use their attacks — running attack, gore and charge. Vanilla: 1×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Roars, growls, howls, dodges, teleports and shields stay vanilla.",
+      "interaction": "Each knob under the slider fine-tunes one move on its own. SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
       "exposeInUi": false
     },
     {
@@ -2160,7 +2160,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Burer Attack Rate",
-      "description": "How often a Burer can use its attacks: claw swipes. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Burer variant on the selected difficulty.",
+      "description": "How often a Burer can use its attacks: claw. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Burer variant on the selected difficulty.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -2200,9 +2200,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Burers use their attacks — claw swipes. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its abilities (shields, telekinetic throws, grenade throws and weapon pulls) are ABILITIES.",
-      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "How often Burers use their attacks — claw. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Roars, growls, howls, dodges, teleports and shields stay vanilla.",
+      "interaction": "Each knob under the slider fine-tunes one move on its own. SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
       "exposeInUi": false
     },
     {
@@ -2210,7 +2210,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Chimera Attack Rate",
-      "description": "How often a Chimera can use its attacks: claws, short and long leaps, runs, fly-through attacks and dodges. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Chimera variant on the selected difficulty.",
+      "description": "How often a Chimera can use its attacks: long leap, running attack, jump in and fly-through. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Chimera variant on the selected difficulty.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -2250,9 +2250,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Chimeras use their attacks — claws, short and long leaps, runs, fly-through attacks and dodges. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its abilities (growls) are ABILITIES.",
-      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "How often Chimeras use their attacks — long leap, running attack, jump in and fly-through. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Roars, growls, howls, dodges, teleports and shields stay vanilla.",
+      "interaction": "Each knob under the slider fine-tunes one move on its own. SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
       "exposeInUi": false
     },
     {
@@ -2260,7 +2260,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Controller Attack Rate",
-      "description": "How often a Controller can use its attacks: claw swipes. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Controller variant on the selected difficulty.",
+      "description": "How often a Controller can use its attacks: claw. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Controller variant on the selected difficulty.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -2300,9 +2300,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Controllers use their attacks — claw swipes. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its abilities (psy attacks, roars, raising the dead and zombifying) are ABILITIES.",
-      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "How often Controllers use their attacks — claw. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Roars, growls, howls, dodges, teleports and shields stay vanilla.",
+      "interaction": "Each knob under the slider fine-tunes one move on its own. SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
       "exposeInUi": false
     },
     {
@@ -2310,7 +2310,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Deer Attack Rate",
-      "description": "How often a Deer can use its attacks: claws, leaps, runs and charges. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Deer variant on the selected difficulty.",
+      "description": "How often a Deer can use its attacks: claw, leap and charge. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Deer variant on the selected difficulty.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -2350,9 +2350,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Deer use their attacks — claws, leaps, runs and charges. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it. It has no special abilities.",
-      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "How often Deers use their attacks — claw, leap and charge. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Roars, growls, howls, dodges, teleports and shields stay vanilla.",
+      "interaction": "Each knob under the slider fine-tunes one move on its own. SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
       "exposeInUi": false
     },
     {
@@ -2360,7 +2360,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Flesh Attack Rate",
-      "description": "How often a Flesh can use its attacks: bites and leaps. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Flesh variant on the selected difficulty.",
+      "description": "How often a Flesh can use its attacks: claw and leap. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Flesh variant on the selected difficulty.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -2397,9 +2397,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Fleshes use their attacks — bites and leaps. Vanilla: 1×. Higher = less breathing room between them.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it. It has no special abilities.",
-      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "How often Fleshs use their attacks — claw and leap. Vanilla: 1×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Roars, growls, howls, dodges, teleports and shields stay vanilla.",
+      "interaction": "Each knob under the slider fine-tunes one move on its own. SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
       "exposeInUi": false
     },
     {
@@ -2407,7 +2407,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Poltergeist Attack Rate",
-      "description": "How often a Poltergeist can use its attacks: area bursts. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Poltergeist variant on the selected difficulty.",
+      "description": "How often a Poltergeist can use its attacks: area burst. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Poltergeist variant on the selected difficulty.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -2444,9 +2444,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Poltergeists use their attacks — area bursts. Vanilla: 1×. Higher = less breathing room between them.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its abilities (telekinetic throws, anomaly activation and shields) are ABILITIES.",
-      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "How often Poltergeists use their attacks — area burst. Vanilla: 1×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Roars, growls, howls, dodges, teleports and shields stay vanilla.",
+      "interaction": "Each knob under the slider fine-tunes one move on its own. SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
       "exposeInUi": false
     },
     {
@@ -2454,7 +2454,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Pseudodog Attack Rate",
-      "description": "How often a Pseudodog can use its attacks: bites and running bites. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Pseudodog variant on the selected difficulty.",
+      "description": "How often a Pseudodog can use its attacks: running attack and bite. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Pseudodog variant on the selected difficulty.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -2494,9 +2494,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Pseudodogs use their attacks — bites and running bites. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its howl and phantom summons are ABILITIES.",
-      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "How often Pseudodogs use their attacks — running attack and bite. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Roars, growls, howls, dodges, teleports and shields stay vanilla.",
+      "interaction": "Each knob under the slider fine-tunes one move on its own. SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
       "exposeInUi": false
     },
     {
@@ -2504,7 +2504,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Pseudogiant Attack Rate",
-      "description": "How often a Pseudogiant can use its attacks: stomps, runs and charges. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Pseudogiant variant on the selected difficulty.",
+      "description": "How often a Pseudogiant can use its attacks: stomp, running attack and charge. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Pseudogiant variant on the selected difficulty.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -2544,9 +2544,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Pseudogiants use their attacks — stomps, runs and charges. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its abilities (shockwaves, roars and throws) are ABILITIES.",
-      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "How often Pseudogiants use their attacks — stomp, running attack and charge. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Roars, growls, howls, dodges, teleports and shields stay vanilla.",
+      "interaction": "Each knob under the slider fine-tunes one move on its own. SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
       "exposeInUi": false
     },
     {
@@ -2554,7 +2554,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Snork Attack Rate",
-      "description": "How often a Snork can use its attacks: claws, kicks, leaps, fly-through attacks and dodges. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Snork variant on the selected difficulty.",
+      "description": "How often a Snork can use its attacks: claw, kick, leap, jump in and fly-through. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Snork variant on the selected difficulty.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -2591,9 +2591,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Snorks use their attacks — claws, kicks, leaps, fly-through attacks and dodges. Vanilla: 1×. Higher = less breathing room between them.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its abilities (growls) are ABILITIES.",
-      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "How often Snorks use their attacks — claw, kick, leap, jump in and fly-through. Vanilla: 1×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Roars, growls, howls, dodges, teleports and shields stay vanilla.",
+      "interaction": "Each knob under the slider fine-tunes one move on its own. SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
       "exposeInUi": false
     },
     {
@@ -2601,7 +2601,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Tushkan Attack Rate",
-      "description": "How often a Tushkan can use its attacks: bites and leaps. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Tushkan variant on the selected difficulty.",
+      "description": "How often a Tushkan can use its attacks: claw and leap. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Tushkan variant on the selected difficulty.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -2638,9 +2638,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Tushkans use their attacks — bites and leaps. Vanilla: 1×. Higher = less breathing room between them.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it. It has no special abilities.",
-      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "How often Tushkans use their attacks — claw and leap. Vanilla: 1×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Roars, growls, howls, dodges, teleports and shields stay vanilla.",
+      "interaction": "Each knob under the slider fine-tunes one move on its own. SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
       "exposeInUi": false
     },
     {
@@ -2648,57 +2648,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Bayun Ability Rate",
-      "description": "How often a Bayun can use its abilities: growls, clone summons and blink teleports. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Bayun variant on the selected difficulty.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Ability rate"
-      },
-      "vanilla": {
-        "Novice": 1,
-        "Stalker": 1,
-        "Veteran": 1,
-        "Master": 2
-      },
-      "default": {
-        "mode": "referenceDifficulty"
-      },
-      "slider": {
-        "min": 0.25,
-        "max": 3,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "set1/x"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "Native per-agent, per-tag cooldown multiplier list of the selected difficulty (vanilla: Master only, 0.5).",
-          "Base cooldowns are AbilityPrototypes TriggeredCooldowns (seconds); agent entries match exact prototype SIDs, so every variant of the family is listed.",
-          "Families and tags the game never lists on Master need an in-game check."
-        ]
-      },
-      "rationale": "How often Bayuns use their abilities — growls, clone summons and blink teleports. Vanilla: Novice–Veteran 1×, Master 2× (clones stay 10 s). Higher = less breathing room between them.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its basic attacks (claw swipes, leaps, pounces and dodges) are ATTACKS.",
-      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
-      "exposeInUi": false
-    },
-    {
-      "id": "combat.mutantAbilityRate.blinddog",
-      "tab": "combat",
-      "group": "Mutant Health",
-      "label": "Blind Dog Ability Rate",
-      "description": "How often a Blind Dog can use its abilities: the pack's shield. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Blind Dog variant on the selected difficulty.",
+      "description": "How often a Bayun can use its abilities: clone summon. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Bayun variant on the selected difficulty.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -2735,9 +2685,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Blind Dogs use their abilities — the pack's shield. Vanilla: 1×. Higher = less breathing room between them.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its basic attacks (bites and running bites) are ATTACKS.",
-      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "How often Bayuns use their abilities — clone summon. Vanilla: 1×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Roars, growls, howls, dodges, teleports and shields stay vanilla.",
+      "interaction": "Each knob under the slider fine-tunes one move on its own. SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
       "exposeInUi": false
     },
     {
@@ -2745,7 +2695,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Bloodsucker Ability Rate",
-      "description": "How often a Bloodsucker can use its abilities: roars and anomaly spawning. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Bloodsucker variant on the selected difficulty.",
+      "description": "How often a Bloodsucker can use its abilities: spawn anomaly. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Bloodsucker variant on the selected difficulty.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -2754,13 +2704,10 @@
         "valueLabel": "Ability rate"
       },
       "vanilla": {
-        "Novice": 1,
-        "Stalker": 1,
-        "Veteran": 1,
-        "Master": 2
+        "All": 1
       },
       "default": {
-        "mode": "referenceDifficulty"
+        "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0.25,
@@ -2785,9 +2732,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Bloodsuckers use their abilities — roars and anomaly spawning. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its basic attacks (claw slashes, running attacks, leaps and bites) are ATTACKS.",
-      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "How often Bloodsuckers use their abilities — spawn anomaly. Vanilla: 1×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Roars, growls, howls, dodges, teleports and shields stay vanilla.",
+      "interaction": "Each knob under the slider fine-tunes one move on its own. SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
       "exposeInUi": false
     },
     {
@@ -2795,7 +2742,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Burer Ability Rate",
-      "description": "How often a Burer can use its abilities: shields, telekinetic throws, grenade throws and weapon pulls. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Burer variant on the selected difficulty.",
+      "description": "How often a Burer can use its abilities: grenade throws, disarm, throw and raise weapons. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Burer variant on the selected difficulty.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -2835,59 +2782,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Burers use their abilities — shields, telekinetic throws, grenade throws and weapon pulls. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its basic attacks (claw swipes) are ATTACKS.",
-      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
-      "exposeInUi": false
-    },
-    {
-      "id": "combat.mutantAbilityRate.chimera",
-      "tab": "combat",
-      "group": "Mutant Health",
-      "label": "Chimera Ability Rate",
-      "description": "How often a Chimera can use its abilities: growls. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Chimera variant on the selected difficulty.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Ability rate"
-      },
-      "vanilla": {
-        "Novice": 1,
-        "Stalker": 1,
-        "Veteran": 1,
-        "Master": 2
-      },
-      "default": {
-        "mode": "referenceDifficulty"
-      },
-      "slider": {
-        "min": 0.25,
-        "max": 3,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "set1/x"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "Native per-agent, per-tag cooldown multiplier list of the selected difficulty (vanilla: Master only, 0.5).",
-          "Base cooldowns are AbilityPrototypes TriggeredCooldowns (seconds); agent entries match exact prototype SIDs, so every variant of the family is listed.",
-          "Families and tags the game never lists on Master need an in-game check."
-        ]
-      },
-      "rationale": "How often Chimeras use their abilities — growls. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its basic attacks (claws, short and long leaps, runs, fly-through attacks and dodges) are ATTACKS.",
-      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "How often Burers use their abilities — grenade throws, disarm, throw and raise weapons. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Roars, growls, howls, dodges, teleports and shields stay vanilla.",
+      "interaction": "Each knob under the slider fine-tunes one move on its own. SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
       "exposeInUi": false
     },
     {
@@ -2895,7 +2792,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Controller Ability Rate",
-      "description": "How often a Controller can use its abilities: psy attacks, roars, raising the dead, zombifying and (Deer controller) blind dog summons. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Controller variant on the selected difficulty.",
+      "description": "How often a Controller can use its abilities: psy strike, raise corpse, zombify and blind dog summon. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Controller variant on the selected difficulty.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -2935,9 +2832,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Controllers use their abilities — psy attacks, roars, raising the dead, zombifying and the Deer controller's dog summons. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its basic attacks (claw swipes) are ATTACKS.",
-      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "How often Controllers use their abilities — psy strike, raise corpse, zombify and blind dog summon. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Roars, growls, howls, dodges, teleports and shields stay vanilla.",
+      "interaction": "Each knob under the slider fine-tunes one move on its own. SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
       "exposeInUi": false
     },
     {
@@ -2945,7 +2842,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Deer Ability Rate",
-      "description": "How often a Deer can call blind dogs. Rate r writes cooldown multiplier 1/r on its summon cooldown for every Deer variant on the selected difficulty.",
+      "description": "How often a Deer can use its abilities: blind dog summon. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Deer variant on the selected difficulty.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -2982,9 +2879,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Deer call a pack of blind dogs. Vanilla: 1×; every 20 s. Higher = more dogs in the fight.",
-      "logic": "2× halves the pause between summons; 0.5× doubles it. Its basic attacks (claws, leaps and charges) are ATTACKS.",
-      "interaction": "The DOGS knob under this slider fine-tunes the summon on its own. SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special move.",
+      "rationale": "How often Deers use their abilities — blind dog summon. Vanilla: 1×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Roars, growls, howls, dodges, teleports and shields stay vanilla.",
+      "interaction": "Each knob under the slider fine-tunes one move on its own. SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
       "exposeInUi": false
     },
     {
@@ -2992,7 +2889,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Poltergeist Ability Rate",
-      "description": "How often a Poltergeist can use its abilities: telekinetic throws, anomaly activation and shields. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Poltergeist variant on the selected difficulty.",
+      "description": "How often a Poltergeist can use its abilities: spawn anomaly and throw. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Poltergeist variant on the selected difficulty.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -3029,9 +2926,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Poltergeists use their abilities — telekinetic throws, anomaly activation and shields. Vanilla: 1×. Higher = less breathing room between them.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its basic attacks (area bursts) are ATTACKS.",
-      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "How often Poltergeists use their abilities — spawn anomaly and throw. Vanilla: 1×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Roars, growls, howls, dodges, teleports and shields stay vanilla.",
+      "interaction": "Each knob under the slider fine-tunes one move on its own. SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
       "exposeInUi": false
     },
     {
@@ -3039,7 +2936,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Pseudodog Ability Rate",
-      "description": "How often a Pseudodog can use its abilities: howls and phantom summons. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Pseudodog variant on the selected difficulty.",
+      "description": "How often a Pseudodog can use its abilities: phantom summon while fleeing and phantom summon. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Pseudodog variant on the selected difficulty.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -3051,7 +2948,7 @@
         "All": 1
       },
       "default": {
-        "mode": "referenceDifficulty"
+        "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0.25,
@@ -3076,9 +2973,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Pseudodogs howl and call phantom dogs. Vanilla: 1×; phantoms every 20 s (10 s while fleeing), howl every 30 s. Higher = more phantoms in the fight.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it.",
-      "interaction": "The PHANTOMS, RETREAT and HOWL knobs fine-tune each move on its own. SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special move.",
+      "rationale": "How often Pseudodogs use their abilities — phantom summon while fleeing and phantom summon. Vanilla: 1×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Roars, growls, howls, dodges, teleports and shields stay vanilla.",
+      "interaction": "Each knob under the slider fine-tunes one move on its own. SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
       "exposeInUi": false
     },
     {
@@ -3086,7 +2983,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Pseudogiant Ability Rate",
-      "description": "How often a Pseudogiant can use its abilities: shockwaves, roars and throws. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Pseudogiant variant on the selected difficulty.",
+      "description": "How often a Pseudogiant can use its abilities: shockwave and throw. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Pseudogiant variant on the selected difficulty.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -3126,56 +3023,9 @@
           "Families and tags the game never lists on Master need an in-game check."
         ]
       },
-      "rationale": "How often Pseudogiants use their abilities — shockwaves, roars and throws. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its basic attacks (stomps, runs and charges) are ATTACKS.",
-      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
-      "exposeInUi": false
-    },
-    {
-      "id": "combat.mutantAbilityRate.snork",
-      "tab": "combat",
-      "group": "Mutant Health",
-      "label": "Snork Ability Rate",
-      "description": "How often a Snork can use its abilities: growls. Rate r writes cooldown multiplier 1/r for each of these cooldowns of every Snork variant on the selected difficulty.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Ability rate"
-      },
-      "vanilla": {
-        "All": 1
-      },
-      "default": {
-        "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0.25,
-        "max": 3,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "set1/x"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "Native per-agent, per-tag cooldown multiplier list of the selected difficulty (vanilla: Master only, 0.5).",
-          "Base cooldowns are AbilityPrototypes TriggeredCooldowns (seconds); agent entries match exact prototype SIDs, so every variant of the family is listed.",
-          "Families and tags the game never lists on Master need an in-game check."
-        ]
-      },
-      "rationale": "How often Snorks use their abilities — growls. Vanilla: 1×. Higher = less breathing room between them.",
-      "logic": "2× halves every pause between these moves; 0.5× doubles it. Its basic attacks (claws, kicks, leaps, fly-through attacks and dodges) are ATTACKS.",
-      "interaction": "SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move. How hard hits land is MUTANT HIT DAMAGE.",
+      "rationale": "How often Pseudogiants use their abilities — shockwave and throw. Vanilla: Novice–Veteran 1×, Master 2×. Higher = less breathing room between them.",
+      "logic": "2× halves every pause between these moves; 0.5× doubles it. Roars, growls, howls, dodges, teleports and shields stay vanilla.",
+      "interaction": "Each knob under the slider fine-tunes one move on its own. SPECIAL ABILITY RATE separately limits how often any mutant in the fight may use a special or knockdown move.",
       "exposeInUi": false
     },
     {
@@ -3226,53 +3076,6 @@
       "rationale": "How often mutants in a fight get to use their special and knockdown moves — growls, shields, knockdown leaps and charges. Vanilla: Novice–Veteran 1× (8–12 s pause after each one), Master 2× (4–6 s).",
       "logic": "Higher = shorter pauses between special moves (8–12 s at 1×); lower = more time to recover.",
       "interaction": "Each mutant's ATTACK RATE still sets how soon it can attack again.",
-      "exposeInUi": false
-    },
-    {
-      "id": "combat.mutantMoveRate.bayun.dodge",
-      "tab": "combat",
-      "group": "Mutant Health",
-      "label": "Bayun Dodge Rate",
-      "description": "How often a Bayun can use one move: dodge. Rate k writes cooldown multiplier 1/k on the Ability.Cooldown.Evasion cooldown of every Bayun variant, on top of its ATTACKS slider.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Dodge rate"
-      },
-      "vanilla": {
-        "All": 1
-      },
-      "default": {
-        "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0.25,
-        "max": 3,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "set1/x"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "Own cooldown tag Ability.Cooldown.Evasion; vanilla 1 s (main agent, base CFG).",
-          "Same AgentCooldownMultipliers list as ATTACKS / ABILITIES; the multiplier is group × 1/knob.",
-          "Families and tags the game never lists on Master need an in-game check."
-        ]
-      },
-      "rationale": "How often Bayuns use one move: dodge. Vanilla: 1×; every 1 s. The knob shows the real wait in seconds.",
-      "logic": "Higher = shorter wait for this move only; 2× halves it, 0.5× doubles it.",
-      "interaction": "Bayun ATTACKS scales every move in the group first; this knob then scales dodge alone. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
       "exposeInUi": false
     },
     {
@@ -3511,100 +3314,6 @@
       "exposeInUi": false
     },
     {
-      "id": "combat.mutantMoveRate.bayun.teleport",
-      "tab": "combat",
-      "group": "Mutant Health",
-      "label": "Bayun Blink Rate",
-      "description": "How often a Bayun can use one move: teleport. Rate k writes cooldown multiplier 1/k on the Ability.Cooldown.BlinkTeleport cooldown of every Bayun variant, on top of its ABILITIES slider.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Blink rate"
-      },
-      "vanilla": {
-        "All": 1
-      },
-      "default": {
-        "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0.25,
-        "max": 3,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "set1/x"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "Own cooldown tag Ability.Cooldown.BlinkTeleport; vanilla 12 s (main agent, base CFG).",
-          "Same AgentCooldownMultipliers list as ATTACKS / ABILITIES; the multiplier is group × 1/knob.",
-          "Families and tags the game never lists on Master need an in-game check."
-        ]
-      },
-      "rationale": "How often Bayuns use one move: teleport. Vanilla: 1×; every 12 s, Master 6 s. The knob shows the real wait in seconds.",
-      "logic": "Higher = shorter wait for this move only; 2× halves it, 0.5× doubles it.",
-      "interaction": "Bayun ABILITIES scales every move in the group first; this knob then scales teleport alone. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
-      "exposeInUi": false
-    },
-    {
-      "id": "combat.mutantMoveRate.bayun.growl",
-      "tab": "combat",
-      "group": "Mutant Health",
-      "label": "Bayun Growl Rate",
-      "description": "How often a Bayun can use one move: growl. Rate k writes cooldown multiplier 1/k on the Ability.Cooldown.Growl cooldown of every Bayun variant, on top of its ABILITIES slider.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Growl rate"
-      },
-      "vanilla": {
-        "All": 1
-      },
-      "default": {
-        "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0.25,
-        "max": 3,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "set1/x"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "Own cooldown tag Ability.Cooldown.Growl; vanilla 60 s (main agent, base CFG).",
-          "Same AgentCooldownMultipliers list as ATTACKS / ABILITIES; the multiplier is group × 1/knob.",
-          "Families and tags the game never lists on Master need an in-game check."
-        ]
-      },
-      "rationale": "How often Bayuns use one move: growl. Vanilla: 1×; every 60 s, Master 30 s. The knob shows the real wait in seconds.",
-      "logic": "Higher = shorter wait for this move only; 2× halves it, 0.5× doubles it.",
-      "interaction": "Bayun ABILITIES scales every move in the group first; this knob then scales growl alone. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
-      "exposeInUi": false
-    },
-    {
       "id": "combat.mutantMoveRate.blinddog.bite",
       "tab": "combat",
       "group": "Mutant Health",
@@ -3743,53 +3452,6 @@
       "rationale": "How often Blind Dogs use one move: bite from any angle. Vanilla: 1×; every 16 s. The knob shows the real wait in seconds.",
       "logic": "Higher = shorter wait for this move only; 2× halves it, 0.5× doubles it.",
       "interaction": "Blind Dog ATTACKS scales every move in the group first; this knob then scales bite from any angle alone. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
-      "exposeInUi": false
-    },
-    {
-      "id": "combat.mutantMoveRate.blinddog.shield",
-      "tab": "combat",
-      "group": "Mutant Health",
-      "label": "Blind Dog Shield Rate",
-      "description": "How often a Blind Dog can use one move: shield. Rate k writes cooldown multiplier 1/k on the Ability.Cooldown.Shield cooldown of every Blind Dog variant, on top of its ABILITIES slider.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Shield rate"
-      },
-      "vanilla": {
-        "All": 1
-      },
-      "default": {
-        "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0.25,
-        "max": 3,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "set1/x"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "Own cooldown tag Ability.Cooldown.Shield; vanilla 25 s (main agent, base CFG).",
-          "Same AgentCooldownMultipliers list as ATTACKS / ABILITIES; the multiplier is group × 1/knob.",
-          "Families and tags the game never lists on Master need an in-game check."
-        ]
-      },
-      "rationale": "How often Blind Dogs use one move: shield. Vanilla: 1×; every 25 s. The knob shows the real wait in seconds.",
-      "logic": "Higher = shorter wait for this move only; 2× halves it, 0.5× doubles it.",
-      "interaction": "Blind Dog ABILITIES scales every move in the group first; this knob then scales shield alone. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
       "exposeInUi": false
     },
     {
@@ -3978,53 +3640,6 @@
       "rationale": "How often Bloodsuckers use one move: spawn anomaly. Vanilla: 1×; every 3 s. The knob shows the real wait in seconds.",
       "logic": "Higher = shorter wait for this move only; 2× halves it, 0.5× doubles it.",
       "interaction": "Bloodsucker ABILITIES scales every move in the group first; this knob then scales spawn anomaly alone. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
-      "exposeInUi": false
-    },
-    {
-      "id": "combat.mutantMoveRate.bloodsucker.roar",
-      "tab": "combat",
-      "group": "Mutant Health",
-      "label": "Bloodsucker Roar Rate",
-      "description": "How often a Bloodsucker can use one move: roar (Ashy). Rate k writes cooldown multiplier 1/k on the Ability.Cooldown.Roar cooldown of every Bloodsucker variant, on top of its ABILITIES slider.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Roar rate"
-      },
-      "vanilla": {
-        "All": 1
-      },
-      "default": {
-        "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0.25,
-        "max": 3,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "set1/x"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "Own cooldown tag Ability.Cooldown.Roar; vanilla 60 s (main agent, base CFG).",
-          "Same AgentCooldownMultipliers list as ATTACKS / ABILITIES; the multiplier is group × 1/knob.",
-          "Families and tags the game never lists on Master need an in-game check."
-        ]
-      },
-      "rationale": "How often Bloodsuckers use one move: roar (Ashy). Vanilla: 1×; every 60 s, Master 30 s. The knob shows the real wait in seconds.",
-      "logic": "Higher = shorter wait for this move only; 2× halves it, 0.5× doubles it.",
-      "interaction": "Bloodsucker ABILITIES scales every move in the group first; this knob then scales roar (Ashy) alone. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
       "exposeInUi": false
     },
     {
@@ -4404,53 +4019,6 @@
       "exposeInUi": false
     },
     {
-      "id": "combat.mutantMoveRate.burer.shield",
-      "tab": "combat",
-      "group": "Mutant Health",
-      "label": "Burer Shield Rate",
-      "description": "How often a Burer can use one move: shield. Rate k writes cooldown multiplier 1/k on the Ability.Cooldown.Shield cooldown of every Burer variant, on top of its ABILITIES slider.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Shield rate"
-      },
-      "vanilla": {
-        "All": 1
-      },
-      "default": {
-        "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0.25,
-        "max": 3,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "set1/x"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "Own cooldown tag Ability.Cooldown.Shield; vanilla 17 s (main agent, base CFG).",
-          "Same AgentCooldownMultipliers list as ATTACKS / ABILITIES; the multiplier is group × 1/knob.",
-          "Families and tags the game never lists on Master need an in-game check."
-        ]
-      },
-      "rationale": "How often Burers use one move: shield. Vanilla: 1×; every 17 s, Master 8.5 s. The knob shows the real wait in seconds.",
-      "logic": "Higher = shorter wait for this move only; 2× halves it, 0.5× doubles it.",
-      "interaction": "Burer ABILITIES scales every move in the group first; this knob then scales shield alone. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
-      "exposeInUi": false
-    },
-    {
       "id": "combat.mutantMoveRate.chimera.longLeap",
       "tab": "combat",
       "group": "Mutant Health",
@@ -4592,53 +4160,6 @@
       "exposeInUi": false
     },
     {
-      "id": "combat.mutantMoveRate.chimera.shortLeap",
-      "tab": "combat",
-      "group": "Mutant Health",
-      "label": "Chimera Hop Rate",
-      "description": "How often a Chimera can use one move: short leap. Rate k writes cooldown multiplier 1/k on the Ability.Cooldown.ShortJumpAttack cooldown of every Chimera variant, on top of its ATTACKS slider.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Hop rate"
-      },
-      "vanilla": {
-        "All": 1
-      },
-      "default": {
-        "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0.25,
-        "max": 3,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "set1/x"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "Own cooldown tag Ability.Cooldown.ShortJumpAttack; vanilla 8 s (main agent, base CFG).",
-          "Same AgentCooldownMultipliers list as ATTACKS / ABILITIES; the multiplier is group × 1/knob.",
-          "Families and tags the game never lists on Master need an in-game check."
-        ]
-      },
-      "rationale": "How often Chimeras use one move: short leap. Vanilla: 1×; every 8 s, Master 4 s. The knob shows the real wait in seconds.",
-      "logic": "Higher = shorter wait for this move only; 2× halves it, 0.5× doubles it.",
-      "interaction": "Chimera ATTACKS scales every move in the group first; this knob then scales short leap alone. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
-      "exposeInUi": false
-    },
-    {
       "id": "combat.mutantMoveRate.chimera.flyThrough",
       "tab": "combat",
       "group": "Mutant Health",
@@ -4686,53 +4207,6 @@
       "exposeInUi": false
     },
     {
-      "id": "combat.mutantMoveRate.chimera.growl",
-      "tab": "combat",
-      "group": "Mutant Health",
-      "label": "Chimera Growl Rate",
-      "description": "How often a Chimera can use one move: growl. Rate k writes cooldown multiplier 1/k on the Ability.Cooldown.Growl cooldown of every Chimera variant, on top of its ABILITIES slider.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Growl rate"
-      },
-      "vanilla": {
-        "All": 1
-      },
-      "default": {
-        "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0.25,
-        "max": 3,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "set1/x"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "Own cooldown tag Ability.Cooldown.Growl; vanilla 60 s (main agent, base CFG).",
-          "Same AgentCooldownMultipliers list as ATTACKS / ABILITIES; the multiplier is group × 1/knob.",
-          "Families and tags the game never lists on Master need an in-game check."
-        ]
-      },
-      "rationale": "How often Chimeras use one move: growl. Vanilla: 1×; every 60 s, Master 30 s. The knob shows the real wait in seconds.",
-      "logic": "Higher = shorter wait for this move only; 2× halves it, 0.5× doubles it.",
-      "interaction": "Chimera ABILITIES scales every move in the group first; this knob then scales growl alone. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
-      "exposeInUi": false
-    },
-    {
       "id": "combat.mutantMoveRate.controller.claw",
       "tab": "combat",
       "group": "Mutant Health",
@@ -4777,53 +4251,6 @@
       "rationale": "How often Controllers use one move: claw. Vanilla: 1×; every 10 s, Master 5 s. The knob shows the real wait in seconds.",
       "logic": "Higher = shorter wait for this move only; 2× halves it, 0.5× doubles it.",
       "interaction": "Controller ATTACKS scales every move in the group first; this knob then scales claw alone. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
-      "exposeInUi": false
-    },
-    {
-      "id": "combat.mutantMoveRate.controller.roar",
-      "tab": "combat",
-      "group": "Mutant Health",
-      "label": "Controller Roar Rate",
-      "description": "How often a Controller can use one move: roar. Rate k writes cooldown multiplier 1/k on the Ability.Cooldown.Roar cooldown of every Controller variant, on top of its ABILITIES slider.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Roar rate"
-      },
-      "vanilla": {
-        "All": 1
-      },
-      "default": {
-        "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0.25,
-        "max": 3,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "set1/x"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "Own cooldown tag Ability.Cooldown.Roar; vanilla 7 s (main agent, base CFG).",
-          "Same AgentCooldownMultipliers list as ATTACKS / ABILITIES; the multiplier is group × 1/knob.",
-          "Families and tags the game never lists on Master need an in-game check."
-        ]
-      },
-      "rationale": "How often Controllers use one move: roar. Vanilla: 1×; every 7 s, Master 3.5 s. The knob shows the real wait in seconds.",
-      "logic": "Higher = shorter wait for this move only; 2× halves it, 0.5× doubles it.",
-      "interaction": "Controller ABILITIES scales every move in the group first; this knob then scales roar alone. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
       "exposeInUi": false
     },
     {
@@ -5438,53 +4865,6 @@
       "exposeInUi": false
     },
     {
-      "id": "combat.mutantMoveRate.poltergeist.shield",
-      "tab": "combat",
-      "group": "Mutant Health",
-      "label": "Poltergeist Shield Rate",
-      "description": "How often a Poltergeist can use one move: shield. Rate k writes cooldown multiplier 1/k on the Ability.Cooldown.Shield cooldown of every Poltergeist variant, on top of its ABILITIES slider.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Shield rate"
-      },
-      "vanilla": {
-        "All": 1
-      },
-      "default": {
-        "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0.25,
-        "max": 3,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "set1/x"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "Own cooldown tag Ability.Cooldown.Shield; vanilla 20 s (main agent, base CFG).",
-          "Same AgentCooldownMultipliers list as ATTACKS / ABILITIES; the multiplier is group × 1/knob.",
-          "Families and tags the game never lists on Master need an in-game check."
-        ]
-      },
-      "rationale": "How often Poltergeists use one move: shield. Vanilla: 1×; every 20 s. The knob shows the real wait in seconds.",
-      "logic": "Higher = shorter wait for this move only; 2× halves it, 0.5× doubles it.",
-      "interaction": "Poltergeist ABILITIES scales every move in the group first; this knob then scales shield alone. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
-      "exposeInUi": false
-    },
-    {
       "id": "combat.mutantMoveRate.pseudodog.run",
       "tab": "combat",
       "group": "Mutant Health",
@@ -5670,53 +5050,6 @@
       "rationale": "How often Pseudodogs use one move: phantom summon. Vanilla: 1×; every 20 s. The knob shows the real wait in seconds.",
       "logic": "Higher = shorter wait for this move only; 2× halves it, 0.5× doubles it.",
       "interaction": "Pseudodog ABILITIES scales every move in the group first; this knob then scales phantom summon alone. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
-      "exposeInUi": false
-    },
-    {
-      "id": "combat.mutantMoveRate.pseudodog.howl",
-      "tab": "combat",
-      "group": "Mutant Health",
-      "label": "Pseudodog Howl Rate",
-      "description": "How often a Pseudodog can use one move: howl. Rate k writes cooldown multiplier 1/k on the Ability.Cooldown.Howl cooldown of every Pseudodog variant, on top of its ABILITIES slider.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Howl rate"
-      },
-      "vanilla": {
-        "All": 1
-      },
-      "default": {
-        "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0.25,
-        "max": 3,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "set1/x"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "Own cooldown tag Ability.Cooldown.Howl; vanilla 30 s (main agent, base CFG).",
-          "Same AgentCooldownMultipliers list as ATTACKS / ABILITIES; the multiplier is group × 1/knob.",
-          "Families and tags the game never lists on Master need an in-game check."
-        ]
-      },
-      "rationale": "How often Pseudodogs use one move: howl. Vanilla: 1×; every 30 s. The knob shows the real wait in seconds.",
-      "logic": "Higher = shorter wait for this move only; 2× halves it, 0.5× doubles it.",
-      "interaction": "Pseudodog ABILITIES scales every move in the group first; this knob then scales howl alone. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
       "exposeInUi": false
     },
     {
@@ -5955,53 +5288,6 @@
       "exposeInUi": false
     },
     {
-      "id": "combat.mutantMoveRate.pseudogiant.roar",
-      "tab": "combat",
-      "group": "Mutant Health",
-      "label": "Pseudogiant Roar Rate",
-      "description": "How often a Pseudogiant can use one move: roar. Rate k writes cooldown multiplier 1/k on the Ability.Cooldown.Roar cooldown of every Pseudogiant variant, on top of its ABILITIES slider.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Roar rate"
-      },
-      "vanilla": {
-        "All": 1
-      },
-      "default": {
-        "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0.25,
-        "max": 3,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "set1/x"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "Own cooldown tag Ability.Cooldown.Roar; vanilla 60 s (main agent, base CFG).",
-          "Same AgentCooldownMultipliers list as ATTACKS / ABILITIES; the multiplier is group × 1/knob.",
-          "Families and tags the game never lists on Master need an in-game check."
-        ]
-      },
-      "rationale": "How often Pseudogiants use one move: roar. Vanilla: 1×; every 60 s. The knob shows the real wait in seconds.",
-      "logic": "Higher = shorter wait for this move only; 2× halves it, 0.5× doubles it.",
-      "interaction": "Pseudogiant ABILITIES scales every move in the group first; this knob then scales roar alone. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
-      "exposeInUi": false
-    },
-    {
       "id": "combat.mutantMoveRate.snork.claw",
       "tab": "combat",
       "group": "Mutant Health",
@@ -6093,53 +5379,6 @@
       "rationale": "How often Snorks use one move: kick. Vanilla: 1×; every 7 s. The knob shows the real wait in seconds.",
       "logic": "Higher = shorter wait for this move only; 2× halves it, 0.5× doubles it.",
       "interaction": "Snork ATTACKS scales every move in the group first; this knob then scales kick alone. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
-      "exposeInUi": false
-    },
-    {
-      "id": "combat.mutantMoveRate.snork.dodge",
-      "tab": "combat",
-      "group": "Mutant Health",
-      "label": "Snork Dodge Rate",
-      "description": "How often a Snork can use one move: dodge. Rate k writes cooldown multiplier 1/k on the Ability.Cooldown.Evasion cooldown of every Snork variant, on top of its ATTACKS slider.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Dodge rate"
-      },
-      "vanilla": {
-        "All": 1
-      },
-      "default": {
-        "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0.25,
-        "max": 3,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "set1/x"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "Own cooldown tag Ability.Cooldown.Evasion; vanilla 7 s (main agent, base CFG).",
-          "Same AgentCooldownMultipliers list as ATTACKS / ABILITIES; the multiplier is group × 1/knob.",
-          "Families and tags the game never lists on Master need an in-game check."
-        ]
-      },
-      "rationale": "How often Snorks use one move: dodge. Vanilla: 1×; every 7 s. The knob shows the real wait in seconds.",
-      "logic": "Higher = shorter wait for this move only; 2× halves it, 0.5× doubles it.",
-      "interaction": "Snork ATTACKS scales every move in the group first; this knob then scales dodge alone. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
       "exposeInUi": false
     },
     {
@@ -6281,53 +5520,6 @@
       "rationale": "How often Snorks use one move: fly-through. Vanilla: 1×; every 14 s. The knob shows the real wait in seconds.",
       "logic": "Higher = shorter wait for this move only; 2× halves it, 0.5× doubles it.",
       "interaction": "Snork ATTACKS scales every move in the group first; this knob then scales fly-through alone. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
-      "exposeInUi": false
-    },
-    {
-      "id": "combat.mutantMoveRate.snork.growl",
-      "tab": "combat",
-      "group": "Mutant Health",
-      "label": "Snork Growl Rate",
-      "description": "How often a Snork can use one move: growl. Rate k writes cooldown multiplier 1/k on the Ability.Cooldown.Growl cooldown of every Snork variant, on top of its ABILITIES slider.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Growl rate"
-      },
-      "vanilla": {
-        "All": 1
-      },
-      "default": {
-        "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0.25,
-        "max": 3,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=...].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "set1/x"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "Own cooldown tag Ability.Cooldown.Growl; vanilla 120 s (main agent, base CFG).",
-          "Same AgentCooldownMultipliers list as ATTACKS / ABILITIES; the multiplier is group × 1/knob.",
-          "Families and tags the game never lists on Master need an in-game check."
-        ]
-      },
-      "rationale": "How often Snorks use one move: growl. Vanilla: 1×; every 120 s. The knob shows the real wait in seconds.",
-      "logic": "Higher = shorter wait for this move only; 2× halves it, 0.5× doubles it.",
-      "interaction": "Snork ABILITIES scales every move in the group first; this knob then scales growl alone. SPECIAL ABILITY RATE separately limits special moves for the whole fight.",
       "exposeInUi": false
     },
     {

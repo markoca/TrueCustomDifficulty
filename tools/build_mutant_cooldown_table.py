@@ -74,7 +74,7 @@ def main():
            "(2× = half the wait). On Master the knob's vanilla is 2× where the game already halves.",
            "* Every covered row also has its own knob under its slider (`combat.mutantMoveRate.{family}.{move}`); "
            "the time is divided by slider × knob. Moves at 0 s have no knob.",
-           "* **Not covered** rows are not reached by any knob yet "
+           "* **Vanilla only** rows have no control: roars, growls, howls, dodges, teleports, shields, alert sounds and moves the game never triggers "
            "(see `MUTANT-ABILITIES-CATALOG.md`).",
            "* Special and story variants (phantoms, Prologue, Mist, `Collar` psy, DLC1 bosses, "
            "`ShootingSpecial`, `NoCooldowns`) are listed under *Variants* and never set the family value.",
@@ -88,7 +88,7 @@ def main():
         for tag, rs in by[key].items():
             full = tag
             group = ("ATTACKS" if tag in f["attack"] else "ABILITIES" if tag in f["ability"]
-                     else "not covered")
+                     else "vanilla only")
             normal = sorted({r["dur"] for r in rs if not SPECIAL.search(r["ability"]) and r["src"] == "base"})
             special = sorted({(r["dur"], r["ability"]) for r in rs if SPECIAL.search(r["ability"]) or r["src"] == "dlc"})
             if not normal:
@@ -97,7 +97,7 @@ def main():
             n = " / ".join(fmt(x) + " s" for x in normal)
             m = " / ".join(fmt(x * (0.5 if full in f["master"] else 1)) + " s" for x in normal)
             var = "; ".join(f"{a} {fmt(d)} s" for d, a in special if d not in normal)
-            order = {"ATTACKS": 0, "ABILITIES": 1, "SUMMON RATE": 2, "not covered": 3}[group]
+            order = {"ATTACKS": 0, "ABILITIES": 1, "SUMMON RATE": 2, "vanilla only": 3}[group]
             lines.append((order, normal[0] if normal else 0, f"| {group} | {MOVE.get(tag, tag)} | `{tag}` | {n} | "
                                                              f"{m if m != n else '='} | {var} |"))
         out += [x[2] for x in sorted(lines)] + [""]

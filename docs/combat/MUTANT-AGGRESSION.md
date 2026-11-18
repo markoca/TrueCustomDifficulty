@@ -5,9 +5,9 @@ Two control groups on the Mutant board (*MUTANT DAMAGE, HEALTH AND AGGRESSION*):
 | Control | Ids | Range | Vanilla |
 |---|---|---|---|
 | ATTACKS per family (14) | `combat.mutantAttackRate.{family}` | 0.25×–3×, step 0.25 | 1×; **2× on Master** for Bayun, Bloodsucker, Burer, Chimera, Controller, Deer, Pseudodog, Pseudogiant |
-| ABILITIES per family (10) | `combat.mutantAbilityRate.{family}` | 0.25×–3×, step 0.25 | 1×; **2× on Master** for Bayun, Bloodsucker, Burer, Chimera, Controller, Pseudogiant |
+| ABILITIES per family (8) | `combat.mutantAbilityRate.{family}` | 0.25×–3×, step 0.25 | 1×; **2× on Master** for Burer, Controller, Pseudogiant |
 | ABILITIES Deer (2026-11-18) | `combat.mutantAbilityRate.deer` | 0.25×–3×, step 0.25 | 1× (blind dog summon) |
-| One knob per move (68) | `combat.mutantMoveRate.{family}.{move}` | 0.25×–3×, step 0.25 | 1× |
+| One knob per attack (54) | `combat.mutantMoveRate.{family}.{move}` | 0.25×–3×, step 0.25 | 1× |
 | SPECIAL ABILITY RATE (global) | `combat.mutantSpecialAbilityRate` | 0.25×–3×, step 0.25 | 1× Novice / Stalker / Veteran, 2× Master |
 
 All are `runtime_test_required`. Source: S.T.A.L.K.E.R. 2 2.1 base dump.
@@ -48,6 +48,21 @@ All are `runtime_test_required`. Source: S.T.A.L.K.E.R. 2 2.1 base dump.
   psy/shield/teleport/anomaly/growl/shockwave/summon for ABILITIES. Chimera growl is 60 s and Snork growl 120 s
   (2026-11-18 fix; the card used to say 30 s and 20 s). At the vanilla value it shows the game's effective time (e.g. Master Controller psy 6 s).
 * `Mutant_AttackCooldown` (1.0 on all difficulties) is not touched.
+
+## Attacks only (2026-11-18, second pass)
+
+* Only moves that hurt or bring enemies have controls. Roars, growls, howls, dodges, Bayun teleports and shields
+  are in no slider and have no knob; the writer writes the game's own Master 0.5 back for them, so they stay vanilla.
+* Checked against the CFG: the regular Blind Dog never shields (`ShieldActionData Enabled = false`; only
+  `Blinddog_Collar` has it), Chimera never short-leaps (`ShortJumpAttackData Enabled = false`), and Pseudogiant
+  throws only as the electrocollar variant (`ThrowActionData` enabled on `Pseudogiant_Collar` only).
+* Removed: Blind Dog, Chimera and Snork ABILITIES sliders (nothing left); 14 knobs. 54 attack knobs remain:
+  ATTACKS 37, ABILITIES 17 (Bayun clones; Bloodsucker anomaly; Burer grenades, disarm, throw, weapons;
+  Controller psy, corpse, zombify, dogs; Deer dogs; Poltergeist anomaly, throw; Pseudodog phantoms, retreat;
+  Pseudogiant shockwave, throw).
+* Bayun and Bloodsucker ABILITIES are now 1× on Master too (their halved Master moves were a growl,
+  teleport or roar). Stock Hardcore stores them at 1×.
+* With `TCD_BASE_DUMP`, the audit checks every knob's move is in an agent's ability list of its family.
 
 ## One knob per move (2026-11-18)
 

@@ -6,24 +6,24 @@ Do not edit by hand.
 * **Normal** = Novice, Stalker and Veteran. **Master** = what the game uses on Master: the difficulty halves the tags it lists for the family's main agent (`AgentCooldownMultipliers` 0.5).
 * A family's ATTACKS or ABILITIES knob at rate *r* divides every time in that group by *r* (2× = half the wait). On Master the knob's vanilla is 2× where the game already halves.
 * Every covered row also has its own knob under its slider (`combat.mutantMoveRate.{family}.{move}`); the time is divided by slider × knob. Moves at 0 s have no knob.
-* **Not covered** rows are not reached by any knob yet (see `MUTANT-ABILITIES-CATALOG.md`).
+* **Vanilla only** rows have no control: roars, growls, howls, dodges, teleports, shields, alert sounds and moves the game never triggers (see `MUTANT-ABILITIES-CATALOG.md`).
 * Special and story variants (phantoms, Prologue, Mist, `Collar` psy, DLC1 bosses, `ShootingSpecial`, `NoCooldowns`) are listed under *Variants* and never set the family value.
 
 ## Bayun
 
 | Group | Move | Tag | Normal | Master | Variants |
 |---|---|---|---|---|---|
-| ATTACKS | dodge | `Evasion` | 1 s | = |  |
 | ATTACKS | claw / turn swipe | `ClawAttack` | 5 s | 2.5 s |  |
 | ATTACKS | jump to enemy | `JumpToEnemy` | 6 s | 3 s |  |
 | ATTACKS | leap | `JumpAttack` | 8 s | 4 s |  |
 | ATTACKS | fly-through | `FlyThrough` | 10 s | = |  |
 | ABILITIES | summon | `CombatSummon` | 10 s | = |  |
-| ABILITIES | teleport | `BlinkTeleport` | 12 s | 6 s |  |
-| ABILITIES | growl | `Growl` | 60 s | 30 s |  |
-| not covered | mimic sound | `TrickSound.Mimicry` | 8 s | = |  |
-| not covered | mocking sound | `TrickSound.Mockery` | 8 s | = |  |
-| not covered | ambush sound | `TrickSound.Ambush` | 20 s | = | TrickSoundAmbush_Bayun_E10_MQ01 10 s |
+| vanilla only | dodge | `Evasion` | 1 s | = |  |
+| vanilla only | mimic sound | `TrickSound.Mimicry` | 8 s | = |  |
+| vanilla only | mocking sound | `TrickSound.Mockery` | 8 s | = |  |
+| vanilla only | teleport | `BlinkTeleport` | 12 s | 6 s |  |
+| vanilla only | ambush sound | `TrickSound.Ambush` | 20 s | = | TrickSoundAmbush_Bayun_E10_MQ01 10 s |
+| vanilla only | growl | `Growl` | 60 s | 30 s |  |
 
 ## Blind Dog
 
@@ -32,9 +32,9 @@ Do not edit by hand.
 | ATTACKS | bite | `BiteAttack` | 5 s | = |  |
 | ATTACKS | running attack | `RunAttack` | 7 s | = | BlindDog_PhantomAttack 50 s |
 | ATTACKS | bite from any angle | `BiteAttackAnyAngle` | 16 s | = |  |
-| ABILITIES | shield | `Shield` | 25 s | = |  |
-| not covered | alert reaction | `Alerted` | 3 s | = |  |
-| not covered | howl | `Howl` | 50 s | = |  |
+| vanilla only | alert reaction | `Alerted` | 3 s | = |  |
+| vanilla only | shield | `Shield` | 25 s | = |  |
+| vanilla only | howl | `Howl` | 50 s | = |  |
 
 ## Bloodsucker
 
@@ -44,8 +44,8 @@ Do not edit by hand.
 | ATTACKS | running attack | `RunAttack` | 6 s | 3 s | PrologueBloodsucker_RunAttack_Base 10 s; PrologueBloodsucker_RunAttack_Left 10 s; PrologueBloodsucker_RunAttack_Right 10 s; MistBloodsucker_RunAttack_Base 25 s; MistBloodsucker_RunAttack_Left 25 s; MistBloodsucker_RunAttack_Right 25 s; Bloodsucker_PhantomAttack 50 s |
 | ATTACKS | leap | `JumpAttack` | 20 s | 10 s | MistBloodsucker_JumpAttack 25 s |
 | ABILITIES | spawn anomaly | `ActivateAnomaly` | 3 s | = |  |
-| ABILITIES | roar | `Roar` | 60 s / 6000 s | 30 s / 3000 s |  |
-| not covered | alert reaction | `Alerted` | 3 s | = |  |
+| vanilla only | alert reaction | `Alerted` | 3 s | = |  |
+| vanilla only | roar | `Roar` | 60 s / 6000 s | 30 s / 3000 s |  |
 
 ## Boar
 
@@ -54,8 +54,8 @@ Do not edit by hand.
 | ATTACKS | running attack | `RunAttack` | 5 s | = | Boar_PhantomAttack 50 s |
 | ATTACKS | claw / turn swipe | `ClawAttack` | 10 s | = |  |
 | ATTACKS | charge | `Charge` | 12 s | = |  |
-| not covered | alert reaction | `Alerted` | 3 s | = |  |
-| not covered | grunt | `Grunt` | 120 s | = |  |
+| vanilla only | alert reaction | `Alerted` | 3 s | = |  |
+| vanilla only | grunt | `Grunt` | 120 s | = |  |
 
 ## Burer
 
@@ -66,31 +66,31 @@ Do not edit by hand.
 | ABILITIES | disarm | `WeaponDrag` | 8 s | 4 s | Burer_WeaponDrag_ShootingSpecial 120 s |
 | ABILITIES | raise weapons and shoot | `WeaponRiseAndShoot` | 10 s | 5 s | Burer_WeaponRiseAndShoot_ShootingSpecial 8 s |
 | ABILITIES | throw | `Throw` | 10 s | 5 s |  |
-| ABILITIES | shield | `Shield` | 17 s | 8.5 s |  |
+| vanilla only | shield | `Shield` | 17 s | 8.5 s |  |
 
 ## Chimera
 
 | Group | Move | Tag | Normal | Master | Variants |
 |---|---|---|---|---|---|
 | ATTACKS | claw / turn swipe | `ClawAttack` | 0 s | = | JadedChimera_ClawAttack 5 s; JadedChimera_TurnAttack 5 s |
-| ATTACKS | dodge | `Evasion` | 0 s | = |  |
 | ATTACKS | long leap | `LongJumpAttack` | 5 s | 2.5 s | JadedChimera_LongJumpAttack 10 s |
 | ATTACKS | running attack | `RunAttack` | 5 s | 2.5 s | JadedChimeraPhantom_RunAttack_Base 20 s; JadedChimeraPhantom_RunAttack_Left 20 s; JadedChimeraPhantom_RunAttack_Right 20 s |
 | ATTACKS | jump to enemy | `JumpToEnemy` | 6 s | = | JadedChimeraPhantom_JumpToEnemy 0 s |
-| ATTACKS | short leap | `ShortJumpAttack` | 8 s | 4 s |  |
 | ATTACKS | fly-through | `FlyThrough` | 10 s | 5 s |  |
-| ABILITIES | growl | `Growl` | 60 s | 30 s |  |
-| not covered | summon phantom | `Summon` | 25 s | = |  |
+| vanilla only | dodge | `Evasion` | 0 s | = |  |
+| vanilla only | short leap | `ShortJumpAttack` | 8 s | 4 s |  |
+| vanilla only | summon phantom | `Summon` | 25 s | = |  |
+| vanilla only | growl | `Growl` | 60 s | 30 s |  |
 
 ## Controller
 
 | Group | Move | Tag | Normal | Master | Variants |
 |---|---|---|---|---|---|
 | ATTACKS | claw / turn swipe | `ClawAttack` | 10 s | 5 s |  |
-| ABILITIES | roar | `Roar` | 7 s | 3.5 s |  |
 | ABILITIES | psy strike | `Abilities.PSYAttack` | 12 s | 6 s | SpatialBubbleController_PSYStrike 6 s |
 | ABILITIES | raise corpse | `Abilities.RaiseDeadBody` | 15 s | 7.5 s |  |
 | ABILITIES | zombify | `Abilities.ZombifyNPC` | 15 s | 7.5 s |  |
+| vanilla only | roar | `Roar` | 7 s | 3.5 s |  |
 
 ## Deer
 
@@ -100,7 +100,7 @@ Do not edit by hand.
 | ATTACKS | leap | `JumpAttack` | 8 s | 4 s |  |
 | ATTACKS | charge | `Charge` | 10 s | 5 s |  |
 | ABILITIES | summon | `CombatSummon` | 20 s | = |  |
-| not covered | roar | `Roar` | 3000 s | = |  |
+| vanilla only | roar | `Roar` | 3000 s | = |  |
 
 ## Flesh
 
@@ -108,8 +108,8 @@ Do not edit by hand.
 |---|---|---|---|---|---|
 | ATTACKS | claw / turn swipe | `ClawAttack` | 3 s / 5 s | = |  |
 | ATTACKS | leap | `JumpAttack` | 4 s | = | Flesh_PhantomAttack 50 s |
-| not covered | alert reaction | `Alerted` | 2 s | = |  |
-| not covered | squeal | `Squeek` | 40 s | = |  |
+| vanilla only | alert reaction | `Alerted` | 2 s | = |  |
+| vanilla only | squeal | `Squeek` | 40 s | = |  |
 
 ## Poltergeist
 
@@ -118,7 +118,7 @@ Do not edit by hand.
 | ATTACKS | area burst | `AOEAttack` | 3 s | = |  |
 | ABILITIES | spawn anomaly | `ActivateAnomaly` | 3 s | = | Poltergeist_ActivateToxicCloudAnomaly_YanivToxicRozmiv 1 s |
 | ABILITIES | throw | `Throw` | 10 s | = | Poltergeist_ThrowExplosivesOnly 5 s; DLC01_MQ02_Poltergeist_Throw 12 s |
-| ABILITIES | shield | `Shield` | 20 s | = |  |
+| vanilla only | shield | `Shield` | 20 s | = |  |
 
 ## Pseudodog
 
@@ -128,8 +128,8 @@ Do not edit by hand.
 | ATTACKS | running attack | `RunAttack` | 5 s / 6 s | 2.5 s / 3 s |  |
 | ABILITIES | retreat summon | `RetreatSummon` | 10 s | = |  |
 | ABILITIES | summon | `CombatSummon` | 20 s | = |  |
-| ABILITIES | howl | `Howl` | 30 s | = |  |
-| not covered | alert reaction | `Alerted` | 3 s | = |  |
+| vanilla only | alert reaction | `Alerted` | 3 s | = |  |
+| vanilla only | howl | `Howl` | 30 s | = |  |
 
 ## Pseudogiant
 
@@ -140,20 +140,20 @@ Do not edit by hand.
 | ATTACKS | charge | `Charge` | 10 s | 5 s | ChargeAbility_Pseudogiant_NoCooldowns 0 s |
 | ABILITIES | shockwave | `ShockwaveAttack` | 8 s | 4 s | Pseudogiant_NoCooldowns_ShockwaveAttack 0 s |
 | ABILITIES | throw | `Throw` | 10 s | = |  |
-| ABILITIES | roar | `Roar` | 60 s | = |  |
+| vanilla only | roar | `Roar` | 60 s | = |  |
 
 ## Snork
 
 | Group | Move | Tag | Normal | Master | Variants |
 |---|---|---|---|---|---|
 | ATTACKS | claw / turn swipe | `ClawAttack` | 5 s | = |  |
-| ATTACKS | dodge | `Evasion` | 7 s | = |  |
 | ATTACKS | kick | `KickAttack` | 7 s | = |  |
 | ATTACKS | jump to enemy | `JumpToEnemy` | 12 s | = |  |
 | ATTACKS | leap | `JumpAttack` | 12 s | = |  |
 | ATTACKS | fly-through | `FlyThrough` | 14 s | = |  |
-| ABILITIES | growl | `Growl` | 120 s | = |  |
-| not covered | alert reaction | `Alerted` | 2 s | = |  |
+| vanilla only | alert reaction | `Alerted` | 2 s | = |  |
+| vanilla only | dodge | `Evasion` | 7 s | = |  |
+| vanilla only | growl | `Growl` | 120 s | = |  |
 
 ## Tushkan
 
@@ -161,4 +161,4 @@ Do not edit by hand.
 |---|---|---|---|---|---|
 | ATTACKS | claw / turn swipe | `ClawAttack` | 3 s | = |  |
 | ATTACKS | leap | `JumpAttack` | 8 s | = | Tushkan_PhantomAttack 50 s |
-| not covered | squeal | `Squeek` | 40 s | = |  |
+| vanilla only | squeal | `Squeek` | 40 s | = |  |

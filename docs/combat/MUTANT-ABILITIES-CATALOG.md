@@ -1,6 +1,6 @@
 # Mutant abilities: catalog of controllable levers
 
-Status 2026-11-18: every cooldown of sections 1–2 that a mutant owns as an attack, ability or summon now has its own knob under its slider (see MUTANT-AGGRESSION.md). Pack calls other than the Pseudodog howl, windows, area, counts and strength remain a **catalog only.** Nothing in this document is wired to the UI or writer yet,
+Status 2026-11-18: attacks only. Every attack cooldown of sections 1–2 that a mutant owns as an attack, ability or summon now has its own knob under its slider (see MUTANT-AGGRESSION.md). Roars, growls, howls, dodges, teleports and shields stay vanilla by choice. Windows, area, counts and strength remain a **catalog only.** Nothing in this document is wired to the UI or writer yet,
 except what section 1 lists as covered. It is the reference for choosing the next mutant controls.
 
 Sources: `GameData/AbilityPrototypes.cfg` (base), `DLC1/AbilityPrototypes.cfg`,

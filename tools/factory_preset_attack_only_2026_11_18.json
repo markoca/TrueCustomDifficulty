@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-18",
+  "note": "Attack-only mutant knobs: roars, growls, howls, dodges, teleports and shields removed (stay vanilla); Blind Dog, Chimera and Snork ABILITIES sliders removed; ability sliders whose Master vanilla became 1× store 1× where they stored the old 2× vanilla.",
+  "previousStockBlobs": {
+    "Anomaly Runner": "1bacef43df413701522eb9c66b465d158d21af11",
+    "Field Medic": "e5f40029aa32f41ece2dbbc8eb7b071fd5ada5c2",
+    "Hardcore+": "3cbd5556d583bd24d07322670445d643489d0e6d",
+    "Hardcore": "1382de5d3e207e70934b0ededd4ea680e11562c3",
+    "Immersive": "665440d5407704a455ec4eb08a278feb3a7af3fe",
+    "Mercenary": "5849ebe0f0d6b34313d4795fc4204f8022d2ad50",
+    "Mutant Hunter": "4eacd967026f89df2eba9c1e2667ca0d146ec60d",
+    "Outcast": "5c42c2531c172b284d274bd79192ca91d64b74fe",
+    "Scavenger": "626f809e395b58b16de2be10519241a7c7a9989b",
+    "Smuggler": "2656aa0fa2c0a5f28897d476b4bcd1392e9542c4",
+    "Tactical": "b46ad32a11ccfb27f69fe4c361e09e174e15d0ea",
+    "Wanderer": "ebe7dc195e63a193723743bb22427b640e517c73"
+  },
+  "changedToNewVanilla": [
+    [
+      "Hardcore",
+      "combat.mutantAbilityRate.bayun"
+    ],
+    [
+      "Hardcore",
+      "combat.mutantAbilityRate.bloodsucker"
+    ]
+  ]
+}

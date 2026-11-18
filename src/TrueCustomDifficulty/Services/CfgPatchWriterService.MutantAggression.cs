@@ -84,6 +84,14 @@ public sealed partial class CfgPatchWriterService
                     var entries = new List<(string Tag, double Multiplier)>();
                     foreach (var tag in tags)
                     {
+                        // Roars, growls, howls, dodges, teleports and shields have no
+                        // control: the game's own Master entry is written back unchanged.
+                        if (!family.AttackTags.Contains(tag) && !family.AbilityTags.Contains(tag))
+                        {
+                            if (difficultySid == "Stalker")
+                                entries.Add((tag, MutantAggressionPolicy.VanillaMasterCooldownMultiplier));
+                            continue;
+                        }
                         var group = family.AttackTags.Contains(tag)
                             ? MutantAggressionPolicy.Group.Attacks : MutantAggressionPolicy.Group.Abilities;
                         if (!rates.TryGetValue(group, out var r))

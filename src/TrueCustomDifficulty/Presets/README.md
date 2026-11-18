@@ -161,3 +161,5 @@ All 12 shipped profile files now include **247 parameter IDs** (34 more than the
 **2026-11-18 — SUMMON RATE:** every profile stores SUMMON RATE (Pseudodog phantoms, Bayun clones, Deer blind dogs). Non-vanilla: Hardcore+ and Mutant Hunter 1.5×, Outcast and Wanderer 1.25×. Pseudodog ABILITIES is its howl; stock Hardcore stores it at 1×.
 
 **2026-11-18 — Mutant move knobs:** SUMMON RATE is retired. Every profile stores one knob per mutant move (68) and Deer ABILITIES, all 1× except the summon knobs: Hardcore+ and Mutant Hunter 1.5×, Outcast and Wanderer 1.25× (Pseudodog phantoms, Bayun clones, Deer and Controller dogs).
+
+**2026-11-18 — Attack-only mutant knobs:** roars, growls, howls, dodges, teleports and shields have no control any more and stay vanilla. Every profile stores 54 attack knobs; Hardcore stores Bayun and Bloodsucker ABILITIES at 1×.

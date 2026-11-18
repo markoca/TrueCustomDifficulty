@@ -331,3 +331,8 @@ The 12 profiles now store the four new controls (422 catalog controls each). The
 
 * Every profile stores the 68 move knobs and Deer ABILITIES (491 controls). All are 1× except the summon knobs, which keep SUMMON RATE's role values: Hardcore+ and Mutant Hunter 1.5×, Outcast and Wanderer 1.25× on Pseudodog PHANTOMS and RETREAT, Bayun CLONES, Deer DOGS and Controller DOGS.
 * Untouched older stock copies upgrade by blob hash (`PreMoveKnobFactoryBlobs`); edited copies keep their values, and a stored SUMMON RATE is ignored.
+
+## 2026-11-18 — Attack-only mutant knobs
+
+* 474 controls per profile: roar, growl, howl, dodge, teleport and shield knobs and the Blind Dog, Chimera and Snork ABILITIES sliders are gone (their moves stay vanilla).
+* Stock Hardcore stores Bayun and Bloodsucker ABILITIES at 1× (their Master vanilla is now 1×). Untouched older stock copies upgrade by blob hash (`PreAttackOnlyFactoryBlobs`).

@@ -60,3 +60,23 @@ def extract(base_path, dlc_path):
               if v(e,'CooldownTag')==tag:
                   out.append(dict(src=src,fam=fam,ability=name,tag=tag.replace('Ability.Cooldown.',''),dur=float(v(e,'Duration').rstrip('f').rstrip('.') or 0)))
   return out
+
+
+def agent_cooldown_tags(obj_path, ability_path, sid):
+    """Own cooldown tags of every ability in an agent's ObjPrototypes ability list (refkey-resolved)."""
+    objs, _ = parse(obj_path)
+    abil, _ = parse(ability_path)
+
+    def sids(name, depth=0):
+        n = objs.get(name)
+        if not n or depth > 8:
+            return set()
+        out = set()
+        a = kid(n, 'Abilities')
+        if a:
+            out |= {v(c, 'SID') for c in a['kids'] if v(c, 'SID')}
+        if n['ref'] and n['ref'] != '[0]':
+            out |= sids(n['ref'], depth + 1)
+        return out
+
+    return {(resolve(abil, s, 'CooldownTag') or '').replace('Ability.Cooldown.', '') for s in sids(sid)} - {''}
