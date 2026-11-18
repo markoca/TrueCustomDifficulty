@@ -6,8 +6,8 @@ namespace TrueCustomDifficulty.Infrastructure;
 
 /// <summary>
 /// One responsive Economy editor: the TRADER STOCK board (with its AMMO /
-/// MEDICAL SUPPLY rails) on the left and the Service Prices bank on the right.
-/// Narrow windows stack the bank below the board.
+/// MEDICAL SUPPLY rails) on the left; SERVICE PRICES and, under it, TRADER
+/// RESTOCK on the right. Narrow windows stack both below the board.
 /// </summary>
 public sealed class TraderEconomyPanel : Panel
 {
@@ -38,23 +38,28 @@ public sealed class TraderEconomyPanel : Panel
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = UsableWidth(availableSize.Width);
-        if (InternalChildren.Count != 2)
-            throw new InvalidOperationException("Trader Economy requires the stock board and the service bank.");
+        if (InternalChildren.Count != 3)
+            throw new InvalidOperationException("Trader Economy requires the stock board, the service bank and the restock board.");
 
         var table = InternalChildren[0];
         var services = InternalChildren[1];
+        var restock = InternalChildren[2];
 
         if (UseSideColumn(width))
         {
             var (tableWidth, bankWidth) = ColumnWidths(width);
             table.Measure(new Size(tableWidth, double.PositiveInfinity));
             services.Measure(new Size(bankWidth, double.PositiveInfinity));
-            return new Size(width, Math.Max(table.DesiredSize.Height, services.DesiredSize.Height));
+            restock.Measure(new Size(bankWidth, double.PositiveInfinity));
+            var right = services.DesiredSize.Height + Gap + restock.DesiredSize.Height;
+            return new Size(width, Math.Max(table.DesiredSize.Height, right));
         }
 
         table.Measure(new Size(Math.Min(FallbackTableWidth, width), double.PositiveInfinity));
         services.Measure(new Size(Math.Min(FallbackBankWidth, width), double.PositiveInfinity));
-        return new Size(width, table.DesiredSize.Height + Gap + services.DesiredSize.Height);
+        restock.Measure(new Size(Math.Min(FallbackBankWidth, width), double.PositiveInfinity));
+        return new Size(width, table.DesiredSize.Height + Gap + services.DesiredSize.Height
+            + Gap + restock.DesiredSize.Height);
     }
 
     protected override Size ArrangeOverride(Size finalSize)
@@ -62,22 +67,28 @@ public sealed class TraderEconomyPanel : Panel
         var width = Math.Max(1.0, finalSize.Width);
         var table = InternalChildren[0];
         var services = InternalChildren[1];
+        var restock = InternalChildren[2];
 
         if (UseSideColumn(width))
         {
             var (tableWidth, bankWidth) = ColumnWidths(width);
             var left = Math.Max(0.0, (width - (tableWidth + Gap + bankWidth)) / 2.0);
+            var right = left + tableWidth + Gap;
             table.Arrange(new Rect(left, 0.0, tableWidth, table.DesiredSize.Height));
-            services.Arrange(new Rect(left + tableWidth + Gap, 0.0, bankWidth, services.DesiredSize.Height));
+            services.Arrange(new Rect(right, 0.0, bankWidth, services.DesiredSize.Height));
+            restock.Arrange(new Rect(right, services.DesiredSize.Height + Gap, bankWidth, restock.DesiredSize.Height));
             return finalSize;
         }
 
         var tableWidthNarrow = Math.Min(FallbackTableWidth, width);
         var bankWidthNarrow = Math.Min(FallbackBankWidth, width);
+        var bankLeft = (width - bankWidthNarrow) / 2.0;
         table.Arrange(new Rect((width - tableWidthNarrow) / 2.0, 0.0,
             tableWidthNarrow, table.DesiredSize.Height));
-        services.Arrange(new Rect((width - bankWidthNarrow) / 2.0, table.DesiredSize.Height + Gap,
-            bankWidthNarrow, services.DesiredSize.Height));
+        var servicesTop = table.DesiredSize.Height + Gap;
+        services.Arrange(new Rect(bankLeft, servicesTop, bankWidthNarrow, services.DesiredSize.Height));
+        restock.Arrange(new Rect(bankLeft, servicesTop + services.DesiredSize.Height + Gap,
+            bankWidthNarrow, restock.DesiredSize.Height));
         return finalSize;
     }
 }

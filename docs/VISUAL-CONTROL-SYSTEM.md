@@ -1,3 +1,7 @@
+## CURRENT 2026-11-18 — TRADER RESTOCK under SERVICE PRICES
+
+* EXPENSES: the right column of the trader row is SERVICE PRICES, then (10 DIP gap) TRADER RESTOCK at the same width, filling the space beside TRADER STOCK. The standalone TRADER RESTOCK card below the row is gone. Narrow windows stack TRADER STOCK, SERVICE PRICES, TRADER RESTOCK. Board content unchanged.
+
 ## CURRENT 2026-11-18 — SPECIAL MOVES caps the knockdown knobs
 
 * The second global card is titled **SPECIAL MOVES** with the value `one every 8–12 s` (Master `4–6 s`).

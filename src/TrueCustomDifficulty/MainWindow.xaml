@@ -351,6 +351,12 @@
                                                                                                      PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                                      ParameterSelected="AggregateVisualControl_ParameterSelected"
                                                                                                      Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
+                                                                    <!-- TRADER RESTOCK fills the right column under SERVICE PRICES. -->
+                                                                    <controls:AggregateVisualControl Family="TraderRestock"
+                                                                                                     HorizontalAlignment="Stretch"
+                                                                                                     PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
+                                                                                                     ParameterSelected="AggregateVisualControl_ParameterSelected"
+                                                                                                     Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
                                                                 </infra:TraderEconomyPanel>
 
                                                                  

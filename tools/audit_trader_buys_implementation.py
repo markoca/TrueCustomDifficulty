@@ -74,11 +74,14 @@ assert 'var tableWidth = contentWidth * TableShare;' in panel
 assert 'return (tableWidth, contentWidth - tableWidth);' in panel
 assert 'tableWidth >= MinTableWidth && bankWidth >= MinBankWidth' in panel
 assert 'var (tableWidth, bankWidth) = ColumnWidths(width);' in panel
-assert 'services.Arrange(new Rect(left + tableWidth + Gap, 0.0, bankWidth' in panel
+assert 'services.Arrange(new Rect(right, 0.0, bankWidth' in panel
+# 2026-11-18: TRADER RESTOCK sits under SERVICE PRICES in the right column.
+assert 'restock.Arrange(new Rect(right, services.DesiredSize.Height + Gap, bankWidth' in panel
+assert 'Family="TraderRestock"' in xaml
 assert 'Math.Min(FallbackTableWidth, width)' in panel
 assert 'Math.Min(FallbackBankWidth, width)' in panel
 assert 'Family="ServiceCostsBoard"\n                                                                                                     HorizontalAlignment="Stretch"' in xaml
-assert 'InternalChildren.Count != 2' in panel
+assert 'InternalChildren.Count != 3' in panel
 assert 'table.DesiredSize.Height + Gap' in panel
 # The legacy BUY source anchor must not leak a bare ON / wheel +/- card.
 # SELL anchors the only visible stock editor; all 40 BUY toggles still write.

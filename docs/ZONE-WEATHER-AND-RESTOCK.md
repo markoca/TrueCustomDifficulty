@@ -122,3 +122,7 @@ The .NET build, a Wine run and in-game behaviour have not been checked: how ofte
 ## 2026-11-18 — Board as knobs
 
 ZONE WEATHER uses three knobs (ARTIFACT HUNTING geometry) with short in-dial lines (`ZoneTimersPolicy.KnobText`). Below them, ONE EMISSION draws a dynamic 0–(warning + 80) s bar: warning (light), storm = shock wave + active (gold), calm after it (grey), and a white tick for the NPC leave-cover moment. Two sentences explain it.
+
+## 2026-11-18 — TRADER RESTOCK moved under SERVICE PRICES
+
+* The board is no longer its own card in EXPENSES: it is the third child of `TraderEconomyPanel`, under SERVICE PRICES in the right column next to TRADER STOCK (narrow windows: stacked below SERVICE PRICES). Same board, CFG and presets.

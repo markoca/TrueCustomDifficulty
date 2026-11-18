@@ -856,6 +856,8 @@ public sealed class ParameterViewModel : ObservableObject
         // service knobs in TraderEconomyPanel; no standalone rows.
         && !IsTraderSupply
         && Id != "economy.fastTravelCost"
+        // TRADER RESTOCK sits under SERVICE PRICES in TraderEconomyPanel.
+        && Id != ZoneTimersPolicy.TraderRestockId
         && (!IsMedicalHealingMember || IsMedicalHealingAnchor)
         && (!IsActionCostMember || IsActionCostAnchor)
         && (!IsExhaustionRecoveryMember || IsExhaustionRecoveryAnchor)
