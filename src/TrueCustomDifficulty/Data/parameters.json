@@ -298,7 +298,7 @@
       },
       "rationale": "How much it hurts when a human enemy shoots you. Vanilla: Novice 0.17×, Stalker 0.85×, Veteran 1.02×, Master 1.35×. Low values let you tank a burst; high values make every exposed second dangerous.",
       "logic": "",
-      "interaction": "HUMAN ENEMY HP sets how long enemies survive; this sets how dangerous their shots are. PEAK / MINIMUM HIT PROTECTION also soften sustained fire."
+      "interaction": "HUMAN ENEMY HP sets how long enemies survive; this sets how dangerous their shots are. PEAK / MIN HIT PROTECTION also soften sustained fire."
     },
     {
       "id": "combat.explosionDamage",
@@ -1105,7 +1105,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Maximum repeated-hit protection"
+        "valueLabel": "Max repeated-hit protection"
       },
       "vanilla": {
         "Novice": 1,
@@ -1137,20 +1137,20 @@
       },
       "rationale": "The game softens damage when many hits land at once, and this is the strongest that safety net gets. Vanilla: Novice 100%, Stalker 75%, Veteran 50%, Master 40%.",
       "logic": "Higher = more protection when many hits land at once; lower = bursts hurt more. It's protection strength, not a straight damage cut.",
-      "interaction": "MINIMUM HIT PROTECTION sets the weakest end. Enemy gun damage is separate."
+      "interaction": "MIN HIT PROTECTION sets the weakest end. Enemy gun damage is separate."
     },
     {
       "id": "combat.accumulatedDamageWeightMin",
       "tab": "combat",
       "group": "Taking Repeated Hits",
-      "label": "Minimum Hit Protection",
+      "label": "Min Hit Protection",
       "description": "Sets the weaker end of the hidden protection the game can apply when several hits land close together.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Minimum repeated-hit protection"
+        "valueLabel": "Min repeated-hit protection"
       },
       "vanilla": {
         "Novice": 1,
@@ -1215,7 +1215,7 @@
         "notes": []
       },
       "rationale": "Whether hits you already healed still count against your burst protection. Vanilla: Novice–Stalker OFF, Veteran–Master ON. ON = patching up mid-fight doesn't reset the safety net; OFF is more forgiving.",
-      "logic": "OFF = Novice and Stalker behaviour, ON = Veteran and Master. Healing always restores HP; this only decides whether PEAK / MINIMUM HIT PROTECTION still counts the healed damage.",
+      "logic": "OFF = Novice and Stalker behaviour, ON = Veteran and Master. Healing always restores HP; this only decides whether PEAK / MIN HIT PROTECTION still counts the healed damage.",
       "interaction": "Works with PEAK HIT PROTECTION. Healing still restores HP even while past hits count."
     },
     {
@@ -1229,7 +1229,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Maximum health"
+        "valueLabel": "Max health"
       },
       "vanilla": {
         "All": 1
@@ -1299,7 +1299,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Maximum health"
+        "valueLabel": "Max health"
       },
       "vanilla": {
         "All": 1
@@ -1346,7 +1346,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Maximum health"
+        "valueLabel": "Max health"
       },
       "vanilla": {
         "All": 1
@@ -1393,7 +1393,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Maximum health"
+        "valueLabel": "Max health"
       },
       "vanilla": {
         "All": 1
@@ -1440,7 +1440,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Maximum health"
+        "valueLabel": "Max health"
       },
       "vanilla": {
         "All": 1
@@ -1487,7 +1487,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Maximum health"
+        "valueLabel": "Max health"
       },
       "vanilla": {
         "All": 1
@@ -1541,7 +1541,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Maximum health"
+        "valueLabel": "Max health"
       },
       "vanilla": {
         "All": 1
@@ -1588,7 +1588,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Maximum health"
+        "valueLabel": "Max health"
       },
       "vanilla": {
         "All": 1
@@ -1640,7 +1640,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Maximum health"
+        "valueLabel": "Max health"
       },
       "vanilla": {
         "All": 1
@@ -1699,7 +1699,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Maximum health"
+        "valueLabel": "Max health"
       },
       "vanilla": {
         "All": 1
@@ -1751,7 +1751,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Maximum health"
+        "valueLabel": "Max health"
       },
       "vanilla": {
         "All": 1
@@ -1831,7 +1831,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Maximum health"
+        "valueLabel": "Max health"
       },
       "vanilla": {
         "All": 1
@@ -1875,7 +1875,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Maximum health"
+        "valueLabel": "Max health"
       },
       "vanilla": {
         "All": 1
@@ -1919,7 +1919,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Maximum health"
+        "valueLabel": "Max health"
       },
       "vanilla": {
         "All": 1
@@ -3627,7 +3627,7 @@
         "primary": "raw",
         "rawFormat": "0",
         "unit": "points",
-        "valueLabel": "Hunger state threshold"
+        "valueLabel": "Hunger stage starts at"
       },
       "vanilla": {
         "All": 17
@@ -3673,7 +3673,7 @@
         "primary": "raw",
         "rawFormat": "0",
         "unit": "points",
-        "valueLabel": "Hunger state threshold"
+        "valueLabel": "Hunger stage starts at"
       },
       "vanilla": {
         "All": 33
@@ -3720,7 +3720,7 @@
         "primary": "raw",
         "rawFormat": "0",
         "unit": "points",
-        "valueLabel": "Hunger state threshold"
+        "valueLabel": "Hunger stage starts at"
       },
       "vanilla": {
         "All": 83
@@ -3893,7 +3893,7 @@
         "primary": "raw",
         "rawFormat": "0",
         "unit": "points",
-        "valueLabel": "Fatigue state threshold"
+        "valueLabel": "Fatigue stage starts at"
       },
       "vanilla": {
         "All": 50
@@ -3939,7 +3939,7 @@
         "primary": "raw",
         "rawFormat": "0",
         "unit": "points",
-        "valueLabel": "Fatigue state threshold"
+        "valueLabel": "Fatigue stage starts at"
       },
       "vanilla": {
         "All": 60
@@ -3985,7 +3985,7 @@
         "primary": "raw",
         "rawFormat": "0",
         "unit": "points",
-        "valueLabel": "Fatigue state threshold"
+        "valueLabel": "Fatigue stage starts at"
       },
       "vanilla": {
         "All": 80
@@ -5266,7 +5266,7 @@
       "id": "survival.minimumSleepHours",
       "tab": "survival",
       "group": "Sleeping",
-      "label": "Minimum Sleep",
+      "label": "Min Sleep",
       "description": "Sets the minimum sleep duration used by the default sleep settings.",
       "control": "slider",
       "valueKind": "raw",
@@ -5274,7 +5274,7 @@
         "primary": "multiplier",
         "rawFormat": "0.##x",
         "unit": "hours",
-        "valueLabel": "Minimum sleep duration"
+        "valueLabel": "Min sleep duration"
       },
       "vanilla": {
         "All": 7
@@ -5605,7 +5605,7 @@
         "primary": "percentOfVanilla",
         "rawFormat": "0",
         "unit": "HP",
-        "valueLabel": "Maximum health"
+        "valueLabel": "Max health"
       },
       "vanilla": {
         "All": 100
@@ -5746,7 +5746,7 @@
       "display": {
         "primary": "percent",
         "rawFormat": "0.00×",
-        "valueLabel": "Health recovery multiplier"
+        "valueLabel": "Health recovery strength"
       },
       "vanilla": {
         "Novice": 1,
@@ -6718,7 +6718,7 @@
         "primary": "percentOfVanilla",
         "rawFormat": "0",
         "unit": "stamina",
-        "valueLabel": "Maximum stamina"
+        "valueLabel": "Max stamina"
       },
       "vanilla": {
         "All": 100
@@ -6987,7 +6987,7 @@
       "display": {
         "primary": "raw",
         "rawFormat": "0.00",
-        "valueLabel": "Stamina effect in speed-limited sprint state"
+        "valueLabel": "Stamina while sprinting slowed"
       },
       "vanilla": {
         "All": -0.65
@@ -7031,7 +7031,7 @@
       "display": {
         "primary": "raw",
         "rawFormat": "0.00",
-        "valueLabel": "Stamina effect in internal Jogging state"
+        "valueLabel": "Stamina while jogging"
       },
       "vanilla": {
         "All": 0
@@ -7075,7 +7075,7 @@
       "display": {
         "primary": "raw",
         "rawFormat": "0.00",
-        "valueLabel": "Stamina effect in internal SlowRun state"
+        "valueLabel": "Stamina while running slowly"
       },
       "vanilla": {
         "All": 0
@@ -7120,7 +7120,7 @@
         "primary": "raw",
         "rawFormat": "0",
         "unit": "uu",
-        "valueLabel": "Maximum vault height"
+        "valueLabel": "Max vault height"
       },
       "vanilla": {
         "All": 130
@@ -7583,7 +7583,7 @@
       "display": {
         "primary": "raw",
         "rawFormat": "0.00",
-        "valueLabel": "Stamina effect in full sprint state"
+        "valueLabel": "Stamina while sprinting"
       },
       "vanilla": {
         "All": -1.4
@@ -7627,7 +7627,7 @@
       "display": {
         "primary": "raw",
         "rawFormat": "0.00",
-        "valueLabel": "Stamina effect in internal Run state"
+        "valueLabel": "Stamina while running"
       },
       "vanilla": {
         "All": -0.65
@@ -7710,7 +7710,7 @@
       "id": "stamina.maxCarryWeight",
       "tab": "stamina",
       "group": "Encumbrance",
-      "label": "Maximum Carry Weight",
+      "label": "Max Carry Weight",
       "description": "Sets the player's default maximum inventory mass.",
       "control": "slider",
       "valueKind": "raw",
@@ -8774,7 +8774,7 @@
       "id": "loot.stashMedkitMinCount",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Minimum Medkits",
+      "label": "Min Medkits",
       "description": "Numeric 0–5 minimum floor: 0 retains the original minimum, 1–5 impose a higher floor. Quest and protected loot remain untouched.",
       "control": "slider",
       "valueKind": "integer",
@@ -8822,7 +8822,7 @@
       "id": "loot.stashMedkitMaxCount",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Maximum Medkits",
+      "label": "Max Medkits",
       "description": "Numeric 0–5 maximum cap: 0 excludes, 5 retains the original source cap; 1–4 impose a smaller maximum. Quest and protected loot remain untouched.",
       "control": "slider",
       "valueKind": "integer",
@@ -8870,7 +8870,7 @@
       "id": "loot.stashArmyMedkitMinCount",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Minimum Army Medkits",
+      "label": "Min Army Medkits",
       "description": "Numeric 0–5 minimum floor: 0 retains the original minimum, 1–5 impose a higher floor. Quest and protected loot remain untouched.",
       "control": "slider",
       "valueKind": "integer",
@@ -8918,7 +8918,7 @@
       "id": "loot.stashArmyMedkitMaxCount",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Maximum Army Medkits",
+      "label": "Max Army Medkits",
       "description": "Numeric 0–5 maximum cap: 0 excludes, 5 retains the original source cap; 1–4 impose a smaller maximum. Quest and protected loot remain untouched.",
       "control": "slider",
       "valueKind": "integer",
@@ -9384,7 +9384,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.0×",
-        "valueLabel": "Relative mix weight"
+        "valueLabel": "Share of bonus gear"
       },
       "vanilla": {
         "All": 1
@@ -9439,7 +9439,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.0×",
-        "valueLabel": "Relative mix weight"
+        "valueLabel": "Share of bonus gear"
       },
       "vanilla": {
         "All": 1
@@ -9494,7 +9494,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.0×",
-        "valueLabel": "Relative mix weight"
+        "valueLabel": "Share of bonus gear"
       },
       "vanilla": {
         "All": 1
@@ -9549,7 +9549,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.0×",
-        "valueLabel": "Relative mix weight"
+        "valueLabel": "Share of bonus gear"
       },
       "vanilla": {
         "All": 0
@@ -10083,7 +10083,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": ".45 ACP Weight"
+        "valueLabel": ".45 ACP share"
       },
       "vanilla": {
         "All": 1
@@ -10128,7 +10128,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "5.45x39 mm Weight"
+        "valueLabel": "5.45×39 mm share"
       },
       "vanilla": {
         "All": 1
@@ -10173,7 +10173,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "12x70 Buckshot Weight"
+        "valueLabel": "12×70 buckshot share"
       },
       "vanilla": {
         "All": 1
@@ -10218,7 +10218,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Army Medkit Weight"
+        "valueLabel": "Army Medkit share"
       },
       "vanilla": {
         "All": 1
@@ -11076,14 +11076,14 @@
       "id": "economy.traderMinBuyCondition",
       "tab": "economy",
       "group": "Trading",
-      "label": "Minimum Sellable Condition",
+      "label": "Min Sellable Condition",
       "description": "Sets the minimum condition a weapon or armor must have before traders will buy it from you. 0% allows completely broken gear; 40% is vanilla.",
       "control": "slider",
       "valueKind": "probability",
       "display": {
         "primary": "percent",
         "rawFormat": "0%",
-        "valueLabel": "Minimum accepted item condition"
+        "valueLabel": "Min accepted item condition"
       },
       "vanilla": {
         "All": 0.4
@@ -12197,7 +12197,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "weapon weight"
+        "valueLabel": "Weapon weight"
       },
       "vanilla": {
         "All": 1
@@ -12236,7 +12236,7 @@
       },
       "rationale": "How heavy weapons are in your backpack. Vanilla: 1×. Lower it to carry a spare rifle without being slowed down; damage and handling don't change.",
       "logic": "1× keeps vanilla weight. 0× makes them weightless; 2× doubles their weight.",
-      "interaction": "Weapons keep their weight differences. MAXIMUM CARRY WEIGHT is separate."
+      "interaction": "Weapons keep their weight differences. MAX CARRY WEIGHT is separate."
     },
     {
       "id": "equipment.armorWeight",
@@ -12249,7 +12249,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "armor weight"
+        "valueLabel": "Armor weight"
       },
       "vanilla": {
         "All": 1
@@ -13011,7 +13011,7 @@
       "display": {
         "primary": "percent",
         "rawFormat": "0.###",
-        "valueLabel": "Maximum stamina loss"
+        "valueLabel": "Max stamina loss"
       },
       "vanilla": {
         "All": 0.2
@@ -13278,7 +13278,7 @@
         "primary": "raw",
         "rawFormat": "0",
         "unit": "points",
-        "valueLabel": "Bleeding stage threshold"
+        "valueLabel": "Bleeding stage starts at"
       },
       "vanilla": {
         "All": 50
@@ -13325,7 +13325,7 @@
         "primary": "raw",
         "rawFormat": "0",
         "unit": "points",
-        "valueLabel": "Bleeding stage threshold"
+        "valueLabel": "Bleeding stage starts at"
       },
       "vanilla": {
         "All": 75
@@ -16052,7 +16052,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "species encounter cap"
+        "valueLabel": "Pack size"
       },
       "vanilla": {
         "All": 1
@@ -16120,7 +16120,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "species encounter cap"
+        "valueLabel": "Pack size"
       },
       "vanilla": {
         "All": 1
@@ -16188,7 +16188,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "species encounter cap"
+        "valueLabel": "Pack size"
       },
       "vanilla": {
         "All": 1
@@ -16256,7 +16256,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "species encounter cap"
+        "valueLabel": "Pack size"
       },
       "vanilla": {
         "All": 1
@@ -16324,7 +16324,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "species encounter cap"
+        "valueLabel": "Pack size"
       },
       "vanilla": {
         "All": 1
@@ -16392,7 +16392,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "species encounter cap"
+        "valueLabel": "Pack size"
       },
       "vanilla": {
         "All": 1
@@ -16460,7 +16460,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "species encounter cap"
+        "valueLabel": "Pack size"
       },
       "vanilla": {
         "All": 1
@@ -16528,7 +16528,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "species encounter cap"
+        "valueLabel": "Pack size"
       },
       "vanilla": {
         "All": 1
@@ -16596,7 +16596,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "species encounter cap"
+        "valueLabel": "Pack size"
       },
       "vanilla": {
         "All": 1
@@ -16664,7 +16664,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "species encounter cap"
+        "valueLabel": "Pack size"
       },
       "vanilla": {
         "All": 1
@@ -16732,7 +16732,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "species encounter cap"
+        "valueLabel": "Pack size"
       },
       "vanilla": {
         "All": 1
@@ -16800,7 +16800,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "species encounter cap"
+        "valueLabel": "Pack size"
       },
       "vanilla": {
         "All": 1
@@ -16868,7 +16868,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "species encounter cap"
+        "valueLabel": "Pack size"
       },
       "vanilla": {
         "All": 1
@@ -16936,7 +16936,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "species encounter cap"
+        "valueLabel": "Pack size"
       },
       "vanilla": {
         "All": 1

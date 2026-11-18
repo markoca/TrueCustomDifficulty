@@ -2360,7 +2360,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             new Rect(16.0, 191.0, cell, 116.0),
             text, muted, border, accent, panel, vaultHeight: true);
         DrawMovementLimitRuler(dc, P("stamina.maxCarryWeight"),
-            "MAXIMUM CARRY WEIGHT", "kg",
+            "MAX CARRY WEIGHT", "kg",
             new Rect(16.0 + cell + gap, 191.0, cell, 116.0),
             text, muted, border, accent, panel, vaultHeight: false);
     }
@@ -4264,7 +4264,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var selector = new Rect(left, 146.0, width, 84.0);
         dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .72),
             new Pen(border, .9), selector, 4, 4);
-        DrawText(dc, "MINIMUM HOURS ASLEEP",
+        DrawText(dc, "MIN HOURS ASLEEP",
             new Point(left + 11, 154.0), 10.6, text, FontWeights.Bold);
         var modified = minimumHours.IsValueModifiedFromReference();
         DrawRightAlignedText(dc, $"{minimumHours.CurrentNumber:0} HOURS",

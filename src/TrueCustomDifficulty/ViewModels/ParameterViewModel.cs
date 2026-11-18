@@ -125,7 +125,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "ConsumableMixer" => "Set Water and Energy Drink instant stamina gains, lasting buffs and effect durations separately. OVERRIDE LIMITS allows longer durations.",
                     "SleepingDashboard" => "Set when you can sleep, the minimum hours and how much HP and stamina you regain when you wake up.",
                     "CoreHealthDashboard" => "Set MAX HP and PASSIVE HP REGEN at the top. REGEN DELAY, REGEN STRENGTH and LOW-HP RECOVERY RATE use separate tracks.",
-                    "StaminaCore" => "Set MAX STAMINA and STAMINA REGEN at the top. VAULT HEIGHT and MAXIMUM CARRY WEIGHT below change independently.",
+                    "StaminaCore" => "Set MAX STAMINA and STAMINA REGEN at the top. VAULT HEIGHT and MAX CARRY WEIGHT below change independently.",
                     "WaterStaminaPressure" => "Drag the MEDIUM WATER or DEEP WATER track separately.",
                     "SevereFatiguePenaltyBoard" => "Enable severe-fatigue mechanics, then drag each of the five vertical penalty equalizer bars independently.",
                     "MasterLowHealth" => "Enable low-health mechanics and turn the HEALTH RECOVERY LOSS knob: how much slower HP regenerates while your health is low.",
@@ -1448,7 +1448,7 @@ public sealed class ParameterViewModel : ObservableObject
             if (Id == "loot.blueprintShuffle")
                 return "Moves blueprints between their spots.";
             if (Id == "combat.accumulatedDamageIncludesHealedHealth")
-                return "ON: healing restores HP, but PEAK / MINIMUM HIT PROTECTION still count the healed damage.";
+                return "ON: healing restores HP, but PEAK / MIN HIT PROTECTION still count the healed damage.";
             if (IsToggle || IsChoiceSlider)
                 return string.Empty;
 

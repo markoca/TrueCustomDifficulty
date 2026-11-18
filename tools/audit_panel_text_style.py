@@ -103,6 +103,11 @@ for p in CATALOG:
         text = p.get(kind) or ""
         if text:
             hits += lint(p["id"], text, kind)
+    value_label = (p.get("display") or {}).get("valueLabel") or ""
+    if value_label:
+        hits += lint(p["id"], value_label, "valueLabel")
+        if value_label[0].islower():
+            hits.append((p["id"], "valueLabel", "value label starts with a capital"))
     r = p.get("rationale") or ""
     if r and not re.search(r"\bVanilla\b", r):
         hits.append((p["id"], "rationale", "missing 'Vanilla:'"))
@@ -180,6 +185,16 @@ for f in UI_FILES:
     for n, line in enumerate(f.read_text().splitlines(), 1):
         if re.search(r'(\}|\d) (KG|PTS|PTS/S|RAD|SEC|UU|uu)"', line):
             hits.append((f"{f.name}:{n}", "ui", "unit after a number is lower case (kg, pts, pts/s, rad, s, cm)"))
+
+# MIN / MAX are always abbreviated in names and captions.
+for p in CATALOG:
+    for field in (p.get("label") or "", (p.get("display") or {}).get("valueLabel") or ""):
+        if re.search(r"\b(Minimum|Maximum)\b", field):
+            hits.append((p["id"], "label", "write Min / Max in names"))
+for f in UI_FILES:
+    for n, line in enumerate(f.read_text().splitlines(), 1):
+        if re.search(r'"[^"]*\b(MINIMUM|MAXIMUM)\b', line):
+            hits.append((f"{f.name}:{n}", "ui", "caption says MIN / MAX"))
 
 # CAPS names in panel texts must be something the player can find on screen:
 # a control label or a caption the UI code draws.

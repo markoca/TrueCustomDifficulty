@@ -1,3 +1,20 @@
+## 2026-11-18 — CURRENT: MIN / MAX everywhere, panel value labels in player words
+
+* **MIN / MAX names**:
+  * Labels: *Min Hit Protection*, *Min Sleep*, *Max Carry Weight*, *Min / Max Medkits*, *Min / Max Army Medkits*, *Min Sellable Condition*.
+  * Captions: `MAX CARRY WEIGHT`, `MIN HOURS ASLEEP`.
+  * Texts: `PEAK / MIN HIT PROTECTION`.
+  * 22 value labels: `Max health`, `Max stamina`, `Max vault height`, …
+* **Panel value line** (`display.valueLabel`, shown under the title as `<label> · <value>`) gets the same style rules:
+  * `Health recovery strength` (was *multiplier*)
+  * `Share of bonus gear` (was *Relative mix weight*)
+  * `.45 ACP share` / `5.45×39 mm share` / `12×70 buckshot share` / `Army Medkit share` (was *… Weight*, with *x*)
+  * `Hunger / Fatigue / Bleeding stage starts at` (was *state threshold*)
+  * `Stamina while jogging / running / sprinting …` (was *internal Run state*)
+  * `Pack size` (was *species encounter cap*)
+  * `Weapon weight` / `Armor weight` (capitalized)
+* The style gate now checks value labels (tech speak, ×, leading capital), *Minimum / Maximum* in names and value labels, and `MINIMUM / MAXIMUM` in UI captions.
+
 ## 2026-11-18 — CURRENT: Vanilla clause format — en-dash pairs, `s` / `min`
 
 * Neighbouring difficulties merge with an en dash in every `Vanilla:` clause, pairs included: `Novice–Stalker 1×`, `Stalker–Veteran 1×` and `Veteran–Master 0.75×` (was *Novice and Stalker …*). This covers 13 texts: explosions, your weapon damage, healed hits, bleeding severity, HP regen strength, bonus packs (card too), Rare coupons, trader buy / sell, and upgrades.

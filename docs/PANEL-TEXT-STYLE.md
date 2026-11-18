@@ -9,7 +9,8 @@ The right-hand panel is read by a **player**, not by a modder. Every text answer
 
 | Section | Field | Shape | Max |
 |---|---|---|---|
-| Panel title | `label` (or `OwnPanelTitle` for board anchors) | The name the board draws. | — |
+| Panel title | `label` (or `OwnPanelTitle` for board anchors) | The name the board draws. *Min* / *Max*, never *Minimum* / *Maximum*. | — |
+| Value line | `display.valueLabel` | What the number is, in player words, capitalized: `Max health`, `Pack size`, `Stamina while jogging`. Same tech-speak rules. | — |
 | **WHAT IT DOES** | `rationale` | One paragraph: **① what it changes in play** (one sentence, starts with *How …* / *Whether …* / *Which …* when it fits) → **② `Vanilla: …`** → **③ a feel or tip sentence** (optional, never a `Higher = …` that HIGHER / LOWER already says) → **④ `Only works while X is ON.`** if it has a master switch. | 300 chars |
 | **HIGHER / LOWER** | `logic` | Direction only, opening with it: `Higher = …; lower = …` (or the value that sets it: `0 = …`, `1× keeps …`, `100% = …`, `OFF …`). No vanilla values (they live in ①–②). | 200 chars |
 | **WORKS WITH** | `interaction` | Which other controls stack, override or stay separate — named in CAPS. Opens with the scope or the partner: `Only <thing>. <CAPS> is separate.`, `Stacks with …`, `Separate from …`, `Multiplies with …`. Never empty. Every CAPS name must be a control label or an on-screen caption. Never opens with *This …* / *The game …* / *How much …*; no mouse tips (*drag*, *right-click*, *radar point* belong in CONTROLS); no *eligible*. | 220 chars |

@@ -33,7 +33,7 @@ names={
   "loot.expensiveStashMoneyChance": "Rare Coupons Chance",
   "economy.buyCondition": "Prices Traders Pay",
   "economy.sellCondition": "Prices You Pay",
-  "economy.traderMinBuyCondition": "Minimum Sellable Condition",
+  "economy.traderMinBuyCondition": "Min Sellable Condition",
   "economy.itemValueFloor": "Broken Gear Value",
   "economy.traderAmmoStock": "Trader Ammo Supply",
   "economy.medicStock": "Trader Medical Supply",
