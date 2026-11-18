@@ -59,6 +59,26 @@ public static class ZoneTimersPolicy
     /// <summary>Last stage end at this warning (must stay ≤ 300 s).</summary>
     public static double EmissionEnd(double warningSeconds) => 140.0 + Shift(warningSeconds);
 
+    /// <summary>
+    /// Short in-dial line in player words for the ZONE WEATHER knobs.
+    /// The weights are relative to the selected difficulty's vanilla.
+    /// </summary>
+    public static string? KnobText(string id, double value, double reference)
+    {
+        const double eps = 0.0001;
+        return id switch
+        {
+            EmissionFrequencyId => value <= eps ? "NO RANDOM EMISSIONS"
+                : Math.Abs(value - reference) < eps ? "VANILLA PACE"
+                : value < reference ? "RARER EMISSIONS" : "MORE EMISSIONS",
+            StormFrequencyId => value <= eps ? "NO STORMS"
+                : Math.Abs(value - reference) < eps ? "VANILLA PACE"
+                : value < reference ? "CLEARER SKIES" : "MORE RAIN & THUNDER",
+            EmissionWarningId => "TO FIND COVER",
+            _ => null
+        };
+    }
+
     // ---- TRADER RESTOCK ------------------------------------------------
     // BoolProviderPrototypes.cfg: the only refresh conditions trade uses.
     // 84 named traders (base + DLC1) refresh on TradeRegenHoursPassed8; the

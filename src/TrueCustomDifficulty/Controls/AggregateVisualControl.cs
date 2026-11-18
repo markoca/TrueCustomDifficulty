@@ -990,42 +990,76 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
     }
 
-    // ZONE WEATHER: how often emissions and storms come (weather weights of
-    // the selected difficulty) and how long the emission warning lasts; the
-    // line under EMISSION WARNING follows ZoneTimersPolicy like the writer.
+    // ZONE WEATHER: three knobs (ARTIFACT HUNTING geometry) — how often
+    // random emissions and storms come (weather weights of the selected
+    // difficulty) and how long the emission warning lasts — and a timeline
+    // of one emission that follows ZoneTimersPolicy like the writer.
+    private const double ZoneTimelineHeight = 92.0;
+
+    private static double ZoneWeatherHeight(double width)
+        => ArtifactKnobTop + ArtifactKnobHeight + ArtifactKnobGap + ZoneTimelineHeight + 14.0;
+
     private void DrawZoneWeatherBoard(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
         DrawCenteredText(dc, "ZONE WEATHER",
             new Point(ActualWidth / 2.0, 21.0), VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
-        var cards = new (string Id, string Label)[]
+        var knobs = new (string Id, string Label)[]
         {
             (ZoneTimersPolicy.EmissionFrequencyId, "EMISSIONS"),
             (ZoneTimersPolicy.StormFrequencyId, "STORMS"),
             (ZoneTimersPolicy.EmissionWarningId, "EMISSION WARNING")
         };
-        var columns = EconomyColumns(ActualWidth);
-        var cardWidth = EconomyCardWidth(ActualWidth, columns);
-        const double gap = 12.0;
-        var bankWidth = columns * cardWidth + (columns - 1) * gap;
-        var left = (ActualWidth - bankWidth) / 2.0;
-        for (var i = 0; i < cards.Length; i++)
+        var (left, bankWidth, cellWidth) = ArtifactKnobBank(ActualWidth);
+        for (var i = 0; i < knobs.Length; i++)
         {
-            var rect = new Rect(left + (i % columns) * (cardWidth + gap),
-                48.0 + (i / columns) * LairCardPitch, cardWidth, 80.0);
-            var parameter = P(cards[i].Id);
-            DrawEconomyCard(dc, parameter, cards[i].Label, rect, text, muted, border, accent, panel);
-            if (parameter is null || cards[i].Id != ZoneTimersPolicy.EmissionWarningId)
-                continue;
-            var warning = Math.Round(parameter.CurrentNumber);
-            var line = $"SHOCK WAVE AT {warning:0} s · OVER AT {ZoneTimersPolicy.EmissionEnd(warning):0} s";
-            var readout = CreateText(line, 9.6,
-                !parameter.IsControlEnabled ? muted
-                    : parameter.IsValueModifiedFromReference() ? ReadoutInk.Numbers(accent, muted) : muted,
-                FontWeights.SemiBold, Math.Max(1.0, rect.Width - 8.0));
-            dc.DrawText(readout, new Point(rect.Left + 4.0, rect.Bottom + 6.0));
+            var parameter = P(knobs[i].Id);
+            var knobCard = new Rect(left + i * (cellWidth + ArtifactKnobGap),
+                ArtifactKnobTop, cellWidth, ArtifactKnobHeight);
+            dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9), knobCard, 4.0, 4.0, parameter);
+            var isWarning = knobs[i].Id == ZoneTimersPolicy.EmissionWarningId;
+            DrawSourceKnob(dc, parameter, knobs[i].Label, knobCard,
+                text, muted, border, accent, panel,
+                rawReadout: isWarning,
+                nativeUnit: isWarning ? "SECONDS" : null,
+                secondaryReadout: parameter is null ? null
+                    : ZoneTimersPolicy.KnobText(parameter.Id, parameter.CurrentNumber, parameter.ReferenceNumber),
+                secondaryModified: parameter?.IsValueModifiedFromReference() == true);
         }
+
+        // One emission, start to finish, on a fixed 0–300 s scale (the
+        // emission weather window): warning, shock wave + active, after.
+        var warningParameter = P(ZoneTimersPolicy.EmissionWarningId);
+        var warning = Math.Round(warningParameter?.CurrentNumber ?? ZoneTimersPolicy.VanillaWarningSeconds);
+        var changed = warningParameter?.IsValueModifiedFromReference() == true;
+        var card = new Rect(left, ArtifactKnobTop + ArtifactKnobHeight + ArtifactKnobGap,
+            bankWidth, ZoneTimelineHeight);
+        dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0);
+        DrawText(dc, "ONE EMISSION", new Point(card.Left + 12.0, card.Top + 8.0),
+            10.0, text, FontWeights.Bold);
+        DrawRightAlignedText(dc, "WARNING · EMISSION · CALM",
+            new Point(card.Right - 12.0, card.Top + 9.0), 9.0, muted, FontWeights.Normal);
+
+        var bar = new Rect(card.Left + 12.0, card.Top + 32.0, Math.Max(1.0, card.Width - 24.0), 12.0);
+        double TimeX(double seconds) => bar.Left + bar.Width * Math.Clamp(seconds / ZoneTimersPolicy.EmissionWeatherSeconds, 0.0, 1.0);
+        var activeEnd = warning + 60.0;
+        var end = ZoneTimersPolicy.EmissionEnd(warning);
+        dc.DrawRectangle(CloneWithOpacity(muted, .18), null, bar);
+        dc.DrawRectangle(CloneWithOpacity(accent, .35), null, new Rect(bar.Left, bar.Top, TimeX(warning) - bar.Left, bar.Height));
+        dc.DrawRectangle(accent, null, new Rect(TimeX(warning), bar.Top, TimeX(activeEnd) - TimeX(warning), bar.Height));
+        dc.DrawRectangle(CloneWithOpacity(muted, .55), null, new Rect(TimeX(activeEnd), bar.Top, TimeX(end) - TimeX(activeEnd), bar.Height));
+        dc.DrawRectangle(null, new Pen(CloneWithOpacity(border, .9), 0.8), bar);
+        var cover = ZoneTimersPolicy.VanillaAiEndSeconds + ZoneTimersPolicy.Shift(warning);
+        dc.DrawLine(new Pen(text, 1.2), new Point(TimeX(cover), bar.Top - 4.0), new Point(TimeX(cover), bar.Bottom + 4.0));
+
+        var ink = changed ? ReadoutInk.Numbers(accent, muted) : muted;
+        var line1 = $"You get {warning:0} s to find cover. The storm hits at {warning:0} s and is over at {activeEnd:0} s.";
+        var line2 = $"NPCs leave cover at {cover:0} s (white tick).";
+        dc.DrawText(CreateText(line1, 9.6, ink, FontWeights.SemiBold, Math.Max(1.0, card.Width - 24.0)),
+            new Point(card.Left + 12.0, bar.Bottom + 10.0));
+        dc.DrawText(CreateText(line2, 9.6, ink, FontWeights.SemiBold, Math.Max(1.0, card.Width - 24.0)),
+            new Point(card.Left + 12.0, bar.Bottom + 26.0));
     }
 
     // TRADER RESTOCK: one card (named traders, in-game hours) and the
@@ -7171,7 +7205,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
         var stashGraph = Family is "StashContentMix"
             or "StashMedicalComposition" or "StashGear";
-        if (!stashGraph && Family is not ("PlayerWeaponProfile" or "ArtifactHunting" or "StashSmartLoot" or "AmmoDistribution" or "ConsumableMixer" or "EquipmentWearBalance" or "ServiceCostsBoard" or "RadiationBalance" or "HumanCombatProfile" or "StarvationTimeline" or "FlycatcherSlowdown" or "AnomalySpecialEffects" or "NpcLootLoadout"))
+        if (!stashGraph && Family is not ("PlayerWeaponProfile" or "ZoneWeather" or "ArtifactHunting" or "StashSmartLoot" or "AmmoDistribution" or "ConsumableMixer" or "EquipmentWearBalance" or "ServiceCostsBoard" or "RadiationBalance" or "HumanCombatProfile" or "StarvationTimeline" or "FlycatcherSlowdown" or "AnomalySpecialEffects" or "NpcLootLoadout"))
             return;
 
         var target = FindTarget(e.GetPosition(this));
@@ -8257,7 +8291,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "ServiceCostsBoard" => ServicePriceBoardHeight(width),
             "ItemWeightBoard" => EconomyBoardHeight(width, 4),
             "LairPopulation" => LairPopulationBoardHeight(width),
-            "ZoneWeather" => LairPopulationBoardHeight(width),
+            "ZoneWeather" => ZoneWeatherHeight(width),
             "TraderRestock" => 48.0 + LairCardPitch + 6.0,
             "ArtifactHunting" => ArtifactHuntingHeight(width),
             "HumanTactics" => HumanTacticsHeight(width),

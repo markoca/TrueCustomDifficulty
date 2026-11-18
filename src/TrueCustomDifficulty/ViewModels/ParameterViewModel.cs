@@ -136,7 +136,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "RepairCurve" => "Drag one reputation point up or down to set its repair price; neighbouring points keep their order.",
                     "ServiceCostsBoard" => "Adjust guide travel, upgrades and repairs separately. Discounts and reputation may still affect final prices.",
                     "ItemWeightBoard" => "Adjust ammunition, food and medicine, weapons or armor weight independently.",
-                    "ZoneWeather" => "Drag EMISSIONS, STORMS or EMISSION WARNING. The line under the warning shows when the shock wave hits and when the emission is over.",
+                    "ZoneWeather" => "Turn a knob: EMISSIONS and STORMS (how often they come, compared with vanilla), EMISSION WARNING (seconds to find cover). ONE EMISSION shows the warning, the storm and the calm after it on a 5-minute bar.",
                     "TraderRestock" => "Drag RESTOCK EVERY to set how many in-game hours traders wait before restocking. The line under it shows the stalkers you trade with.",
                     "LairPopulation" => "Drag HUMAN CAMPS, MUTANT NESTS or RESPAWN TIME. The line under each card shows a real lair by your rank, or how long a lair takes to fill back up.",
                     "HumanTactics" => "COMBAT MINUTE: each row is one minute of a fight. Drag a row's marker left for more GRENADES, SUPPRESSION, FLANKING, PUSH or CAMPING PENALTY, right for fewer (hollow = vanilla, shaded = random window). ENEMY ACCURACY: drag the ring; tighter = more of their bullets hit you (dashed = vanilla).",

@@ -88,3 +88,7 @@ Older stock files upgrade only when byte-identical (`PreZoneWeatherFactoryBlobs`
 ## Not yet verified
 
 The .NET build, a Wine run and in-game behaviour have not been checked: how often emissions and storms actually come, the timing of the warning and the cover AI, and whether traders actually restock at the new interval.
+
+## 2026-11-18 — Board as knobs
+
+ZONE WEATHER uses three knobs (ARTIFACT HUNTING geometry) with short in-dial lines (`ZoneTimersPolicy.KnobText`). Below them, ONE EMISSION draws a 0–300 s bar: warning (light), storm = shock wave + active (gold), calm after it (grey), and a white tick for the NPC leave-cover moment. Two sentences explain it.

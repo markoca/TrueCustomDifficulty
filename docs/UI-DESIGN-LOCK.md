@@ -1,3 +1,15 @@
+## 2026-11-18 — CURRENT: ZONE WEATHER as knobs, with an emission timeline
+
+* The ZONE WEATHER board is now three knobs in the ARTIFACT HUNTING layout: **EMISSIONS**, **STORMS** and **EMISSION WARNING**. The scroll wheel works on them.
+* Each knob has a short line in player words:
+  * EMISSIONS: `VANILLA PACE` / `RARER EMISSIONS` / `MORE EMISSIONS` / `NO RANDOM EMISSIONS`;
+  * STORMS: `CLEARER SKIES` / `MORE RAIN & THUNDER` / `NO STORMS`;
+  * EMISSION WARNING: `TO FIND COVER`, with the value in SECONDS.
+* New card **ONE EMISSION** under the knobs:
+  * a 5-minute bar with the warning, the storm and the calm after it, plus a white tick where NPCs leave cover;
+  * two lines in plain words: `You get 60 s to find cover. The storm hits at 60 s and is over at 120 s.` / `NPCs leave cover at 130 s (white tick).`
+  * changed numbers turn gold.
+
 ## 2026-11-18 — CURRENT: ZONE WEATHER and TRADER RESTOCK
 
 * New board **ZONE WEATHER** (Environment tab):
