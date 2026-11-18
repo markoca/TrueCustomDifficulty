@@ -21,3 +21,4 @@ audit/generic-loot-fixtures/
 # Local audit report outputs (never tracked).
 audit/final-cfg-mapping/
 audit/stashes-cfg-route-delta.csv
+tools/__pycache__/lair_cfg_parse.cpython-*.pyc
