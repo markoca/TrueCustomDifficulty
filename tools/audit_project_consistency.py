@@ -2201,6 +2201,10 @@ if _factory_service_text.count('PreWaterSplitFactoryBlobs.TryGetValue(name,') !=
 # Do not rewrite old evidence or silently exempt the rest of its contracts.
 _current_scarcity = json.loads((ROOT / "tools/factory_preset_scarcity_refine_2026_11_18.json").read_text(encoding="utf-8"))
 _current_scarcity_roles = _current_scarcity["roles"]
+_current_bandage_hp = json.loads((ROOT / "tools/factory_preset_bandage_hp_policy_2026_11_18.json").read_text(encoding="utf-8"))
+if (set(_current_bandage_hp.get("values", {})) != set(_factory_preset_names)
+        or _current_bandage_hp.get("previousStockBlobs") != {"Scavenger": "162438f40e6615d7e0488cc4535b53f3c7a536fa"}):
+    _factory_errors.append("Bandage HP policy must cover every factory role and the exact prior Scavenger stock blob")
 if (set(_current_scarcity_roles) != set(_factory_preset_names)
     or len(_current_scarcity.get("priorCurrentStockBlobs", {})) != 12):
     _factory_errors.append("scarcity refinement current role matrix/upgrade census missing")
@@ -2256,6 +2260,8 @@ for _name in _factory_preset_names:
             continue
         for _pid, _target in zip(_source_ids, _vectors[_group_idx]):
             _target = _current_scarcity_roles[_name]["changes"].get(_pid, _target)
+            if _pid == "health.bandageHealing":
+                _target = _current_bandage_hp["values"][_name]
             _definition = _factory_catalog[_pid]
             _stored = _entries.get(_pid, {})
             _kind = "toggle" if _definition["control"] == "toggle" else "slider"
@@ -2311,18 +2317,23 @@ for _hard in (_hc, _hcp):
         or _hard["economy.traderAmmoStock"]["number"] < .25):
         _factory_errors.append("Hardcore profile lost all recovery/ammo access")
 
-_factory_medical_expectations = {
-    "Scavenger": (10, False),
-    "Mutant Hunter": (0, False),
-    "Hardcore": (0, False),
-    "Hardcore+": (0, False),
-}
-for _name, (_bandage_expected, _food_expected) in _factory_medical_expectations.items():
+# Bandages always treat bleeding, but only Field Medic may restore HP.
+# This current policy intentionally supersedes the old Scavenger 10 HP rule.
+if _current_bandage_hp.get("values", {}).get("Field Medic") != 10 or any(
+        hp != 0 for name, hp in _current_bandage_hp.get("values", {}).items()
+        if name != "Field Medic"):
+    _factory_errors.append("Factory Bandage HP policy permits only the Field Medic 10 HP exception")
+if _factory_service_text.count("PreBandageHpPolicyFactoryBlobs") != 3:
+    _factory_errors.append("Bandage HP exact-stock upgrade path missing")
+for _name in _factory_preset_names:
     _preset = json.loads((_factory_preset_dir / f"{_name}.json").read_text(encoding="utf-8"))
-    _bandage = _preset["values"].get("health.bandageHealing", {}).get("number")
-    _food = _preset["values"].get("health.foodHealing", {}).get("boolean")
-    if _bandage != _bandage_expected or _food is not _food_expected:
-        _factory_errors.append(f"{_name}: medical rule drifted bandage={_bandage}, food={_food}")
+    _values = _preset["values"]
+    _bandage = _values.get("health.bandageHealing", {}).get("number")
+    _bleeding = _values.get("health.bandageBleeding", {}).get("number", 0)
+    _food = _values.get("health.foodHealing", {}).get("boolean")
+    if (_bandage != _current_bandage_hp["values"].get(_name)
+            or not 0 < _bleeding <= 100 or _food is not False):
+        _factory_errors.append(f"{_name}: Bandage must stop bleeding, return only intended HP and keep food healing OFF")
 
 # Role-deep audit: the explicitly authored role changes still match the
 # native-source role matrix; the presets cover the full current catalog.

@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "date": "2026-11-18",
+  "source": "STALKER 2.1 EffectPrototypes.cfg BandageHealing2 ValueMin|ValueMax",
+  "intent": "Bandages stop bleeding, not recover lost HP. Field Medic alone keeps a modest 10 HP heal as a role-specific exception. All other stock profiles use 0 HP, including Scavenger. This changes no bleeding removal, per-item healing time, medkits or manual editor range.",
+  "values": {
+    "Anomaly Runner": 0,
+    "Field Medic": 10,
+    "Hardcore+": 0,
+    "Hardcore": 0,
+    "Immersive": 0,
+    "Mercenary": 0,
+    "Mutant Hunter": 0,
+    "Outcast": 0,
+    "Scavenger": 0,
+    "Smuggler": 0,
+    "Tactical": 0,
+    "Wanderer": 0
+  },
+  "previousStockBlobs": {
+    "Scavenger": "162438f40e6615d7e0488cc4535b53f3c7a536fa"
+  },
+  "constraints": {
+    "allOthers": 0,
+    "fieldMedic": 10,
+    "bleedingTreatmentIndependent": true,
+    "manualEditorRemainsEditable": true
+  }
+}

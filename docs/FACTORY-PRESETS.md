@@ -1,3 +1,14 @@
+## 2026-11-18 — CURRENT: bandages stop bleeding; HP restoration is Field Medic-only
+
+**Hard factory-profile rule:** **11 of 12 factory presets restore 0 HP from a bandage**. **Field Medic alone restores 10 HP per bandage**, preserving its medical-specialist identity without allowing instant arcade sustain. Scavenger formerly restored 10 HP; it now restores **0 HP** as well. In *every* profile, the separate native `health.bandageBleeding` control stays positive, so bandages retain their primary purpose of stopping bleeding. No change to medkit healing amount, medical `Duration` (5–10 s factory values), food-healing policy, reference difficulty, the editable bandage healing UI, or any CFG writer. This is an authored preset policy, not a locked global editor restriction.
+
+| Factory profiles | Bandage HP restored | Bleeding removal |
+|---|---:|---|
+| Field Medic | 10 HP | Unchanged (100 bleed pts) |
+| All other 11 (including Scavenger) | **0 HP** | Unchanged (role-specific, positive) |
+
+**Implementation:** `tools/factory_preset_bandage_hp_policy_2026_11_18.json` is the current role policy and supersedes the October scarcity matrix only for `health.bandageHealing`. `PresetDirectoryService.PreBandageHpPolicyFactoryBlobs` recognizes the immediately preceding *unmodified Scavenger* stock file by Git blob SHA, upgrading it without touching user-edited factory-named or custom presets. The existing source `BandageHealing2.ValueMin|ValueMax` remains mapped, and all 12 values are pinned by factory coverage, project-consistency and actual embedded-preset load contracts. In-game verification is still required.
+
 ## 2026-11-18 — CURRENT: medical treatment is a tactical commitment (5–10 s)
 
 **Authoritative timing overlay:** `tools/factory_preset_heal_time_2026_11_18.json`, applied after current scarcity/refinement values. All **48 factory medical-duration settings** now use native seconds from **5–10 s**, never the previously shipped 1–4 s arcade treatment. Even with scarce medicine, instantaneous combat healing would undermine survival. No new CFG IDs: four existing `Duration` targets, BandageHealing2, MedkitHealing3, ArmyMedkitHealing4 and EcoMedkitHealing4, via the unchanged writer. These sources configure healing-effect duration; they are not a proven change to the separate consumable-use animation or interruption rules, which require in-game testing.
@@ -200,7 +211,7 @@ The following numbers are **configured source-specific controls**, not observed 
 
 **System decisions (all 12):**
 - Ordinary food no longer restores HP. It remains a hunger resource. All optional NPC smart-loot corpse bonus packages are set to NONE, removing the extra water/medical-ammo source while leaving native NPC equipment and independently modeled corpse drops unchanged.
-- Bandages prioritize bleeding control instead of easy health restoration: only **Field Medic** and **Scavenger** retain a small **10 HP** healing bonus; every other factory profile uses **0 HP**. Bleeding removal remains an independent source with real CFG semantics. Field Medic's earlier invalid 130-point bandage bleeding removal is corrected to the true 100-point cap.
+- Bandages prioritize bleeding control instead of easy health restoration: the **current** rule permits only **Field Medic** to restore **10 HP**; **Scavenger** and the other ten profiles restore **0 HP**. The earlier Scavenger exception in the October balance was retired on 2026-11-18. Bleeding removal remains an independent source with real CFG semantics. Field Medic's earlier invalid 130-point bandage bleeding removal is corrected to the true 100-point cap.
 - Sleep recovery is limited to **15–90 HP**, no longer an automatic 200-HP refill. Medkit potency, medical inventories and accessible treatment differ by role; Field Medic remains a relative medical specialist without unlimited medicine.
 - Ammo acquisition is reduced through separate NPC, stash, crate and trader routes; weapon density is controlled independently of shuffling. The existing nine non-quest unique weapons remain subject to their existing shuffle contract, not arbitrary removal.
 - Trader stock, mission income, resale values, consumable/ammo prices, weapon/armor costs, artifact/trophy prices, travel, wear and repairs are coordinated by profile. High-earning roles retain financial advantages, but cannot offset scarcity for free.
@@ -277,7 +288,7 @@ The hard profiles intentionally separate wound treatment, food and healing:
 - **Hardcore**: Bandage Healing = `0`; Food Restores Health = `OFF`
 - **Hardcore+**: Bandage Healing = `0`; Food Restores Health = `OFF`
 - **Mutant Hunter**: Bandage Healing = `0`; Food Restores Health = `OFF`
-- **Scavenger**: Bandage Healing = `10`; Food Restores Health = `OFF`
+- **Scavenger**: Bandage Healing = `0` (supersedes the previous 10 HP); Food Restores Health = `OFF`
 
 The food-healing toggle only controls the four confirmed ordinary-food healing effects
 for Bread, Fresh Bread, Canned Food and Sausage. Weird Kettle alternative effects are

@@ -1,3 +1,7 @@
+## 2026-11-18 — Factory bandages treat bleeding, not HP
+
+**11 of the 12 factory profiles have Bandage Healing = 0 HP.** Field Medic alone retains 10 HP as a deliberate medical-role exception. Scavenger's former 10 HP bonus is removed. All twelve keep their separate native bleeding removal; 5–10 s factory treatment durations and medkit healing are unchanged. The manual bandage healing control remains editable. Only an exact unchanged Scavenger factory copy is replaced on startup; customized/user presets stay untouched. Source policy and full audit: `tools/factory_preset_bandage_hp_policy_2026_11_18.json`, `docs/FACTORY-PRESETS.md`.
+
 ## 2026-11-18 — Healing time is part of every factory role
 
 All twelve shipped profiles now use **5–10 seconds** for their four native item HEAL TIME values. Field Medic remains quickest; Hardcore+ and Outcast expose the player longest. Previous 1–4 s factory heals are superseded. The manual catalog range remains **1–10 s** with unchanged compact UI. Existing exact-byte stock copies upgrade automatically; customized factory-named and user presets are never overwritten. Full role matrix and source notes: `docs/FACTORY-PRESETS.md` and `tools/factory_preset_heal_time_2026_11_18.json`.
@@ -78,7 +82,7 @@ The two independent Water strength sources are both present in all **twelve ship
 
 ## Current scarcity-first balance — 2026-10-14
 
-The twelve role presets deliberately reduce vanilla's excess supplies through real loot categories, NPC/stash/trader availability, limited medical healing, sleep recovery and coherent economy/repair costs. Food never heals HP in these factory profiles; extra corpse smart-loot bonuses are OFF. Field Medic and Scavenger retain a small 10 HP bandage heal, others use bandages for bleeding control. The full source-backed tuning matrix lives in `tools/factory_preset_scarcity_balance.json`, described in `docs/FACTORY-PRESETS.md`. Previously shipped byte-identical factory JSON files automatically upgrade; edited/user presets stay untouched. This is preset data, not a new UI/CFG setting.
+The twelve role presets deliberately reduce vanilla's excess supplies through real loot categories, NPC/stash/trader availability, limited medical healing, sleep recovery and coherent economy/repair costs. Food never heals HP in these factory profiles; extra corpse smart-loot bonuses are OFF. **Current 2026-11-18 correction:** Field Medic alone retains a 10 HP bandage heal; Scavenger and every other role use bandages only for bleeding control. The old two-role exception is superseded. The full source-backed tuning matrix lives in `tools/factory_preset_scarcity_balance.json`, described in `docs/FACTORY-PRESETS.md`. Previously shipped byte-identical factory JSON files automatically upgrade; edited/user presets stay untouched. This is preset data, not a new UI/CFG setting.
 
 The application ships with twelve custom factory presets:
 
@@ -105,7 +109,7 @@ Medical realism rules in the hard presets:
 - Hardcore: Bandage Healing = 0; Food Restores Health = OFF
 - Hardcore+: Bandage Healing = 0; Food Restores Health = OFF
 - Mutant Hunter: Bandage Healing = 0; Food Restores Health = OFF
-- Scavenger: Food Restores Health = OFF; Bandage Healing remains 10 HP
+- Scavenger: Food Restores Health = OFF; Bandage Healing = 0 HP (current policy)
 
 The Food Restores Health toggle only affects ordinary Bread, Fresh Bread,
 Canned Food and Sausage. Weird Kettle alternative effects are intentionally untouched.

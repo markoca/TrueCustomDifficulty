@@ -1101,6 +1101,14 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "e495c007cd6310ad00be8ce6b41fe7adf4a6b219",
     };
 
+    // 2026-11-18: Scavenger no longer restores HP with bandages.
+    // Exact former factory blob only; never overwrite player-customized presets.
+    private static readonly Dictionary<string, string> PreBandageHpPolicyFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Scavenger"] = "162438f40e6615d7e0488cc4535b53f3c7a536fa",
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -1150,7 +1158,8 @@ public sealed class PresetDirectoryService
             && !PreFallDamageFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreVibeFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreScarcityRefineFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreHealTimeFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreHealTimeFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreBandageHpPolicyFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -1258,7 +1267,9 @@ public sealed class PresetDirectoryService
                 || (PreScarcityRefineFactoryBlobs.TryGetValue(name, out var preScarcityRefineHash)
                     && actual.Equals(preScarcityRefineHash, StringComparison.OrdinalIgnoreCase))
                 || (PreHealTimeFactoryBlobs.TryGetValue(name, out var preHealTimeHash)
-                    && actual.Equals(preHealTimeHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preHealTimeHash, StringComparison.OrdinalIgnoreCase))
+                || (PreBandageHpPolicyFactoryBlobs.TryGetValue(name, out var preBandageHpHash)
+                    && actual.Equals(preBandageHpHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

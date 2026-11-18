@@ -668,6 +668,12 @@ internal static partial class Program
                     && file0.Values["health.armyMedkitHealTime"].Number == expectedHeal.Army
                     && file0.Values["health.ecoMedkitHealTime"].Number == expectedHeal.Eco,
                     name + ": HEAL TIME differs from 5–10 s factory balance");
+                // Bandages treat bleeding for every role. They restore HP only
+                // for Field Medic; Scavenger's former 10 HP bonus is retired.
+                Check(file0.Values["health.bandageHealing"].Number == (file0.Name == "Field Medic" ? 10 : 0)
+                    && file0.Values["health.bandageBleeding"].Number > 0
+                    && file0.Values["health.foodHealing"].Boolean == false,
+                    name + ": bandage must not heal HP outside Field Medic, without disabling bleeding treatment");
                 var stashSmartEnabled = file0.Values["loot.stashSmartLootEnabled"].Boolean == true;
                 var stockedChance = file0.Values["loot.stashSmartStockedChance"].Number!.Value;
                 var lowChance = file0.Values["loot.stashSmartShortChance"].Number!.Value;

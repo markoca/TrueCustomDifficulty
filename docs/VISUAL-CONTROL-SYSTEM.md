@@ -1,3 +1,8 @@
+## CURRENT 2026-11-18 — Bandage HP is a factory role setting, not a UI restriction
+
+* Default factory files now keep **Bandage Healing at 0 HP** in 11 roles, with **Field Medic at 10 HP**. BLEED REMOVAL remains independent and role-specific. The existing catalog-matched compact medical board and Healing/Bleeding/Heal Time controls remain entirely unchanged; no redundant captions, new switches, full-width rails or forced editor minimums.
+* Source `BandageHealing2.ValueMin|ValueMax` still drives HP restoration separately from `BandageBleeding4`; UI controls preserve their native values and behavior. See `docs/FACTORY-PRESETS.md`.
+
 ## CURRENT 2026-11-18 — Factory healing follows the native medical controls
 
 * Factory Bandage / Medkit / Army Medkit / Eco Medkit HEAL TIME values are now **5–10 s** with distinct roles, using the existing catalog's **1–10 s** source duration range and native 1 s step. No UI layout, range, control ID, renderer, frame or writer modification. Each existing medical vertical duration bar stays compact beside Healing and Bleeding, with the same hover/reset and numbers-only modified accent.

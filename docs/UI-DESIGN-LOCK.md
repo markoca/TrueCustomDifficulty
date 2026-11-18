@@ -1,3 +1,8 @@
+## CURRENT 2026-11-18 — Factory bandages do not restore HP (Field Medic exception)
+
+* All 12 factory profiles use the native **Bandage Healing Amount** source: **0 HP** everywhere except **Field Medic (10 HP)**. All retain independent, positive bandage bleed removal. No UI code, catalog range, control placement, slider width, frame, hover/reset behavior, or Stamina Usage number/caption alignment changes. Do not add special text, labels or global locks to force this preset policy in the user-editable UI.
+* The existing 5–10 s factory treatment duration policy remains separate from bandage HP restoration. Details: `docs/FACTORY-PRESETS.md`.
+
 ## CURRENT 2026-11-18 — Factory HEAL TIME is no longer arcade-fast
 
 * All 12 native factory roles now store per-item HEAL TIME **5–10 seconds** (Bandage, Medkit, Army Medkit, Eco Medkit). This is a preset-only balance change. Keep the **existing** compact item-aligned duration rails, 1–10 s / 1 s editable catalog bounds, Stamina Usage-style captions and values, glow, reset and changed-number yellow accents. Do not add duplicate captions, frames, Base/Vanilla text, full-width controls or hidden locks.
