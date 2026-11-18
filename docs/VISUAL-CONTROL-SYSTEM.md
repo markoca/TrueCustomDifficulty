@@ -1,3 +1,8 @@
+## 2026-11-18 — CURRENT: number ink, second sweep
+
+* Four more places changed: Drunkenness *WASTED AFTER N*, the World Loot MOD lane `%`, the water stamina cap number, and the starvation HUD time (digits only, `h / m / s` plain).
+* `tools/audit_number_ink.py` now also flags `changed ? size + N : size` and whole-value gold (`? accent :`) in text draws.
+
 ## 2026-11-18 — CURRENT: only numbers turn gold and grow, project-wide
 
 * A changed value now changes **only its numbers**: they turn gold and are 1.2 DIP bigger (`ReadoutInk.NumberGrowth`). Words and units around them (`kg`, `%`, `×`, `s`, `HOURS`, `RARE+`) keep their colour and size.

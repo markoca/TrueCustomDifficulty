@@ -728,9 +728,8 @@ public sealed class DrunkennessControl : FrameworkElement
         bool modified)
     {
         var prefixText = CreateText(prefix, size, textBrush, FontWeights.SemiBold);
-        var highlightedText = CreateText(highlighted,
-            modified ? size + 1.2 : size,
-            modified ? BrushResource("AccentBrush", Brushes.Gold) : textBrush,
+        var highlightedText = CreateText(highlighted, size,
+            modified ? ReadoutInk.Numbers(BrushResource("AccentBrush", Brushes.Gold), textBrush) : textBrush,
             FontWeights.Bold);
         var suffixText = CreateText(suffix, size, textBrush, FontWeights.SemiBold);
 

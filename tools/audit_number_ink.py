@@ -31,6 +31,12 @@ for f in CONTROLS:
             a, b = re.findall(r"\d+(?:\.\d+)?", m.group(0).split("?", 1)[1])[:2]
             if 8.0 <= float(b) < float(a) <= float(b) + 3.0:
                 hits.append(f"{f.name}:{n}: whole text grows on change: {m.group(0)}")
+        if re.search(r"(?:[Mm]odified|[Cc]hanged|FromReference\(\))\w*\)?\s*\?\s*\w+\s*\+\s*\d", line):
+            hits.append(f"{f.name}:{n}: whole text grows on change (size + N)")
+        if re.search(r"(?:[Mm]odified|[Cc]hanged|FromReference\(\)|IsEffectiveChange|> Epsilon)[^;]{0,40}\?\s*"
+                     r"(?:accent|BrushResource\(\"AccentBrush\"[^)]*\)|FindBrush\(\"AccentBrush\"[^)]*\))\s*:", line) \
+                and not re.search(r"Pen\(|CloneWithOpacity|Draw(?:Line|Ellipse|Rectangle|Geometry)|Chrome", line):
+            hits.append(f"{f.name}:{n}: whole value painted gold; use ReadoutInk.Numbers")
         if "SetForegroundBrush(" in line and "separatorBrush" not in line and f.name != "ReadoutInk.cs":
             window = "\n".join(lines[max(0, n - 4):n + 3])
             if "SetFontSize(" not in window:

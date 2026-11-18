@@ -19,3 +19,11 @@ Manual number regexes match `[+\-−]?\d+(?:\.\d+)?`. Units (`%`, `x`, `×`) are
 * XAML: CURRENT, EFFECTIVE, RANGE MIN/MAX and the example line no longer turn wholly gold or 13.7 bold. Only their numbers change.
 
 Gate: `tools/audit_number_ink.py` (in `pre_release.py`).
+
+## Second sweep (same day)
+
+* Drunkenness *WASTED AFTER N* now has the base size, with only N gold and grown. Before, `size + 1.2` went through a separate path.
+* World Loot MOD lane `%`: only the number is gold. Before, the whole `12%` was gold.
+* The water stamina cap number now also grows on change (`ReadoutInk.Mark`). Its bold base emphasis stays.
+* Starvation HUD `~1h 5m 20s`: only the digits are big and gold; `h / m / s` and `~` stay plain.
+* The gate also catches `changed ? size + N : size` and a whole value painted `? accent :`.

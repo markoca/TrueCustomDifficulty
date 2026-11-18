@@ -260,7 +260,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
             enabled ? accent : muted, _hoverRow == ModLane && enabled);
         DrawCenteredText(dc, $"{fraction * 100.0:0}%",
             new Point(modCenter, 88), 11.3,
-            enabled && fraction > Epsilon ? accent : enabled ? text : muted, FontWeights.Bold);
+            enabled && fraction > Epsilon ? ReadoutInk.Numbers(accent, text) : enabled ? text : muted, FontWeights.Bold);
         _modCheckbox = new Rect(modCenter - 52.0, 290.0, 18.0, 18.0);
         BooleanCheckboxChrome.Draw(dc, _modCheckbox, ModItemsEnabled, IsEnabled && ModItemsEditorAvailable,
             _hoverRow == ModLane, panel, border, accent);

@@ -4137,7 +4137,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             capLabel.SetFontSize(13.0, capNumber.Index, capNumber.Length);
             capLabel.SetFontWeight(FontWeights.Bold, capNumber.Index, capNumber.Length);
             if (Math.Abs(waterCap - referenceWaterCap) > Epsilon)
-                capLabel.SetForegroundBrush(accent, capNumber.Index, capNumber.Length);
+                ReadoutInk.Mark(capLabel, accent, capNumber.Index, capNumber.Length, 13.0);
         }
         dc.DrawText(capLabel, new Point(
             waterGroup.Right - 10.0 - capLabel.WidthIncludingTrailingWhitespace,
@@ -4906,8 +4906,13 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 summaryText.SetForegroundBrush(accent, prefix.Length, tickCountText.Length);
                 summaryText.SetFontSize(14.5, prefix.Length, tickCountText.Length);
                 var timeOffset = prefix.Length + tickCountText.Length + connector.Length;
-                summaryText.SetForegroundBrush(accent, timeOffset, timeText.Length);
-                summaryText.SetFontSize(19.0, timeOffset, timeText.Length);
+                // Only the digits of ~1h 5m 20s are big and gold; h / m / s stay plain.
+                foreach (System.Text.RegularExpressions.Match token in
+                    System.Text.RegularExpressions.Regex.Matches(timeText, @"\d+(?:\.\d+)?"))
+                {
+                    summaryText.SetForegroundBrush(accent, timeOffset + token.Index, token.Length);
+                    summaryText.SetFontSize(19.0, timeOffset + token.Index, token.Length);
+                }
             }
             dc.DrawText(summaryText,
                 new Point(hud.Left + (hud.Width - summaryText.WidthIncludingTrailingWhitespace) / 2.0,
