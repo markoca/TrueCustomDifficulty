@@ -136,6 +136,11 @@ for p in CATALOG:
         hits.append((p["id"], "logic", "vanilla value belongs in WHAT IT DOES, not HIGHER / LOWER"))
     if re.match(r"(Higher|Lower) =", logic) and re.search(r"(?:^|[.!?] )(Higher|Lower) = ", r):
         hits.append((p["id"], "rationale", "'Higher = …' repeats HIGHER / LOWER; keep it there only"))
+    _toks = lambda x: set(re.findall(r"\d+(?:\.\d+)?(?:%|×)?", x))
+    for _k, _sent in enumerate(re.split(r"(?<=[.!?])\s+(?=[A-Z0-9])", r)):
+        if _k >= 2 and logic and re.match(r"\d", _sent) and len(_sent) < 60 \
+                and _toks(_sent) and _toks(_sent) <= _toks(logic):
+            hits.append((p["id"], "rationale", f"'{_sent}' only repeats HIGHER / LOWER"))
     master = p.get("requiresToggle")
     if master and master in by_id and "Only works while" not in r:
         hits.append((p["id"], "rationale", "missing 'Only works while … is ON.'"))

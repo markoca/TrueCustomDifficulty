@@ -630,7 +630,7 @@
           "Not changed by the game's difficulty; 1× is vanilla on every difficulty."
         ]
       },
-      "rationale": "How accurately human enemies shoot. Vanilla: 1×. 2× = half the spread, so more bullets find you at range; 0.5× = twice the spread. Damage per hit is ENEMY GUN DAMAGE.",
+      "rationale": "How accurately human enemies shoot. Vanilla: 1×. Damage per hit is ENEMY GUN DAMAGE.",
       "logic": "2× halves the spread of every enemy gun; 0.5× doubles it. 1× keeps vanilla spread.",
       "interaction": "Independent of the tactics; ENEMY GUN DAMAGE sets how much each hit hurts."
     },
@@ -4080,7 +4080,7 @@
           "The slider scales only those energy-drink fatigue-relief values; passive player RegenSleepinessPoints remains controlled separately by Fatigue Build-up Rate."
         ]
       },
-      "rationale": "How much tiredness an energy drink washes away. Vanilla: 1×. 0× makes energy drinks useless against fatigue, 2× doubles their wake-up kick. It doesn't slow how fast you get tired again.",
+      "rationale": "How much tiredness an energy drink washes away. Vanilla: 1×. It doesn't slow how fast you get tired again.",
       "logic": "1× keeps vanilla fatigue relief; 0.5× halves it, 2× doubles it, 0× removes it.",
       "interaction": "FATIGUE RATE controls how quickly tiredness comes back. This changes the amount removed by ordinary and special Energy Drinks."
     },
@@ -4216,7 +4216,7 @@
           "The active green bar displays its source magnitude from 0–50%, independently of the native -10% WaterStaminaPerAction1 effect."
         ]
       },
-      "rationale": "Strength of water's short +25% stamina bonus. Vanilla: 1×. 0× removes it, 2× makes it +50%. The instant refill is a separate setting.",
+      "rationale": "Strength of water's short +25% stamina bonus. Vanilla: 1×. The instant refill is a separate setting.",
       "logic": "0× removes this stamina bonus; 1× keeps +25%, 2× gives +50%. The instant 38% refill is a separate setting.",
       "interaction": "Only the bonus. Water's cost cut and instant refill are separate.",
       "exposeInUi": false
@@ -4261,7 +4261,7 @@
           "The yellow STAMINA COST mini-knob shows the native negative drain modifier as 0% to -20%, without changing its underlying 0–2× scale."
         ]
       },
-      "rationale": "Water also makes running and other actions cost less stamina for a while. Vanilla: 1× (−10%). 0× removes it, 2× doubles it to −20%.",
+      "rationale": "Water also makes running and other actions cost less stamina for a while. Vanilla: 1× (−10%). 2× doubles it to −20%.",
       "logic": "Higher = actions get cheaper; 0× = no discount, 2× = twice the vanilla discount.",
       "interaction": "Only the cost cut. Water's +25% bonus and instant refill are separate.",
       "exposeInUi": false
@@ -4445,7 +4445,7 @@
           "Per-action stamina-cost effects are intentionally excluded here until their raw magnitude is locked source-exact."
         ]
       },
-      "rationale": "How strongly an energy drink keeps refilling your stamina after the first gulp. Vanilla: 1×. 0× removes that boost, 2× doubles it.",
+      "rationale": "How strongly an energy drink keeps refilling your stamina after the first gulp. Vanilla: 1×. 0× removes that boost.",
       "logic": "1× keeps the energy drink's stamina regeneration; 0 removes it; 2× doubles it.",
       "interaction": "Only the regen. ENERGY DRINK STAMINA GAIN, ENERGY DRINK FATIGUE RELIEF and ENERGY DRINK REGEN DURATION are separate.",
       "exposeInUi": false
@@ -5502,7 +5502,7 @@
           "The runtime values are not replaced by one universal damage number; each stage keeps its original relative value."
         ]
       },
-      "rationale": "How much health radiation eats once it becomes dangerous. Vanilla: 1×. 2× doubles the damage; the warning levels stay where they are.",
+      "rationale": "How much health radiation eats once it becomes dangerous. Vanilla: 1×. The warning levels stay where they are.",
       "logic": "1× keeps vanilla radiation damage; 0.5× halves it, 2× doubles it, up to 25×. The warning levels stay vanilla.",
       "interaction": "Only HP loss from radiation. RADIATION ACCUMULATION sets how fast it builds; recovery and Anti-Rad clear it."
     },
@@ -5893,7 +5893,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much that Master low-health punishment slows your healing. Vanilla: 70%. 0% removes it. Only works while LOW HEALTH MECHANICS is ON.",
+      "rationale": "How much that Master low-health punishment slows your healing. Vanilla: 70%. Only works while LOW HEALTH MECHANICS is ON.",
       "logic": "Higher = your health barely recovers while badly hurt; 0% removes this penalty.",
       "interaction": "Stacks on top of the normal low-HP recovery and HEALTH REGEN STRENGTH.",
       "requiresToggle": "advanced.lowHealthMechanics"
@@ -6356,7 +6356,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much of a bandage's heal you keep under Master's weaker meds. Vanilla: 25% — about 5 HP from a 20 HP bandage. 100% = no cut. Only works while HEALING ITEM EFFICIENCY REDUCTION is ON.",
+      "rationale": "How much of a bandage's heal you keep under Master's weaker meds. Vanilla: 25% — about 5 HP from a 20 HP bandage. Only works while HEALING ITEM EFFICIENCY REDUCTION is ON.",
       "logic": "100% = no Master healing cut; lower = the bandage heals less.",
       "interaction": "Multiplies with the base heal, so changing both stacks.",
       "requiresToggle": "advanced.masterEffectModifierMechanics"
@@ -6398,7 +6398,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much of a medkit's heal you keep under Master's weaker meds. Vanilla: 71% — about 50 HP from a 70 HP medkit. 100% = no cut. Only works while HEALING ITEM EFFICIENCY REDUCTION is ON.",
+      "rationale": "How much of a medkit's heal you keep under Master's weaker meds. Vanilla: 71% — about 50 HP from a 70 HP medkit. Only works while HEALING ITEM EFFICIENCY REDUCTION is ON.",
       "logic": "100% = no Master healing cut; lower = the medkit heals less.",
       "interaction": "Multiplies with the base heal, so changing both stacks.",
       "requiresToggle": "advanced.masterEffectModifierMechanics"
@@ -6440,7 +6440,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much of an army medkit's heal you keep under Master's weaker meds. Vanilla: 82% — about 70 HP from an 85 HP army medkit. 100% = no cut. Only works while HEALING ITEM EFFICIENCY REDUCTION is ON.",
+      "rationale": "How much of an army medkit's heal you keep under Master's weaker meds. Vanilla: 82% — about 70 HP from an 85 HP army medkit. Only works while HEALING ITEM EFFICIENCY REDUCTION is ON.",
       "logic": "100% = no Master healing cut; lower = the army medkit heals less.",
       "interaction": "Multiplies with the base heal, so changing both stacks.",
       "requiresToggle": "advanced.masterEffectModifierMechanics"
@@ -7170,7 +7170,7 @@
       "group": "Water",
       "label": "Medium-Water Stamina Drain",
       "description": "Changes the extra stamina drain while moving through medium-depth water.",
-      "rationale": "Extra stamina lost while wading through waist-deep water. Vanilla: 1. 0 makes wading free.",
+      "rationale": "Extra stamina lost while wading through waist-deep water. Vanilla: 1.",
       "logic": "Higher = wading costs more stamina; lower = it's easier; 0 = free.",
       "interaction": "Only the drain. How deep the water must be stays vanilla.",
       "control": "slider",
@@ -7701,7 +7701,7 @@
           "UI stores a positive penalty magnitude; production writer emits the corresponding negative CFG coefficient via negateSet."
         ]
       },
-      "rationale": "How much slower stamina refills while you aim down sights. Vanilla: −25%. 0 lets you catch your breath at full speed while aiming.",
+      "rationale": "How much slower stamina refills while you aim down sights. Vanilla: −25%.",
       "logic": "Higher = stamina recovers slower while aiming; 0 removes the penalty.",
       "interaction": "A steady recovery penalty while aiming, not a one-time cost. STAMINA REGEN sets the base rate; sprint, jump, vault and melee costs stay separate.",
       "exposeInUi": false
@@ -7917,7 +7917,7 @@
           "92 ordinary-human SubItemGenerator links (88 base + 4 DLC1 NORD; roaming GeneralNPC_* and settlement GuardNPC_*) are redirected to TCD-owned pool clones; disabled Prologue edges, named MIK, unspawned No_Armor roots, zombies (which re-declare their own link) and the shared vanilla pools themselves remain vanilla."
         ]
       },
-      "rationale": "How often ordinary human enemies carry their usual meds. Vanilla: 1×. 0× = they never carry meds; 2× = twice as likely.",
+      "rationale": "How often ordinary human enemies carry their usual meds. Vanilla: 1×. 0× = they never carry meds.",
       "logic": "0–2× the game's own chance for every med on ordinary corpses.",
       "interaction": "Always editable, even when BONUS PACKS is Water or None; zombies, quests, traders and stashes are untouched."
     },
@@ -8066,7 +8066,7 @@
           "Until 2026-11-16 Weight lists only lost stack size, so one-item Basic food/drink/bandage/coupon picks did not change below 100%."
         ]
       },
-      "rationale": "Makes ordinary stashes come up empty more often. Vanilla: 0% — no change. 50% = every supply item turns up half as often; when it does, you get the usual amount. Quest stashes are never touched.",
+      "rationale": "Makes ordinary stashes come up empty more often. Vanilla: 0% — no change. When an item does turn up, you get the usual amount. Quest stashes are never touched.",
       "logic": "0% keeps vanilla odds; 50% halves the odds of every supply item; 100% leaves these stashes without optional supplies. Same rule for every list type.",
       "interaction": "Multiplies with every ADJUST ODDS cell and MEDICAL COMPOSITION; AMMO AMOUNT (stack sizes) and EXTRA STASH GEAR stay separate. Check it on stashes you haven't opened yet."
     },
@@ -8173,7 +8173,7 @@
           "Quest, unique, DLC1 regular and Cabin/direct rows are outside this rule."
         ]
       },
-      "rationale": "How much of the vanilla odds for meds you keep in Basic stashes (the Basic MEDS cell). Vanilla: 100%. 50% = half as often, 0% = never. Food and drinks keep their own odds.",
+      "rationale": "How much of the vanilla odds for meds you keep in Basic stashes (the Basic MEDS cell). Vanilla: 100%. Food and drinks keep their own odds.",
       "logic": "100% keeps vanilla meds odds; 50% halves them; 0% removes meds from Basic stashes. Other items are not affected.",
       "interaction": "Standard and Rare stashes have their own cells in ADJUST ODDS. MEDICAL COMPOSITION multiplies per item on top of this. Smart loot has its own SMART LOOT GIVES checkboxes (STASH SMART LOOT).",
       "exposeInUi": true
@@ -8227,7 +8227,7 @@
           "Quest, unique, DLC1 regular and Cabin/direct rows are outside this rule."
         ]
       },
-      "rationale": "How much of the vanilla odds for food you keep in Basic stashes (the Basic FOOD cell). Vanilla: 100%. 50% = half as often, 0% = never. Meds and drinks keep their own odds.",
+      "rationale": "How much of the vanilla odds for food you keep in Basic stashes (the Basic FOOD cell). Vanilla: 100%. Meds and drinks keep their own odds.",
       "logic": "100% keeps vanilla food odds; 50% halves them; 0% removes food from Basic stashes. Other items are not affected.",
       "interaction": "Standard and Rare stashes have their own cells in ADJUST ODDS. Stack sizes stay separate. Smart loot has its own SMART LOOT GIVES checkboxes (STASH SMART LOOT).",
       "exposeInUi": true
@@ -8281,7 +8281,7 @@
           "Quest, unique, DLC1 regular and Cabin/direct rows are outside this rule."
         ]
       },
-      "rationale": "How much of the vanilla odds for drinks — water, energy drinks, milk and vodka — you keep in Basic stashes (the Basic DRINKS cell). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
+      "rationale": "How much of the vanilla odds for drinks — water, energy drinks, milk and vodka — you keep in Basic stashes (the Basic DRINKS cell). Vanilla: 100%. Other items keep their own odds.",
       "logic": "100% keeps vanilla drinks odds; 50% halves them; 0% removes drinks from Basic stashes. Other items are not affected.",
       "interaction": "Standard and Rare stashes have their own cells in ADJUST ODDS. Stack sizes stay separate. Smart loot has its own SMART LOOT GIVES checkboxes (STASH SMART LOOT).",
       "exposeInUi": true
@@ -8389,7 +8389,7 @@
           "Quest, unique, DLC1 regular and Cabin/direct rows are outside this rule."
         ]
       },
-      "rationale": "How often Basic stashes give coupons (Novice and Stalker only). Vanilla: 100%. 0% = no coupons from Basic stashes. Veteran and Master have none to begin with.",
+      "rationale": "How often Basic stashes give coupons (Novice and Stalker only). Vanilla: 100%. Veteran and Master have none to begin with.",
       "logic": "100% keeps vanilla coupons odds; 50% halves them; 0% removes coupons from these Basic and smart stash lists. Other items are not affected.",
       "interaction": "Standard and Rare stashes have their own cells in ADJUST ODDS. Stack sizes stay separate.",
       "exposeInUi": false
@@ -8483,7 +8483,7 @@
           "Native chance rows can differ by tier/difficulty; this is a percentage-of-native control, not a single absolute drop chance."
         ]
       },
-      "rationale": "How much of the vanilla odds for bandages you keep in stashes (the BANDAGES cell in MEDICAL COMPOSITION). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
+      "rationale": "How much of the vanilla odds for bandages you keep in stashes (the BANDAGES cell in MEDICAL COMPOSITION). Vanilla: 100%. Other items keep their own odds.",
       "logic": "100% keeps vanilla Bandage odds; 50% halves them; 0% = never from these stashes.",
       "interaction": "Multiplies with the tier's MEDS cell in STASH LOOT MIX. Stack size (QUANTITY) stays separate.",
       "exposeInUi": true
@@ -8577,7 +8577,7 @@
           "Native chance rows can differ by tier/difficulty; this is a percentage-of-native control, not a single absolute drop chance."
         ]
       },
-      "rationale": "How much of the vanilla odds for medkits you keep in stashes (the MEDKITS cell in MEDICAL COMPOSITION). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
+      "rationale": "How much of the vanilla odds for medkits you keep in stashes (the MEDKITS cell in MEDICAL COMPOSITION). Vanilla: 100%. Other items keep their own odds.",
       "logic": "100% keeps vanilla Medkit odds; 50% halves them; 0% = never from these stashes.",
       "interaction": "Multiplies with the tier's MEDS cell in STASH LOOT MIX. Stack size (QUANTITY) stays separate.",
       "exposeInUi": true
@@ -8671,7 +8671,7 @@
           "Native chance rows can differ by tier/difficulty; this is a percentage-of-native control, not a single absolute drop chance."
         ]
       },
-      "rationale": "How much of the vanilla odds for army medkits you keep in stashes (the ARMY MEDKITS cell in MEDICAL COMPOSITION). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
+      "rationale": "How much of the vanilla odds for army medkits you keep in stashes (the ARMY MEDKITS cell in MEDICAL COMPOSITION). Vanilla: 100%. Other items keep their own odds.",
       "logic": "100% keeps vanilla Army Medkit odds; 50% halves them; 0% = never from these stashes.",
       "interaction": "Multiplies with the tier's MEDS cell in STASH LOOT MIX. Stack size (QUANTITY) stays separate.",
       "exposeInUi": true
@@ -8765,7 +8765,7 @@
           "Native chance rows can differ by tier/difficulty; this is a percentage-of-native control, not a single absolute drop chance."
         ]
       },
-      "rationale": "How much of the vanilla odds for anti-rads you keep in stashes (the ANTI-RAD cell in MEDICAL COMPOSITION). Vanilla: 100%. 50% = half as often, 0% = never. Other items keep their own odds.",
+      "rationale": "How much of the vanilla odds for anti-rads you keep in stashes (the ANTI-RAD cell in MEDICAL COMPOSITION). Vanilla: 100%. Other items keep their own odds.",
       "logic": "100% keeps vanilla Anti-Rad odds; 50% halves them; 0% = never from these stashes.",
       "interaction": "Multiplies with the tier's MEDS cell in STASH LOOT MIX. Stack size (QUANTITY) stays separate.",
       "exposeInUi": true
@@ -8813,7 +8813,7 @@
           "Underlying -1/0/1–6 sentinel values are retained for legacy preset compatibility."
         ]
       },
-      "rationale": "The minimum medkit stack a stash can give when it has medkits. Vanilla: 0 = the game's own minimum. Raise it so a medkit find is always worth the trip. It doesn't make medkits appear more often.",
+      "rationale": "The minimum medkit stack a stash can give when it has medkits. Vanilla: 0. Raise it so a medkit find is always worth the trip. It doesn't make medkits appear more often.",
       "logic": "Higher = bigger medkit stacks at least; 0 keeps the vanilla minimum.",
       "interaction": "Only stack size. Its chance and which stashes have it are separate.",
       "exposeInUi": true
@@ -8861,7 +8861,7 @@
           "Underlying -1/0/1–6 sentinel values are retained for legacy preset compatibility."
         ]
       },
-      "rationale": "The maximum medkit stack a stash can give. Vanilla: 5 = the game's own cap. Lower it to stop finding piles of medkits; 0 takes medkits out of these stacks.",
+      "rationale": "The maximum medkit stack a stash can give. Vanilla: 5. Lower it to stop finding piles of medkits.",
       "logic": "Lower = smaller medkit stacks; 0 means stashes never give it; 5 keeps the vanilla maximum.",
       "interaction": "Only stack size. Its chance and which stashes have it are separate.",
       "exposeInUi": true
@@ -8909,7 +8909,7 @@
           "Underlying -1/0/1–6 sentinel values are retained for legacy preset compatibility."
         ]
       },
-      "rationale": "The minimum army medkit stack a stash can give when it has them. Vanilla: 0 = the game's own minimum. It doesn't make them appear more often.",
+      "rationale": "The minimum army medkit stack a stash can give when it has them. Vanilla: 0. It doesn't make them appear more often.",
       "logic": "Higher = bigger army medkit stacks at least; 0 keeps the vanilla minimum.",
       "interaction": "Only stack size. Its chance and which stashes have it are separate.",
       "exposeInUi": true
@@ -8957,7 +8957,7 @@
           "Underlying -1/0/1–6 sentinel values are retained for legacy preset compatibility."
         ]
       },
-      "rationale": "The maximum army medkit stack a stash can give. Vanilla: 5 = the game's own cap. 0 takes army medkits out of these stacks.",
+      "rationale": "The maximum army medkit stack a stash can give. Vanilla: 5.",
       "logic": "Lower = smaller army medkit stacks; 0 means stashes never give it; 5 keeps the vanilla maximum.",
       "interaction": "Only stack size. Its chance and which stashes have it are separate.",
       "exposeInUi": true
@@ -10563,7 +10563,7 @@
       ],
       "logic": "100% keeps vanilla odds for each item; 50% halves them; 0% means it never turns up. It never fills a whole stash.",
       "interaction": "Only medical items in Standard stashes. Which stashes have them and stack size are separate.",
-      "rationale": "How often Standard stashes have meds. Vanilla: 100% (bandages 40%, medkits 100%). 50% = half as likely."
+      "rationale": "How often Standard stashes have meds. Vanilla: 100% (bandages 40%, medkits 100%)."
     },
     {
       "id": "loot.mediumStashDrinksChance",
@@ -12478,7 +12478,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Bonus stamina recovery while your stomach is full. Vanilla: +20% — a reward for eating before a fight. 0% removes it.",
+      "rationale": "Bonus stamina recovery while your stomach is full. Vanilla: +20% — a reward for eating before a fight.",
       "logic": "Higher = a bigger stamina bonus for staying well fed; 0% removes it. It never turns into a penalty.",
       "interaction": "You stop being well fed at the vanilla point. STAMINA REGEN sets the normal recovery rate."
     },
@@ -12519,7 +12519,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much more stamina actions cost while you're starving under Master rules. Vanilla: +200% — three times the normal cost. 0% removes the extra. Only works while STARVATION MECHANICS is ON.",
+      "rationale": "How much more stamina actions cost while you're starving under Master rules. Vanilla: +200% — three times the normal cost. Only works while STARVATION MECHANICS is ON.",
       "logic": "100% means +100% extra stamina cost, not normal cost. 0% removes this extra starvation cost.",
       "interaction": "Only the extra cost per action. Severe hunger also slows stamina regen.",
       "requiresToggle": "advanced.starvationMechanics"
@@ -12563,7 +12563,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Health lost each time starvation hits under Master rules. Vanilla: 4 HP. 0 = starving no longer hurts directly. Only works while STARVATION MECHANICS is ON.",
+      "rationale": "Health lost each time starvation hits under Master rules. Vanilla: 4 HP. Only works while STARVATION MECHANICS is ON.",
       "logic": "Higher = each starvation hit takes more HP; 0 = no HP damage (the other penalties stay).",
       "interaction": "STARVATION DAMAGE INTERVAL controls how often the charge repeats, while STARVATION PENALTY DELAY controls when this effect begins after activation.",
       "requiresToggle": "advanced.starvationMechanics"
@@ -12706,7 +12706,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much starving blocks your healing under Master rules. Vanilla: 100% — no healing at all. 0% removes it. Only works while STARVATION MECHANICS is ON.",
+      "rationale": "How much starving blocks your healing under Master rules. Vanilla: 100% — no healing at all. Only works while STARVATION MECHANICS is ON.",
       "logic": "Higher = health recovers less while starving; 0% removes this penalty.",
       "interaction": "Cuts healing, not direct damage. Stacks with STARVATION DAMAGE and the Health regen settings.",
       "requiresToggle": "advanced.starvationMechanics"
@@ -13037,7 +13037,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much of your stamina bar you lose while exhausted under Master rules. Vanilla: 20%. 0% removes it. Only works while SEVERE FATIGUE MECHANICS is ON.",
+      "rationale": "How much of your stamina bar you lose while exhausted under Master rules. Vanilla: 20%. Only works while SEVERE FATIGUE MECHANICS is ON.",
       "logic": "Higher = an even smaller stamina bar while severely tired; 0% removes this penalty.",
       "interaction": "MAX STAMINA sets your normal bar; this loss only applies while you're severely tired.",
       "requiresToggle": "advanced.fatigueMechanics"
@@ -13086,7 +13086,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much carry capacity you lose while exhausted under Master rules. Vanilla: 20%. 0% removes it. Only works while SEVERE FATIGUE MECHANICS is ON.",
+      "rationale": "How much carry capacity you lose while exhausted under Master rules. Vanilla: 20%. Only works while SEVERE FATIGUE MECHANICS is ON.",
       "logic": "Higher = you can carry even less while severely tired; 0% removes this penalty.",
       "interaction": "Your normal carrying limit and equipment carry bonuses remain separate.",
       "requiresToggle": "advanced.fatigueMechanics"
@@ -13261,7 +13261,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How much more stamina actions cost while heavily irradiated under Master rules. Vanilla: +50%. 0% removes it. Only works while RADIATION STAMINA PENALTY is ON.",
+      "rationale": "How much more stamina actions cost while heavily irradiated under Master rules. Vanilla: +50%. Only works while RADIATION STAMINA PENALTY is ON.",
       "logic": "50% means +50% extra stamina cost. 0% removes this extra radiation cost.",
       "interaction": "Stacks with the normal action costs. RADIATION ACCUMULATION sets how fast you get there.",
       "requiresToggle": "advanced.radiationMechanics"
@@ -13563,7 +13563,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How hard electro anomalies hit you. Vanilla: 65 base damage, then scaled by GLOBAL ANOMALY DAMAGE (Stalker 1×). Each anomaly type has its own bar on this board. 0 makes them harmless.",
+      "rationale": "How hard electro anomalies hit you. Vanilla: 65 base damage, then scaled by GLOBAL ANOMALY DAMAGE (Stalker 1×). Each anomaly type has its own bar on this board.",
       "logic": "Higher = this anomaly hits harder; 0 makes it harmless. EFFECTIVE = BASE × GLOBAL ANOMALY DAMAGE, before your protection.",
       "interaction": "Multiplies with GLOBAL ANOMALY DAMAGE. Only this anomaly type changes.",
       "exposeInUi": true
@@ -13607,7 +13607,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How hard chemical anomalies hit you. Vanilla: 30 base damage, then scaled by GLOBAL ANOMALY DAMAGE (Stalker 1×). 0 makes them harmless.",
+      "rationale": "How hard chemical anomalies hit you. Vanilla: 30 base damage, then scaled by GLOBAL ANOMALY DAMAGE (Stalker 1×).",
       "logic": "Higher = this anomaly hits harder; 0 makes it harmless. EFFECTIVE = BASE × GLOBAL ANOMALY DAMAGE, before your protection.",
       "interaction": "Multiplies with GLOBAL ANOMALY DAMAGE. Only this anomaly type changes.",
       "exposeInUi": false
@@ -13651,7 +13651,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How hard fire anomalies hit you. Vanilla: 60 base damage, then scaled by GLOBAL ANOMALY DAMAGE (Stalker 1×). 0 makes them harmless.",
+      "rationale": "How hard fire anomalies hit you. Vanilla: 60 base damage, then scaled by GLOBAL ANOMALY DAMAGE (Stalker 1×).",
       "logic": "Higher = this anomaly hits harder; 0 makes it harmless. EFFECTIVE = BASE × GLOBAL ANOMALY DAMAGE, before your protection.",
       "interaction": "Multiplies with GLOBAL ANOMALY DAMAGE. Only this anomaly type changes.",
       "exposeInUi": false
@@ -13695,7 +13695,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How hard carousel (gravity whirl) anomalies hit you. Vanilla: 105 base damage, then scaled by GLOBAL ANOMALY DAMAGE (Stalker 1×). The hardest-hitting of the group. 0 makes them harmless.",
+      "rationale": "How hard carousel (gravity whirl) anomalies hit you. Vanilla: 105 base damage, then scaled by GLOBAL ANOMALY DAMAGE (Stalker 1×). The hardest-hitting of the group.",
       "logic": "Higher = this anomaly hits harder; 0 makes it harmless. EFFECTIVE = BASE × GLOBAL ANOMALY DAMAGE, before your protection.",
       "interaction": "Multiplies with GLOBAL ANOMALY DAMAGE. Only this anomaly type changes.",
       "exposeInUi": false
@@ -13739,7 +13739,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How hard toxic cloud anomalies hit you. Vanilla: 25 base damage, then scaled by GLOBAL ANOMALY DAMAGE (Stalker 1×). 0 makes them harmless.",
+      "rationale": "How hard toxic cloud anomalies hit you. Vanilla: 25 base damage, then scaled by GLOBAL ANOMALY DAMAGE (Stalker 1×).",
       "logic": "Higher = this anomaly hits harder; 0 makes it harmless. EFFECTIVE = BASE × GLOBAL ANOMALY DAMAGE, before your protection.",
       "interaction": "Multiplies with GLOBAL ANOMALY DAMAGE. Only this anomaly type changes.",
       "exposeInUi": false
@@ -13783,7 +13783,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "How hard steam anomalies hit you. Vanilla: 60 base damage, then scaled by GLOBAL ANOMALY DAMAGE (Stalker 1×). 0 makes them harmless.",
+      "rationale": "How hard steam anomalies hit you. Vanilla: 60 base damage, then scaled by GLOBAL ANOMALY DAMAGE (Stalker 1×).",
       "logic": "Higher = this anomaly hits harder; 0 makes it harmless. EFFECTIVE = BASE × GLOBAL ANOMALY DAMAGE, before your protection.",
       "interaction": "Multiplies with GLOBAL ANOMALY DAMAGE. Only this anomaly type changes.",
       "exposeInUi": false
@@ -13827,7 +13827,7 @@
           "Runtime CFG 2.0.5 stores FlycatcherVelocityChange as -50%. The UI exposes retained movement speed instead: CFG delta = UI value - 1.0."
         ]
       },
-      "rationale": "How fast you can still move when a Flycatcher grabs you. Vanilla: 50% of normal speed. 100% = no slowdown; 0% = stuck in place.",
+      "rationale": "How fast you can still move when a Flycatcher grabs you. Vanilla: 50% of normal speed.",
       "logic": "Higher = you move more freely inside it; 100% = no slowdown; 0% = stuck in place.",
       "interaction": "Only your walking speed inside. FLYCATCHER TURN SPEED, bullet slowdown and regen penalties are separate."
     },
@@ -13877,7 +13877,7 @@
           "Runtime CFG 2.0.5 stores both yaw and pitch effects as -0.7. One UI value intentionally drives both targets: CFG delta = UI value - 1.0."
         ]
       },
-      "rationale": "How fast you can still turn and look around inside a Flycatcher. Vanilla: 30% of normal. 100% = no slowdown.",
+      "rationale": "How fast you can still turn and look around inside a Flycatcher. Vanilla: 30% of normal.",
       "logic": "Higher = you turn more freely inside it; 100% = no slowdown; 0% = you can't turn.",
       "interaction": "Only turning, both sideways and up/down. FLYCATCHER MOVEMENT SPEED is separate."
     },
@@ -14067,7 +14067,7 @@
           "Runtime CFG stores SoapBubbleDamage ValueMin/ValueMax as 100/100. Particle and other Soap Bubble behavior is intentionally left untouched."
         ]
       },
-      "rationale": "How much health a Soap Bubble's chemical burn takes. Vanilla: 100. 0 removes the health damage only.",
+      "rationale": "How much health a Soap Bubble's chemical burn takes. Vanilla: 100.",
       "logic": "Higher = Soap Bubble hurts more; 0 removes its health damage.",
       "interaction": "Only the damage. How the Soap Bubble moves and spreads stays vanilla.",
       "exposeInUi": false
@@ -14113,7 +14113,7 @@
           "Runtime CFG stores FireBallAnomaly ValueMin/ValueMax as 100/100 Burn damage. Fireball movement/trail behavior remains untouched."
         ]
       },
-      "rationale": "How much health a Fireball's burn takes. Vanilla: 100. 0 removes the health damage only.",
+      "rationale": "How much health a Fireball's burn takes. Vanilla: 100.",
       "logic": "Higher = Fireball hurts more; 0 removes its health damage.",
       "interaction": "Only the damage. How the Fireball moves stays vanilla.",
       "exposeInUi": false
@@ -14207,7 +14207,7 @@
           "Runtime CFG stores DiamondBleeding ValueMin/ValueMax as 10/10."
         ]
       },
-      "rationale": "How badly a Diamond hit makes you bleed. Vanilla: 10 bleed pts. 0 = no bleeding from it.",
+      "rationale": "How badly a Diamond hit makes you bleed. Vanilla: 10 bleed pts.",
       "logic": "Higher = Diamond cuts make you bleed more; 0 = no bleeding.",
       "interaction": "DIAMOND HEALTH DAMAGE is a separate setting.",
       "exposeInUi": false
@@ -14251,7 +14251,7 @@
           "Runtime CFG stores PsyAnomalyIncreaseRegen as DegenPsyPoints with ValueMin/ValueMax = -1.7/-1.7. The UI exposes the magnitude as a positive 0-200% multiplier."
         ]
       },
-      "rationale": "How fast psy anomalies drain your psy meter. Vanilla: 1×. 0× = they stop draining it; 2× = twice as fast.",
+      "rationale": "How fast psy anomalies drain your psy meter. Vanilla: 1×.",
       "logic": "1× keeps vanilla psy drain; 0× removes it; 2× doubles it.",
       "interaction": "Only the constant Psy drain. Other Psy effects stay vanilla."
     },
@@ -14389,7 +14389,7 @@
           "Count is 1 in every world spawner; whether the engine places several artifacts per spawn needs an in-game check."
         ]
       },
-      "rationale": "How many artifacts drop at once when a field spawns. Vanilla: 1. 2–3 turn a well-searched field into a jackpot.",
+      "rationale": "How many artifacts drop at once when a field spawns. Vanilla: 1. More turns a well-searched field into a jackpot.",
       "logic": "1 = vanilla, one artifact per spawn; 2 or 3 = that many.",
       "interaction": "Multiplies every artifact that spawns; SPAWN CHANCE decides how often that happens."
     },
@@ -15113,7 +15113,7 @@
           "DLC1 uses its own DLCGameData/DLC1/WeaponData/CharacterWeaponSettingsPrototypes.cfg with 11 non-zero player entries."
         ]
       },
-      "rationale": "How fast your guns wear out when you shoot. Vanilla: 1×. 0.5× = about twice as many shots between repairs; 2× = half as many. A healthier gun also jams less.",
+      "rationale": "How fast your guns wear out when you shoot. Vanilla: 1×. A healthier gun also jams less.",
       "logic": "1× keeps vanilla wear; 0.5× roughly halves condition loss per shot; 2× roughly doubles it.",
       "interaction": "WEAPON JAM RATE is separate. Slower wear indirectly delays condition-related jams because your gun stays healthy longer."
     },
@@ -15536,7 +15536,7 @@
           "The layout is freshly randomized on every Build."
         ]
       },
-      "rationale": "How many loose guns you'll find out in the Zone after shuffling. Vanilla: 100% fills all safe weapon spots. Turn it down for fewer guns lying around — even 0% leaves at least one of each regular model. Quest, unique and NPC weapons are unaffected. Only works while SHUFFLE LOOSE WEAPONS is ON.",
+      "rationale": "How many loose guns lie around the Zone after shuffling. Vanilla: 100% (every safe spot filled). Quest, unique and NPC weapons are untouched. Only works while SHUFFLE LOOSE WEAPONS is ON.",
       "logic": "Higher = more weapon spots stay filled; lower = guns are scarcer. Even 0% keeps one of every regular model.",
       "interaction": "Only affects loose regular weapons when SHUFFLE LOOSE WEAPONS is ON; quest, unique and NPC guns are untouched."
     },
@@ -15827,7 +15827,7 @@
           "Does not modify LairPrototypes.cfg, respawn timers, faction population, or scenario frequency."
         ]
       },
-      "rationale": "How big human squads can get while you're a Newbie. Vanilla: 1× (3 NPC). 2× = up to twice as many per squad. How often squads show up doesn't change. Each rank has its own bar.",
+      "rationale": "How big human squads get while you're a Newbie. Vanilla: 1× (3 NPC). How often squads show up doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "Only squads at this player rank. Other ranks keep their own size.",
       "exposeInUi": true
@@ -15874,7 +15874,7 @@
           "Does not modify LairPrototypes.cfg, respawn timers, faction population, or scenario frequency."
         ]
       },
-      "rationale": "How big human squads can get while you're Experienced. Vanilla: 1× (4 NPC). How often squads show up doesn't change.",
+      "rationale": "How big human squads get while you're Experienced. Vanilla: 1× (4 NPC). How often squads show up doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "Only squads at this player rank. Other ranks keep their own size.",
       "exposeInUi": false
@@ -15921,7 +15921,7 @@
           "Does not modify LairPrototypes.cfg, respawn timers, faction population, or scenario frequency."
         ]
       },
-      "rationale": "How big human squads can get while you're a Veteran. Vanilla: 1× (5 NPC).",
+      "rationale": "How big human squads get while you're a Veteran. Vanilla: 1× (5 NPC).",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "Only squads at this player rank. Other ranks keep their own size.",
       "exposeInUi": false
@@ -15968,7 +15968,7 @@
           "Does not modify LairPrototypes.cfg, respawn timers, faction population, or scenario frequency."
         ]
       },
-      "rationale": "How big human squads can get while you're a Master. Vanilla: 1× (6 NPC) — late-game firefights get crowded.",
+      "rationale": "How big human squads get while you're a Master. Vanilla: 1× (6 NPC) — late-game firefights get crowded.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "Only squads at this player rank. Other ranks keep their own size.",
       "exposeInUi": false
@@ -16104,7 +16104,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many bloodsuckers can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 0 / 1 / 1 / 1). 2× = up to twice as many per group; how often they spawn doesn't change. Each species has its own bar. A Newbie cap of 0 stays 0.",
+      "rationale": "How many bloodsuckers show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 0 / 1 / 1 / 1). How often they spawn doesn't change. A vanilla 0 stays 0.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "Only Bloodsucker packs. Other mutants keep their own size.",
       "exposeInUi": true
@@ -16172,7 +16172,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many blind dogs can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 4 / 6 / 8 / 12). 2× = up to twice as many per group; how often they spawn doesn't change.",
+      "rationale": "How many blind dogs show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 4 / 6 / 8 / 12). How often they spawn doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "Only Blind Dog packs. Other mutants keep their own size.",
       "exposeInUi": false
@@ -16240,7 +16240,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many fleshs can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 2 / 3 / 5 / 6). 2× = up to twice as many per group; how often they spawn doesn't change.",
+      "rationale": "How many fleshs show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 2 / 3 / 5 / 6). How often they spawn doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "Only Flesh packs. Other mutants keep their own size.",
       "exposeInUi": false
@@ -16308,7 +16308,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many controllers can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 0 / 1 / 1 / 1). 2× = up to twice as many per group; how often they spawn doesn't change. A Newbie cap of 0 stays 0.",
+      "rationale": "How many controllers show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 0 / 1 / 1 / 1). How often they spawn doesn't change. A vanilla 0 stays 0.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "Only Controller packs. Other mutants keep their own size.",
       "exposeInUi": false
@@ -16376,7 +16376,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many poltergeists can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 1 / 1 / 2 / 2). 2× = up to twice as many per group; how often they spawn doesn't change.",
+      "rationale": "How many poltergeists show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 1 / 1 / 2 / 2). How often they spawn doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "Only Poltergeist packs. Other mutants keep their own size.",
       "exposeInUi": false
@@ -16444,7 +16444,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many snorks can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 1 / 3 / 4 / 6). 2× = up to twice as many per group; how often they spawn doesn't change.",
+      "rationale": "How many snorks show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 1 / 3 / 4 / 6). How often they spawn doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "Only Snork packs. Other mutants keep their own size.",
       "exposeInUi": false
@@ -16512,7 +16512,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many boars can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 2 / 3 / 5 / 6). 2× = up to twice as many per group; how often they spawn doesn't change.",
+      "rationale": "How many boars show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 2 / 3 / 5 / 6). How often they spawn doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "Only Boar packs. Other mutants keep their own size.",
       "exposeInUi": false
@@ -16580,7 +16580,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many chimeras can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 1). 2× = up to twice as many per group; how often they spawn doesn't change.",
+      "rationale": "How many chimeras show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 1). How often they spawn doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "Only Chimera packs. Other mutants keep their own size.",
       "exposeInUi": false
@@ -16648,7 +16648,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many bayuns can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 2). 2× = up to twice as many per group; how often they spawn doesn't change.",
+      "rationale": "How many bayuns show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 2). How often they spawn doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "Only Bayun packs. Other mutants keep their own size.",
       "exposeInUi": false
@@ -16716,7 +16716,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many tushkans can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 6 / 8 / 12 / 16). 2× = up to twice as many per group; how often they spawn doesn't change.",
+      "rationale": "How many tushkans show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 6 / 8 / 12 / 16). How often they spawn doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "Only Tushkan packs. Other mutants keep their own size.",
       "exposeInUi": false
@@ -16784,7 +16784,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many rat swarms can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 1). 2× = up to twice as many per group; how often they spawn doesn't change.",
+      "rationale": "How many rat swarms show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 1). How often they spawn doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "Only Rat Swarm packs. Other mutants keep their own size.",
       "exposeInUi": false
@@ -16852,7 +16852,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many burers can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 2). 2× = up to twice as many per group; how often they spawn doesn't change.",
+      "rationale": "How many burers show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 2). How often they spawn doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "Only Burer packs. Other mutants keep their own size.",
       "exposeInUi": false
@@ -16920,7 +16920,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many pseudodogs can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 1). 2× = up to twice as many per group; how often they spawn doesn't change.",
+      "rationale": "How many pseudodogs show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 1). How often they spawn doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "Only Pseudodog packs. Other mutants keep their own size.",
       "exposeInUi": false
@@ -16988,7 +16988,7 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "How many deers can show up together. Vanilla: 1× (by your rank Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 1). 2× = up to twice as many per group; how often they spawn doesn't change.",
+      "rationale": "How many deer show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 1 / 1 / 1 / 1). How often they spawn doesn't change.",
       "logic": "Higher = bigger groups can show up; lower = smaller ones.",
       "interaction": "Only Deer packs. Other mutants keep their own size.",
       "exposeInUi": false
@@ -18507,8 +18507,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often shopkeepers offer weapons. Vanilla: 100%. 50% = those offers turn up half as often; 0% = shopkeepers never sell weapons, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every weapons offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often shopkeepers offer weapons. Vanilla: 100%. At 0% you have to find weapons in the Zone.",
+      "logic": "Lower = weapons offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": true
     },
@@ -18546,8 +18546,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often shopkeepers offer armor. Vanilla: 100%. 50% = those offers turn up half as often; 0% = shopkeepers never sell armor, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every armor offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often shopkeepers offer armor. Vanilla: 100%. At 0% you have to find armor in the Zone.",
+      "logic": "Lower = armor offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -18585,8 +18585,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often shopkeepers offer attachments. Vanilla: 100%. 50% = those offers turn up half as often; 0% = shopkeepers never sell attachments, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every attachments offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often shopkeepers offer attachments. Vanilla: 100%. At 0% you have to find attachments in the Zone.",
+      "logic": "Lower = attachments offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -18624,8 +18624,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often shopkeepers offer ammo. Vanilla: 100%. 50% = those offers turn up half as often; 0% = shopkeepers never sell ammo, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every ammo offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often shopkeepers offer ammo. Vanilla: 100%. At 0% you have to find ammo in the Zone.",
+      "logic": "Lower = ammo offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -18663,8 +18663,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often shopkeepers offer meds. Vanilla: 100%. 50% = those offers turn up half as often; 0% = shopkeepers never sell meds, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every meds offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often shopkeepers offer meds. Vanilla: 100%. At 0% you have to find meds in the Zone.",
+      "logic": "Lower = meds offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -18702,8 +18702,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often shopkeepers offer food. Vanilla: 100%. 50% = those offers turn up half as often; 0% = shopkeepers never sell food, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every food offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often shopkeepers offer food. Vanilla: 100%. At 0% you have to find food in the Zone.",
+      "logic": "Lower = food offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -18741,8 +18741,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often shopkeepers offer drinks. Vanilla: 100%. 50% = those offers turn up half as often; 0% = shopkeepers never sell drinks, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every drinks offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often shopkeepers offer drinks. Vanilla: 100%. At 0% you have to find drinks in the Zone.",
+      "logic": "Lower = drinks offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -18780,8 +18780,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often shopkeepers offer artifacts. Vanilla: 100%. 50% = those offers turn up half as often; 0% = shopkeepers never sell artifacts, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every artifacts offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often shopkeepers offer artifacts. Vanilla: 100%. At 0% you have to find artifacts in the Zone.",
+      "logic": "Lower = artifacts offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -18819,8 +18819,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often shopkeepers offer detectors. Vanilla: 100%. 50% = those offers turn up half as often; 0% = shopkeepers never sell detectors, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every detectors offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often shopkeepers offer detectors. Vanilla: 100%. At 0% you have to find detectors in the Zone.",
+      "logic": "Lower = detectors offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -18858,8 +18858,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often shopkeepers offer grenades. Vanilla: 100%. 50% = those offers turn up half as often; 0% = shopkeepers never sell grenades, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every grenades offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often shopkeepers offer grenades. Vanilla: 100%. At 0% you have to find grenades in the Zone.",
+      "logic": "Lower = grenades offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -18897,8 +18897,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often medics offer meds. Vanilla: 100%. 50% = those offers turn up half as often; 0% = medics never sell meds, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every meds offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often medics offer meds. Vanilla: 100%. At 0% you have to find meds in the Zone.",
+      "logic": "Lower = meds offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -18936,8 +18936,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often medics offer drinks. Vanilla: 100%. 50% = those offers turn up half as often; 0% = medics never sell drinks, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every drinks offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often medics offer drinks. Vanilla: 100%. At 0% you have to find drinks in the Zone.",
+      "logic": "Lower = drinks offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -18975,8 +18975,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often medics offer artifacts. Vanilla: 100%. 50% = those offers turn up half as often; 0% = medics never sell artifacts, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every artifacts offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often medics offer artifacts. Vanilla: 100%. At 0% you have to find artifacts in the Zone.",
+      "logic": "Lower = artifacts offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -19014,8 +19014,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often medics offer detectors. Vanilla: 100%. 50% = those offers turn up half as often; 0% = medics never sell detectors, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every detectors offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often medics offer detectors. Vanilla: 100%. At 0% you have to find detectors in the Zone.",
+      "logic": "Lower = detectors offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -19054,8 +19054,8 @@
           "Not edited since 2026-11-16: only one technician (Bolshak, DLC1) sells items. No rail; a saved value is kept for preset compatibility but never written."
         ]
       },
-      "rationale": "How often technicians offer weapons. Vanilla: 100%. 50% = those offers turn up half as often; 0% = technicians never sell weapons, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every weapons offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often technicians offer weapons. Vanilla: 100%. At 0% you have to find weapons in the Zone.",
+      "logic": "Lower = weapons offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -19094,8 +19094,8 @@
           "Not edited since 2026-11-16: only one technician (Bolshak, DLC1) sells items. No rail; a saved value is kept for preset compatibility but never written."
         ]
       },
-      "rationale": "How often technicians offer attachments. Vanilla: 100%. 50% = those offers turn up half as often; 0% = technicians never sell attachments, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every attachments offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often technicians offer attachments. Vanilla: 100%. At 0% you have to find attachments in the Zone.",
+      "logic": "Lower = attachments offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -19134,8 +19134,8 @@
           "Not edited since 2026-11-16: only one technician (Bolshak, DLC1) sells items. No rail; a saved value is kept for preset compatibility but never written."
         ]
       },
-      "rationale": "How often technicians offer ammo. Vanilla: 100%. 50% = those offers turn up half as often; 0% = technicians never sell ammo, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every ammo offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often technicians offer ammo. Vanilla: 100%. At 0% you have to find ammo in the Zone.",
+      "logic": "Lower = ammo offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -19174,8 +19174,8 @@
           "Not edited since 2026-11-16: only one technician (Bolshak, DLC1) sells items. No rail; a saved value is kept for preset compatibility but never written."
         ]
       },
-      "rationale": "How often technicians offer meds. Vanilla: 100%. 50% = those offers turn up half as often; 0% = technicians never sell meds, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every meds offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often technicians offer meds. Vanilla: 100%. At 0% you have to find meds in the Zone.",
+      "logic": "Lower = meds offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -19214,8 +19214,8 @@
           "Not edited since 2026-11-16: only one technician (Bolshak, DLC1) sells items. No rail; a saved value is kept for preset compatibility but never written."
         ]
       },
-      "rationale": "How often technicians offer food. Vanilla: 100%. 50% = those offers turn up half as often; 0% = technicians never sell food, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every food offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often technicians offer food. Vanilla: 100%. At 0% you have to find food in the Zone.",
+      "logic": "Lower = food offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -19254,8 +19254,8 @@
           "Not edited since 2026-11-16: only one technician (Bolshak, DLC1) sells items. No rail; a saved value is kept for preset compatibility but never written."
         ]
       },
-      "rationale": "How often technicians offer drinks. Vanilla: 100%. 50% = those offers turn up half as often; 0% = technicians never sell drinks, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every drinks offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often technicians offer drinks. Vanilla: 100%. At 0% you have to find drinks in the Zone.",
+      "logic": "Lower = drinks offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -19293,8 +19293,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often bartenders offer weapons. Vanilla: 100%. 50% = those offers turn up half as often; 0% = bartenders never sell weapons, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every weapons offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often bartenders offer weapons. Vanilla: 100%. At 0% you have to find weapons in the Zone.",
+      "logic": "Lower = weapons offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -19332,8 +19332,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often bartenders offer ammo. Vanilla: 100%. 50% = those offers turn up half as often; 0% = bartenders never sell ammo, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every ammo offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often bartenders offer ammo. Vanilla: 100%. At 0% you have to find ammo in the Zone.",
+      "logic": "Lower = ammo offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -19371,8 +19371,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often bartenders offer food. Vanilla: 100%. 50% = those offers turn up half as often; 0% = bartenders never sell food, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every food offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often bartenders offer food. Vanilla: 100%. At 0% you have to find food in the Zone.",
+      "logic": "Lower = food offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -19410,8 +19410,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often bartenders offer drinks. Vanilla: 100%. 50% = those offers turn up half as often; 0% = bartenders never sell drinks, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every drinks offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often bartenders offer drinks. Vanilla: 100%. At 0% you have to find drinks in the Zone.",
+      "logic": "Lower = drinks offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -19449,8 +19449,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often bartenders offer artifacts. Vanilla: 100%. 50% = those offers turn up half as often; 0% = bartenders never sell artifacts, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every artifacts offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often bartenders offer artifacts. Vanilla: 100%. At 0% you have to find artifacts in the Zone.",
+      "logic": "Lower = artifacts offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -19488,8 +19488,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often bartenders offer detectors. Vanilla: 100%. 50% = those offers turn up half as often; 0% = bartenders never sell detectors, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every detectors offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often bartenders offer detectors. Vanilla: 100%. At 0% you have to find detectors in the Zone.",
+      "logic": "Lower = detectors offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -19527,8 +19527,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often ordinary stalkers you can trade with offer ammo. Vanilla: 100%. 50% = those offers turn up half as often; 0% = ordinary stalkers you can trade with never sell ammo, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every ammo offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often stalkers you trade with offer ammo. Vanilla: 100%. At 0% you have to find ammo in the Zone.",
+      "logic": "Lower = ammo offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -19566,8 +19566,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often ordinary stalkers you can trade with offer meds. Vanilla: 100%. 50% = those offers turn up half as often; 0% = ordinary stalkers you can trade with never sell meds, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every meds offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often stalkers you trade with offer meds. Vanilla: 100%. At 0% you have to find meds in the Zone.",
+      "logic": "Lower = meds offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -19605,8 +19605,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often ordinary stalkers you can trade with offer food. Vanilla: 100%. 50% = those offers turn up half as often; 0% = ordinary stalkers you can trade with never sell food, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every food offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often stalkers you trade with offer food. Vanilla: 100%. At 0% you have to find food in the Zone.",
+      "logic": "Lower = food offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -19644,8 +19644,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often ordinary stalkers you can trade with offer drinks. Vanilla: 100%. 50% = those offers turn up half as often; 0% = ordinary stalkers you can trade with never sell drinks, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every drinks offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often stalkers you trade with offer drinks. Vanilla: 100%. At 0% you have to find drinks in the Zone.",
+      "logic": "Lower = drinks offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     },
@@ -19683,8 +19683,8 @@
           "No change at default. An OFF cell removes only the selected item category from the selected trader role."
         ]
       },
-      "rationale": "How often ordinary stalkers you can trade with offer grenades. Vanilla: 100%. 50% = those offers turn up half as often; 0% = ordinary stalkers you can trade with never sell grenades, so you have to find them in the Zone.",
-      "logic": "100% keeps vanilla odds; 5–95% makes every grenades offer turn up that much less often; 0% takes them off the shelf. Rank unlocks and restock timing stay vanilla.",
+      "rationale": "How often stalkers you trade with offer grenades. Vanilla: 100%. At 0% you have to find grenades in the Zone.",
+      "logic": "Lower = grenades offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.",
       "interaction": "Separate from AMMO / MEDICAL SUPPLY, which set how much a trader carries. Prices, what traders buy and refresh timing stay vanilla.",
       "exposeInUi": false
     }

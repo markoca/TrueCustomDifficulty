@@ -1,3 +1,13 @@
+## 2026-11-18 — CURRENT: rationale trim — no value mapping that HIGHER / LOWER already gives
+
+* **Mutant pack size** (14): `How many bloodsuckers show up per pack. Vanilla: 1× (Newbie / Experienced / Veteran / Master: 0 / 1 / 1 / 1). How often they spawn doesn't change. A vanilla 0 stays 0.` The text no longer says *2× = up to twice …* or *Each species has its own bar*. *deers* is now *deer*.
+* **Human squad size** (4): drops *2× = up to twice …* and *Each rank has its own bar*.
+* **Trader stock** (31): `How often stalkers you trade with offer grenades. Vanilla: 100%. At 0% you have to find grenades in the Zone.` Before, it said *ordinary stalkers you can trade with* and *50% = those offers turn up half as often*. HIGHER / LOWER is now `Lower = grenades offers turn up less often; 0% takes them off the shelf. Rank unlocks stay vanilla.` (was *5–95% makes every … offer*).
+* **44 more rationales** drop a trailing value-mapping sentence (`0% removes it.`, `50% = half as often, 0% = never.`, `100% = no cut.`, `0 makes them harmless.` …) that HIGHER / LOWER already states. Tip sentences stay: pseudogiant ammo, sleep healing, artifact jackpot, Glass Shards running.
+* Guns to Find: `How many loose guns lie around the Zone after shuffling. Vanilla: 100% (every safe spot filled). …` Medkit MIN / MAX: `Vanilla: 0.` / `Vanilla: 5.`
+* Median WHAT IT DOES length is now 121 characters (was 138), with a longest of 222 (was 293).
+* The style gate flags a short sentence after `Vanilla:` that starts with a number and only repeats HIGHER / LOWER values.
+
 ## 2026-11-18 — CURRENT: number ink, second sweep
 
 * Four more places changed: Drunkenness *WASTED AFTER N*, the World Loot MOD lane `%`, the water stamina cap number, and the starvation HUD time (digits only, `h / m / s` plain).

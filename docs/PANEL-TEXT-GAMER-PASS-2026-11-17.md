@@ -98,6 +98,8 @@ The right-hand panel shows four sections for a selected control: **WHAT IT DOES*
 
 39. WHAT IT DOES never repeats a `Higher = …` sentence that HIGHER / LOWER already has; `Vanilla:` is always the second sentence (gate-enforced).
 
+40. WHAT IT DOES never re-lists values HIGHER / LOWER already maps (`0% removes it.`, `50% = half as often`); keep only a tip that adds something (gate-enforced).
+
 ## Since 2026-11-18
 
 The rules above are consolidated in `docs/PANEL-TEXT-STYLE.md` and enforced by `tools/audit_panel_text_style.py`.

@@ -50,7 +50,7 @@ assert setting['label']=='Guns to Find' and setting['display']['valueLabel']=='G
 assert setting['requiresToggle']=='loot.worldWeaponShuffle'
 assert setting['slider']=={'min': 0, 'max': 1, 'step': 0.05, 'stepMode': 'absolute'}
 assert 'Even at 0%' in setting['description']
-assert 'Quest, unique and NPC weapons are unaffected' in setting['rationale']
+assert 'Quest, unique and NPC weapons are untouched' in setting['rationale']
 assert 'DrawText(dc, "GUNS TO FIND", new Point(left, rowTop + 2.0)' in ui
 assert 'DrawText(dc, "Density", new Point(left, rowTop + 2.0)' not in ui
 vm=(ROOT/'src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs').read_text(encoding='utf8')
