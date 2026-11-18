@@ -37,20 +37,20 @@ internal static partial class Program
         var initialChoice = smart.CurrentText;
         smart.CurrentText = "NPC_Medicine_Smart, NPC_Ammo_Smart";
         npcBoard.Measure(new System.Windows.Size(920.0, 1200.0));
-        Check(Math.Abs(npcBoard.DesiredSize.Height - 470.0) < 0.000001,
+        Check(Math.Abs(npcBoard.DesiredSize.Height - 510.0) < 0.000001,
             "NPC bonus card must sit beside weapon condition");
         npcBoard.Measure(new System.Windows.Size(860.0, 1200.0));
-        Check(Math.Abs(npcBoard.DesiredSize.Height - 470.0) < 0.000001,
+        Check(Math.Abs(npcBoard.DesiredSize.Height - 510.0) < 0.000001,
             "NPC board must stay width-capped at medium width");
         npcBoard.Measure(new System.Windows.Size(600.0, 1200.0));
-        Check(Math.Abs(npcBoard.DesiredSize.Height - 568.0) < 0.000001,
+        Check(Math.Abs(npcBoard.DesiredSize.Height - 706.0) < 0.000001,
             "Narrow NPC ammo mode must keep the two-column middle tier");
         smart.CurrentText = string.Empty;
         npcBoard.Measure(new System.Windows.Size(920.0, 1200.0));
-        Check(Math.Abs(npcBoard.DesiredSize.Height - 470.0) < 0.000001,
+        Check(Math.Abs(npcBoard.DesiredSize.Height - 510.0) < 0.000001,
             "NPC NONE mode must collapse optional ammo controls");
         npcBoard.Measure(new System.Windows.Size(600.0, 1200.0));
-        Check(Math.Abs(npcBoard.DesiredSize.Height - 568.0) < 0.000001,
+        Check(Math.Abs(npcBoard.DesiredSize.Height - 706.0) < 0.000001,
             "Narrow NPC NONE mode must collapse optional ammo controls");
         smart.CurrentText = initialChoice;
 

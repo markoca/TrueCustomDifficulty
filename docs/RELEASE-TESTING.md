@@ -777,3 +777,5 @@ Fourth run (2026-11-18, e7be19a): 12 PASS / 1 FAIL. LootSpecialGenerators `smart
 Fifth run (2026-11-18, 4c23dcf): 12 PASS / 1 FAIL. The NPC LOOT board height pins were updated to 510 / 510 / 706.
 
 Sixth run (2026-11-18, b978bdd): 12 PASS / 1 FAIL. `stash-medical-zero` now expects Basic Chance rows to follow the Basic cell.
+
+Seventh run (2026-11-18, 2926ff9): 12 PASS / 1 FAIL. The GenericSupplyReduction NPC LOOT heights were updated to 510 / 706.

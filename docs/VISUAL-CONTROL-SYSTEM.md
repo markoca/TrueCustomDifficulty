@@ -1,3 +1,7 @@
+## CURRENT 2026-11-18 — Seventh Wine contract run: 12 PASS / 1 FAIL
+
+* No UI change. GenericSupplyReduction had the same five pre-redesign NPC LOOT height pins (470 / 568). They are now 510 / 706, like NpcConsumableChanceFirstPass. No other board-height pins remain in the C# contracts, apart from the Health ones, which pass. All three reflection targets (`IsNpcBonusSliderLocked`, `_currentBoolean`, `StashGearWeightShares`) still exist.
+
 ## CURRENT 2026-11-18 — Sixth Wine contract run: 12 PASS / 1 FAIL
 
 * No UI or writer change. LootSpecialGenerators `stash-medical-zero` still assumed that the Basic MEDS / FOOD / DRINKS cells are Weight-only. Since the stash consistency pass (4a52c2c), those cells also keep their share of Basic Chance rows (Bandage / Medkit / Vodka; `TierChanceParameterId`). The check now expects source Chance × cell. The Basic RGD-5 Chance stays with BASIC GRENADES CHANCE.
