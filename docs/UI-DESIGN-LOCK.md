@@ -1,3 +1,7 @@
+## CURRENT 2026-11-18 — Gate repairs after the knob redesign
+
+* ZONE WEATHER and ARTIFACT RARE+ help text follow the panel-text rules again: `Vanilla:` follows the first sentence, logic opens with `Higher =`, and times read `60 s`. Board captions that hold no numbers (LAIR CAPACITY, FREQUENCY, BASE ODDS, MASTER ZONES) need no `secondaryModified` flag; only the three stamina and Hercules readouts that carry numbers do. No visual change.
+
 ## CURRENT 2026-11-18 — Mutant abilities catalog (no UI change)
 
 * `docs/combat/MUTANT-ABILITIES-CATALOG.md` lists every mutant-ability lever in the game CFG: cooldowns, reaction windows, area, counts and strength, with vanilla values. It also covers the cooldown tags that ATTACKS, ABILITIES and SPECIAL ABILITY RATE do not reach yet (summons, howls, squeals, sound tricks), dependencies, excluded boss and story agents, and a recommended shortlist. No board, writer or preset changes yet.

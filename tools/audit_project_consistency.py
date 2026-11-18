@@ -5764,8 +5764,9 @@ note("Stamina casing: STAMINA headings, lowercase stamina/s and numeric units")
 # Two-value source knob centers: secondary derived values stay grey
 # except changed numerical digits, including linked cross-tab source changes.
 _knob_source = (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
-# 3 stamina/Hercules call sites + ARTIFACT HUNTING and ZONE WEATHER loops (2026-11-17/18).
-if _knob_source.count("secondaryReadout:") != 5 or _knob_source.count("secondaryModified:") != 5:
+# 3 stamina/Hercules call sites carry numbers and must pass secondaryModified;
+# LAIR POPULATION, ZONE WEATHER and ARTIFACT HUNTING loops pass number-free captions (2026-11-18).
+if _knob_source.count("secondaryReadout:") != 6 or _knob_source.count("secondaryModified:") != 3:
     fail("All two-value knob call sites must supply reference-aware secondary readouts")
 for _needed in (
         "private void DrawKnobSecondaryReadout(",

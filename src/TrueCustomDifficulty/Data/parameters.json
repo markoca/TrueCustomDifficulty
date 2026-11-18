@@ -14404,8 +14404,8 @@
           "Vanilla split (Common/Uncommon/Rare/Epic): Newbie 80/20/0/0, Experienced 50/48/1.9/0.1, Veteran 30/59/10/1, Master 10/65/20/5. Newbie areas have no rare artifacts and stay unchanged."
         ]
       },
-      "rationale": "Among artifacts that spawn, how often you find a Rare or Epic one. Master zones start at 25% Rare+; Veteran at 11%. The knob shows Master-zone odds, while RARITY BY ZONE shows every area. Newbie zones still have none.",
-      "logic": "Higher shifts the existing rarity distribution toward Rare and Epic, with total odds normalised to 100%. Does not increase the number of artifact spawn attempts.",
+      "rationale": "How often a spawned artifact is Rare or Epic. Vanilla: Master zones 25% Rare+, Veteran 11%, Newbie none. The knob shows Master-zone odds; RARITY BY ZONE shows every area.",
+      "logic": "Higher = the rarity split shifts toward Rare and Epic, still totalling 100%. Does not add artifact spawns.",
       "interaction": "Only the rarity of a successful artifact spawn. SPAWN CHANCE controls whether it happens; PER SPAWN controls how many artifacts appear."
     },
     {
@@ -14499,7 +14499,7 @@
           "Artifact fields refill after emissions, so more emissions also mean more artifacts."
         ]
       },
-      "rationale": "More random emissions mean more sudden runs for shelter. Turn it down for a quieter Zone, or 0× to stop random ones. Story emissions stay.",
+      "rationale": "More random emissions mean more sudden runs for shelter. Vanilla: 100%. 0% stops random emissions; story emissions stay.",
       "logic": "Higher = random emissions are picked more often when eligible. This is not a countdown or fixed interval; 0× turns off random emission weather.",
       "interaction": "Artifact fields refill after an emission, so this also feeds ARTIFACT HUNTING. Emissions kill anyone caught outside; LAIR RESPAWN TIME sets how fast lairs fill back up.",
       "exposeInUi": true
@@ -14548,7 +14548,7 @@
           "A weight in the weather pick: more storms leave less room for clear and cloudy weather."
         ]
       },
-      "rationale": "More storms bring more bad weather to the Zone. Turn it down for calmer skies, or 0× for no randomly selected storms.",
+      "rationale": "More storms bring more bad weather to the Zone. Vanilla: 100%. 0% stops randomly selected storms.",
       "logic": "Higher = more frequent storm selections at the expense of other weather; 0× = no random storm weather.",
       "interaction": "RAIN NOISE and THUNDER NOISE set how much the weather hides your noise from enemies. EMISSION FREQUENCY is separate.",
       "exposeInUi": false
@@ -14597,8 +14597,8 @@
           "The red-sky calm before an emission (120 s weather) is not changed."
         ]
       },
-      "rationale": "Seconds to find shelter before an emission hits. Raise it for more time to hide, or shorten it for a tougher run. The actual blast lasts just as long.",
-      "logic": "10–60 seconds between the warning and the shock wave. Later world emission stages shift to match; the active emission still lasts 60 seconds.",
+      "rationale": "Time to find shelter before an emission hits. Vanilla: 60 s. Shorter makes runs for cover tougher; the blast itself lasts just as long.",
+      "logic": "Higher = more time between the warning and the shock wave, 10–60 s. Later emission stages shift to match; the active emission still lasts 60 s.",
       "interaction": "Only the warning. The emission itself lasts as long as before, and NPCs still take cover with you.",
       "exposeInUi": false
     },

@@ -117,7 +117,7 @@ def main():
                   'secondaryReadout: isRespawn ? "FULL AGAIN" : "LAIR CAPACITY"'):
         check(token in ui, "board drifted: " + token)
     board = ui[ui.index('    private void DrawLairPopulationBoard('):
-               ui.index('    // ZONE WEATHER: three frameless source dials')]
+               ui.index('    // ZONE WEATHER: frameless STORMS')]
     check('DrawEconomyCard(' not in board and 'DrawTrackedRoundedRectangle(' not in board,
           "lair population knobs have no rectangular card frames")
     check(board.count('DrawSourceKnob(') == 1
