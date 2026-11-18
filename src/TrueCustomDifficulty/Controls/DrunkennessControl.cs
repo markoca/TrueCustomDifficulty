@@ -270,7 +270,7 @@ public sealed class DrunkennessControl : FrameworkElement
         var changed = parameter?.IsValueModifiedFromReference() == true;
         var currentText = CreateText(
             strength.ToString("0", CultureInfo.InvariantCulture),
-            changed ? 14.5 : 13.3,
+            13.3,
             changed ? ReadoutInk.Numbers(accent, text) : text,
             FontWeights.Bold);
         dc.DrawText(currentText, new Point(valueX, rect.Top + 25));
@@ -760,7 +760,7 @@ public sealed class DrunkennessControl : FrameworkElement
             Math.Max(9.0, size),
             ink,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
-        return ReadoutInk.Highlight(formatted, value, numberInk);
+        return ReadoutInk.Highlight(formatted, value, numberInk, Math.Max(9.0, size));
     }
 
     private enum ActiveSlider

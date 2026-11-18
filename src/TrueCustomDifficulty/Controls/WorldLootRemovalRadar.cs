@@ -527,7 +527,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
             if (value[i] == '|')
                 formatted.SetForegroundBrush(separatorBrush, i, 1);
         }
-        ReadoutInk.Highlight(formatted, value, numberInk);
+        ReadoutInk.Highlight(formatted, value, numberInk, Math.Max(9.0, size));
 
         return formatted;
     }

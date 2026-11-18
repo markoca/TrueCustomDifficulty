@@ -3366,7 +3366,7 @@ for _file, _required in {
     ),
     "BleedingCurveControl.cs": (
         "highlightDerivedLastNumber: true",
-        "ft.SetForegroundBrush(accent, derived.Index, derived.Length);",
+        "ReadoutInk.Mark(ft, accent, derived.Index, derived.Length, size);",
     ),
 }.items():
     _body = (_semantic_source_dir / _file).read_text(encoding="utf-8")
@@ -5383,7 +5383,7 @@ _knob_native = _npc_preview_source.split("private void DrawNpcCompactMultiplierK
 _knob_mod = _npc_preview_source.split("private void DrawNpcModItemsCard(", 1)[-1].split("private void SelectNpcModItems(", 1)[0]
 if any(token not in _knob_shared for token in (
     'WeaponKnobStartAngle', 'WeaponKnobSweepAngle',
-    'KnobVisibleStepStride', 'SetForegroundBrush(accent',
+    'KnobVisibleStepStride', 'ReadoutInk.Mark(formatted, accent',
     'DrawKnobArc(dc, center, radius', 'DrawCenteredText(dc, caption,')):
     fail("NPC 270-degree knobs must use the same catalog-native dial renderer")
 if any(token not in _knob_native for token in (
@@ -5770,7 +5770,7 @@ for _needed in (
         "var formatted = CreateText(label, 11.0, muted, FontWeights.Bold, maxWidth);",
         "if (modified)",
         'System.Text.RegularExpressions.Regex.Matches(label, @"\\d+(?:\\.\\d+)?")',
-        "formatted.SetForegroundBrush(accent, number.Index, number.Length);",
+        "ReadoutInk.Mark(formatted, accent, number.Index, number.Length, 11.0);",
         "active && secondaryModified",
         "var referenceStaminaPool = Math.Max(1.0, maxStamina?.ReferenceNumber ?? 100.0);",
         "burst.ReferenceNumber * referenceStaminaPool",
@@ -5885,10 +5885,8 @@ for _token in (
         '<Style x:Key="RangeTrackValueStyle" TargetType="{x:Type TextBlock}">',
         'Text="MIN" Style="{StaticResource RangeTrackCaptionStyle}"',
         'Text="MAX" Style="{StaticResource RangeTrackCaptionStyle}"',
-        'Text="{Binding RangeMinDisplay}" Style="{StaticResource RangeTrackValueStyle}"',
-        'Text="{Binding RangeMaxDisplay}" Style="{StaticResource RangeTrackValueStyle}"',
-        '<Setter TargetName="RangeMinValueText" Property="Foreground" Value="{StaticResource AccentBrush}" />',
-        '<Setter TargetName="RangeMaxValueText" Property="Foreground" Value="{StaticResource AccentBrush}" />',
+        'controls:NumberRuns.Text="{Binding RangeMinDisplay}" controls:NumberRuns.Highlight="{Binding IsModified}" controls:NumberRuns.Accent="{StaticResource AccentBrush}" Style="{StaticResource RangeTrackValueStyle}"',
+        'controls:NumberRuns.Text="{Binding RangeMaxDisplay}" controls:NumberRuns.Highlight="{Binding IsModified}" controls:NumberRuns.Accent="{StaticResource AccentBrush}" Style="{StaticResource RangeTrackValueStyle}"',
         ):
     if _token not in _range_ui:
         fail("Native range control shared style/editable modified tint drifted: " + _token)

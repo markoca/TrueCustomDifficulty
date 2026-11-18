@@ -589,7 +589,7 @@ public sealed class MutantHealthRadar : FrameworkElement
         if (modified)
         {
             var match = System.Text.RegularExpressions.Regex.Match(
-                label, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?");
+                label, @"[+\-−]?\d+(?:\.\d+)?");
             if (match.Success)
             {
                 formatted.SetForegroundBrush(accent, match.Index, match.Length);
@@ -618,7 +618,7 @@ public sealed class MutantHealthRadar : FrameworkElement
             Math.Max(9.0, size),
             ink,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
-        ReadoutInk.Highlight(formatted, value, numberInk);
+        ReadoutInk.Highlight(formatted, value, numberInk, Math.Max(9.0, size));
 
         return formatted;
     }

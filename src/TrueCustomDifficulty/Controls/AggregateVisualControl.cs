@@ -721,7 +721,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawRightAlignedText(dc,
             coupons.CurrentNumber.ToString("N0", CultureInfo.InvariantCulture),
             new Point(card.Right - 13.0, card.Top + 5.0),
-            changed ? 16.2 : 15.0,
+            15.0,
             changed ? ReadoutInk.Numbers(accent, text) : coupons.IsControlEnabled ? text : muted,
             FontWeights.Bold);
 
@@ -818,7 +818,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         var modified = parameter.IsValueModifiedFromReference();
         var value = CardReadout(parameter);
-        var readout = CreateText(value, modified ? 13.0 : 11.8,
+        var readout = CreateText(value, 11.8,
             modified ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
         // Reserve the measured readout width, not an arbitrary 95-DIP lane.
         // At minimum window width titles cannot overwrite the live value.
@@ -1006,7 +1006,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             if (rankChanged)
             {
                 var digits = $"{rare:0.#}".Length;
-                readout.SetForegroundBrush(accent, 0, digits);
+                ReadoutInk.Mark(readout, accent, 0, digits, 9.4);
             }
             dc.DrawText(readout, new Point(
                 card.Right - 12.0 - readout.WidthIncludingTrailingWhitespace, y));
@@ -1055,7 +1055,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var xCaption = CreateText("MOVEMENT SPEED", 10.5, text, FontWeights.Bold);
         var xChanged = movement.IsValueModifiedFromReference();
         var xValue = CreateText($"{movement.CurrentNumber * 100.0:0.#}%",
-            xChanged ? 14.2 : 13.0, xChanged ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
+            13.0, xChanged ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
         var xStart = plot.Left + plot.Width / 2.0 -
             (xCaption.WidthIncludingTrailingWhitespace + axisGap +
              xValue.WidthIncludingTrailingWhitespace) / 2.0;
@@ -1068,7 +1068,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var yCaption = CreateText("TURN SPEED", 10.5, text, FontWeights.Bold);
         var yChanged = turning.IsValueModifiedFromReference();
         var yValue = CreateText($"{turning.CurrentNumber * 100.0:0.#}%",
-            yChanged ? 14.2 : 13.0, yChanged ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
+            13.0, yChanged ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
         var yAnchor = plot.Left - 46.0;
         var yStart = yAnchor -
             (yCaption.WidthIncludingTrailingWhitespace + axisGap +
@@ -1206,8 +1206,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     {
         var result = CreateText(label, size, neutral, weight, width);
         foreach (System.Text.RegularExpressions.Match number in
-            System.Text.RegularExpressions.Regex.Matches(label, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?"))
-            result.SetForegroundBrush(accent, number.Index, number.Length);
+            System.Text.RegularExpressions.Regex.Matches(label, @"[+\-−]?\d+(?:\.\d+)?"))
+            ReadoutInk.Mark(result, accent, number.Index, number.Length, size);
         return result;
     }
 
@@ -1230,7 +1230,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         {
             foreach (System.Text.RegularExpressions.Match number in
                 System.Text.RegularExpressions.Regex.Matches(label, @"\d+(?:\.\d+)?"))
-                formatted.SetForegroundBrush(accent, number.Index, number.Length);
+                ReadoutInk.Mark(formatted, accent, number.Index, number.Length, 11.0);
         }
 
         dc.DrawText(formatted, new Point(
@@ -1641,7 +1641,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             foreach (System.Text.RegularExpressions.Match number in
                 System.Text.RegularExpressions.Regex.Matches(
                     value, @"\d+(?:\.\d+)?"))
-                formatted.SetForegroundBrush(accent, number.Index, number.Length);
+                ReadoutInk.Mark(formatted, accent, number.Index, number.Length, 11.2);
         dc.DrawText(formatted, new Point(
             center.X - formatted.WidthIncludingTrailingWhitespace / 2.0,
             center.Y - 7.0));
@@ -1851,11 +1851,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             9.6, muted, FontWeights.Bold);
         DrawCenteredText(dc, $"{condition.CurrentMinNumber * 100.0:0}%",
             new Point(minReadoutX, rangeCard.Top + 37.0),
-            minModified ? 14.2 : 13.0,
+            13.0,
             minModified ? ReadoutInk.Numbers(accent, text) : text, FontWeights.SemiBold);
         DrawCenteredText(dc, $"{condition.CurrentMaxNumber * 100.0:0}%",
             new Point(maxReadoutX, rangeCard.Top + 37.0),
-            maxModified ? 14.2 : 13.0,
+            13.0,
             maxModified ? ReadoutInk.Numbers(accent, text) : text, FontWeights.SemiBold);
         dc.DrawLine(new Pen(CloneWithOpacity(border, 0.60), 0.8),
             new Point(center, rangeCard.Top + 24.0),
@@ -2738,7 +2738,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // of which bundle owns them. Never apply a second whole-card fade.
         var disabledInk = MasterDisabledInk(text);
         var display = CreateText(valueText(parameter.CurrentNumber),
-            changed ? 13.0 : 11.8,
+            11.8,
             enabled ? changed ? ReadoutInk.Numbers(accent, text) : text : disabledInk, FontWeights.Bold);
         var labelWidth = Math.Max(1.0, card.Width - 36.0 -
             display.WidthIncludingTrailingWhitespace - 9.0);
@@ -2994,7 +2994,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             enabled ? text : disabledInk, FontWeights.Bold);
         DrawMixerCentered(dc, format(parameter.CurrentNumber),
             new Point(center, card.Top + 30.0),
-            Math.Max(30.0, card.Width - 10.0), modified ? 13.3 : 12.1,
+            Math.Max(30.0, card.Width - 10.0), 12.1,
             !enabled ? disabledInk : modified ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
         DrawMixerCentered(dc, format(parameter.Maximum),
             new Point(center, card.Top + 53.0),
@@ -3378,15 +3378,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         {
             // In the two Master signed-percentage dials, only the editable
             // numeric token becomes gold; +/- and % remain neutral.
-            var formatted = CreateText(currentLabel, modified ? 16.2 : 15.0,
-                active ? text : muted, FontWeights.Bold, card.Width - 12.0);
-            if (modified)
-            {
-                foreach (System.Text.RegularExpressions.Match token in
-                    System.Text.RegularExpressions.Regex.Matches(
-                        currentLabel, @"\d+(?:\.\d+)?"))
-                    formatted.SetForegroundBrush(accent, token.Index, token.Length);
-            }
+            var formatted = CreateText(currentLabel, 15.0,
+                !active ? muted : modified ? ReadoutInk.Numbers(accent, text) : text,
+                FontWeights.Bold, card.Width - 12.0);
             dc.DrawText(formatted, new Point(
                 center.X - formatted.WidthIncludingTrailingWhitespace / 2.0,
                 currentTop));
@@ -3395,10 +3389,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         {
             // Hercules: one centered value line; only the editable number turns gold.
             var combined = CreateText($"{currentLabel} {nativeUnit}",
-                prominent ? (modified ? 18.2 : 17.0) : (modified ? 16.2 : 15.0),
-                active ? text : muted, FontWeights.Bold, card.Width - 12.0);
-            if (modified)
-                combined.SetForegroundBrush(accent, 0, currentLabel.Length);
+                prominent ? 17.0 : 15.0,
+                !active ? muted : modified ? ReadoutInk.Numbers(accent, text) : text,
+                FontWeights.Bold, card.Width - 12.0);
             dc.DrawText(combined, new Point(
                 center.X - combined.WidthIncludingTrailingWhitespace / 2.0, currentTop));
         }
@@ -3407,17 +3400,16 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             // Percentage units remain neutral like other source-native controls:
             // only a modified numeric token becomes gold.
             var rendered = CreateText(currentLabel,
-                prominent ? (modified ? 18.2 : 17.0) : (modified ? 16.2 : 15.0),
-                active ? text : muted, FontWeights.Bold, card.Width - 12.0);
-            if (modified)
-                rendered.SetForegroundBrush(accent, 0, Math.Max(0, currentLabel.Length - 1));
+                prominent ? 17.0 : 15.0,
+                !active ? muted : modified ? ReadoutInk.Numbers(accent, text) : text,
+                FontWeights.Bold, card.Width - 12.0);
             dc.DrawText(rendered, new Point(
                 center.X - rendered.WidthIncludingTrailingWhitespace / 2.0, currentTop));
         }
         else
         {
             DrawCenteredText(dc, currentLabel, new Point(center.X, currentTop),
-                prominent ? (modified ? 18.2 : 17.0) : (modified ? 16.2 : 15.0),
+                prominent ? 17.0 : 15.0,
                 active ? modified ? ReadoutInk.Numbers(accent, text) : text : muted, FontWeights.Bold);
         }
         if (secondaryReadout is not null)
@@ -3663,7 +3655,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             FontWeights.Bold);
         // Per-value modification grammar: highlight only digits, not the unit.
         if (active && parameter.IsValueModifiedFromReference())
-            formatted.SetForegroundBrush(accent, 0, value.Length - 1);
+            ReadoutInk.Mark(formatted, accent, 0, value.Length - 1, 16.0);
         dc.DrawText(formatted, new Point(
             centerX - formatted.WidthIncludingTrailingWhitespace / 2.0, 83.0));
     }
@@ -3741,7 +3733,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             DrawMixerCentered(dc, $"{parameter.CurrentNumber:0.##}×",
                 new Point(x, plot.Bottom + 37.0),
                 plot.Width / 4.0 - 10.0,
-                parameter.IsValueModifiedFromReference() ? 12.3 : 11.1,
+                11.1,
                 parameter.IsValueModifiedFromReference() ? ReadoutInk.Numbers(accent, text) : text,
                 FontWeights.Bold);
             // Actual repair-price layers multiply: Base Repair times this
@@ -4021,7 +4013,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             DrawRightAlignedText(dc,
                 $"{durations[i] * parameter.CurrentNumber:0.#} s",
                 new Point(preview.Right - 12.0, y - 9.0),
-                modified ? 12.2 : 11.0, modified ? ReadoutInk.Numbers(accent, text) : text,
+                11.0, modified ? ReadoutInk.Numbers(accent, text) : text,
                 FontWeights.Bold);
 
             // Keep native source snapping and right-click/R reset. The hit
@@ -4088,7 +4080,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             var modified = source.IsValueModifiedFromReference();
             DrawRightAlignedText(dc, $"{source.CurrentNumber:0} s",
                 new Point(preview.Right - 12.0, y - 9.0),
-                modified ? 12.2 : 11.0,
+                11.0,
                 modified ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
             AddHorizontalTarget(source,
                 new Rect(track.Left - 6.0, y - 10.0,
@@ -4269,7 +4261,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var modified = minimumHours.IsValueModifiedFromReference();
         DrawRightAlignedText(dc, $"{minimumHours.CurrentNumber:0} HOURS",
             new Point(selector.Right - 11, 152.0),
-            modified ? 13.0 : 11.8, modified ? ReadoutInk.Numbers(accent, text) : text,
+            11.8, modified ? ReadoutInk.Numbers(accent, text) : text,
             FontWeights.Bold);
 
         const int hoursCount = 14;
@@ -4346,7 +4338,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var changed = parameter.IsValueModifiedFromReference();
         DrawRightAlignedText(dc, $"{parameter.CurrentNumber:0.##}×",
             new Point(card.Right - 12, card.Top + 8),
-            changed ? 13.3 : 12.1, changed ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
+            12.1, changed ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
         var track = new Rect(card.Left + 18, card.Top + 49,
             card.Width - 36, 12.0);
         var now = ValueToX(parameter.CurrentNumber,
@@ -5586,7 +5578,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             System.Globalization.CultureInfo.InvariantCulture);
         var number = CreateText(digits + "%", 10.6, enabled ? text : muted, FontWeights.Bold);
         if (enabled && parameter.IsValueModifiedFromReference())
-            number.SetForegroundBrush(accent, 0, digits.Length);
+            ReadoutInk.Mark(number, accent, 0, digits.Length, 10.6);
         dc.DrawText(number, new Point(cell.Right - 8.0 - number.WidthIncludingTrailingWhitespace,
             cell.Top + 4.0));
         var rail = new Rect(cell.Left + 12.0, cell.Bottom - 15.0, Math.Max(1.0, cell.Width - 24.0), 3.0);
@@ -5685,13 +5677,13 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             9.6, muted, FontWeights.Bold);
         DrawCenteredText(dc, minValue.ToString(CultureInfo.InvariantCulture),
             new Point(minReadoutX, card.Top + 43.0),
-            min.IsValueModifiedFromReference() ? 14.2 : 13.0,
+            13.0,
             !min.IsControlEnabled ? muted :
                 min.IsValueModifiedFromReference() ? ReadoutInk.Numbers(FindBrush("AccentBrush", Brushes.Goldenrod), text) : text,
             FontWeights.SemiBold);
         DrawCenteredText(dc, maxValue.ToString(CultureInfo.InvariantCulture),
             new Point(maxReadoutX, card.Top + 43.0),
-            max.IsValueModifiedFromReference() ? 14.2 : 13.0,
+            13.0,
             !max.IsControlEnabled ? muted :
                 max.IsValueModifiedFromReference() ? ReadoutInk.Numbers(FindBrush("AccentBrush", Brushes.Goldenrod), text) : text,
             FontWeights.SemiBold);
@@ -5979,7 +5971,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             foreach (System.Text.RegularExpressions.Match number in
                 System.Text.RegularExpressions.Regex.Matches(
                     value, @"-?\d+(?:\.\d+)?"))
-                formatted.SetForegroundBrush(accent, number.Index, number.Length);
+                ReadoutInk.Mark(formatted, accent, number.Index, number.Length, size);
         }
         var x = Math.Min(right.X, ActualWidth - 12.0)
             - formatted.WidthIncludingTrailingWhitespace;
@@ -6099,7 +6091,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 // Ammo Yield itself differs from selected Base Preset.
                 DrawCenteredText(dc, $"{low}–{high}",
                     new Point(tile.Left + tile.Width / 2.0, tile.Top + 17.0),
-                    countsModified ? 12.8 : 11.6,
+                    11.6,
                     countsModified ? ReadoutInk.Numbers(accent, eligible ? text : muted) : eligible ? text : muted,
                     FontWeights.SemiBold);
             }
@@ -6407,7 +6399,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         if (active && parameter.IsValueModifiedFromReference())
             foreach (System.Text.RegularExpressions.Match token in
                 System.Text.RegularExpressions.Regex.Matches(value, @"\d+(?:\.\d+)?"))
-                formatted.SetForegroundBrush(accent, token.Index, token.Length);
+                ReadoutInk.Mark(formatted, accent, token.Index, token.Length, 12.4);
         dc.DrawText(formatted, new Point(center.X -
             formatted.WidthIncludingTrailingWhitespace / 2.0, center.Y - 8.0));
         // Stashes knobs share the same small white lower value grammar as
@@ -6453,7 +6445,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             parameter.IsControlEnabled ? text : muted, FontWeights.Bold, contentWidth);
         if (parameter.IsControlEnabled && parameter.IsValueModifiedFromReference())
             foreach (System.Text.RegularExpressions.Match token in
-                System.Text.RegularExpressions.Regex.Matches(value, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?"))
+                System.Text.RegularExpressions.Regex.Matches(value, @"[+\-−]?\d+(?:\.\d+)?"))
             {
                 valueText.SetForegroundBrush(accent, token.Index, token.Length);
                 valueText.SetFontSize(12.7, token.Index, token.Length);
@@ -6461,11 +6453,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         if (highlightDerivedLastNumber && parameter.IsControlEnabled)
         {
             var nums = System.Text.RegularExpressions.Regex.Matches(
-                value, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?");
+                value, @"[+\-−]?\d+(?:\.\d+)?");
             if (nums.Count > 0)
             {
                 var derived = nums[nums.Count - 1];
-                valueText.SetForegroundBrush(accent, derived.Index, derived.Length);
+                ReadoutInk.Mark(valueText, accent, derived.Index, derived.Length, 11.5);
             }
         }
         // Measure after number highlights enlarge edited values; reserve a
@@ -6619,7 +6611,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         {
             foreach (System.Text.RegularExpressions.Match token in
                 System.Text.RegularExpressions.Regex.Matches(
-                    value, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?"))
+                    value, @"[+\-−]?\d+(?:\.\d+)?"))
             {
                 valueText.SetForegroundBrush(accent, token.Index, token.Length);
                 valueText.SetFontSize(baseSize + 1.2, token.Index, token.Length);
@@ -7993,7 +7985,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             formatted.MaxLineCount = 1;
             formatted.Trimming = TextTrimming.CharacterEllipsis;
         }
-        ReadoutInk.Highlight(formatted, value, numberInk);
+        ReadoutInk.Highlight(formatted, value, numberInk, Math.Max(9.0, size));
 
         return formatted;
     }
@@ -8008,7 +8000,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     {
         var formatted = CreateText(caption, size, normal, weight);
         var numbers = System.Text.RegularExpressions.Regex.Matches(
-            caption, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?");
+            caption, @"[+\-−]?\d+(?:\.\d+)?");
         for (var i = 0; i < numbers.Count && i < changed.Length; i++)
             if (changed[i])
             {

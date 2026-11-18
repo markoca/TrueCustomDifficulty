@@ -691,7 +691,7 @@ public sealed class MedicalHealingRadar : FrameworkElement
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal,
                 weight, FontStretches.Normal), Math.Max(9, size), ink,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
-        return ReadoutInk.Highlight(formatted, value, numberInk);
+        return ReadoutInk.Highlight(formatted, value, numberInk, Math.Max(9.0, size));
     }
 
     private sealed record HitArea(Rect Bounds, int Row, HitAction Action);

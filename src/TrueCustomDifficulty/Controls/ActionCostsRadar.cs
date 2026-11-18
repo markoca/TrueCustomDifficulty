@@ -599,7 +599,7 @@ public sealed class ActionCostsRadar : FrameworkElement
         if (parameter.IsValueModifiedFromReference())
         {
             var numeric = System.Text.RegularExpressions.Regex.Match(
-                value, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?");
+                value, @"[+\-−]?\d+(?:\.\d+)?");
             if (numeric.Success)
             {
                 formatted.SetForegroundBrush(accent, numeric.Index, numeric.Length);
@@ -855,7 +855,7 @@ public sealed class ActionCostsRadar : FrameworkElement
             Math.Max(9.0, size),
             ink,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
-        ReadoutInk.Highlight(formatted, value, numberInk);
+        ReadoutInk.Highlight(formatted, value, numberInk, Math.Max(9.0, size));
 
         return formatted;
     }

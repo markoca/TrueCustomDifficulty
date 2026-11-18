@@ -160,8 +160,8 @@ public sealed partial class AggregateVisualControl
                 }
                 DrawRightAlignedText(dc, item.PercentText,
                     new Point(valueRight, rowTop + 2.0),
-                    enabled && item.IsEffectiveChange ? 10.8 : 10.1,
-                    enabled && item.IsEffectiveChange ? accent
+                    10.1,
+                    enabled && item.IsEffectiveChange ? ReadoutInk.Numbers(accent, text)
                         : enabled ? text : CloneWithOpacity(muted, 0.7),
                     FontWeights.SemiBold);
                 var railY = rail.Top + rail.Height / 2.0;

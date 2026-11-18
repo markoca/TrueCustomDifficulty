@@ -313,7 +313,7 @@ public sealed class TraderBuysMatrix : FrameworkElement
         DrawText(dc, label, new Point(card.Left + 10.0, card.Top + 7.0), 10.0, text, FontWeights.Bold);
         var modified = p.IsValueModifiedFromReference();
         var value = Text($"{p.CurrentNumber.ToString("0.##", CultureInfo.InvariantCulture)}×",
-            modified ? 12.4 : 11.4, modified ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
+            11.4, modified ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
         dc.DrawText(value, new Point(card.Right - 10.0 - value.Width, card.Top + 6.0));
         var track = new Rect(card.Left + 12.0, card.Top + 32.0, Math.Max(1.0, card.Width - 24.0), 10.0);
         DrawTrack(dc, id, track, p.CurrentNumber, p.ReferenceNumber, p.Minimum, p.Maximum,
@@ -333,7 +333,7 @@ public sealed class TraderBuysMatrix : FrameworkElement
         var readout = kind == RailKind.Gear && value <= Epsilon
             ? "OFF"
             : Math.Round(value * 100.0).ToString(CultureInfo.InvariantCulture) + "%";
-        var valueText = Text(readout, modified ? 11.4 : 10.6, modified ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
+        var valueText = Text(readout, 10.6, modified ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
         dc.DrawText(valueText, new Point(card.Right - 10.0 - valueText.Width,
             card.Top + (card.Height - valueText.Height) / 2.0));
         var track = new Rect(card.Left + 120.0, card.Top + card.Height / 2.0 - 4.0,
@@ -622,7 +622,7 @@ public sealed class TraderBuysMatrix : FrameworkElement
         var formatted = new FormattedText(value, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
             size, ink, VisualTreeHelper.GetDpi(this).PixelsPerDip);
-        ReadoutInk.Highlight(formatted, value, numberInk);
+        ReadoutInk.Highlight(formatted, value, numberInk, Math.Max(9.0, size));
         if (double.IsFinite(maxWidth))
         {
             formatted.MaxTextWidth = Math.Max(1.0, maxWidth);

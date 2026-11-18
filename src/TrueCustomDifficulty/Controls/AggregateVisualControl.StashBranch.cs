@@ -55,9 +55,8 @@ public sealed partial class AggregateVisualControl
                 System.Globalization.CultureInfo.InvariantCulture);
         var modified = enabled && p.IsValueModifiedFromReference();
         var number = CreateText(digits + (multiplier ? "×" : percentage ? "%" : ""),
-            modified ? 12.6 : 11.8,
-            enabled ? text : muted, FontWeights.Bold);
-        if (modified) number.SetForegroundBrush(accent, 0, digits.Length);
+            11.8,
+            !enabled ? muted : modified ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
         dc.DrawText(number,
             new Point(card.Right - number.WidthIncludingTrailingWhitespace - 11.0,
                 y + 3.0));

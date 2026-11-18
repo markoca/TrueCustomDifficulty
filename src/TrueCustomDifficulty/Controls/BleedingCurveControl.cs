@@ -257,7 +257,7 @@ public sealed class BleedingCurveControl : FrameworkElement
             dc,
             parameter.CurrentDisplay,
             new Point(rect.Right - 10, rect.Top + 6),
-            parameter.IsValueModifiedFromReference() ? 12.8 : 11.6,
+            11.6,
             parameter.IsValueModifiedFromReference() ? ReadoutInk.Numbers(accent, text) : text,
             FontWeights.Bold);
 
@@ -968,7 +968,7 @@ public sealed class BleedingCurveControl : FrameworkElement
             Math.Max(9.0, size),
             ink,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
-        return ReadoutInk.Highlight(formatted, value, numberInk);
+        return ReadoutInk.Highlight(formatted, value, numberInk, Math.Max(9.0, size));
     }
 
     private void DrawText(DrawingContext dc, string value, Point point, double size, Brush brush, FontWeight weight)
@@ -988,7 +988,7 @@ public sealed class BleedingCurveControl : FrameworkElement
         if (modified)
         {
             var number = System.Text.RegularExpressions.Regex.Match(
-                value, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?");
+                value, @"[+\-−]?\d+(?:\.\d+)?");
             if (number.Success)
             {
                 ft.SetForegroundBrush(accent, number.Index, number.Length);
@@ -999,11 +999,11 @@ public sealed class BleedingCurveControl : FrameworkElement
         if (highlightDerivedLastNumber)
         {
             var numbers = System.Text.RegularExpressions.Regex.Matches(value,
-                @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?");
+                @"[+\-−]?\d+(?:\.\d+)?");
             if (numbers.Count > 0)
             {
                 var derived = numbers[numbers.Count - 1];
-                ft.SetForegroundBrush(accent, derived.Index, derived.Length);
+                ReadoutInk.Mark(ft, accent, derived.Index, derived.Length, size);
             }
         }
         dc.DrawText(ft, new Point(point.X - ft.WidthIncludingTrailingWhitespace / 2.0,

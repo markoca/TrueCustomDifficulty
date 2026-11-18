@@ -164,7 +164,7 @@
                                                                             PreviewMouseRightButtonDown="SliderControl_PreviewMouseRightButtonDown"
                                                                             BorderThickness="0"
                                                                             Padding="3,1">
-                                                                        <TextBlock x:Name="CurrentValueText" Text="{Binding CurrentDisplay}"
+                                                                        <TextBlock x:Name="CurrentValueText" controls:NumberRuns.Text="{Binding CurrentDisplay}" controls:NumberRuns.Highlight="{Binding IsModified}" controls:NumberRuns.Accent="{StaticResource AccentHoverBrush}"
                                                                                    Foreground="{StaticResource TextBrush}"
                                                                                    FontSize="13.3" FontWeight="SemiBold"
                                                                                    TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" />
@@ -204,7 +204,7 @@
                                                                            TextWrapping="Wrap"
                                                                            VerticalAlignment="Center" />
                                                                 <TextBlock x:Name="EffectiveValueText"
-                                                                           Grid.Column="1" Text="{Binding EffectiveDisplay}"
+                                                                           Grid.Column="1" controls:NumberRuns.Text="{Binding EffectiveDisplay}" controls:NumberRuns.Highlight="{Binding IsModified}" controls:NumberRuns.Accent="{StaticResource AccentBrush}"
                                                                            Foreground="{StaticResource RadarMutedTextBrush}"
                                                                            FontSize="11.8" FontWeight="SemiBold"
                                                                            Margin="12,0,0,0" HorizontalAlignment="Right"
@@ -475,7 +475,7 @@
                                                                                 IsSnapToTickEnabled="True"
                                                                                 Value="{Binding CurrentMinNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                                                 PreviewMouseRightButtonDown="SliderControl_PreviewMouseRightButtonDown" />
-                                                                        <TextBlock x:Name="RangeMinValueText" Grid.Column="2" Text="{Binding RangeMinDisplay}" Style="{StaticResource RangeTrackValueStyle}" />
+                                                                        <TextBlock x:Name="RangeMinValueText" Grid.Column="2" controls:NumberRuns.Text="{Binding RangeMinDisplay}" controls:NumberRuns.Highlight="{Binding IsModified}" controls:NumberRuns.Accent="{StaticResource AccentBrush}" Style="{StaticResource RangeTrackValueStyle}" />
                                                                     </Grid>
                                                                     <controls:VanillaMarkerBar Grid.Row="1" Height="17" Margin="34,-1,54,0" IsEnabled="{Binding IsControlEnabled}" Tag="rangeMin" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Markers="{Binding VanillaMarkers}" MarkerClicked="VanillaMarkerControl_MarkerClicked" />
         
@@ -496,7 +496,7 @@
                                                                                 IsSnapToTickEnabled="True"
                                                                                 Value="{Binding CurrentMaxNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                                                 PreviewMouseRightButtonDown="SliderControl_PreviewMouseRightButtonDown" />
-                                                                        <TextBlock x:Name="RangeMaxValueText" Grid.Column="2" Text="{Binding RangeMaxDisplay}" Style="{StaticResource RangeTrackValueStyle}" />
+                                                                        <TextBlock x:Name="RangeMaxValueText" Grid.Column="2" controls:NumberRuns.Text="{Binding RangeMaxDisplay}" controls:NumberRuns.Highlight="{Binding IsModified}" controls:NumberRuns.Accent="{StaticResource AccentBrush}" Style="{StaticResource RangeTrackValueStyle}" />
                                                                     </Grid>
                                                                     <controls:VanillaMarkerBar Grid.Row="3" Height="17" Margin="34,-1,54,0" IsEnabled="{Binding IsControlEnabled}" Tag="rangeMax" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Markers="{Binding VanillaMarkers}" MarkerClicked="VanillaMarkerControl_MarkerClicked" />
                                                                 </Grid>
@@ -507,7 +507,7 @@
                                                             <TextBlock x:Name="PracticalQuantityText"
                                                                        Grid.Row="3"
                                                                        Visibility="Collapsed"
-                                                                       Text="{Binding PracticalQuantityDisplay}"
+                                                                       controls:NumberRuns.Text="{Binding PracticalQuantityDisplay}" controls:NumberRuns.Highlight="{Binding IsModified}" controls:NumberRuns.Accent="{StaticResource AccentBrush}"
                                                                        Foreground="{StaticResource MutedTextBrush}"
                                                                        FontSize="10"
                                                                        Margin="0,4,0,0"
@@ -680,13 +680,7 @@
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding IsModified}" Value="True">
                                                             <Setter TargetName="ModifiedIndicator" Property="Visibility" Value="Visible" />
-                                                            <Setter TargetName="CurrentValueText" Property="FontWeight" Value="Bold" />
-                                                            <Setter TargetName="CurrentValueText" Property="FontSize" Value="13.7" />
-                                                            <Setter TargetName="CurrentValueText" Property="Foreground" Value="{StaticResource AccentHoverBrush}" />
-                                                            <Setter TargetName="EffectiveValueText" Property="Foreground" Value="{StaticResource AccentBrush}" />
-                                                            <Setter TargetName="RangeMinValueText" Property="Foreground" Value="{StaticResource AccentBrush}" />
-                                                            <Setter TargetName="RangeMaxValueText" Property="Foreground" Value="{StaticResource AccentBrush}" />
-                                                            <Setter TargetName="PracticalQuantityText" Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                                            <!-- Only the numbers turn gold and grow (controls:NumberRuns). -->
                                                             <!-- One short fade on entry into the modified state, never card-wide. -->
                                                             <DataTrigger.EnterActions>
                                                                 <BeginStoryboard>

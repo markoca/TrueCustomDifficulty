@@ -251,7 +251,7 @@ public sealed partial class AggregateVisualControl
             // Narrow legend column (700–760 DIP boards): one size smaller so
             // "spots you 80 m ahead, 25 m aside" stays on one line.
             var compact = layout.Legend.Width < 250.0;
-            dc.DrawText(CreateText(value, (modified ? 14.0 : 13.0) - (compact ? 1.5 : 0.0),
+            dc.DrawText(CreateText(value, 13.0 - (compact ? 1.5 : 0.0),
                     modified ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold,
                     Math.Max(1.0, layout.Legend.Width - 18.0)),
                 new Point(layout.Legend.Left + 18.0, top + 19.0));

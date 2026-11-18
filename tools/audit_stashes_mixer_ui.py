@@ -479,7 +479,7 @@ assert "for (var stop = " not in coverage
 assert "foreach (var stop in new[] { p.Minimum, p.Maximum })" in coverage
 assert "var rail = new Rect(x + 13.0, y + 26.0," in coverage
 assert "p.IsValueModifiedFromReference()" in coverage
-assert "number.SetForegroundBrush(accent, 0, digits.Length)" in coverage
+assert "modified ? ReadoutInk.Numbers(accent, text) : text" in coverage
 assert "var currentX = ValueToX(p.CurrentNumber," in coverage
 assert "p.Minimum, p.Maximum, rail, false);" in coverage
 assert "p.ReferenceNumber" in coverage

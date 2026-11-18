@@ -129,7 +129,7 @@ public sealed partial class AggregateVisualControl
         var readout = string.Create(CultureInfo.InvariantCulture, $"every {lo:0.#}–{hi:0.#} s");
         DrawRightAlignedText(dc, readout,
             new Point(row.Right - 10.0, track.Top + 2.0),
-            changed ? 12.4 : 11.4,
+            11.4,
             changed ? ReadoutInk.Numbers(accent, text) : parameter.IsControlEnabled ? text : muted,
             FontWeights.Bold);
 
@@ -261,7 +261,7 @@ public sealed partial class AggregateVisualControl
             parameter.CurrentNumber, parameter.ReferenceNumber) ?? "shot spread";
         DrawCenteredText(dc, value,
             new Point(center.X, center.Y + 78.0),
-            changed ? 13.5 : 12.2,
+            12.2,
             changed ? ReadoutInk.Numbers(accent, text) : parameter.IsControlEnabled ? text : muted,
             FontWeights.Bold);
         if (parameter.IsControlEnabled)

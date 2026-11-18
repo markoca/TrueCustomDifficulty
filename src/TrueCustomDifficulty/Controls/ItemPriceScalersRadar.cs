@@ -317,7 +317,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal,
                 weight, FontStretches.Normal), size, ink,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
-        return ReadoutInk.Highlight(formatted, value, numberInk);
+        return ReadoutInk.Highlight(formatted, value, numberInk, Math.Max(9.0, size));
     }
 
     private sealed record HitTarget(int Index, Rect Bounds, double Top, double Bottom);

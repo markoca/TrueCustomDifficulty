@@ -341,7 +341,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         // This helper already centers vertically by text height: use the dial
         // center directly rather than applying the generic top-edge offset.
         DrawCenteredText(dc, $"{p.CurrentNumber:0.##}×", new Point(center.X, center.Y),
-            p.IsValueModifiedFromReference() ? 16.2 : 15.0,
+            15.0,
             active && p.IsValueModifiedFromReference() ? ReadoutInk.Numbers(accent, text) : text, FontWeights.Bold);
         DrawCenteredText(dc, $"{p.Minimum:0.##}×",
             new Point(center.X - KnobRadius * .8, card.Bottom - KnobTypography.EndpointInsetFromBottom),
@@ -668,7 +668,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             if (value[i] == '|')
                 formatted.SetForegroundBrush(separatorBrush, i, 1);
         }
-        ReadoutInk.Highlight(formatted, value, numberInk);
+        ReadoutInk.Highlight(formatted, value, numberInk, Math.Max(9.0, size));
 
         return formatted;
     }

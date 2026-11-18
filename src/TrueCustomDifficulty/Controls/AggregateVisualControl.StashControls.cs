@@ -155,7 +155,7 @@ public sealed partial class AggregateVisualControl
         var number = CreateText(digits + "%", 10.6,
             enabled ? text : muted, FontWeights.Bold);
         if (enabled && modified)
-            number.SetForegroundBrush(accent, 0, digits.Length);
+            ReadoutInk.Mark(number, accent, 0, digits.Length, 10.6);
         dc.DrawText(number, new Point(
             cell.Right - 7.0 - number.WidthIncludingTrailingWhitespace,
             cell.Top + (cell.Height - number.Height) / 2.0));

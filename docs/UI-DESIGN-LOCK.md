@@ -1,3 +1,10 @@
+## 2026-11-18 — CURRENT: only numbers turn gold and grow, project-wide
+
+* A changed value now changes **only its numbers**: they turn gold and are 1.2 DIP bigger (`ReadoutInk.NumberGrowth`). Words and units around them (`kg`, `%`, `×`, `s`, `HOURS`, `RARE+`) keep their colour and size.
+* Removed 26 *changed → bigger font* ternaries that enlarged whole readouts. Ten manual gold ranges now use `ReadoutInk.Mark`, so they grow too. The manual number regexes no longer include `%` / `×`.
+* XAML panel values (CURRENT, EFFECTIVE, RANGE MIN / MAX, the example line) use the new `controls:NumberRuns`. There is no more whole-text gold or 13.7 bold on IsModified.
+* Gate `tools/audit_number_ink.py` (added to `pre_release.py`). Details: `docs/NUMBER-INK.md`.
+
 ## 2026-11-18 — CURRENT: panel example lines and value line separators
 
 * **Example lines under the value** (`PracticalQuantityDisplay`, from `lootHint`):
