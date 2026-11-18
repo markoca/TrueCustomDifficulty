@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.1",
-  "supportedParameterCount": 415,
+  "supportedParameterCount": 417,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -48288,6 +48288,15 @@
         "UniversalArtifactSpawner",
         "LesserZoneMagneticShortDistance"
       ]
+    },
+    "lairPopulation": {
+      "note": "Scales every eligible faction/rank MaxSpawnQuantity in LairPrototypes.cfg (base + DLC1) half-up; 0 stays 0, non-zero stays >= 1. Guard posts, friendly scientists, story prototypes and the empty test prototype are not in the manifest. Written by WriteLairPopulation (LairPopulationPolicy).",
+      "parameterIds": [
+        "alife.lairPopulation.human",
+        "alife.lairPopulation.mutant"
+      ],
+      "manifestResource": "TrueCustomDifficulty.Data.lair-population-manifest.csv",
+      "expectedRows": 1116
     },
     "humanTactics": {
       "note": "GRENADES / SUPPRESSION / FLANKING / PUSH / CAMPING PENALTY scale CombatSynchronizer FilterGroups cooldowns (source x reference / rate) in the full rank tables of the selected difficulty, written together with SPECIAL ABILITY RATE by one writer.",

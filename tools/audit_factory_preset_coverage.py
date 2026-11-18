@@ -34,6 +34,9 @@ NEW_IDS |= {"combat.npcFogVisibility", "combat.npcRainNoise", "combat.npcStormNo
 
 # 2026-11-17 thematic pass: role values for those controls (absent = vanilla).
 THEMATIC = json.loads((ROOT / "tools/factory_preset_thematic_2026_11_17.json").read_text(encoding="utf-8"))
+# 2026-11-18: LAIR POPULATION role values (absent = vanilla 1×).
+LAIR = json.loads((ROOT / "tools/factory_preset_lair_population_2026_11_18.json").read_text(encoding="utf-8"))
+NEW_IDS |= {"alife.lairPopulation.human", "alife.lairPopulation.mutant"}
 
 presets = sorted((APP / "Presets").glob("*.json"))
 assert len(presets) == 12, len(presets)
@@ -44,7 +47,8 @@ for path in presets:
     values = data["values"]
     assert set(values) == set(by_id), (path.name, sorted(set(by_id) ^ set(values)))
     ref = data["referenceDifficulty"]
-    role = THEMATIC["values"][data["name"]] if data["name"] in THEMATIC["values"] else THEMATIC["values"][path.stem]
+    role = dict(THEMATIC["values"][data["name"]] if data["name"] in THEMATIC["values"] else THEMATIC["values"][path.stem])
+    role.update(LAIR["values"][path.stem])
     assert set(role) <= set(by_id), (path.name, set(role) - set(by_id))
     for pid in NEW_IDS | set(role):
         p = by_id[pid]
@@ -70,6 +74,9 @@ assert pds.count("PreSmartLootSwitchFactoryBlobs") == 3
 assert pds.count("PreNpcSmartLootFactoryBlobs") == 3
 assert pds.count("PreSmartOddsFactoryBlobs") == 3
 assert pds.count("PreThematicFactoryBlobs") == 3
+assert pds.count("PreLairPopulationFactoryBlobs") == 3
+for _name, _hash in LAIR["previousStockBlobs"].items():
+    assert f'["{_name}"] = "{_hash}"' in pds, _name
 for _name, _hash in THEMATIC["previousStockBlobs"].items():
     assert f'["{_name}"] = "{_hash}"' in pds, _name
 assert len(pds.split("PreNewControlsFactoryBlobs =", 1)[1].split("};", 1)[0].split('"] = "')) == 13

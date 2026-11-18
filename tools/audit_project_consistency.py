@@ -2631,6 +2631,7 @@ if (_alife_role_map.get("schemaVersion") != 1
     or set(_alife_caps_by_id) != {
         id for id in _factory_catalog if id.startswith("alife.")
         and id != "alife.mutantSpawn.generic"
+        and not id.startswith("alife.lairPopulation.")  # own audit (2026-11-18)
     }
     or len(_alife_caps_by_id) != 18):
     _factory_errors.append("12-role A-Life mapping source coverage drift")
@@ -3919,7 +3920,7 @@ _global_expected_tabs = {
     "environment": 9,  # ARTIFACT HUNTING (3 after RESPAWN RATE retired)
     "loot": 31,  # + NPC SMART LOOT master         # + corpse supply reduction, loose artifacts
     "stashes": 42,      # + stash supply reduction
-    "alife": 2,
+    "alife": 3,
 }
 _global_confirmed = sum(p.get("support", {}).get("status") == "confirmed" for p in _global_visible)
 _global_runtime = sum(p.get("support", {}).get("status") == "runtime_test_required" for p in _global_visible)
@@ -4086,10 +4087,10 @@ if (len(parameters) != _CENSUS_CATALOG or len(_global_visible) != _CENSUS_VISIBL
     fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected {_CENSUS_CATALOG}/{_CENSUS_VISIBLE}/{_CENSUS_HIDDEN}")
 elif _global_tab_counts != _global_expected_tabs:
     fail(f"global visible tab counts drifted: {_global_tab_counts}; expected {_global_expected_tabs}")
-elif _global_confirmed != 117 or _global_runtime != 93:
-    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 117/93")
-elif _global_control_counts != {"slider": 186, "toggle": 22, "choiceSlider": 1, "range": 1}:
-    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 186 sliders / 22 toggles / 1 choiceSlider / 1 range")
+elif _global_confirmed != 117 or _global_runtime != 94:  # +1 LAIR POPULATION (2026-11-18)
+    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 117/94")
+elif _global_control_counts != {"slider": 187, "toggle": 22, "choiceSlider": 1, "range": 1}:  # +1 LAIR POPULATION
+    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 187 sliders / 22 toggles / 1 choiceSlider / 1 range")
 elif _global_duplicate_labels:
     fail(f"duplicate player-facing labels detected: {_global_duplicate_labels}")
 elif _global_out_of_range:
@@ -5854,7 +5855,7 @@ _visual_boards = {
     "MutantDropRadar.cs": 1,
     "WorldLootRemovalRadar.cs": 1,
     "AnomalyDamageRadar.cs": 1,
-    "AggregateVisualControl.cs": 7,  # GLOBAL ANOMALY DAMAGE board removed 2026-11-17
+    "AggregateVisualControl.cs": 8,  # GLOBAL ANOMALY DAMAGE board removed 2026-11-17; +LAIR POPULATION 2026-11-18
 }
 for _file, _expected in _visual_boards.items():
     _source = (_visual_dir / _file).read_text(encoding="utf-8")

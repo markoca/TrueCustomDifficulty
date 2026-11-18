@@ -61,7 +61,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private void RaiseParameterSelected(ParameterViewModel parameter)
     {
         if (Family is "FlycatcherSlowdown" or "AnomalySpecialEffects" or "ServiceCostsBoard"
-            or "CouponFlow" or "ItemWeightBoard" or "ArtifactHunting" or "StashSmartLoot" or "HumanTactics" or "HumanAwareness" or "EquipmentWearBalance"
+            or "CouponFlow" or "ItemWeightBoard" or "LairPopulation" or "ArtifactHunting" or "StashSmartLoot" or "HumanTactics" or "HumanAwareness" or "EquipmentWearBalance"
             or "StashContentMix" or "StashMedicalComposition"
             or "StashGear" or "NpcLootLoadout" or "HumanCombatProfile" or "PlayerWeaponProfile"
             or "StarvationTimeline" or "SevereFatiguePenaltyBoard"
@@ -379,6 +379,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 break;
             case "ItemWeightBoard":
                 DrawEquipmentWeightBoard(dc, text, muted, border, accent, panel);
+                break;
+            case "LairPopulation":
+                DrawLairPopulationBoard(dc, text, muted, border, accent, panel);
                 break;
             case "ArtifactHunting":
                 DrawArtifactHunting(dc, text, muted, border, accent, panel);
@@ -908,6 +911,58 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 48.0 + (i / columns) * 94.0, cardWidth, 80.0);
             DrawEconomyCard(dc, P(controls[i].Id), controls[i].Label,
                 rect, text, muted, border, accent, panel);
+        }
+    }
+
+    // LAIR POPULATION: how many inhabitants a world lair holds. Two cards
+    // (HUMAN CAMPS / MUTANT NESTS) and one real lair per card that follows
+    // the writer's rounding (LairPopulationPolicy.Scale).
+    private const double LairCardPitch = 108.0;
+
+    private static double LairPopulationBoardHeight(double width)
+    {
+        var rows = (2 + EconomyColumns(width) - 1) / EconomyColumns(width);
+        return 48.0 + rows * LairCardPitch + 6.0;
+    }
+
+    private void DrawLairPopulationBoard(
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush accent, Brush panel)
+    {
+        DrawCenteredText(dc, "LAIR POPULATION",
+            new Point(ActualWidth / 2.0, 21.0), VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
+
+        var cards = new (string Id, string Label, string Example, string Prototype, string Faction)[]
+        {
+            (LairPopulationPolicy.HumanId, "HUMAN CAMPS", "BANDIT CAMP", "Bandits", "Bandits"),
+            (LairPopulationPolicy.MutantId, "MUTANT NESTS", "TUSHKAN NEST", "Tushkan", "Tushkan")
+        };
+        var ranks = new[] { "Newbie", "Experienced", "Veteran", "Master" };
+        var columns = EconomyColumns(ActualWidth);
+        var cardWidth = EconomyCardWidth(ActualWidth, columns);
+        const double gap = 12.0;
+        var bankWidth = columns * cardWidth + (columns - 1) * gap;
+        var left = (ActualWidth - bankWidth) / 2.0;
+
+        for (var i = 0; i < cards.Length; i++)
+        {
+            var rect = new Rect(left + (i % columns) * (cardWidth + gap),
+                48.0 + (i / columns) * LairCardPitch, cardWidth, 80.0);
+            var parameter = P(cards[i].Id);
+            DrawEconomyCard(dc, parameter, cards[i].Label, rect, text, muted, border, accent, panel);
+            if (parameter is null)
+                continue;
+
+            // One real lair, by your rank (Newbie / Experienced / Veteran / Master).
+            var counts = ranks.Select(rank => LairPopulationPolicy.Example(
+                cards[i].Prototype, cards[i].Faction, rank, parameter.CurrentNumber)).ToArray();
+            var changed = counts.Any(c => c.Current != c.Vanilla);
+            var line = $"{cards[i].Example} BY RANK  "
+                + string.Join(" / ", counts.Select(c => c.Current.ToString(CultureInfo.InvariantCulture)));
+            var readout = CreateText(line, 9.6,
+                !parameter.IsControlEnabled ? muted : changed ? ReadoutInk.Numbers(accent, muted) : muted,
+                FontWeights.SemiBold, Math.Max(1.0, rect.Width - 8.0));
+            dc.DrawText(readout, new Point(rect.Left + 4.0, rect.Bottom + 6.0));
         }
     }
 
@@ -8111,6 +8166,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "CouponFlow" => CouponBoardHeight(width),
             "ServiceCostsBoard" => ServicePriceBoardHeight(width),
             "ItemWeightBoard" => EconomyBoardHeight(width, 4),
+            "LairPopulation" => LairPopulationBoardHeight(width),
             "ArtifactHunting" => ArtifactHuntingHeight(width),
             "HumanTactics" => HumanTacticsHeight(width),
             "HumanAwareness" => HumanAwarenessHeight(width),
@@ -8199,6 +8255,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "ArtifactHunting" => ArtifactSpawnPolicy.ParameterIds,
             "HumanTactics" => HumanCombatPolicy.TacticsBoardIds,
             "HumanAwareness" => HumanCombatPolicy.AwarenessIds,
+            "LairPopulation" => LairPopulationPolicy.ParameterIds,
             "ItemWeightBoard" => new[]
             {
                 "equipment.ammoWeight",

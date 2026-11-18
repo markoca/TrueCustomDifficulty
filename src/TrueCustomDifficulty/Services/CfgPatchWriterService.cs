@@ -319,6 +319,9 @@ public sealed partial class CfgPatchWriterService
         // ARTIFACT HUNTING: rarity split of the world artifact spawners.
         editCount += WriteArtifactRareLuck(modifiedById, documents, writtenParameters);
 
+        // LAIR POPULATION: how many inhabitants each world lair can hold.
+        editCount += WriteLairPopulation(modifiedById, hasDlc1, documents, writtenParameters);
+
         var worldWeaponDistribution = WriteWorldWeaponDistribution(
             modifiedById,
             allById,
@@ -567,6 +570,7 @@ public sealed partial class CfgPatchWriterService
         supported.UnionWith(baseline.Special.PsyParameterKeys.Keys);
         supported.UnionWith(MutantAggressionPolicy.ParameterIds);
         supported.Add(ArtifactSpawnPolicy.RareLuckId);
+        supported.UnionWith(LairPopulationPolicy.ParameterIds);
         supported.UnionWith(HumanCombatPolicy.TacticIds);
         supported.Add(HumanCombatPolicy.RainNoiseId);
         supported.Add(HumanCombatPolicy.StormNoiseId);

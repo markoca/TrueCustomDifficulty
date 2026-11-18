@@ -17000,6 +17000,116 @@
       "exposeInUi": false
     },
     {
+      "id": "alife.lairPopulation.human",
+      "tab": "alife",
+      "group": "Lair Population",
+      "label": "Human Lair Population",
+      "description": "Scales how many human NPCs each world lair can hold (MaxSpawnQuantity per faction and player rank in LairPrototypes.cfg, base game and DLC1).",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Lair capacity"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/LairPrototypes.cfg",
+          "prototype": "eligible lairs (lair-population-manifest.csv)",
+          "path": "Preset.PossibleInhabitantFactions.{Faction}.SpawnSettingsPerPlayerRanks.{Rank}.MaxSpawnQuantity",
+          "operation": "scaleLairPopulation"
+        },
+        {
+          "scope": "dlc1",
+          "file": "DLCGameData/DLC1/LairPrototypes.cfg",
+          "prototype": "eligible lairs (lair-population-manifest.csv)",
+          "path": "Preset.PossibleInhabitantFactions.{Faction}.SpawnSettingsPerPlayerRanks.{Rank}.MaxSpawnQuantity",
+          "operation": "scaleLairPopulation"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "508 rows: 17 human factions (bandits, military, Monolith, Duty, Freedom, mercenaries, …) in 288 base + 220 DLC1 faction/rank entries.",
+          "Half-up rounding; a vanilla 0 stays 0 and a non-zero count never drops below 1.",
+          "Not edited: settlement guard posts (Guard*), friendly scientists, story / special prototypes (SIRCAA, MALACHITE, Object68, FW_*), RestingLairDefault and the empty test prototype.",
+          "Separate from GROUP SIZE (ALifeDirectorScenarioPrototypes.cfg MaxCount). Respawn timers, starting fill and archetype mix stay vanilla."
+        ]
+      },
+      "rationale": "How many people a human camp or base can hold. Vanilla: 1× (a bandit camp holds 6 / 6 / 7 / 8 by your rank). Respawn speed doesn't change.",
+      "logic": "Higher = fuller camps and bigger fights at bases; lower = emptier camps.",
+      "interaction": "Separate from HUMAN SQUAD SIZE, which sets how many show up together. MUTANT LAIR POPULATION is separate.",
+      "exposeInUi": true
+    },
+    {
+      "id": "alife.lairPopulation.mutant",
+      "tab": "alife",
+      "group": "Lair Population",
+      "label": "Mutant Lair Population",
+      "description": "Scales how many mutants and zombies each world lair can hold (MaxSpawnQuantity per faction and player rank in LairPrototypes.cfg, base game and DLC1).",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Lair capacity"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/LairPrototypes.cfg",
+          "prototype": "eligible lairs (lair-population-manifest.csv)",
+          "path": "Preset.PossibleInhabitantFactions.{Faction}.SpawnSettingsPerPlayerRanks.{Rank}.MaxSpawnQuantity",
+          "operation": "scaleLairPopulation"
+        },
+        {
+          "scope": "dlc1",
+          "file": "DLCGameData/DLC1/LairPrototypes.cfg",
+          "prototype": "eligible lairs (lair-population-manifest.csv)",
+          "path": "Preset.PossibleInhabitantFactions.{Faction}.SpawnSettingsPerPlayerRanks.{Rank}.MaxSpawnQuantity",
+          "operation": "scaleLairPopulation"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "608 rows: 17 mutant and zombie species in 352 base + 256 DLC1 faction/rank entries.",
+          "Half-up rounding; a vanilla 0 stays 0 and a non-zero count never drops below 1.",
+          "Not edited: settlement guard posts (Guard*), friendly scientists, story / special prototypes (SIRCAA, MALACHITE, Object68, FW_*), RestingLairDefault and the empty test prototype.",
+          "Separate from GROUP SIZE (ALifeDirectorScenarioPrototypes.cfg MaxCount). Respawn timers, starting fill and archetype mix stay vanilla."
+        ]
+      },
+      "rationale": "How many mutants a nest can hold. Vanilla: 1× (a blind dog nest holds 9; a tushkan nest 14 / 16 / 20 / 24 by your rank). Respawn speed doesn't change.",
+      "logic": "Higher = bigger packs around nests; lower = thinner nests. A nest of 1 stays at least 1.",
+      "interaction": "Separate from MUTANT GROUP SIZE, which sets how many show up together. HUMAN LAIR POPULATION is separate.",
+      "exposeInUi": false
+    },
+    {
       "id": "economy.traderBuys.general.weapon",
       "tab": "economy",
       "group": "Trader Buys",

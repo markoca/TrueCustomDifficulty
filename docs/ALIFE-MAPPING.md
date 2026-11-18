@@ -89,3 +89,7 @@ There is no mapped Pseudogiant restriction in this Director `Restrictions[].MaxC
 - faction `MinLairs` / `MaxLairs`
 
 Those values belong to world population, lair lifecycle, or Director timing rather than the spawn-count caps represented by these radars.
+
+## 2026-11-18 — Lair Population
+
+`LairPrototypes.cfg` `MaxSpawnQuantity` is now edited by LAIR POPULATION (HUMAN CAMPS / MUTANT NESTS). That is separate from the group-size caps above. See `ALIFE-LAIR-POPULATION.md`.

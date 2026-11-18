@@ -831,6 +831,24 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "5b6217bbedd9231ad1a3d4c1085bd0ed5550a69b",
     };
 
+    // Exact stock files before LAIR POPULATION was added (2026-11-18).
+    private static readonly Dictionary<string, string> PreLairPopulationFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "a939727ded510f1a256139b96d42b7a96e6463dd",
+        ["Field Medic"] = "9a6724d7cf56221748e782234efa4c34e4374b96",
+        ["Hardcore+"] = "f5a046e3fa9c5baa9a63ec8fb147bd2362a39679",
+        ["Hardcore"] = "318b9fb4e5e119bfe784283bb9a4f7c71d64b33f",
+        ["Immersive"] = "f16a64dd39fc3301a533850e858e972d17c6e0f5",
+        ["Mercenary"] = "52fae80012569ff3576c65c813c6efe253a7c033",
+        ["Mutant Hunter"] = "b619161dc7d4bb04d6ed3edff9e3d34b136bedcc",
+        ["Outcast"] = "a12c4f4215d21aa366f1d7d5e96d2d35c1e7bc43",
+        ["Scavenger"] = "9ae5adab84502ba292501d94fbdc48895c74650a",
+        ["Smuggler"] = "2557eb63496a58a23efebe98f6b72c9dd91b53a1",
+        ["Tactical"] = "ae64543b18affb9fff8207d9e4feff00865ab314",
+        ["Wanderer"] = "74bc9e8b3b038f24c40b327f4ae91e03ed61489f",
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -864,7 +882,8 @@ public sealed class PresetDirectoryService
             && !PreNpcSmartLootFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreSmartOddsFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreSmartGivesFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreThematicFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreThematicFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreLairPopulationFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -940,7 +959,9 @@ public sealed class PresetDirectoryService
                 || (PreSmartGivesFactoryBlobs.TryGetValue(name, out var preSmartGivesHash)
                     && actual.Equals(preSmartGivesHash, StringComparison.OrdinalIgnoreCase))
                 || (PreThematicFactoryBlobs.TryGetValue(name, out var preThematicHash)
-                    && actual.Equals(preThematicHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preThematicHash, StringComparison.OrdinalIgnoreCase))
+                || (PreLairPopulationFactoryBlobs.TryGetValue(name, out var preLairHash)
+                    && actual.Equals(preLairHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

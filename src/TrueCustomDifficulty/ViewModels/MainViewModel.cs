@@ -444,6 +444,7 @@ public sealed class MainViewModel : ObservableObject
                 || itemPriceScalerParameterIds.Contains(p.Id)
                 || mutantHealthParameterIds.Contains(p.Id)
                 || humanGroupSizeParameterIds.Contains(p.Id)
+                || LairPopulationPolicy.ParameterIds.Contains(p.Id)
                 || mutantGroupSizeParameterIds.Contains(p.Id)
                 || traderBuysParameterIds.Contains(p.Id)
                 || traderSellsParameterIds.Contains(p.Id))
@@ -694,6 +695,9 @@ public sealed class MainViewModel : ObservableObject
         WireVisualAggregate(
             ArtifactSpawnPolicy.SpawnChanceId,
             ArtifactSpawnPolicy.ParameterIds.ToArray());
+        WireVisualAggregate(
+            LairPopulationPolicy.HumanId,
+            LairPopulationPolicy.ParameterIds.ToArray());
         WireVisualAggregate(
             HumanCombatPolicy.GrenadeRateId,
             HumanCombatPolicy.TacticsBoardIds.ToArray());

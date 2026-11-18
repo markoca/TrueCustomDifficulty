@@ -149,3 +149,5 @@ Vanilla S.T.A.L.K.E.R. 2 provides plentiful loot and supplies. All factory prese
 
 All 12 shipped profile files now include **247 parameter IDs** (34 more than the previous 213) with playstyle-specific tuning of the new controls and three existing child drink durations. Full tuning and validation contract: `docs/FACTORY-PRESETS.md` and `tools/factory_preset_expansion.json`. Previously installed, byte-for-byte official factory files upgrade automatically; edited or custom JSONs are never overwritten. All three short drink effects remain bound by their Water / Energy parent duration. Hidden, unverified source multipliers remain neutral.
 
+
+**2026-11-18 — LAIR POPULATION:** every profile stores HUMAN CAMPS / MUTANT NESTS (`alife.lairPopulation.human` / `.mutant`). The values are Hardcore+ 1.5 / 1.4, Hardcore 1.25 / 1.15, Mutant Hunter 1 / 1.3, Mercenary and Tactical 1.25 / 1, Outcast 1.15 / 1.1, Anomaly Runner 0.75 / 0.85, Scavenger 0.75 / 1, Wanderer 0.85 / 1; the others stay at 1×. Every non-1 value changes real lair caps (`tools/audit_lair_population.py`). Stock files upgrade only when byte-identical.

@@ -869,6 +869,14 @@
       "kind": "slider",
       "number": 1
     },
+    "alife.lairPopulation.human": {
+      "kind": "slider",
+      "number": 1.15
+    },
+    "alife.lairPopulation.mutant": {
+      "kind": "slider",
+      "number": 1.1
+    },
     "survival.waterRegenDuration": {
       "kind": "slider",
       "number": 20

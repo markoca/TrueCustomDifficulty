@@ -7,7 +7,9 @@ HUNTING, HUMAN TACTICS / HUMAN AWARENESS) have their own dedicated audits and
 are excluded from those historical slices here.
 """
 
-POST_361_PREFIXES = ("combat.mutantAttackRate.", "combat.mutantAbilityRate.", "environment.artifact")
+POST_361_PREFIXES = ("combat.mutantAttackRate.", "combat.mutantAbilityRate.", "environment.artifact",
+                     # 2026-11-18: LAIR POPULATION (own audit).
+                     "alife.lairPopulation.")
 POST_361_IDS = frozenset({
     "combat.mutantSpecialAbilityRate",
     "combat.npcGrenadeRate", "combat.npcSuppressionRate", "combat.npcFlankRate",

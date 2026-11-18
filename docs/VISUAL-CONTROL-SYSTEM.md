@@ -1,3 +1,13 @@
+## 2026-11-18 — CURRENT: LAIR POPULATION (A-Life)
+
+* New board **LAIR POPULATION** on the A-Life tab with two cards:
+  * **HUMAN CAMPS** (`alife.lairPopulation.human`) and **MUTANT NESTS** (`alife.lairPopulation.mutant`), 0.25×–3×, vanilla 1×. They set how many inhabitants a world lair can hold (`LairPrototypes.cfg MaxSpawnQuantity`, base + DLC1, 1116 eligible faction / rank entries). This is separate from GROUP SIZE, which is how many show up together.
+  * Rounding is half-up; a vanilla 0 stays 0 and a non-zero count never drops below 1.
+  * Under each card, one real lair by your rank: `BANDIT CAMP BY RANK 6 / 6 / 7 / 8`, `TUSHKAN NEST BY RANK 14 / 16 / 20 / 24`. Changed numbers turn gold.
+* Not edited: settlement guard posts, friendly scientists, story / special prototypes (SIRCAA, MALACHITE, Object68, FW_*), the resting-lair default and the empty test prototype. Respawn timers, starting fill and archetype mix stay vanilla.
+* Factory presets: Hardcore+ 1.5 / 1.4, Hardcore 1.25 / 1.15, Mutant Hunter 1 / 1.3, Mercenary and Tactical 1.25 / 1, Outcast 1.15 / 1.1, Anomaly Runner 0.75 / 0.85, Scavenger 0.75 / 1, Wanderer 0.85 / 1; the rest stay at 1×. Stock files upgrade only when byte-identical.
+* Gate `tools/audit_lair_population.py` (in `pre_release.py`). Census is now 417 controls, 211 visible. Details: `docs/ALIFE-LAIR-POPULATION.md`.
+
 ## 2026-11-18 — CURRENT: every control has HIGHER / LOWER
 
 * 80 visible controls had no HIGHER / LOWER section, so the panel skipped it. All of them now have one, in the `Higher = …; lower = …` shape:

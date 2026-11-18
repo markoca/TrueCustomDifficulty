@@ -51,7 +51,7 @@ def main() -> int:
     assert baseline["gameVersion"] == catalog["source"]["gameVersion"] == "2.1", (
         "2.1 source-target metadata mismatch; legacy 2.0.5 fallback is not supported."
     )
-    assert len(baseline["special"]) == 32  # + weatherHearing, looseArtifactsRemoved, stashSmartNeed
+    assert len(baseline["special"]) == 33  # + weatherHearing, looseArtifactsRemoved, stashSmartNeed, lairPopulation
     sell = baseline["special"]["traderSells"]
     assert len(sell["parameterIds"]) == 31 and sell["expectedSourceRows"] == 2939
     assert sell["expectedProfiles"] == 86

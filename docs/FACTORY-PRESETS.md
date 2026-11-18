@@ -312,3 +312,7 @@ All twelve factory profiles now include **18 new values**: four rank-specific hu
 | Wanderer | Slightly smaller human groups | More common wildlife packs, fewer elites |
 
 Existing unmodified twelve-profile JSONs are automatically replaced when the app starts by matching their exact previous Git blob hash. Locally edited factory and user-named preset files are not overwritten. The UI remains unchanged; modified value numbers are still highlighted yellow only when different from vanilla. Gameplay runtime was not tested.
+
+## 2026-11-18 — LAIR POPULATION
+
+The 12 profiles now store `alife.lairPopulation.human` / `.mutant` (417 catalog controls each). The matrix is in `ALIFE-LAIR-POPULATION.md` and `tools/factory_preset_lair_population_2026_11_18.json`; stock files upgrade only when byte-identical (`PreLairPopulationFactoryBlobs`).
