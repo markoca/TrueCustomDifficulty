@@ -2111,6 +2111,20 @@ _human_profile_ids = _human_profile_matrix["ids"]
 _human_profile_roles = _human_profile_matrix["roles"]
 _rad_profile_policy = json.loads((ROOT / "tools/factory_preset_radiation_lethality_2026_11_19.json").read_text(encoding="utf-8"))
 _rad_profile_roles = _rad_profile_policy["roles"]
+_four_domain_policy = json.loads((ROOT / "tools/factory_preset_four_domain_balance_2026_11_19.json").read_text(encoding="utf-8"))
+_four_domain_roles = _four_domain_policy["roles"]
+if (set(_four_domain_roles) != set(_factory_preset_names)
+        or len(_four_domain_policy["ids"]) != 11
+        or sum(len(role["traderSellOdds"]) for role in _four_domain_roles.values()) != 289):
+    _factory_errors.append("Four-domain policy must author all twelve roles, 11 source IDs and 289 trader stock odds")
+else:
+    for _name, _role in _four_domain_roles.items():
+        _preset = json.loads((_factory_preset_dir / f"{_name}.json").read_text(encoding="utf-8"))
+        for _pid, _num in _role["values"].items():
+            if _preset["values"][_pid] != {"kind": "slider", "number": _num}:
+                _factory_errors.append(f"{_name}: four-domain source drift {_pid}")
+        if _preset.get("traderSellOdds") != _role["traderSellOdds"]:
+            _factory_errors.append(f"{_name}: trader stock category odds differ from the active role balance")
 if (set(_rad_profile_roles) != set(_factory_preset_names) or _rad_profile_policy.get("sourceId") != "survival.radiationDamage"
         or len({v["damageMultiplier"] for v in _rad_profile_roles.values()}) != 12
         or _rad_profile_roles["Hardcore+"]["damageMultiplier"] != 25):
@@ -2244,6 +2258,7 @@ for _name in _factory_preset_names:
             _target = _world_removal_roles[_name]["changes"].get(_pid, _target)
             _target = _human_profile_roles[_name]["values"].get(_pid, _target)
             _target = _rad_profile_roles[_name]["damageMultiplier"] if _pid == "survival.radiationDamage" else _target
+            _target = _four_domain_roles[_name]["values"].get(_pid, _target)
             _definition = _factory_catalog.get(_pid)
             _stored = _entries.get(_pid)
             if _definition is None or _stored is None:
@@ -2385,6 +2400,7 @@ for _name in _factory_preset_names:
             _target = _world_removal_roles[_name]["changes"].get(_pid, _target)
             _target = _human_profile_roles[_name]["values"].get(_pid, _target)
             _target = _rad_profile_roles[_name]["damageMultiplier"] if _pid == "survival.radiationDamage" else _target
+            _target = _four_domain_roles[_name]["values"].get(_pid, _target)
             _definition = _factory_catalog[_pid]
             _stored = _entries.get(_pid, {})
             _kind = "toggle" if _definition["control"] == "toggle" else "slider"
@@ -2490,6 +2506,7 @@ for _role, _signature in _role_matrix.get("profiles", {}).items():
         _target = _world_removal_roles[_role]["changes"].get(_pid, _target)
         _target = _human_profile_roles[_role]["values"].get(_pid, _target)
         _target = _rad_profile_roles[_role]["damageMultiplier"] if _pid == "survival.radiationDamage" else _target
+        _target = _four_domain_roles[_role]["values"].get(_pid, _target)
         if _stored.get("kind") != "slider" or _stored.get("number") != _target:
             _factory_errors.append(f"{_role}: authored role drift {_pid}")
         _bound = _definition["slider"]
@@ -2573,6 +2590,7 @@ for _role, _settings in _consumable_matrix.get("profiles", {}).items():
         _target = _world_removal_roles[_role]["changes"].get(_pid, _target)
         _target = _human_profile_roles[_role]["values"].get(_pid, _target)
         _target = _rad_profile_roles[_role]["damageMultiplier"] if _pid == "survival.radiationDamage" else _target
+        _target = _four_domain_roles[_role]["values"].get(_pid, _target)
         _definition = _factory_catalog.get(_pid, {})
         _stored = _entries.get(_pid, {})
         if (_definition.get("control") != "slider" or _stored.get("kind") != "slider"

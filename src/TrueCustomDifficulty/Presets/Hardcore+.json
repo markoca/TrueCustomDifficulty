@@ -7,13 +7,31 @@
   "drinkDurationOverride": true,
   "medicalOverride": false,
   "traderSellOdds": {
-    "economy.traderSells.general.armor": 0.5,
-    "economy.traderSells.general.artifacts": 0.5,
-    "economy.traderSells.medic.artifacts": 0.5,
-    "economy.traderSells.bartender.artifacts": 0.5,
-    "economy.traderSells.general.ammo": 0.75,
-    "economy.traderSells.bartender.ammo": 0.75,
-    "economy.traderSells.genericNpc.ammo": 0.75
+    "economy.traderSells.general.weapons": 0.4,
+    "economy.traderSells.general.armor": 0.35,
+    "economy.traderSells.general.attachments": 0.4,
+    "economy.traderSells.general.ammo": 0.45,
+    "economy.traderSells.general.medical": 0.5,
+    "economy.traderSells.general.food": 0.6,
+    "economy.traderSells.general.drinks": 0.6,
+    "economy.traderSells.general.artifacts": 0.3,
+    "economy.traderSells.general.detectors": 0.35,
+    "economy.traderSells.general.grenades": 0.4,
+    "economy.traderSells.medic.medical": 0.65,
+    "economy.traderSells.medic.drinks": 0.65,
+    "economy.traderSells.medic.artifacts": 0.3,
+    "economy.traderSells.medic.detectors": 0.4,
+    "economy.traderSells.bartender.weapons": 0.35,
+    "economy.traderSells.bartender.ammo": 0.45,
+    "economy.traderSells.bartender.food": 0.6,
+    "economy.traderSells.bartender.drinks": 0.6,
+    "economy.traderSells.bartender.artifacts": 0.3,
+    "economy.traderSells.bartender.detectors": 0.35,
+    "economy.traderSells.genericNpc.ammo": 0.4,
+    "economy.traderSells.genericNpc.medical": 0.45,
+    "economy.traderSells.genericNpc.food": 0.65,
+    "economy.traderSells.genericNpc.drinks": 0.5,
+    "economy.traderSells.genericNpc.grenades": 0.3
   },
   "savedAtUtc": "2026-10-19T18:00:00Z",
   "values": {
@@ -543,11 +561,11 @@
     },
     "survival.beerDrunknessStrength": {
       "kind": "slider",
-      "number": 22
+      "number": 35
     },
     "survival.vodkaDrunknessStrength": {
       "kind": "slider",
-      "number": 45
+      "number": 75
     },
     "survival.sleepEligibilityThreshold": {
       "kind": "slider",
@@ -952,15 +970,15 @@
     },
     "loot.ammoBoxWeight918": {
       "kind": "slider",
-      "number": 0.5
+      "number": 0.25
     },
     "loot.ammoBoxWeight045": {
       "kind": "slider",
-      "number": 1.25
+      "number": 1
     },
     "loot.ammoBoxWeight545": {
       "kind": "slider",
-      "number": 1.25
+      "number": 1.5
     },
     "loot.ammoBoxWeight012": {
       "kind": "slider",
@@ -1232,11 +1250,11 @@
     },
     "survival.bleedingMediumThreshold": {
       "kind": "slider",
-      "number": 43
+      "number": 29
     },
     "survival.bleedingStrongThreshold": {
       "kind": "slider",
-      "number": 68
+      "number": 53
     },
     "survival.bleedingLowDamage": {
       "kind": "slider",

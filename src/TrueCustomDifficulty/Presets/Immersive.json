@@ -6,6 +6,30 @@
   "referenceDifficulty": "Stalker",
   "drinkDurationOverride": true,
   "medicalOverride": false,
+  "traderSellOdds": {
+    "economy.traderSells.general.weapons": 0.8,
+    "economy.traderSells.general.armor": 0.75,
+    "economy.traderSells.general.attachments": 0.8,
+    "economy.traderSells.general.ammo": 0.8,
+    "economy.traderSells.general.medical": 0.85,
+    "economy.traderSells.general.food": 0.9,
+    "economy.traderSells.general.drinks": 0.9,
+    "economy.traderSells.general.artifacts": 0.65,
+    "economy.traderSells.general.detectors": 0.75,
+    "economy.traderSells.general.grenades": 0.7,
+    "economy.traderSells.medic.drinks": 0.95,
+    "economy.traderSells.medic.artifacts": 0.7,
+    "economy.traderSells.medic.detectors": 0.8,
+    "economy.traderSells.bartender.weapons": 0.75,
+    "economy.traderSells.bartender.ammo": 0.8,
+    "economy.traderSells.bartender.artifacts": 0.7,
+    "economy.traderSells.bartender.detectors": 0.8,
+    "economy.traderSells.genericNpc.ammo": 0.8,
+    "economy.traderSells.genericNpc.medical": 0.85,
+    "economy.traderSells.genericNpc.food": 0.9,
+    "economy.traderSells.genericNpc.drinks": 0.9,
+    "economy.traderSells.genericNpc.grenades": 0.7
+  },
   "savedAtUtc": "2026-10-19T18:00:00Z",
   "values": {
     "combat.npcHealth": {
@@ -534,11 +558,11 @@
     },
     "survival.beerDrunknessStrength": {
       "kind": "slider",
-      "number": 15
+      "number": 18
     },
     "survival.vodkaDrunknessStrength": {
       "kind": "slider",
-      "number": 30
+      "number": 40
     },
     "survival.sleepEligibilityThreshold": {
       "kind": "slider",
@@ -947,11 +971,11 @@
     },
     "loot.ammoBoxWeight045": {
       "kind": "slider",
-      "number": 1
+      "number": 0.75
     },
     "loot.ammoBoxWeight545": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "loot.ammoBoxWeight012": {
       "kind": "slider",
@@ -959,7 +983,7 @@
     },
     "loot.medicalBoxArmyMedkitWeight": {
       "kind": "slider",
-      "number": 1
+      "number": 0.75
     },
     "loot.destructibleGrenadeQuantity": {
       "kind": "slider",
@@ -1223,11 +1247,11 @@
     },
     "survival.bleedingMediumThreshold": {
       "kind": "slider",
-      "number": 50
+      "number": 51
     },
     "survival.bleedingStrongThreshold": {
       "kind": "slider",
-      "number": 76
+      "number": 77
     },
     "survival.bleedingLowDamage": {
       "kind": "slider",

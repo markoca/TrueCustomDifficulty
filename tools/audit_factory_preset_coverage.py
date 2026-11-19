@@ -58,6 +58,8 @@ BANDAGE_HP = json.loads((ROOT / "tools/factory_preset_bandage_hp_policy_2026_11_
 ROLE_DIVERSITY = json.loads((ROOT / "tools/factory_preset_role_diversification_2026_11_19.json").read_text(encoding="utf-8"))
 LOOSE_WORLD = json.loads((ROOT / "tools/factory_preset_world_removal_policy_2026_11_19.json").read_text(encoding="utf-8"))
 HUMAN_ROLES = json.loads((ROOT / "tools/factory_preset_human_roles_2026_11_19.json").read_text(encoding="utf-8"))
+FOUR_DOMAINS = json.loads((ROOT / "tools/factory_preset_four_domain_balance_2026_11_19.json").read_text(encoding="utf-8"))
+assert set(FOUR_DOMAINS["roles"]) == set(VIBE["values"]) and len(FOUR_DOMAINS["ids"]) == 11
 RADIATION = json.loads((ROOT / "tools/factory_preset_radiation_lethality_2026_11_19.json").read_text(encoding="utf-8"))
 RAD_ID = RADIATION["sourceId"]
 assert RAD_ID == "survival.radiationDamage" and RADIATION["range"]["max"] == 25
@@ -127,6 +129,7 @@ for path in presets:
     role.update(LOOSE_WORLD["roles"][path.stem]["changes"])
     role.update(HUMAN_ROLES["roles"][path.stem]["values"])
     role[RAD_ID] = RADIATION["roles"][path.stem]["damageMultiplier"]
+    role.update(FOUR_DOMAINS["roles"][path.stem]["values"])
     # 2026-11-18 attack-only pass: role values of removed controls (roars, growls, ...) are gone.
     role = {k: v for k, v in role.items() if k in by_id}
     for pid in NEW_IDS | set(role):
@@ -151,6 +154,7 @@ for path in presets:
     assert amount("combat.npcStormNoise") < amount("combat.npcRainNoise"), path.name
     assert amount("combat.npcSightRange") <= 2.5, path.name
     assert amount(RAD_ID) == RADIATION["roles"][path.stem]["damageMultiplier"], path.name
+    assert all(amount(pid) == target for pid, target in FOUR_DOMAINS["roles"][path.stem]["values"].items()), path.name
     assert 4.5 <= amount(RAD_ID) <= 25, path.name
     assert all(enabled(id) is LOOSE_WORLD["roles"][path.stem]["values"][id] for id in LOOSE_WORLD_IDS), path.name
     assert amount("health.bandageHealing") == BANDAGE_HP["values"][path.stem], path.name
@@ -174,9 +178,10 @@ for path in presets:
         assert not any(pid.startswith("loot.stashGear") for pid in
                        SCARCITY["roles"][path.stem]["changes"]), path.name
     side = THEMATIC["sidecars"].get(path.stem, {})
-    for key in ("traderSellOdds", "genericNpcRareGearEnabled", "genericNpcRareGearChance"):
+    assert data.get("traderSellOdds") == FOUR_DOMAINS["roles"][path.stem]["traderSellOdds"], (path.name, "traderSellOdds")
+    for key in ("genericNpcRareGearEnabled", "genericNpcRareGearChance"):
         assert data.get(key) == side.get(key), (path.name, key, data.get(key))
-    for pid in side.get("traderSellOdds", {}):
+    for pid in FOUR_DOMAINS["roles"][path.stem]["traderSellOdds"]:
         assert values[pid] == {"kind": "toggle", "boolean": True}, (path.name, pid)
     for pid, stored in values.items():
         p = by_id[pid]

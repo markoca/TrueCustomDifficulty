@@ -1,3 +1,7 @@
+## 2026-11-19 — Four-domain factory-role rebalance
+
+All twelve canonical profiles now vary alcohol intoxication strength, two bleeding-stage thresholds, seven native breakable-container controls and Trader Stock category offer odds. Former 100% trader entries were neutral: the 31 category switches were ON, while only three roles had authored partial `traderSellOdds` sidecars. The current matrix uses **289 native category odds entries**, 5%-step fractions of original offer Chance, and preserves each profession's signature supplies. All source CFG routes, gameplay thresholds, separate stock amounts, UI controls and custom-named user files remain unchanged. Authoritative policy: `tools/factory_preset_four_domain_balance_2026_11_19.json`; rationale: `docs/FACTORY-PRESETS.md`.
+
 ## 2026-11-19 — Radiation HP Damage: 4.5× to 25× by role
 
 All twelve canonical factory profiles use much stronger, differentiated `survival.radiationDamage` values: Wanderer 4.5×; Field Medic 5.5×; Immersive 7×; Scavenger 9×; Mercenary 10×; Mutant Hunter 12.5×; Smuggler 14×; Anomaly Runner 16×; Tactical 18×; Hardcore 22.5×; Outcast 24×; Hardcore+ 25×. HP damage sources alone change: build-up, recovery, medicine, stage thresholds, UI and CFG writer are unchanged. Conditional radiation inspector death estimates do not establish engine runtime cadence. Policy: `tools/factory_preset_radiation_lethality_2026_11_19.json`.

@@ -1,3 +1,30 @@
+## 2026-11-19 — Distinct alcohol, bleeding stages, breakable boxes and trader stock
+
+**Current authority:** `tools/factory_preset_four_domain_balance_2026_11_19.json`, applied after earlier role/scarcity/radiation matrices. All twelve official profiles keep the same 452 source IDs and full existing trade-category switches. This pass tunes eleven native source values per role (Beer and Vodka strength, Medium/Severe bleed thresholds, seven breakable-box knobs) and the already-supported category-odds sidecar. The historical role matrices stay immutable; only the active overlay has priority.
+
+**Why Trader Stock used to read 100%:** All 31 `economy.traderSells.*` category *enable* toggles were ON in every factory profile; the `traderSellOdds` per-role category sidecar had been authored only for Hardcore, Hardcore+ and Outcast. All absent sidecar entries defaulted to **100% of vanilla offer odds**. That **does not guarantee an item** in stock: it retains the game's original per-entry Chance/Weight. The live writer handles 5–95% through exact category source Chance scaling, retaining empty weight choices where necessary. Supply amount knobs separately scale ammunition/medical MinCount/MaxCount; restock time remains independent. The six technician selling categories are source-only, not meaningful UI controls, and are left untouched. Buying categories are also unchanged.
+
+The new role matrix authors **289 independently reduced trader-category odds** across the 12 roles (out of 300 active, 25 per role), leaving only 11 strategically full categories at 100%. No available category is artificially set to zero; specialty stores retain their identity. Medicine remains 100% at dedicated medics for Field Medic; drinks remain full at bartenders for Smuggler and Wanderer; Mercenary has more reliable ammunition/attachments; Hardcore+ and Outcast face the strongest all-round supply cuts. Most displayed odds now differ by profession and trader category instead of defaulting to 100%.
+
+| Profile | Beer strength (vanilla 15) | Vodka strength (vanilla 30) | Medium bleed | Severe bleed | Box mix identity | Trader identity |
+|---|---:|---:|---:|---:|---|---|
+| Anomaly Runner | 24 | 50 | 39 | 64 | Low-volume sidearm/field ammunition | Scarce grenades, medicines available through deliberate search |
+| Field Medic | 11 | 20 | 56 | 82 | Better Army Medkit fraction | Full dedicated medic medicine odds, weak weapons |
+| Hardcore+ | 35 | 75 | 29 | 53 | Scarce shots and medkits | Severe availability cuts, in addition to 25% ammo/medical quantities |
+| Hardcore | 30 | 65 | 34 | 59 | More 5.45/5.56 and .45, less low-tier ammo | Unreliable most categories |
+| Immersive | 18 | 40 | 51 | 77 | Plausible mix with shotgun emphasis | Food/drink dependable, weapons and gear less common |
+| Mercenary | 17 | 35 | 52 | 77 | More rifles, fewer pistol/shotgun rounds | Combat gear, ammo, attachments emphasized |
+| Mutant Hunter | 21 | 45 | 41 | 65 | Shotgun-heavy ammunition | Hunting provisions and useful medicines prioritized |
+| Outcast | 32 | 70 | 28 | 52 | Shotgun/salvage bias, very little medicine | Extremely lean all-around stock |
+| Scavenger | 12 | 25 | 43 | 68 | More small arms and shotgun shells | Food/drink more accessible than specialized equipment |
+| Smuggler | 9 | 20 | 49 | 74 | Sidearm-heavy mixes and more medkits | Drinks/artifacts and trade routes protected |
+| Tactical | 23 | 50 | 45 | 70 | Rifles first, useful grenade boxes | Professional ammo/attachments, less food/detectors |
+| Wanderer | 13 | 25 | 58 | 84 | Shotgun/travel mix | Strong food, drinks, detectors, limited military stock |
+
+**Semantics:** Larger Beer/Vodka Strength means each drink adds **more** drunkness, i.e. **less** practical alcohol tolerance; the hidden `drunknessThresholdScale` remains neutral at 1. Medium and Severe bleed thresholds are ordered, have 15+ point separation and follow the distinct existing per-tick HP damage and natural recovery. Four ammo-box mix values alter **relative weight among ammo types**, not a blanket world spawn chance; ammo quantity, medical Army Medkit weight and grenade-box quantity are distinct sources. Existing World Loot removal percentages still determine how many physical boxes are available, independent of what a remaining box yields.
+
+**Coverage:** `tools/audit_factory_four_domain_balance.py`, factory-coverage, role-coverage, whole-project consistency and AllControls preset sidecar round-trip contracts verify source ranges, 5% odds granularity, 12 unique role mixes, exact 452-key profile files and unchanged trader enable switches. Git-tracked JSONs are the only source of factory values; a successful `publish.sh` updates the matching portable `Presets/<role>.json` without a `Factory` or `(local)` copy. In-game balance of generated merchant inventories and opened containers still needs runtime observation.
+
 ## 2026-11-19 — Radiation HP Damage is a core profile lethality axis
 
 **Authoritative source:** `tools/factory_preset_radiation_lethality_2026_11_19.json`. The previous factory values occupied only **1.10×–1.80×** despite the existing **0–25×** HP DAMAGE editor range. All twelve roles now use deliberately separate values from **4.5× to 25×**. The setting is the existing native `survival.radiationDamage`: it scales the **eleven ordinary radiation-stage HP damage effects** in `GameData/EffectPrototypes.cfg` (22 Min/Max leaves). It is NOT a new game setting or 25× faster accumulation; stage thresholds, the direct field RadBlock 9000 damage, accumulation, natural decay, stamina penalty, medicine and reference difficulty remain unchanged.

@@ -783,6 +783,20 @@ internal static partial class Program
                 var vm = new MainViewModel(Catalog);
                 vm.ApplyPresetFromPath(path);
                 var loaded = vm.CreatePresetFile("factory");
+                // Trader Stock odds are preset sidecars rather than catalog
+                // parameters. Ensure LOAD / SAVE also carries all role-specific
+                // category probabilities; checking the 452 sliders is not enough.
+                var expectedSellOdds = file0.TraderSellOdds
+                    ?? new Dictionary<string, double>(StringComparer.Ordinal);
+                var loadedSellOdds = loaded.TraderSellOdds
+                    ?? new Dictionary<string, double>(StringComparer.Ordinal);
+                Check(expectedSellOdds.Count >= 20
+                      && loadedSellOdds.Count == expectedSellOdds.Count
+                      && expectedSellOdds.All(pair =>
+                          loadedSellOdds.TryGetValue(pair.Key, out var current)
+                          && Math.Abs(pair.Value - current) < 1e-9),
+                    name + ": trader stock partial offer odds did not survive load/save");
+
                 foreach (var (id, back) in loaded.Values)
                 {
                     if (!file0.Values.TryGetValue(id, out var value)) { problems.Add(name + " " + id + ": missing in file"); continue; }

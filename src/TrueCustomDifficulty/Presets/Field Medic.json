@@ -6,6 +6,32 @@
   "referenceDifficulty": "Stalker",
   "drinkDurationOverride": true,
   "medicalOverride": true,
+  "traderSellOdds": {
+    "economy.traderSells.general.weapons": 0.6,
+    "economy.traderSells.general.armor": 0.65,
+    "economy.traderSells.general.attachments": 0.65,
+    "economy.traderSells.general.ammo": 0.65,
+    "economy.traderSells.general.medical": 0.85,
+    "economy.traderSells.general.food": 0.8,
+    "economy.traderSells.general.drinks": 0.85,
+    "economy.traderSells.general.artifacts": 0.5,
+    "economy.traderSells.general.detectors": 0.6,
+    "economy.traderSells.general.grenades": 0.5,
+    "economy.traderSells.medic.drinks": 0.95,
+    "economy.traderSells.medic.artifacts": 0.7,
+    "economy.traderSells.medic.detectors": 0.8,
+    "economy.traderSells.bartender.weapons": 0.6,
+    "economy.traderSells.bartender.ammo": 0.6,
+    "economy.traderSells.bartender.food": 0.9,
+    "economy.traderSells.bartender.drinks": 0.95,
+    "economy.traderSells.bartender.artifacts": 0.65,
+    "economy.traderSells.bartender.detectors": 0.7,
+    "economy.traderSells.genericNpc.ammo": 0.65,
+    "economy.traderSells.genericNpc.medical": 0.9,
+    "economy.traderSells.genericNpc.food": 0.85,
+    "economy.traderSells.genericNpc.drinks": 0.85,
+    "economy.traderSells.genericNpc.grenades": 0.5
+  },
   "savedAtUtc": "2026-10-19T18:00:00Z",
   "values": {
     "combat.npcHealth": {
@@ -534,11 +560,11 @@
     },
     "survival.beerDrunknessStrength": {
       "kind": "slider",
-      "number": 14
+      "number": 11
     },
     "survival.vodkaDrunknessStrength": {
       "kind": "slider",
-      "number": 30
+      "number": 20
     },
     "survival.sleepEligibilityThreshold": {
       "kind": "slider",
@@ -939,19 +965,19 @@
     },
     "loot.destructibleAmmoQuantity": {
       "kind": "slider",
-      "number": 0.75
+      "number": 1
     },
     "loot.ammoBoxWeight918": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "loot.ammoBoxWeight045": {
       "kind": "slider",
-      "number": 1
+      "number": 0.75
     },
     "loot.ammoBoxWeight545": {
       "kind": "slider",
-      "number": 1
+      "number": 0.75
     },
     "loot.ammoBoxWeight012": {
       "kind": "slider",
@@ -959,7 +985,7 @@
     },
     "loot.medicalBoxArmyMedkitWeight": {
       "kind": "slider",
-      "number": 1.5
+      "number": 2
     },
     "loot.destructibleGrenadeQuantity": {
       "kind": "slider",
@@ -1223,11 +1249,11 @@
     },
     "survival.bleedingMediumThreshold": {
       "kind": "slider",
-      "number": 52
+      "number": 56
     },
     "survival.bleedingStrongThreshold": {
       "kind": "slider",
-      "number": 78
+      "number": 82
     },
     "survival.bleedingLowDamage": {
       "kind": "slider",
