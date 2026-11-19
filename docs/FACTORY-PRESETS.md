@@ -1,3 +1,7 @@
+## 2026-11-19 — Build-time factory preset synchronization
+
+The canonical twelve JSON profiles under `src/TrueCustomDifficulty/Presets/` are now synchronized by `publish.sh` to `publish/win-x64/Presets/Factory/` whenever the Windows executable is successfully published. They are staged and switched with the EXE and BUILD-INFO in one rollback-capable transaction, while all root user presets survive. The built-in picker continues reading only those managed factory copies; user-modified `Presets/<role>.json` remain separately accessible. A build receipt includes the factory source checksum. Static fake-dotnet contract tests cover repeated publishes, changed JSON source, missing source, failed compilation and protected portable files.
+
 ## 2026-11-19 — Current factory picker source
 
 The twelve role values remain those in `tools/factory_preset_human_roles_2026_11_19.json`. The picker now loads official roles from the managed `Presets/Factory` folder, always refreshed from the EXE, rather than possibly loading a stale, protected, user-edited `Presets/<role>.json`. Differing local versions stay selectable with the `(local)` suffix. No balance, native control, CFG patch or UI layout changed.

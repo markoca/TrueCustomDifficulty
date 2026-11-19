@@ -1,3 +1,7 @@
+## 2026-11-19 — Factory presets synchronize on every successful publish
+
+`git pull` updates the tracked source JSONs and `./publish.sh` synchronizes all 12 to `publish/win-x64/Presets/Factory` together with the new EXE and BUILD-INFO receipt. The main `Presets` directory and local edits are preserved; user-edited factory-named files remain selectable as `(local)`. Failed builds retain the previous EXE and matching Factory files.
+
 ## 2026-11-19 — Factory selection is independent from local copies
 
 The twelve official dropdown roles read up-to-date factory JSONs from `Presets/Factory`. Modified root `Presets/<role>.json` files are preserved and separately listed as `<role> (local)`; identical duplicates are hidden. Use the official role entry for the latest Human Tactics/Awareness values. Load/Save still use the portable Presets root.

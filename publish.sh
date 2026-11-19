@@ -22,6 +22,14 @@ fi
 
 PROJECT="$ROOT/src/TrueCustomDifficulty/TrueCustomDifficulty.csproj"
 PROJECT_DIR="$(dirname "$PROJECT")"
+FACTORY_SOURCE_DIR="$PROJECT_DIR/Presets"
+# Only these twelve tracked JSONs define the official factory roles. Pull updates
+# them in the checkout; publish copies all twelve into the portable runtime.
+FACTORY_ROLES=(
+    "Anomaly Runner" "Field Medic" "Hardcore+" "Hardcore"
+    "Immersive" "Mercenary" "Mutant Hunter" "Outcast"
+    "Scavenger" "Smuggler" "Tactical" "Wanderer"
+)
 STASH_TIER_SOURCE="$PROJECT_DIR/Controls/AggregateVisualControl.StashBranch.cs"
 EXE_NAME="TrueCustomDifficulty.exe"
 PUBLISH_DIR="$ROOT/publish/win-x64"
@@ -108,6 +116,29 @@ if [[ "$TARGET_FRAMEWORK" != "net10.0-windows" ]]; then
     echo "Refusing to publish an old/stale project checkout." >&2
     exit 1
 fi
+
+# Never ship an EXE with missing/stale factory source profiles. This
+# validation happens before compilation and before any published state changes.
+if [[ ! -d "$FACTORY_SOURCE_DIR" ]]; then
+    echo "ERROR: Factory preset source directory is missing: $FACTORY_SOURCE_DIR" >&2
+    exit 1
+fi
+for role in "${FACTORY_ROLES[@]}"; do
+    if [[ ! -s "$FACTORY_SOURCE_DIR/$role.json" || -L "$FACTORY_SOURCE_DIR/$role.json" ]]; then
+        echo "ERROR: Missing, empty or linked factory preset: $role.json" >&2
+        exit 1
+    fi
+done
+SOURCE_FACTORY_COUNT="$(find "$FACTORY_SOURCE_DIR" -maxdepth 1 -type f -name '*.json' | wc -l)"
+if (( SOURCE_FACTORY_COUNT != ${#FACTORY_ROLES[@]} )); then
+    echo "ERROR: Expected exactly ${#FACTORY_ROLES[@]} factory JSON sources; found $SOURCE_FACTORY_COUNT." >&2
+    exit 1
+fi
+FACTORY_SOURCE_SHA256="$(
+    for role in "${FACTORY_ROLES[@]}"; do
+        printf '%s %s\n' "$role" "$(sha256sum "$FACTORY_SOURCE_DIR/$role.json" | cut -d' ' -f1)"
+    done | sha256sum | cut -d' ' -f1
+)"
 
 # Publish the current source without running test or verification scripts.
 # WPF creates generated temporary projects under obj/.  Removing both build trees
@@ -198,8 +229,26 @@ STASH_TIER_SHA256="$(sha256sum "$STASH_TIER_SOURCE" | cut -d' ' -f1)"
 # Publish the matching source/binary receipt as part of the same transaction.
 # The renderer checksum differentiates this source-backed UI from an older
 # executable or another checkout that still paints the removed NATIVE row.
-printf 'source_commit=%s\nexe_sha256=%s\nstash_tier_source_sha256=%s\nstash_chance_native_row=absent\n' "$GIT_HEAD" "$EXE_SHA256" "$STASH_TIER_SHA256" > "$PUBLISH_STAGING/BUILD-INFO.txt"
+printf 'source_commit=%s\nexe_sha256=%s\nstash_tier_source_sha256=%s\nstash_chance_native_row=absent\nfactory_preset_count=%s\nfactory_presets_sha256=%s\n' "$GIT_HEAD" "$EXE_SHA256" "$STASH_TIER_SHA256" "${#FACTORY_ROLES[@]}" "$FACTORY_SOURCE_SHA256" > "$PUBLISH_STAGING/BUILD-INFO.txt"
 RUNTIME_NAMES+=("BUILD-INFO.txt")
+
+# Stage factory presets with the EXE, not at application launch. The Presets
+# root contains user-owned JSONs: keep its directory inode and its contents.
+# Only Presets/Factory is app-managed; replace it in the SAME rollback-capable
+# transaction as the EXE so a failed publish cannot mix versions.
+if [[ -L "$PUBLISH_DIR/Presets" || -L "$PUBLISH_DIR/Presets/Factory" ]]; then
+    echo "ERROR: Refusing to replace presets through a symlink." >&2
+    exit 1
+fi
+mkdir -p -- "$PUBLISH_DIR/Presets" "$PUBLISH_STAGING/Presets/Factory" "$PUBLISH_BACKUP/Presets"
+for role in "${FACTORY_ROLES[@]}"; do
+    cp -p -- "$FACTORY_SOURCE_DIR/$role.json" "$PUBLISH_STAGING/Presets/Factory/$role.json"
+    cmp -s -- "$FACTORY_SOURCE_DIR/$role.json" "$PUBLISH_STAGING/Presets/Factory/$role.json" || {
+        echo "ERROR: Factory preset staging failed verification: $role.json" >&2
+        exit 1
+    }
+done
+RUNTIME_NAMES+=("Presets/Factory")
 
 TRANSACTION_STARTED=1
 for name in "${RUNTIME_NAMES[@]}"; do
@@ -214,6 +263,7 @@ done
 mkdir -p -- "$PUBLISH_DIR/tools" "$PUBLISH_DIR/Presets"
 # Seed user-facing documentation like Localization Workbench. Preserve an
 # existing user-edited README and never overwrite supplied repak/retoc binaries.
+# The app-managed Presets/Factory has already been synchronized transactionally.
 if [[ ! -e "$PUBLISH_DIR/tools/README.txt" ]]; then
     cp -- "$ROOT/tools/README.txt" "$PUBLISH_DIR/tools/README.txt"
 fi
@@ -231,6 +281,9 @@ echo "Location: $PUBLISH_DIR"
 echo "Build receipt: $PUBLISH_DIR/BUILD-INFO.txt"
 echo "Executable SHA-256: $EXE_SHA256"
 echo "Stashes Chance renderer SHA-256: $STASH_TIER_SHA256"
+echo "Factory presets: ${#FACTORY_ROLES[@]} refreshed from source"
+echo "Factory preset source SHA-256: $FACTORY_SOURCE_SHA256"
+echo "Factory location: $PUBLISH_DIR/Presets/Factory"
 echo
 echo "For a verified, fresh main-branch launch, use:"
 echo "  bash \"$ROOT/run-latest.sh\""

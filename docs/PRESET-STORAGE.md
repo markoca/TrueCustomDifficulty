@@ -1,3 +1,11 @@
+## 2026-11-19 — Pull + publish refreshes factory profiles
+
+Run `git pull` on `main` to update the 12 version-controlled JSON sources under `src/TrueCustomDifficulty/Presets/`. Every **successful** `./publish.sh` copies the exact twelve JSONs into `publish/win-x64/Presets/Factory/` **in the same rollback-capable transaction as the EXE**. This happens at build time, before launching the app. The build receipt `publish/win-x64/BUILD-INFO.txt` records `factory_preset_count=12` and `factory_presets_sha256`, providing a common source signature with the EXE build.
+
+The portable `Presets` root and its inode remain unchanged; custom files, manually edited `Presets/<role>.json`, `README.md`, `tools`, and prior `Output` are not deleted. The app-managed `Presets/Factory` subtree alone is replaced, so **do not store personal preset edits inside Factory**. Edited root versions remain available as `<role> (local)` in the picker. If compilation, source validation or publishing fails, the previously working EXE, factory profiles and build receipt are preserved. The app also refreshes managed profiles from embedded resources at startup, keeping the built-in copies consistent.
+
+Validation: `python3 tools/audit_publish_directory_contract.py` exercises fake publishes, updates to tracked factory sources, protected local presets, rollback and missing-source rejection. A real .NET 10/Wine build and live UI check remain separate.
+
 # Preset storage
 
 True Custom Difficulty uses one portable preset location:
