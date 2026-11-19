@@ -1,3 +1,8 @@
+## CURRENT 2026-11-19 — Preset dropdown wheel cycling
+
+* The 190-DIP profile dropdown maintains its exact existing shape and layout. Its scoped `PreviewMouseWheel` handler changes one entry up/down while collapsed and marks the gesture handled, preventing scrolling the surrounding editor. Changing `SelectedIndex` reaches the normal TwoWay `SelectedPreset` loading path so the whole editor updates immediately. The first/last entries are hard stops.
+* Keep native popup scrolling if the dropdown is open; preserve the slider value-box wheel handler and all unrelated tab-scroll behavior. Do not introduce a secondary preset picker or click requirement. CI contract: `tools/audit_preset_dropdown_wheel.py`.
+
 ## CURRENT 2026-11-19 — Factory Human Combat role tuning without visual drift
 
 * Six existing HUMAN TACTICS controls and six HUMAN AWARENESS controls take 12 unique factory sets (110 changed source values). The UI is completely unchanged: source-value scaling, native increments, compact interactive intervals, accuracy reticle, awareness radar, weather masking visuals, numeric accents, hover and context reset remain consistent with the catalog.

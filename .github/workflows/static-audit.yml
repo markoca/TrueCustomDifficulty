@@ -37,6 +37,9 @@ jobs:
       - name: Active UI-to-CFG contract
         run: python tools/audit_ui_cfg_contract.py
 
+      - name: Preset dropdown mouse wheel and immediate profile loading contract
+        run: python tools/audit_preset_dropdown_wheel.py
+
       - name: Trader Buys native role/category and UI contract
         run: python tools/audit_trader_buys_implementation.py
 

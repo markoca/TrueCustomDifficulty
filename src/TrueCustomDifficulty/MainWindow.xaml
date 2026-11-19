@@ -1266,6 +1266,7 @@
                                   Margin="0,0,7,0"
                                   ItemsSource="{Binding AvailablePresets}"
                                   SelectedItem="{Binding SelectedPreset, Mode=TwoWay}"
+                                  PreviewMouseWheel="PresetComboBox_PreviewMouseWheel"
                                   DisplayMemberPath="Name"
                                   />
                         <Button Content="Load Preset" Command="{Binding LoadPresetCommand}" />

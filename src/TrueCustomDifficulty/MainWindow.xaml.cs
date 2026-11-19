@@ -1,6 +1,7 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using TrueCustomDifficulty.Controls;
@@ -244,6 +245,28 @@ public partial class MainWindow : Window
             parameter.PanelCard = null;
             main.SelectedTab.SelectedParameter = parameter;
         }
+    }
+
+    private void PresetComboBox_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        // Only the profile picker owns this wheel gesture. While the list is
+        // expanded, retain native ComboBox scrolling/selection behavior.
+        if (sender is not ComboBox picker || picker.IsDropDownOpen
+            || picker.Items.Count == 0 || e.Delta == 0)
+            return;
+
+        // One entry per wheel event. SelectedItem's existing TwoWay binding
+        // invokes MainViewModel.SelectedPreset, which loads the whole profile.
+        // Keep the endpoints fixed instead of wrapping to an unrelated role.
+        var current = picker.SelectedIndex;
+        var next = current < 0 ? 0 : Math.Clamp(
+            current + (e.Delta > 0 ? -1 : 1), 0, picker.Items.Count - 1);
+        if (next != current)
+            picker.SelectedIndex = next;
+
+        // Avoid scrolling the surrounding tab panel or double-changing when
+        // WPF's native focused ComboBox wheel handling also runs.
+        e.Handled = true;
     }
 
     private void CurrentValueBox_PreviewMouseWheel(object sender, MouseWheelEventArgs e)

@@ -1,3 +1,8 @@
+## CURRENT 2026-11-19 — Profile picker mouse wheel
+
+* Hovering the bottom-right preset dropdown while it is **collapsed** lets the player move **one preset per mouse-wheel event**, up = previous entry, down = next entry. The selected role is loaded immediately through the existing `SelectedPreset` TwoWay binding; no click or extra Load Preset action is necessary. Selection is clamped at first/last entries, not wrapped. No added controls, enlarged dropdown, focus requirement, new labels or layout shifts.
+* While the dropdown popup is **open**, WPF retains its native list scrolling. Wheel input outside this dropdown is unchanged, including value boxes and compact game control knobs. During Build, the existing disabled-hit-test toolbar blocks profile switching. Contract: `tools/audit_preset_dropdown_wheel.py`.
+
 ## CURRENT 2026-11-19 — Human Tactics and Awareness distinguish all 12 factory roles
 
 * All 12 existing source controls (five action-rate lanes, the accuracy spread reticle, sight/hearing/memory radar and three weather fractions) get profile-specific authored values. This is **110 preset numeric changes**, not a new UI control. Preserve the catalog-locked compact Human Tactics intervals/rate rails, accuracy reticle, Awareness radar, fog/rain/storm knob/slider presentation, responsive 16:9 geometry, right-click/R resets, reference markers and yellow-only-modified numeric values.
