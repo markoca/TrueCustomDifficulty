@@ -30,16 +30,39 @@ ACTUAL_SHA="$(sha256sum "$EXE" | awk '{print $1}')"
 EXPECTED_STASH_SHA="$(sed -n 's/^stash_tier_source_sha256=//p' "$RECEIPT")"
 ACTUAL_STASH_SHA="$(sha256sum "$STASH_TIER_SOURCE" | awk '{print $1}')"
 NATIVE_ROW_STATUS="$(sed -n 's/^stash_chance_native_row=//p' "$RECEIPT")"
+FACTORY_COUNT="$(sed -n 's/^factory_preset_count=//p' "$RECEIPT")"
+EXPECTED_FACTORY_SHA="$(sed -n 's/^factory_presets_sha256=//p' "$RECEIPT")"
+FACTORY_ROLES=(
+    "Anomaly Runner" "Field Medic" "Hardcore+" "Hardcore"
+    "Immersive" "Mercenary" "Mutant Hunter" "Outcast"
+    "Scavenger" "Smuggler" "Tactical" "Wanderer"
+)
+FACTORY_SOURCE_DIR="$ROOT/src/TrueCustomDifficulty/Presets"
+FACTORY_RUNTIME_DIR="$ROOT/publish/win-x64/Presets"
+for role in "${FACTORY_ROLES[@]}"; do
+    if [[ ! -f "$FACTORY_SOURCE_DIR/$role.json" || ! -f "$FACTORY_RUNTIME_DIR/$role.json" ]] \
+        || ! cmp -s -- "$FACTORY_SOURCE_DIR/$role.json" "$FACTORY_RUNTIME_DIR/$role.json"; then
+        echo "ERROR: Stale or missing factory profile: $role.json. Rebuild first." >&2
+        exit 1
+    fi
+done
+ACTUAL_FACTORY_SHA="$(
+    for role in "${FACTORY_ROLES[@]}"; do
+        printf '%s %s\n' "$role" "$(sha256sum "$FACTORY_RUNTIME_DIR/$role.json" | cut -d' ' -f1)"
+    done | sha256sum | cut -d' ' -f1
+)"
 
 if [[ -z "$SOURCE" || -z "$EXPECTED_SHA" || -z "$EXPECTED_STASH_SHA"
       || "$SOURCE" != "$HEAD" || "$EXPECTED_SHA" != "$ACTUAL_SHA"
       || "$EXPECTED_STASH_SHA" != "$ACTUAL_STASH_SHA"
-      || "$NATIVE_ROW_STATUS" != "absent" ]]; then
+      || "$NATIVE_ROW_STATUS" != "absent" || "$FACTORY_COUNT" != "12"
+      || -z "$EXPECTED_FACTORY_SHA" || "$EXPECTED_FACTORY_SHA" != "$ACTUAL_FACTORY_SHA" ]]; then
     echo "ERROR: Build source/EXE/Stashes renderer fingerprint mismatch. Refusing stale launch." >&2
     echo "Git HEAD=$HEAD; receipt=$SOURCE" >&2
     echo "EXE sha256: actual=$ACTUAL_SHA; receipt=$EXPECTED_SHA" >&2
     echo "Stash renderer sha256: actual=$ACTUAL_STASH_SHA; receipt=$EXPECTED_STASH_SHA" >&2
     echo "Stashes NATIVE row: $NATIVE_ROW_STATUS" >&2
+    echo "Factory presets: actual=$ACTUAL_FACTORY_SHA; receipt=$EXPECTED_FACTORY_SHA" >&2
     exit 1
 fi
 if grep -nF '"NATIVE' "$STASH_TIER_SOURCE" >&2; then
@@ -51,4 +74,5 @@ echo "Launching validated True Custom Difficulty from commit $SOURCE"
 echo "EXE SHA-256: $ACTUAL_SHA"
 echo "Stashes Chance source SHA-256: $ACTUAL_STASH_SHA"
 echo "NATIVE card caption: absent"
+echo "Factory presets: twelve root JSON files match Git sources"
 exec env WINEPREFIX="${WINEPREFIX:-$HOME/.wine-s2}" WINEDEBUG=-all wine "$EXE"

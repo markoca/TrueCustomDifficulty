@@ -12,14 +12,16 @@ assert "UserPresetStorageService" not in vm, "LocalAppData user-preset service r
 assert vm.count("InitialDirectory = _presetDirectoryService.Ensure()") == 1 and "presetDirectory = _presetDirectoryService.EnsureWritable();" in vm and "InitialDirectory = presetDirectory" in vm,     "Save and Load dialogs must both default to the portable Presets directory"
 assert "var items = _presetDirectoryService.List();" in vm,     "Preset picker must read the same portable Presets directory"
 directory_source = (ROOT / "src/TrueCustomDifficulty/Services/PresetDirectoryService.cs").read_text(encoding="utf-8")
-assert 'var managed = Path.Combine(directory, "Factory");' in directory_source
-assert 'Name = name + " (local)"' in directory_source
-assert 'Path = Path.Combine(managed, $"{name}.json")' in directory_source
-assert 'File.ReadAllBytes(path).AsSpan().SequenceEqual' in directory_source
+assert 'Path.Combine(directory, "Factory")' not in directory_source
+assert 'Name = name + " (local)"' not in directory_source
+assert 'return Directory.EnumerateFiles(directory, "*.json", SearchOption.TopDirectoryOnly)' in directory_source
+assert 'string.Equals(File.ReadAllText(destination), embedded, StringComparison.Ordinal)' in directory_source
+assert 'File.WriteAllText(destination, embedded);' in directory_source
+assert 'RUNTIME_NAMES+=("Presets/$role.json")' in (ROOT / "publish.sh").read_text(encoding="utf-8")
 assert not storage_path.exists(), "Obsolete LocalAppData preset service still exists"
 
 assert "File.WriteAllText(fullPath, json);" in preset,     "Preset save must write the completed JSON directly to the selected target"
 assert "File.Move(tempPath, fullPath, overwrite: true)" not in preset,     "Privileged Windows temp-file replacement path returned"
 assert 'Guid.NewGuid().ToString("N") + ".tmp"' not in preset,     "Preset save unexpectedly creates temporary rename files"
 
-print("[PASS] factory and custom presets use one portable Presets directory")
+print("[PASS] one canonical factory JSON per role in portable Presets, without local/Factory duplicates")

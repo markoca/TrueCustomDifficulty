@@ -28,7 +28,7 @@ assert 'tools|Presets|Output|BUILD-INFO.txt' in script
 assert 'mv -- "$PUBLISH_STAGING/$name" "$PUBLISH_DIR/$name"' in script
 assert 'cp -- "$ROOT/tools/README.txt" "$PUBLISH_DIR/tools/README.txt"' in script
 assert 'if [[ ! -e "$PUBLISH_DIR/tools/README.txt" ]]; then' in script
-assert 'RUNTIME_NAMES+=("Presets/Factory")' in script, "Factory JSONs must share the EXE rollback transaction"
+assert 'RUNTIME_NAMES+=("Presets/$role.json")' in script, "Root factory JSONs must share the EXE rollback transaction"
 assert 'factory_presets_sha256=%s' in script, "Build receipt lacks factory content signature"
 assert 'cmp -s -- "$FACTORY_SOURCE_DIR/$role.json"' in script, "Factory copies need byte verification"
 
@@ -103,7 +103,7 @@ fi
         "tools/repak.exe": b"USER REPAK",
         "tools/retoc.exe": b"USER RETOC",
         "Presets/Custom.json": b'{"test":"user"}\n',
-        "Presets/Tactical.json": b'{"name":"Tactical","my_custom_edit":true}\n',
+        "Presets/player-custom.json": b'{"name":"player-custom","my_custom_edit":true}\n',
         "Presets/README.md": b"USER EDITED README",
         "Output/previous.pak": b"PREVIOUS GOOD MOD",
         "user-notes.txt": b"USER NOTES",
@@ -111,6 +111,11 @@ fi
     for name, value in sentinels.items():
         (dest / name).write_bytes(value)
 
+    # Old releases used Presets/Factory; a successful publish must retire it.
+    legacy = dest / "Presets/Factory"
+    legacy.mkdir()
+    (legacy / "Tactical.json").write_text('{"name":"Tactical","balance":0}\n', encoding="utf-8")
+    (dest / "Presets/Tactical.json").write_text('{"name":"Tactical","balance":0}\n', encoding="utf-8")
     (dest / "TrueCustomDifficulty.exe").write_bytes(b"OLD GOOD EXE")
     (dest / "BUILD-INFO.txt").write_bytes(b"OLD GOOD RECEIPT")
     inode = dest.stat().st_ino
@@ -134,11 +139,9 @@ fi
         )
 
     def factory_snapshot():
-        managed = dest / "Presets/Factory"
-        assert sorted(p.name for p in managed.glob("*.json")) == sorted(
-            role + ".json" for role in FACTORY_ROLES
-        ), "Factory set must contain exactly the 12 tracked roles"
-        return {p.name: p.read_bytes() for p in managed.glob("*.json")}
+        managed = dest / "Presets"
+        return {role + ".json": (managed / (role + ".json")).read_bytes()
+                for role in FACTORY_ROLES}
 
     def check_factory_current():
         actual = factory_snapshot()
@@ -160,6 +163,8 @@ fi
     assert one.returncode == 0, one.stdout + one.stderr
     check_state()
     check_factory_current()
+    assert not legacy.exists(), "Old duplicate Factory directory survived"
+    assert json.loads((dest / "Presets/Tactical.json").read_text())["balance"] == 1
     # The first publish supplies only the README; user-owned binaries survive.
     runtime_tools_readme = dest / "tools/README.txt"
     assert runtime_tools_readme.read_text(encoding="utf-8") == "SOURCE TOOL INSTRUCTIONS\n"
@@ -171,7 +176,7 @@ fi
     assert "exe_sha256=" + hashlib.sha256(b"EXE BUILD 1\n").hexdigest() in receipt
 
     # Simulate git pull changing factory balance between builds, without
-    # destroying a custom root Tactical.json or the portable Presets inode.
+    # touching custom-named files or the portable Presets inode.
     (project / "Presets/Tactical.json").write_text(
         '{"name":"Tactical","balance":2}\n', encoding="utf-8"
     )
@@ -182,8 +187,8 @@ fi
     assert two.returncode == 0, two.stdout + two.stderr
     check_state()
     check_factory_current()
-    assert json.loads((dest / "Presets/Factory/Tactical.json").read_text())["balance"] == 2
-    assert json.loads((dest / "Presets/Factory/Scavenger.json").read_text())["balance"] == 2
+    assert json.loads((dest / "Presets/Tactical.json").read_text())["balance"] == 2
+    assert json.loads((dest / "Presets/Scavenger.json").read_text())["balance"] == 2
     assert "factory_preset_count=12" in (dest / "BUILD-INFO.txt").read_text()
     assert runtime_tools_readme.read_text(encoding="utf-8") == "USER EDITED TOOLS README\n"
     assert (dest / "TrueCustomDifficulty.exe").read_bytes() == b"EXE BUILD 2\n"
@@ -225,6 +230,6 @@ print("PASS: publish/win-x64 retains its inode, portable tools/presets/output,"
 print("PASS: user-facing tools/README.txt is seeded once and never overwrites edits.")
 print("PASS: runtime artifacts, factory JSONs and BUILD-INFO update together;"
       " bad/unsafe dotnet output leaves the last good build intact.")
-print("PASS: factory roles follow pulled source on each successful build;"
-      " root user presets and changed local copies remain untouched.")
+print("PASS: factory roles follow pulled source as single root files on each build;"
+      " custom-named JSONs remain intact, without Factory/(local) duplicates.")
 print("NOT TESTED: real .NET 10 WPF publish output or Dolphin rendering.")

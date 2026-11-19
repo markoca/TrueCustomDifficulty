@@ -37,7 +37,8 @@ FINAL_EXE="$PUBLISH_DIR/$EXE_NAME"
 TEMP_OUTPUT="$(mktemp -d "${TMPDIR:-/tmp}/TrueCustomDifficulty-publish.XXXXXX")"
 
 # Never remove/recreate publish/win-x64: KDE Dolphin can retain the old
-# inode, and users keep repak/retoc, customized presets and output there.
+# inode. Custom-named presets and installed tools stay intact, but the twelve
+# official factory names are synchronized from the Git-tracked sources.
 PUBLISH_STAGING=""
 PUBLISH_BACKUP=""
 TRANSACTION_STARTED=0
@@ -232,23 +233,26 @@ STASH_TIER_SHA256="$(sha256sum "$STASH_TIER_SOURCE" | cut -d' ' -f1)"
 printf 'source_commit=%s\nexe_sha256=%s\nstash_tier_source_sha256=%s\nstash_chance_native_row=absent\nfactory_preset_count=%s\nfactory_presets_sha256=%s\n' "$GIT_HEAD" "$EXE_SHA256" "$STASH_TIER_SHA256" "${#FACTORY_ROLES[@]}" "$FACTORY_SOURCE_SHA256" > "$PUBLISH_STAGING/BUILD-INFO.txt"
 RUNTIME_NAMES+=("BUILD-INFO.txt")
 
-# Stage factory presets with the EXE, not at application launch. The Presets
-# root contains user-owned JSONs: keep its directory inode and its contents.
-# Only Presets/Factory is app-managed; replace it in the SAME rollback-capable
-# transaction as the EXE so a failed publish cannot mix versions.
-if [[ -L "$PUBLISH_DIR/Presets" || -L "$PUBLISH_DIR/Presets/Factory" ]]; then
-    echo "ERROR: Refusing to replace presets through a symlink." >&2
+# Stage official JSONs directly in Presets, not in a separate Factory folder.
+# Every official file joins the same EXE/receipt rollback transaction, leaving
+# custom names and the existing portable Presets directory inode untouched.
+if [[ -L "$PUBLISH_DIR/Presets" ]]; then
+    echo "ERROR: Refusing to update a symlinked Presets directory." >&2
     exit 1
 fi
-mkdir -p -- "$PUBLISH_DIR/Presets" "$PUBLISH_STAGING/Presets/Factory" "$PUBLISH_BACKUP/Presets"
+mkdir -p -- "$PUBLISH_DIR/Presets" "$PUBLISH_STAGING/Presets" "$PUBLISH_BACKUP/Presets"
 for role in "${FACTORY_ROLES[@]}"; do
-    cp -p -- "$FACTORY_SOURCE_DIR/$role.json" "$PUBLISH_STAGING/Presets/Factory/$role.json"
-    cmp -s -- "$FACTORY_SOURCE_DIR/$role.json" "$PUBLISH_STAGING/Presets/Factory/$role.json" || {
+    if [[ -L "$PUBLISH_DIR/Presets/$role.json" ]]; then
+        echo "ERROR: Refusing to replace a symlinked factory preset: $role.json" >&2
+        exit 1
+    fi
+    cp -p -- "$FACTORY_SOURCE_DIR/$role.json" "$PUBLISH_STAGING/Presets/$role.json"
+    cmp -s -- "$FACTORY_SOURCE_DIR/$role.json" "$PUBLISH_STAGING/Presets/$role.json" || {
         echo "ERROR: Factory preset staging failed verification: $role.json" >&2
         exit 1
     }
+    RUNTIME_NAMES+=("Presets/$role.json")
 done
-RUNTIME_NAMES+=("Presets/Factory")
 
 TRANSACTION_STARTED=1
 for name in "${RUNTIME_NAMES[@]}"; do
@@ -263,13 +267,24 @@ done
 mkdir -p -- "$PUBLISH_DIR/tools" "$PUBLISH_DIR/Presets"
 # Seed user-facing documentation like Localization Workbench. Preserve an
 # existing user-edited README and never overwrite supplied repak/retoc binaries.
-# The app-managed Presets/Factory has already been synchronized transactionally.
+# All twelve root factory JSONs have already been synchronized transactionally.
 if [[ ! -e "$PUBLISH_DIR/tools/README.txt" ]]; then
     cp -- "$ROOT/tools/README.txt" "$PUBLISH_DIR/tools/README.txt"
 fi
 # Only initialize preset README if absent. Never reset user-edited portable state.
 if [[ ! -e "$PUBLISH_DIR/Presets/README.md" ]]; then
     cp -- "$ROOT/src/TrueCustomDifficulty/Presets/README.md" "$PUBLISH_DIR/Presets/README.md"
+fi
+# Retire old generated Factory copies from the previous release. Unknown
+# files are never removed, and an occupied legacy directory is left intact.
+LEGACY_FACTORY="$PUBLISH_DIR/Presets/Factory"
+if [[ -d "$LEGACY_FACTORY" && ! -L "$LEGACY_FACTORY" ]]; then
+    for role in "${FACTORY_ROLES[@]}"; do
+        if [[ -f "$LEGACY_FACTORY/$role.json" && ! -L "$LEGACY_FACTORY/$role.json" ]]; then
+            rm -f -- "$LEGACY_FACTORY/$role.json" || true
+        fi
+    done
+    rmdir -- "$LEGACY_FACTORY" 2>/dev/null || true
 fi
 TRANSACTION_STARTED=0
 
@@ -283,7 +298,7 @@ echo "Executable SHA-256: $EXE_SHA256"
 echo "Stashes Chance renderer SHA-256: $STASH_TIER_SHA256"
 echo "Factory presets: ${#FACTORY_ROLES[@]} refreshed from source"
 echo "Factory preset source SHA-256: $FACTORY_SOURCE_SHA256"
-echo "Factory location: $PUBLISH_DIR/Presets/Factory"
+echo "Factory location: $PUBLISH_DIR/Presets (one file per official role)"
 echo
 echo "For a verified, fresh main-branch launch, use:"
 echo "  bash \"$ROOT/run-latest.sh\""

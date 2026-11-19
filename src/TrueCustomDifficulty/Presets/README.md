@@ -1,3 +1,7 @@
+## 2026-11-19 — One canonical root JSON per official role
+
+The twelve tracked profiles in `src/TrueCustomDifficulty/Presets/` are the only source of factory balance. Every successful `./publish.sh` writes those exact bytes into `publish/win-x64/Presets/<role>.json` with the EXE and build receipt; the application loads that same root file and refreshes from embedded sources on launch. No `Factory` directory or `(local)` role is used. Any changes to an official installed file are overwritten by the next successful build or launch. Save differently named custom profiles if you want an independent local variant; to edit a factory role permanently, commit its source JSON.
+
 ## 2026-11-19 — Factory presets synchronize on every successful publish
 
 `git pull` updates the tracked source JSONs and `./publish.sh` synchronizes all 12 to `publish/win-x64/Presets/Factory` together with the new EXE and BUILD-INFO receipt. The main `Presets` directory and local edits are preserved; user-edited factory-named files remain selectable as `(local)`. Failed builds retain the previous EXE and matching Factory files.

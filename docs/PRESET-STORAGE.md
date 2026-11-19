@@ -1,40 +1,19 @@
-## 2026-11-19 — Pull + publish refreshes factory profiles
+# Preset storage — one authoritative JSON per factory role
 
-Run `git pull` on `main` to update the 12 version-controlled JSON sources under `src/TrueCustomDifficulty/Presets/`. Every **successful** `./publish.sh` copies the exact twelve JSONs into `publish/win-x64/Presets/Factory/` **in the same rollback-capable transaction as the EXE**. This happens at build time, before launching the app. The build receipt `publish/win-x64/BUILD-INFO.txt` records `factory_preset_count=12` and `factory_presets_sha256`, providing a common source signature with the EXE build.
+The twelve official profiles are version-controlled under `src/TrueCustomDifficulty/Presets/<role>.json`. Each `git pull` updates these source files on `main`. Every successful `./publish.sh` copies the twelve JSON files byte-for-byte to `publish/win-x64/Presets/<role>.json`, together with the EXE and `BUILD-INFO.txt` in a rollback-capable transaction. The picker loads these root JSONs directly: **one file per official role**, no `Factory` subdirectory and no `(local)` role duplicate. The app also refreshes all twelve official files from its embedded resources at startup.
 
-The portable `Presets` root and its inode remain unchanged; custom files, manually edited `Presets/<role>.json`, `README.md`, `tools`, and prior `Output` are not deleted. The app-managed `Presets/Factory` subtree alone is replaced, so **do not store personal preset edits inside Factory**. Edited root versions remain available as `<role> (local)` in the picker. If compilation, source validation or publishing fails, the previously working EXE, factory profiles and build receipt are preserved. The app also refreshes managed profiles from embedded resources at startup, keeping the built-in copies consistent.
+**Source-of-truth policy:** `main` owns the twelve official role names. Changes made only to an installed `Presets/<role>.json` file are overwritten on a successful publish or next application launch. To permanently tune a built-in profile, edit its tracked source JSON and commit/push to `main`. Saving from the app does **not** automatically push to GitHub. A separately named custom profile (e.g. `My Tactical.json`) is never overwritten, unless the user intentionally chooses its name for a save.
 
-Validation: `python3 tools/audit_publish_directory_contract.py` exercises fake publishes, updates to tracked factory sources, protected local presets, rollback and missing-source rejection. A real .NET 10/Wine build and live UI check remain separate.
-
-# Preset storage
-
-True Custom Difficulty uses one portable preset location:
-
-`<TrueCustomDifficulty>\Presets`
-
-The 12 factory profiles, custom presets saved by the user, and legacy portable presets all live in that directory. **Save Preset** and **Load Preset** both default there, and the preset picker reads the same directory. Custom presets are not redirected to `%LOCALAPPDATA%`.
+The portable `Presets` root inode, unrelated custom-named JSONs, its README, existing `tools` and `Output` remain intact. The obsolete generated `Presets/Factory` folder is retired after a successful publish; unknown files found there are preserved instead of deleted. A failed build or source validation keeps the previous EXE, official JSON files and receipt. `BUILD-INFO.txt` records `factory_preset_count=12` and `factory_presets_sha256`, which `run-latest.sh` verifies against both source and published files before launching Wine.
 
 ## Windows save behavior
 
-Preset JSON is fully serialized in memory before the destination file is touched, then written directly with `File.WriteAllText`.
-
-The previous implementation wrote a temporary file and used `File.Move(temp, target, overwrite: true)`. On some Windows folders that replacement operation can fail with:
-
-`A required privilege is not held by the client.`
-
-That privileged rename/replace path is no longer used for presets.
-
-Before opening **Save Preset**, the application now verifies that it can create a brand-new file in `Presets`. This is intentionally different from overwriting an existing JSON: Windows can allow file writes while denying **Create files / write data** on the directory itself.
-
-If creation is denied, True Custom Difficulty grants the current Windows user **Modify** permission on the portable `Presets` directory only, with inheritance for files/subfolders. It first tries the ACL repair without elevation; if Windows refuses the ACL change, it invokes Windows' built-in `%SystemRoot%\System32\icacls.exe` through a one-time UAC approval. **Nothing needs to be installed or shipped with the app.** Permission-tool, UAC, Wine-compatibility and account-resolution failures are caught and shown as a normal error dialog; they must never crash the application. It does not grant permissions on the whole application directory, the game directory, or other user files.
+Preset JSON is fully serialized in memory before the destination file is touched, then written directly using `File.WriteAllText`. Save and Load dialogs default to the portable `Presets` root, not `%LOCALAPPDATA%`. A permission probe checks whether the current Windows user can create new files; if needed, the app tries to grant that user Modify access to the portable Presets folder using Windows `icacls`. Permission errors are shown through a normal dialog.
 
 ## Verification
 
 ```bash
 python3 tools/audit_preset_storage_contract.py
+python3 tools/audit_publish_directory_contract.py
 dotnet run --project tests/PresetSaveContract/PresetSaveContract.csproj
 ```
-
-## 2026-11-19 — Factory picker source correction
-
-Official factory roles in the dropdown use current EXE-embedded JSONs mirrored to `Presets/Factory/<role>.json`, refreshed on startup. Root `Presets/<role>.json` remains under the existing exact-blob migration: any locally edited copy is preserved and shown separately as `<role> (local)`, not silently substituted for the updated factory. Identical duplicates are hidden in the picker. Save/Load dialogs continue to default to the portable root `Presets` folder; custom-named profiles remain unchanged. The managed Factory subfolder is not a user save destination. This addresses Human Tactics/Awareness values appearing unchanged when changing profile without altering the catalog, source CFG, or gameplay values.

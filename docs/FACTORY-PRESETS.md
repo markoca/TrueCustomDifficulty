@@ -1,3 +1,7 @@
+## 2026-11-19 — Single source-of-truth factory profiles
+
+Each built-in profile is a single portable `Presets/<role>.json`, synchronized from the tracked `src/TrueCustomDifficulty/Presets/<role>.json` on every successful publish. The separate `Presets/Factory` and `(local)` approach is retired; updates to the twelve official names are authoritative, while differently named custom files remain untouched. The EXE, twelve JSONs and receipt share rollback. Historical notes below about local overlays are superseded by this policy.
+
 ## 2026-11-19 — Build-time factory preset synchronization
 
 The canonical twelve JSON profiles under `src/TrueCustomDifficulty/Presets/` are now synchronized by `publish.sh` to `publish/win-x64/Presets/Factory/` whenever the Windows executable is successfully published. They are staged and switched with the EXE and BUILD-INFO in one rollback-capable transaction, while all root user presets survive. The built-in picker continues reading only those managed factory copies; user-modified `Presets/<role>.json` remain separately accessible. A build receipt includes the factory source checksum. Static fake-dotnet contract tests cover repeated publishes, changed JSON source, missing source, failed compilation and protected portable files.

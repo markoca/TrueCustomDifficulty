@@ -298,22 +298,17 @@ public sealed class PresetDirectoryService
                 File.Delete(legacyPath);
         }
 
-        // The picker must always point to current factory values; a protected
-        // locally edited Presets/<name>.json must not silently mask a new role.
-        var managed = Path.Combine(directory, "Factory");
-        Directory.CreateDirectory(managed);
+        // The twelve repository/embedded factory profiles own their names.
+        // One portable file per role; startup and publish both restore the
+        // current source values. Unrelated custom-named files are preserved.
         foreach (var name in FactoryPresetNames)
         {
             var resourceName = $"TrueCustomDifficulty.Presets.{name}.json";
             var destination = Path.Combine(directory, $"{name}.json");
-            if (!File.Exists(destination) || IsUnmodifiedPreviousFactory(name, destination))
-                WriteEmbedded(resourceName, destination);
-
-            var factoryPath = Path.Combine(managed, $"{name}.json");
             var embedded = ReadEmbedded(resourceName);
-            if (!File.Exists(factoryPath)
-                || !string.Equals(File.ReadAllText(factoryPath), embedded, StringComparison.Ordinal))
-                File.WriteAllText(factoryPath, embedded);
+            if (!File.Exists(destination)
+                || !string.Equals(File.ReadAllText(destination), embedded, StringComparison.Ordinal))
+                File.WriteAllText(destination, embedded);
         }
 
         // Remove the discontinued QA preset from the player's picker.
@@ -470,35 +465,14 @@ public sealed class PresetDirectoryService
     public IReadOnlyList<PresetListItem> List()
     {
         var directory = Ensure();
-        var managed = Path.Combine(directory, "Factory");
-
-        var official = FactoryPresetNames.Select(name => new PresetListItem
-        {
-            Name = name,
-            Path = Path.Combine(managed, $"{name}.json")
-        });
-
-        // Keep user-edited copies, but never substitute them for factory roles.
-        var local = Directory.EnumerateFiles(directory, "*.json", SearchOption.TopDirectoryOnly)
-            .Select(path =>
+        return Directory.EnumerateFiles(directory, "*.json", SearchOption.TopDirectoryOnly)
+            .OrderBy(path => FactoryOrder(Path.GetFileNameWithoutExtension(path)))
+            .ThenBy(path => Path.GetFileNameWithoutExtension(path), StringComparer.OrdinalIgnoreCase)
+            .Select(path => new PresetListItem
             {
-                var name = Path.GetFileNameWithoutExtension(path);
-                if (FactoryOrder(name) < FactoryPresetNames.Length)
-                {
-                    var canonical = Path.Combine(managed, $"{name}.json");
-                    if (File.ReadAllBytes(path).AsSpan().SequenceEqual(File.ReadAllBytes(canonical)))
-                        return null;
-                    return new PresetListItem { Name = name + " (local)", Path = path };
-                }
-                return new PresetListItem { Name = name, Path = path };
+                Name = Path.GetFileNameWithoutExtension(path),
+                Path = path
             })
-            .Where(item => item is not null)
-            .Select(item => item!);
-
-        return official.Concat(local)
-            .OrderBy(item => FactoryOrder(Path.GetFileNameWithoutExtension(item.Path)))
-            .ThenBy(item => Path.GetDirectoryName(item.Path) == managed ? 0 : 1)
-            .ThenBy(item => item.Name, StringComparer.OrdinalIgnoreCase)
             .ToList();
     }
 
