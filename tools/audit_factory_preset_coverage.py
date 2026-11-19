@@ -58,6 +58,13 @@ BANDAGE_HP = json.loads((ROOT / "tools/factory_preset_bandage_hp_policy_2026_11_
 ROLE_DIVERSITY = json.loads((ROOT / "tools/factory_preset_role_diversification_2026_11_19.json").read_text(encoding="utf-8"))
 LOOSE_WORLD = json.loads((ROOT / "tools/factory_preset_world_removal_policy_2026_11_19.json").read_text(encoding="utf-8"))
 HUMAN_ROLES = json.loads((ROOT / "tools/factory_preset_human_roles_2026_11_19.json").read_text(encoding="utf-8"))
+RADIATION = json.loads((ROOT / "tools/factory_preset_radiation_lethality_2026_11_19.json").read_text(encoding="utf-8"))
+RAD_ID = RADIATION["sourceId"]
+assert RAD_ID == "survival.radiationDamage" and RADIATION["range"]["max"] == 25
+assert set(RADIATION["roles"]) == set(VIBE["values"])
+assert len({role["damageMultiplier"] for role in RADIATION["roles"].values()}) == 12
+assert RADIATION["roles"]["Hardcore+"]["damageMultiplier"] == 25
+assert RADIATION["roles"]["Hardcore"]["damageMultiplier"] < 25
 HUMAN_IDS = tuple(HUMAN_ROLES["ids"])
 assert len(HUMAN_IDS) == len(set(HUMAN_IDS)) == 12
 assert set(HUMAN_ROLES["roles"]) == set(VIBE["values"]) == set(HUMAN_ROLES["previousStockBlobs"])
@@ -119,6 +126,7 @@ for path in presets:
     role.update(ROLE_DIVERSITY["roles"][path.stem]["changes"])
     role.update(LOOSE_WORLD["roles"][path.stem]["changes"])
     role.update(HUMAN_ROLES["roles"][path.stem]["values"])
+    role[RAD_ID] = RADIATION["roles"][path.stem]["damageMultiplier"]
     # 2026-11-18 attack-only pass: role values of removed controls (roars, growls, ...) are gone.
     role = {k: v for k, v in role.items() if k in by_id}
     for pid in NEW_IDS | set(role):
@@ -142,6 +150,8 @@ for path in presets:
     assert all(amount(pid) == HUMAN_ROLES["roles"][path.stem]["values"][pid] for pid in HUMAN_IDS), path.name
     assert amount("combat.npcStormNoise") < amount("combat.npcRainNoise"), path.name
     assert amount("combat.npcSightRange") <= 2.5, path.name
+    assert amount(RAD_ID) == RADIATION["roles"][path.stem]["damageMultiplier"], path.name
+    assert 4.5 <= amount(RAD_ID) <= 25, path.name
     assert all(enabled(id) is LOOSE_WORLD["roles"][path.stem]["values"][id] for id in LOOSE_WORLD_IDS), path.name
     assert amount("health.bandageHealing") == BANDAGE_HP["values"][path.stem], path.name
     assert amount("health.bandageBleeding") > 0, path.name

@@ -1,3 +1,26 @@
+## 2026-11-19 — Radiation HP Damage is a core profile lethality axis
+
+**Authoritative source:** `tools/factory_preset_radiation_lethality_2026_11_19.json`. The previous factory values occupied only **1.10×–1.80×** despite the existing **0–25×** HP DAMAGE editor range. All twelve roles now use deliberately separate values from **4.5× to 25×**. The setting is the existing native `survival.radiationDamage`: it scales the **eleven ordinary radiation-stage HP damage effects** in `GameData/EffectPrototypes.cfg` (22 Min/Max leaves). It is NOT a new game setting or 25× faster accumulation; stage thresholds, the direct field RadBlock 9000 damage, accumulation, natural decay, stamina penalty, medicine and reference difficulty remain unchanged.
+
+| Profile | Before | New HP Damage | Reason |
+|---|---:|---:|---|
+| Wanderer | 1.45× | **4.5×** | Most forgiving for sustained exploration; radiation still matters |
+| Field Medic | 1.10× | **5.5×** | Superior treatment permits medical recovery but not immunity |
+| Immersive | 1.16× | **7×** | Credible serious exposure without extreme lethality |
+| Scavenger | 1.25× | **9×** | Contaminated salvage has real HP cost |
+| Mercenary | 1.18× | **10×** | Professional resources offset exposure but not the hazard itself |
+| Mutant Hunter | 1.18× | **12.5×** | High-risk contaminated hunts and lower radiation supplies |
+| Smuggler | 1.45× | **14×** | Dangerous illicit routes; movement and cure planning matter |
+| Anomaly Runner | 1.55× | **16×** | Artifact runs are dangerous gambles; high anti-rad access is necessary |
+| Tactical | 1.15× | **18×** | Punishes fighting or camping in radioactive areas |
+| Hardcore | 1.50× | **22.5×** | Near-lethal exposure and tough treatment constraints |
+| Outcast | 1.38× | **24×** | Extremely dangerous contamination in a low-supply life |
+| Hardcore+ | 1.80× | **25×** | Full upper-cap exposure lethality, intentionally the maximum |
+
+**Separate axes:** A given role's `radiationAccumulation`, `radiationRecovery`, Anti-Rad potency and scarce supplies remain its established values. 25× affects HP damage *after radiation reaches a damage-producing stage*, not how fast the RAD gauge fills. The fixed-RAD inspector's `EST. HP ZERO` figure is conditional on an assumed damage tick interval and lack of armor/protection/healing; it is **not** a verified in-game time-to-death. No UI/control catalog change, no source re-mapping and no altered runtime cadence. Real-game survivability must be tested at equivalent RAD stages.
+
+**Source and tests:** The 12 tracked preset JSONs are canonical and copied into portable `Presets/<role>.json` with `./publish.sh`. Factory coverage, role coverage, project consistency and AllControls factory import contracts assert the new role matrix without rewriting historical tuning ledgers. All 452 settings stay serialized in every preset; only `survival.radiationDamage` changes.
+
 ## 2026-11-19 — Single source-of-truth factory profiles
 
 Each built-in profile is a single portable `Presets/<role>.json`, synchronized from the tracked `src/TrueCustomDifficulty/Presets/<role>.json` on every successful publish. The separate `Presets/Factory` and `(local)` approach is retired; updates to the twelve official names are authoritative, while differently named custom files remain untouched. The EXE, twelve JSONs and receipt share rollback. Historical notes below about local overlays are superseded by this policy.

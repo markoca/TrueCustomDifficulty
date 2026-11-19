@@ -1,0 +1,75 @@
+{
+  "version": 1,
+  "date": "2026-11-19",
+  "sourceId": "survival.radiationDamage",
+  "originalCfg": "GameData/EffectPrototypes.cfg radiation stages; 11 source prototypes × ValueMin/ValueMax, unchanged thresholds",
+  "sourceVanilla": 1,
+  "range": {
+    "min": 0,
+    "max": 25
+  },
+  "scope": "Author role-specific HP damage multiplier only; preserve radiation accumulation, passive decay, cures, difficulty, and 452 source settings.",
+  "notice": "The fixed-RAD death time is a hypothetical one-charge-per-second estimate; true runtime cadence, mitigation and stage overlap require gameplay verification.",
+  "roles": {
+    "Anomaly Runner": {
+      "previous": 1.55,
+      "damageMultiplier": 16,
+      "intent": "Artifact runs are high-radiation gambles; extraction and anti-rad planning matter."
+    },
+    "Field Medic": {
+      "previous": 1.1,
+      "damageMultiplier": 5.5,
+      "intent": "Medical expertise and stronger radiation treatment make damage less punishing, never safe."
+    },
+    "Hardcore+": {
+      "previous": 1.8,
+      "damageMultiplier": 25,
+      "intent": "Full-scale fatal exposure: the 25x upper cap is deliberate total hardcore."
+    },
+    "Hardcore": {
+      "previous": 1.5,
+      "damageMultiplier": 22.5,
+      "intent": "Near-lethal radiation, with a small survivability margin below Hardcore+."
+    },
+    "Immersive": {
+      "previous": 1.16,
+      "damageMultiplier": 7,
+      "intent": "Serious chronic contamination without the instant-death ceiling."
+    },
+    "Mercenary": {
+      "previous": 1.18,
+      "damageMultiplier": 10,
+      "intent": "Expensive professional exposure; funded medical supplies offset risk, not damage."
+    },
+    "Mutant Hunter": {
+      "previous": 1.18,
+      "damageMultiplier": 12.5,
+      "intent": "Hazardous mutant hunting in contaminated territory; treatment remains scarce."
+    },
+    "Outcast": {
+      "previous": 1.38,
+      "damageMultiplier": 24,
+      "intent": "Brutal exposure with poor treatment access; almost as merciless as Hardcore+."
+    },
+    "Scavenger": {
+      "previous": 1.25,
+      "damageMultiplier": 9,
+      "intent": "Looting contaminated wrecks has meaningful HP cost, with some salvager survival margin."
+    },
+    "Smuggler": {
+      "previous": 1.45,
+      "damageMultiplier": 14,
+      "intent": "Dangerous illicit routes with some mobility and antirad access."
+    },
+    "Tactical": {
+      "previous": 1.15,
+      "damageMultiplier": 18,
+      "intent": "High radiation combat pressure forces disciplined extraction instead of healing through damage."
+    },
+    "Wanderer": {
+      "previous": 1.45,
+      "damageMultiplier": 4.5,
+      "intent": "Least lethal for a long-distance explorer, but still well above vanilla while accumulation remains elevated."
+    }
+  }
+}

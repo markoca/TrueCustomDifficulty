@@ -2109,6 +2109,12 @@ _world_removal_roles = _world_removal["roles"]
 _human_profile_matrix = json.loads((ROOT / "tools/factory_preset_human_roles_2026_11_19.json").read_text(encoding="utf-8"))
 _human_profile_ids = _human_profile_matrix["ids"]
 _human_profile_roles = _human_profile_matrix["roles"]
+_rad_profile_policy = json.loads((ROOT / "tools/factory_preset_radiation_lethality_2026_11_19.json").read_text(encoding="utf-8"))
+_rad_profile_roles = _rad_profile_policy["roles"]
+if (set(_rad_profile_roles) != set(_factory_preset_names) or _rad_profile_policy.get("sourceId") != "survival.radiationDamage"
+        or len({v["damageMultiplier"] for v in _rad_profile_roles.values()}) != 12
+        or _rad_profile_roles["Hardcore+"]["damageMultiplier"] != 25):
+    _factory_errors.append("Rad HP DAMAGE must span twelve distinct source-legal values up to 25x")
 if (set(_human_profile_roles) != set(_factory_preset_names)
         or set(_human_profile_matrix.get("previousStockBlobs", {})) != set(_factory_preset_names)
         or len(set(_human_profile_ids)) != 12
@@ -2237,6 +2243,7 @@ for _name in _factory_preset_names:
             _target = _diversity_roles[_name]["changes"].get(_pid, _target)
             _target = _world_removal_roles[_name]["changes"].get(_pid, _target)
             _target = _human_profile_roles[_name]["values"].get(_pid, _target)
+            _target = _rad_profile_roles[_name]["damageMultiplier"] if _pid == "survival.radiationDamage" else _target
             _definition = _factory_catalog.get(_pid)
             _stored = _entries.get(_pid)
             if _definition is None or _stored is None:
@@ -2291,7 +2298,7 @@ if ('PreWaterSplitFactoryBlobs' not in _factory_service_text
         or 'PreFullCoverageFactoryBlobs' not in _factory_service_text
         or '&& !PreFullCoverageFactoryBlobs.TryGetValue(name, out knownHash)' not in _factory_service_text
         or 'PreFullCoverageFactoryBlobs.TryGetValue(name, out var preFullCoverageHash)' not in _factory_service_text
-        or 'if (!File.Exists(destination) || IsUnmodifiedPreviousFactory(name, destination))' not in _factory_service_text):
+        or 'File.WriteAllText(destination, embedded);' not in _factory_service_text):
     _factory_errors.append("byte-identical old stock factory migration or user-edits safety missing")
 
 # Exact pristine-stock migration: 12 old 247-source profiles update only
@@ -2377,6 +2384,7 @@ for _name in _factory_preset_names:
             _target = _diversity_roles[_name]["changes"].get(_pid, _target)
             _target = _world_removal_roles[_name]["changes"].get(_pid, _target)
             _target = _human_profile_roles[_name]["values"].get(_pid, _target)
+            _target = _rad_profile_roles[_name]["damageMultiplier"] if _pid == "survival.radiationDamage" else _target
             _definition = _factory_catalog[_pid]
             _stored = _entries.get(_pid, {})
             _kind = "toggle" if _definition["control"] == "toggle" else "slider"
@@ -2413,7 +2421,7 @@ for _name in _factory_preset_names:
 if ('PreScarcityBalanceFactoryBlobs' not in _factory_service_text
         or '&& !PreScarcityBalanceFactoryBlobs.TryGetValue(name, out knownHash)' not in _factory_service_text
         or 'PreScarcityBalanceFactoryBlobs.TryGetValue(name, out var preScarcityHash)' not in _factory_service_text
-        or 'if (!File.Exists(destination) || IsUnmodifiedPreviousFactory(name, destination))' not in _factory_service_text):
+        or 'File.WriteAllText(destination, embedded);' not in _factory_service_text):
     _factory_errors.append("scarcity balance factory upgrade changed user-file safety contract")
 
 # Old fixed Hardcore numbers were superseded by native-source role tuning.
@@ -2481,6 +2489,7 @@ for _role, _signature in _role_matrix.get("profiles", {}).items():
         _target = _diversity_roles[_role]["changes"].get(_pid, _target)
         _target = _world_removal_roles[_role]["changes"].get(_pid, _target)
         _target = _human_profile_roles[_role]["values"].get(_pid, _target)
+        _target = _rad_profile_roles[_role]["damageMultiplier"] if _pid == "survival.radiationDamage" else _target
         if _stored.get("kind") != "slider" or _stored.get("number") != _target:
             _factory_errors.append(f"{_role}: authored role drift {_pid}")
         _bound = _definition["slider"]
@@ -2563,6 +2572,7 @@ for _role, _settings in _consumable_matrix.get("profiles", {}).items():
         _target = _diversity_roles[_role]["changes"].get(_pid, _target)
         _target = _world_removal_roles[_role]["changes"].get(_pid, _target)
         _target = _human_profile_roles[_role]["values"].get(_pid, _target)
+        _target = _rad_profile_roles[_role]["damageMultiplier"] if _pid == "survival.radiationDamage" else _target
         _definition = _factory_catalog.get(_pid, {})
         _stored = _entries.get(_pid, {})
         if (_definition.get("control") != "slider" or _stored.get("kind") != "slider"

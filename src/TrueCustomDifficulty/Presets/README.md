@@ -1,3 +1,7 @@
+## 2026-11-19 — Radiation HP Damage: 4.5× to 25× by role
+
+All twelve canonical factory profiles use much stronger, differentiated `survival.radiationDamage` values: Wanderer 4.5×; Field Medic 5.5×; Immersive 7×; Scavenger 9×; Mercenary 10×; Mutant Hunter 12.5×; Smuggler 14×; Anomaly Runner 16×; Tactical 18×; Hardcore 22.5×; Outcast 24×; Hardcore+ 25×. HP damage sources alone change: build-up, recovery, medicine, stage thresholds, UI and CFG writer are unchanged. Conditional radiation inspector death estimates do not establish engine runtime cadence. Policy: `tools/factory_preset_radiation_lethality_2026_11_19.json`.
+
 ## 2026-11-19 — One canonical root JSON per official role
 
 The twelve tracked profiles in `src/TrueCustomDifficulty/Presets/` are the only source of factory balance. Every successful `./publish.sh` writes those exact bytes into `publish/win-x64/Presets/<role>.json` with the EXE and build receipt; the application loads that same root file and refreshes from embedded sources on launch. No `Factory` directory or `(local)` role is used. Any changes to an official installed file are overwritten by the next successful build or launch. Save differently named custom profiles if you want an independent local variant; to edit a factory role permanently, commit its source JSON.

@@ -560,7 +560,7 @@
     },
     "survival.radiationDamage": {
       "kind": "slider",
-      "number": 1.18
+      "number": 10
     },
     "survival.bleedingSeverity": {
       "kind": "slider",

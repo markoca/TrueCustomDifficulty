@@ -670,6 +670,28 @@ internal static partial class Program
                     && file0.Values["health.armyMedkitHealTime"].Number == expectedHeal.Army
                     && file0.Values["health.ecoMedkitHealTime"].Number == expectedHeal.Eco,
                     name + ": HEAL TIME differs from 5–10 s factory balance");
+                // Radiation lethality is deliberately a separate role axis:
+                // the 0–25× UI source is usable without touching the CFG stage
+                // thresholds, build-up, recovery, or individual cures.
+                var radiationByRole = new Dictionary<string, double>(StringComparer.Ordinal)
+                {
+                    ["Anomaly Runner"] = 16.0,
+                    ["Field Medic"] = 5.5,
+                    ["Hardcore+"] = 25.0,
+                    ["Hardcore"] = 22.5,
+                    ["Immersive"] = 7.0,
+                    ["Mercenary"] = 10.0,
+                    ["Mutant Hunter"] = 12.5,
+                    ["Outcast"] = 24.0,
+                    ["Scavenger"] = 9.0,
+                    ["Smuggler"] = 14.0,
+                    ["Tactical"] = 18.0,
+                    ["Wanderer"] = 4.5,
+                };
+                Check(radiationByRole.TryGetValue(file0.Name, out var radiationMultiplier)
+                    && file0.Values["survival.radiationDamage"].Number == radiationMultiplier
+                    && radiationMultiplier >= 4.5 && radiationMultiplier <= 25,
+                    name + ": role-specific radiation HP damage source drift");
                 // Bandages treat bleeding for every role. They restore HP only
                 // for Field Medic; Scavenger's former 10 HP bonus is retired.
                 Check(file0.Values["health.bandageHealing"].Number == (file0.Name == "Field Medic" ? 10 : 0)

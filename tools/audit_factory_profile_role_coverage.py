@@ -16,6 +16,8 @@ role_diversity = json.loads((ROOT/"tools/factory_preset_role_diversification_202
 assert len(role_diversity["roles"]) == 12
 world_removal = json.loads((ROOT/"tools/factory_preset_world_removal_policy_2026_11_19.json").read_text(encoding="utf-8"))
 human_roles = json.loads((ROOT/"tools/factory_preset_human_roles_2026_11_19.json").read_text(encoding="utf-8"))
+radiation = json.loads((ROOT/"tools/factory_preset_radiation_lethality_2026_11_19.json").read_text(encoding="utf-8"))
+assert radiation["sourceId"] == "survival.radiationDamage" and len(radiation["roles"]) == 12
 assert len(human_roles["roles"]) == 12
 assert len(world_removal["roles"]) == 12
 catalog = json.loads((ROOT/"src/TrueCustomDifficulty/Data/parameters.json").read_text(encoding="utf-8"))
@@ -66,6 +68,8 @@ for index,name in enumerate(names):
         value = role_diversity["roles"][name]["changes"].get(id, value)
         value = world_removal["roles"][name]["changes"].get(id, value)
         value = human_roles["roles"][name]["values"].get(id, value)
+        if id == radiation["sourceId"]:
+            value = radiation["roles"][name]["damageMultiplier"]
         if p["control"]=="toggle":
             assert entry=={"kind":"toggle","boolean":value},(name,id)
         else:
@@ -75,6 +79,7 @@ for index,name in enumerate(names):
             if slider.get("stepMode")=="absolute":
                 steps=(value-slider["min"])/slider["step"]
                 assert abs(steps-round(steps))<1e-6,(name,id,value)
+    assert get(radiation["sourceId"]) == radiation["roles"][name]["damageMultiplier"], name
     assert get("loot.stashGearEnabled")!=get("loot.worldWeaponShuffle"),name
     assert get("loot.stashGearEnabled")==matrix["roleResults"][name]["gear"],name
     if get("loot.stashGearEnabled"):
