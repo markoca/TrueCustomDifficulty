@@ -140,3 +140,10 @@ Current behavior supersedes the earlier display-only cap. SIGHT is really limite
   vanilla group as a dashed ring and the current group as a tinted ring with a fixed 8-shot pattern;
   drag the ring (same log mapping as before). Readout stays `shot spread N%`. `DispersionRadius` has no
   documented unit, so the figure is relative — never a hit-percentage at a distance.
+
+## 2026-11-19 — Factory role Human Tactics / Awareness balance
+
+All 12 factory profiles now vary the existing **five combat-token rates, gun accuracy, human sight, hearing, alert memory, fog visibility and rain/thunder hearing fractions**. This is a 12×12 factory source matrix with 110 changed cells and no CFG writer/UI control changes. The profile roles and full values are recorded in `docs/FACTORY-PRESETS.md` and `tools/factory_preset_human_roles_2026_11_19.json`.
+
+Keep the precise semantics: action rate changes token pauses, not guaranteed action execution; higher sight and hearing mean larger detection radii; higher memory means longer pursuit. **Lower fog visibility and lower rain/thunder retained hearing indicate better concealment**. Role pressure must be distinct: Tactical suppresses and flanks aggressively, Mercenary uses professional coordination, Outcast pursues, Smuggler evades patrols in bad weather, Scavenger survives through ambiguity and alertness, Immersive keeps plausible behavior, and Hardcore+ remains harsh but below source maxima. These are factory default values; users may still customize every native control. All tests are source/serializer verification until reproduced in-game.
+

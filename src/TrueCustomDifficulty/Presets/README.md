@@ -1,3 +1,7 @@
+## 2026-11-19 — Distinct human enemy behavior for all factory roles
+
+All 12 factory profiles now have fully authored HUMAN TACTICS / HUMAN AWARENESS settings: 12 native parameters per profile, **110 real changes**, with role-specific enemy coordination, accuracy, sight, hearing, search memory and fog/rain/storm concealment. `tools/factory_preset_human_roles_2026_11_19.json` holds the active matrix and rationale; `docs/FACTORY-PRESETS.md` compares all roles. Exact unedited former stock blobs upgrade automatically; customized profiles are preserved. No UI, CFG mapping, medical, stash or loose-item removal behavior changed in this pass.
+
 ## 2026-11-19 — Current source-specific world pickup removal policy
 
 The 12 native profiles now use intentionally distinct **Remove Loose Detectors**, **Remove Loose Armor**, and **Remove Loose Artifacts** toggles. 19 checkbox changes were authored across 10 profiles; two already matched. Anomaly Runner/Wanderer retain accessible explorer detectors and fixed Weird finds; Scavenger retains loose armor; Smuggler retains fixed artifacts; Hardcore/Hardcore+/Outcast remove all three. Quest, trade, NPC loadout, reward-only and anomaly-field artifact sources are outside these operations. No new UI or CFG writers; authored values and roles: `tools/factory_preset_world_removal_policy_2026_11_19.json`, `docs/FACTORY-PRESETS.md`. Only pristine prior stock copies update automatically, never edited/user presets.

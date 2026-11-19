@@ -1,3 +1,28 @@
+## 2026-11-19 — CURRENT: role-driven Human Tactics and Human Awareness
+
+**Source of truth:** `tools/factory_preset_human_roles_2026_11_19.json`. All twelve built-in profiles now author **all twelve existing Human Combat sources** (six tactics and six awareness), with **110 actual numeric changes** over the previous factory versions. No UI control, dimension, catalog step, CFG writer or reference difficulty is added/changed. The balance is role-specific, not merely multiplying gun damage and aim accuracy.
+
+**Human Tactics:** `combat.npcGrenadeRate`, `npcSuppressionRate`, `npcFlankRate`, `npcPushRate`, `npcCamperPunishRate` (native quarter-step action-rate multipliers, 0.25–3); `npcAccuracy` (native 0.05× steps, 0.25–2). **Human Awareness:** `npcSightRange` (0.25–2.5×), `npcHearingRange` (0.25–3×), `npcAlertMemory` (0.25–3×), `npcFogVisibility` (0.2–1), `npcRainNoise` (0.1–1) and `npcStormNoise` (0.1–1), all native 0.05-step values. Sight at 2.5× remains capped at 200 m ahead. These AI properties affect human NPCs, not mutant senses. Grenade/suppression/flank/push values rescale action-token cooldowns; they do not guarantee per-NPC actions every listed second.
+
+**Weather meaning must remain exact:** FOG values are retained visibility fraction (smaller = heavier concealment). RAIN NOISE and THUNDER NOISE are **fractions of hearing range retained** in that weather, not increased noise strength; smaller = better masking. Each profile has thunder lower than rain. Hardcore+ has 0.85 retained hearing in rain and 0.75 in thunderstorms, while Smuggler retains 0.55 / 0.45 and gets better stealth routes. Higher awareness, group coordination and worse bad-weather concealment combine with existing scarcity and 5–10 s healing without creating unavoidable AI omniscience.
+
+| Profile | Grenade / Suppression / Flank / Push / Camper rates | Accuracy / Sight / Hearing / Memory | Fog / Rain / Thunder retained fractions | Intent |
+|---|---|---|---|---|
+| Anomaly Runner | .75 / 1 / 1.25 / .75 / 1× | .95 / 1 / 1.15 / 1.40× | .55 / .55 / .45 | Flanking and pursuit during artifact runs; weak direct rush, exploitable weather |
+| Field Medic | 1 / 1.50 / 1 / 1.50 / 1× | .95 / 1.05 / 1.05 / 1.25× | .65 / .60 / .50 | Suppress and push the healer out of unsafe treatment spots; humane spotting |
+| Hardcore+ | 2.50 / 2.75 / 2.75 / 2.50 / 2.50× | 1.35 / 1.45 / 1.45 / 2.40× | .85 / .85 / .75 | Extreme coordinated fire and long searches; bad weather offers less cover |
+| Hardcore | 2 / 2.25 / 2.25 / 2 / 2× | 1.20 / 1.30 / 1.30 / 1.90× | .80 / .80 / .70 | Deliberate but demanding coordination; remains below Hardcore+ |
+| Immersive | 1 / 1.25 / 1.25 / 1 / 1× | 1 / 1.05 / 1.10 / 1.50× | .55 / .55 / .45 | Grounded group behavior and alertness with meaningful fog/weather |
+| Mercenary | 1.25 / 2 / 2 / 1.25 / 1.75× | 1.10 / 1.15 / 1.20 / 1.65× | .70 / .65 / .55 | Professional suppressive/flanking teams instead of grenade spam |
+| Mutant Hunter | 1 / 1 / 1.25 / 1.25 / 1× | 1 / 1.05 / 1.30 / 1.40× | .60 / .60 / .50 | Human patrols listen for hunters, but mutant combat stays centerpiece |
+| Outcast | 1.25 / 1.25 / 1.75 / 1.75 / 1.50× | 1.10 / 1.15 / 1.30 / 2× | .70 / .75 / .65 | Hostile search parties pressure isolated players and close escape routes |
+| Scavenger | .75 / .75 / 1.25 / 1 / 1× | .90 / .85 / 1 / 1.10× | .55 / .55 / .45 | Weak human logistics but flank ambushes; salvage and sneaking both work |
+| Smuggler | .75 / 1 / 1.50 / 1 / 1.25× | 1 / 1.15 / 1.35 / 1.85× | .60 / .55 / .45 | Human patrols spot/hear, remember and intercept; weather and evasion help |
+| Tactical | 2 / 2.25 / 2.25 / 1.75 / 2× | 1.25 / 1.30 / 1.20 / 2.10× | .80 / .80 / .70 | Difficult precision engagements, suppression, positioning and search |
+| Wanderer | .75 / 1 / 1 / 1 / .75× | .95 / 1 / 1 / 1.25× | .55 / .55 / .45 | Less oppressive patrol actions and good weather cover for long traversal |
+
+**Factory migrations:** `PresetDirectoryService.PreHumanRolesFactoryBlobs` contains all twelve *exact preceding stock Git blob SHA-1s*, so only untouched stock files upgrade. User-edited factory-name files and custom presets remain unchanged. Both factory Python auditors, whole-project consistency and the Windows AllControls embedded-resource import contract check all 12 role values. Source-side values are catalog-valid; source behavior requires actual in-game testing. No new renderer or UI geometry: Human Tactics and Awareness retain their catalog-native compact boards, reset controls, reference markers and modified-number semantics.
+
 ## 2026-11-19 — CURRENT: selective removal of loose detectors, armor and fixed artifacts
 
 **Policy:** `tools/factory_preset_world_removal_policy_2026_11_19.json`. Three existing native source controls now have a deliberately role-specific **ON/OFF** matrix. This pass changes **19 actual checkbox values** in 10 profiles, without adding UI controls or touching any CFG writer. The other two profiles already matched the intended combination.

@@ -24,7 +24,7 @@
     },
     "combat.npcGrenadeRate": {
       "kind": "slider",
-      "number": 1
+      "number": 0.75
     },
     "combat.npcSuppressionRate": {
       "kind": "slider",
@@ -32,7 +32,7 @@
     },
     "combat.npcFlankRate": {
       "kind": "slider",
-      "number": 0.75
+      "number": 1.5
     },
     "combat.npcPushRate": {
       "kind": "slider",
@@ -40,7 +40,7 @@
     },
     "combat.npcCamperPunishRate": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.npcAccuracy": {
       "kind": "slider",
@@ -48,15 +48,15 @@
     },
     "combat.npcSightRange": {
       "kind": "slider",
-      "number": 0.85
+      "number": 1.15
     },
     "combat.npcHearingRange": {
       "kind": "slider",
-      "number": 0.85
+      "number": 1.35
     },
     "combat.npcAlertMemory": {
       "kind": "slider",
-      "number": 0.65
+      "number": 1.85
     },
     "combat.npcFogVisibility": {
       "kind": "slider",

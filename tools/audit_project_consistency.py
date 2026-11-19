@@ -2106,6 +2106,47 @@ _diversity_blobs = _role_diversity.get("previousStockBlobs", {})
 _diversity_changes = {pid for role in _diversity_roles.values() for pid in role["changes"]}
 _world_removal = json.loads((ROOT / "tools/factory_preset_world_removal_policy_2026_11_19.json").read_text(encoding="utf-8"))
 _world_removal_roles = _world_removal["roles"]
+_human_profile_matrix = json.loads((ROOT / "tools/factory_preset_human_roles_2026_11_19.json").read_text(encoding="utf-8"))
+_human_profile_ids = _human_profile_matrix["ids"]
+_human_profile_roles = _human_profile_matrix["roles"]
+if (set(_human_profile_roles) != set(_factory_preset_names)
+        or set(_human_profile_matrix.get("previousStockBlobs", {})) != set(_factory_preset_names)
+        or len(set(_human_profile_ids)) != 12
+        or len(_human_profile_matrix["tactics"]) != 6
+        or len(_human_profile_matrix["awareness"]) != 6
+        or len({tuple(row["values"][pid] for pid in _human_profile_ids)
+                for row in _human_profile_roles.values()}) != 12):
+    _factory_errors.append("Human roles require 12 distinct native Human Tactics + Human Awareness matrices")
+if _factory_service_text.count("PreHumanRolesFactoryBlobs") != 3:
+    _factory_errors.append("Human role factory pristine-only migration missing")
+for _role, _record in _human_profile_roles.items():
+    _entries = json.loads((_factory_preset_dir / f"{_role}.json").read_text(encoding="utf-8"))["values"]
+    if (set(_record["values"]) != set(_human_profile_ids)
+            or len(_record.get("intent", "")) < 25):
+        _factory_errors.append(f"{_role}: incomplete human tactics/awareness role design")
+        continue
+    _hash = _human_profile_matrix["previousStockBlobs"][_role]
+    if f'["{_role}"] = "{_hash}"' not in _factory_service_text:
+        _factory_errors.append(f"{_role}: previous factory SHA is not allowlisted")
+    for _pid, _expected in _record["values"].items():
+        _meta = _factory_catalog[_pid]
+        _slider = _meta["slider"]
+        _stored = _entries[_pid]
+        if _stored != {"kind": "slider", "number": _expected}:
+            _factory_errors.append(f"{_role}: human role source drift {_pid}")
+        if (not _slider["min"] - 1e-7 <= _expected <= _slider["max"] + 1e-7
+                or abs((_expected - _slider["min"]) / _slider["step"]
+                       - round((_expected - _slider["min"]) / _slider["step"])) > 1e-6):
+            _factory_errors.append(f"{_role}: human role value off native source grid {_pid}")
+    if _entries["combat.npcStormNoise"]["number"] >= _entries["combat.npcRainNoise"]["number"]:
+        _factory_errors.append(f"{_role}: storm must mask noise more than rain")
+    if _entries["combat.npcSightRange"]["number"] > 2.5:
+        _factory_errors.append(f"{_role}: sight exceeds 200 m forward")
+if (not _human_profile_roles["Tactical"]["values"]["combat.npcFlankRate"]
+        > _human_profile_roles["Mercenary"]["values"]["combat.npcFlankRate"]
+        or not _human_profile_roles["Hardcore+"]["values"]["combat.npcAlertMemory"]
+        > _human_profile_roles["Hardcore"]["values"]["combat.npcAlertMemory"]):
+    _factory_errors.append("Coordinated Tactical and Hardcore+ role awareness identity regressed")
 _world_removal_ids = {"loot.worldDetectors", "loot.worldArmorRemoved", "loot.looseArtifactsRemoved"}
 _changed_world_roles = {name for name, role in _world_removal_roles.items() if role["changes"]}
 if (set(_world_removal_roles) != set(_factory_preset_names)
@@ -2195,6 +2236,7 @@ for _name in _factory_preset_names:
         for _pid, _target in zip(_ids, _tuned_values):
             _target = _diversity_roles[_name]["changes"].get(_pid, _target)
             _target = _world_removal_roles[_name]["changes"].get(_pid, _target)
+            _target = _human_profile_roles[_name]["values"].get(_pid, _target)
             _definition = _factory_catalog.get(_pid)
             _stored = _entries.get(_pid)
             if _definition is None or _stored is None:
@@ -2334,6 +2376,7 @@ for _name in _factory_preset_names:
                 _target = _current_bandage_hp["values"][_name]
             _target = _diversity_roles[_name]["changes"].get(_pid, _target)
             _target = _world_removal_roles[_name]["changes"].get(_pid, _target)
+            _target = _human_profile_roles[_name]["values"].get(_pid, _target)
             _definition = _factory_catalog[_pid]
             _stored = _entries.get(_pid, {})
             _kind = "toggle" if _definition["control"] == "toggle" else "slider"
@@ -2437,6 +2480,7 @@ for _role, _signature in _role_matrix.get("profiles", {}).items():
         _target = _current_scarcity_roles[_role]["changes"].get(_pid, _target)
         _target = _diversity_roles[_role]["changes"].get(_pid, _target)
         _target = _world_removal_roles[_role]["changes"].get(_pid, _target)
+        _target = _human_profile_roles[_role]["values"].get(_pid, _target)
         if _stored.get("kind") != "slider" or _stored.get("number") != _target:
             _factory_errors.append(f"{_role}: authored role drift {_pid}")
         _bound = _definition["slider"]
@@ -2518,6 +2562,7 @@ for _role, _settings in _consumable_matrix.get("profiles", {}).items():
     for _pid, _target in _settings["changes"].items():
         _target = _diversity_roles[_role]["changes"].get(_pid, _target)
         _target = _world_removal_roles[_role]["changes"].get(_pid, _target)
+        _target = _human_profile_roles[_role]["values"].get(_pid, _target)
         _definition = _factory_catalog.get(_pid, {})
         _stored = _entries.get(_pid, {})
         if (_definition.get("control") != "slider" or _stored.get("kind") != "slider"

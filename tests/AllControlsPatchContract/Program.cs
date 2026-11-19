@@ -629,7 +629,7 @@ internal static partial class Program
                     ["Outcast"] = ("combat.mutantMoveRate.controller.psy", 1.75),
                     ["Scavenger"] = ("combat.mutantMoveRate.blinddog.runBite", 0.5),
                     ["Smuggler"] = ("combat.mutantMoveRate.controller.psy", 1.5),
-                    ["Tactical"] = ("combat.npcFlankRate", 1.75),
+                    ["Tactical"] = ("combat.npcFlankRate", 2.25),
                     ["Wanderer"] = ("combat.mutantMoveRate.poltergeist.throw", 1.75)
                 };
                 Check(signatures.TryGetValue(file0.Name, out var signature)
@@ -718,6 +718,36 @@ internal static partial class Program
                     && file0.Values["loot.worldArmorRemoved"].Boolean == worldRemoval.Armor
                     && file0.Values["loot.looseArtifactsRemoved"].Boolean == worldRemoval.FixedArtifacts,
                     name + ": loose detector/armor/fixed artifact source toggles no longer match role");
+                // Exact source-native Human Tactics + Awareness values for
+                // every factory role. Fog = retained sight, rain/thunder = retained
+                // hearing (lower fractions give the player better concealment).
+                string[] humanIds =
+                {
+                    "combat.npcGrenadeRate", "combat.npcSuppressionRate", "combat.npcFlankRate",
+                    "combat.npcPushRate", "combat.npcCamperPunishRate", "combat.npcAccuracy",
+                    "combat.npcSightRange", "combat.npcHearingRange", "combat.npcAlertMemory",
+                    "combat.npcFogVisibility", "combat.npcRainNoise", "combat.npcStormNoise"
+                };
+                var humanRoleValues = new Dictionary<string, double[]>(StringComparer.Ordinal)
+                {
+                    ["Anomaly Runner"] = new double[] { 0.75, 1, 1.25, 0.75, 1, 0.95, 1, 1.15, 1.4, 0.55, 0.55, 0.45 },
+                    ["Field Medic"] = new double[] { 1, 1.5, 1, 1.5, 1, 0.95, 1.05, 1.05, 1.25, 0.65, 0.6, 0.5 },
+                    ["Hardcore+"] = new double[] { 2.5, 2.75, 2.75, 2.5, 2.5, 1.35, 1.45, 1.45, 2.4, 0.85, 0.85, 0.75 },
+                    ["Hardcore"] = new double[] { 2, 2.25, 2.25, 2, 2, 1.2, 1.3, 1.3, 1.9, 0.8, 0.8, 0.7 },
+                    ["Immersive"] = new double[] { 1, 1.25, 1.25, 1, 1, 1, 1.05, 1.1, 1.5, 0.55, 0.55, 0.45 },
+                    ["Mercenary"] = new double[] { 1.25, 2, 2, 1.25, 1.75, 1.1, 1.15, 1.2, 1.65, 0.7, 0.65, 0.55 },
+                    ["Mutant Hunter"] = new double[] { 1, 1, 1.25, 1.25, 1, 1, 1.05, 1.3, 1.4, 0.6, 0.6, 0.5 },
+                    ["Outcast"] = new double[] { 1.25, 1.25, 1.75, 1.75, 1.5, 1.1, 1.15, 1.3, 2, 0.7, 0.75, 0.65 },
+                    ["Scavenger"] = new double[] { 0.75, 0.75, 1.25, 1, 1, 0.9, 0.85, 1, 1.1, 0.55, 0.55, 0.45 },
+                    ["Smuggler"] = new double[] { 0.75, 1, 1.5, 1, 1.25, 1, 1.15, 1.35, 1.85, 0.6, 0.55, 0.45 },
+                    ["Tactical"] = new double[] { 2, 2.25, 2.25, 1.75, 2, 1.25, 1.3, 1.2, 2.1, 0.8, 0.8, 0.7 },
+                    ["Wanderer"] = new double[] { 0.75, 1, 1, 1, 0.75, 0.95, 1, 1, 1.25, 0.55, 0.55, 0.45 },
+                };
+                Check(humanRoleValues.TryGetValue(file0.Name, out var humanExpected)
+                      && humanIds.Length == 12 && humanExpected.Length == humanIds.Length
+                      && humanIds.Select((id, index) => Math.Abs(file0.Values[id].Number!.Value - humanExpected[index]) < 1e-9).All(v => v)
+                      && file0.Values["combat.npcStormNoise"].Number < file0.Values["combat.npcRainNoise"].Number,
+                    name + ": native human tactics / awareness or weather masking drift");
                 var stashSmartEnabled = file0.Values["loot.stashSmartLootEnabled"].Boolean == true;
                 var stockedChance = file0.Values["loot.stashSmartStockedChance"].Number!.Value;
                 var lowChance = file0.Values["loot.stashSmartShortChance"].Number!.Value;

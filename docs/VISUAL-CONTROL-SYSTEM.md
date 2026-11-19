@@ -1,3 +1,8 @@
+## CURRENT 2026-11-19 — Factory Human Combat role tuning without visual drift
+
+* Six existing HUMAN TACTICS controls and six HUMAN AWARENESS controls take 12 unique factory sets (110 changed source values). The UI is completely unchanged: source-value scaling, native increments, compact interactive intervals, accuracy reticle, awareness radar, weather masking visuals, numeric accents, hover and context reset remain consistent with the catalog.
+* The storm/noise fraction is the enemy's **remaining hearing distance**, not the percentage hidden. Lower rain/storm source values afford better stealth; every role gives more masking in thunderstorms than in rain. All 12 factory profiles keep the same 200 m sight cap and reference data with no invented difficulty knob. See `docs/FACTORY-PRESETS.md`.
+
 ## CURRENT 2026-11-19 — Selective loose detector / armor / artifact toggles
 
 * The existing native World Loot remove controls now differ by factory role, **19 checkbox value changes across 10 profiles**, with all 12 role combinations verified. No new control, duplicate line, panel expansion, catalog range, spacing, border, hover, right-click reset or modified-meaning highlighting change.

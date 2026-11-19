@@ -1,0 +1,269 @@
+{
+  "version": 1,
+  "date": "2026-11-19",
+  "source": "STALKER 2.1 Human Combat Synchronizer / AI Vision Hearing Threat / AIGlobals catalog",
+  "scope": "12 native Human Tactics and Human Awareness source controls; profile values define the active 2026-11-19 balance after all historical ledgers.",
+  "ids": [
+    "combat.npcGrenadeRate",
+    "combat.npcSuppressionRate",
+    "combat.npcFlankRate",
+    "combat.npcPushRate",
+    "combat.npcCamperPunishRate",
+    "combat.npcAccuracy",
+    "combat.npcSightRange",
+    "combat.npcHearingRange",
+    "combat.npcAlertMemory",
+    "combat.npcFogVisibility",
+    "combat.npcRainNoise",
+    "combat.npcStormNoise"
+  ],
+  "tactics": [
+    "combat.npcGrenadeRate",
+    "combat.npcSuppressionRate",
+    "combat.npcFlankRate",
+    "combat.npcPushRate",
+    "combat.npcCamperPunishRate",
+    "combat.npcAccuracy"
+  ],
+  "awareness": [
+    "combat.npcSightRange",
+    "combat.npcHearingRange",
+    "combat.npcAlertMemory",
+    "combat.npcFogVisibility",
+    "combat.npcRainNoise",
+    "combat.npcStormNoise"
+  ],
+  "previousStockBlobs": {
+    "Anomaly Runner": "c832deed788c7ca49c01fe51e6ffd7915e7f6ecc",
+    "Field Medic": "1be3a19d39eda2a3090b6e175492b277a4d35e29",
+    "Hardcore+": "13b7fcd19fb937b276126711310734c70846abcd",
+    "Hardcore": "41ae72c9f73479913265bfc0a588da838306eb2f",
+    "Immersive": "e786b0f118031001e59a0c593b63978c19349a3f",
+    "Mercenary": "a3d5c2c4ac0b212fbe1b3b64a3fb0e96287bca7d",
+    "Mutant Hunter": "4604ed9c0c333bdcd7917d471f75dad8a97df8db",
+    "Outcast": "d4147e63093fdb5e1b160c30e8e0d7b2fdbb38b4",
+    "Scavenger": "27bbf474ca294cbb616528a0cedee8ac775081f6",
+    "Smuggler": "02cbf5b66562137c96bcf2b62127d0d1ff083b4f",
+    "Tactical": "302ddcad4fe2b4416742b5e6f7f77285d56827fd",
+    "Wanderer": "942ea2b44744423e1f7748462443582c8cd16e41"
+  },
+  "roles": {
+    "Anomaly Runner": {
+      "intent": "Flank pressure around anomaly runs, but grenades and direct push remain modest. Alert trackers hear well; heavy fog/rain/storms give meaningful escape cover.",
+      "values": {
+        "combat.npcGrenadeRate": 0.75,
+        "combat.npcSuppressionRate": 1,
+        "combat.npcFlankRate": 1.25,
+        "combat.npcPushRate": 0.75,
+        "combat.npcCamperPunishRate": 1,
+        "combat.npcAccuracy": 0.95,
+        "combat.npcSightRange": 1,
+        "combat.npcHearingRange": 1.15,
+        "combat.npcAlertMemory": 1.4,
+        "combat.npcFogVisibility": 0.55,
+        "combat.npcRainNoise": 0.55,
+        "combat.npcStormNoise": 0.45
+      }
+    },
+    "Field Medic": {
+      "intent": "Suppressive fire and controlled pushes force treatment into safe cover rather than encouraging arcade healing. Awareness moderate, concealment still possible.",
+      "values": {
+        "combat.npcGrenadeRate": 1,
+        "combat.npcSuppressionRate": 1.5,
+        "combat.npcFlankRate": 1,
+        "combat.npcPushRate": 1.5,
+        "combat.npcCamperPunishRate": 1,
+        "combat.npcAccuracy": 0.95,
+        "combat.npcSightRange": 1.05,
+        "combat.npcHearingRange": 1.05,
+        "combat.npcAlertMemory": 1.25,
+        "combat.npcFogVisibility": 0.65,
+        "combat.npcRainNoise": 0.6,
+        "combat.npcStormNoise": 0.5
+      }
+    },
+    "Hardcore+": {
+      "intent": "Most relentless coordinated groups, grenades, suppression, accurate spotting and long searches. Weather offers little cover, but not literal omniscience.",
+      "values": {
+        "combat.npcGrenadeRate": 2.5,
+        "combat.npcSuppressionRate": 2.75,
+        "combat.npcFlankRate": 2.75,
+        "combat.npcPushRate": 2.5,
+        "combat.npcCamperPunishRate": 2.5,
+        "combat.npcAccuracy": 1.35,
+        "combat.npcSightRange": 1.45,
+        "combat.npcHearingRange": 1.45,
+        "combat.npcAlertMemory": 2.4,
+        "combat.npcFogVisibility": 0.85,
+        "combat.npcRainNoise": 0.85,
+        "combat.npcStormNoise": 0.75
+      }
+    },
+    "Hardcore": {
+      "intent": "Difficult coordinated human fights with more suppression/flanking and meaningful pursuit, softer than Hardcore+ across every axis.",
+      "values": {
+        "combat.npcGrenadeRate": 2,
+        "combat.npcSuppressionRate": 2.25,
+        "combat.npcFlankRate": 2.25,
+        "combat.npcPushRate": 2,
+        "combat.npcCamperPunishRate": 2,
+        "combat.npcAccuracy": 1.2,
+        "combat.npcSightRange": 1.3,
+        "combat.npcHearingRange": 1.3,
+        "combat.npcAlertMemory": 1.9,
+        "combat.npcFogVisibility": 0.8,
+        "combat.npcRainNoise": 0.8,
+        "combat.npcStormNoise": 0.7
+      }
+    },
+    "Immersive": {
+      "intent": "Credible squad positioning and searching rather than aim-bot escalation. Fog, rain and thunder provide realistic hiding opportunities.",
+      "values": {
+        "combat.npcGrenadeRate": 1,
+        "combat.npcSuppressionRate": 1.25,
+        "combat.npcFlankRate": 1.25,
+        "combat.npcPushRate": 1,
+        "combat.npcCamperPunishRate": 1,
+        "combat.npcAccuracy": 1,
+        "combat.npcSightRange": 1.05,
+        "combat.npcHearingRange": 1.1,
+        "combat.npcAlertMemory": 1.5,
+        "combat.npcFogVisibility": 0.55,
+        "combat.npcRainNoise": 0.55,
+        "combat.npcStormNoise": 0.45
+      }
+    },
+    "Mercenary": {
+      "intent": "Professional tactical teams suppress and flank aggressively; firepower comes from coordination and persistent search, not pure grenade spam.",
+      "values": {
+        "combat.npcGrenadeRate": 1.25,
+        "combat.npcSuppressionRate": 2,
+        "combat.npcFlankRate": 2,
+        "combat.npcPushRate": 1.25,
+        "combat.npcCamperPunishRate": 1.75,
+        "combat.npcAccuracy": 1.1,
+        "combat.npcSightRange": 1.15,
+        "combat.npcHearingRange": 1.2,
+        "combat.npcAlertMemory": 1.65,
+        "combat.npcFogVisibility": 0.7,
+        "combat.npcRainNoise": 0.65,
+        "combat.npcStormNoise": 0.55
+      }
+    },
+    "Mutant Hunter": {
+      "intent": "Human encounters are secondary; enemies track sounds well, flank moderately and keep a practical search, without overshadowing mutant hunting.",
+      "values": {
+        "combat.npcGrenadeRate": 1,
+        "combat.npcSuppressionRate": 1,
+        "combat.npcFlankRate": 1.25,
+        "combat.npcPushRate": 1.25,
+        "combat.npcCamperPunishRate": 1,
+        "combat.npcAccuracy": 1,
+        "combat.npcSightRange": 1.05,
+        "combat.npcHearingRange": 1.3,
+        "combat.npcAlertMemory": 1.4,
+        "combat.npcFogVisibility": 0.6,
+        "combat.npcRainNoise": 0.6,
+        "combat.npcStormNoise": 0.5
+      }
+    },
+    "Outcast": {
+      "intent": "Unwelcoming patrols hunt and surround the player, with long alert memory and strong hearing; not an across-the-board gun accuracy boost.",
+      "values": {
+        "combat.npcGrenadeRate": 1.25,
+        "combat.npcSuppressionRate": 1.25,
+        "combat.npcFlankRate": 1.75,
+        "combat.npcPushRate": 1.75,
+        "combat.npcCamperPunishRate": 1.5,
+        "combat.npcAccuracy": 1.1,
+        "combat.npcSightRange": 1.15,
+        "combat.npcHearingRange": 1.3,
+        "combat.npcAlertMemory": 2,
+        "combat.npcFogVisibility": 0.7,
+        "combat.npcRainNoise": 0.75,
+        "combat.npcStormNoise": 0.65
+      }
+    },
+    "Scavenger": {
+      "intent": "Humans can ambush and flank, but are easier to evade by making use of fog and bad weather. Low grenade/suppression tempo complements salvage-focused danger.",
+      "values": {
+        "combat.npcGrenadeRate": 0.75,
+        "combat.npcSuppressionRate": 0.75,
+        "combat.npcFlankRate": 1.25,
+        "combat.npcPushRate": 1,
+        "combat.npcCamperPunishRate": 1,
+        "combat.npcAccuracy": 0.9,
+        "combat.npcSightRange": 0.85,
+        "combat.npcHearingRange": 1,
+        "combat.npcAlertMemory": 1.1,
+        "combat.npcFogVisibility": 0.55,
+        "combat.npcRainNoise": 0.55,
+        "combat.npcStormNoise": 0.45
+      }
+    },
+    "Smuggler": {
+      "intent": "Stealth and evasion become meaningful: patrols hear and remember, can cut off routes, but fog/rain/storms help bypass them.",
+      "values": {
+        "combat.npcGrenadeRate": 0.75,
+        "combat.npcSuppressionRate": 1,
+        "combat.npcFlankRate": 1.5,
+        "combat.npcPushRate": 1,
+        "combat.npcCamperPunishRate": 1.25,
+        "combat.npcAccuracy": 1,
+        "combat.npcSightRange": 1.15,
+        "combat.npcHearingRange": 1.35,
+        "combat.npcAlertMemory": 1.85,
+        "combat.npcFogVisibility": 0.6,
+        "combat.npcRainNoise": 0.55,
+        "combat.npcStormNoise": 0.45
+      }
+    },
+    "Tactical": {
+      "intent": "Human firefights are about suppression, flanking, precision and long enemy search, rather than multiplying enemy health.",
+      "values": {
+        "combat.npcGrenadeRate": 2,
+        "combat.npcSuppressionRate": 2.25,
+        "combat.npcFlankRate": 2.25,
+        "combat.npcPushRate": 1.75,
+        "combat.npcCamperPunishRate": 2,
+        "combat.npcAccuracy": 1.25,
+        "combat.npcSightRange": 1.3,
+        "combat.npcHearingRange": 1.2,
+        "combat.npcAlertMemory": 2.1,
+        "combat.npcFogVisibility": 0.8,
+        "combat.npcRainNoise": 0.8,
+        "combat.npcStormNoise": 0.7
+      }
+    },
+    "Wanderer": {
+      "intent": "Stealth and movement are viable on long journeys: short skirmishes and generous natural concealment offset travel-related risks.",
+      "values": {
+        "combat.npcGrenadeRate": 0.75,
+        "combat.npcSuppressionRate": 1,
+        "combat.npcFlankRate": 1,
+        "combat.npcPushRate": 1,
+        "combat.npcCamperPunishRate": 0.75,
+        "combat.npcAccuracy": 0.95,
+        "combat.npcSightRange": 1,
+        "combat.npcHearingRange": 1,
+        "combat.npcAlertMemory": 1.25,
+        "combat.npcFogVisibility": 0.55,
+        "combat.npcRainNoise": 0.55,
+        "combat.npcStormNoise": 0.45
+      }
+    }
+  },
+  "semantics": {
+    "safety": "Only source-backed human NPC controls; does not change mutant awareness, spotting by scripted quests, guaranteed actions or difficulty reference.",
+    "fog": "Fog Visibility is the fraction of clear-weather sight retained: lower = better fog concealment.",
+    "rain": "Rain Noise is retained hearing range, not literal noise volume: lower = more masking (larger concealment).",
+    "storm": "Thunder Noise is retained hearing range: lower = stronger storm masking."
+  },
+  "constraints": [
+    "Source Native 0.25x tactic steps, 0.05x accuracy/awareness steps, bounded sight maximum 2.5x (200m ahead).",
+    "Rain and storm values are hearing-range fractions, so reduced values indicate stronger sound masking.",
+    "Every profile has different tactics and awareness decisions grounded in its survival/combat loop, not blanket enemy buffs.",
+    "Medical, supply, world loot removals, quest sources, reference difficulty, and UI grammar unchanged.",
+    "Preserve exact stock-only migration; user-edited and custom presets are never overwritten."
+  ]
+}

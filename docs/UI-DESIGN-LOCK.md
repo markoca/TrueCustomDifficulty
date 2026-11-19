@@ -1,3 +1,8 @@
+## CURRENT 2026-11-19 — Human Tactics and Awareness distinguish all 12 factory roles
+
+* All 12 existing source controls (five action-rate lanes, the accuracy spread reticle, sight/hearing/memory radar and three weather fractions) get profile-specific authored values. This is **110 preset numeric changes**, not a new UI control. Preserve the catalog-locked compact Human Tactics intervals/rate rails, accuracy reticle, Awareness radar, fog/rain/storm knob/slider presentation, responsive 16:9 geometry, right-click/R resets, reference markers and yellow-only-modified numeric values.
+* **FOG** is retained sight fraction. **RAIN NOISE/THUNDER NOISE** are hearing fractions retained, so lowering them increases masking. Tooltips/labels must not invert this meaning. Native 0.25× tactics and 0.05× awareness steps, plus 200 m max straight-ahead sight, remain unchanged. See `docs/combat/HUMAN-TACTICS-AND-AWARENESS.md` and `docs/FACTORY-PRESETS.md`.
+
 ## CURRENT 2026-11-19 — World pickup removal as profile policy
 
 * **Remove Loose Detectors**, **Remove Loose Armor** and **Remove Loose Artifacts** use the existing catalog-native World Loot checkboxes. New 12-profile policy selectively enables them as appropriate (19 native toggle edits, 10 affected profiles); no UI component, card width, control position, slider, value formatting or writer changes. Keep compact checkmark positioning, hover, reset, edited-number accents and no redundant labels.

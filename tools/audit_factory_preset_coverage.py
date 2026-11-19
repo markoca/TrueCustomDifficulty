@@ -57,6 +57,14 @@ HEAL_IDS = ("health.bandageHealTime", "health.medkitHealTime", "health.armyMedki
 BANDAGE_HP = json.loads((ROOT / "tools/factory_preset_bandage_hp_policy_2026_11_18.json").read_text(encoding="utf-8"))
 ROLE_DIVERSITY = json.loads((ROOT / "tools/factory_preset_role_diversification_2026_11_19.json").read_text(encoding="utf-8"))
 LOOSE_WORLD = json.loads((ROOT / "tools/factory_preset_world_removal_policy_2026_11_19.json").read_text(encoding="utf-8"))
+HUMAN_ROLES = json.loads((ROOT / "tools/factory_preset_human_roles_2026_11_19.json").read_text(encoding="utf-8"))
+HUMAN_IDS = tuple(HUMAN_ROLES["ids"])
+assert len(HUMAN_IDS) == len(set(HUMAN_IDS)) == 12
+assert set(HUMAN_ROLES["roles"]) == set(VIBE["values"]) == set(HUMAN_ROLES["previousStockBlobs"])
+assert set(HUMAN_ROLES["tactics"]) | set(HUMAN_ROLES["awareness"]) == set(HUMAN_IDS)
+assert len(HUMAN_ROLES["tactics"]) == len(HUMAN_ROLES["awareness"]) == 6
+assert all(set(role["values"]) == set(HUMAN_IDS) and role["intent"]
+           for role in HUMAN_ROLES["roles"].values())
 LOOSE_WORLD_IDS = ("loot.worldDetectors", "loot.worldArmorRemoved", "loot.looseArtifactsRemoved")
 assert set(LOOSE_WORLD["roles"]) == set(VIBE["values"])
 assert set(LOOSE_WORLD["sourceIDs"]) == set(LOOSE_WORLD_IDS)
@@ -110,6 +118,7 @@ for path in presets:
     # The 2026-11-19 source-specific overlay supersedes historical snapshots.
     role.update(ROLE_DIVERSITY["roles"][path.stem]["changes"])
     role.update(LOOSE_WORLD["roles"][path.stem]["changes"])
+    role.update(HUMAN_ROLES["roles"][path.stem]["values"])
     # 2026-11-18 attack-only pass: role values of removed controls (roars, growls, ...) are gone.
     role = {k: v for k, v in role.items() if k in by_id}
     for pid in NEW_IDS | set(role):
@@ -130,6 +139,9 @@ for path in presets:
     assert amount("loot.looseWorldLootRemoved") >= .5, path.name
     assert amount("loot.worldWeaponDensity") <= .7, path.name
     assert amount("environment.artifactCount") == 1, path.name
+    assert all(amount(pid) == HUMAN_ROLES["roles"][path.stem]["values"][pid] for pid in HUMAN_IDS), path.name
+    assert amount("combat.npcStormNoise") < amount("combat.npcRainNoise"), path.name
+    assert amount("combat.npcSightRange") <= 2.5, path.name
     assert all(enabled(id) is LOOSE_WORLD["roles"][path.stem]["values"][id] for id in LOOSE_WORLD_IDS), path.name
     assert amount("health.bandageHealing") == BANDAGE_HP["values"][path.stem], path.name
     assert amount("health.bandageBleeding") > 0, path.name
@@ -194,6 +206,9 @@ assert pds.count("PreHealTimeFactoryBlobs") == 3
 assert pds.count("PreBandageHpPolicyFactoryBlobs") == 3
 assert pds.count("PreRoleDiversityFactoryBlobs") == 3
 assert pds.count("PreWorldRemovalPolicyFactoryBlobs") == 3
+assert pds.count("PreHumanRolesFactoryBlobs") == 3
+for _name, _hash in HUMAN_ROLES["previousStockBlobs"].items():
+    assert f'["{_name}"] = "{_hash}"' in pds, _name
 for _name, _hash in LOOSE_WORLD["previousStockBlobs"].items():
     assert f'["{_name}"] = "{_hash}"' in pds, _name
 for _name, _hash in ROLE_DIVERSITY["previousStockBlobs"].items():
@@ -230,4 +245,4 @@ assert len(pds.split("PreNewControlsFactoryBlobs =", 1)[1].split("};", 1)[0].spl
 
 assert sum(len(role["changes"]) for role in SCARCITY["roles"].values()) == 140
 assert all(role.get("intent") for role in SCARCITY["roles"].values())
-print(f"PASS: 12 factory roles × {len(by_id)} settings; 363 role changes plus 19 world-removal toggles; medical/quest/source-scarcity rules and stock migration")
+print(f"PASS: 12 factory roles × {len(by_id)} settings; human tactics/awareness 12×12, 110 real retunes; corpse/stash, medical and world-removal policies preserved")

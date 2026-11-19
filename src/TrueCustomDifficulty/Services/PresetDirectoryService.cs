@@ -1146,6 +1146,25 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "d6a8ceeb9478ad22163e821cade6ec186180fcb1",
     };
 
+    // 2026-11-19: updated human tactics and awareness for all twelve roles.
+    // Match only exact previous factory Git blobs; customized profiles survive.
+    private static readonly Dictionary<string, string> PreHumanRolesFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "c832deed788c7ca49c01fe51e6ffd7915e7f6ecc",
+        ["Field Medic"] = "1be3a19d39eda2a3090b6e175492b277a4d35e29",
+        ["Hardcore+"] = "13b7fcd19fb937b276126711310734c70846abcd",
+        ["Hardcore"] = "41ae72c9f73479913265bfc0a588da838306eb2f",
+        ["Immersive"] = "e786b0f118031001e59a0c593b63978c19349a3f",
+        ["Mercenary"] = "a3d5c2c4ac0b212fbe1b3b64a3fb0e96287bca7d",
+        ["Mutant Hunter"] = "4604ed9c0c333bdcd7917d471f75dad8a97df8db",
+        ["Outcast"] = "d4147e63093fdb5e1b160c30e8e0d7b2fdbb38b4",
+        ["Scavenger"] = "27bbf474ca294cbb616528a0cedee8ac775081f6",
+        ["Smuggler"] = "02cbf5b66562137c96bcf2b62127d0d1ff083b4f",
+        ["Tactical"] = "302ddcad4fe2b4416742b5e6f7f77285d56827fd",
+        ["Wanderer"] = "942ea2b44744423e1f7748462443582c8cd16e41",
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -1198,7 +1217,8 @@ public sealed class PresetDirectoryService
             && !PreHealTimeFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreBandageHpPolicyFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreRoleDiversityFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreWorldRemovalPolicyFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreWorldRemovalPolicyFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreHumanRolesFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -1312,7 +1332,9 @@ public sealed class PresetDirectoryService
                 || (PreRoleDiversityFactoryBlobs.TryGetValue(name, out var preRoleDiversityHash)
                     && actual.Equals(preRoleDiversityHash, StringComparison.OrdinalIgnoreCase))
                 || (PreWorldRemovalPolicyFactoryBlobs.TryGetValue(name, out var preWorldRemovalHash)
-                    && actual.Equals(preWorldRemovalHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preWorldRemovalHash, StringComparison.OrdinalIgnoreCase))
+                || (PreHumanRolesFactoryBlobs.TryGetValue(name, out var preHumanRolesHash)
+                    && actual.Equals(preHumanRolesHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

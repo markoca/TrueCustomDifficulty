@@ -30,11 +30,11 @@
     },
     "combat.npcFlankRate": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.npcPushRate": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "combat.npcCamperPunishRate": {
       "kind": "slider",
@@ -46,27 +46,27 @@
     },
     "combat.npcSightRange": {
       "kind": "slider",
-      "number": 1
+      "number": 1.05
     },
     "combat.npcHearingRange": {
       "kind": "slider",
-      "number": 1
+      "number": 1.3
     },
     "combat.npcAlertMemory": {
       "kind": "slider",
-      "number": 1
+      "number": 1.4
     },
     "combat.npcFogVisibility": {
       "kind": "slider",
-      "number": 0.7
+      "number": 0.6
     },
     "combat.npcRainNoise": {
       "kind": "slider",
-      "number": 0.7
+      "number": 0.6
     },
     "combat.npcStormNoise": {
       "kind": "slider",
-      "number": 0.6
+      "number": 0.5
     },
     "combat.playerWeaponDamage": {
       "kind": "slider",
