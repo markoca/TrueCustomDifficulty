@@ -1,3 +1,7 @@
+## 2026-11-19 — Factory selection is independent from local copies
+
+The twelve official dropdown roles read up-to-date factory JSONs from `Presets/Factory`. Modified root `Presets/<role>.json` files are preserved and separately listed as `<role> (local)`; identical duplicates are hidden. Use the official role entry for the latest Human Tactics/Awareness values. Load/Save still use the portable Presets root.
+
 ## 2026-11-19 — Distinct human enemy behavior for all factory roles
 
 All 12 factory profiles now have fully authored HUMAN TACTICS / HUMAN AWARENESS settings: 12 native parameters per profile, **110 real changes**, with role-specific enemy coordination, accuracy, sight, hearing, search memory and fog/rain/storm concealment. `tools/factory_preset_human_roles_2026_11_19.json` holds the active matrix and rationale; `docs/FACTORY-PRESETS.md` compares all roles. Exact unedited former stock blobs upgrade automatically; customized profiles are preserved. No UI, CFG mapping, medical, stash or loose-item removal behavior changed in this pass.

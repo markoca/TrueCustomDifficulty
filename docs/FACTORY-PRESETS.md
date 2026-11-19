@@ -1,3 +1,7 @@
+## 2026-11-19 — Current factory picker source
+
+The twelve role values remain those in `tools/factory_preset_human_roles_2026_11_19.json`. The picker now loads official roles from the managed `Presets/Factory` folder, always refreshed from the EXE, rather than possibly loading a stale, protected, user-edited `Presets/<role>.json`. Differing local versions stay selectable with the `(local)` suffix. No balance, native control, CFG patch or UI layout changed.
+
 ## 2026-11-19 — CURRENT: role-driven Human Tactics and Human Awareness
 
 **Source of truth:** `tools/factory_preset_human_roles_2026_11_19.json`. All twelve built-in profiles now author **all twelve existing Human Combat sources** (six tactics and six awareness), with **110 actual numeric changes** over the previous factory versions. No UI control, dimension, catalog step, CFG writer or reference difficulty is added/changed. The balance is role-specific, not merely multiplying gun damage and aim accuracy.

@@ -26,3 +26,7 @@ If creation is denied, True Custom Difficulty grants the current Windows user **
 python3 tools/audit_preset_storage_contract.py
 dotnet run --project tests/PresetSaveContract/PresetSaveContract.csproj
 ```
+
+## 2026-11-19 — Factory picker source correction
+
+Official factory roles in the dropdown use current EXE-embedded JSONs mirrored to `Presets/Factory/<role>.json`, refreshed on startup. Root `Presets/<role>.json` remains under the existing exact-blob migration: any locally edited copy is preserved and shown separately as `<role> (local)`, not silently substituted for the updated factory. Identical duplicates are hidden in the picker. Save/Load dialogs continue to default to the portable root `Presets` folder; custom-named profiles remain unchanged. The managed Factory subfolder is not a user save destination. This addresses Human Tactics/Awareness values appearing unchanged when changing profile without altering the catalog, source CFG, or gameplay values.

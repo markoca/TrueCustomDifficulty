@@ -11,6 +11,11 @@ assert "_userPresetStorage" not in vm, "LocalAppData user-preset storage returne
 assert "UserPresetStorageService" not in vm, "LocalAppData user-preset service returned to MainViewModel"
 assert vm.count("InitialDirectory = _presetDirectoryService.Ensure()") == 1 and "presetDirectory = _presetDirectoryService.EnsureWritable();" in vm and "InitialDirectory = presetDirectory" in vm,     "Save and Load dialogs must both default to the portable Presets directory"
 assert "var items = _presetDirectoryService.List();" in vm,     "Preset picker must read the same portable Presets directory"
+directory_source = (ROOT / "src/TrueCustomDifficulty/Services/PresetDirectoryService.cs").read_text(encoding="utf-8")
+assert 'var managed = Path.Combine(directory, "Factory");' in directory_source
+assert 'Name = name + " (local)"' in directory_source
+assert 'Path = Path.Combine(managed, $"{name}.json")' in directory_source
+assert 'File.ReadAllBytes(path).AsSpan().SequenceEqual' in directory_source
 assert not storage_path.exists(), "Obsolete LocalAppData preset service still exists"
 
 assert "File.WriteAllText(fullPath, json);" in preset,     "Preset save must write the completed JSON directly to the selected target"

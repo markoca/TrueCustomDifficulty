@@ -298,11 +298,22 @@ public sealed class PresetDirectoryService
                 File.Delete(legacyPath);
         }
 
+        // The picker must always point to current factory values; a protected
+        // locally edited Presets/<name>.json must not silently mask a new role.
+        var managed = Path.Combine(directory, "Factory");
+        Directory.CreateDirectory(managed);
         foreach (var name in FactoryPresetNames)
         {
+            var resourceName = $"TrueCustomDifficulty.Presets.{name}.json";
             var destination = Path.Combine(directory, $"{name}.json");
             if (!File.Exists(destination) || IsUnmodifiedPreviousFactory(name, destination))
-                WriteEmbedded($"TrueCustomDifficulty.Presets.{name}.json", destination);
+                WriteEmbedded(resourceName, destination);
+
+            var factoryPath = Path.Combine(managed, $"{name}.json");
+            var embedded = ReadEmbedded(resourceName);
+            if (!File.Exists(factoryPath)
+                || !string.Equals(File.ReadAllText(factoryPath), embedded, StringComparison.Ordinal))
+                File.WriteAllText(factoryPath, embedded);
         }
 
         // Remove the discontinued QA preset from the player's picker.
@@ -459,14 +470,35 @@ public sealed class PresetDirectoryService
     public IReadOnlyList<PresetListItem> List()
     {
         var directory = Ensure();
-        return Directory.EnumerateFiles(directory, "*.json", SearchOption.TopDirectoryOnly)
-            .OrderBy(path => FactoryOrder(Path.GetFileNameWithoutExtension(path)))
-            .ThenBy(path => Path.GetFileNameWithoutExtension(path), StringComparer.OrdinalIgnoreCase)
-            .Select(path => new PresetListItem
+        var managed = Path.Combine(directory, "Factory");
+
+        var official = FactoryPresetNames.Select(name => new PresetListItem
+        {
+            Name = name,
+            Path = Path.Combine(managed, $"{name}.json")
+        });
+
+        // Keep user-edited copies, but never substitute them for factory roles.
+        var local = Directory.EnumerateFiles(directory, "*.json", SearchOption.TopDirectoryOnly)
+            .Select(path =>
             {
-                Name = Path.GetFileNameWithoutExtension(path),
-                Path = path
+                var name = Path.GetFileNameWithoutExtension(path);
+                if (FactoryOrder(name) < FactoryPresetNames.Length)
+                {
+                    var canonical = Path.Combine(managed, $"{name}.json");
+                    if (File.ReadAllBytes(path).AsSpan().SequenceEqual(File.ReadAllBytes(canonical)))
+                        return null;
+                    return new PresetListItem { Name = name + " (local)", Path = path };
+                }
+                return new PresetListItem { Name = name, Path = path };
             })
+            .Where(item => item is not null)
+            .Select(item => item!);
+
+        return official.Concat(local)
+            .OrderBy(item => FactoryOrder(Path.GetFileNameWithoutExtension(item.Path)))
+            .ThenBy(item => Path.GetDirectoryName(item.Path) == managed ? 0 : 1)
+            .ThenBy(item => item.Name, StringComparer.OrdinalIgnoreCase)
             .ToList();
     }
 
@@ -1396,11 +1428,14 @@ public sealed class PresetDirectoryService
         }
     }
 
-    private static void WriteEmbedded(string resourceName, string destinationPath)
+    private static string ReadEmbedded(string resourceName)
     {
         using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName)
             ?? throw new InvalidDataException($"Embedded preset resource '{resourceName}' was not found.");
         using var reader = new StreamReader(stream);
-        File.WriteAllText(destinationPath, reader.ReadToEnd());
+        return reader.ReadToEnd();
     }
+
+    private static void WriteEmbedded(string resourceName, string destinationPath)
+        => File.WriteAllText(destinationPath, ReadEmbedded(resourceName));
 }
