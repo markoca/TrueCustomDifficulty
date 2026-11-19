@@ -643,20 +643,22 @@ internal static partial class Program
                 // Role-accurate scarcity signatures on the same actual shipped files.
                 // Checking two independent source endpoints prevents an off-by-one
                 // or disabled smart-loot knob from masquerading as successful tuning.
+                // Source-derived 2026-11-19 scarcity. Not an estimated total
+                // drop percentage; item/tier sources reduce supplies independently.
                 var scarcity = new Dictionary<string, (double Corpse, double Stash)>(StringComparer.Ordinal)
                 {
-                    ["Anomaly Runner"] = (0.10, 0.10),
-                    ["Field Medic"] = (0.05, 0.10),
-                    ["Hardcore+"] = (0.15, 0.15),
-                    ["Hardcore"] = (0.10, 0.10),
-                    ["Immersive"] = (0.10, 0.15),
-                    ["Mercenary"] = (0.15, 0.10),
-                    ["Mutant Hunter"] = (0.10, 0.10),
-                    ["Outcast"] = (0.15, 0.15),
-                    ["Scavenger"] = (0.05, 0.15),
-                    ["Smuggler"] = (0.20, 0.10),
-                    ["Tactical"] = (0.15, 0.10),
-                    ["Wanderer"] = (0.10, 0.10)
+                    ["Anomaly Runner"] = (0.10, 0.20),
+                    ["Field Medic"] = (0.05, 0.15),
+                    ["Hardcore+"] = (0.20, 0.25),
+                    ["Hardcore"] = (0.15, 0.20),
+                    ["Immersive"] = (0.10, 0.20),
+                    ["Mercenary"] = (0.20, 0.20),
+                    ["Mutant Hunter"] = (0.10, 0.20),
+                    ["Outcast"] = (0.20, 0.25),
+                    ["Scavenger"] = (0.05, 0.20),
+                    ["Smuggler"] = (0.20, 0.20),
+                    ["Tactical"] = (0.15, 0.20),
+                    ["Wanderer"] = (0.10, 0.15),
                 };
                 Check(scarcity.TryGetValue(file0.Name, out var expectedSupply)
                     && Math.Abs(file0.Values["loot.genericCorpseReduction"].Number!.Value - expectedSupply.Corpse) < 1e-9
@@ -674,6 +676,26 @@ internal static partial class Program
                     && file0.Values["health.bandageBleeding"].Number > 0
                     && file0.Values["health.foodHealing"].Boolean == false,
                     name + ": bandage must not heal HP outside Field Medic, without disabling bleeding treatment");
+                var roleSourceSignatures = new Dictionary<string, (double WeaponWeight, double MedkitBleed, double StandardAmmo)>(StringComparer.Ordinal)
+                {
+                    ["Anomaly Runner"] = (0.95, 10, 0.50),
+                    ["Field Medic"] = (1.05, 30, 0.50),
+                    ["Hardcore+"] = (1.20, 5, 0.25),
+                    ["Hardcore"] = (1.15, 5, 0.25),
+                    ["Immersive"] = (1.00, 10, 0.50),
+                    ["Mercenary"] = (1.05, 10, 0.75),
+                    ["Mutant Hunter"] = (1.10, 15, 0.75),
+                    ["Outcast"] = (1.20, 5, 0.25),
+                    ["Scavenger"] = (1.10, 10, 0.50),
+                    ["Smuggler"] = (0.85, 10, 0.50),
+                    ["Tactical"] = (1.05, 10, 0.75),
+                    ["Wanderer"] = (0.85, 10, 0.50),
+                };
+                Check(roleSourceSignatures.TryGetValue(file0.Name, out var roleExpected)
+                      && file0.Values["equipment.weaponWeight"].Number == roleExpected.WeaponWeight
+                      && file0.Values["health.medkitBleeding"].Number == roleExpected.MedkitBleed
+                      && file0.Values["loot.mediumStashAmmoQuantity"].Number == roleExpected.StandardAmmo,
+                    name + ": role-specific 2026-11-19 equipment/medicine/ammo signature changed");
                 var stashSmartEnabled = file0.Values["loot.stashSmartLootEnabled"].Boolean == true;
                 var stockedChance = file0.Values["loot.stashSmartStockedChance"].Number!.Value;
                 var lowChance = file0.Values["loot.stashSmartShortChance"].Number!.Value;

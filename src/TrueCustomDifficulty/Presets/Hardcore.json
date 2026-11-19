@@ -429,7 +429,7 @@
     },
     "survival.sleepinessRate": {
       "kind": "slider",
-      "number": 0.017
+      "number": 0.018
     },
     "survival.sleepLowThreshold": {
       "kind": "slider",
@@ -561,7 +561,7 @@
     },
     "survival.radiationDamage": {
       "kind": "slider",
-      "number": 1.42
+      "number": 1.5
     },
     "survival.bleedingSeverity": {
       "kind": "slider",
@@ -769,7 +769,7 @@
     },
     "loot.genericCorpseReduction": {
       "kind": "slider",
-      "number": 0.1
+      "number": 0.15
     },
     "loot.npcSmartLootEnabled": {
       "kind": "toggle",
@@ -794,7 +794,7 @@
     },
     "loot.genericStashReduction": {
       "kind": "slider",
-      "number": 0.1
+      "number": 0.2
     },
     "loot.stashMixAmmo": {
       "kind": "slider",
@@ -802,15 +802,15 @@
     },
     "loot.stashMixMedical": {
       "kind": "slider",
-      "number": 0.7
+      "number": 0.65
     },
     "loot.stashMixFood": {
       "kind": "slider",
-      "number": 0.65
+      "number": 0.55
     },
     "loot.stashMixDrinks": {
       "kind": "slider",
-      "number": 0.7
+      "number": 0.6
     },
     "loot.stashMixGrenades": {
       "kind": "slider",
@@ -878,7 +878,7 @@
     },
     "loot.stashSmartShortChance": {
       "kind": "slider",
-      "number": 0.45
+      "number": 0.35
     },
     "loot.stashSmartMeds": {
       "kind": "toggle",
@@ -986,31 +986,31 @@
     },
     "loot.mediumStashDrinksChance": {
       "kind": "slider",
-      "number": 0.75
+      "number": 0.6
     },
     "loot.mediumStashCouponsChance": {
       "kind": "slider",
-      "number": 0.7
+      "number": 0.6
     },
     "loot.expensiveStashAmmoChance": {
       "kind": "slider",
-      "number": 0.65
+      "number": 0.55
     },
     "loot.expensiveStashMedicalChance": {
       "kind": "slider",
-      "number": 0.65
+      "number": 0.55
     },
     "loot.expensiveStashFoodChance": {
       "kind": "slider",
-      "number": 0.65
+      "number": 0.55
     },
     "loot.expensiveStashDrinksChance": {
       "kind": "slider",
-      "number": 0.65
+      "number": 0.55
     },
     "loot.expensiveStashGrenadesChance": {
       "kind": "slider",
-      "number": 0.6
+      "number": 0.5
     },
     "loot.expensiveStashMoneyChance": {
       "kind": "slider",
@@ -1086,7 +1086,7 @@
     },
     "economy.repairCostBase": {
       "kind": "slider",
-      "number": 1.5
+      "number": 1.55
     },
     "economy.repairEnemy": {
       "kind": "slider",
@@ -1098,11 +1098,11 @@
     },
     "economy.repairNeutral": {
       "kind": "slider",
-      "number": 1.2
+      "number": 1.25
     },
     "economy.repairFriend": {
       "kind": "slider",
-      "number": 0.85
+      "number": 0.9
     },
     "economy.mainQuestReward": {
       "kind": "slider",
@@ -1126,7 +1126,7 @@
     },
     "equipment.weaponWeight": {
       "kind": "slider",
-      "number": 1.1
+      "number": 1.15
     },
     "equipment.armorWeight": {
       "kind": "slider",
@@ -1206,19 +1206,19 @@
     },
     "survival.severeFatigueCarryWeight": {
       "kind": "slider",
-      "number": 0.25
+      "number": 0.3
     },
     "survival.severeFatigueRecoil": {
       "kind": "slider",
-      "number": 0.75
+      "number": 0.8
     },
     "survival.severeFatigueAimSway": {
       "kind": "slider",
-      "number": 0.55
+      "number": 0.58
     },
     "survival.severeFatigueDispersion": {
       "kind": "slider",
-      "number": 0.65
+      "number": 0.68
     },
     "survival.radiationStaminaDrainPenalty": {
       "kind": "slider",
@@ -1242,7 +1242,7 @@
     },
     "survival.bleedingStrongDamage": {
       "kind": "slider",
-      "number": 3
+      "number": 3.2
     },
     "advanced.masterEffectModifierMechanics": {
       "kind": "toggle",
@@ -1382,7 +1382,7 @@
     },
     "loot.mutant.pseudogiantChance": {
       "kind": "slider",
-      "number": 0.25
+      "number": 0.2
     },
     "loot.mutant.tushkanChance": {
       "kind": "slider",
@@ -1394,7 +1394,7 @@
     },
     "equipment.weaponWearPerShot": {
       "kind": "slider",
-      "number": 1.35
+      "number": 1.4
     },
     "loot.worldAmmoCratesRemoved": {
       "kind": "slider",
@@ -1406,11 +1406,11 @@
     },
     "loot.worldFoodDrinkCratesRemoved": {
       "kind": "slider",
-      "number": 0.69
+      "number": 0.78
     },
     "loot.worldMedicalCratesRemoved": {
       "kind": "slider",
-      "number": 0.75
+      "number": 0.82
     },
     "loot.looseWorldLootRemoved": {
       "kind": "slider",

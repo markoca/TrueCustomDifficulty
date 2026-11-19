@@ -1,3 +1,8 @@
+## CURRENT 2026-11-19 — Factory source diversity without UI proliferation
+
+* Factory profiles receive **363 intentional existing-source changes across 84 catalog IDs**; no UI renderer, layout, sliders, source metadata, widths or control IDs change. Every new value is presented by its existing catalog-native compact control, Stamina Usage-style numbers/captions, modified-only yellow digits, matching knob/slider grammar, hover glow and native reset.
+* Source-local corpse/stash scarcity rises by role while reward categories, health, fatigue, movement, equipment and prices diverge for gameplay reasons. The four HEAL TIME sources stay at least 5 s; only Field Medic may gain HP from bandages. Do not add a redundant global scarcity slider, extra borders, repeated vanilla text, full-width card or fake inactive setting. See `docs/FACTORY-PRESETS.md` and `tools/factory_preset_role_diversification_2026_11_19.json`.
+
 ## CURRENT 2026-11-18 — Factory bandages do not restore HP (Field Medic exception)
 
 * All 12 factory profiles use the native **Bandage Healing Amount** source: **0 HP** everywhere except **Field Medic (10 HP)**. All retain independent, positive bandage bleed removal. No UI code, catalog range, control placement, slider width, frame, hover/reset behavior, or Stamina Usage number/caption alignment changes. Do not add special text, labels or global locks to force this preset policy in the user-editable UI.

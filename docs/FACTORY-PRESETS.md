@@ -1,3 +1,30 @@
+## 2026-11-19 — CURRENT: source-backed diversification of all twelve factory profiles
+
+**Source of truth:** `tools/factory_preset_role_diversification_2026_11_19.json`. This overlay supersedes only its explicit values from all 2026-10/11 historical ledgers and later scarcity/healing passes. **363 actual changes on 84 distinct existing catalog IDs** across all 12 roles, with **452 unchanged catalog IDs per profile** (i.e., all profile files remain complete). No invented generator, global loot coefficient, UI control, CFG writer, retired source, inert A-Life setting, or altered reference difficulty. All updates use sourced bounds, native steps and the same compact catalog UI.
+
+| Role | Actual edits | Corpse reduction | Stash reduction | Gameplay trade-off |
+|---|---:|---:|---:|---|
+| Anomaly Runner | 34 | 10% | 20% | High artifact/psi risk, fewer ordinary stash supplies and lighter equipment |
+| Field Medic | 28 | 5% | 15% | Strong medical treatment, reduced free food/ammo and superior professional aid |
+| Hardcore+ | 28 | 20% | 25% | Extreme attrition, severe medical scarcity and harsh gear wear |
+| Hardcore | 28 | 15% | 20% | Dangerous survival, harsh but less punishing than Hardcore+ |
+| Immersive | 33 | 10% | 20% | Realistic fatigue, predictable wounds and slower replenishment |
+| Mercenary | 27 | 20% | 20% | Paid ammunition, strong combat tactics and contract earnings |
+| Mutant Hunter | 33 | 10% | 20% | Better trophy income, demanding hunts and expensive weapon upkeep |
+| Outcast | 32 | 20% | 25% | Hostile territory, scarce stashes and rare emergency treatment |
+| Scavenger | 31 | 5% | 20% | Salvage economics and corpse value, not rich supply stashes |
+| Smuggler | 32 | 20% | 20% | Cargo mobility and artifact trade, with fewer battlefield freebies |
+| Tactical | 29 | 15% | 20% | Precision firefights, higher combat demand and limited free ammunition |
+| Wanderer | 28 | 10% | 15% | Exploration resources, lighter equipment and less accidental ammo |
+
+**Balance method and source limitations.** Generic corpse reductions are 5–20%; eligible generic stash reductions are **15–25%**. These are additional source-local scarcity gates, *not* measured final drop percentages. The active Basic MEDS/FOOD/DRINKS odds, Standard/Rare category odds, Standard/Rare ammo quantities, Smart Loot stocked/low chances, NPC medical supply, world crate removals and paid trader routes are balanced by profession. Rewards do not automatically compensate for extra encounters. Some source generators are still **runtime-test-required** and must be measured with newly spawned stashes/corpses and a clean mod build.
+
+**Medical and combat guardrails.** Field Medic alone may restore 10 HP using a bandage; the other eleven roles restore **0 HP** from bandages while still removing bleeding. All four native per-item HEAL TIME values remain **5–10 s**. Medkit potency and bleed removal are retuned separately. Mutant move knob definitions, pre-existing 53 species move-role values and one artifact per eligible source remain intact. Optional Smart Loot on Hardcore+ stays OFF. No source-inactive extra stash gear values or placeholder NPC bonus packs are modified.
+
+**Role complexity has gameplay purpose.** Gear mass and fatigue penalties affect a character's ability to escape, heal and carry supplies. Trading, repair costs and trophy values make buying/salvaging/hunting worthwhile in different profiles. The result should create different loops for a hunter, a courier, a professional fighter, an exile and a medic rather than merely a uniform difficulty multiplier. Numbers are authored balance hypotheses, not proof of observed UE spawn frequency, healing animation time or effective integer A-Life caps.
+
+**Migration and validation.** `PresetDirectoryService.PreRoleDiversityFactoryBlobs` upgrades only twelve exact-byte old factory copies, including untouched bandage-healing and slow-HEAL-TIME versions. Player-edited factory files and custom presets stay untouched. `audit_factory_preset_coverage.py` checks every explicit overlay entry and 452 control IDs; `audit_factory_profile_role_coverage.py` and `audit_project_consistency.py` keep older provenance as history while applying current overrides. The AllControls factory load contract checks new source signatures for each role. Windows/Wine and in-game acceptance must still be run.
+
 ## 2026-11-18 — CURRENT: bandages stop bleeding; HP restoration is Field Medic-only
 
 **Hard factory-profile rule:** **11 of 12 factory presets restore 0 HP from a bandage**. **Field Medic alone restores 10 HP per bandage**, preserving its medical-specialist identity without allowing instant arcade sustain. Scavenger formerly restored 10 HP; it now restores **0 HP** as well. In *every* profile, the separate native `health.bandageBleeding` control stays positive, so bandages retain their primary purpose of stopping bleeding. No change to medkit healing amount, medical `Duration` (5–10 s factory values), food-healing policy, reference difficulty, the editable bandage healing UI, or any CFG writer. This is an authored preset policy, not a locked global editor restriction.

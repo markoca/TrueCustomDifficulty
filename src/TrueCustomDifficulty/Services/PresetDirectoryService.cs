@@ -1109,6 +1109,26 @@ public sealed class PresetDirectoryService
         ["Scavenger"] = "162438f40e6615d7e0488cc4535b53f3c7a536fa",
     };
 
+    // 2026-11-19: source-native differentiation of all 12 factory roles.
+    // Only their immediately prior, byte-identical stock versions migrate.
+    // Never replace player-edited factory-name files or custom presets.
+    private static readonly Dictionary<string, string> PreRoleDiversityFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "a3d3b1941ac852811a4227b01c00213849293b32",
+        ["Field Medic"] = "8f930eda1f0ced31911ce11b757839f86fc62519",
+        ["Hardcore+"] = "36cdad5525ea93859df5925bee08dadfe685f689",
+        ["Hardcore"] = "148f7e30aaa93c3427d129bb21020880da8f542b",
+        ["Immersive"] = "ff152d39220cfdc59df9e9dc80135b980202ed0a",
+        ["Mercenary"] = "81138ba62f0f96785c03c0d06c3e0baef90434b9",
+        ["Mutant Hunter"] = "f7242fa033f5cee4d8484af502cfca1aa1aadc14",
+        ["Outcast"] = "2be742c43b05d9f8fb31f33f87844a22ff59db09",
+        ["Scavenger"] = "95004c3a01f27f85e66dc15b65e327cf4294fdf5",
+        ["Smuggler"] = "80c6c81fbaad648e26abde97e884c6ade15d7141",
+        ["Tactical"] = "8b7f848c8efd0916dc0bd4feb67880160ee68356",
+        ["Wanderer"] = "3fa10467aa4b9826d928a7fca95a4cd28930d373",
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -1159,7 +1179,8 @@ public sealed class PresetDirectoryService
             && !PreVibeFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreScarcityRefineFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreHealTimeFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreBandageHpPolicyFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreBandageHpPolicyFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreRoleDiversityFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -1269,7 +1290,9 @@ public sealed class PresetDirectoryService
                 || (PreHealTimeFactoryBlobs.TryGetValue(name, out var preHealTimeHash)
                     && actual.Equals(preHealTimeHash, StringComparison.OrdinalIgnoreCase))
                 || (PreBandageHpPolicyFactoryBlobs.TryGetValue(name, out var preBandageHpHash)
-                    && actual.Equals(preBandageHpHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preBandageHpHash, StringComparison.OrdinalIgnoreCase))
+                || (PreRoleDiversityFactoryBlobs.TryGetValue(name, out var preRoleDiversityHash)
+                    && actual.Equals(preRoleDiversityHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

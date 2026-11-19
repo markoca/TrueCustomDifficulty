@@ -55,6 +55,12 @@ SCARCITY = json.loads((ROOT / "tools/factory_preset_scarcity_refine_2026_11_18.j
 HEAL_TIMES = json.loads((ROOT / "tools/factory_preset_heal_time_2026_11_18.json").read_text(encoding="utf-8"))
 HEAL_IDS = ("health.bandageHealTime", "health.medkitHealTime", "health.armyMedkitHealTime", "health.ecoMedkitHealTime")
 BANDAGE_HP = json.loads((ROOT / "tools/factory_preset_bandage_hp_policy_2026_11_18.json").read_text(encoding="utf-8"))
+ROLE_DIVERSITY = json.loads((ROOT / "tools/factory_preset_role_diversification_2026_11_19.json").read_text(encoding="utf-8"))
+assert set(ROLE_DIVERSITY["roles"]) == set(VIBE["values"])
+assert set(ROLE_DIVERSITY["previousStockBlobs"]) == set(VIBE["values"])
+assert sum(len(x["changes"]) for x in ROLE_DIVERSITY["roles"].values()) == 363
+assert len({pid for role in ROLE_DIVERSITY["roles"].values() for pid in role["changes"]}) == 84
+assert all(len(role["changes"]) >= 25 and role["intent"] for role in ROLE_DIVERSITY["roles"].values())
 assert set(BANDAGE_HP["values"]) == set(VIBE["values"])
 assert BANDAGE_HP["values"]["Field Medic"] == 10
 assert all(hp == 0 for name, hp in BANDAGE_HP["values"].items() if name != "Field Medic")
@@ -93,6 +99,8 @@ for path in presets:
     role.update(SCARCITY["roles"][path.stem]["changes"])
     role.update(HEAL_TIMES["values"][path.stem])
     role["health.bandageHealing"] = BANDAGE_HP["values"][path.stem]
+    # The 2026-11-19 source-specific overlay supersedes historical snapshots.
+    role.update(ROLE_DIVERSITY["roles"][path.stem]["changes"])
     # 2026-11-18 attack-only pass: role values of removed controls (roars, growls, ...) are gone.
     role = {k: v for k, v in role.items() if k in by_id}
     for pid in NEW_IDS | set(role):
@@ -109,7 +117,7 @@ for path in presets:
     def enabled(pid):
         return values[pid]["boolean"]
     assert .05 <= amount("loot.genericCorpseReduction") <= .20, path.name
-    assert .10 <= amount("loot.genericStashReduction") <= .15, path.name
+    assert .15 <= amount("loot.genericStashReduction") <= .25, path.name
     assert amount("loot.looseWorldLootRemoved") >= .5, path.name
     assert amount("loot.worldWeaponDensity") <= .7, path.name
     assert amount("environment.artifactCount") == 1, path.name
@@ -174,6 +182,9 @@ assert pds.count("PreVibeFactoryBlobs") == 3
 assert pds.count("PreScarcityRefineFactoryBlobs") == 3
 assert pds.count("PreHealTimeFactoryBlobs") == 3
 assert pds.count("PreBandageHpPolicyFactoryBlobs") == 3
+assert pds.count("PreRoleDiversityFactoryBlobs") == 3
+for _name, _hash in ROLE_DIVERSITY["previousStockBlobs"].items():
+    assert f'["{_name}"] = "{_hash}"' in pds, _name
 assert BANDAGE_HP["previousStockBlobs"] == {"Scavenger": "162438f40e6615d7e0488cc4535b53f3c7a536fa"}
 assert '["Scavenger"] = "162438f40e6615d7e0488cc4535b53f3c7a536fa"' in pds
 for _name, _hash in HEAL_TIMES["previousStockBlobs"].items():
@@ -206,4 +217,4 @@ assert len(pds.split("PreNewControlsFactoryBlobs =", 1)[1].split("};", 1)[0].spl
 
 assert sum(len(role["changes"]) for role in SCARCITY["roles"].values()) == 140
 assert all(role.get("intent") for role in SCARCITY["roles"].values())
-print(f"PASS: 12 factory profiles × {len(by_id)} values; 48 native HEAL TIME durations >= 5 s; only Field Medic heals HP with bandages; 53 mutant moves per role; 140 source-native scarcity edits, exact-stock upgrade hashes")
+print(f"PASS: 12 factory roles × {len(by_id)} settings; 363 deliberate changes across 84 sourced controls; bandage/HEAL TIME/source-scarcity invariants and exact-stock migration")

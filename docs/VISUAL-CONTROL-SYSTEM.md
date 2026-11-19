@@ -1,3 +1,8 @@
+## CURRENT 2026-11-19 — Profile diversity uses existing source-aligned controls
+
+* All 12 factory profiles now use 84 native sourced controls in an additional role-specific rebalance (363 actual preset edits). This is a **data-only** pass; compact 16:9 medical, survival, stash, economy, equipment and combat layouts, source rails/knobs, slider alignment, hover/reset, and yellow-only-modified-number behavior are unchanged.
+* Scarcity is source-local, not a new general-purpose multiplier: generic stash reductions now range from 15–25% and stack with tier-category odds. All roles keep 5–10 s medical treatment duration and 0 bandage HP except Field Medic (10 HP). Never insert redundant labels or use inactive sliders to increase the number of changed values. See `docs/FACTORY-PRESETS.md`.
+
 ## CURRENT 2026-11-18 — Bandage HP is a factory role setting, not a UI restriction
 
 * Default factory files now keep **Bandage Healing at 0 HP** in 11 roles, with **Field Medic at 10 HP**. BLEED REMOVAL remains independent and role-specific. The existing catalog-matched compact medical board and Healing/Bleeding/Heal Time controls remain entirely unchanged; no redundant captions, new switches, full-width rails or forced editor minimums.

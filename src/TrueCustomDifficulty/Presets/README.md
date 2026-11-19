@@ -1,3 +1,7 @@
+## 2026-11-19 — Current factory role diversification (84 sources)
+
+12 complete native factory presets now make 363 actual value changes across 84 existing sourced control IDs. All preserve 452 stored settings, 5–10 s per-item HEAL TIME, Field Medic-only bandage HP, one artifact per spawn, compact UI control grammar and protected quest/unique loot. Generic stash reduction is now 15–25% by role, alongside reduced category odds and different professional supply paths. The source-to-role matrix is `tools/factory_preset_role_diversification_2026_11_19.json`; documented rationale and full profile comparison are in `docs/FACTORY-PRESETS.md`. Pristine installed factory copies upgrade without overwriting user-edited/custom presets; 2.1 runtime must still be tested.
+
 ## 2026-11-18 — Factory bandages treat bleeding, not HP
 
 **11 of the 12 factory profiles have Bandage Healing = 0 HP.** Field Medic alone retains 10 HP as a deliberate medical-role exception. Scavenger's former 10 HP bonus is removed. All twelve keep their separate native bleeding removal; 5–10 s factory treatment durations and medkit healing are unchanged. The manual bandage healing control remains editable. Only an exact unchanged Scavenger factory copy is replaced on startup; customized/user presets stay untouched. Source policy and full audit: `tools/factory_preset_bandage_hp_policy_2026_11_18.json`, `docs/FACTORY-PRESETS.md`.

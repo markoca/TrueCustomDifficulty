@@ -23,7 +23,7 @@
     },
     "combat.npcWeaponDamage": {
       "kind": "slider",
-      "number": 1.6
+      "number": 1.7
     },
     "combat.explosionDamage": {
       "kind": "slider",
@@ -91,7 +91,7 @@
     },
     "combat.mutantDamage": {
       "kind": "slider",
-      "number": 1.6
+      "number": 1.7
     },
     "combat.accumulatedDamageWeightMax": {
       "kind": "slider",
@@ -567,7 +567,7 @@
     },
     "survival.radiationDamage": {
       "kind": "slider",
-      "number": 1.6
+      "number": 1.8
     },
     "survival.bleedingSeverity": {
       "kind": "slider",
@@ -775,7 +775,7 @@
     },
     "loot.genericCorpseReduction": {
       "kind": "slider",
-      "number": 0.15
+      "number": 0.2
     },
     "loot.npcSmartLootEnabled": {
       "kind": "toggle",
@@ -787,7 +787,7 @@
     },
     "loot.npcMedicalChance": {
       "kind": "slider",
-      "number": 0.25
+      "number": 0.2
     },
     "loot.npcWeaponAmmoSupply": {
       "kind": "slider",
@@ -800,7 +800,7 @@
     },
     "loot.genericStashReduction": {
       "kind": "slider",
-      "number": 0.15
+      "number": 0.25
     },
     "loot.stashMixAmmo": {
       "kind": "slider",
@@ -808,15 +808,15 @@
     },
     "loot.stashMixMedical": {
       "kind": "slider",
-      "number": 0.6
+      "number": 0.55
     },
     "loot.stashMixFood": {
       "kind": "slider",
-      "number": 0.55
+      "number": 0.45
     },
     "loot.stashMixDrinks": {
       "kind": "slider",
-      "number": 0.65
+      "number": 0.55
     },
     "loot.stashMixGrenades": {
       "kind": "slider",
@@ -992,31 +992,31 @@
     },
     "loot.mediumStashDrinksChance": {
       "kind": "slider",
-      "number": 0.65
+      "number": 0.5
     },
     "loot.mediumStashCouponsChance": {
       "kind": "slider",
-      "number": 0.6
+      "number": 0.5
     },
     "loot.expensiveStashAmmoChance": {
       "kind": "slider",
-      "number": 0.55
+      "number": 0.45
     },
     "loot.expensiveStashMedicalChance": {
       "kind": "slider",
-      "number": 0.5
+      "number": 0.45
     },
     "loot.expensiveStashFoodChance": {
       "kind": "slider",
-      "number": 0.5
+      "number": 0.4
     },
     "loot.expensiveStashDrinksChance": {
       "kind": "slider",
-      "number": 0.5
+      "number": 0.45
     },
     "loot.expensiveStashGrenadesChance": {
       "kind": "slider",
-      "number": 0.5
+      "number": 0.4
     },
     "loot.expensiveStashMoneyChance": {
       "kind": "slider",
@@ -1092,7 +1092,7 @@
     },
     "economy.repairCostBase": {
       "kind": "slider",
-      "number": 1.55
+      "number": 1.6
     },
     "economy.repairEnemy": {
       "kind": "slider",
@@ -1104,11 +1104,11 @@
     },
     "economy.repairNeutral": {
       "kind": "slider",
-      "number": 1.5
+      "number": 1.55
     },
     "economy.repairFriend": {
       "kind": "slider",
-      "number": 1
+      "number": 1.05
     },
     "economy.mainQuestReward": {
       "kind": "slider",
@@ -1132,11 +1132,11 @@
     },
     "equipment.weaponWeight": {
       "kind": "slider",
-      "number": 1.15
+      "number": 1.2
     },
     "equipment.armorWeight": {
       "kind": "slider",
-      "number": 1.15
+      "number": 1.2
     },
     "environment.anomalyDamage": {
       "kind": "slider",
@@ -1216,7 +1216,7 @@
     },
     "survival.severeFatigueRecoil": {
       "kind": "slider",
-      "number": 0.9
+      "number": 0.95
     },
     "survival.severeFatigueAimSway": {
       "kind": "slider",
@@ -1224,7 +1224,7 @@
     },
     "survival.severeFatigueDispersion": {
       "kind": "slider",
-      "number": 0.8
+      "number": 0.85
     },
     "survival.radiationStaminaDrainPenalty": {
       "kind": "slider",
@@ -1248,7 +1248,7 @@
     },
     "survival.bleedingStrongDamage": {
       "kind": "slider",
-      "number": 3.5
+      "number": 3.8
     },
     "advanced.masterEffectModifierMechanics": {
       "kind": "toggle",
@@ -1388,7 +1388,7 @@
     },
     "loot.mutant.pseudogiantChance": {
       "kind": "slider",
-      "number": 0.1
+      "number": 0.05
     },
     "loot.mutant.tushkanChance": {
       "kind": "slider",
@@ -1400,7 +1400,7 @@
     },
     "equipment.weaponWearPerShot": {
       "kind": "slider",
-      "number": 1.45
+      "number": 1.5
     },
     "loot.worldAmmoCratesRemoved": {
       "kind": "slider",
@@ -1412,11 +1412,11 @@
     },
     "loot.worldFoodDrinkCratesRemoved": {
       "kind": "slider",
-      "number": 0.74
+      "number": 0.85
     },
     "loot.worldMedicalCratesRemoved": {
       "kind": "slider",
-      "number": 0.82
+      "number": 0.9
     },
     "loot.looseWorldLootRemoved": {
       "kind": "slider",

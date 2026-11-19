@@ -12,6 +12,8 @@ matrix = json.loads((ROOT/"tools/factory_profile_role_coverage_2026_10_19.json")
 # scarcity overrides take precedence over its original stash categories.
 scarcity = json.loads((ROOT/"tools/factory_preset_scarcity_refine_2026_11_18.json").read_text(encoding="utf-8"))
 assert len(scarcity["roles"]) == 12
+role_diversity = json.loads((ROOT/"tools/factory_preset_role_diversification_2026_11_19.json").read_text(encoding="utf-8"))
+assert len(role_diversity["roles"]) == 12
 catalog = json.loads((ROOT/"src/TrueCustomDifficulty/Data/parameters.json").read_text(encoding="utf-8"))
 sources = {p["id"]:p for p in catalog["parameters"]}
 names = matrix["profiles"]
@@ -57,6 +59,7 @@ for index,name in enumerate(names):
         # The role matrix is an immutable 2026-10-19 authoring snapshot;
         # newer source-valid stash/gear scarcity decisions explicitly supersede it.
         value = scarcity["roles"][name]["changes"].get(id, value)
+        value = role_diversity["roles"][name]["changes"].get(id, value)
         if p["control"]=="toggle":
             assert entry=={"kind":"toggle","boolean":value},(name,id)
         else:
@@ -83,5 +86,5 @@ for index,name in enumerate(names):
     assert matrix["roleResults"][name]["newChanges"]>=30,name
 print(f"PASS: 12 factory roles / {CATALOG} catalog sources each (40 neutral Trader Buys + 31 Trader Sells) / 49 curated control dimensions")
 print("PASS: native bounds, absolute snaps, ordered stages, stash chance, exclusive gear/shuffle, pristine-only migration map")
-print("PASS: later source-backed stash scarcity overrides checked; earlier native scope and role invariants preserved")
+print("PASS: current 2026-11-19 role-specific overlays checked; historical native scope and role invariants preserved")
 print("NOT TESTED: WPF publish, actual .NET preset import, BPatch, Wine or UE gameplay.")

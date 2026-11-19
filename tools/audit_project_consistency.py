@@ -2100,6 +2100,43 @@ _factory_legacy_catalog = {pid: p for pid, p in _factory_catalog.items()
 _factory_tuning = json.loads((ROOT / "tools/factory_preset_expansion.json").read_text(encoding="utf-8"))
 _factory_groups = _factory_tuning["groups"]
 _factory_tuning_profiles = _factory_tuning["profiles"]
+_role_diversity = json.loads((ROOT / "tools/factory_preset_role_diversification_2026_11_19.json").read_text(encoding="utf-8"))
+_diversity_roles = _role_diversity["roles"]
+_diversity_blobs = _role_diversity.get("previousStockBlobs", {})
+_diversity_changes = {pid for role in _diversity_roles.values() for pid in role["changes"]}
+if (set(_diversity_roles) != set(_factory_preset_names)
+        or set(_diversity_blobs) != set(_factory_preset_names)
+        or sum(len(role["changes"]) for role in _diversity_roles.values()) != 363
+        or len(_diversity_changes) != 84):
+    _factory_errors.append("2026-11-19 diversity roles, source-count or pristine migration ledger incomplete")
+if _factory_service_text.count("PreRoleDiversityFactoryBlobs") != 3:
+    _factory_errors.append("New factory diversity upgrade safety not wired")
+for _name in _factory_preset_names:
+    _role = _diversity_roles[_name]
+    if len(_role["changes"]) < 25 or len(_role["intent"]) < 30:
+        _factory_errors.append(f"{_name}: too few deliberate current role distinctions")
+    if f'["{_name}"] = "{_diversity_blobs[_name]}"' not in _factory_service_text:
+        _factory_errors.append(f"{_name}: prior exact factory blob identity not recognized")
+    _entry = json.loads((_factory_preset_dir / f"{_name}.json").read_text(encoding="utf-8"))["values"]
+    for _id, _value in _role["changes"].items():
+        _source = _factory_catalog.get(_id)
+        if not _source:
+            _factory_errors.append(f"{_name}: unknown role source {_id}")
+            continue
+        _actual = _entry[_id].get("number", _entry[_id].get("boolean"))
+        if _actual != _value:
+            _factory_errors.append(f"{_name}: current role source drift {_id}")
+    if not (.05 <= _entry["loot.genericCorpseReduction"]["number"] <= .2
+            and .15 <= _entry["loot.genericStashReduction"]["number"] <= .25
+            and _entry["loot.npcMedicalChance"]["number"] > 0
+            and _entry["economy.traderAmmoStock"]["number"] >= .25):
+        _factory_errors.append(f"{_name}: corpse/stash scarcity or medical/ammo access lost")
+    if _entry["health.bandageHealing"]["number"] != (10 if _name == "Field Medic" else 0):
+        _factory_errors.append(f"{_name}: bandages gained forbidden HP")
+    if any(_entry[_id]["number"] < 5 for _id in (
+            "health.bandageHealTime", "health.medkitHealTime",
+            "health.armyMedkitHealTime", "health.ecoMedkitHealTime")):
+        _factory_errors.append(f"{_name}: treatment too quick")
 _factory_tuned_ids = [pid for members in _factory_groups.values() for pid in members]
 if len(_factory_catalog) != len(parameters) or len(_factory_tuned_ids) != 37 or len(set(_factory_tuned_ids)) != 37:
     _factory_errors.append("expected 359 current source IDs and 34 historical + 3 drink duration matrix slots")
@@ -2125,6 +2162,7 @@ for _name in _factory_preset_names:
             _factory_errors.append(f"{_name}: tuning group length {_group_name}")
             continue
         for _pid, _target in zip(_ids, _tuned_values):
+            _target = _diversity_roles[_name]["changes"].get(_pid, _target)
             _definition = _factory_catalog.get(_pid)
             _stored = _entries.get(_pid)
             if _definition is None or _stored is None:
@@ -2262,6 +2300,7 @@ for _name in _factory_preset_names:
             _target = _current_scarcity_roles[_name]["changes"].get(_pid, _target)
             if _pid == "health.bandageHealing":
                 _target = _current_bandage_hp["values"][_name]
+            _target = _diversity_roles[_name]["changes"].get(_pid, _target)
             _definition = _factory_catalog[_pid]
             _stored = _entries.get(_pid, {})
             _kind = "toggle" if _definition["control"] == "toggle" else "slider"
@@ -2363,6 +2402,7 @@ for _role, _signature in _role_matrix.get("profiles", {}).items():
         # Only source IDs deliberately superseded by the newest scarcity pass
         # use that value; every untouched historical role decision remains pinned.
         _target = _current_scarcity_roles[_role]["changes"].get(_pid, _target)
+        _target = _diversity_roles[_role]["changes"].get(_pid, _target)
         if _stored.get("kind") != "slider" or _stored.get("number") != _target:
             _factory_errors.append(f"{_role}: authored role drift {_pid}")
         _bound = _definition["slider"]
@@ -2442,6 +2482,7 @@ for _role, _settings in _consumable_matrix.get("profiles", {}).items():
     if not _settings.get("intent"):
         _factory_errors.append(f"{_role}: missing balance intent")
     for _pid, _target in _settings["changes"].items():
+        _target = _diversity_roles[_role]["changes"].get(_pid, _target)
         _definition = _factory_catalog.get(_pid, {})
         _stored = _entries.get(_pid, {})
         if (_definition.get("control") != "slider" or _stored.get("kind") != "slider"
