@@ -696,6 +696,28 @@ internal static partial class Program
                       && file0.Values["health.medkitBleeding"].Number == roleExpected.MedkitBleed
                       && file0.Values["loot.mediumStashAmmoQuantity"].Number == roleExpected.StandardAmmo,
                     name + ": role-specific 2026-11-19 equipment/medicine/ammo signature changed");
+                // Native loose-loot removals are role policy, never a global
+                // removal. Keep artifact fields, quest and vendor sources.
+                var worldRemovalByRole = new Dictionary<string, (bool Detectors, bool Armor, bool FixedArtifacts)>(StringComparer.Ordinal)
+                {
+                    ["Anomaly Runner"] = (false, true, false),
+                    ["Field Medic"] = (true, true, true),
+                    ["Hardcore+"] = (true, true, true),
+                    ["Hardcore"] = (true, true, true),
+                    ["Immersive"] = (true, true, false),
+                    ["Mercenary"] = (true, true, true),
+                    ["Mutant Hunter"] = (true, true, true),
+                    ["Outcast"] = (true, true, true),
+                    ["Scavenger"] = (true, false, false),
+                    ["Smuggler"] = (true, true, false),
+                    ["Tactical"] = (true, true, true),
+                    ["Wanderer"] = (false, true, false),
+                };
+                Check(worldRemovalByRole.TryGetValue(file0.Name, out var worldRemoval)
+                    && file0.Values["loot.worldDetectors"].Boolean == worldRemoval.Detectors
+                    && file0.Values["loot.worldArmorRemoved"].Boolean == worldRemoval.Armor
+                    && file0.Values["loot.looseArtifactsRemoved"].Boolean == worldRemoval.FixedArtifacts,
+                    name + ": loose detector/armor/fixed artifact source toggles no longer match role");
                 var stashSmartEnabled = file0.Values["loot.stashSmartLootEnabled"].Boolean == true;
                 var stockedChance = file0.Values["loot.stashSmartStockedChance"].Number!.Value;
                 var lowChance = file0.Values["loot.stashSmartShortChance"].Number!.Value;

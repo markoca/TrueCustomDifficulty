@@ -2104,6 +2104,37 @@ _role_diversity = json.loads((ROOT / "tools/factory_preset_role_diversification_
 _diversity_roles = _role_diversity["roles"]
 _diversity_blobs = _role_diversity.get("previousStockBlobs", {})
 _diversity_changes = {pid for role in _diversity_roles.values() for pid in role["changes"]}
+_world_removal = json.loads((ROOT / "tools/factory_preset_world_removal_policy_2026_11_19.json").read_text(encoding="utf-8"))
+_world_removal_roles = _world_removal["roles"]
+_world_removal_ids = {"loot.worldDetectors", "loot.worldArmorRemoved", "loot.looseArtifactsRemoved"}
+_changed_world_roles = {name for name, role in _world_removal_roles.items() if role["changes"]}
+if (set(_world_removal_roles) != set(_factory_preset_names)
+        or set(_world_removal.get("sourceIDs", [])) != _world_removal_ids
+        or set(_world_removal.get("previousStockBlobs", {})) != _changed_world_roles
+        or sum(len(role["changes"]) for role in _world_removal_roles.values()) != 19):
+    _factory_errors.append("2026-11-19 world removal factory policy lacks full role/source/upgrade coverage")
+if _factory_service_text.count("PreWorldRemovalPolicyFactoryBlobs") != 3:
+    _factory_errors.append("world removal exact-stock upgrade is not wired")
+for _name in _factory_preset_names:
+    _role = _world_removal_roles[_name]
+    _vals = _role["values"]
+    if set(_vals) != _world_removal_ids or not _role["intent"]:
+        _factory_errors.append(f"{_name}: missing source-native loose-loot removal decisions")
+        continue
+    _stored = json.loads((_factory_preset_dir / f"{_name}.json").read_text(encoding="utf-8"))["values"]
+    for _id in _world_removal_ids:
+        if _stored[_id] != {"kind": "toggle", "boolean": _vals[_id]}:
+            _factory_errors.append(f"{_name}: {_id} world pickup removal policy drifted")
+    if _name in _changed_world_roles:
+        _blob = _world_removal["previousStockBlobs"][_name]
+        if f'["{_name}"] = "{_blob}"' not in _factory_service_text:
+            _factory_errors.append(f"{_name}: previous world-removal factory SHA missing")
+    if _vals["loot.looseArtifactsRemoved"] and _name in ("Anomaly Runner", "Wanderer", "Smuggler", "Immersive", "Scavenger"):
+        _factory_errors.append(f"{_name}: source-specific field exploration must keep fixed Weird artifact finds")
+    if _vals["loot.worldArmorRemoved"] and _name == "Scavenger":
+        _factory_errors.append("Scavenger must retain the world-armor salvage route")
+    if _vals["loot.worldDetectors"] and _name in ("Anomaly Runner", "Wanderer"):
+        _factory_errors.append(f"{_name}: detector exploration route disabled")
 if (set(_diversity_roles) != set(_factory_preset_names)
         or set(_diversity_blobs) != set(_factory_preset_names)
         or sum(len(role["changes"]) for role in _diversity_roles.values()) != 363
@@ -2163,6 +2194,7 @@ for _name in _factory_preset_names:
             continue
         for _pid, _target in zip(_ids, _tuned_values):
             _target = _diversity_roles[_name]["changes"].get(_pid, _target)
+            _target = _world_removal_roles[_name]["changes"].get(_pid, _target)
             _definition = _factory_catalog.get(_pid)
             _stored = _entries.get(_pid)
             if _definition is None or _stored is None:
@@ -2301,6 +2333,7 @@ for _name in _factory_preset_names:
             if _pid == "health.bandageHealing":
                 _target = _current_bandage_hp["values"][_name]
             _target = _diversity_roles[_name]["changes"].get(_pid, _target)
+            _target = _world_removal_roles[_name]["changes"].get(_pid, _target)
             _definition = _factory_catalog[_pid]
             _stored = _entries.get(_pid, {})
             _kind = "toggle" if _definition["control"] == "toggle" else "slider"
@@ -2403,6 +2436,7 @@ for _role, _signature in _role_matrix.get("profiles", {}).items():
         # use that value; every untouched historical role decision remains pinned.
         _target = _current_scarcity_roles[_role]["changes"].get(_pid, _target)
         _target = _diversity_roles[_role]["changes"].get(_pid, _target)
+        _target = _world_removal_roles[_role]["changes"].get(_pid, _target)
         if _stored.get("kind") != "slider" or _stored.get("number") != _target:
             _factory_errors.append(f"{_role}: authored role drift {_pid}")
         _bound = _definition["slider"]
@@ -2483,6 +2517,7 @@ for _role, _settings in _consumable_matrix.get("profiles", {}).items():
         _factory_errors.append(f"{_role}: missing balance intent")
     for _pid, _target in _settings["changes"].items():
         _target = _diversity_roles[_role]["changes"].get(_pid, _target)
+        _target = _world_removal_roles[_role]["changes"].get(_pid, _target)
         _definition = _factory_catalog.get(_pid, {})
         _stored = _entries.get(_pid, {})
         if (_definition.get("control") != "slider" or _stored.get("kind") != "slider"

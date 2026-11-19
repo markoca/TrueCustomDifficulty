@@ -1,3 +1,28 @@
+## 2026-11-19 — CURRENT: selective removal of loose detectors, armor and fixed artifacts
+
+**Policy:** `tools/factory_preset_world_removal_policy_2026_11_19.json`. Three existing native source controls now have a deliberately role-specific **ON/OFF** matrix. This pass changes **19 actual checkbox values** in 10 profiles, without adding UI controls or touching any CFG writer. The other two profiles already matched the intended combination.
+
+| Factory role | REMOVE LOOSE DETECTORS | REMOVE LOOSE ARMOR | REMOVE LOOSE ARTIFACTS |
+|---|---|---|---|
+| Anomaly Runner | OFF | ON | OFF |
+| Field Medic | ON | ON | ON |
+| Hardcore+ | ON | ON | ON |
+| Hardcore | ON | ON | ON |
+| Immersive | ON | ON | OFF |
+| Mercenary | ON | ON | ON |
+| Mutant Hunter | ON | ON | ON |
+| Outcast | ON | ON | ON |
+| Scavenger | ON | OFF | OFF |
+| Smuggler | ON | ON | OFF |
+| Tactical | ON | ON | ON |
+| Wanderer | OFF | ON | OFF |
+
+**Source scopes, not blanket removal.** DETECTORS removes only audited non-quest direct detector placements, plus eligible ordinary stash Bear in DLC1; quest detectors, NPC equipment and traders remain. ARMOR removes audited regular non-quest direct suits/helmets and eligible non-quest regular stash helmets; NPC loadouts, scripted/quest suits (including X7), reward-only gear and merchants remain. ARTIFACTS removes only the four fixed non-quest Weird spawner sites and DLC Water Drip; anomaly-field artifact generation and quests are unaffected, so it does **not** turn off artifact hunting.
+
+**Role rationale.** Anomaly Runner and Wanderer retain convenient detector discoveries and fixed oddities to support exploration, but must earn their protective suits. Scavenger retains loose suits and the opportunity for rare fixed finds because salvaging is its identity; free detectors stay absent. Smuggler keeps fixed artifacts for trading but must acquire suits/detectors through risk and commerce. Immersive retains distinctive discoveries but removes free gear progression. Field Medic, Mercenary, Mutant Hunter and Tactical depend on their professional supply/trade/trophy loops rather than free fixed gear. Hardcore, Hardcore+ and Outcast remove all three eligible categories for strong scarcity.
+
+**Safety and migration.** Quest, unique mission equipment, reward-only and NPC/trader sources remain outside the source operations. Previous authoring matrices remain intact as historical evidence; the current policy overlay takes precedence only for the three source flags. `PresetDirectoryService.PreWorldRemovalPolicyFactoryBlobs` recognizes only the 10 changed profiles' exact preceding stock blob hashes. Custom and user-modified presets are not replaced. Python preset/consistency audits and Windows embedded-factory load checks cover all 12 role values. Source operations still require gameplay verification on fresh world/stash spawns; existing spawned actors may persist in saved games.
+
 ## 2026-11-19 — CURRENT: source-backed diversification of all twelve factory profiles
 
 **Source of truth:** `tools/factory_preset_role_diversification_2026_11_19.json`. This overlay supersedes only its explicit values from all 2026-10/11 historical ledgers and later scarcity/healing passes. **363 actual changes on 84 distinct existing catalog IDs** across all 12 roles, with **452 unchanged catalog IDs per profile** (i.e., all profile files remain complete). No invented generator, global loot coefficient, UI control, CFG writer, retired source, inert A-Life setting, or altered reference difficulty. All updates use sourced bounds, native steps and the same compact catalog UI.

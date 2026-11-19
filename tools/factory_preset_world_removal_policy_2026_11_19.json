@@ -1,0 +1,175 @@
+{
+  "version": 1,
+  "date": "2026-11-19",
+  "target": "STALKER 2.1 verified non-quest world loot removals",
+  "roleCount": 12,
+  "changedToggles": 19,
+  "sourceIDs": [
+    "loot.worldDetectors",
+    "loot.worldArmorRemoved",
+    "loot.looseArtifactsRemoved"
+  ],
+  "scope": {
+    "loot.worldDetectors": "Remove audited non-quest direct detector pickups and the protected-route X16 ordinary stash Bear; traders/quest/NPC equipment stay.",
+    "loot.worldArmorRemoved": "Remove audited ordinary non-quest loose suits and helmets and six eligible stash helmet entries; quest and trader/NPC gear stay.",
+    "loot.looseArtifactsRemoved": "Remove fixed non-quest Weird artifact world spots and DLC WaterDrip; anomaly field spawners and quest artifacts stay."
+  },
+  "previousStockBlobs": {
+    "Anomaly Runner": "2187877248d2ee0b7de8497145081a59c377ef3d",
+    "Field Medic": "00af67cabd152d2279b10f8391341871376472c1",
+    "Hardcore": "b7b4d2878a96dc88d90751f989f0ae31b3869de8",
+    "Immersive": "d8347b83b0a1d09c1a4b8b662c5c430a8e060d73",
+    "Mercenary": "4544aabcd2766be21f28616bdc4d790711141ae3",
+    "Mutant Hunter": "09af3e4fc6108362e0fd0adab43f3873a2b75ab9",
+    "Outcast": "489983df241981a0b0c4abead96d5fbc572366a7",
+    "Smuggler": "0ed51d31358b877e5de8da18e5361f609a8ab70f",
+    "Tactical": "e930b45f67fa7a9de91fcd8e7dfc0be8ba6e2079",
+    "Wanderer": "d6a8ceeb9478ad22163e821cade6ec186180fcb1"
+  },
+  "roles": {
+    "Anomaly Runner": {
+      "intent": "Keep detector finds and fixed Weird artifacts for field exploration; ordinary loose armor is a purchasable/earned upgrade.",
+      "values": {
+        "loot.worldDetectors": false,
+        "loot.worldArmorRemoved": true,
+        "loot.looseArtifactsRemoved": false
+      },
+      "changes": {
+        "loot.worldArmorRemoved": true
+      }
+    },
+    "Field Medic": {
+      "intent": "Medicine defines the specialization; detectors, suits, and fixed Weird freebies should be acquired from legitimate trading and reward channels.",
+      "values": {
+        "loot.worldDetectors": true,
+        "loot.worldArmorRemoved": true,
+        "loot.looseArtifactsRemoved": true
+      },
+      "changes": {
+        "loot.worldDetectors": true,
+        "loot.worldArmorRemoved": true,
+        "loot.looseArtifactsRemoved": true
+      }
+    },
+    "Hardcore+": {
+      "intent": "Maximum eligible world-pickup scarcity while quest, traders, NPC equipment, anomaly fields and authored rewards remain.",
+      "values": {
+        "loot.worldDetectors": true,
+        "loot.worldArmorRemoved": true,
+        "loot.looseArtifactsRemoved": true
+      },
+      "changes": {}
+    },
+    "Hardcore": {
+      "intent": "Close the remaining free-armor loophole; detectors and fixed Weird artifact pickups were already removed.",
+      "values": {
+        "loot.worldDetectors": true,
+        "loot.worldArmorRemoved": true,
+        "loot.looseArtifactsRemoved": true
+      },
+      "changes": {
+        "loot.worldArmorRemoved": true
+      }
+    },
+    "Immersive": {
+      "intent": "World armor and free detectors undermine acquisition and risk; keep fixed Weird artifact discoveries as environmental storytelling.",
+      "values": {
+        "loot.worldDetectors": true,
+        "loot.worldArmorRemoved": true,
+        "loot.looseArtifactsRemoved": false
+      },
+      "changes": {
+        "loot.worldDetectors": true,
+        "loot.worldArmorRemoved": true
+      }
+    },
+    "Mercenary": {
+      "intent": "A paid combat professional should buy/earn equipment instead of receiving free detectors, suits or Weird artifacts from fixed positions.",
+      "values": {
+        "loot.worldDetectors": true,
+        "loot.worldArmorRemoved": true,
+        "loot.looseArtifactsRemoved": true
+      },
+      "changes": {
+        "loot.worldDetectors": true,
+        "loot.worldArmorRemoved": true,
+        "loot.looseArtifactsRemoved": true
+      }
+    },
+    "Mutant Hunter": {
+      "intent": "Lean on trophy sales and hunting gear purchases, not free detector/suit/Weird artifact routes; anomaly-field hunting remains possible.",
+      "values": {
+        "loot.worldDetectors": true,
+        "loot.worldArmorRemoved": true,
+        "loot.looseArtifactsRemoved": true
+      },
+      "changes": {
+        "loot.worldDetectors": true,
+        "loot.worldArmorRemoved": true,
+        "loot.looseArtifactsRemoved": true
+      }
+    },
+    "Outcast": {
+      "intent": "Remove non-quest fixed Weird artifacts as well as already scarce detectors and armor: extreme outsider hardship.",
+      "values": {
+        "loot.worldDetectors": true,
+        "loot.worldArmorRemoved": true,
+        "loot.looseArtifactsRemoved": true
+      },
+      "changes": {
+        "loot.looseArtifactsRemoved": true
+      }
+    },
+    "Scavenger": {
+      "intent": "Leave worn loose armor and unusual world discoveries to support scavenging; ordinary free detectors stay removed.",
+      "values": {
+        "loot.worldDetectors": true,
+        "loot.worldArmorRemoved": false,
+        "loot.looseArtifactsRemoved": false
+      },
+      "changes": {}
+    },
+    "Smuggler": {
+      "intent": "Profit from artifact trading and cargo rather than free suits; keep fixed artifact finds available while removing loose detectors.",
+      "values": {
+        "loot.worldDetectors": true,
+        "loot.worldArmorRemoved": true,
+        "loot.looseArtifactsRemoved": false
+      },
+      "changes": {
+        "loot.worldArmorRemoved": true
+      }
+    },
+    "Tactical": {
+      "intent": "Resource discipline and earned combat gear: no convenient non-quest detector, armor or fixed Weird artifact freebies.",
+      "values": {
+        "loot.worldDetectors": true,
+        "loot.worldArmorRemoved": true,
+        "loot.looseArtifactsRemoved": true
+      },
+      "changes": {
+        "loot.worldDetectors": true,
+        "loot.worldArmorRemoved": true,
+        "loot.looseArtifactsRemoved": true
+      }
+    },
+    "Wanderer": {
+      "intent": "Keep detectors and fixed Weird discoveries for long-haul exploration; make loose suits a deliberate reward or trade purchase.",
+      "values": {
+        "loot.worldDetectors": false,
+        "loot.worldArmorRemoved": true,
+        "loot.looseArtifactsRemoved": false
+      },
+      "changes": {
+        "loot.worldArmorRemoved": true
+      }
+    }
+  },
+  "invariants": [
+    "12 profiles retain all 452 sourced values, preserved references and medical timing.",
+    "Only Field Medic bandages restore HP (10 HP); every other profile restores 0 HP.",
+    "Anomaly Runner and Wanderer keep loose detectors and fixed Weird artifacts; Scavenger keeps scavenged armor.",
+    "Universal artifact fields and quest, trade, NPC and reward item sources are never removed by these toggles.",
+    "The existing UI and writer remain unchanged; in-game loot spawn behavior needs fresh-game verification."
+  ]
+}

@@ -1129,6 +1129,23 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "3fa10467aa4b9826d928a7fca95a4cd28930d373",
     };
 
+    // 2026-11-19: loose non-quest equipment becomes a profile choice.
+    // Only exact previous factory blobs migrate, never player-edited files.
+    private static readonly Dictionary<string, string> PreWorldRemovalPolicyFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "2187877248d2ee0b7de8497145081a59c377ef3d",
+        ["Field Medic"] = "00af67cabd152d2279b10f8391341871376472c1",
+        ["Hardcore"] = "b7b4d2878a96dc88d90751f989f0ae31b3869de8",
+        ["Immersive"] = "d8347b83b0a1d09c1a4b8b662c5c430a8e060d73",
+        ["Mercenary"] = "4544aabcd2766be21f28616bdc4d790711141ae3",
+        ["Mutant Hunter"] = "09af3e4fc6108362e0fd0adab43f3873a2b75ab9",
+        ["Outcast"] = "489983df241981a0b0c4abead96d5fbc572366a7",
+        ["Smuggler"] = "0ed51d31358b877e5de8da18e5361f609a8ab70f",
+        ["Tactical"] = "e930b45f67fa7a9de91fcd8e7dfc0be8ba6e2079",
+        ["Wanderer"] = "d6a8ceeb9478ad22163e821cade6ec186180fcb1",
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -1180,7 +1197,8 @@ public sealed class PresetDirectoryService
             && !PreScarcityRefineFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreHealTimeFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreBandageHpPolicyFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreRoleDiversityFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreRoleDiversityFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreWorldRemovalPolicyFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -1292,7 +1310,9 @@ public sealed class PresetDirectoryService
                 || (PreBandageHpPolicyFactoryBlobs.TryGetValue(name, out var preBandageHpHash)
                     && actual.Equals(preBandageHpHash, StringComparison.OrdinalIgnoreCase))
                 || (PreRoleDiversityFactoryBlobs.TryGetValue(name, out var preRoleDiversityHash)
-                    && actual.Equals(preRoleDiversityHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preRoleDiversityHash, StringComparison.OrdinalIgnoreCase))
+                || (PreWorldRemovalPolicyFactoryBlobs.TryGetValue(name, out var preWorldRemovalHash)
+                    && actual.Equals(preWorldRemovalHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

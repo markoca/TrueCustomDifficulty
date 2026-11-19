@@ -1,3 +1,8 @@
+## CURRENT 2026-11-19 — World pickup removal as profile policy
+
+* **Remove Loose Detectors**, **Remove Loose Armor** and **Remove Loose Artifacts** use the existing catalog-native World Loot checkboxes. New 12-profile policy selectively enables them as appropriate (19 native toggle edits, 10 affected profiles); no UI component, card width, control position, slider, value formatting or writer changes. Keep compact checkmark positioning, hover, reset, edited-number accents and no redundant labels.
+* Removals target only their documented non-quest source sets, preserving anomaly-field artifact spawns and story equipment. Scavenger retains ordinary loose armor for salvage; explorer roles keep fixed Weird finds. See `docs/FACTORY-PRESETS.md` for the complete ON/OFF table.
+
 ## CURRENT 2026-11-19 — Factory source diversity without UI proliferation
 
 * Factory profiles receive **363 intentional existing-source changes across 84 catalog IDs**; no UI renderer, layout, sliders, source metadata, widths or control IDs change. Every new value is presented by its existing catalog-native compact control, Stamina Usage-style numbers/captions, modified-only yellow digits, matching knob/slider grammar, hover glow and native reset.

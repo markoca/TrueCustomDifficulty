@@ -1443,7 +1443,7 @@
     },
     "loot.looseArtifactsRemoved": {
       "kind": "toggle",
-      "boolean": false
+      "boolean": true
     },
     "loot.blueprintShuffle": {
       "kind": "toggle",

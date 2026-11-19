@@ -14,6 +14,8 @@ scarcity = json.loads((ROOT/"tools/factory_preset_scarcity_refine_2026_11_18.jso
 assert len(scarcity["roles"]) == 12
 role_diversity = json.loads((ROOT/"tools/factory_preset_role_diversification_2026_11_19.json").read_text(encoding="utf-8"))
 assert len(role_diversity["roles"]) == 12
+world_removal = json.loads((ROOT/"tools/factory_preset_world_removal_policy_2026_11_19.json").read_text(encoding="utf-8"))
+assert len(world_removal["roles"]) == 12
 catalog = json.loads((ROOT/"src/TrueCustomDifficulty/Data/parameters.json").read_text(encoding="utf-8"))
 sources = {p["id"]:p for p in catalog["parameters"]}
 names = matrix["profiles"]
@@ -60,6 +62,7 @@ for index,name in enumerate(names):
         # newer source-valid stash/gear scarcity decisions explicitly supersede it.
         value = scarcity["roles"][name]["changes"].get(id, value)
         value = role_diversity["roles"][name]["changes"].get(id, value)
+        value = world_removal["roles"][name]["changes"].get(id, value)
         if p["control"]=="toggle":
             assert entry=={"kind":"toggle","boolean":value},(name,id)
         else:

@@ -1,3 +1,8 @@
+## CURRENT 2026-11-19 — Selective loose detector / armor / artifact toggles
+
+* The existing native World Loot remove controls now differ by factory role, **19 checkbox value changes across 10 profiles**, with all 12 role combinations verified. No new control, duplicate line, panel expansion, catalog range, spacing, border, hover, right-click reset or modified-meaning highlighting change.
+* Source scopes remain precise: ordinary detector finds, non-quest loose suits/helmets, and fixed Weird/Water Drip artifact spawns. **Artifact fields and quest rewards remain**; the profile-only ON/OFF defaults do not lock user customization. See `docs/FACTORY-PRESETS.md`.
+
 ## CURRENT 2026-11-19 — Profile diversity uses existing source-aligned controls
 
 * All 12 factory profiles now use 84 native sourced controls in an additional role-specific rebalance (363 actual preset edits). This is a **data-only** pass; compact 16:9 medical, survival, stash, economy, equipment and combat layouts, source rails/knobs, slider alignment, hover/reset, and yellow-only-modified-number behavior are unchanged.

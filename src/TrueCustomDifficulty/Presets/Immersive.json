@@ -1431,11 +1431,11 @@
     },
     "loot.worldDetectors": {
       "kind": "toggle",
-      "boolean": false
+      "boolean": true
     },
     "loot.worldArmorRemoved": {
       "kind": "toggle",
-      "boolean": false
+      "boolean": true
     },
     "loot.looseArtifactsRemoved": {
       "kind": "toggle",
