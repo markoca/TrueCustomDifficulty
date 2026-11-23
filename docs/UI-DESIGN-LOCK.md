@@ -1,5 +1,14 @@
 ## CURRENT 2026-11-23 — Whole Overweight percentages, source-accurate kg
 
+## 2026-11-23 — Centered rank selector and compact Food/Drink knobs (latest layout lock)
+
+Only the **Food / Drink Boxes** section of `AggregateVisualControl / AmmoDistribution` changes geometry. The full `NEWBIE · EXP · VET · MASTER` rank selector is a **251-DIP-wide group centered on the actual aggregate width** (`(ActualWidth - (4×59 + 3×5)) / 2`), no longer right-aligned. On widths below **600 DIP**, the whole selector occupies a dedicated row immediately below the left section heading (+24 DIP) so there is no title/tab overlap; the sliders and everything beneath move down by the identical offset. At wider widths, the chips remain centered in the title row. Tab click regions remain exact 59×19 DIP rectangles.
+
+The Food and Drink content knobs are **two centered rows of four** using a capped **744-DIP bank**, **14-DIP inter-column gaps**, **108-DIP cards** and the native 270° renderer with **0.68× dial radius**. A scoped `compactLayout: true` option positions the dial center at **card top +61 DIP**, caption at **+2 DIP** and endpoint labels at **card bottom −15 DIP**, without modifying any other knob family's established visual geometry. Individual native hit targets still derive from the actual smaller circle; wheel, drag, keyboard, hover glow, color-only modified values and right-click reset retain the original behavior. No new frames appear around the knobs.
+
+Exact section vertical contract (all offsets measured from Food/Drink header origin, add +24 DIP under 600 DIP panel width): branch tracks **+21..93** (72 DIP), Food heading **+101**, Food knobs **+117..225**, Drink heading **+234**, Drink knobs **+250..358**, preview heading **+368**, preview cards **+387..604** (217 DIP). The responsive measured continuation is `FoodDrinkBoxesHeight(width) = 621 DIP + (width < 600 ? 24 : 0)`, providing **17 DIP** after the preview. The older **689-DIP** geometry is superseded. The untouched ammo, grenade, medical cards and the two read-only native Chance/Weight previews keep their original widths and semantics. No CFG, profile, preset, chance step or native Weight mapping changes.
+
+
 ## 2026-11-23 — Direct 10%-step chances and Ammo-style Food/Drink bars (latest contract)
 
 The previous ten-source multiplier model is **superseded**. The player chooses a rank (NEWBIE / EXP / VET / MASTER) in the existing BREAKABLE BOXES board; selection only changes which **actual backing sources** the two branch tracks and eight item knobs edit:

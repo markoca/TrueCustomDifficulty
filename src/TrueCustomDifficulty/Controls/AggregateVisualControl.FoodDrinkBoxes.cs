@@ -14,7 +14,14 @@ namespace TrueCustomDifficulty.Controls;
 /// </summary>
 public sealed partial class AggregateVisualControl
 {
-    private const double FoodDrinkBoxesHeight = 689.0;
+    // A Food/Drink-only compact rotary grammar: responsive height is derived
+    // from the exact rank header and card positions drawn below.
+    private const double FoodDrinkKnobHeight = 108.0;
+    private const double FoodDrinkKnobGap = 14.0;
+    private static double FoodDrinkRankOffset(double width)
+        => width < 600.0 ? 24.0 : 0.0;
+    private static double FoodDrinkBoxesHeight(double width)
+        => 621.0 + FoodDrinkRankOffset(width);
     private int _foodDrinkSelectedRank = 2; // Veteran player-rank source on opening
     private readonly Rect[] _foodDrinkRankTabs = new Rect[4];
 
@@ -73,6 +80,7 @@ public sealed partial class AggregateVisualControl
         const double gap = 10.0;
         var full = Math.Max(1.0, ActualWidth - margin * 2.0);
         var half = Math.Max(1.0, (full - gap) / 2.0);
+        var rankOffset = FoodDrinkRankOffset(ActualWidth);
         DrawText(dc, "FOOD / DRINK BOXES", new Point(margin, top),
             10.2, muted, FontWeights.Bold);
 
@@ -80,11 +88,14 @@ public sealed partial class AggregateVisualControl
         // Current rank is preserved when sliders move; no dropdown scroll theft.
         const double tabWidth = 59.0;
         const double tabGap = 5.0;
-        var tabLeft = Math.Max(margin + 166.0,
-            ActualWidth - margin - (tabWidth * 4.0 + tabGap * 3.0));
+        // Center the complete selector, never align it to the right edge.
+        // At narrow widths the selector moves below the title, rather than
+        // overlapping FOOD / DRINK BOXES or forcing chips offscreen.
+        var tabLeft = (ActualWidth - (tabWidth * 4.0 + tabGap * 3.0)) / 2.0;
         for (var i = 0; i < RankTabLabels.Length; i++)
         {
-            var tab = new Rect(tabLeft + i * (tabWidth + tabGap), top - 2.0, tabWidth, 19.0);
+            var tab = new Rect(tabLeft + i * (tabWidth + tabGap),
+                top - 2.0 + rankOffset, tabWidth, 19.0);
             _foodDrinkRankTabs[i] = tab;
             var selected = _foodDrinkSelectedRank == i;
             dc.DrawRoundedRectangle(
@@ -103,36 +114,41 @@ public sealed partial class AggregateVisualControl
 
         var mode = _foodDrinkSelectedRank == 0 ? "WEIGHT" : "CHANCE";
         DrawHorizontalTrackCard(dc, foodBranch, "FOOD " + mode,
-            new Rect(margin, top + 21.0, half, 72.0),
+            new Rect(margin, top + 21.0 + rankOffset, half, 72.0),
             text, muted, border, accent, panel, pairedValueFormatting: true);
         DrawHorizontalTrackCard(dc, drinkBranch, "DRINK " + mode,
-            new Rect(margin + half + gap, top + 21.0, half, 72.0),
+            new Rect(margin + half + gap, top + 21.0 + rankOffset, half, 72.0),
             text, muted, border, accent, panel, pairedValueFormatting: true);
 
         void Knobs(ParameterViewModel?[] sources, string[] labels,
             double rowTop, Brush[] palette)
         {
-            var bank = Math.Min(full, 780.0);
-            var cell = Math.Max(1.0, (bank - 3.0 * gap) / 4.0);
+            // Center all four smaller dials in a capped 744-DIP bank;
+            // equal columns/gaps keep labels and hit circles independent.
+            var bank = Math.Min(full, 744.0);
+            var cell = Math.Max(1.0,
+                (bank - 3.0 * FoodDrinkKnobGap) / 4.0);
             var left = (ActualWidth - bank) / 2.0;
             for (var i = 0; i < 4; i++)
                 DrawSourceKnob(dc, sources[i], labels[i],
-                    new Rect(left + i * (cell + gap), rowTop, cell, 142.0),
+                    new Rect(left + i * (cell + FoodDrinkKnobGap), rowTop,
+                        cell, FoodDrinkKnobHeight),
                     text, muted, border, accent, panel,
                     percentageReadout: _foodDrinkSelectedRank != 0,
-                    dialAccent: palette[i]);
+                    dialAccent: palette[i], dialScale: 0.68,
+                    compactLayout: true);
         }
 
         DrawText(dc, "FOOD CONTENT " + mode,
-            new Point(margin, top + 101.0), 10.2, muted, FontWeights.Bold);
-        Knobs(food, FoodBoxLabels, top + 117.0, FoodPalette);
+            new Point(margin, top + 101.0 + rankOffset), 10.2, muted, FontWeights.Bold);
+        Knobs(food, FoodBoxLabels, top + 117.0 + rankOffset, FoodPalette);
         DrawText(dc, "DRINK CONTENT " + mode,
-            new Point(margin, top + 268.0), 10.2, muted, FontWeights.Bold);
-        Knobs(drink, DrinkBoxLabels, top + 284.0, DrinkPalette);
+            new Point(margin, top + 234.0 + rankOffset), 10.2, muted, FontWeights.Bold);
+        Knobs(drink, DrinkBoxLabels, top + 250.0 + rankOffset, DrinkPalette);
 
         DrawText(dc, "BOX CONTENT · NATIVE PLAYER-RANK VALUES",
-            new Point(margin, top + 436.0), 10.2, muted, FontWeights.Bold);
-        var previewTop = top + 455.0;
+            new Point(margin, top + 368.0 + rankOffset), 10.2, muted, FontWeights.Bold);
+        var previewTop = top + 387.0 + rankOffset;
         DrawFoodDrinkRankBars(dc, new Rect(margin, previewTop, half, 217.0),
             "FOOD", FoodBoxShort, FoodBoxItemIds, BaseFoodWeights,
             FoodPalette, "loot.foodBoxBranch",

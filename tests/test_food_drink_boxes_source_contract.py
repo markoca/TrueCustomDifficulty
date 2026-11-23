@@ -83,6 +83,62 @@ class FoodDrinkBoxContract(unittest.TestCase):
                 self.assertGreater(values["loot.foodBoxBranch"]["number"] +
                                    values["loot.drinkBoxBranch"]["number"], 0)
 
+    def test_compact_food_drink_layout_contract(self):
+        ui = (SOURCE / "Controls/AggregateVisualControl.FoodDrinkBoxes.cs").read_text()
+        aggregate = (SOURCE / "Controls/AggregateVisualControl.cs").read_text()
+        self.assertIn("var tabLeft = (ActualWidth - (tabWidth * 4.0 + tabGap * 3.0)) / 2.0;", ui)
+        self.assertIn("var rankOffset = FoodDrinkRankOffset(ActualWidth);", ui)
+        self.assertIn("width < 600.0 ? 24.0 : 0.0", ui)
+        self.assertIn("=> 621.0 + FoodDrinkRankOffset(width);", ui)
+        self.assertIn("private const double FoodDrinkKnobHeight = 108.0;", ui)
+        self.assertIn("private const double FoodDrinkKnobGap = 14.0;", ui)
+        self.assertIn("var bank = Math.Min(full, 744.0);", ui)
+        self.assertIn("dialScale: 0.68,", ui)
+        self.assertIn("compactLayout: true", ui)
+        self.assertIn("compactLayout ? 61.0 : 97.0", aggregate)
+        self.assertIn("compactLayout ? 15.0 : KnobTypography.EndpointInsetFromBottom", aggregate)
+        self.assertIn("FoodDrinkBoxesHeight(width)", aggregate)
+
+        # Check the same math as the renderer at narrow, breakpoint and wide widths.
+        # Rank chips must stay centered and in-bounds, all four compact dials
+        # must have equal widths/gaps, and measured height must contain preview.
+        for width in (520.0, 560.0, 599.0, 600.0, 760.0, 900.0, 1600.0):
+            with self.subTest(width=width):
+                tab_width, tab_gap, tab_count = 59.0, 5.0, 4
+                group = tab_count * tab_width + (tab_count - 1) * tab_gap
+                tab_left = (width - group) / 2.0
+                self.assertGreaterEqual(tab_left, 0.0)
+                self.assertAlmostEqual(tab_left + group / 2.0, width / 2.0)
+                self.assertLessEqual(tab_left + group, width)
+
+                inner = width - 34.0
+                bank = min(inner, 744.0)
+                gap = 14.0
+                cell = (bank - 3.0 * gap) / 4.0
+                self.assertGreaterEqual(cell, 0.0)
+                left = (width - bank) / 2.0
+                for i in range(4):
+                    x = left + i * (cell + gap)
+                    self.assertGreaterEqual(x, 0.0)
+                    self.assertLessEqual(x + cell, width)
+                    if i < 3:
+                        self.assertAlmostEqual(
+                            left + (i + 1) * (cell + gap) - (x + cell), gap)
+
+                offset = 24.0 if width < 600.0 else 0.0
+                tab_bottom = -2.0 + offset + 19.0
+                track_top = 21.0 + offset
+                self.assertGreaterEqual(track_top - tab_bottom, 4.0)
+                food_knob_bottom = 117.0 + offset + 108.0
+                drink_caption_top = 234.0 + offset
+                drink_knob_bottom = 250.0 + offset + 108.0
+                preview_caption_top = 368.0 + offset
+                preview_bottom = 387.0 + offset + 217.0
+                panel_height = 621.0 + offset
+                self.assertGreaterEqual(drink_caption_top - food_knob_bottom, 9.0)
+                self.assertGreaterEqual(preview_caption_top - drink_knob_bottom, 10.0)
+                self.assertAlmostEqual(panel_height - preview_bottom, 17.0)
+
     def test_ui_ranks_and_chance_migration(self):
         ui = (SOURCE / "Controls/AggregateVisualControl.FoodDrinkBoxes.cs").read_text()
         self.assertIn("TrySelectFoodDrinkRank", ui)

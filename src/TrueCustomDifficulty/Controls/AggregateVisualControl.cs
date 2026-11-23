@@ -3532,19 +3532,21 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         bool positivePrefix = true, string? secondaryReadout = null,
         bool inlineNativeUnit = false, bool secondaryModified = false,
         Brush? dialAccent = null, double dialScale = 1.0,
-        double? visualMaximum = null, Func<double, string>? valueFormatter = null)
+        double? visualMaximum = null, Func<double, string>? valueFormatter = null,
+        bool compactLayout = false)
     {
         // All larger hero dials (Headshot, Starvation HP and Radiation HP)
         // raise ONLY the caption by 9 DIP to restore the ordinary knob's
         // title-to-top-tick clearance. Keep the dial/gesture geometry intact.
-        var titleY = card.Top + (prominent ? 10.0 : 19.0);
+        var titleY = card.Top + (compactLayout ? 2.0 : prominent ? 10.0 : 19.0);
         DrawCenteredText(dc, label, new Point(card.Left + card.Width / 2, titleY),
             KnobTypography.CaptionSize,
             parameter?.IsControlEnabled == true ? text : muted, FontWeights.Bold);
         if (parameter is null)
             return;
 
-        var center = new Point(card.Left + card.Width / 2, card.Top + 97.0);
+        var center = new Point(card.Left + card.Width / 2,
+            card.Top + (compactLayout ? 61.0 : 97.0));
         var radius = Math.Min(WeaponKnobRadius * (prominent ? 1.18 : 1.0) * dialScale,
             (card.Width - 24.0) / 2.0);
         var dialMaximum = visualMaximum ?? parameter.Maximum;
@@ -3701,7 +3703,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 : percentageReadout ? Percent(parameter.Minimum)
                 : rawReadout ? $"{parameter.Minimum:0.#}"
                 : $"{parameter.Minimum:0.##}×",
-            new Point(center.X - radius * .80, card.Bottom - KnobTypography.EndpointInsetFromBottom),
+            new Point(center.X - radius * .80,
+                card.Bottom - (compactLayout ? 15.0 : KnobTypography.EndpointInsetFromBottom)),
             KnobTypography.EndpointSize, Brushes.White, FontWeights.SemiBold);
         DrawCenteredText(dc,
             valueFormatter is not null ? valueFormatter(dialMaximum)
@@ -3709,7 +3712,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 : percentageReadout ? Percent(dialMaximum)
                 : rawReadout ? $"{dialMaximum:0.#}"
                 : $"{dialMaximum:0.##}×",
-            new Point(center.X + radius * .80, card.Bottom - KnobTypography.EndpointInsetFromBottom),
+            new Point(center.X + radius * .80,
+                card.Bottom - (compactLayout ? 15.0 : KnobTypography.EndpointInsetFromBottom)),
             KnobTypography.EndpointSize, Brushes.White, FontWeights.SemiBold);
 
         if (!active)
@@ -6567,7 +6571,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // MEDICAL BOXES: one knob + Army Medkit share per player rank.
         var medicalBox = new Rect(margin, mix.Bottom + 30.0, inner, MedicalBoxCardHeight);
         return new AmmoDistributionGeometry(ammo, grenade, preview, knobTop, mix,
-            medicalBox, medicalBox.Bottom + 30.0 + FoodDrinkBoxesHeight + 14.0);
+            medicalBox, medicalBox.Bottom + 30.0 + FoodDrinkBoxesHeight(width) + 14.0);
     }
 
     // Shared density for the large Survival/Health aggregate panels. Rows are
