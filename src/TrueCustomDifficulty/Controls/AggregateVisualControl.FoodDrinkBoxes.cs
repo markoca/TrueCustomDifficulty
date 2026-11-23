@@ -17,11 +17,13 @@ public sealed partial class AggregateVisualControl
     // A Food/Drink-only compact rotary grammar: responsive height is derived
     // from the exact rank header and card positions drawn below.
     private const double FoodDrinkKnobHeight = 108.0;
-    private const double FoodDrinkKnobGap = 14.0;
+    private const double FoodDrinkKnobColumnGap = 18.0;
+    private const double FoodDrinkKnobRowPitch = 122.0;
+    private const double FoodDrinkKnobBankCap = 384.0;
     private static double FoodDrinkRankOffset(double width)
         => width < 600.0 ? 24.0 : 0.0;
     private static double FoodDrinkBoxesHeight(double width)
-        => 621.0 + FoodDrinkRankOffset(width);
+        => 616.0 + FoodDrinkRankOffset(width);
     private int _foodDrinkSelectedRank = 2; // Veteran player-rank source on opening
     private readonly Rect[] _foodDrinkRankTabs = new Rect[4];
 
@@ -120,35 +122,47 @@ public sealed partial class AggregateVisualControl
             new Rect(margin + half + gap, top + 21.0 + rankOffset, half, 72.0),
             text, muted, border, accent, panel, pairedValueFormatting: true);
 
-        void Knobs(ParameterViewModel?[] sources, string[] labels,
-            double rowTop, Brush[] palette)
+
+        // Food LEFT and Drink RIGHT, each a matching 2×2 grid.
+        // Cap the dial bank inside each half while preserving equal horizontal
+        // columns, identical row pitch, a shared title baseline and native
+        // compact knobs. Every hit rectangle follows its rendered center.
+        void DrawKnobGrid(ParameterViewModel?[] sources, string[] labels,
+            Brush[] palette, double groupLeft)
         {
-            // Center all four smaller dials in a capped 744-DIP bank;
-            // equal columns/gaps keep labels and hit circles independent.
-            var bank = Math.Min(full, 744.0);
-            var cell = Math.Max(1.0,
-                (bank - 3.0 * FoodDrinkKnobGap) / 4.0);
-            var left = (ActualWidth - bank) / 2.0;
+            var bank = Math.Min(Math.Max(1.0, half - 16.0), FoodDrinkKnobBankCap);
+            var cell = Math.Max(1.0, (bank - FoodDrinkKnobColumnGap) / 2.0);
+            var left = groupLeft + (half - bank) / 2.0;
+            var firstRowTop = top + 117.0 + rankOffset;
             for (var i = 0; i < 4; i++)
+            {
+                var column = i % 2;
+                var row = i / 2;
+                var knobLeft = left + column * (cell + FoodDrinkKnobColumnGap);
+                var knobTop = firstRowTop + row * FoodDrinkKnobRowPitch;
                 DrawSourceKnob(dc, sources[i], labels[i],
-                    new Rect(left + i * (cell + FoodDrinkKnobGap), rowTop,
-                        cell, FoodDrinkKnobHeight),
+                    new Rect(knobLeft, knobTop, cell, FoodDrinkKnobHeight),
                     text, muted, border, accent, panel,
                     percentageReadout: _foodDrinkSelectedRank != 0,
                     dialAccent: palette[i], dialScale: 0.68,
                     compactLayout: true);
+            }
         }
 
-        DrawText(dc, "FOOD CONTENT " + mode,
-            new Point(margin, top + 101.0 + rankOffset), 10.2, muted, FontWeights.Bold);
-        Knobs(food, FoodBoxLabels, top + 117.0 + rankOffset, FoodPalette);
-        DrawText(dc, "DRINK CONTENT " + mode,
-            new Point(margin, top + 234.0 + rankOffset), 10.2, muted, FontWeights.Bold);
-        Knobs(drink, DrinkBoxLabels, top + 250.0 + rankOffset, DrinkPalette);
+        var foodLeft = margin;
+        var drinkLeft = margin + half + gap;
+        DrawCenteredText(dc, "FOOD CONTENT " + mode,
+            new Point(foodLeft + half / 2.0, top + 101.0 + rankOffset),
+            10.2, muted, FontWeights.Bold);
+        DrawCenteredText(dc, "DRINK CONTENT " + mode,
+            new Point(drinkLeft + half / 2.0, top + 101.0 + rankOffset),
+            10.2, muted, FontWeights.Bold);
+        DrawKnobGrid(food, FoodBoxLabels, FoodPalette, foodLeft);
+        DrawKnobGrid(drink, DrinkBoxLabels, DrinkPalette, drinkLeft);
 
         DrawText(dc, "BOX CONTENT · NATIVE PLAYER-RANK VALUES",
-            new Point(margin, top + 368.0 + rankOffset), 10.2, muted, FontWeights.Bold);
-        var previewTop = top + 387.0 + rankOffset;
+            new Point(margin, top + 363.0 + rankOffset), 10.2, muted, FontWeights.Bold);
+        var previewTop = top + 382.0 + rankOffset;
         DrawFoodDrinkRankBars(dc, new Rect(margin, previewTop, half, 217.0),
             "FOOD", FoodBoxShort, FoodBoxItemIds, BaseFoodWeights,
             FoodPalette, "loot.foodBoxBranch",

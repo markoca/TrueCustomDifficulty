@@ -89,19 +89,26 @@ class FoodDrinkBoxContract(unittest.TestCase):
         self.assertIn("var tabLeft = (ActualWidth - (tabWidth * 4.0 + tabGap * 3.0)) / 2.0;", ui)
         self.assertIn("var rankOffset = FoodDrinkRankOffset(ActualWidth);", ui)
         self.assertIn("width < 600.0 ? 24.0 : 0.0", ui)
-        self.assertIn("=> 621.0 + FoodDrinkRankOffset(width);", ui)
+        self.assertIn("=> 616.0 + FoodDrinkRankOffset(width);", ui)
         self.assertIn("private const double FoodDrinkKnobHeight = 108.0;", ui)
-        self.assertIn("private const double FoodDrinkKnobGap = 14.0;", ui)
-        self.assertIn("var bank = Math.Min(full, 744.0);", ui)
+        self.assertIn("private const double FoodDrinkKnobColumnGap = 18.0;", ui)
+        self.assertIn("private const double FoodDrinkKnobRowPitch = 122.0;", ui)
+        self.assertIn("private const double FoodDrinkKnobBankCap = 384.0;", ui)
+        self.assertIn("var column = i % 2;", ui)
+        self.assertIn("var row = i / 2;", ui)
+        self.assertIn("var left = groupLeft + (half - bank) / 2.0;", ui)
+        self.assertIn("new Point(foodLeft + half / 2.0, top + 101.0 + rankOffset)", ui)
+        self.assertIn("new Point(drinkLeft + half / 2.0, top + 101.0 + rankOffset)", ui)
+        self.assertIn("DrawKnobGrid(food, FoodBoxLabels, FoodPalette, foodLeft);", ui)
+        self.assertIn("DrawKnobGrid(drink, DrinkBoxLabels, DrinkPalette, drinkLeft);", ui)
         self.assertIn("dialScale: 0.68,", ui)
         self.assertIn("compactLayout: true", ui)
         self.assertIn("compactLayout ? 61.0 : 97.0", aggregate)
         self.assertIn("compactLayout ? 15.0 : KnobTypography.EndpointInsetFromBottom", aggregate)
         self.assertIn("FoodDrinkBoxesHeight(width)", aggregate)
 
-        # Check the same math as the renderer at narrow, breakpoint and wide widths.
-        # Rank chips must stay centered and in-bounds, all four compact dials
-        # must have equal widths/gaps, and measured height must contain preview.
+        # Both banks must be symmetric, remain inside their own halves, and
+        # have no overlapping hit circles or labels at responsive widths.
         for width in (520.0, 560.0, 599.0, 600.0, 760.0, 900.0, 1600.0):
             with self.subTest(width=width):
                 tab_width, tab_gap, tab_count = 59.0, 5.0, 4
@@ -111,32 +118,41 @@ class FoodDrinkBoxContract(unittest.TestCase):
                 self.assertAlmostEqual(tab_left + group / 2.0, width / 2.0)
                 self.assertLessEqual(tab_left + group, width)
 
-                inner = width - 34.0
-                bank = min(inner, 744.0)
-                gap = 14.0
-                cell = (bank - 3.0 * gap) / 4.0
-                self.assertGreaterEqual(cell, 0.0)
-                left = (width - bank) / 2.0
-                for i in range(4):
-                    x = left + i * (cell + gap)
-                    self.assertGreaterEqual(x, 0.0)
-                    self.assertLessEqual(x + cell, width)
-                    if i < 3:
-                        self.assertAlmostEqual(
-                            left + (i + 1) * (cell + gap) - (x + cell), gap)
+                outer_margin, outer_gap = 17.0, 10.0
+                half = (width - 2 * outer_margin - outer_gap) / 2.0
+                bank = min(half - 16.0, 384.0)
+                cell = (bank - 18.0) / 2.0
+                self.assertGreaterEqual(cell, 102.0)
+                food_left = outer_margin
+                drink_left = outer_margin + half + outer_gap
+                center_gap = drink_left - (food_left + half)
+                self.assertAlmostEqual(center_gap, outer_gap)
+                for group_left in (food_left, drink_left):
+                    left = group_left + (half - bank) / 2.0
+                    # Bank, titles, headings and outer branch sliders share
+                    # the exact same group center.
+                    self.assertAlmostEqual(left + bank / 2.0,
+                                           group_left + half / 2.0)
+                    for index in range(4):
+                        column, row = index % 2, index // 2
+                        x = left + column * (cell + 18.0)
+                        y = 117.0 + row * 122.0
+                        self.assertGreaterEqual(x, group_left)
+                        self.assertLessEqual(x + cell, group_left + half)
+                        if row == 0:
+                            self.assertAlmostEqual(y + 108.0 + 14.0,
+                                                   117.0 + 122.0)
 
                 offset = 24.0 if width < 600.0 else 0.0
                 tab_bottom = -2.0 + offset + 19.0
                 track_top = 21.0 + offset
                 self.assertGreaterEqual(track_top - tab_bottom, 4.0)
-                food_knob_bottom = 117.0 + offset + 108.0
-                drink_caption_top = 234.0 + offset
-                drink_knob_bottom = 250.0 + offset + 108.0
-                preview_caption_top = 368.0 + offset
-                preview_bottom = 387.0 + offset + 217.0
-                panel_height = 621.0 + offset
-                self.assertGreaterEqual(drink_caption_top - food_knob_bottom, 9.0)
-                self.assertGreaterEqual(preview_caption_top - drink_knob_bottom, 10.0)
+                first_knob_top = 117.0 + offset
+                last_knob_bottom = first_knob_top + 122.0 + 108.0
+                preview_caption_top = 363.0 + offset
+                preview_bottom = 382.0 + offset + 217.0
+                panel_height = 616.0 + offset
+                self.assertGreaterEqual(preview_caption_top - last_knob_bottom, 16.0)
                 self.assertAlmostEqual(panel_height - preview_bottom, 17.0)
 
     def test_ui_ranks_and_chance_migration(self):

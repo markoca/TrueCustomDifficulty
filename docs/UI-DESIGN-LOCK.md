@@ -1,5 +1,18 @@
 ## CURRENT 2026-11-23 — Whole Overweight percentages, source-accurate kg
 
+## 2026-11-23 — Food left 2×2 + Drink right 2×2 (latest visual lock)
+
+**Supersedes the two full-width rows of four Food/Drink knobs.** In `Loot → Breakable Boxes → Food / Drink Boxes`, render two **simultaneous, symmetrical half-width groups** under the existing independent side-by-side FOOD/DRINK Weight-or-Chance tracks:
+
+- **FOOD LEFT:** `SAUSAGE | BREAD` in the first row, `CANNED FOOD | MILK` in the second row.
+- **DRINK RIGHT:** `WATER | BEER` in the first row, `VODKA | ENERGY DRINK` in the second row.
+- Put **FOOD CONTENT WEIGHT/CHANCE** and **DRINK CONTENT WEIGHT/CHANCE** on the **same heading baseline** centered over their respective half-width groups, with the 10-DIP gap and 17-DIP outer margins inherited from the two existing branch slider cards and the read-only FOOD/DRINK preview columns.
+- Each half centers its own 2-column bank with width `min(halfWidth − 16, 384)`, a **18-DIP inter-column gap**, equal cells and a **122-DIP row pitch**. The **108-DIP native compact knobs** keep `dialScale: 0.68`, `compactLayout: true`, native hit circles, reference marks, yellow modified values, palette, hover, wheel, drag, keyboard and right-click reset; NO rectangular knob frame is added. Ordering stays the original source-array order, using `column = i % 2` and `row = i / 2`.
+- Measured vertical coordinates relative to the Food/Drink section origin: Food/Drink branch tracks `+21..93`; both content headings `+101`; both 2×2 banks `+117..347` (first row `+117..225`, second row `+239..347`); common preview heading `+363`; original read-only Food and Drink bar cards `+382..599`; 17-DIP bottom clearance. All values receive the existing +24-DIP responsive offset below 600-DIP panel width. `FoodDrinkBoxesHeight(width) = 616 + (width < 600 ? 24 : 0)`, down from 621 DIP on standard widths. The old "+117 four horizontal Food; +250 four horizontal Drink" contract is historical.
+- Rank buttons stay horizontally centered; parent `AmmoDistribution` height derives directly from the same `FoodDrinkBoxesHeight(width)`. The Food and Drink preview bars remain **unchanged** and independently aligned to their branch sliders and 2×2 knob groups.
+- This is a **layout-only change**. No new Chance/Weight source, CFG writer edit, rank step, factory profile, preset migration or physical drop rule changes. Regression checks cover narrow (520–599), breakpoint (600), normal (760–900), and wide (1600) widths.
+
+
 ## 2026-11-23 — Centered rank selector and compact Food/Drink knobs (latest layout lock)
 
 Only the **Food / Drink Boxes** section of `AggregateVisualControl / AmmoDistribution` changes geometry. The full `NEWBIE · EXP · VET · MASTER` rank selector is a **251-DIP-wide group centered on the actual aggregate width** (`(ActualWidth - (4×59 + 3×5)) / 2`), no longer right-aligned. On widths below **600 DIP**, the whole selector occupies a dedicated row immediately below the left section heading (+24 DIP) so there is no title/tab overlap; the sliders and everything beneath move down by the identical offset. At wider widths, the chips remain centered in the title row. Tab click regions remain exact 59×19 DIP rectangles.
