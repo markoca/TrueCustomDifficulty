@@ -198,19 +198,19 @@
     },
     "combat.mutantMoveRate.bayun.clones": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.mutantMoveRate.blinddog.bite": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.mutantMoveRate.blinddog.runBite": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.mutantMoveRate.blinddog.anyAngleBite": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.mutantMoveRate.bloodsucker.claw": {
       "kind": "slider",
@@ -226,15 +226,15 @@
     },
     "combat.mutantMoveRate.bloodsucker.anomaly": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.mutantMoveRate.boar.run": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.mutantMoveRate.boar.gore": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.mutantMoveRate.boar.charge": {
       "kind": "slider",
@@ -250,7 +250,7 @@
     },
     "combat.mutantMoveRate.burer.disarm": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.mutantMoveRate.burer.throw": {
       "kind": "slider",
@@ -266,7 +266,7 @@
     },
     "combat.mutantMoveRate.chimera.run": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.mutantMoveRate.chimera.jumpIn": {
       "kind": "slider",
@@ -278,19 +278,19 @@
     },
     "combat.mutantMoveRate.controller.claw": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.mutantMoveRate.controller.psy": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.mutantMoveRate.controller.corpse": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.mutantMoveRate.controller.zombify": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.mutantMoveRate.deer.claw": {
       "kind": "slider",
@@ -306,7 +306,7 @@
     },
     "combat.mutantMoveRate.deer.dogs": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.mutantMoveRate.flesh.claw": {
       "kind": "slider",
@@ -330,11 +330,11 @@
     },
     "combat.mutantMoveRate.pseudodog.run": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.mutantMoveRate.pseudodog.bite": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.mutantMoveRate.pseudodog.retreatPhantoms": {
       "kind": "slider",
@@ -350,19 +350,19 @@
     },
     "combat.mutantMoveRate.pseudogiant.run": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.mutantMoveRate.pseudogiant.charge": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.mutantMoveRate.pseudogiant.shockwave": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.mutantMoveRate.pseudogiant.throw": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.mutantMoveRate.snork.claw": {
       "kind": "slider",
@@ -390,7 +390,7 @@
     },
     "combat.mutantMoveRate.tushkan.leap": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.psySpawnCycleDelay": {
       "kind": "slider",
@@ -1896,6 +1896,126 @@
     "stamina.overweightCriticalThreshold": {
       "kind": "slider",
       "number": 0.98
+    },
+    "loot.foodBoxBranchExperienced": {
+      "kind": "slider",
+      "number": 0.5
+    },
+    "loot.foodBoxBranchVeteran": {
+      "kind": "slider",
+      "number": 0.6
+    },
+    "loot.foodBoxBranchMaster": {
+      "kind": "slider",
+      "number": 0.6
+    },
+    "loot.drinkBoxBranchExperienced": {
+      "kind": "slider",
+      "number": 0.4
+    },
+    "loot.drinkBoxBranchVeteran": {
+      "kind": "slider",
+      "number": 0.5
+    },
+    "loot.drinkBoxBranchMaster": {
+      "kind": "slider",
+      "number": 0.6
+    },
+    "loot.foodBoxSausageExperienced": {
+      "kind": "slider",
+      "number": 0.5
+    },
+    "loot.foodBoxSausageVeteran": {
+      "kind": "slider",
+      "number": 0.4
+    },
+    "loot.foodBoxSausageMaster": {
+      "kind": "slider",
+      "number": 0.3
+    },
+    "loot.foodBoxBreadExperienced": {
+      "kind": "slider",
+      "number": 0.6
+    },
+    "loot.foodBoxBreadVeteran": {
+      "kind": "slider",
+      "number": 0.5
+    },
+    "loot.foodBoxBreadMaster": {
+      "kind": "slider",
+      "number": 0.4
+    },
+    "loot.foodBoxCannedExperienced": {
+      "kind": "slider",
+      "number": 0.4
+    },
+    "loot.foodBoxCannedVeteran": {
+      "kind": "slider",
+      "number": 0.5
+    },
+    "loot.foodBoxCannedMaster": {
+      "kind": "slider",
+      "number": 0.6
+    },
+    "loot.foodBoxMilkExperienced": {
+      "kind": "slider",
+      "number": 0.2
+    },
+    "loot.foodBoxMilkVeteran": {
+      "kind": "slider",
+      "number": 0.2
+    },
+    "loot.foodBoxMilkMaster": {
+      "kind": "slider",
+      "number": 0.3
+    },
+    "loot.drinkBoxWaterExperienced": {
+      "kind": "slider",
+      "number": 0.6
+    },
+    "loot.drinkBoxWaterVeteran": {
+      "kind": "slider",
+      "number": 0.5
+    },
+    "loot.drinkBoxWaterMaster": {
+      "kind": "slider",
+      "number": 0.4
+    },
+    "loot.drinkBoxBeerExperienced": {
+      "kind": "slider",
+      "number": 0.5
+    },
+    "loot.drinkBoxBeerVeteran": {
+      "kind": "slider",
+      "number": 0.4
+    },
+    "loot.drinkBoxBeerMaster": {
+      "kind": "slider",
+      "number": 0.3
+    },
+    "loot.drinkBoxVodkaExperienced": {
+      "kind": "slider",
+      "number": 0.2
+    },
+    "loot.drinkBoxVodkaVeteran": {
+      "kind": "slider",
+      "number": 0.3
+    },
+    "loot.drinkBoxVodkaMaster": {
+      "kind": "slider",
+      "number": 0.3
+    },
+    "loot.drinkBoxEnergyExperienced": {
+      "kind": "slider",
+      "number": 0.2
+    },
+    "loot.drinkBoxEnergyVeteran": {
+      "kind": "slider",
+      "number": 0.2
+    },
+    "loot.drinkBoxEnergyMaster": {
+      "kind": "slider",
+      "number": 0.3
     }
   }
 }

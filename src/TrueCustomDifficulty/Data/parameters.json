@@ -11899,7 +11899,7 @@
       "tab": "loot",
       "group": "Breakable Containers",
       "label": "FOOD BOX ROLL",
-      "description": "Adjust the food branch of food/drink breakable boxes. Base/Newbie uses relative Weight; Experienced, Veteran and Master use their native outer branch Chance.",
+      "description": "Newbie-only relative Weight scaler. Experienced, Veteran and Master use separate literal 0–100% Chance controls in 10% steps. Adjust the food branch of food/drink breakable boxes. Base/Newbie uses relative Weight; Experienced, Veteran and Master use their native outer branch Chance.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -11923,9 +11923,9 @@
         {
           "scope": "baseGame",
           "file": "GameData/ItemGeneratorPrototypes.cfg",
-          "prototype": "DestructibleStash_Food_Drink / _Experienced / _Veteran / _Master",
-          "path": "ItemGenerator/[0]/PossibleItems/[0].Weight (base) / .Chance (higher ranks)",
-          "operation": "scale / scaleClamp01"
+          "prototype": "DestructibleStash_Food_Drink",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Weight (Newbie/base only)",
+          "operation": "scale"
         }
       ],
       "support": {
@@ -11938,8 +11938,8 @@
         ]
       },
       "rationale": "Food branch selection in breakable boxes. 1× = Vanilla; Newbie changes relative weights, higher ranks scale native Chance.",
-      "logic": "Higher makes this branch more likely; 0× disables it on defined paths. The graph shows rank-specific results.",
-      "interaction": "Separate from item mix and from removing physical food/drink boxes.",
+      "logic": "NEWBIE: relative Weight only (not actual % drop chance). Select a higher rank to edit its native Chance directly.",
+      "interaction": "Change player-rank tab to edit direct Chance on a 10% grid. The individual chance tracks below show the true CFG values.",
       "exposeInUi": false
     },
     {
@@ -11947,7 +11947,7 @@
       "tab": "loot",
       "group": "Breakable Containers",
       "label": "DRINK BOX ROLL",
-      "description": "Adjust the drink branch of food/drink breakable boxes. Base/Newbie uses relative Weight; Experienced, Veteran and Master use their native outer branch Chance.",
+      "description": "Newbie-only relative Weight scaler. Experienced, Veteran and Master use separate literal 0–100% Chance controls in 10% steps. Adjust the drink branch of food/drink breakable boxes. Base/Newbie uses relative Weight; Experienced, Veteran and Master use their native outer branch Chance.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -11971,9 +11971,9 @@
         {
           "scope": "baseGame",
           "file": "GameData/ItemGeneratorPrototypes.cfg",
-          "prototype": "DestructibleStash_Food_Drink / _Experienced / _Veteran / _Master",
-          "path": "ItemGenerator/[0]/PossibleItems/[1].Weight (base) / .Chance (higher ranks)",
-          "operation": "scale / scaleClamp01"
+          "prototype": "DestructibleStash_Food_Drink",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Weight (Newbie/base only)",
+          "operation": "scale"
         }
       ],
       "support": {
@@ -11986,8 +11986,8 @@
         ]
       },
       "rationale": "Drink branch selection in breakable boxes. 1× = Vanilla; Newbie changes relative weights, higher ranks scale native Chance.",
-      "logic": "Higher makes this branch more likely; 0× disables it on defined paths. The graph shows rank-specific results.",
-      "interaction": "Separate from item mix and from removing physical food/drink boxes.",
+      "logic": "NEWBIE: relative Weight only (not actual % drop chance). Select a higher rank to edit its native Chance directly.",
+      "interaction": "Change player-rank tab to edit direct Chance on a 10% grid. The individual chance tracks below show the true CFG values.",
       "exposeInUi": false
     },
     {
@@ -11995,7 +11995,7 @@
       "tab": "loot",
       "group": "Breakable Containers",
       "label": "SAUSAGE MIX",
-      "description": "Adjust Sausage selection in food/drink breakable boxes: Newbie Weight, and Experienced/Veteran/Master per-item Chance.",
+      "description": "Newbie-only relative Weight scaler. Experienced, Veteran and Master use separate literal 0–100% Chance controls in 10% steps. Adjust Sausage selection in food/drink breakable boxes: Newbie Weight, and Experienced/Veteran/Master per-item Chance.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -12019,9 +12019,9 @@
         {
           "scope": "baseGame",
           "file": "GameData/ItemGeneratorPrototypes.cfg",
-          "prototype": "DestructibleStash_Food / _Experienced / _Veteran / _Master",
-          "path": "ItemGenerator/[0]/PossibleItems/[0].Weight (base) / .Chance (higher ranks)",
-          "operation": "scale / scaleClamp01"
+          "prototype": "DestructibleStash_Food",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Weight (Newbie/base only)",
+          "operation": "scale"
         }
       ],
       "support": {
@@ -12034,8 +12034,8 @@
         ]
       },
       "rationale": "How often Sausage gets picked from food/drink breakable boxes. 1× = Vanilla; zero = unavailable from defined pools.",
-      "logic": "Newbie = share of weighted picks; Experienced/Veteran/Master = item chance. See rank preview.",
-      "interaction": "Works with FOOD/DRINK BOX ROLL; does not change quantities or physical box counts.",
+      "logic": "NEWBIE: relative Weight only (not actual % drop chance). Select a higher rank to edit its native Chance directly.",
+      "interaction": "Change player-rank tab to edit direct Chance on a 10% grid. The individual chance tracks below show the true CFG values.",
       "exposeInUi": false
     },
     {
@@ -12043,7 +12043,7 @@
       "tab": "loot",
       "group": "Breakable Containers",
       "label": "BREAD MIX",
-      "description": "Adjust Bread selection in food/drink breakable boxes: Newbie Weight, and Experienced/Veteran/Master per-item Chance.",
+      "description": "Newbie-only relative Weight scaler. Experienced, Veteran and Master use separate literal 0–100% Chance controls in 10% steps. Adjust Bread selection in food/drink breakable boxes: Newbie Weight, and Experienced/Veteran/Master per-item Chance.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -12067,9 +12067,9 @@
         {
           "scope": "baseGame",
           "file": "GameData/ItemGeneratorPrototypes.cfg",
-          "prototype": "DestructibleStash_Food / _Experienced / _Veteran / _Master",
-          "path": "ItemGenerator/[0]/PossibleItems/[1].Weight (base) / .Chance (higher ranks)",
-          "operation": "scale / scaleClamp01"
+          "prototype": "DestructibleStash_Food",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Weight (Newbie/base only)",
+          "operation": "scale"
         }
       ],
       "support": {
@@ -12082,8 +12082,8 @@
         ]
       },
       "rationale": "How often Bread gets picked from food/drink breakable boxes. 1× = Vanilla; zero = unavailable from defined pools.",
-      "logic": "Newbie = share of weighted picks; Experienced/Veteran/Master = item chance. See rank preview.",
-      "interaction": "Works with FOOD/DRINK BOX ROLL; does not change quantities or physical box counts.",
+      "logic": "NEWBIE: relative Weight only (not actual % drop chance). Select a higher rank to edit its native Chance directly.",
+      "interaction": "Change player-rank tab to edit direct Chance on a 10% grid. The individual chance tracks below show the true CFG values.",
       "exposeInUi": false
     },
     {
@@ -12091,7 +12091,7 @@
       "tab": "loot",
       "group": "Breakable Containers",
       "label": "CANNED FOOD MIX",
-      "description": "Adjust CannedFood selection in food/drink breakable boxes: Newbie Weight, and Experienced/Veteran/Master per-item Chance.",
+      "description": "Newbie-only relative Weight scaler. Experienced, Veteran and Master use separate literal 0–100% Chance controls in 10% steps. Adjust CannedFood selection in food/drink breakable boxes: Newbie Weight, and Experienced/Veteran/Master per-item Chance.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -12115,9 +12115,9 @@
         {
           "scope": "baseGame",
           "file": "GameData/ItemGeneratorPrototypes.cfg",
-          "prototype": "DestructibleStash_Food / _Experienced / _Veteran / _Master",
-          "path": "ItemGenerator/[0]/PossibleItems/[2].Weight (base) / .Chance (higher ranks)",
-          "operation": "scale / scaleClamp01"
+          "prototype": "DestructibleStash_Food",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Weight (Newbie/base only)",
+          "operation": "scale"
         }
       ],
       "support": {
@@ -12130,8 +12130,8 @@
         ]
       },
       "rationale": "How often CannedFood gets picked from food/drink breakable boxes. 1× = Vanilla; zero = unavailable from defined pools.",
-      "logic": "Newbie = share of weighted picks; Experienced/Veteran/Master = item chance. See rank preview.",
-      "interaction": "Works with FOOD/DRINK BOX ROLL; does not change quantities or physical box counts.",
+      "logic": "NEWBIE: relative Weight only (not actual % drop chance). Select a higher rank to edit its native Chance directly.",
+      "interaction": "Change player-rank tab to edit direct Chance on a 10% grid. The individual chance tracks below show the true CFG values.",
       "exposeInUi": false
     },
     {
@@ -12139,7 +12139,7 @@
       "tab": "loot",
       "group": "Breakable Containers",
       "label": "MILK MIX",
-      "description": "Adjust Milk selection in food/drink breakable boxes: Newbie Weight, and Experienced/Veteran/Master per-item Chance.",
+      "description": "Newbie-only relative Weight scaler. Experienced, Veteran and Master use separate literal 0–100% Chance controls in 10% steps. Adjust Milk selection in food/drink breakable boxes: Newbie Weight, and Experienced/Veteran/Master per-item Chance.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -12163,9 +12163,9 @@
         {
           "scope": "baseGame",
           "file": "GameData/ItemGeneratorPrototypes.cfg",
-          "prototype": "DestructibleStash_Food / _Experienced / _Veteran / _Master",
-          "path": "ItemGenerator/[0]/PossibleItems/[3].Weight (base) / .Chance (higher ranks)",
-          "operation": "scale / scaleClamp01"
+          "prototype": "DestructibleStash_Food",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Weight (Newbie/base only)",
+          "operation": "scale"
         }
       ],
       "support": {
@@ -12178,8 +12178,8 @@
         ]
       },
       "rationale": "How often Milk gets picked from food/drink breakable boxes. 1× = Vanilla; zero = unavailable from defined pools.",
-      "logic": "Newbie = share of weighted picks; Experienced/Veteran/Master = item chance. See rank preview.",
-      "interaction": "Works with FOOD/DRINK BOX ROLL; does not change quantities or physical box counts.",
+      "logic": "NEWBIE: relative Weight only (not actual % drop chance). Select a higher rank to edit its native Chance directly.",
+      "interaction": "Change player-rank tab to edit direct Chance on a 10% grid. The individual chance tracks below show the true CFG values.",
       "exposeInUi": false
     },
     {
@@ -12187,7 +12187,7 @@
       "tab": "loot",
       "group": "Breakable Containers",
       "label": "WATER MIX",
-      "description": "Adjust Water selection in food/drink breakable boxes: Newbie Weight, and Experienced/Veteran/Master per-item Chance.",
+      "description": "Newbie-only relative Weight scaler. Experienced, Veteran and Master use separate literal 0–100% Chance controls in 10% steps. Adjust Water selection in food/drink breakable boxes: Newbie Weight, and Experienced/Veteran/Master per-item Chance.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -12211,9 +12211,9 @@
         {
           "scope": "baseGame",
           "file": "GameData/ItemGeneratorPrototypes.cfg",
-          "prototype": "DestructibleStash_Drink / _Experienced / _Veteran / _Master",
-          "path": "ItemGenerator/[0]/PossibleItems/[0].Weight (base) / .Chance (higher ranks)",
-          "operation": "scale / scaleClamp01"
+          "prototype": "DestructibleStash_Drink",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Weight (Newbie/base only)",
+          "operation": "scale"
         }
       ],
       "support": {
@@ -12226,8 +12226,8 @@
         ]
       },
       "rationale": "How often Water gets picked from food/drink breakable boxes. 1× = Vanilla; zero = unavailable from defined pools.",
-      "logic": "Newbie = share of weighted picks; Experienced/Veteran/Master = item chance. See rank preview.",
-      "interaction": "Works with FOOD/DRINK BOX ROLL; does not change quantities or physical box counts.",
+      "logic": "NEWBIE: relative Weight only (not actual % drop chance). Select a higher rank to edit its native Chance directly.",
+      "interaction": "Change player-rank tab to edit direct Chance on a 10% grid. The individual chance tracks below show the true CFG values.",
       "exposeInUi": false
     },
     {
@@ -12235,7 +12235,7 @@
       "tab": "loot",
       "group": "Breakable Containers",
       "label": "BEER MIX",
-      "description": "Adjust Beer selection in food/drink breakable boxes: Newbie Weight, and Experienced/Veteran/Master per-item Chance.",
+      "description": "Newbie-only relative Weight scaler. Experienced, Veteran and Master use separate literal 0–100% Chance controls in 10% steps. Adjust Beer selection in food/drink breakable boxes: Newbie Weight, and Experienced/Veteran/Master per-item Chance.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -12259,9 +12259,9 @@
         {
           "scope": "baseGame",
           "file": "GameData/ItemGeneratorPrototypes.cfg",
-          "prototype": "DestructibleStash_Drink / _Experienced / _Veteran / _Master",
-          "path": "ItemGenerator/[0]/PossibleItems/[1].Weight (base) / .Chance (higher ranks)",
-          "operation": "scale / scaleClamp01"
+          "prototype": "DestructibleStash_Drink",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Weight (Newbie/base only)",
+          "operation": "scale"
         }
       ],
       "support": {
@@ -12274,8 +12274,8 @@
         ]
       },
       "rationale": "How often Beer gets picked from food/drink breakable boxes. 1× = Vanilla; zero = unavailable from defined pools.",
-      "logic": "Newbie = share of weighted picks; Experienced/Veteran/Master = item chance. See rank preview.",
-      "interaction": "Works with FOOD/DRINK BOX ROLL; does not change quantities or physical box counts.",
+      "logic": "NEWBIE: relative Weight only (not actual % drop chance). Select a higher rank to edit its native Chance directly.",
+      "interaction": "Change player-rank tab to edit direct Chance on a 10% grid. The individual chance tracks below show the true CFG values.",
       "exposeInUi": false
     },
     {
@@ -12283,7 +12283,7 @@
       "tab": "loot",
       "group": "Breakable Containers",
       "label": "VODKA MIX",
-      "description": "Adjust Vodka selection in food/drink breakable boxes: Newbie Weight, and Experienced/Veteran/Master per-item Chance.",
+      "description": "Newbie-only relative Weight scaler. Experienced, Veteran and Master use separate literal 0–100% Chance controls in 10% steps. Adjust Vodka selection in food/drink breakable boxes: Newbie Weight, and Experienced/Veteran/Master per-item Chance.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -12307,9 +12307,9 @@
         {
           "scope": "baseGame",
           "file": "GameData/ItemGeneratorPrototypes.cfg",
-          "prototype": "DestructibleStash_Drink / _Experienced / _Veteran / _Master",
-          "path": "ItemGenerator/[0]/PossibleItems/[2].Weight (base) / .Chance (higher ranks)",
-          "operation": "scale / scaleClamp01"
+          "prototype": "DestructibleStash_Drink",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Weight (Newbie/base only)",
+          "operation": "scale"
         }
       ],
       "support": {
@@ -12322,8 +12322,8 @@
         ]
       },
       "rationale": "How often Vodka gets picked from food/drink breakable boxes. 1× = Vanilla; zero = unavailable from defined pools.",
-      "logic": "Newbie = share of weighted picks; Experienced/Veteran/Master = item chance. See rank preview.",
-      "interaction": "Works with FOOD/DRINK BOX ROLL; does not change quantities or physical box counts.",
+      "logic": "NEWBIE: relative Weight only (not actual % drop chance). Select a higher rank to edit its native Chance directly.",
+      "interaction": "Change player-rank tab to edit direct Chance on a 10% grid. The individual chance tracks below show the true CFG values.",
       "exposeInUi": false
     },
     {
@@ -12331,7 +12331,7 @@
       "tab": "loot",
       "group": "Breakable Containers",
       "label": "ENERGY DRINK MIX",
-      "description": "Adjust Energetic selection in food/drink breakable boxes: Newbie Weight, and Experienced/Veteran/Master per-item Chance.",
+      "description": "Newbie-only relative Weight scaler. Experienced, Veteran and Master use separate literal 0–100% Chance controls in 10% steps. Adjust Energetic selection in food/drink breakable boxes: Newbie Weight, and Experienced/Veteran/Master per-item Chance.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -12355,9 +12355,9 @@
         {
           "scope": "baseGame",
           "file": "GameData/ItemGeneratorPrototypes.cfg",
-          "prototype": "DestructibleStash_Drink / _Experienced / _Veteran / _Master",
-          "path": "ItemGenerator/[0]/PossibleItems/[3].Weight (base) / .Chance (higher ranks)",
-          "operation": "scale / scaleClamp01"
+          "prototype": "DestructibleStash_Drink",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Weight (Newbie/base only)",
+          "operation": "scale"
         }
       ],
       "support": {
@@ -12370,8 +12370,1448 @@
         ]
       },
       "rationale": "How often Energetic gets picked from food/drink breakable boxes. 1× = Vanilla; zero = unavailable from defined pools.",
-      "logic": "Newbie = share of weighted picks; Experienced/Veteran/Master = item chance. See rank preview.",
-      "interaction": "Works with FOOD/DRINK BOX ROLL; does not change quantities or physical box counts.",
+      "logic": "NEWBIE: relative Weight only (not actual % drop chance). Select a higher rank to edit its native Chance directly.",
+      "interaction": "Change player-rank tab to edit direct Chance on a 10% grid. The individual chance tracks below show the true CFG values.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.foodBoxBranchExperienced",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "FOOD BOX CHANCE · Experienced",
+      "description": "Literal Experienced food/drink box CFG Chance. Vanilla is 60%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Experienced absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.6
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Experienced food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Experienced source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 60%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Experienced chance: 60% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.foodBoxBranchVeteran",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "FOOD BOX CHANCE · Veteran",
+      "description": "Literal Veteran food/drink box CFG Chance. Vanilla is 70%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Veteran absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.7
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Veteran food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Veteran source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 70%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Veteran chance: 70% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.foodBoxBranchMaster",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "FOOD BOX CHANCE · Master",
+      "description": "Literal Master food/drink box CFG Chance. Vanilla is 80%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Master absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.8
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Master food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Master source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 80%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Master chance: 80% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.drinkBoxBranchExperienced",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "DRINK BOX CHANCE · Experienced",
+      "description": "Literal Experienced food/drink box CFG Chance. Vanilla is 60%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Experienced absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.6
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Experienced food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Experienced source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 60%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Experienced chance: 60% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.drinkBoxBranchVeteran",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "DRINK BOX CHANCE · Veteran",
+      "description": "Literal Veteran food/drink box CFG Chance. Vanilla is 70%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Veteran absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.7
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Veteran food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Veteran source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 70%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Veteran chance: 70% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.drinkBoxBranchMaster",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "DRINK BOX CHANCE · Master",
+      "description": "Literal Master food/drink box CFG Chance. Vanilla is 80%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Master absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.8
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Master food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Master source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 80%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Master chance: 80% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.foodBoxSausageExperienced",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "SAUSAGE CHANCE · Experienced",
+      "description": "Literal Experienced food/drink box CFG Chance. Vanilla is 60%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Experienced absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.6
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Experienced food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Experienced source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 60%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Experienced chance: 60% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.foodBoxSausageVeteran",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "SAUSAGE CHANCE · Veteran",
+      "description": "Literal Veteran food/drink box CFG Chance. Vanilla is 50%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Veteran absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.5
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Veteran food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Veteran source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 50%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Veteran chance: 50% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.foodBoxSausageMaster",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "SAUSAGE CHANCE · Master",
+      "description": "Literal Master food/drink box CFG Chance. Vanilla is 40%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Master absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.4
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Master food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Master source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 40%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Master chance: 40% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.foodBoxBreadExperienced",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "BREAD CHANCE · Experienced",
+      "description": "Literal Experienced food/drink box CFG Chance. Vanilla is 60%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Experienced absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.6
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Experienced food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Experienced source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 60%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Experienced chance: 60% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.foodBoxBreadVeteran",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "BREAD CHANCE · Veteran",
+      "description": "Literal Veteran food/drink box CFG Chance. Vanilla is 50%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Veteran absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.5
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Veteran food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Veteran source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 50%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Veteran chance: 50% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.foodBoxBreadMaster",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "BREAD CHANCE · Master",
+      "description": "Literal Master food/drink box CFG Chance. Vanilla is 40%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Master absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.4
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Master food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Master source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 40%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Master chance: 40% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.foodBoxCannedExperienced",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "CANNED FOOD CHANCE · Experienced",
+      "description": "Literal Experienced food/drink box CFG Chance. Vanilla is 40%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Experienced absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.4
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Experienced food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Experienced source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 40%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Experienced chance: 40% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.foodBoxCannedVeteran",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "CANNED FOOD CHANCE · Veteran",
+      "description": "Literal Veteran food/drink box CFG Chance. Vanilla is 50%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Veteran absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.5
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Veteran food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Veteran source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 50%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Veteran chance: 50% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.foodBoxCannedMaster",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "CANNED FOOD CHANCE · Master",
+      "description": "Literal Master food/drink box CFG Chance. Vanilla is 60%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Master absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.6
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Master food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Master source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 60%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Master chance: 60% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.foodBoxMilkExperienced",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "MILK CHANCE · Experienced",
+      "description": "Literal Experienced food/drink box CFG Chance. Vanilla is 30%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Experienced absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.3
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Experienced food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Experienced source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 30%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Experienced chance: 30% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.foodBoxMilkVeteran",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "MILK CHANCE · Veteran",
+      "description": "Literal Veteran food/drink box CFG Chance. Vanilla is 40%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Veteran absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.4
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Veteran food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Veteran source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 40%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Veteran chance: 40% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.foodBoxMilkMaster",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "MILK CHANCE · Master",
+      "description": "Literal Master food/drink box CFG Chance. Vanilla is 50%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Master absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.5
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Master food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Master source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 50%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Master chance: 50% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.drinkBoxWaterExperienced",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "WATER CHANCE · Experienced",
+      "description": "Literal Experienced food/drink box CFG Chance. Vanilla is 60%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Experienced absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.6
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Experienced food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Experienced source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 60%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Experienced chance: 60% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.drinkBoxWaterVeteran",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "WATER CHANCE · Veteran",
+      "description": "Literal Veteran food/drink box CFG Chance. Vanilla is 50%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Veteran absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.5
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Veteran food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Veteran source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 50%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Veteran chance: 50% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.drinkBoxWaterMaster",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "WATER CHANCE · Master",
+      "description": "Literal Master food/drink box CFG Chance. Vanilla is 40%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Master absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.4
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Master food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Master source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 40%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Master chance: 40% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.drinkBoxBeerExperienced",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "BEER CHANCE · Experienced",
+      "description": "Literal Experienced food/drink box CFG Chance. Vanilla is 60%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Experienced absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.6
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Experienced food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Experienced source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 60%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Experienced chance: 60% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.drinkBoxBeerVeteran",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "BEER CHANCE · Veteran",
+      "description": "Literal Veteran food/drink box CFG Chance. Vanilla is 50%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Veteran absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.5
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Veteran food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Veteran source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 50%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Veteran chance: 50% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.drinkBoxBeerMaster",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "BEER CHANCE · Master",
+      "description": "Literal Master food/drink box CFG Chance. Vanilla is 40%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Master absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.4
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Master food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Master source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 40%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Master chance: 40% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.drinkBoxVodkaExperienced",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "VODKA CHANCE · Experienced",
+      "description": "Literal Experienced food/drink box CFG Chance. Vanilla is 40%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Experienced absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.4
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Experienced food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Experienced source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 40%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Experienced chance: 40% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.drinkBoxVodkaVeteran",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "VODKA CHANCE · Veteran",
+      "description": "Literal Veteran food/drink box CFG Chance. Vanilla is 50%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Veteran absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.5
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Veteran food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Veteran source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 50%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Veteran chance: 50% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.drinkBoxVodkaMaster",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "VODKA CHANCE · Master",
+      "description": "Literal Master food/drink box CFG Chance. Vanilla is 60%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Master absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.6
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Master food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Master source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 60%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Master chance: 60% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.drinkBoxEnergyExperienced",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "ENERGY DRINK CHANCE · Experienced",
+      "description": "Literal Experienced food/drink box CFG Chance. Vanilla is 30%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Experienced absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.3
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Experienced food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Experienced source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 30%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Experienced chance: 30% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.drinkBoxEnergyVeteran",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "ENERGY DRINK CHANCE · Veteran",
+      "description": "Literal Veteran food/drink box CFG Chance. Vanilla is 40%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Veteran absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.4
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Veteran food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Veteran source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 40%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Veteran chance: 40% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.drinkBoxEnergyMaster",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "ENERGY DRINK CHANCE · Master",
+      "description": "Literal Master food/drink box CFG Chance. Vanilla is 50%; 0.6 represents exactly 60%, and controls move in 10% increments. Independent of other ranks.",
+      "control": "slider",
+      "valueKind": "probability",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Master absolute Chance"
+      },
+      "vanilla": {
+        "All": 0.5
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "Defined Master food/drink wrapper or leaf",
+          "path": "ItemGenerator/[0]/PossibleItems/[source index].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Writes Master source Chance directly, not a scaler against Vanilla.",
+          "10% editing step. Vanilla 50%; values are stored as native 0–1 fractions.",
+          "Physical crate counts and item quantities are unaffected.",
+          "The missing DestructibleStash_Food_Drink_Newbie generator is excluded."
+        ]
+      },
+      "rationale": "Actual Master chance: 50% Vanilla. Direct 0–100% in 10% steps. Not a multiplier.",
+      "logic": "Changing one rank's chance never changes other ranks. Zero means this native chance will never pass.",
+      "interaction": "Choose the rank in the Food/Drink board; the probability knob and preview bars show its exact chance.",
       "exposeInUi": false
     },
     {

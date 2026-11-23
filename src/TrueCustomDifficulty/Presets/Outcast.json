@@ -313,7 +313,7 @@
     },
     "combat.mutantMoveRate.flesh.claw": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.mutantMoveRate.flesh.leap": {
       "kind": "slider",
@@ -389,7 +389,7 @@
     },
     "combat.mutantMoveRate.tushkan.claw": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.mutantMoveRate.tushkan.leap": {
       "kind": "slider",
@@ -1899,6 +1899,126 @@
     "stamina.overweightCriticalThreshold": {
       "kind": "slider",
       "number": 0.93
+    },
+    "loot.foodBoxBranchExperienced": {
+      "kind": "slider",
+      "number": 0.2
+    },
+    "loot.foodBoxBranchVeteran": {
+      "kind": "slider",
+      "number": 0.3
+    },
+    "loot.foodBoxBranchMaster": {
+      "kind": "slider",
+      "number": 0.3
+    },
+    "loot.drinkBoxBranchExperienced": {
+      "kind": "slider",
+      "number": 0.2
+    },
+    "loot.drinkBoxBranchVeteran": {
+      "kind": "slider",
+      "number": 0.2
+    },
+    "loot.drinkBoxBranchMaster": {
+      "kind": "slider",
+      "number": 0.2
+    },
+    "loot.foodBoxSausageExperienced": {
+      "kind": "slider",
+      "number": 0.6
+    },
+    "loot.foodBoxSausageVeteran": {
+      "kind": "slider",
+      "number": 0.5
+    },
+    "loot.foodBoxSausageMaster": {
+      "kind": "slider",
+      "number": 0.4
+    },
+    "loot.foodBoxBreadExperienced": {
+      "kind": "slider",
+      "number": 0.5
+    },
+    "loot.foodBoxBreadVeteran": {
+      "kind": "slider",
+      "number": 0.4
+    },
+    "loot.foodBoxBreadMaster": {
+      "kind": "slider",
+      "number": 0.3
+    },
+    "loot.foodBoxCannedExperienced": {
+      "kind": "slider",
+      "number": 0.2
+    },
+    "loot.foodBoxCannedVeteran": {
+      "kind": "slider",
+      "number": 0.3
+    },
+    "loot.foodBoxCannedMaster": {
+      "kind": "slider",
+      "number": 0.3
+    },
+    "loot.foodBoxMilkExperienced": {
+      "kind": "slider",
+      "number": 0.1
+    },
+    "loot.foodBoxMilkVeteran": {
+      "kind": "slider",
+      "number": 0.1
+    },
+    "loot.foodBoxMilkMaster": {
+      "kind": "slider",
+      "number": 0.1
+    },
+    "loot.drinkBoxWaterExperienced": {
+      "kind": "slider",
+      "number": 0.5
+    },
+    "loot.drinkBoxWaterVeteran": {
+      "kind": "slider",
+      "number": 0.4
+    },
+    "loot.drinkBoxWaterMaster": {
+      "kind": "slider",
+      "number": 0.3
+    },
+    "loot.drinkBoxBeerExperienced": {
+      "kind": "slider",
+      "number": 0.2
+    },
+    "loot.drinkBoxBeerVeteran": {
+      "kind": "slider",
+      "number": 0.1
+    },
+    "loot.drinkBoxBeerMaster": {
+      "kind": "slider",
+      "number": 0.1
+    },
+    "loot.drinkBoxVodkaExperienced": {
+      "kind": "slider",
+      "number": 0
+    },
+    "loot.drinkBoxVodkaVeteran": {
+      "kind": "slider",
+      "number": 0
+    },
+    "loot.drinkBoxVodkaMaster": {
+      "kind": "slider",
+      "number": 0
+    },
+    "loot.drinkBoxEnergyExperienced": {
+      "kind": "slider",
+      "number": 0.1
+    },
+    "loot.drinkBoxEnergyVeteran": {
+      "kind": "slider",
+      "number": 0.1
+    },
+    "loot.drinkBoxEnergyMaster": {
+      "kind": "slider",
+      "number": 0.1
     }
   }
 }

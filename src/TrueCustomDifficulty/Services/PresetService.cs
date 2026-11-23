@@ -43,11 +43,37 @@ public sealed class PresetService
             var preset = JsonSerializer.Deserialize<PresetFile>(json, Options)
                           ?? throw new InvalidDataException("Preset file could not be parsed.");
             Validate(preset);
+            MigrateFoodDrinkBoxChances(preset);
             return preset;
         }
         catch (JsonException ex)
         {
             throw new InvalidDataException("Preset file is not valid JSON or uses an invalid preset value.", ex);
+        }
+    }
+
+    // In-memory upgrade for historical 10-multiplier presets. Only Newbie
+    // weights still use multipliers; older higher-rank output is translated
+    // to literal 10% Chance fields without editing the user's stored file.
+    private static void MigrateFoodDrinkBoxChances(PresetFile preset)
+    {
+        foreach (var root in FoodDrinkBoxPolicy.Roots)
+        {
+            if (!preset.Values.TryGetValue(root, out var legacy) ||
+                legacy.Number is not double factor || !double.IsFinite(factor))
+                continue;
+            for (var rank = 1; rank <= 3; rank++)
+            {
+                var id = FoodDrinkBoxPolicy.ChanceId(root, rank);
+                if (preset.Values.ContainsKey(id))
+                    continue;
+                preset.Values[id] = new PresetValue
+                {
+                    Kind = "slider",
+                    Number = FoodDrinkBoxPolicy.SnapChance(
+                        FoodDrinkBoxPolicy.VanillaChance(root, rank) * factor)
+                };
+            }
         }
     }
 

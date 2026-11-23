@@ -6827,7 +6827,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "loot.expensiveStashAmmoQuantity" or
             "loot.ammoBoxWeight918" or "loot.ammoBoxWeight045" or
             "loot.ammoBoxWeight545" or "loot.ammoBoxWeight012" or
-            "loot.medicalBoxArmyMedkitWeight" => $"{rawValue:0.##}×",
+            "loot.medicalBoxArmyMedkitWeight" or
+            "loot.foodBoxBranch" or "loot.drinkBoxBranch" => $"{rawValue:0.##}×",
+            _ when parameter.Definition.Display?.Primary == "percent" => $"{rawValue * 100.0:0}%",
             "loot.cheapStashGrenadeChance" or "loot.expensiveStashMoneyChance" =>
                 $"{rawValue * 100.0:0}%",
             "loot.cheapStashGrenadeQuantity" => $"{rawValue:0}",
@@ -6931,10 +6933,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 track, parameter.Minimum, parameter.Maximum);
 
         var halfWidth = Math.Max(1.0, track.Width / 2.0 - 4.0);
-        dc.DrawText(CreateText(FormatCompact(parameter.Minimum), axisSize,
+        var chanceTrack = parameter.Definition.Display?.Primary == "percent";
+        dc.DrawText(CreateText(chanceTrack ? $"{parameter.Minimum * 100:0}%" : FormatCompact(parameter.Minimum), axisSize,
                 muted, FontWeights.Normal, halfWidth),
             new Point(track.Left, card.Top + 52.0));
-        var right = CreateText(FormatCompact(parameter.Maximum), axisSize,
+        var right = CreateText(chanceTrack ? $"{parameter.Maximum * 100:0}%" : FormatCompact(parameter.Maximum), axisSize,
             muted, FontWeights.Normal, halfWidth);
         dc.DrawText(right, new Point(
             track.Right - right.WidthIncludingTrailingWhitespace,
@@ -7057,6 +7060,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         Focus();
 
         var point = e.GetPosition(this);
+        if (TrySelectFoodDrinkRank(point))
+        {
+            e.Handled = true;
+            return;
+        }
         NpcCardSelectAt(point);
         GenericCardSelectAt(point);
         if (NpcNeedBoostMouseDown(point) || StashPresenceMouseDown(point))
@@ -8762,7 +8770,37 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 "loot.drinkBoxWater",
                 "loot.drinkBoxBeer",
                 "loot.drinkBoxVodka",
-                "loot.drinkBoxEnergy"
+                "loot.drinkBoxEnergy",
+                "loot.foodBoxBranchExperienced",
+                "loot.foodBoxBranchVeteran",
+                "loot.foodBoxBranchMaster",
+                "loot.drinkBoxBranchExperienced",
+                "loot.drinkBoxBranchVeteran",
+                "loot.drinkBoxBranchMaster",
+                "loot.foodBoxSausageExperienced",
+                "loot.foodBoxSausageVeteran",
+                "loot.foodBoxSausageMaster",
+                "loot.foodBoxBreadExperienced",
+                "loot.foodBoxBreadVeteran",
+                "loot.foodBoxBreadMaster",
+                "loot.foodBoxCannedExperienced",
+                "loot.foodBoxCannedVeteran",
+                "loot.foodBoxCannedMaster",
+                "loot.foodBoxMilkExperienced",
+                "loot.foodBoxMilkVeteran",
+                "loot.foodBoxMilkMaster",
+                "loot.drinkBoxWaterExperienced",
+                "loot.drinkBoxWaterVeteran",
+                "loot.drinkBoxWaterMaster",
+                "loot.drinkBoxBeerExperienced",
+                "loot.drinkBoxBeerVeteran",
+                "loot.drinkBoxBeerMaster",
+                "loot.drinkBoxVodkaExperienced",
+                "loot.drinkBoxVodkaVeteran",
+                "loot.drinkBoxVodkaMaster",
+                "loot.drinkBoxEnergyExperienced",
+                "loot.drinkBoxEnergyVeteran",
+                "loot.drinkBoxEnergyMaster"
             },
             _ => Array.Empty<string>()
         };
