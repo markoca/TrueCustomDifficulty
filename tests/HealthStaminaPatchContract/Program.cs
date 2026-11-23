@@ -131,6 +131,9 @@ internal static class Program
         // A change to MAX CARRY WEIGHT relocates the four vanilla-ratio
         // thresholds and HUD markers even without editing any stage.
         var carry = vm.AllParameters.Single(p => p.Id == "stamina.maxCarryWeight");
+        Check(carry.VisualAggregateFamily == "OverweightThresholds"
+              && !carry.IsVisualAggregateAnchor,
+            "MAX CARRY WEIGHT must be an editable member of the four-node graph");
         carry.CurrentNumber = 115.0;
         var output = Path.Combine(_keepRoot ?? Path.GetTempPath(),
             "TCD_Health_Stamina", "overweight-capacity");
@@ -226,8 +229,11 @@ internal static class Program
         var vm = new MainViewModel(Catalog);
         var stamina = vm.Tabs.Single(t => t.Id == "stamina");
         Check(stamina.Parameters.Any(p => p.Id == vault.Id && p.VisualAggregateFamily == "StaminaCore")
-            && stamina.Parameters.Any(p => p.Id == carry.Id && p.VisualAggregateFamily == "StaminaCore"),
-            "Vault height and carry weight must remain in the Core Stamina visual family");
+            && stamina.Parameters.Any(p => p.Id == carry.Id
+                && p.VisualAggregateFamily == "OverweightThresholds")
+            && !stamina.Parameters.Any(p => p.Id == carry.Id
+                && p.VisualAggregateFamily == "StaminaCore"),
+            "Vault height stays in Core Stamina; carry weight belongs only in Overweight System");
         Console.WriteLine("MOVEMENT/EXHAUSTION: native IDs, slider ranges, landmarks and gamer captions preserved.");
     }
 

@@ -19,51 +19,61 @@ public sealed partial class AggregateVisualControl
     private static readonly string[] OverweightStageNames =
         { "LIGHT", "MEDIUM", "HEAVY", "CRITICAL" };
 
-    // Fit the Bleeding-style chart and all four read-only stage cards,
-    // including a compact 2x2 card bank at narrow host widths.
+    // Native MAX CARRY WEIGHT ruler is directly above the Bleeding-style
+    // profile. Extra height accommodates both the ruler and four read-only
+    // stage cards (2x2 on narrow hosts).
     private static double OverweightProfileHeight(double width)
-        => width >= 700.0 ? 490.0 : 604.0;
+        => width >= 700.0 ? 612.0 : 726.0;
 
     private void DrawOverweightThresholdBoard(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
         DrawHeader(dc, "OVERWEIGHT SYSTEM", "", text, muted, accent);
-        var carryParameter = Linked("stamina.maxCarryWeight");
+        // MAX CARRY WEIGHT belongs to this aggregate now, not Core Stamina.
+        // The single native parameter drives the ruler, kilogram axis and
+        // four derived stage-card masses.
+        var carryParameter = P("stamina.maxCarryWeight");
         var carry = carryParameter?.CurrentNumber ?? 80.0;
         var carryChanged = carryParameter?.IsValueModifiedFromReference() == true;
         var parameters = OverweightThresholdIds.Select(P).ToArray();
         if (parameters.Any(p => p is null))
             return;
 
+        if (carryParameter is not null)
+            DrawMovementLimitRuler(dc, carryParameter, "MAX CARRY WEIGHT", "kg",
+                new Rect(16.0, 51.0, Math.Max(1.0, ActualWidth - 32.0), 116.0),
+                text, muted, border, accent, panel, vaultHeight: false);
+
         DrawText(dc, "LOAD PENALTY PROFILE",
-            new Point(16.0, 61.0), 11.4, accent, FontWeights.Bold);
-        DrawRightAlignedText(dc, $"MAX CARRY {carry:0.#} kg",
-            new Point(ActualWidth - 18.0, 41.0), 10.0, muted, FontWeights.SemiBold);
+            new Point(16.0, 185.0), 11.4, accent, FontWeights.Bold);
 
         // Explicit legend: the graph shows two different, uneditable native
         // penalty magnitudes while X handles edit only activation thresholds.
         var legendX = Math.Max(215.0, ActualWidth - 270.0);
         dc.DrawLine(new Pen(accent, 2.6),
-            new Point(legendX, 69.0), new Point(legendX + 20.0, 69.0));
-        DrawText(dc, "SPEED LOSS", new Point(legendX + 25.0, 61.0),
+            new Point(legendX, 193.0), new Point(legendX + 20.0, 193.0));
+        DrawText(dc, "SPEED LOSS", new Point(legendX + 25.0, 185.0),
             9.1, text, FontWeights.SemiBold);
         dc.DrawLine(new Pen(Brushes.White, 2.0),
-            new Point(legendX + 130.0, 69.0), new Point(legendX + 150.0, 69.0));
-        DrawText(dc, "REGEN LOSS", new Point(legendX + 155.0, 61.0),
+            new Point(legendX + 130.0, 193.0), new Point(legendX + 150.0, 193.0));
+        DrawText(dc, "REGEN LOSS", new Point(legendX + 155.0, 185.0),
             9.1, text, FontWeights.SemiBold);
 
-        DrawText(dc, "PENALTY %", new Point(16.0, 91.0),
+        DrawText(dc, "PENALTY %", new Point(16.0, 215.0),
             9.3, text, FontWeights.Bold);
-        var plot = new Rect(66.0, 108.0,
+        var plot = new Rect(66.0, 232.0,
             Math.Max(350.0, ActualWidth - 104.0), 184.0);
         dc.DrawTrackedRoundedRectangle(panel, new Pen(border, 1.0),
             plot, 4.0, 4.0);
 
-        // Like BLEEDING DAMAGE PROFILE, X is the trigger threshold and Y
-        // is the stage effect. The real engine uses distinct fixed stages,
-        // so a stair-step line is essential: no invented interpolation.
-        double X(double ratio) => ValueToX(ratio, 0.0, 1.0, plot, reverse: false);
+        // The X domain follows the player's configured carrying capacity:
+        // from zero to CURRENT MAX CARRY WEIGHT in kilograms. The actual
+        // stored stage values stay percentages (ratio of that capacity).
+        // Moving the ruler updates the kilogram ticks without converting
+        // preset ratios into absolute kilograms.
+        double X(double kilograms) => ValueToX(
+            kilograms, 0.0, Math.Max(1.0, carry), plot, reverse: false);
         double Y(double loss) => ValueToY(loss, 0.0, 50.0, plot);
         for (var loss = 0; loss <= 50; loss += 10)
         {
@@ -77,20 +87,22 @@ public sealed partial class AggregateVisualControl
         }
         for (var percent = 0; percent <= 100; percent += 25)
         {
-            var x = X(percent / 100.0);
+            var kg = carry * percent / 100.0;
+            var x = X(kg);
             dc.DrawLine(new Pen(CloneWithOpacity(border, percent == 100 ? .70 : .35), 1.0)
                     { DashStyle = percent is 0 or 100 ? DashStyles.Solid : DashStyles.Dot },
                 new Point(x, plot.Top), new Point(x, plot.Bottom));
-            DrawCenteredText(dc, percent.ToString(),
+            DrawCenteredText(dc, $"{kg:0.##}",
                 new Point(x, plot.Bottom + 11.0),
                 9.5, muted, FontWeights.SemiBold);
         }
-        DrawCenteredText(dc, "LOAD / MAX CARRY WEIGHT (%)",
+        DrawCenteredText(dc, $"CARRIED LOAD (kg) · MAX {carry:0.#} kg",
             new Point(ActualWidth / 2.0 + 18.0, plot.Bottom + 31.0),
             10.1, text, FontWeights.Bold);
 
-        var liveX = parameters.Select(p => X(p!.CurrentNumber)).ToArray();
-        var vanillaX = parameters.Select(p => X(p!.ReferenceNumber)).ToArray();
+        var liveX = parameters.Select(p => X(carry * p!.CurrentNumber)).ToArray();
+        // Gray factory markers use current capacity as their axis reference.
+        var vanillaX = parameters.Select(p => X(carry * p!.ReferenceNumber)).ToArray();
 
         void StepCurve(double[] xs, double[] loss, Pen pen)
         {
@@ -164,9 +176,10 @@ public sealed partial class AggregateVisualControl
 
             if (!parameter.IsControlEnabled)
                 continue;
-            // The captured hit target maps the entire X axis. This preserves
-            // smooth dragging even when the live ring moves away from its
-            // original hit box during a captured mouse operation.
+            // Drag still writes the source-native ratio 0..1. Its mapping
+            // is equivalent to 0..carry kg on this dynamic axis; keeping
+            // ratios here preserves old presets, steps and stage constraints.
+            // The captured target stays active while the ring moves.
             var map = new Rect(plot.Left, speed.Y - 1.0, plot.Width, 2.0);
             AddHorizontalTarget(parameter,
                 new Rect(speed.X - 18.0, speed.Y - 18.0, 36.0, 36.0),
@@ -182,14 +195,15 @@ public sealed partial class AggregateVisualControl
         }
 
         // Bleeding-profile style read-only stage cards. These values are
-        // derived from the same four source sliders and the linked capacity.
+        // derived from the same four source ratios and the edited MAX CARRY
+        // WEIGHT directly above the plot.
         // A card can select its parameter rationale, but does not edit.
         var narrow = ActualWidth < 700.0;
         const double gap = 8.0;
         var columns = narrow ? 2 : 4;
         var bankWidth = Math.Max(1.0, ActualWidth - 32.0);
         var cardWidth = (bankWidth - gap * (columns - 1)) / columns;
-        const double cardsTop = 355.0;
+        const double cardsTop = 479.0;
         const double cardHeight = 105.0;
         for (var i = 0; i < 4; i++)
         {

@@ -22,27 +22,41 @@ in these CFGs and needs an in-game test.
 `InventoryPenaltyLessWeight = 50.0`, `MediumEffectStartUI = 50`,
 `CriticalEffectStartUI = 70`. Synchronize these with edited thresholds.
 
-## User-facing editor
+## Current editor — capacity-scaled interactive graph
 
-STAMINA / **OVERWEIGHT THRESHOLDS** is one compact 2×2 board:
-**LIGHT LOAD**, **MEDIUM LOAD**, **HEAVY LOAD**, **CRITICAL LOAD**.
-Each native Core Stamina-style horizontal rail edits a **fraction of maximum
-base carry weight**, with its live KG load preview below the track.
+STAMINA / **OVERWEIGHT SYSTEM** combines the original MAX CARRY WEIGHT
+source and four threshold sources in one interactive Bleeding-style board.
+The single native **MAX CARRY WEIGHT** slider (20–160 kg, 5 kg steps) is
+located immediately above the LOAD PENALTY PROFILE; it has been removed from
+CORE STAMINA to avoid duplicate editors.
 
-The factory settings are 62.5%, 75%, 87.5%, 100%. All four stages use
-2.5-percentage-point steps, with a minimum 2.5-point gap between adjacent
-stages. Existing SliderConstraintCoordinator cascades changes to preserve
-strict stage order. One handle resets on right-click; R resets the board.
-Original native rail, reference tick, hover glow, changed-only yellow numeric
-token and compact card spacing are preserved. The displayed KG load is
-read-only, not a second source.
+The graph's horizontal axis is **kilograms from 0 to the currently selected
+MAX CARRY WEIGHT**, not fixed 0–100%. Five dynamically recalculated ticks
+show 0, 25%, 50%, 75% and 100% of that weight *in kilograms*. For example:
 
-Maximum Carry Weight remains an independent 20–160 kg editor. At 50 kg
-the thresholds default to 31.25 / 37.5 / 43.75 / 50 kg; at 115 kg they
-default to 71.875 / 86.25 / 100.625 / 115 kg. This preserves old profiles,
-including Hardcore+ and Smuggler, without requiring mass preset rewrites.
-Older preset JSON files that do not contain the four new IDs inherit the
-vanilla ratios when loaded.
+| MAX CARRY WEIGHT | Kilogram axis ticks | Vanilla stage kilograms (LIGHT / MEDIUM / HEAVY / CRITICAL) |
+|---|---|---|
+| 50 kg | 0 / 12.5 / 25 / 37.5 / 50 | 31.25 / 37.5 / 43.75 / 50 |
+| 80 kg | 0 / 20 / 40 / 60 / 80 | 50 / 60 / 70 / 80 |
+| 115 kg | 0 / 28.75 / 57.5 / 86.25 / 115 | 71.875 / 86.25 / 100.625 / 115 |
+
+Threshold values remain ratios in the presets (factory 62.5% / 75% /
+87.5% / 100%) and are mapped onto the displayed kilogram axis using the
+current carrying limit. Editing carry moves the graph's absolute kilogram
+values, but preserves each threshold's original ratio. Dragging a gold
+threshold node or its baseline marker edits the corresponding ratio in
+native 2.5-percentage-point steps; the original strict-stage constraint
+coordinator continues to prevent crossings. Right-click restores one
+stage or MAX CARRY WEIGHT; R resets all five source controls on this board.
+
+The profile uses stepped native-effect lines, yellow for speed loss and
+white for stamina regeneration loss, plus dashed reference lines (the native
+effect strengths remain unchanged). Four read-only stage cards below show
+live percent, kilogram trigger, speed/regen penalty and jogging availability.
+Derived mass highlights when either its ratio or MAX CARRY WEIGHT changes.
+Cards select their rationale without editing it. The responsive board is
+612 DIP high at wide widths and 726 DIP when cards form two rows. No source
+effects, writer routes or existing preset values are duplicated.
 
 ## Production BPatch contract
 
@@ -138,3 +152,21 @@ Only presentation and source selection are changed. The BPatch output, stage
 ratios, native effect strength and 2.1 CFG paths are unchanged. The visual
 stage curve is not an engine-runtime simulator: validate effect stacking and
 removal in-game, especially when hovering around a boundary.
+
+## 2026-11-23 — dynamic kilogram axis and integrated carry slider
+
+A single existing `stamina.maxCarryWeight` source has moved from the
+`StaminaCore` aggregate to `OverweightThresholds`; `GetFamilyIds` and
+`ParameterViewModel.VisualAggregateFamily` agree. The graph now owns and
+edits this parameter, rather than observing it as a read-only linked source.
+Its source-native ruler sits at the top of the same board. Core Stamina keeps
+MAX STAMINA, REGEN and a full-width VAULT HEIGHT control, with no duplicate
+carry editor.
+
+The graph axis reads kilogram quantities 0..MAX CARRY WEIGHT. Both the
+yellow/white stage profiles and their dashed reference positions use
+`carryKg × ratio`. Graph drag maps back to the unchanged source ratio
+0..1, so loading old presets, strict ordering and the atomic writer route
+are unaffected. Reset and keyboard interactions use the existing native
+`HitTarget`/family code; R now resets carry and all four thresholds together.
+Five axis ticks and every stage-card kg readout update on any carry change.

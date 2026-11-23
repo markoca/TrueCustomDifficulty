@@ -227,7 +227,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var linkedIds = Family switch
         {
             "ConsumableMixer" => new[] { "stamina.maxSP", "stamina.maxCarryWeight" },
-            "OverweightThresholds" => new[] { "stamina.maxCarryWeight" },
             "SleepingDashboard" => new[] { "health.maxHP" },
             "FatigueCurve" => new[] { "survival.sleepEligibilityThreshold" },
             "RepairCurve" => new[] { "economy.repairCostBase" },
@@ -2607,9 +2606,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             9.6, muted, FontWeights.Normal);
     }
 
-    // Core Stamina mirrors Core Health's two primary 105-DIP native rulers:
-    // shared typography, rail/handle, limits and reference ticks. Movement
-    // keeps its independent source-native vault and carry editors below.
+    // Core Stamina keeps MAX STAMINA and STAMINA REGEN plus the native
+    // VAULT HEIGHT slider. MAX CARRY WEIGHT was moved to the Overweight
+    // profile so the actual capacity editor and kilogram axis stay together.
     private void DrawStaminaMovementBoard(DrawingContext dc, Brush text, Brush muted,
         Brush border, Brush accent, Brush panel)
     {
@@ -2631,12 +2630,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             10.2, muted, FontWeights.Bold);
         DrawMovementLimitRuler(dc, P("stamina.vaultMaxHeight"),
             "VAULT HEIGHT", "cm",
-            new Rect(16.0, 191.0, cell, 116.0),
+            new Rect(16.0, 191.0, width, 116.0),
             text, muted, border, accent, panel, vaultHeight: true);
-        DrawMovementLimitRuler(dc, P("stamina.maxCarryWeight"),
-            "MAX CARRY WEIGHT", "kg",
-            new Rect(16.0 + cell + gap, 191.0, cell, 116.0),
-            text, muted, border, accent, panel, vaultHeight: false);
     }
 
     // Hunger and Fatigue share exactly the same two native-resource rulers as
@@ -8605,8 +8600,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             },
             "StaminaCore" => new[] {
                 "stamina.maxSP", "stamina.regeneration",
-                "stamina.vaultMaxHeight", "stamina.maxCarryWeight" },
+                "stamina.vaultMaxHeight" },
             "OverweightThresholds" => new[] {
+                "stamina.maxCarryWeight",
                 "stamina.overweightLightThreshold", "stamina.overweightMediumThreshold",
                 "stamina.overweightHeavyThreshold", "stamina.overweightCriticalThreshold" },
             "WaterStaminaPressure" => new[] { "stamina.waterMediumDrain", "stamina.waterStrongDrain" },
