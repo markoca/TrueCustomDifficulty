@@ -37,6 +37,7 @@ internal static class Program
             MedicalItemsPairingCase();
             MovementLimitsAndExhaustionNamingCase();
             StaminaStatesLayoutContractCase();
+            OverweightThresholdsCase();
 
             // A unique concrete edit for every live Health/Stamina catalog
             // parameter. Master-only modifiers use Master because their
@@ -46,7 +47,7 @@ internal static class Program
                          || p.Id.StartsWith("stamina.", StringComparison.Ordinal))
                 .OrderBy(p => p.Id, StringComparer.Ordinal)
                 .ToArray();
-            Check(cohort.Length == 50, "Health/Stamina catalog cohort is no longer 50 controls");
+            Check(cohort.Length == 54, "Health/Stamina catalog cohort is no longer 54 controls");
 
             // These five source-backed speed-state definitions are intentionally
             // excluded from MainViewModel. They are documented internal CFG
@@ -69,9 +70,10 @@ internal static class Program
                 "Unexpected Health/Stamina app VM exclusions: "
                 + string.Join(", ", notLoaded.OrderBy(s => s)));
             var liveCohort = cohort.Where(p => liveIds.Contains(p.Id)).ToArray();
-            Check(liveCohort.Length == 45,
-                "Health/Stamina live VM count is not 45");
-            foreach (var def in liveCohort)
+            Check(liveCohort.Length == 49,
+                "Health/Stamina live VM count is not 49");
+            foreach (var def in liveCohort.Where(p => p.Id != "stamina.maxCarryWeight"
+                         && !p.Id.StartsWith("stamina.overweight", StringComparison.Ordinal)))
             {
                 var diff = def.Id.StartsWith("health.master", StringComparison.Ordinal)
                     ? "Master" : "Veteran";
@@ -106,6 +108,83 @@ internal static class Program
             Console.Error.WriteLine("FAIL: " + exc);
             return 1;
         }
+    }
+
+
+    private static void OverweightThresholdsCase()
+    {
+        var vm = new MainViewModel(Catalog);
+        var ids = new[]
+        {
+            "stamina.overweightLightThreshold", "stamina.overweightMediumThreshold",
+            "stamina.overweightHeavyThreshold", "stamina.overweightCriticalThreshold"
+        };
+        var stages = ids.Select(id => vm.AllParameters.Single(p => p.Id == id)).ToArray();
+        var expected = new[] { 0.625, 0.75, 0.875, 1.0 };
+        for (var i = 0; i < stages.Length; i++)
+        {
+            Check(stages[i].VisualAggregateFamily == "OverweightThresholds"
+                  && Math.Abs(stages[i].CurrentNumber - expected[i]) < 0.000001,
+                ids[i] + " must have source-accurate vanilla ratio and board");
+        }
+
+        // A change to MAX CARRY WEIGHT relocates the four vanilla-ratio
+        // thresholds and HUD markers even without editing any stage.
+        var carry = vm.AllParameters.Single(p => p.Id == "stamina.maxCarryWeight");
+        carry.CurrentNumber = 115.0;
+        var output = Path.Combine(_keepRoot ?? Path.GetTempPath(),
+            "TCD_Health_Stamina", "overweight-capacity");
+        try
+        {
+            var result = new CfgPatchWriterService().Write(vm, Catalog, null, output);
+            Check(result.ParameterCount == 1 && result.FileCount == 2 && result.EditCount == 9,
+                "Overweight carry-only route must emit one capacity and eight linked fields");
+            var weight = Parse(File.ReadAllText(ExpectedFile(output,
+                "GameData/ObjWeightParamsPrototypes.cfg"))).Get("DefaultWeightParams");
+            var effects = weight.Get("WeightEffectParams");
+            for (var i = 0; i < 4; i++)
+                Approx(effects.Get($"[{3 - i}]").Value("Threshold"),
+                    115.0 * expected[i], ids[i] + " derived threshold");
+            Approx(weight.Value("MaxInventoryMass"), 115.0, "MaxInventoryMass");
+            Approx(weight.Value("InventoryPenaltyLessWeight"), 115.0 * expected[0] - 0.01,
+                "WeightParams pre-penalty threshold");
+            var global = Parse(File.ReadAllText(ExpectedFile(output,
+                "GameData/CoreVariables.cfg"))).Get("DefaultConfig");
+            Approx(global.Value("InventoryPenaltyLessWeight"), 115.0 * expected[0],
+                "Global inventory threshold");
+            Approx(global.Value("MediumEffectStartUI"), 115.0 * expected[0],
+                "Medium inventory indicator");
+            Approx(global.Value("CriticalEffectStartUI"), 115.0 * expected[2],
+                "Critical inventory indicator");
+
+            stages[1].CurrentNumber = 0.95;
+            Check(stages[2].CurrentNumber >= 0.975 - 0.000001
+                  && stages[3].CurrentNumber >= 1.0 - 0.000001,
+                "Moving medium load must push heavy and critical to preserve ordering");
+            stages[0].CurrentNumber = 0.975;
+            Check(stages[0].CurrentNumber <= 0.925 + 0.000001,
+                "Light load must clamp to leave room for the other three stages");
+
+            // Now write the edited profile through the same production path.
+            var updated = new CfgPatchWriterService().Write(vm, Catalog, null, output);
+            Check(updated.ParameterCount == 4 && updated.EditCount == 9
+                  && updated.FileCount == 2,
+                "Carry plus three changed stages must share one atomic writer");
+            var changed = Parse(File.ReadAllText(ExpectedFile(output,
+                "GameData/ObjWeightParamsPrototypes.cfg"))).Get("DefaultWeightParams")
+                .Get("WeightEffectParams");
+            for (var i = 0; i < 4; i++)
+                Approx(changed.Get($"[{3 - i}]").Value("Threshold"),
+                    115.0 * stages[i].CurrentNumber, ids[i] + " edited threshold");
+        }
+        finally
+        {
+            if (_keepRoot is null && Directory.Exists(output))
+                Directory.Delete(output, recursive: true);
+        }
+
+        _passed++;
+        Console.WriteLine("PASS overweight 2.1 source order, capacity scaling, HUD sync and stage constraints");
     }
 
     private static void MovementLimitsAndExhaustionNamingCase()

@@ -97,13 +97,16 @@ The tuner leaves those depth thresholds untouched and exposes only the stamina-d
 
 `WaterStrongStaminaPenalty` is also used in the Deadly water state. `WaterDeadlyDamage` remains separate and is not changed.
 
-### Encumbrance
+### Encumbrance — 2.1 linked threshold controls (2026-11-23)
+
+Four new percentage-of-capacity controls edit the original 50 / 60 / 70 / 80 kg activation thresholds without modifying the velocity or stamina effects themselves. They form a strict four-stage ramp, move when MAX CARRY WEIGHT changes, and synchronize both weight-penalty source boundaries and the CoreVariables inventory UI markers. See `docs/OVERWEIGHT-THRESHOLDS-2.1.md`.
+
 
 The existing **Maximum Carry Weight** control remains:
 
 - `ObjWeightParamsPrototypes.cfg -> DefaultWeightParams.MaxInventoryMass = 80`
 
-The runtime also defines weight-effect thresholds at `50 / 60 / 70 / 80` and stamina-regeneration penalties of approximately `-10% / -20% / -35% / -50%`. They remain documented rather than exposed as independent sliders.
+The vanilla runtime defines weight-effect thresholds at `50 / 60 / 70 / 80` and stamina-regeneration penalties of approximately `-10% / -20% / -35% / -50%`. The thresholds are now exposed as linked percentage-of-capacity sliders; their original penalty strengths remain fixed.
 
 ## Additional stamina controls and audit-only speed states
 

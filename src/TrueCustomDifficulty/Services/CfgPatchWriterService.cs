@@ -20,6 +20,12 @@ public sealed partial class CfgPatchWriterService
     private const string PatchSuffix = "TrueCustomDifficulty";
     private readonly CfgWriterBaselineService _baselineService = new();
 
+    private static readonly string[] OverweightThresholdIds =
+    {
+        "stamina.overweightLightThreshold", "stamina.overweightMediumThreshold",
+        "stamina.overweightHeavyThreshold", "stamina.overweightCriticalThreshold"
+    };
+
     public CfgWriteResult Write(
         MainViewModel vm,
         ParameterCatalog catalog,
@@ -150,6 +156,10 @@ public sealed partial class CfgPatchWriterService
                 editCount++;
             }
         }
+
+        // On a carry-capacity or stage change, relocate all four load effects and
+        // synchronize the inventory display with the real activation points.
+        editCount += WriteOverweightThresholds(modifiedById, allById, documents, writtenParameters);
 
         // Source-locked 2.1 weather-hearing routes share the existing AIGlobals patch.
         foreach (var (id, indices) in new (string Id, int[] Indices)[]
@@ -578,6 +588,9 @@ public sealed partial class CfgPatchWriterService
         supported.UnionWith(LairPopulationPolicy.ParameterIds);
         supported.Add(ZoneTimersPolicy.EmissionWarningId);
         supported.Add(ZoneTimersPolicy.TraderRestockId);
+        if (!baseline.Special.OverweightThresholds.ParameterIds.SequenceEqual(OverweightThresholdIds))
+            throw new InvalidDataException("Overweight threshold source IDs do not match the 2.1 writer contract.");
+        supported.UnionWith(baseline.Special.OverweightThresholds.ParameterIds);
         supported.UnionWith(HumanCombatPolicy.TacticIds);
         supported.Add(HumanCombatPolicy.RainNoiseId);
         supported.Add(HumanCombatPolicy.StormNoiseId);
@@ -638,6 +651,62 @@ public sealed partial class CfgPatchWriterService
             documents[file] = document;
         }
         return document;
+    }
+
+
+    // Source: S.T.A.L.K.E.R. 2.1, DefaultWeightParams.WeightEffectParams.
+    // Index order is descending (0 = 80 kg, 3 = 50 kg at vanilla 80 kg).
+    // Only activation boundaries are rewritten. The engine's original velocity
+    // and stamina effect SIDs remain intact. A max-carry edit automatically
+    // relocates the stages even in older presets that lack threshold settings.
+    private static int WriteOverweightThresholds(
+        IReadOnlyDictionary<string, ParameterViewModel> modifiedById,
+        IReadOnlyDictionary<string, ParameterViewModel> allById,
+        IDictionary<string, PatchDocument> documents,
+        ISet<string> writtenParameters)
+    {
+        if (!modifiedById.ContainsKey("stamina.maxCarryWeight")
+            && !OverweightThresholdIds.Any(modifiedById.ContainsKey))
+            return 0;
+
+        var maxCarry = allById["stamina.maxCarryWeight"].CurrentNumber;
+        var fractions = OverweightThresholdIds
+            .Select(id => allById[id].CurrentNumber).ToArray();
+        for (var i = 1; i < fractions.Length; i++)
+        {
+            if (fractions[i] - fractions[i - 1] < 0.025 - 0.000001)
+                throw new InvalidDataException(
+                    "Overweight thresholds must rise by at least 2.5 percentage points.");
+        }
+        if (fractions[0] <= 0.0 || fractions[^1] > 1.0)
+            throw new InvalidDataException("Overweight thresholds must fit within MAX CARRY WEIGHT.");
+
+        var kg = fractions.Select(fraction => maxCarry * fraction).ToArray();
+        var weight = GetDocument(documents, "GameData/ObjWeightParamsPrototypes.cfg");
+        for (var i = 0; i < kg.Length; i++)
+        {
+            // The game stores the list in reverse stage order.
+            weight.AddAssignment("DefaultWeightParams",
+                new[] { "WeightEffectParams", $"[{3 - i}]" },
+                "Threshold", FormatLikeSource(kg[i], "50.f"));
+        }
+
+        // Vanilla 49.99 stays just below the first actual penalty (50 kg).
+        weight.AddAssignment("DefaultWeightParams", Array.Empty<string>(),
+            "InventoryPenaltyLessWeight", FormatLikeSource(kg[0] - 0.01, "49.99"));
+
+        var globals = GetDocument(documents, "GameData/CoreVariables.cfg");
+        globals.AddAssignment("DefaultConfig", Array.Empty<string>(),
+            "InventoryPenaltyLessWeight", FormatLikeSource(kg[0], "50.0"));
+        globals.AddAssignment("DefaultConfig", Array.Empty<string>(),
+            "MediumEffectStartUI", FormatLikeSource(kg[0], "50"));
+        globals.AddAssignment("DefaultConfig", Array.Empty<string>(),
+            "CriticalEffectStartUI", FormatLikeSource(kg[2], "70"));
+
+        foreach (var id in OverweightThresholdIds)
+            if (modifiedById.ContainsKey(id))
+                writtenParameters.Add(id);
+        return 8;
     }
 
     private static string TransformValue(ParameterViewModel parameter, CfgWriterEditPoint point)

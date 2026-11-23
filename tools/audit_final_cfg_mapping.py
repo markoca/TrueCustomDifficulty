@@ -204,6 +204,7 @@ def method_routes(special):
     add("WriteArtifactRareLuck", special["artifactHunting"]["parameterId"])
     add("WriteLairPopulation", *special["lairPopulation"]["parameterIds"])
     add("WriteZoneTimers", *special["zoneTimers"]["parameterIds"])
+    add("WriteOverweightThresholds", *special["overweightThresholds"]["parameterIds"])
     return routes
 
 def main():
@@ -252,7 +253,7 @@ def main():
     require(len(baseline["editPoints"]) == EDIT_POINTS and len(direct) == DIRECT_IDS,
             "direct writer point count drift")
     special = method_routes(baseline["special"])
-    require(len(special) == 218, "special writer route count drift")  # + loose artifacts, stash smart x3, NPC smart master, 53 move knobs, -24 group sliders
+    require(len(special) == 222, "special writer route count drift")  # + loose artifacts, stash smart x3, NPC smart master, 53 move knobs, -24 group sliders
     require(not set(direct).intersection(special), "direct/special parameter double ownership")
     # Weather hearing (RAIN / THUNDER NOISE) is written inline in Write()
     # (AISettings WeatherSettings[3..5].HearingDistanceCoef).
@@ -266,7 +267,7 @@ def main():
     require(not weather.intersection(direct) and not weather.intersection(special),
             "weather-hearing double ownership")
     require(set(direct) | set(special) | weather == set(definitions), "unrouted CFG IDs")
-    require(len(definitions) - len(NON_UI) == 429, "UI dimension count drift")  # +3 LAIR POPULATION, +4 ZONE WEATHER / RESTOCK, +53 move knobs, -24 group sliders, +1 FALL DAMAGE (2026-11-18)
+    require(len(definitions) - len(NON_UI) == 433, "UI dimension count drift")  # +3 LAIR POPULATION, +4 ZONE WEATHER / RESTOCK, +53 move knobs, -24 group sliders, +1 FALL DAMAGE (2026-11-18)
     require(len(NON_UI) == 23 and NON_UI.issubset(definitions),
             "23 non-mounted catalog source IDs required")
     for pid in NON_UI:

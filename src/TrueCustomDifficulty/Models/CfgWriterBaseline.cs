@@ -85,6 +85,9 @@ public sealed class CfgWriterTraderSells
 
 public sealed class CfgWriterSpecialBaseline
 {
+    [JsonPropertyName("overweightThresholds")]
+    public CfgWriterOverweightThresholds OverweightThresholds { get; set; } = new();
+
     [JsonPropertyName("traderSells")]
     public CfgWriterTraderSells TraderSells { get; set; } = new();
 
@@ -131,6 +134,12 @@ public sealed class CfgWriterSpecialBaseline
 
     [JsonPropertyName("crateSpawnProduction")]
     public CfgWriterCrateSpawnProduction CrateSpawnProduction { get; set; } = new();
+}
+
+public sealed class CfgWriterOverweightThresholds
+{
+    [JsonPropertyName("parameterIds")]
+    public List<string> ParameterIds { get; set; } = new();
 }
 
 public sealed class CfgWriterLooseUniqueWeaponShuffle

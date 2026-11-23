@@ -1842,6 +1842,22 @@
     "economy.traderSells.genericNpc.grenades": {
       "kind": "toggle",
       "boolean": true
+    },
+    "stamina.overweightLightThreshold": {
+      "kind": "slider",
+      "number": 0.625
+    },
+    "stamina.overweightMediumThreshold": {
+      "kind": "slider",
+      "number": 0.75
+    },
+    "stamina.overweightHeavyThreshold": {
+      "kind": "slider",
+      "number": 0.875
+    },
+    "stamina.overweightCriticalThreshold": {
+      "kind": "slider",
+      "number": 1
     }
   }
 }

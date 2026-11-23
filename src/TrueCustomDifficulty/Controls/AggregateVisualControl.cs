@@ -66,7 +66,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             or "StashGear" or "NpcLootLoadout" or "HumanCombatProfile" or "PlayerWeaponProfile"
             or "StarvationTimeline" or "SevereFatiguePenaltyBoard"
             or "TradingDashboard" or "RepairCurve" or "SleepingDashboard"
-            or "RadiationBalance" or "StaminaCore" or "ConsumableMixer"
+            or "RadiationBalance" or "StaminaCore" or "OverweightThresholds" or "ConsumableMixer"
             or "MasterLowHealth" or "MasterRadiationPenalty" or "MasterMedicalHealing")
         {
             // NPC LOOT: every selection inside a card reports that card and
@@ -227,6 +227,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var linkedIds = Family switch
         {
             "ConsumableMixer" => new[] { "stamina.maxSP", "stamina.maxCarryWeight" },
+            "OverweightThresholds" => new[] { "stamina.maxCarryWeight" },
             "SleepingDashboard" => new[] { "health.maxHP" },
             "FatigueCurve" => new[] { "survival.sleepEligibilityThreshold" },
             "RepairCurve" => new[] { "economy.repairCostBase" },
@@ -427,6 +428,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 break;
             case "StaminaCore":
                 DrawStaminaMovementBoard(dc, text, muted, border, accent, panel);
+                break;
+            case "OverweightThresholds":
+                DrawOverweightThresholdBoard(dc, text, muted, border, accent, panel);
                 break;
             case "WaterStaminaPressure":
                 DrawWaterStaminaBoard(dc, text, muted, border, accent, panel);
@@ -3391,7 +3395,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "HP" or "stamina" => $"{parameter.CurrentNumber:0} {unit}",
             "×" => $"{parameter.CurrentNumber:0.##}×",
             "pts/s" => $"{parameter.CurrentNumber:0.000} pts/s",
-            "%" => $"{(parameter.CurrentNumber > Epsilon ? "+" : "")}{parameter.CurrentNumber * 100.0:0.#}%",
+            "%" => $"{(Family == "OverweightThresholds" || parameter.CurrentNumber <= Epsilon ? "" : "+")}{parameter.CurrentNumber * 100.0:0.#}%",
             _ => FriendlyValue(parameter)
         };
         // Native 0.001-rate precision takes more room than HP/stamina, but uses
@@ -8396,6 +8400,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "StashGear" => StashGearHeight(width),
             "StashSmartLoot" => StashSmartLootHeight(width),
             "StaminaCore" => 323.0,
+            "OverweightThresholds" => 365.0,
             "WaterStaminaPressure" => 171.0,
             "FatigueCurve" => CompactFatigueHeight(width),
             "EquipmentWearBalance" => 242.0,
@@ -8558,6 +8563,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "StaminaCore" => new[] {
                 "stamina.maxSP", "stamina.regeneration",
                 "stamina.vaultMaxHeight", "stamina.maxCarryWeight" },
+            "OverweightThresholds" => new[] {
+                "stamina.overweightLightThreshold", "stamina.overweightMediumThreshold",
+                "stamina.overweightHeavyThreshold", "stamina.overweightCriticalThreshold" },
             "WaterStaminaPressure" => new[] { "stamina.waterMediumDrain", "stamina.waterStrongDrain" },
             "FatigueCurve" => new[]
             {

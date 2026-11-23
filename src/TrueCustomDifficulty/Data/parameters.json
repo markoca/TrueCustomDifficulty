@@ -207,6 +207,17 @@
         "stamina.meleeNormalCost",
         "stamina.meleeStrongCost"
       ]
+    },
+    {
+      "id": "overweightThresholdOrder",
+      "order": "nondecreasing",
+      "minimumGap": 0.025,
+      "parameterIds": [
+        "stamina.overweightLightThreshold",
+        "stamina.overweightMediumThreshold",
+        "stamina.overweightHeavyThreshold",
+        "stamina.overweightCriticalThreshold"
+      ]
     }
   ],
   "parameters": [
@@ -9190,6 +9201,193 @@
       "rationale": "How much you can carry before you get slowed down. Vanilla: 80 kg. Pack past it and you slow to a crawl.",
       "logic": "Higher = you haul more loot; lower = a tighter backpack.",
       "interaction": "Overload starts before this limit, and gear carry bonuses add on top."
+    },
+    {
+      "id": "stamina.overweightLightThreshold",
+      "tab": "stamina",
+      "group": "Overweight Thresholds",
+      "label": "Light Load Threshold",
+      "description": "Sets when the light load penalty begins, as a share of MAX CARRY WEIGHT.",
+      "rationale": "At vanilla 80 kg maximum this penalty starts at 50 kg. Follows MAX CARRY WEIGHT so the same preset works with different carrying limits.",
+      "logic": "Higher = penalty starts later. Lower = penalty starts sooner. The strength of the speed and stamina penalties stays vanilla.",
+      "interaction": "Set a share of MAX CARRY WEIGHT. The KG readout updates live. Other stages remain strictly ordered.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0.#%",
+        "unit": "%",
+        "valueLabel": "Of max carry"
+      },
+      "vanilla": {
+        "All": 0.625
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.1,
+        "max": 1,
+        "step": 0.025,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ObjWeightParamsPrototypes.cfg",
+          "prototype": "DefaultWeightParams",
+          "path": "WeightEffectParams[3].Threshold",
+          "operation": "derivedCarryPercent"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "CFG 2.1 source-verified threshold 50 kg at base MaxInventoryMass=80.",
+          "Special BPatch writer derives kg from current MAX CARRY WEIGHT, retaining existing EffectPrototypeSIDs; live effect removal is not engine-proven."
+        ]
+      }
+    },
+    {
+      "id": "stamina.overweightMediumThreshold",
+      "tab": "stamina",
+      "group": "Overweight Thresholds",
+      "label": "Medium Load Threshold",
+      "description": "Sets when the medium load penalty begins, as a share of MAX CARRY WEIGHT.",
+      "rationale": "At vanilla 80 kg maximum this penalty starts at 60 kg. Follows MAX CARRY WEIGHT so the same preset works with different carrying limits.",
+      "logic": "Higher = penalty starts later. Lower = penalty starts sooner. The strength of the speed and stamina penalties stays vanilla.",
+      "interaction": "Set a share of MAX CARRY WEIGHT. The KG readout updates live. Other stages remain strictly ordered.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0.#%",
+        "unit": "%",
+        "valueLabel": "Of max carry"
+      },
+      "vanilla": {
+        "All": 0.75
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.1,
+        "max": 1,
+        "step": 0.025,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ObjWeightParamsPrototypes.cfg",
+          "prototype": "DefaultWeightParams",
+          "path": "WeightEffectParams[2].Threshold",
+          "operation": "derivedCarryPercent"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "CFG 2.1 source-verified threshold 60 kg at base MaxInventoryMass=80.",
+          "Special BPatch writer derives kg from current MAX CARRY WEIGHT, retaining existing EffectPrototypeSIDs; live effect removal is not engine-proven."
+        ]
+      },
+      "exposeInUi": false
+    },
+    {
+      "id": "stamina.overweightHeavyThreshold",
+      "tab": "stamina",
+      "group": "Overweight Thresholds",
+      "label": "Heavy Load Threshold",
+      "description": "Sets when the heavy load penalty begins, as a share of MAX CARRY WEIGHT.",
+      "rationale": "At vanilla 80 kg maximum this penalty starts at 70 kg. Follows MAX CARRY WEIGHT so the same preset works with different carrying limits.",
+      "logic": "Higher = penalty starts later. Lower = penalty starts sooner. The strength of the speed and stamina penalties stays vanilla.",
+      "interaction": "Set a share of MAX CARRY WEIGHT. The KG readout updates live. Other stages remain strictly ordered.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0.#%",
+        "unit": "%",
+        "valueLabel": "Of max carry"
+      },
+      "vanilla": {
+        "All": 0.875
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.1,
+        "max": 1,
+        "step": 0.025,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ObjWeightParamsPrototypes.cfg",
+          "prototype": "DefaultWeightParams",
+          "path": "WeightEffectParams[1].Threshold",
+          "operation": "derivedCarryPercent"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "CFG 2.1 source-verified threshold 70 kg at base MaxInventoryMass=80.",
+          "Special BPatch writer derives kg from current MAX CARRY WEIGHT, retaining existing EffectPrototypeSIDs; live effect removal is not engine-proven."
+        ]
+      },
+      "exposeInUi": false
+    },
+    {
+      "id": "stamina.overweightCriticalThreshold",
+      "tab": "stamina",
+      "group": "Overweight Thresholds",
+      "label": "Critical Load Threshold",
+      "description": "Sets when the critical load penalty begins, as a share of MAX CARRY WEIGHT.",
+      "rationale": "At vanilla 80 kg maximum this penalty starts at 80 kg. Follows MAX CARRY WEIGHT so the same preset works with different carrying limits.",
+      "logic": "Higher = penalty starts later. Lower = penalty starts sooner. The strength of the speed and stamina penalties stays vanilla.",
+      "interaction": "Set a share of MAX CARRY WEIGHT. The KG readout updates live. Other stages remain strictly ordered.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0.#%",
+        "unit": "%",
+        "valueLabel": "Of max carry"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.1,
+        "max": 1,
+        "step": 0.025,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ObjWeightParamsPrototypes.cfg",
+          "prototype": "DefaultWeightParams",
+          "path": "WeightEffectParams[0].Threshold",
+          "operation": "derivedCarryPercent"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "CFG 2.1 source-verified threshold 80 kg at base MaxInventoryMass=80.",
+          "Special BPatch writer derives kg from current MAX CARRY WEIGHT, retaining existing EffectPrototypeSIDs; live effect removal is not engine-proven."
+        ]
+      },
+      "exposeInUi": false
     },
     {
       "id": "loot.genericCorpseReduction",

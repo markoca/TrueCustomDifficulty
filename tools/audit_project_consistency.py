@@ -501,7 +501,7 @@ else:
 _non_gen_expected = {
     "combat": (27, 11, 16),  # + HUMAN TACTICS / HUMAN AWARENESS (9) + weather FOG / RAIN / THUNDER (3)
     "health": (14, 10, 4),  # +FALL DAMAGE (runtime) 2026-11-18
-    "stamina": (7, 6, 1),
+    "stamina": (8, 6, 2),
     # Equipment is a separate tab again; CFG sources and total visibility are unchanged.
     "survival": (35, 29, 6),  # + 4 food satiety
     "economy": (19, 12, 7),  # TRADER STOCK + TRADER RESTOCK anchors runtime-test-required; TECHNICIAN hidden.

@@ -1,3 +1,8 @@
+## CURRENT 2026-11-23 — Overweight Thresholds (2.1)
+
+* STAMINA / OVERWEIGHT THRESHOLDS: one compact 2×2 native Core Stamina-style four-rail board, with LIGHT / MEDIUM / HEAVY / CRITICAL LOAD captions, edited percent of MAX CARRY WEIGHT (factory 62.5 / 75 / 87.5 / 100%), and a small read-only KG load line below each slider. Only edited digits turn yellow; retain neutral unit text, native reference tick, source hover glow and right-click / R reset. Keep 2.5-point snapping and a strict 2.5-percentage-point stage gap.
+* The four active thresholds move proportionally with the existing base MAX CARRY WEIGHT control (50-kg and 115-kg preset examples included), while the original -15 / -25 / -50% velocity effects and stamina penalties stay unchanged. The writer synchronizes both InventoryPenaltyLessWeight fields and the two CoreVariables inventory UI markers, without duplicating controls or changing any source effect SID. Code/test/source matrix: `docs/OVERWEIGHT-THRESHOLDS-2.1.md`.
+
 ## CURRENT 2026-11-19 — Profile picker mouse wheel
 
 * Hovering the bottom-right preset dropdown while it is **collapsed** lets the player move **one preset per mouse-wheel event**, up = previous entry, down = next entry. The selected role is loaded immediately through the existing `SelectedPreset` TwoWay binding; no click or extra Load Preset action is necessary. Selection is clamped at first/last entries, not wrapped. No added controls, enlarged dropdown, focus requirement, new labels or layout shifts.

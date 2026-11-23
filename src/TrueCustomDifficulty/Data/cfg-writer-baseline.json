@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.1",
-  "supportedParameterCount": 452,
+  "supportedParameterCount": 456,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -48480,6 +48480,14 @@
       "parameterIds": [
         "combat.npcRainNoise",
         "combat.npcStormNoise"
+      ]
+    },
+    "overweightThresholds": {
+      "parameterIds": [
+        "stamina.overweightLightThreshold",
+        "stamina.overweightMediumThreshold",
+        "stamina.overweightHeavyThreshold",
+        "stamina.overweightCriticalThreshold"
       ]
     }
   }

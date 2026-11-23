@@ -94,7 +94,7 @@ WRITERS = (
     ("loot-world-placement-writer", "LootWorldPlacementContract", "loot-world-placement-fixtures", 26),
     # This smoke test has no --out CLI; it validates every UI-editable
     # source against the actual writer's staged CFG output in temporary dirs.
-    ("all-controls-writer", "AllControlsPatchContract", None, 429),
+    ("all-controls-writer", "AllControlsPatchContract", None, 433),
     ("rc-signal-production-writer", "RCSignalPatchContract", "rc-signal-patch-fixtures", 13),
 )
 MANUAL = (

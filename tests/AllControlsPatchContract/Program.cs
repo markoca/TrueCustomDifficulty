@@ -77,8 +77,8 @@ internal static partial class Program
 
             var ids = Catalog.Parameters.Select(p => p.Id).ToHashSet(StringComparer.Ordinal);
             var tested = ids.Except(NonUi, StringComparer.Ordinal).OrderBy(x => x, StringComparer.Ordinal).ToArray();
-            Check(ids.Count == 452 && NonUi.IsSubsetOf(ids) && tested.Length == 429,
-                "Expected 452 catalog sources and 429 mounted editable writer probes");
+            Check(ids.Count == 456 && NonUi.IsSubsetOf(ids) && tested.Length == 433,
+                "Expected 456 catalog sources and 433 mounted editable writer probes");
 
             // The ordinary Master/Stalker corpse package contains no bonus
             // NPC_Ammo_Smart, so that source must be explicitly probed where
@@ -785,7 +785,7 @@ internal static partial class Program
                 var loaded = vm.CreatePresetFile("factory");
                 // Trader Stock odds are preset sidecars rather than catalog
                 // parameters. Ensure LOAD / SAVE also carries all role-specific
-                // category probabilities; checking the 452 sliders is not enough.
+                // category probabilities; checking the 456 sliders is not enough.
                 var expectedSellOdds = file0.TraderSellOdds
                     ?? new Dictionary<string, double>(StringComparer.Ordinal);
                 var loadedSellOdds = loaded.TraderSellOdds

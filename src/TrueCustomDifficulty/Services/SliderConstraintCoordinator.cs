@@ -31,7 +31,7 @@ public sealed class SliderConstraintCoordinator
             var runtime = new RuntimeConstraint(
                 definition.Id,
                 string.Equals(definition.Order, "nondecreasing", StringComparison.Ordinal),
-                members);
+                members, Math.Max(0.0, definition.MinimumGap));
 
             _constraints.Add(runtime);
             foreach (var member in members)
@@ -102,12 +102,12 @@ public sealed class SliderConstraintCoordinator
 
             if (constraint.IsNondecreasing)
             {
-                if (left.Value > right.Value + Epsilon)
-                    SetAtMost(left, right.Value);
+                if (left.Value > right.Value - constraint.MinimumGap + Epsilon)
+                    SetAtMost(left, right.Value - constraint.MinimumGap);
             }
-            else if (left.Value + Epsilon < right.Value)
+            else if (left.Value + Epsilon < right.Value + constraint.MinimumGap)
             {
-                SetAtLeast(left, right.Value);
+                SetAtLeast(left, right.Value + constraint.MinimumGap);
             }
         }
 
@@ -118,12 +118,12 @@ public sealed class SliderConstraintCoordinator
 
             if (constraint.IsNondecreasing)
             {
-                if (right.Value + Epsilon < left.Value)
-                    SetAtLeast(right, left.Value);
+                if (right.Value + Epsilon < left.Value + constraint.MinimumGap)
+                    SetAtLeast(right, left.Value + constraint.MinimumGap);
             }
-            else if (right.Value > left.Value + Epsilon)
+            else if (right.Value > left.Value - constraint.MinimumGap + Epsilon)
             {
-                SetAtMost(right, left.Value);
+                SetAtMost(right, left.Value - constraint.MinimumGap);
             }
         }
     }
@@ -138,21 +138,25 @@ public sealed class SliderConstraintCoordinator
         {
             // Left-side members must be able to stay <= active.
             for (var i = 0; i <= activeIndex; i++)
-                lowerBound = Math.Max(lowerBound, constraint.Members[i].MinimumValue);
+                lowerBound = Math.Max(lowerBound, constraint.Members[i].MinimumValue +
+                    (activeIndex - i) * constraint.MinimumGap);
 
             // Right-side members must be able to stay >= active.
             for (var i = activeIndex; i < constraint.Members.Count; i++)
-                upperBound = Math.Min(upperBound, constraint.Members[i].MaximumValue);
+                upperBound = Math.Min(upperBound, constraint.Members[i].MaximumValue -
+                    (i - activeIndex) * constraint.MinimumGap);
         }
         else
         {
             // Left-side members must be able to stay >= active.
             for (var i = 0; i <= activeIndex; i++)
-                upperBound = Math.Min(upperBound, constraint.Members[i].MaximumValue);
+                upperBound = Math.Min(upperBound, constraint.Members[i].MaximumValue -
+                    (activeIndex - i) * constraint.MinimumGap);
 
             // Right-side members must be able to stay <= active.
             for (var i = activeIndex; i < constraint.Members.Count; i++)
-                lowerBound = Math.Max(lowerBound, constraint.Members[i].MinimumValue);
+                lowerBound = Math.Max(lowerBound, constraint.Members[i].MinimumValue +
+                    (i - activeIndex) * constraint.MinimumGap);
         }
 
         if (active.Value < lowerBound - Epsilon)
@@ -172,12 +176,12 @@ public sealed class SliderConstraintCoordinator
 
             if (constraint.IsNondecreasing)
             {
-                if (right.Value + Epsilon < left.Value)
-                    SetAtLeast(right, left.Value);
+                if (right.Value + Epsilon < left.Value + constraint.MinimumGap)
+                    SetAtLeast(right, left.Value + constraint.MinimumGap);
             }
-            else if (right.Value > left.Value + Epsilon)
+            else if (right.Value > left.Value - constraint.MinimumGap + Epsilon)
             {
-                SetAtMost(right, left.Value);
+                SetAtMost(right, left.Value - constraint.MinimumGap);
             }
         }
     }
@@ -245,5 +249,6 @@ public sealed class SliderConstraintCoordinator
     private sealed record RuntimeConstraint(
         string Id,
         bool IsNondecreasing,
-        List<RuntimeMember> Members);
+        List<RuntimeMember> Members,
+        double MinimumGap);
 }

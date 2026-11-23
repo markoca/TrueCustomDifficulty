@@ -90,6 +90,10 @@ TRADER_SELL_ROLES = {
 TRADER_SELL_IDS = [f"economy.traderSells.{role}.{category}"
                    for role, categories in TRADER_SELL_ROLES.items() for category in categories]
 AGGREGATES["Traders"] = TRADER_BUY_IDS + TRADER_SELL_IDS
+AGGREGATES["Overweight Thresholds"] = [
+    "stamina.overweightLightThreshold", "stamina.overweightMediumThreshold",
+    "stamina.overweightHeavyThreshold", "stamina.overweightCriticalThreshold",
+]
 
 # Unlike aggregate backing members, these source IDs are intentionally
 # audit-only, not exposed by a native or aggregate editor.

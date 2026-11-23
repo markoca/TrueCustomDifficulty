@@ -463,6 +463,22 @@ public sealed class MainViewModel : ObservableObject
         }
 
         var parametersById = parameterVMs.ToDictionary(p => p.Id, StringComparer.Ordinal);
+        if (parametersById.TryGetValue("stamina.maxCarryWeight", out var carryWeight))
+        {
+            var overweightStages = new[]
+            {
+                "stamina.overweightLightThreshold", "stamina.overweightMediumThreshold",
+                "stamina.overweightHeavyThreshold", "stamina.overweightCriticalThreshold"
+            }.Select(id => parametersById[id]).ToArray();
+            foreach (var stage in overweightStages)
+                stage.SetOverweightCarryProvider(() => carryWeight.CurrentNumber);
+            carryWeight.PropertyChanged += (_, args) =>
+            {
+                if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
+                    foreach (var stage in overweightStages)
+                        stage.RefreshOverweightCarryDisplay();
+            };
+        }
 
         void WireVisualAggregate(string anchorId, params string[] memberIds)
         {
@@ -2549,6 +2565,10 @@ public sealed class MainViewModel : ObservableObject
 
                 // Encumbrance
                 "stamina.maxCarryWeight" => 600,
+                "stamina.overweightLightThreshold" => 610,
+                "stamina.overweightMediumThreshold" => 620,
+                "stamina.overweightHeavyThreshold" => 630,
+                "stamina.overweightCriticalThreshold" => 640,
                 _ => 699
             };
         }

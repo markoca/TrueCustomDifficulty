@@ -27,6 +27,7 @@ public sealed class ParameterViewModel : ObservableObject
     private Func<bool>? _dependencyEnabledProvider;
     private Func<bool>? _aggregateModifiedProvider;
     private Func<double>? _dynamicMaximumProvider;
+    private Func<double>? _overweightCarryProvider;
 
     public ParameterDefinition Definition { get; }
     public string Id => Definition.Id;
@@ -126,6 +127,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "SleepingDashboard" => "Set when you can sleep, the minimum hours and how much HP and stamina you regain when you wake up.",
                     "CoreHealthDashboard" => "Set MAX HP and PASSIVE HP REGEN at the top. REGEN DELAY, REGEN STRENGTH and LOW-HP RECOVERY RATE use separate tracks.",
                     "StaminaCore" => "Set MAX STAMINA and STAMINA REGEN at the top. VAULT HEIGHT and MAX CARRY WEIGHT below change independently.",
+                    "OverweightThresholds" => "Each rail sets when a load penalty starts as a share of MAX CARRY WEIGHT. The readout below shows the live kilograms. Stages stay in order and cannot cross.",
                     "WaterStaminaPressure" => "Drag the MEDIUM WATER or DEEP WATER track separately.",
                     "SevereFatiguePenaltyBoard" => "Enable severe-fatigue mechanics, then drag each of the five vertical penalty equalizer bars independently.",
                     "MasterLowHealth" => "Enable low-health mechanics and turn the HEALTH RECOVERY LOSS knob: how much slower HP regenerates while your health is low.",
@@ -524,6 +526,10 @@ public sealed class ParameterViewModel : ObservableObject
         ["stamina.regeneration"] = "StaminaCore",
         ["stamina.waterMediumDrain"] = "WaterStaminaPressure",
         ["stamina.waterStrongDrain"] = "WaterStaminaPressure",
+        ["stamina.overweightLightThreshold"] = "OverweightThresholds",
+        ["stamina.overweightMediumThreshold"] = "OverweightThresholds",
+        ["stamina.overweightHeavyThreshold"] = "OverweightThresholds",
+        ["stamina.overweightCriticalThreshold"] = "OverweightThresholds",
         ["survival.sleepinessRate"] = "FatigueCurve",
         ["survival.sleepLowThreshold"] = "FatigueCurve",
         ["survival.sleepMediumThreshold"] = "FatigueCurve",
@@ -750,6 +756,7 @@ public sealed class ParameterViewModel : ObservableObject
     private static readonly Dictionary<string, string> VisualAggregateAnchorByFamily = new(StringComparer.Ordinal)
     {
         ["StaminaCore"] = "stamina.maxSP",
+        ["OverweightThresholds"] = "stamina.overweightLightThreshold",
         ["WaterStaminaPressure"] = "stamina.waterMediumDrain",
         ["FatigueCurve"] = "survival.sleepinessRate",
         ["EquipmentWearBalance"] = "equipment.armorDurability",
@@ -888,6 +895,15 @@ public sealed class ParameterViewModel : ObservableObject
     public double Maximum => _dynamicMaximumProvider is null
         ? StaticMaximum
         : Math.Max(Minimum, _dynamicMaximumProvider());
+
+    public void SetOverweightCarryProvider(Func<double> provider)
+    {
+        _overweightCarryProvider = provider;
+        RefreshOverweightCarryDisplay();
+    }
+
+    public void RefreshOverweightCarryDisplay()
+        => OnPropertyChanged(nameof(CurrentDisplay));
 
     public void SetDynamicMaximumProvider(Func<double> provider)
     {
@@ -1201,6 +1217,10 @@ public sealed class ParameterViewModel : ObservableObject
             var playerFacing = FormatPlayerFacingCurrentValue();
             if (!string.IsNullOrWhiteSpace(playerFacing))
                 return playerFacing;
+
+            if (Id.StartsWith("stamina.overweight", StringComparison.Ordinal)
+                && _overweightCarryProvider is not null)
+                return $"{CurrentNumber * 100:0.#}% · {CurrentNumber * _overweightCarryProvider():0.###} kg";
 
             if (Definition.Display?.Primary == "percent")
                 return $"{CurrentNumber * 100:0.#}%";

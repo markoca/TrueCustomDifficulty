@@ -123,6 +123,9 @@ public sealed class ParameterCatalogService
             if (constraint.Order is not ("nondecreasing" or "nonincreasing"))
                 throw new InvalidDataException($"Slider constraint {constraint.Id} has unsupported order '{constraint.Order}'.");
 
+            if (!double.IsFinite(constraint.MinimumGap) || constraint.MinimumGap < 0)
+                throw new InvalidDataException($"Slider constraint {constraint.Id} has an invalid minimum gap.");
+
             if (constraint.ParameterIds.Count < 2)
                 throw new InvalidDataException($"Slider constraint {constraint.Id} must contain at least two parameters.");
 
@@ -252,8 +255,8 @@ public sealed class ParameterCatalogService
             for (var i = 1; i < values.Count; i++)
             {
                 var valid = constraint.Order == "nondecreasing"
-                    ? values[i - 1] <= values[i] + epsilon
-                    : values[i - 1] + epsilon >= values[i];
+                    ? values[i - 1] + constraint.MinimumGap <= values[i] + epsilon
+                    : values[i - 1] + epsilon >= values[i] + constraint.MinimumGap;
 
                 if (!valid)
                 {

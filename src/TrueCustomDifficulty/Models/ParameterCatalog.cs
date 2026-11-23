@@ -40,6 +40,9 @@ public sealed class SliderConstraintDefinition
 
     [JsonPropertyName("parameterIds")]
     public List<string> ParameterIds { get; set; } = new();
+
+    [JsonPropertyName("minimumGap")]
+    public double MinimumGap { get; set; }
 }
 
 public sealed class AppDefinition
