@@ -1,3 +1,9 @@
+## CURRENT 2026-11-23 — Direct binocular/NVG pickup removal and full rank tabs
+
+All twelve 2.1 factory profiles now persist 497 native settings. `loot.looseOpticsRemoved` disables only the **17 audited active direct WorldMap binocular/NVG pickups** (15 base, two DLC1). **ON:** Hardcore, Hardcore+, Outcast. **OFF:** the other nine profiles; existing player-authored presets with no new field remain Vanilla OFF. Trader, NPC, quest, stash and mod-added NVG sources remain unchanged. Role rationale: restrictive survival modes cannot collect convenient world optics, while explorer/professional modes preserve the scarce original finds. The four Food/Drink source-selecting rank tabs now show full names alongside the standalone RANK: prefix. All authored Food/Drink chance values, Newbie weight multipliers and Overweight thresholds remain unchanged.
+
+See `docs/generators/LOOSE-OPTICS-REMOVAL-2026-11-23.md` and `tools/audit_loose_optics.py`. Static tests and live Windows writer contract are separate from actual in-game loot behavior.
+
 ## CURRENT 2026-11-23 — Food / Drink box source balance for all 12 profiles
 
 **Current source of truth:** `tools/factory_preset_food_drink_boxes_2026_11_23.json`. The earlier ten-multiplier-derived higher-rank values and table are **superseded**. All 12 factory presets now have **40 deliberately authored native settings each**: 10 Newbie relative Weight multipliers and 30 literal Chance values (10 for each of EXP, VET and MASTER). Across the presets, **325 existing numbers** changed in this pass; no gameplay CFG writer or UI code changed.

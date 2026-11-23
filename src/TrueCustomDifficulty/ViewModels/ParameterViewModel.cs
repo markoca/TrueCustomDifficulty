@@ -691,6 +691,7 @@ public sealed class ParameterViewModel : ObservableObject
         ["loot.worldDetectors"] = "WorldLootLayout",
         ["loot.worldArmorRemoved"] = "WorldLootLayout",
         ["loot.looseArtifactsRemoved"] = "WorldLootLayout",
+        ["loot.looseOpticsRemoved"] = "WorldLootLayout",
         ["loot.blueprintShuffle"] = "WorldLootLayout",
 
         ["loot.genericStashReduction"] = "StashContentMix",
@@ -1548,6 +1549,8 @@ public sealed class ParameterViewModel : ObservableObject
                 return "ON removes loose and stash detectors. OFF keeps them where vanilla puts them.";
             if (Id == "loot.looseArtifactsRemoved")
                 return "ON removes 4 fixed Weird artifact spots (+1 Water Drip with DLC). Anomaly fields stay.";
+            if (Id == "loot.looseOpticsRemoved")
+                return "ON removes 12 loose binoculars and 3 NVG (+1 of each with DLC1). NPC gear and traders stay.";
             if (Id == "loot.blueprintShuffle")
                 return "Moves blueprints between their spots.";
             if (Id == "combat.accumulatedDamageIncludesHealedHealth")

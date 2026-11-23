@@ -14,7 +14,7 @@ assert len(roots) == len(set(roots)) == 10
 assert ranks == ["Experienced", "Veteran", "Master"]
 ids = roots + [root + rank for rank in ranks for root in roots]
 assert len(ids) == len(set(ids)) == 40 and set(ids) <= set(catalog)
-assert len(catalog) == baseline["supportedParameterCount"] == 496
+assert len(catalog) == baseline["supportedParameterCount"] == 497
 points = [p for p in baseline["editPoints"] if p["parameterId"] in ids]
 assert len(points) == 40
 assert len({(p["file"], p["prototype"], tuple(p["nodePath"]), p["key"]) for p in points}) == 40

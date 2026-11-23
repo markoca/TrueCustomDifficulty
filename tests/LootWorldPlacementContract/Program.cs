@@ -48,6 +48,7 @@ internal static partial class Program
             }
             Inventory();
             VerifyWorldArmorRemoval();
+            VerifyLooseOpticsRemoval();
             foreach(var diff in new[]{"Novice","Stalker","Veteran","Master"})
                 Case(diff,false,false,null,false,false,false,"vanilla");
             Case("Veteran",false,false,0.5,false,false,false,"inactive-density");
@@ -86,7 +87,7 @@ internal static partial class Program
         // generic editPoint for a manifest-based per-actor BPatch operation.
         var uniqueRoute = WriterBaseline.Special.LooseUniqueWeaponShuffle;
         Check(WriterBaseline.SupportedParameterCount==Catalog.Parameters.Count &&
-            WriterBaseline.SupportedParameterCount==452,
+            WriterBaseline.SupportedParameterCount==497,
             "Writer baseline/catalog count must include unique world weapon shuffle");
         Check(uniqueRoute.ParameterId=="loot.looseUniqueWeaponShuffle" &&
             uniqueRoute.ManifestResource==

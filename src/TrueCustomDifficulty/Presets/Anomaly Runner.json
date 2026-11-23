@@ -2019,6 +2019,10 @@
     "loot.drinkBoxEnergyMaster": {
       "kind": "slider",
       "number": 0.9
+    },
+    "loot.looseOpticsRemoved": {
+      "kind": "toggle",
+      "boolean": false
     }
   }
 }

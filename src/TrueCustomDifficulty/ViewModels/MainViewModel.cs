@@ -329,6 +329,7 @@ public sealed class MainViewModel : ObservableObject
             "loot.worldDetectors",
             "loot.worldArmorRemoved",
             "loot.looseArtifactsRemoved",
+            "loot.looseOpticsRemoved",
             "loot.blueprintShuffle"
         };
 
@@ -856,6 +857,7 @@ public sealed class MainViewModel : ObservableObject
             "loot.worldDetectors",
             "loot.worldArmorRemoved",
             "loot.looseArtifactsRemoved",
+            "loot.looseOpticsRemoved",
             "loot.blueprintShuffle");
 
         // Mutually exclusive overlapping stash weapon transformations:
@@ -2714,6 +2716,7 @@ public sealed class MainViewModel : ObservableObject
                 "loot.worldDetectors" => 105,
                 "loot.worldArmorRemoved" => 106,
                 "loot.looseArtifactsRemoved" => 107,
+                "loot.looseOpticsRemoved" => 108,
 
                 // NPC loot and equipment
                 "loot.npcSmartLootEnabled" => 199,

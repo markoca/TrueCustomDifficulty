@@ -356,6 +356,11 @@ public sealed partial class CfgPatchWriterService
             modifiedById, allById, hasDlc1, outputRoot, writtenParameters);
         editCount += looseArtifactFiles;
 
+        // Exactly 17 direct, active, non-quest binocular/NVG world pickups.
+        var looseOpticsFiles = WriteLooseOpticsRemovals(
+            modifiedById, allById, hasDlc1, outputRoot, writtenParameters);
+        editCount += looseOpticsFiles;
+
         // Strictly allowlisted original regular weapon reward nodes disappear
         // only while the Extra Stash Gear master checkbox is enabled.
         editCount += WriteStashAuthoredWeaponRemovals(allById, documents);
@@ -476,7 +481,7 @@ public sealed partial class CfgPatchWriterService
                 string.Join(Environment.NewLine, missing.Select(id => $"  - {id}")));
         }
 
-        var fileCount = f1BoxRemoval.FileCount + crateRemoval.FileCount + looseRemoval.FileCount + uniqueWeaponShuffle.FileCount + worldWeaponDistribution.FileCount + worldArmorRemoval.FileCount + looseArtifactFiles;
+        var fileCount = f1BoxRemoval.FileCount + crateRemoval.FileCount + looseRemoval.FileCount + uniqueWeaponShuffle.FileCount + worldWeaponDistribution.FileCount + worldArmorRemoval.FileCount + looseArtifactFiles + looseOpticsFiles;
         foreach (var pair in documents.OrderBy(p => p.Key, StringComparer.OrdinalIgnoreCase))
         {
             if (pair.Value.IsEmpty)
@@ -537,6 +542,7 @@ public sealed partial class CfgPatchWriterService
         supported.Add("loot.worldDetectors");
         supported.Add("loot.worldArmorRemoved");
         supported.Add(LooseArtifactsRemovedId);
+        supported.Add(LooseOpticsRemovedId);
         supported.Add("loot.worldF1GrenadeBoxes");
         supported.Add("loot.blueprintShuffle");
         supported.Add("loot.looseWorldLootRemoved");

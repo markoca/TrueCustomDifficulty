@@ -24,7 +24,7 @@ NEW_IDS |= {"combat.mutantSpecialAbilityRate", "combat.npcGrenadeRate", "combat.
             "combat.npcAlertMemory", "loot.genericCorpseReduction", "loot.genericStashReduction"}
 assert len(NEW_IDS) == 15, len(NEW_IDS)  # 40 before RESPAWN RATE retired; ATTACKS / ABILITIES sliders all folded into knobs (2026-11-18)
 # 2026-11-17: weather AI coefficients and per-item medical HEAL TIME seconds.
-NEW_IDS |= {"combat.npcFogVisibility", "combat.npcRainNoise", "combat.npcStormNoise",
+NEW_IDS |= {"loot.looseOpticsRemoved", "combat.npcFogVisibility", "combat.npcRainNoise", "combat.npcStormNoise",
             "health.bandageHealTime", "health.medkitHealTime", "health.armyMedkitHealTime",
             "health.ecoMedkitHealTime", "loot.looseArtifactsRemoved",
             "loot.medicalBoxArmyMedkitWeight", "loot.stashSmartStockedChance",
@@ -132,6 +132,7 @@ for path in presets:
     role[RAD_ID] = RADIATION["roles"][path.stem]["damageMultiplier"]
     role.update(FOUR_DOMAINS["roles"][path.stem]["values"])
     role.update(dict(zip(OVERWEIGHT["ids"], OVERWEIGHT["roles"][path.stem]["ratios"])))
+    role["loot.looseOpticsRemoved"] = path.stem in {"Hardcore", "Hardcore+", "Outcast"}
     # 2026-11-18 attack-only pass: role values of removed controls (roars, growls, ...) are gone.
     role = {k: v for k, v in role.items() if k in by_id}
     for pid in NEW_IDS | set(role):

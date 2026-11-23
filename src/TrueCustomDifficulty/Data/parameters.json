@@ -19511,6 +19511,54 @@
       "exposeInUi": true
     },
     {
+      "id": "loot.looseOpticsRemoved",
+      "tab": "loot",
+      "group": "World Loot",
+      "label": "Remove Loose Binoculars / NVG",
+      "description": "Remove the 17 audited active non-quest WorldMap binocular and night-vision-goggle pickups (15 base, 2 DLC1). Does not touch stashes, trader stock, NPC equipment, quests or modded goggles.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "display": {
+        "valueLabel": "Remove Loose Binoculars / NVG"
+      },
+      "vanilla": {
+        "All": false
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/SpawnActorPrototypes.cfg",
+          "prototype": "12 direct binocular + 3 direct NVG active WorldMap actors",
+          "path": "17-source allowlist subset (15 base)",
+          "operation": "removeNode"
+        },
+        {
+          "scope": "dlc1",
+          "file": "DLCGameData/DLC1/SpawnActorPrototypes.cfg",
+          "prototype": "1 direct binocular + 1 direct NVG active WorldMap actor",
+          "path": "2 DLC1 actors",
+          "operation": "removeNode"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "OFF leaves original world placement untouched; ON writes per-actor removenode for 12 binoculars + 3 NVG base, plus 1 binocular + 1 NVG DLC1.",
+          "ActorSID manifest from original STALKER 2.1 SpawnActorPrototypes.cfg; all eligible actors have SpawnOnStart=true, LevelName=WorldMap_WP, SpawnType=ESpawnType::Item, matching ItemSID and SpawnedPrototypeSID.",
+          "No exact ActorSID reference found in any other decoded base/DLC1 CFG. This is source-only evidence, not full gameplay or Blueprint quest certification.",
+          "No changes to merchant offers, physical stashes, NPC/NVG pools, item prototypes, mod-added AR Goggles or quest rewards.",
+          "Only future spawns affected; items instantiated in an existing save may remain."
+        ]
+      },
+      "rationale": "Removes binoculars and night-vision goggles lying out in the open: 15 pickups in the base Zone, 17 with DLC1. Vanilla: OFF. Traders, NPC gear, stashes and quests keep their originals.",
+      "logic": "OFF leaves all 17 audited pickup spots alone. ON deletes their individual direct world actor spawns without editing the items or their other loot sources.",
+      "interaction": "No trader, NPC, mod NVG or stash changes; best tested in an unexplored location.",
+      "exposeInUi": true
+    },
+    {
       "id": "loot.blueprintShuffle",
       "tab": "loot",
       "group": "World Loot",

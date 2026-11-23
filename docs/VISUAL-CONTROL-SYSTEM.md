@@ -1,3 +1,9 @@
+## CURRENT 2026-11-23 — Full RANK selector and removable binocular/NVG pickups
+
+The FOOD / DRINK BOXES selector shows **RANK:** followed by four separate, full-word tabs: **NEWBIE, EXPERIENCED, VETERAN, MASTER**. One centered 441-DIP selector group (40 DIP label + 10 DIP gap + four 94-DIP tabs and three 5-DIP gaps) replaces the former 251-DIP abbreviated selector. At widths below 760 DIP, the selector and following tracks use the existing 24-DIP second-row offset to avoid title collision. No change to the four source ranks, weight semantics, chance values, 2×2 knobs, preview bars or native selection behavior.
+
+WORLD ITEM SPAWNS > REMOVE gains a fourth compact checkbox **Binocs / NVG**, from `loot.looseOpticsRemoved`. REMOVE is now 155 DIP tall and has four 30-DIP rows; WEAPONS / SHUFFLE remain unchanged. The full family remains navigable at wide and narrow widths, with a single native hit target per row. Source-backed ON removes only 15 base + 2 DLC1 direct WorldMap binocular/NVG pickup actors; NPC equipment, quests, stashes, merchants and modded goggles stay intact. Vanilla OFF. See `docs/generators/LOOSE-OPTICS-REMOVAL-2026-11-23.md` for source identities, CFG writer and test contract.
+
 ## CURRENT 2026-11-23 — Whole Overweight percentages, source-accurate kg
 
 ## 2026-11-23 — Food left 2×2 + Drink right 2×2 (latest visual lock)

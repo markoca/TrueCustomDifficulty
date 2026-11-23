@@ -34,8 +34,8 @@ class FoodDrinkBoxContract(unittest.TestCase):
         cls.params = {p["id"]: p for p in cls.catalog["parameters"]}
 
     def test_complete_mapping(self):
-        self.assertEqual(len(self.params), 496)
-        self.assertEqual(self.baseline["supportedParameterCount"], 496)
+        self.assertEqual(len(self.params), 497)
+        self.assertEqual(self.baseline["supportedParameterCount"], 497)
         self.assertEqual(len(ALL_IDS), 40)
         self.assertEqual(len(self.points), 40)
         self.assertEqual(len({
@@ -115,9 +115,11 @@ class FoodDrinkBoxContract(unittest.TestCase):
     def test_compact_food_drink_layout_contract(self):
         ui = (SOURCE / "Controls/AggregateVisualControl.FoodDrinkBoxes.cs").read_text()
         aggregate = (SOURCE / "Controls/AggregateVisualControl.cs").read_text()
-        self.assertIn("var tabLeft = (ActualWidth - (tabWidth * 4.0 + tabGap * 3.0)) / 2.0;", ui)
+        self.assertIn('var groupLeft = (ActualWidth - selectorWidth) / 2.0;', ui)
+        self.assertIn('DrawCenteredText(dc, "RANK:",', ui)
+        self.assertIn('{ "NEWBIE", "EXPERIENCED", "VETERAN", "MASTER" };', ui)
         self.assertIn("var rankOffset = FoodDrinkRankOffset(ActualWidth);", ui)
-        self.assertIn("width < 600.0 ? 24.0 : 0.0", ui)
+        self.assertIn("width < 760.0 ? 24.0 : 0.0", ui)
         self.assertIn("=> 616.0 + FoodDrinkRankOffset(width);", ui)
         self.assertIn("private const double FoodDrinkKnobHeight = 108.0;", ui)
         self.assertIn("private const double FoodDrinkKnobColumnGap = 18.0;", ui)
@@ -140,12 +142,13 @@ class FoodDrinkBoxContract(unittest.TestCase):
         # have no overlapping hit circles or labels at responsive widths.
         for width in (520.0, 560.0, 599.0, 600.0, 760.0, 900.0, 1600.0):
             with self.subTest(width=width):
-                tab_width, tab_gap, tab_count = 59.0, 5.0, 4
-                group = tab_count * tab_width + (tab_count - 1) * tab_gap
-                tab_left = (width - group) / 2.0
-                self.assertGreaterEqual(tab_left, 0.0)
-                self.assertAlmostEqual(tab_left + group / 2.0, width / 2.0)
-                self.assertLessEqual(tab_left + group, width)
+                tab_width, tab_gap, tab_count = 94.0, 5.0, 4
+                label_width, label_gap = 40.0, 10.0
+                group = label_width + label_gap + tab_count * tab_width + (tab_count - 1) * tab_gap
+                tab_left = (width - group) / 2.0 + label_width + label_gap
+                self.assertGreaterEqual(tab_left - label_width - label_gap, 0.0)
+                self.assertAlmostEqual(tab_left - label_width - label_gap + group / 2.0, width / 2.0)
+                self.assertLessEqual(tab_left + tab_count * tab_width + (tab_count - 1) * tab_gap, width)
 
                 outer_margin, outer_gap = 17.0, 10.0
                 half = (width - 2 * outer_margin - outer_gap) / 2.0
@@ -172,7 +175,7 @@ class FoodDrinkBoxContract(unittest.TestCase):
                             self.assertAlmostEqual(y + 108.0 + 14.0,
                                                    117.0 + 122.0)
 
-                offset = 24.0 if width < 600.0 else 0.0
+                offset = 24.0 if width < 760.0 else 0.0
                 tab_bottom = -2.0 + offset + 19.0
                 track_top = 21.0 + offset
                 self.assertGreaterEqual(track_top - tab_bottom, 4.0)

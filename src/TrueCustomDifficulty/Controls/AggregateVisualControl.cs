@@ -2230,10 +2230,12 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var detectors = P("loot.worldDetectors");
         var armor = P("loot.worldArmorRemoved");
         var artifacts = P("loot.looseArtifactsRemoved");
+        var optics = P("loot.looseOpticsRemoved");
         var blueprints = P("loot.blueprintShuffle");
         DrawHeader(dc, "WORLD ITEM SPAWNS", "", text, muted, accent);
         if (uniqueWeapons is null || weapons is null || density is null || attachments is null
-            || detectors is null || armor is null || artifacts is null || blueprints is null)
+            || detectors is null || armor is null || artifacts is null
+            || optics is null || blueprints is null)
         {
             DrawCenteredText(dc, "World placement data unavailable.",
                 new Point(ActualWidth / 2.0, 125.0),
@@ -2260,7 +2262,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         };
         var removeRows = new (ParameterViewModel Parameter, string Label)[]
         {
-            (detectors, "Loose Detectors"), (armor, "Loose Armor"), (artifacts, "Loose Artifacts")
+            (detectors, "Loose Detectors"), (armor, "Loose Armor"),
+            (artifacts, "Loose Artifacts"), (optics, "Binocs / NVG")
         };
         DrawWorldToggleListCard(dc, layout.Shuffle, "SHUFFLE", shuffleRows,
             text, muted, border, accent, panel);
@@ -2290,6 +2293,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private const double WorldDensityExtra = 14.0;
     private const double WorldListCardHeight =
         WorldListHeader + 3.0 * WorldListRow + WorldDensityExtra + 8.0;
+    private const double WorldRemoveCardHeight = WorldListHeader + 4.0 * WorldListRow + 8.0;
 
     private static WorldLootGeometry LayoutWorldLoot(double hostWidth)
     {
@@ -2304,9 +2308,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             var unit = (content - 2.0 * gap) / 3.3;
             var weapons = new Rect(left, top, unit * 1.3, WorldListCardHeight);
             var shuffle = new Rect(weapons.Right + gap, top, unit, WorldListCardHeight);
-            var remove = new Rect(shuffle.Right + gap, top, unit, WorldListCardHeight);
+            var remove = new Rect(shuffle.Right + gap, top, unit, WorldRemoveCardHeight);
             return new WorldLootGeometry(weapons, shuffle, remove,
-                weapons.Bottom + 14.0);
+                Math.Max(weapons.Bottom, remove.Bottom) + 14.0);
         }
 
         // Very narrow hosts: WEAPONS on top, SHUFFLE + REMOVE side by side.
@@ -2315,8 +2319,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var lower = stacked.Bottom + gap;
         return new WorldLootGeometry(stacked,
             new Rect(left, lower, half, WorldListCardHeight),
-            new Rect(left + half + gap, lower, half, WorldListCardHeight),
-            lower + WorldListCardHeight + 14.0);
+            new Rect(left + half + gap, lower, half, WorldRemoveCardHeight),
+            lower + WorldRemoveCardHeight + 14.0);
     }
 
     private double WorldLootHeight(double width) => LayoutWorldLoot(width).Height;
@@ -2326,8 +2330,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // WEAPONS (3 rows incl. density) uses the natural pitch; 2-row cards
         // spread across the same body height.
         var body = card.Height - WorldListHeader - 8.0;
-        var pitch = rows == 3 ? WorldListRow : body / Math.Max(1, rows);
-        var offset = rows == 3 ? 0.0 : (pitch - WorldListRow) / 2.0;
+        var pitch = rows >= 3 ? WorldListRow : body / Math.Max(1, rows);
+        var offset = rows >= 3 ? 0.0 : (pitch - WorldListRow) / 2.0;
         var tops = new double[rows];
         for (var i = 0; i < rows; i++)
             tops[i] = card.Top + WorldListHeader + offset + i * pitch;
@@ -8572,6 +8576,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 "loot.worldDetectors",
                 "loot.worldArmorRemoved",
                 "loot.looseArtifactsRemoved",
+                "loot.looseOpticsRemoved",
                 "loot.blueprintShuffle"
             },
             "StashContentMix" => new[]

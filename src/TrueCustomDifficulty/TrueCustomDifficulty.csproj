@@ -57,6 +57,7 @@
     <EmbeddedResource Include="Data\world-armor-direct-manifest.csv" LogicalName="TrueCustomDifficulty.Data.world-armor-direct-manifest.csv" />
     <EmbeddedResource Include="Data\world-armor-stash-manifest.csv" LogicalName="TrueCustomDifficulty.Data.world-armor-stash-manifest.csv" />
     <EmbeddedResource Include="Data\loose-artifact-spawner-manifest.csv" LogicalName="TrueCustomDifficulty.Data.loose-artifact-spawner-manifest.csv" />
+    <EmbeddedResource Include="Data\loose-optics-direct-manifest.csv" LogicalName="TrueCustomDifficulty.Data.loose-optics-direct-manifest.csv" />
     <EmbeddedResource Include="Data\world-detector-direct-manifest.csv" LogicalName="TrueCustomDifficulty.Data.world-detector-direct-manifest.csv" />
     <EmbeddedResource Include="Data\world-detector-stash-manifest.csv" LogicalName="TrueCustomDifficulty.Data.world-detector-stash-manifest.csv" />
     <EmbeddedResource Include="Data\world-f1-grenade-box-manifest.csv" LogicalName="TrueCustomDifficulty.Data.world-f1-grenade-box-manifest.csv" />

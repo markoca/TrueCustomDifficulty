@@ -31,6 +31,12 @@ jobs:
       - name: 12 role-specific Overweight thresholds and 2.1 CFG mapping
         run: python tools/audit_factory_overweight_profiles.py
 
+      - name: Food/Drink full-name RANK and direct Chance source contracts
+        run: python tests/test_food_drink_boxes_source_contract.py
+
+      - name: Loose binocular/NVG direct-world actor inventory and role policy
+        run: python tools/audit_loose_optics.py
+
       - name: 2.1 special CFG families (inventory only, source archives not in CI)
         run: python tools/audit_21_special_source_families.py --inventory-only
 

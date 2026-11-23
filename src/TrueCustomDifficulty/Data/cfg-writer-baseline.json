@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.1",
-  "supportedParameterCount": 496,
+  "supportedParameterCount": 497,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -48968,6 +48968,11 @@
       "parameterId": "loot.looseArtifactsRemoved",
       "manifestResource": "TrueCustomDifficulty.Data.loose-artifact-spawner-manifest.csv",
       "actors": 5
+    },
+    "looseOpticsRemoved": {
+      "parameterId": "loot.looseOpticsRemoved",
+      "manifestResource": "TrueCustomDifficulty.Data.loose-optics-direct-manifest.csv",
+      "actors": 17
     },
     "traderBuys": {
       "parameterIds": [

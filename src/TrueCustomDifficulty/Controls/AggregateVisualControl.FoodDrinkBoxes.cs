@@ -21,7 +21,7 @@ public sealed partial class AggregateVisualControl
     private const double FoodDrinkKnobRowPitch = 122.0;
     private const double FoodDrinkKnobBankCap = 384.0;
     private static double FoodDrinkRankOffset(double width)
-        => width < 600.0 ? 24.0 : 0.0;
+        => width < 760.0 ? 24.0 : 0.0;
     private static double FoodDrinkBoxesHeight(double width)
         => 616.0 + FoodDrinkRankOffset(width);
     private int _foodDrinkSelectedRank = 2; // Veteran player-rank source on opening
@@ -52,7 +52,7 @@ public sealed partial class AggregateVisualControl
     private static readonly Brush[] DrinkPalette =
         { Brushes.SteelBlue, Brushes.DodgerBlue, Brushes.MediumPurple, Brushes.CadetBlue };
     private static readonly string[] RankTabLabels =
-        { "NEWBIE", "EXP", "VET", "MASTER" };
+        { "NEWBIE", "EXPERIENCED", "VETERAN", "MASTER" };
 
     private bool TrySelectFoodDrinkRank(Point point)
     {
@@ -88,12 +88,19 @@ public sealed partial class AggregateVisualControl
 
         // Compact same-board rank selector: only rank-specific editors change.
         // Current rank is preserved when sliders move; no dropdown scroll theft.
-        const double tabWidth = 59.0;
+        const double tabWidth = 94.0;
         const double tabGap = 5.0;
-        // Center the complete selector, never align it to the right edge.
-        // At narrow widths the selector moves below the title, rather than
-        // overlapping FOOD / DRINK BOXES or forcing chips offscreen.
-        var tabLeft = (ActualWidth - (tabWidth * 4.0 + tabGap * 3.0)) / 2.0;
+        const double labelWidth = 40.0;
+        const double labelGap = 10.0;
+        // Center RANK: and all four FULL player-rank labels as one selector.
+        // Under 760 DIP the entire row sits beneath FOOD / DRINK BOXES.
+        var selectorWidth = labelWidth + labelGap
+            + tabWidth * RankTabLabels.Length + tabGap * (RankTabLabels.Length - 1);
+        var groupLeft = (ActualWidth - selectorWidth) / 2.0;
+        var tabLeft = groupLeft + labelWidth + labelGap;
+        DrawCenteredText(dc, "RANK:",
+            new Point(groupLeft + labelWidth / 2.0, top + 2.0 + rankOffset),
+            10.0, muted, FontWeights.Bold);
         for (var i = 0; i < RankTabLabels.Length; i++)
         {
             var tab = new Rect(tabLeft + i * (tabWidth + tabGap),
