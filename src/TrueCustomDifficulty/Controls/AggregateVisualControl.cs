@@ -2263,7 +2263,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var removeRows = new (ParameterViewModel Parameter, string Label)[]
         {
             (detectors, "Loose Detectors"), (armor, "Loose Armor"),
-            (artifacts, "Loose Artifacts"), (optics, "Binocs / NVG")
+            (artifacts, "Loose Artifacts"), (optics, "Binoculars / NVG")
         };
         DrawWorldToggleListCard(dc, layout.Shuffle, "SHUFFLE", shuffleRows,
             text, muted, border, accent, panel);
@@ -2303,7 +2303,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var available = Math.Max(1.0, hostWidth - 2.0 * margin);
         var content = Math.Min(620.0, available);
         var left = margin + (available - content) / 2.0;
-        if (content >= 440.0)
+        // Full item names must fit the REMOVE card; below this width, stack
+        // WEAPONS above SHUFFLE / REMOVE instead of ellipsizing Binoculars.
+        if (content >= 560.0)
         {
             var unit = (content - 2.0 * gap) / 3.3;
             var weapons = new Rect(left, top, unit * 1.3, WorldListCardHeight);

@@ -8,7 +8,7 @@ These four ranks select **player-rank item-generator sources, NOT item weight or
 
 ## New REMOVE checkbox — direct binocular and NVG world pickups
 
-`loot.looseOpticsRemoved` is an independent Vanilla-OFF toggle in Loot → World Loot → WORLD ITEM SPAWNS → REMOVE, with compact caption **Binocs / NVG** and rationale **Remove Loose Binoculars / NVG**. Four REMOVE rows now fit a taller card (155 DIP), without changing WEAPONS and SHUFFLE card contents. On narrow layouts the lower SHUFFLE/REMOVE pair remains aligned without clipping.
+`loot.looseOpticsRemoved` is an independent Vanilla-OFF toggle in Loot → World Loot → WORLD ITEM SPAWNS → REMOVE, with compact caption **Binoculars / NVG** and rationale **Remove Loose Binoculars / NVG**. Four REMOVE rows now fit a taller card (155 DIP), without changing WEAPONS and SHUFFLE card contents. For less than 560 DIP of card content width, the cards use the stacked layout so the full word **Binoculars** is not cut off. On narrow layouts the lower SHUFFLE/REMOVE pair remains aligned without clipping.
 
 **Original source:** user-provided `STALKER2-2.1 cfg dump(3).zip` → base `GameData/SpawnActorPrototypes.cfg` and DLC1 `DLCGameData/DLC1/SpawnActorPrototypes.cfg`. The exhaustive `WorldMap_WP` direct Item scan identifies **17** active direct loot actors:
 

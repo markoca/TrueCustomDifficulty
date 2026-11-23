@@ -61,7 +61,9 @@ assert "looseOpticsFiles" in writer and "+ looseOpticsFiles;" in writer
 assert "rows.Count != 17" in part and ": removenode" in part
 assert "IsScopeApplicable" in part
 assert "Data\\loose-optics-direct-manifest.csv" in csproj
-assert '(optics, "Binocs / NVG")' in ui
+assert '(optics, "Binoculars / NVG")' in ui
+assert "if (content >= 560.0)" in ui  # no clipped full-word caption on smaller widths
+assert "Binocs / NVG" not in ui
 assert "WorldRemoveCardHeight" in ui and "4.0 * WorldListRow" in ui
 assert '"loot.looseOpticsRemoved"' in vm and '["loot.looseOpticsRemoved"] = "WorldLootLayout"' in pvm
 
