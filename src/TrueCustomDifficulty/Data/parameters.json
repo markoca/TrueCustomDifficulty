@@ -11895,6 +11895,486 @@
       "exposeInUi": false
     },
     {
+      "id": "loot.foodBoxBranch",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "FOOD BOX ROLL",
+      "description": "Adjust the food branch of food/drink breakable boxes. Base/Newbie uses relative Weight; Experienced, Veteran and Master use their native outer branch Chance.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Food box branch"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 2,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "DestructibleStash_Food_Drink / _Experienced / _Veteran / _Master",
+          "path": "ItemGenerator/[0]/PossibleItems/[0].Weight (base) / .Chance (higher ranks)",
+          "operation": "scale / scaleClamp01"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Newbie adjusts food-versus-drink weighted selection, not absolute drop probability.",
+          "Experienced, Veteran and Master scale 60%, 70%, and 80% vanilla outer-branch Chance up to 100%.",
+          "Only defined generators are targeted. The unresolved DestructibleStash_Food_Drink_Newbie is excluded.",
+          "Physical world food/drink box removal is independent."
+        ]
+      },
+      "rationale": "Food branch selection in breakable boxes. 1× = Vanilla; Newbie changes relative weights, higher ranks scale native Chance.",
+      "logic": "Higher makes this branch more likely; 0× disables it on defined paths. The graph shows rank-specific results.",
+      "interaction": "Separate from item mix and from removing physical food/drink boxes.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.drinkBoxBranch",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "DRINK BOX ROLL",
+      "description": "Adjust the drink branch of food/drink breakable boxes. Base/Newbie uses relative Weight; Experienced, Veteran and Master use their native outer branch Chance.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Drink box branch"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 2,
+        "step": 0.1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "DestructibleStash_Food_Drink / _Experienced / _Veteran / _Master",
+          "path": "ItemGenerator/[0]/PossibleItems/[1].Weight (base) / .Chance (higher ranks)",
+          "operation": "scale / scaleClamp01"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Newbie adjusts food-versus-drink weighted selection, not absolute drop probability.",
+          "Experienced, Veteran and Master scale 60%, 70%, and 80% vanilla outer-branch Chance up to 100%.",
+          "Only defined generators are targeted. The unresolved DestructibleStash_Food_Drink_Newbie is excluded.",
+          "Physical world food/drink box removal is independent."
+        ]
+      },
+      "rationale": "Drink branch selection in breakable boxes. 1× = Vanilla; Newbie changes relative weights, higher ranks scale native Chance.",
+      "logic": "Higher makes this branch more likely; 0× disables it on defined paths. The graph shows rank-specific results.",
+      "interaction": "Separate from item mix and from removing physical food/drink boxes.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.foodBoxSausage",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "SAUSAGE MIX",
+      "description": "Adjust Sausage selection in food/drink breakable boxes: Newbie Weight, and Experienced/Veteran/Master per-item Chance.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Sausage box content"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "DestructibleStash_Food / _Experienced / _Veteran / _Master",
+          "path": "ItemGenerator/[0]/PossibleItems/[0].Weight (base) / .Chance (higher ranks)",
+          "operation": "scale / scaleClamp01"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "At Newbie rank this is a relative Weight, not an independent drop chance.",
+          "At higher ranks each item uses its own native 2.1 Chance (clamped 0–100%).",
+          "Item MinCount/MaxCount and physical box availability are unchanged.",
+          "Undefined DestructibleStash_Food_Drink_Newbie wrapper is not patched."
+        ]
+      },
+      "rationale": "How often Sausage gets picked from food/drink breakable boxes. 1× = Vanilla; zero = unavailable from defined pools.",
+      "logic": "Newbie = share of weighted picks; Experienced/Veteran/Master = item chance. See rank preview.",
+      "interaction": "Works with FOOD/DRINK BOX ROLL; does not change quantities or physical box counts.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.foodBoxBread",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "BREAD MIX",
+      "description": "Adjust Bread selection in food/drink breakable boxes: Newbie Weight, and Experienced/Veteran/Master per-item Chance.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Bread box content"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "DestructibleStash_Food / _Experienced / _Veteran / _Master",
+          "path": "ItemGenerator/[0]/PossibleItems/[1].Weight (base) / .Chance (higher ranks)",
+          "operation": "scale / scaleClamp01"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "At Newbie rank this is a relative Weight, not an independent drop chance.",
+          "At higher ranks each item uses its own native 2.1 Chance (clamped 0–100%).",
+          "Item MinCount/MaxCount and physical box availability are unchanged.",
+          "Undefined DestructibleStash_Food_Drink_Newbie wrapper is not patched."
+        ]
+      },
+      "rationale": "How often Bread gets picked from food/drink breakable boxes. 1× = Vanilla; zero = unavailable from defined pools.",
+      "logic": "Newbie = share of weighted picks; Experienced/Veteran/Master = item chance. See rank preview.",
+      "interaction": "Works with FOOD/DRINK BOX ROLL; does not change quantities or physical box counts.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.foodBoxCanned",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "CANNED FOOD MIX",
+      "description": "Adjust CannedFood selection in food/drink breakable boxes: Newbie Weight, and Experienced/Veteran/Master per-item Chance.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "CannedFood box content"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "DestructibleStash_Food / _Experienced / _Veteran / _Master",
+          "path": "ItemGenerator/[0]/PossibleItems/[2].Weight (base) / .Chance (higher ranks)",
+          "operation": "scale / scaleClamp01"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "At Newbie rank this is a relative Weight, not an independent drop chance.",
+          "At higher ranks each item uses its own native 2.1 Chance (clamped 0–100%).",
+          "Item MinCount/MaxCount and physical box availability are unchanged.",
+          "Undefined DestructibleStash_Food_Drink_Newbie wrapper is not patched."
+        ]
+      },
+      "rationale": "How often CannedFood gets picked from food/drink breakable boxes. 1× = Vanilla; zero = unavailable from defined pools.",
+      "logic": "Newbie = share of weighted picks; Experienced/Veteran/Master = item chance. See rank preview.",
+      "interaction": "Works with FOOD/DRINK BOX ROLL; does not change quantities or physical box counts.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.foodBoxMilk",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "MILK MIX",
+      "description": "Adjust Milk selection in food/drink breakable boxes: Newbie Weight, and Experienced/Veteran/Master per-item Chance.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Milk box content"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "DestructibleStash_Food / _Experienced / _Veteran / _Master",
+          "path": "ItemGenerator/[0]/PossibleItems/[3].Weight (base) / .Chance (higher ranks)",
+          "operation": "scale / scaleClamp01"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "At Newbie rank this is a relative Weight, not an independent drop chance.",
+          "At higher ranks each item uses its own native 2.1 Chance (clamped 0–100%).",
+          "Item MinCount/MaxCount and physical box availability are unchanged.",
+          "Undefined DestructibleStash_Food_Drink_Newbie wrapper is not patched."
+        ]
+      },
+      "rationale": "How often Milk gets picked from food/drink breakable boxes. 1× = Vanilla; zero = unavailable from defined pools.",
+      "logic": "Newbie = share of weighted picks; Experienced/Veteran/Master = item chance. See rank preview.",
+      "interaction": "Works with FOOD/DRINK BOX ROLL; does not change quantities or physical box counts.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.drinkBoxWater",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "WATER MIX",
+      "description": "Adjust Water selection in food/drink breakable boxes: Newbie Weight, and Experienced/Veteran/Master per-item Chance.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Water box content"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "DestructibleStash_Drink / _Experienced / _Veteran / _Master",
+          "path": "ItemGenerator/[0]/PossibleItems/[0].Weight (base) / .Chance (higher ranks)",
+          "operation": "scale / scaleClamp01"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "At Newbie rank this is a relative Weight, not an independent drop chance.",
+          "At higher ranks each item uses its own native 2.1 Chance (clamped 0–100%).",
+          "Item MinCount/MaxCount and physical box availability are unchanged.",
+          "Undefined DestructibleStash_Food_Drink_Newbie wrapper is not patched."
+        ]
+      },
+      "rationale": "How often Water gets picked from food/drink breakable boxes. 1× = Vanilla; zero = unavailable from defined pools.",
+      "logic": "Newbie = share of weighted picks; Experienced/Veteran/Master = item chance. See rank preview.",
+      "interaction": "Works with FOOD/DRINK BOX ROLL; does not change quantities or physical box counts.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.drinkBoxBeer",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "BEER MIX",
+      "description": "Adjust Beer selection in food/drink breakable boxes: Newbie Weight, and Experienced/Veteran/Master per-item Chance.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Beer box content"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "DestructibleStash_Drink / _Experienced / _Veteran / _Master",
+          "path": "ItemGenerator/[0]/PossibleItems/[1].Weight (base) / .Chance (higher ranks)",
+          "operation": "scale / scaleClamp01"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "At Newbie rank this is a relative Weight, not an independent drop chance.",
+          "At higher ranks each item uses its own native 2.1 Chance (clamped 0–100%).",
+          "Item MinCount/MaxCount and physical box availability are unchanged.",
+          "Undefined DestructibleStash_Food_Drink_Newbie wrapper is not patched."
+        ]
+      },
+      "rationale": "How often Beer gets picked from food/drink breakable boxes. 1× = Vanilla; zero = unavailable from defined pools.",
+      "logic": "Newbie = share of weighted picks; Experienced/Veteran/Master = item chance. See rank preview.",
+      "interaction": "Works with FOOD/DRINK BOX ROLL; does not change quantities or physical box counts.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.drinkBoxVodka",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "VODKA MIX",
+      "description": "Adjust Vodka selection in food/drink breakable boxes: Newbie Weight, and Experienced/Veteran/Master per-item Chance.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Vodka box content"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "DestructibleStash_Drink / _Experienced / _Veteran / _Master",
+          "path": "ItemGenerator/[0]/PossibleItems/[2].Weight (base) / .Chance (higher ranks)",
+          "operation": "scale / scaleClamp01"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "At Newbie rank this is a relative Weight, not an independent drop chance.",
+          "At higher ranks each item uses its own native 2.1 Chance (clamped 0–100%).",
+          "Item MinCount/MaxCount and physical box availability are unchanged.",
+          "Undefined DestructibleStash_Food_Drink_Newbie wrapper is not patched."
+        ]
+      },
+      "rationale": "How often Vodka gets picked from food/drink breakable boxes. 1× = Vanilla; zero = unavailable from defined pools.",
+      "logic": "Newbie = share of weighted picks; Experienced/Veteran/Master = item chance. See rank preview.",
+      "interaction": "Works with FOOD/DRINK BOX ROLL; does not change quantities or physical box counts.",
+      "exposeInUi": false
+    },
+    {
+      "id": "loot.drinkBoxEnergy",
+      "tab": "loot",
+      "group": "Breakable Containers",
+      "label": "ENERGY DRINK MIX",
+      "description": "Adjust Energetic selection in food/drink breakable boxes: Newbie Weight, and Experienced/Veteran/Master per-item Chance.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Energetic box content"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "DestructibleStash_Drink / _Experienced / _Veteran / _Master",
+          "path": "ItemGenerator/[0]/PossibleItems/[3].Weight (base) / .Chance (higher ranks)",
+          "operation": "scale / scaleClamp01"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "At Newbie rank this is a relative Weight, not an independent drop chance.",
+          "At higher ranks each item uses its own native 2.1 Chance (clamped 0–100%).",
+          "Item MinCount/MaxCount and physical box availability are unchanged.",
+          "Undefined DestructibleStash_Food_Drink_Newbie wrapper is not patched."
+        ]
+      },
+      "rationale": "How often Energetic gets picked from food/drink breakable boxes. 1× = Vanilla; zero = unavailable from defined pools.",
+      "logic": "Newbie = share of weighted picks; Experienced/Veteran/Master = item chance. See rank preview.",
+      "interaction": "Works with FOOD/DRINK BOX ROLL; does not change quantities or physical box counts.",
+      "exposeInUi": false
+    },
+    {
       "id": "loot.destructibleGrenadeQuantity",
       "tab": "loot",
       "group": "Breakable Containers",

@@ -152,7 +152,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "StashMedicalComposition" => "ADJUST ODDS: each item keeps X% of the vanilla odds in every stash (100% = vanilla, 0% = never); ODDS PER STASH · MEDS shows the result per tier. QUANTITY sets Medkit and Army Medkit MIN/MAX stack sizes.",
                     "StashSmartLoot" => "Checkbox: smart loot ON/OFF in ordinary stashes. EXTRA LOOT WHEN STOCKED / WHEN LOW: how often a set appears when you have enough or run low. SMART LOOT GIVES: which items it may give. Bars = chance a set appears (grey tick = vanilla).",
                     "StashGear" => "BONUS GEAR COVERAGE chooses how many stashes can get extra gear; PRIORITY favors item kinds; BONUS CHANCE is the chance per item. Quest and unique loot are protected.",
-                    "AmmoDistribution" => "AMMO PER BOX and GRENADES PER BOX change amounts. The AMMO TYPE MIX knobs favor calibers; AMMO BOX CONTENT DISTRIBUTION only previews the result. MEDICAL BOXES: the ARMY MEDKIT MIX knob sets how often a medical box gives an Army Medkit (per player rank).",
+                    "AmmoDistribution" => "AMMO and GRENADES change box quantities. AMMO TYPE MIX changes caliber selection. ARMY MEDKIT MIX adjusts medical picks. FOOD/DRINK BOX ROLL changes Newbie weighted branch choice and higher-rank Chance; CONTENT MIX changes item Weight or Chance by rank. Four rank rows show the current values.",
                     "BreakableBoxYields" => "Drag the ammo or grenade yield track to change only that box's contents.",
                     "PlayerWeaponProfile" => "Turn WEAPON DAMAGE, HEADSHOT DAMAGE and JAM RATE independently. Scroll or use arrow keys for fine adjustments.",
                     "HumanGroupSizeRadar" => "Drag each player-rank track to change that rank's maximum human squad size.",
@@ -750,7 +750,17 @@ public sealed class ParameterViewModel : ObservableObject
         ["loot.ammoBoxWeight045"] = "AmmoDistribution",
         ["loot.medicalBoxArmyMedkitWeight"] = "AmmoDistribution",
         ["loot.ammoBoxWeight545"] = "AmmoDistribution",
-        ["loot.ammoBoxWeight012"] = "AmmoDistribution"
+        ["loot.ammoBoxWeight012"] = "AmmoDistribution",
+        ["loot.foodBoxBranch"] = "AmmoDistribution",
+        ["loot.drinkBoxBranch"] = "AmmoDistribution",
+        ["loot.foodBoxSausage"] = "AmmoDistribution",
+        ["loot.foodBoxBread"] = "AmmoDistribution",
+        ["loot.foodBoxCanned"] = "AmmoDistribution",
+        ["loot.foodBoxMilk"] = "AmmoDistribution",
+        ["loot.drinkBoxWater"] = "AmmoDistribution",
+        ["loot.drinkBoxBeer"] = "AmmoDistribution",
+        ["loot.drinkBoxVodka"] = "AmmoDistribution",
+        ["loot.drinkBoxEnergy"] = "AmmoDistribution"
     };
 
     private static readonly Dictionary<string, string> VisualAggregateAnchorByFamily = new(StringComparer.Ordinal)

@@ -1,5 +1,12 @@
 ## CURRENT 2026-11-23 — Whole Overweight percentages, source-accurate kg
 
+## 2026-11-23 — Locked food/drink breakable-box controls (current)
+
+`AmmoDistribution` now includes a second measured section after MEDICAL BOXES: **FOOD / DRINK BOXES**. Two native horizontal tracks `FOOD BOX ROLL` / `DRINK BOX ROLL`, followed by eight original-family unframed knobs (four food, four drink), then two compact read-only rank cards. The cards separate **NEWBIE relative Weight share** from **EXPERIENCED/VETERAN/MASTER item Chance** and print each outer `BOX GATE` Chance. There are never fabricated “Newbie chance” or generic quantity controls. All ten settings are source-backed parameters in `Breakable Containers`, live inside `AmmoDistribution`, and participate in its existing hit targets, per-source modified numeric ink, hover, right-click reset and R reset. The old ammo/medical controls retain their geometry; added section follows their bottom with 30 DIP gap and measured 651 DIP of new content. Physical world box removal remains independent.
+
+**Source boundaries:** 40 native edit points in `GameData/ItemGeneratorPrototypes.cfg`; four defined rank paths × ten settings. Base/Newbie Weight scales in relative groups; higher-rank Chances scale with clamp to 100%. 0× is excluded; 1× is Vanilla. No MinCount/MaxCount, source SID or physical actor redirect changes. `DestructibleStash_Food_Drink_Newbie` has **20 unresolved physical references**, no supplied definition and is not modified. Runtime validation remains pending. Details: `docs/generators/DESTRUCTIBLE-FOOD-DRINK-PRODUCTION-AUDIT.md`.
+
+
 * LIGHT / MEDIUM / HEAVY / CRITICAL: interactive threshold editing uses native-source 0.01 ratio steps (whole **1%** increments), and the four dynamic cards/rationale show integer percentage labels. Exact off-grid original 62.5% / 87.5% Vanilla references are preserved via reset and explicitly marked `~63%` / `~88%` on screen. The source and existing constraint retain the minimum 2.5-percentage-point gap. All 12 factory profiles use 1%-grid values while preserving their MAX CARRY WEIGHT amounts and all unrelated tuning.
 * The STALKER 2.1 source stores `WeightEffectParams[i].Threshold` as **float kilograms** (e.g. `50.f`), not as percentages. The native BPatch writer preserves exact `carryKg × ratio` including fractional kg, never rounds it to integers just to match UI percentages. All existing writer routes and effect SIDs remain unchanged. See `docs/OVERWEIGHT-THRESHOLDS-2.1.md`.
 

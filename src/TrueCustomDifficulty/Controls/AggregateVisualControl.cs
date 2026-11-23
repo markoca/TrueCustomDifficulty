@@ -6476,6 +6476,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         });
 
         DrawMedicalBoxMix(dc, geometry.MedicalBox, text, muted, border, accent, panel);
+        DrawFoodDrinkBoxes(dc, geometry.MedicalBox.Bottom + 30.0,
+            text, muted, border, accent, panel);
     }
 
     // MEDICAL BOXES: the ARMY MEDKIT MIX knob (ArmyMedkit Weight factor) and,
@@ -6565,7 +6567,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // MEDICAL BOXES: one knob + Army Medkit share per player rank.
         var medicalBox = new Rect(margin, mix.Bottom + 30.0, inner, MedicalBoxCardHeight);
         return new AmmoDistributionGeometry(ammo, grenade, preview, knobTop, mix,
-            medicalBox, medicalBox.Bottom + 14.0);
+            medicalBox, medicalBox.Bottom + 30.0 + FoodDrinkBoxesHeight + 14.0);
     }
 
     // Shared density for the large Survival/Health aggregate panels. Rows are
@@ -8750,7 +8752,17 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 "loot.ammoBoxWeight045",
                 "loot.ammoBoxWeight545",
                 "loot.ammoBoxWeight012",
-                "loot.medicalBoxArmyMedkitWeight"
+                "loot.medicalBoxArmyMedkitWeight",
+                "loot.foodBoxBranch",
+                "loot.drinkBoxBranch",
+                "loot.foodBoxSausage",
+                "loot.foodBoxBread",
+                "loot.foodBoxCanned",
+                "loot.foodBoxMilk",
+                "loot.drinkBoxWater",
+                "loot.drinkBoxBeer",
+                "loot.drinkBoxVodka",
+                "loot.drinkBoxEnergy"
             },
             _ => Array.Empty<string>()
         };

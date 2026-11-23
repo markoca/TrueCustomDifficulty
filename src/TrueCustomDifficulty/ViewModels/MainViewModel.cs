@@ -226,7 +226,17 @@ public sealed class MainViewModel : ObservableObject
             "loot.ammoBoxWeight045",
             "loot.ammoBoxWeight545",
             "loot.ammoBoxWeight012",
-            "loot.medicalBoxArmyMedkitWeight"
+            "loot.medicalBoxArmyMedkitWeight",
+            "loot.foodBoxBranch",
+            "loot.drinkBoxBranch",
+            "loot.foodBoxSausage",
+            "loot.foodBoxBread",
+            "loot.foodBoxCanned",
+            "loot.foodBoxMilk",
+            "loot.drinkBoxWater",
+            "loot.drinkBoxBeer",
+            "loot.drinkBoxVodka",
+            "loot.drinkBoxEnergy"
         };
 
         var stashAmmoParameterIds = new HashSet<string>(StringComparer.Ordinal)

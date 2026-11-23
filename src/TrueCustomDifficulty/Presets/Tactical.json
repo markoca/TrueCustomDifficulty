@@ -988,6 +988,46 @@
       "kind": "slider",
       "number": 1
     },
+    "loot.foodBoxBranch": {
+      "kind": "slider",
+      "number": 0.7
+    },
+    "loot.drinkBoxBranch": {
+      "kind": "slider",
+      "number": 0.7
+    },
+    "loot.foodBoxSausage": {
+      "kind": "slider",
+      "number": 0.5
+    },
+    "loot.foodBoxBread": {
+      "kind": "slider",
+      "number": 1
+    },
+    "loot.foodBoxCanned": {
+      "kind": "slider",
+      "number": 1.25
+    },
+    "loot.foodBoxMilk": {
+      "kind": "slider",
+      "number": 0.5
+    },
+    "loot.drinkBoxWater": {
+      "kind": "slider",
+      "number": 1
+    },
+    "loot.drinkBoxBeer": {
+      "kind": "slider",
+      "number": 0.5
+    },
+    "loot.drinkBoxVodka": {
+      "kind": "slider",
+      "number": 0.25
+    },
+    "loot.drinkBoxEnergy": {
+      "kind": "slider",
+      "number": 1
+    },
     "loot.destructibleGrenadeQuantity": {
       "kind": "slider",
       "number": 1

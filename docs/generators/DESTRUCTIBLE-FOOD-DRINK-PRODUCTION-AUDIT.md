@@ -1,8 +1,22 @@
 # Destructible Food / Drink Production Audit
 
-## Decision
+## 2026-11-23 — Rank-aware food and drink box controls (current implementation)
 
-**AUDITED / UI-DEFERRED.** The defined food/drink destructible family is a real production loot surface, but it does not expose one rank-consistent scalar that can honestly be presented as a global Food/Drink Frequency or Quantity control.
+**Implemented, source-mapped; Windows build and gameplay verification pending.** The old conclusion that one uniform “Food/Drink Frequency” slider would conflate Weight with Chance is retained. The replacement is **ten separate, explicitly rank-aware controls**, all in Loot → Breakable Boxes / the existing AmmoDistribution aggregate: FOOD BOX ROLL, DRINK BOX ROLL, SAUSAGE MIX, BREAD MIX, CANNED FOOD MIX, MILK MIX, WATER MIX, BEER MIX, VODKA MIX and ENERGY DRINK MIX.
+
+- The two BOX ROLL sliders multiply `DestructibleStash_Food_Drink`'s **relative Newbie Weight** for their respective food/drink branch, and the **independent native outer Chance** for Experienced, Veteran, Master (0.6, 0.7, 0.8). A 100% higher-rank readout is a capped branch roll, not a guarantee of a particular item.
+- The eight MIX knobs multiply each item's **relative Newbie Weight** (0.3, 0.3, 0.2, 0.1 for each family) or the item-specific **higher-rank Chance**. Source Chance values are multiplied with native clamp 0–1; base Weight is never presented as absolute probability. Item MinCount/MaxCount do not change.
+- Default `1×` leaves Vanilla intact. `0×` excludes that defined branch or candidate. Build validation forbids both Newbie branch weights being zero or an active branch having all its Newbie item weights at zero. Branch controls span 0–2× (0.1× step); item controls span 0–3× (0.25× step).
+- Exactly **40 source-coordinate CFG edit points** (four ranks × ten sliders) patch 12 defined `DestructibleStash_*` generators in `GameData/ItemGeneratorPrototypes.cfg`. No synthetic SIDs, no physical actor reassignment, no added items or quantities. Existing box removal is independently controlled by `loot.worldFoodDrinkCratesRemoved`.
+- **Hard boundary:** `DestructibleStash_Food_Drink_Newbie` has no verified definition. Its 20 physical references are **not directly patched or redirected**. Whether those references indirectly use edited shared leaf definitions remains unverified: no claim of full Newbie coverage.
+- The UI shows two branch tracks, eight native editable knobs, and read-only rank-specific food/drink matrices: **Newbie relative share**, E/V/M item Chances, and separate E/V/M outer gate Chances. Existing independent per-control hover/selection, keyboard, right-click reset and board-wide R apply.
+- All 12 factory presets supply explicit values for all ten new settings; old user presets inherit Vanilla defaults. Validate generated CFG and actual drops in-game before treating runtime outcome as proven.
+
+Historical notes below describe why a **single rank-agnostic frequency/quantity slider** was rejected. They are superseded only for the new narrow, rank-aware editor.
+
+## Historical decision (before rank-aware implementation)
+
+**Previously AUDITED / UI-DEFERRED.** The defined food/drink destructible family is a real production loot surface, but it does not expose one rank-consistent scalar that can honestly be presented as a global Food/Drink Frequency or Quantity control.
 
 Do not add a normal UI control from this family with the current evidence.
 

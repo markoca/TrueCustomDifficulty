@@ -1,3 +1,24 @@
+## 2026-11-23 — Food/Drink Box rank-aware factory settings
+
+All 12 roles now configure the **two branch multipliers** and **eight specific item multipliers** for breakable food/drink boxes. The same multiplier scales a proven Newbie *relative Weight* and E/V/M *individual Chance* (clamped to 100%); these are **not** a general 0–100% global box drop rate. The separate physical box-removal control remains independent. A Newbie relative Weight share is normalized inside the selected pool. Undefined `DestructibleStash_Food_Drink_Newbie` is not written, and all other existing player presets retain Vanilla defaults for missing IDs.
+
+| Preset | Food roll | Drink roll | Sausage | Bread | Canned | Milk | Water | Beer | Vodka | Energy |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Anomaly Runner | 0.70× | 0.80× | 0.75× | 0.75× | 1.00× | 0.50× | 1.25× | 0.50× | 0.75× | 1.50× |
+| Field Medic | 0.80× | 0.70× | 1.00× | 1.00× | 1.00× | 0.75× | 1.25× | 0.50× | 0.50× | 1.00× |
+| Hardcore+ | 0.20× | 0.20× | 0.50× | 0.50× | 0.75× | 0.25× | 0.50× | 0.25× | 0.00× | 0.25× |
+| Hardcore | 0.40× | 0.40× | 0.50× | 0.75× | 1.00× | 0.25× | 0.75× | 0.50× | 0.25× | 0.25× |
+| Immersive | 0.80× | 0.70× | 0.75× | 1.00× | 1.00× | 0.50× | 1.00× | 0.75× | 0.50× | 0.50× |
+| Mercenary | 0.80× | 0.80× | 0.50× | 1.00× | 1.25× | 0.75× | 1.00× | 0.75× | 0.75× | 1.25× |
+| Mutant Hunter | 1.00× | 0.70× | 1.50× | 0.75× | 1.00× | 0.50× | 1.00× | 0.50× | 0.25× | 0.75× |
+| Outcast | 0.40× | 0.30× | 1.00× | 0.75× | 0.50× | 0.25× | 0.75× | 0.25× | 0.00× | 0.25× |
+| Scavenger | 0.70× | 0.60× | 1.25× | 1.25× | 0.75× | 0.25× | 1.25× | 0.50× | 0.25× | 0.50× |
+| Smuggler | 0.80× | 1.20× | 0.75× | 1.00× | 1.25× | 1.00× | 1.00× | 1.25× | 1.50× | 1.00× |
+| Tactical | 0.70× | 0.70× | 0.50× | 1.00× | 1.25× | 0.50× | 1.00× | 0.50× | 0.25× | 1.00× |
+| Wanderer | 1.00× | 0.80× | 1.00× | 1.25× | 1.25× | 0.75× | 1.50× | 0.75× | 0.50× | 0.75× |
+
+**Rationale:** Hardcore+ and Outcast deliberately suppress supply gates and alcohol; Hardcore reduces both broad sources; Scavenger and Wanderer favor basic food and water; Mutant Hunter favors meat; Smuggler favors alcohol and canned goods; Anomaly Runner favors water and energy drinks; Tactical prioritizes practical rations and water; Field Medic preserves medical-role modest food/drink availability; Mercenary retains better field provisions. These are ten extra role-specific parameters in each canonical preset, not changed physical box counts.
+
 ## CURRENT 2026-11-23 — Whole-percent Overweight editing
 
 The STALKER 2.1 source `DefaultWeightParams.WeightEffectParams[i].Threshold`

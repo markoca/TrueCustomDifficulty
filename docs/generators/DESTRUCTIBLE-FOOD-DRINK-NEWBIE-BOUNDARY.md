@@ -53,3 +53,7 @@ Revisit only if one of these becomes available:
 2. runtime evidence that establishes the exact generator shape and semantics.
 
 Until then, the unresolved state is intentional, not an audit gap.
+
+## 2026-11-23 scoped implementation
+
+The new rank-aware Food/Drink Box controls patch only twelve **defined** wrapper and leaf generator SIDs through forty audited native Weight/Chance edit points. They do **not** write the unresolved `DestructibleStash_Food_Drink_Newbie` SID or redirect any of its 20 assignments. Indirect interactions with shared leaf SIDs cannot be excluded until its definition is verified. The original hard boundary remains in force.

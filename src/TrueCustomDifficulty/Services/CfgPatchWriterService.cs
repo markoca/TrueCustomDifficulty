@@ -53,6 +53,7 @@ public sealed partial class CfgPatchWriterService
             .ToList();
         var modifiedById = modified.ToDictionary(p => p.Id, StringComparer.Ordinal);
         var allById = vm.AllParameters.ToDictionary(p => p.Id, StringComparer.Ordinal);
+        ValidateFoodDrinkBoxWeights(allById);
         // Reject incompatible overlapping weapon-slot edits BEFORE touching the
         // existing staging output directory or writing any mod files.
         if (allById.TryGetValue("loot.stashGearEnabled", out var gearOn)

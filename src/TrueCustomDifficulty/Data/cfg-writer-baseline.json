@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.1",
-  "supportedParameterCount": 456,
+  "supportedParameterCount": 466,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -43935,6 +43935,686 @@
       "operation": "set",
       "role": "",
       "difficultySid": "Stalker"
+    },
+    {
+      "parameterId": "loot.foodBoxSausage",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Food",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[0]"
+      ],
+      "key": "Weight",
+      "sourceRaw": "0.3",
+      "operation": "scale",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.foodBoxSausage",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Food_Experienced",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[0]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.6",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.foodBoxSausage",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Food_Veteran",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[0]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.5",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.foodBoxSausage",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Food_Master",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[0]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.4",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.foodBoxBread",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Food",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[1]"
+      ],
+      "key": "Weight",
+      "sourceRaw": "0.3",
+      "operation": "scale",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.foodBoxBread",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Food_Experienced",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[1]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.6",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.foodBoxBread",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Food_Veteran",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[1]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.5",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.foodBoxBread",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Food_Master",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[1]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.4",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.foodBoxCanned",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Food",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[2]"
+      ],
+      "key": "Weight",
+      "sourceRaw": "0.2",
+      "operation": "scale",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.foodBoxCanned",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Food_Experienced",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[2]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.4",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.foodBoxCanned",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Food_Veteran",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[2]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.5",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.foodBoxCanned",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Food_Master",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[2]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.6",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.foodBoxMilk",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Food",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[3]"
+      ],
+      "key": "Weight",
+      "sourceRaw": "0.1",
+      "operation": "scale",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.foodBoxMilk",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Food_Experienced",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[3]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.3",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.foodBoxMilk",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Food_Veteran",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[3]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.4",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.foodBoxMilk",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Food_Master",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[3]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.5",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.drinkBoxWater",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Drink",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[0]"
+      ],
+      "key": "Weight",
+      "sourceRaw": "0.3",
+      "operation": "scale",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.drinkBoxWater",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Drink_Experienced",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[0]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.6",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.drinkBoxWater",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Drink_Veteran",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[0]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.5",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.drinkBoxWater",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Drink_Master",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[0]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.4",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.drinkBoxBeer",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Drink",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[1]"
+      ],
+      "key": "Weight",
+      "sourceRaw": "0.3",
+      "operation": "scale",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.drinkBoxBeer",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Drink_Experienced",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[1]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.6",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.drinkBoxBeer",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Drink_Veteran",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[1]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.5",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.drinkBoxBeer",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Drink_Master",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[1]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.4",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.drinkBoxVodka",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Drink",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[2]"
+      ],
+      "key": "Weight",
+      "sourceRaw": "0.2",
+      "operation": "scale",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.drinkBoxVodka",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Drink_Experienced",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[2]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.4",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.drinkBoxVodka",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Drink_Veteran",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[2]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.5",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.drinkBoxVodka",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Drink_Master",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[2]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.6",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.drinkBoxEnergy",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Drink",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[3]"
+      ],
+      "key": "Weight",
+      "sourceRaw": "0.1",
+      "operation": "scale",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.drinkBoxEnergy",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Drink_Experienced",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[3]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.3",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.drinkBoxEnergy",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Drink_Veteran",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[3]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.4",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.drinkBoxEnergy",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Drink_Master",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[3]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.5",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.foodBoxBranch",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Food_Drink",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[0]"
+      ],
+      "key": "Weight",
+      "sourceRaw": "1",
+      "operation": "scale",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.foodBoxBranch",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Food_Drink_Experienced",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[0]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.6",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.foodBoxBranch",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Food_Drink_Veteran",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[0]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.7",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.foodBoxBranch",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Food_Drink_Master",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[0]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.8",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.drinkBoxBranch",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Food_Drink",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[1]"
+      ],
+      "key": "Weight",
+      "sourceRaw": "1",
+      "operation": "scale",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.drinkBoxBranch",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Food_Drink_Experienced",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[1]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.6",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.drinkBoxBranch",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Food_Drink_Veteran",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[1]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.7",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "loot.drinkBoxBranch",
+      "scope": "baseGame",
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "prototype": "DestructibleStash_Food_Drink_Master",
+      "nodePath": [
+        "ItemGenerator",
+        "[0]",
+        "PossibleItems",
+        "[1]"
+      ],
+      "key": "Chance",
+      "sourceRaw": "0.8",
+      "operation": "scaleClamp01",
+      "role": "",
+      "difficultySid": ""
     }
   ],
   "special": {
