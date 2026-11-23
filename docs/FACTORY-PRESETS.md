@@ -1,27 +1,45 @@
+## CURRENT 2026-11-23 — Whole-percent Overweight editing
+
+The STALKER 2.1 source `DefaultWeightParams.WeightEffectParams[i].Threshold`
+is a **kilogram float**, not a percentage or integer-only field: Vanilla
+is `50.f` / `60.f` / `70.f` / `80.f`. Every manual load-stage
+edit now snaps in **1%** steps; all 12 factory role profiles now have
+**integer percentage** thresholds, stored as 0.01-grid source ratios.
+The native CFG patch still writes precise kg = MAX CARRY WEIGHT × ratio;
+85 kg × 73% writes 62.05f, not 62f, to avoid game-balance drift.
+
+The exact off-grid Vanilla source ratios (62.5%, 87.5%) survive reset;
+the UI shows ~63% / ~88% rather than pretending they are exact integers.
+The source minimum 2.5 percentage-point gap remains for backward
+compatibility; edited pairs on the 1% grid effectively need 3 points.
+Old user presets may snap to the new 1% grid on load; original Vanilla
+reference values are protected. No capacity, native speed/regen penalties,
+CFG writer output path or unrelated factory settings change.
+
 ## 2026-11-23 — Overweight stages tuned across all 12 factory roles
 
 **Current source of truth:** `tools/factory_preset_overweight_2026_11_23.json`.
 All twelve shipped 2.1 profiles previously used identical Vanilla stage ratios
 (62.5 / 75 / 87.5 / 100%); the only difference was MAX CARRY WEIGHT.
 Now **48 existing source ratios** have deliberate, distinct role settings, all
-on the catalog's 2.5-percentage-point grid with strict ordered stage gaps.
+on the catalog's 1-percentage-point grid, preserving the 2.5-point native minimum gap.
 The existing maximum carrying capacities and the other 452 preset values
 stay unchanged. No extra fake parameters or effect magnitude controls are added.
 
 | Profile | Max carry | LIGHT | MEDIUM | HEAVY | CRITICAL | Intent |
 |---|---:|---:|---:|---:|---:|---|
-| Anomaly Runner | 85 kg | 72.5% | 82.5% | 92.5% | 100% | Fast anomaly extraction under valuable cargo; penalties arrive late. |
-| Field Medic | 85 kg | 60% | 75% | 87.5% | 97.5% | Medical kit burden is felt earlier; useful emergency carrying margin remains. |
+| Anomaly Runner | 85 kg | 73% | 83% | 93% | 100% | Fast anomaly extraction under valuable cargo; penalties arrive late. |
+| Field Medic | 85 kg | 60% | 75% | 88% | 98% | Medical kit burden is felt earlier; useful emergency carrying margin remains. |
 | Hardcore+ | 50 kg | 45% | 60% | 75% | 90% | Unforgiving encumbrance: jogging blocked well before the 50 kg ceiling. |
 | Hardcore | 55 kg | 50% | 65% | 80% | 95% | Very demanding but more forgiving than Hardcore+. |
-| Immersive | 75 kg | 60% | 72.5% | 85% | 97.5% | Realistic load fatigue with a slightly earlier heavy stage. |
-| Mercenary | 80 kg | 62.5% | 77.5% | 90% | 100% | Professional kit management; movement falters near heavy loads. |
-| Mutant Hunter | 80 kg | 57.5% | 72.5% | 87.5% | 100% | Weapons, ammo and mutant trophies put strain on the hunt. |
-| Outcast | 55 kg | 47.5% | 62.5% | 77.5% | 92.5% | Early burden and reduced escape capability for the isolated survivor. |
-| Scavenger | 70 kg | 55% | 70% | 85% | 97.5% | Heavy salvage comes at an early mobility price. |
-| Smuggler | 115 kg | 70% | 82.5% | 92.5% | 100% | High-capacity cargo specialist; retains a long mobile load window. |
-| Tactical | 70 kg | 65% | 77.5% | 90% | 100% | Disciplined light loadouts preserve battlefield agility. |
-| Wanderer | 105 kg | 67.5% | 80% | 90% | 100% | Exploration-focused carrying with longer useful travel range. |
+| Immersive | 75 kg | 60% | 73% | 85% | 98% | Realistic load fatigue with a slightly earlier heavy stage. |
+| Mercenary | 80 kg | 63% | 78% | 90% | 100% | Professional kit management; movement falters near heavy loads. |
+| Mutant Hunter | 80 kg | 58% | 73% | 88% | 100% | Weapons, ammo and mutant trophies put strain on the hunt. |
+| Outcast | 55 kg | 48% | 63% | 78% | 93% | Early burden and reduced escape capability for the isolated survivor. |
+| Scavenger | 70 kg | 55% | 70% | 85% | 98% | Heavy salvage comes at an early mobility price. |
+| Smuggler | 115 kg | 70% | 83% | 93% | 100% | High-capacity cargo specialist; retains a long mobile load window. |
+| Tactical | 70 kg | 65% | 78% | 90% | 100% | Disciplined light loadouts preserve battlefield agility. |
+| Wanderer | 105 kg | 68% | 80% | 90% | 100% | Exploration-focused carrying with longer useful travel range. |
 
 **Semantics:** Each percentage is the share of the role's existing MAX CARRY
 WEIGHT at which that load stage begins; the edited parameter is not a sprint

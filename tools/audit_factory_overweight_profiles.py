@@ -17,13 +17,17 @@ IDS = [
 ]
 assert MATRIX["ids"] == IDS and MATRIX["vanillaRatios"] == [0.625, 0.75, 0.875, 1]
 assert MATRIX["gameVersion"] == CATALOG["source"]["gameVersion"] == "2.1"
+assert MATRIX["invariants"]["step"] == .01
+assert MATRIX["invariants"]["minimumAdjacentGap"] == .025
+assert [BY_ID[id]["vanilla"]["All"] for id in IDS] == MATRIX["vanillaRatios"]
+assert [BY_ID[id]["display"]["rawFormat"] for id in IDS] == ["0%"] * 4
 assert len(PRESETS) == len(MATRIX["roles"]) == 12
 assert {p.stem for p in PRESETS} == set(MATRIX["roles"])
 assert len({tuple(role["ratios"]) for role in MATRIX["roles"].values()}) == 12
 for id in IDS:
     source = BY_ID[id]
     assert source["control"] == "slider" and source["slider"]["stepMode"] == "absolute", id
-    assert source["slider"]["min"] == .1 and source["slider"]["max"] == 1 and source["slider"]["step"] == .025, id
+    assert source["slider"]["min"] == .1 and source["slider"]["max"] == 1 and source["slider"]["step"] == .01, id
 
 for path in PRESETS:
     preset = json.loads(path.read_text(encoding="utf-8"))
@@ -40,7 +44,7 @@ for path in PRESETS:
     for index, id in enumerate(IDS):
         ratio = ratios[index]
         assert values[id] == {"kind": "slider", "number": ratio}, (path.name, id)
-        assert .1 <= ratio <= 1 and abs((ratio - .1) / .025 - round((ratio - .1) / .025)) < 1e-8, (path.name, id)
+        assert .1 <= ratio <= 1 and abs(ratio * 100 - round(ratio * 100)) < 1e-8 and abs((ratio - .1) / .01 - round((ratio - .1) / .01)) < 1e-8, (path.name, id)
         if index:
             assert ratio - ratios[index - 1] >= .025 - 1e-8, (path.name, id)
         kg = ratio * carry["number"]
@@ -53,4 +57,4 @@ assert 'WriteOverweightThresholds(modifiedById, allById, documents, writtenParam
 assert 'var kg = fractions.Select(fraction => maxCarry * fraction).ToArray()' in writer
 assert '"WeightEffectParams", $"[{3 - i}]"' in writer
 assert '"CriticalEffectStartUI", FormatLikeSource(kg[2], "70")' in writer
-print("PASS: 12 role-specific Overweight profiles, 48 source ratios, unique 2.5%-grid stage ladders, unchanged capacities, and CFG writer mapping")
+print("PASS: 12 distinct factory Overweight profiles, 48 whole-percent stage ratios, 1% editing grid, original Vanilla floats, and precise kg CFG mapping")

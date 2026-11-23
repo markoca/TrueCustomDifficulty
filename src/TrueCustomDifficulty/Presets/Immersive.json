@@ -1847,7 +1847,7 @@
     },
     "stamina.overweightMediumThreshold": {
       "kind": "slider",
-      "number": 0.725
+      "number": 0.73
     },
     "stamina.overweightHeavyThreshold": {
       "kind": "slider",
@@ -1855,7 +1855,7 @@
     },
     "stamina.overweightCriticalThreshold": {
       "kind": "slider",
-      "number": 0.975
+      "number": 0.98
     }
   }
 }

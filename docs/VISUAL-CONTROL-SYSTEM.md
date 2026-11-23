@@ -1,3 +1,8 @@
+## CURRENT 2026-11-23 — Whole Overweight percentages, source-accurate kg
+
+* LIGHT / MEDIUM / HEAVY / CRITICAL: interactive threshold editing uses native-source 0.01 ratio steps (whole **1%** increments), and the four dynamic cards/rationale show integer percentage labels. Exact off-grid original 62.5% / 87.5% Vanilla references are preserved via reset and explicitly marked `~63%` / `~88%` on screen. The source and existing constraint retain the minimum 2.5-percentage-point gap. All 12 factory profiles use 1%-grid values while preserving their MAX CARRY WEIGHT amounts and all unrelated tuning.
+* The STALKER 2.1 source stores `WeightEffectParams[i].Threshold` as **float kilograms** (e.g. `50.f`), not as percentages. The native BPatch writer preserves exact `carryKg × ratio` including fractional kg, never rounds it to integers just to match UI percentages. All existing writer routes and effect SIDs remain unchanged. See `docs/OVERWEIGHT-THRESHOLDS-2.1.md`.
+
 ## CURRENT 2026-11-23 — Overweight factory role threshold ladders
 
 * All 12 shipped role JSONs now deliberately tune the four source-native OVERWEIGHT SYSTEM stages, preserving current MAX CARRY WEIGHT, 2.5-percentage-point snapping, ordered thresholds, dynamic kg axis, gold/white fixed-effect graphs, and read-only stage cards. Source-only ratio authoring does not create new UI controls or change the two catalogued GUI components. Full 12-role table: `docs/FACTORY-PRESETS.md`, numeric matrix: `tools/factory_preset_overweight_2026_11_23.json`. Right-click/R reset semantics and the 2.1 BPatch routes remain the same.

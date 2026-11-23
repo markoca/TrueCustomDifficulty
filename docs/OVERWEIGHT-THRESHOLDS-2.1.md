@@ -1,3 +1,21 @@
+## CURRENT 2026-11-23 — Whole-percent Overweight editing
+
+The STALKER 2.1 source `DefaultWeightParams.WeightEffectParams[i].Threshold`
+is a **kilogram float**, not a percentage or integer-only field: Vanilla
+is `50.f` / `60.f` / `70.f` / `80.f`. Every manual load-stage
+edit now snaps in **1%** steps; all 12 factory role profiles now have
+**integer percentage** thresholds, stored as 0.01-grid source ratios.
+The native CFG patch still writes precise kg = MAX CARRY WEIGHT × ratio;
+85 kg × 73% writes 62.05f, not 62f, to avoid game-balance drift.
+
+The exact off-grid Vanilla source ratios (62.5%, 87.5%) survive reset;
+the UI shows ~63% / ~88% rather than pretending they are exact integers.
+The source minimum 2.5 percentage-point gap remains for backward
+compatibility; edited pairs on the 1% grid effectively need 3 points.
+Old user presets may snap to the new 1% grid on load; original Vanilla
+reference values are protected. No capacity, native speed/regen penalties,
+CFG writer output path or unrelated factory settings change.
+
 # Overweight Thresholds — S.T.A.L.K.E.R. 2.1
 
 ## Source and vanilla values

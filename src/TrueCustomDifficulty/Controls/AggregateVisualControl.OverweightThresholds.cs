@@ -222,7 +222,7 @@ public sealed partial class AggregateVisualControl
                 new Point(center, y + 7.0),
                 10.7, text, FontWeights.Bold);
             DrawCenteredNumericChanges(dc,
-                $"STARTS AT {parameter.CurrentNumber * 100.0:0.#}%",
+                $"STARTS AT {TrueCustomDifficulty.ViewModels.ParameterViewModel.WholeOverweightPercent(parameter.CurrentNumber)}",
                 new Point(center, y + 31.0),
                 10.5, text, accent, FontWeights.Bold, thresholdChanged);
             DrawCenteredNumericChanges(dc,
@@ -240,7 +240,7 @@ public sealed partial class AggregateVisualControl
         }
 
         DrawText(dc,
-            "DRAG GOLD NODES / AXIS MARKERS · RIGHT-CLICK RESET · R RESET ALL",
+            "DRAG NODES · 1% STEPS · RIGHT-CLICK RESET · R RESET ALL",
             new Point(17.0, cardsTop + (narrow ? 2 : 1) * (cardHeight + gap) + 4.0),
             9.0, muted, FontWeights.Normal);
     }

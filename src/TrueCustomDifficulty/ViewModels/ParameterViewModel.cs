@@ -1186,6 +1186,15 @@ public sealed class ParameterViewModel : ObservableObject
         return false;
     }
 
+    // Keep source-accurate off-grid Vanilla while showing whole percentages.
+    // ~63% and ~88% mean exact 62.5% and 87.5% original values.
+    public static string WholeOverweightPercent(double fraction)
+    {
+        var pct = fraction * 100.0;
+        var rounded = Math.Round(pct, 0, MidpointRounding.AwayFromZero);
+        return $"{(Math.Abs(pct - rounded) > 0.000001 ? "~" : "")}{rounded:0}%";
+    }
+
     public string CurrentDisplay
     {
         get
@@ -1220,7 +1229,7 @@ public sealed class ParameterViewModel : ObservableObject
 
             if (Id.StartsWith("stamina.overweight", StringComparison.Ordinal)
                 && _overweightCarryProvider is not null)
-                return $"{CurrentNumber * 100:0.#}% · {CurrentNumber * _overweightCarryProvider():0.###} kg";
+                return $"{WholeOverweightPercent(CurrentNumber)} · {CurrentNumber * _overweightCarryProvider():0.###} kg";
 
             if (Definition.Display?.Primary == "percent")
                 return $"{CurrentNumber * 100:0.#}%";

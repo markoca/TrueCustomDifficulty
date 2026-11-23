@@ -19,7 +19,7 @@
   "invariants": {
     "minimumRatio": 0.1,
     "maximumRatio": 1,
-    "step": 0.025,
+    "step": 0.01,
     "minimumAdjacentGap": 0.025,
     "carryRangeKg": [
       20,
@@ -33,27 +33,39 @@
     "HEAVY",
     "CRITICAL"
   ],
-  "authoring": "Only the four stage thresholds are modified. All other preset values and the source MAX CARRY WEIGHT amounts remain unchanged. Existing effect strengths, gameplay penalties and BPatch output rules are not altered.",
+  "authoring": "Factory profiles use whole integer percentages on a 1% editor grid; the values are stored as ratios in JSON and written as exact kg floats in the native CFG (e.g. 62.05f). MAX CARRY WEIGHT, native effects and other source settings are unchanged. Off-grid exact Vanilla 62.5% and 87.5% values remain available on reset.",
   "roles": {
     "Anomaly Runner": {
       "maxCarryKg": 85,
       "ratios": [
+        0.73,
+        0.83,
+        0.93,
+        1
+      ],
+      "intent": "Quick anomaly raids: preserve sprint mobility with compact equipment, then pay a steep penalty near the extraction limit.",
+      "previousRatios": [
         0.725,
         0.825,
         0.925,
         1
-      ],
-      "intent": "Quick anomaly raids: preserve sprint mobility with compact equipment, then pay a steep penalty near the extraction limit."
+      ]
     },
     "Field Medic": {
       "maxCarryKg": 85,
       "ratios": [
         0.6,
         0.75,
+        0.88,
+        0.98
+      ],
+      "intent": "Medical bags start weighing on the player relatively early, but sufficient capacity remains to evacuate supplies and wounded.",
+      "previousRatios": [
+        0.6,
+        0.75,
         0.875,
         0.975
-      ],
-      "intent": "Medical bags start weighing on the player relatively early, but sufficient capacity remains to evacuate supplies and wounded."
+      ]
     },
     "Hardcore+": {
       "maxCarryKg": 50,
@@ -63,7 +75,13 @@
         0.75,
         0.9
       ],
-      "intent": "Severe survival scarcity: even moderate baggage slows travel; jogging locks well before the absolute carry limit."
+      "intent": "Severe survival scarcity: even moderate baggage slows travel; jogging locks well before the absolute carry limit.",
+      "previousRatios": [
+        0.45,
+        0.6,
+        0.75,
+        0.9
+      ]
     },
     "Hardcore": {
       "maxCarryKg": 55,
@@ -73,47 +91,77 @@
         0.8,
         0.95
       ],
-      "intent": "Strong encumbrance pressure with a small margin compared with Hardcore+."
+      "intent": "Strong encumbrance pressure with a small margin compared with Hardcore+.",
+      "previousRatios": [
+        0.5,
+        0.65,
+        0.8,
+        0.95
+      ]
     },
     "Immersive": {
       "maxCarryKg": 75,
       "ratios": [
         0.6,
+        0.73,
+        0.85,
+        0.98
+      ],
+      "intent": "Plausible human carrying fatigue begins below comfortable capacity; gradual, grounded penalties.",
+      "previousRatios": [
+        0.6,
         0.725,
         0.85,
         0.975
-      ],
-      "intent": "Plausible human carrying fatigue begins below comfortable capacity; gradual, grounded penalties."
+      ]
     },
     "Mercenary": {
       "maxCarryKg": 80,
       "ratios": [
+        0.63,
+        0.78,
+        0.9,
+        1
+      ],
+      "intent": "Professional soldier carries a standard combat load effectively but suffers under excess kit.",
+      "previousRatios": [
         0.625,
         0.775,
         0.9,
         1
-      ],
-      "intent": "Professional soldier carries a standard combat load effectively but suffers under excess kit."
+      ]
     },
     "Mutant Hunter": {
       "maxCarryKg": 80,
       "ratios": [
+        0.58,
+        0.73,
+        0.88,
+        1
+      ],
+      "intent": "Heavy long guns, ammunition, and trophies cost mobility earlier, especially during pursuit.",
+      "previousRatios": [
         0.575,
         0.725,
         0.875,
         1
-      ],
-      "intent": "Heavy long guns, ammunition, and trophies cost mobility earlier, especially during pursuit."
+      ]
     },
     "Outcast": {
       "maxCarryKg": 55,
       "ratios": [
+        0.48,
+        0.63,
+        0.78,
+        0.93
+      ],
+      "intent": "Poor provisions and hostile territory turn extra scavenged weight into an early, dangerous liability.",
+      "previousRatios": [
         0.475,
         0.625,
         0.775,
         0.925
-      ],
-      "intent": "Poor provisions and hostile territory turn extra scavenged weight into an early, dangerous liability."
+      ]
     },
     "Scavenger": {
       "maxCarryKg": 70,
@@ -121,39 +169,65 @@
         0.55,
         0.7,
         0.85,
-        0.975
+        0.98
       ],
-      "intent": "Hauling salvage is worthwhile but movement is compromised much sooner than for dedicated transport roles."
+      "intent": "Hauling salvage is worthwhile but movement is compromised much sooner than for dedicated transport roles.",
+      "previousRatios": [
+        0.55,
+        0.7,
+        0.85,
+        0.975
+      ]
     },
     "Smuggler": {
       "maxCarryKg": 115,
       "ratios": [
         0.7,
+        0.83,
+        0.93,
+        1
+      ],
+      "intent": "Specialized hauler retains useful speed with valuable cargo; severe penalties arrive close to the limit.",
+      "previousRatios": [
+        0.7,
         0.825,
         0.925,
         1
-      ],
-      "intent": "Specialized hauler retains useful speed with valuable cargo; severe penalties arrive close to the limit."
+      ]
     },
     "Tactical": {
       "maxCarryKg": 70,
       "ratios": [
         0.65,
-        0.775,
+        0.78,
         0.9,
         1
       ],
-      "intent": "Disciplined loadout stays light on the feet; bulky extras degrade tactical maneuverability."
+      "intent": "Disciplined loadout stays light on the feet; bulky extras degrade tactical maneuverability.",
+      "previousRatios": [
+        0.65,
+        0.775,
+        0.9,
+        1
+      ]
     },
     "Wanderer": {
       "maxCarryKg": 105,
       "ratios": [
-        0.675,
+        0.68,
         0.8,
         0.9,
         1
       ],
-      "intent": "Long-distance explorer with travel-ready carrying capacity; main mobility loss saved for heavy travel packs."
+      "intent": "Long-distance explorer with travel-ready carrying capacity; main mobility loss saved for heavy travel packs.",
+      "previousRatios": [
+        0.675,
+        0.8,
+        0.9,
+        1
+      ]
     }
-  }
+  },
+  "nativeCfgFormat": "WeightEffectParams[i].Threshold is a kilogram float, native Vanilla 50.f/60.f/70.f/80.f; never round derived kilograms to whole numbers.",
+  "percentDisplay": "whole percentages; ~ prefix indicates exact off-grid Vanilla source (62.5% -> ~63%)"
 }

@@ -1860,7 +1860,7 @@
     },
     "stamina.overweightCriticalThreshold": {
       "kind": "slider",
-      "number": 0.975
+      "number": 0.98
     }
   }
 }

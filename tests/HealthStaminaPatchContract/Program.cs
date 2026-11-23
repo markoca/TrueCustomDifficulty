@@ -130,6 +130,15 @@ internal static class Program
                 ids[i] + " must have source-accurate vanilla ratio and board");
         }
 
+        // Whole-percent manual editing must not mutate the source-accurate
+        // off-grid Vanilla 62.5% and 87.5% references on reset.
+        stages[0].CurrentNumber = .725;
+        Approx(stages[0].CurrentNumber, .73, "New 1% input snapping");
+        stages[0].ResetToReference();
+        Approx(stages[0].CurrentNumber, .625, "Exact Vanilla 62.5% after reset");
+        stages[2].ResetToReference();
+        Approx(stages[2].CurrentNumber, .875, "Exact Vanilla 87.5% after reset");
+
         // A change to MAX CARRY WEIGHT relocates the four vanilla-ratio
         // thresholds and HUD markers even without editing any stage.
         var carry = vm.AllParameters.Single(p => p.Id == "stamina.maxCarryWeight");
@@ -201,18 +210,18 @@ internal static class Program
     {
         var expected = new Dictionary<string, (double Carry, double[] Ratios)>(StringComparer.Ordinal)
         {
-            ["Anomaly Runner"] = (85, new[] { .725, .825, .925, 1.0 }),
-            ["Field Medic"] = (85, new[] { .6, .75, .875, .975 }),
-            ["Hardcore+"] = (50, new[] { .45, .6, .75, .9 }),
-            ["Hardcore"] = (55, new[] { .5, .65, .8, .95 }),
-            ["Immersive"] = (75, new[] { .6, .725, .85, .975 }),
-            ["Mercenary"] = (80, new[] { .625, .775, .9, 1.0 }),
-            ["Mutant Hunter"] = (80, new[] { .575, .725, .875, 1.0 }),
-            ["Outcast"] = (55, new[] { .475, .625, .775, .925 }),
-            ["Scavenger"] = (70, new[] { .55, .7, .85, .975 }),
-            ["Smuggler"] = (115, new[] { .7, .825, .925, 1.0 }),
-            ["Tactical"] = (70, new[] { .65, .775, .9, 1.0 }),
-            ["Wanderer"] = (105, new[] { .675, .8, .9, 1.0 })
+            ["Anomaly Runner"] = (85, new[] { 0.73, 0.83, 0.93, 1 }),
+            ["Field Medic"] = (85, new[] { 0.6, 0.75, 0.88, 0.98 }),
+            ["Hardcore+"] = (50, new[] { 0.45, 0.6, 0.75, 0.9 }),
+            ["Hardcore"] = (55, new[] { 0.5, 0.65, 0.8, 0.95 }),
+            ["Immersive"] = (75, new[] { 0.6, 0.73, 0.85, 0.98 }),
+            ["Mercenary"] = (80, new[] { 0.63, 0.78, 0.9, 1 }),
+            ["Mutant Hunter"] = (80, new[] { 0.58, 0.73, 0.88, 1 }),
+            ["Outcast"] = (55, new[] { 0.48, 0.63, 0.78, 0.93 }),
+            ["Scavenger"] = (70, new[] { 0.55, 0.7, 0.85, 0.98 }),
+            ["Smuggler"] = (115, new[] { 0.7, 0.83, 0.93, 1 }),
+            ["Tactical"] = (70, new[] { 0.65, 0.78, 0.9, 1 }),
+            ["Wanderer"] = (105, new[] { 0.68, 0.8, 0.9, 1 })
         };
         var ids = new[]
         {
@@ -259,9 +268,12 @@ internal static class Program
                         role.Ratios[i], preset.Name + " saved ratio " + ids[i]);
                     Approx(loadedById[ids[i]].CurrentNumber,
                         role.Ratios[i], preset.Name + " loaded ratio " + ids[i]);
+                    Check(Math.Abs(role.Ratios[i] * 100.0
+                            - Math.Round(role.Ratios[i] * 100.0)) < .000001,
+                        preset.Name + " must use whole percentage steps");
                     Check(role.Ratios[i] <= 1.0
-                        && Math.Abs((role.Ratios[i] - .1) / .025
-                            - Math.Round((role.Ratios[i] - .1) / .025)) < 0.000001
+                        && Math.Abs((role.Ratios[i] - .1) / .01
+                            - Math.Round((role.Ratios[i] - .1) / .01)) < 0.000001
                         && (i == 0 || role.Ratios[i] - role.Ratios[i - 1] >= .025 - 0.000001),
                         preset.Name + " ratio must obey native grid and ordered stages");
                 }
@@ -756,9 +768,13 @@ internal static class Program
         return double.Parse(txt, CultureInfo.InvariantCulture) / (percent ? 100.0 : 1.0);
     }
 
+    // Numeric in-memory states and parsed CFG fields share the same tolerance.
+    // The old role test called string-only Approx with double and broke CI.
     private static void Approx(string raw, double expected, string context)
+        => Approx(ParseRaw(raw), expected, context);
+
+    private static void Approx(double actual, double expected, string context)
     {
-        var actual = ParseRaw(raw);
         Check(Math.Abs(actual - expected) < 0.000001,
             context + ": output " + actual + ", expected " + expected);
     }

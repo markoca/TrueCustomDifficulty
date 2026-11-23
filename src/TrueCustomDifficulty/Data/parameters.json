@@ -9210,12 +9210,12 @@
       "description": "Sets when the light load penalty begins, as a share of MAX CARRY WEIGHT.",
       "rationale": "At vanilla 80 kg maximum this penalty starts at 50 kg. Follows MAX CARRY WEIGHT so the same preset works with different carrying limits.",
       "logic": "Higher = penalty starts later. Lower = penalty starts sooner. The strength of the speed and stamina penalties stays vanilla.",
-      "interaction": "Set a share of MAX CARRY WEIGHT. The KG readout updates live. Other stages remain strictly ordered.",
+      "interaction": "Drag in 1% steps. The CFG uses kg, not percentages; it stores MAX CARRY WEIGHT × ratio. Exact Vanilla reference positions (62.5% and 87.5%) remain reachable on reset. All stages stay strictly ordered.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
         "primary": "percent",
-        "rawFormat": "0.#%",
+        "rawFormat": "0%",
         "unit": "%",
         "valueLabel": "Of max carry"
       },
@@ -9228,7 +9228,7 @@
       "slider": {
         "min": 0.1,
         "max": 1,
-        "step": 0.025,
+        "step": 0.01,
         "stepMode": "absolute"
       },
       "targets": [
@@ -9261,7 +9261,7 @@
       "valueKind": "raw",
       "display": {
         "primary": "percent",
-        "rawFormat": "0.#%",
+        "rawFormat": "0%",
         "unit": "%",
         "valueLabel": "Of max carry"
       },
@@ -9274,7 +9274,7 @@
       "slider": {
         "min": 0.1,
         "max": 1,
-        "step": 0.025,
+        "step": 0.01,
         "stepMode": "absolute"
       },
       "targets": [
@@ -9308,7 +9308,7 @@
       "valueKind": "raw",
       "display": {
         "primary": "percent",
-        "rawFormat": "0.#%",
+        "rawFormat": "0%",
         "unit": "%",
         "valueLabel": "Of max carry"
       },
@@ -9321,7 +9321,7 @@
       "slider": {
         "min": 0.1,
         "max": 1,
-        "step": 0.025,
+        "step": 0.01,
         "stepMode": "absolute"
       },
       "targets": [
@@ -9355,7 +9355,7 @@
       "valueKind": "raw",
       "display": {
         "primary": "percent",
-        "rawFormat": "0.#%",
+        "rawFormat": "0%",
         "unit": "%",
         "valueLabel": "Of max carry"
       },
@@ -9368,7 +9368,7 @@
       "slider": {
         "min": 0.1,
         "max": 1,
-        "step": 0.025,
+        "step": 0.01,
         "stepMode": "absolute"
       },
       "targets": [

@@ -1853,11 +1853,11 @@
     },
     "stamina.overweightHeavyThreshold": {
       "kind": "slider",
-      "number": 0.875
+      "number": 0.88
     },
     "stamina.overweightCriticalThreshold": {
       "kind": "slider",
-      "number": 0.975
+      "number": 0.98
     }
   }
 }
