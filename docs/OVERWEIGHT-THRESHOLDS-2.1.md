@@ -82,3 +82,22 @@ Suggested game test: 55 → 65 → 75 → 65 → 55 → 45 kg with the default
 Verify sprint speed, stamina regen, inventory load indication and effect
 removal after dropping/selling items. Bonus carry from armor/artifacts
 may be computed separately by the game and must be tested.
+
+## 2026-11-23 — unified interactive graph
+
+The former four 2×2 slider rails are replaced by a single Bleeding-style
+four-node stage graph. Each node is on its own labeled horizontal lane, while
+all four share a 0–125% maximum-carry-weight axis. A connected gold line
+shows the current ordered activation thresholds; the dashed gray reference
+line and rings show the unchanged vanilla ratios. Each lane exposes the
+editable ratio and a read-only kilogram threshold at the current Max Carry
+Weight. Drag/click a lane to change that stage. Its entire lane acts as the
+native hit target; neighboring lanes do not steal the pointer.
+
+The current source IDs, stepping (2.5 percentage points), strict 2.5-point
+stage gaps, reference markers, edited-only yellow digits, hover glow,
+right-click stage reset, R board reset, linked capacity preview, preset
+compatibility and BPatch mapping are unchanged. This graph represents the
+*activation order* of existing native load effects; the segments are not
+an interpolated velocity or stamina curve. Runtime removal and sprint-speed
+response still require the in-game regression test described above.

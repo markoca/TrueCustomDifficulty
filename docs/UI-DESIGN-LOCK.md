@@ -1,3 +1,8 @@
+## CURRENT 2026-11-23 — Overweight Thresholds interactive graph
+
+* STAMINA / OVERWEIGHT THRESHOLDS uses **one Bleeding-style interactive four-stage graph**, not a 2×2 set of four sliders. Four named load-stage nodes share a 0–125% MAX CARRY WEIGHT axis with a live gold connected line, dashed factory reference line/nodes, individual percentage and derived kilogram readouts, and generous separate horizontal drag lanes. No extra source parameter is introduced.
+* Click/drag a stage node or its row to edit the original percentage; the existing 2.5-point snapping, strict adjacent-stage ordering, hover/selection glow, modified-digits-only yellow, right-click one-stage reset, R all-stage reset, and linked MAX CARRY WEIGHT behavior remain. Graph connections visualize the four activation thresholds, **not** interpolated sprint speeds or independent penalty strengths. Keep the existing 365-DIP card height, source effects and synchronized BPatch writer unchanged. See `docs/OVERWEIGHT-THRESHOLDS-2.1.md`.
+
 ## CURRENT 2026-11-23 — Overweight Thresholds (2.1)
 
 * STAMINA / OVERWEIGHT THRESHOLDS: one compact 2×2 native Core Stamina-style four-rail board, with LIGHT / MEDIUM / HEAVY / CRITICAL LOAD captions, edited percent of MAX CARRY WEIGHT (factory 62.5 / 75 / 87.5 / 100%), and a small read-only KG load line below each slider. Only edited digits turn yellow; retain neutral unit text, native reference tick, source hover glow and right-click / R reset. Keep 2.5-point snapping and a strict 2.5-percentage-point stage gap.
