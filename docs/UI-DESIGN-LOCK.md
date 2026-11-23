@@ -1,3 +1,8 @@
+## CURRENT 2026-11-23 — Overweight System Bleeding-profile graph
+
+* The STAMINA / OVERWEIGHT board is now a **Bleeding-style stage penalty profile**, not a graph of four horizontal sliders/parallel lanes. Its shared 0–100% MAX CARRY WEIGHT X axis edits the four activation thresholds via gold node handles and baseline markers. The Y axis is the source-native fixed stage penalty: gold **speed loss** (-15/-25/-50/-50%) and white **stamina regeneration loss** (-10/-20/-35/-50%), both drawn as non-interpolated steps; dashed reference profile and projected nodes match Bleeding's visual vocabulary.
+* Four separate **read-only information cards below the plot** (LIGHT/MEDIUM/HEAVY/CRITICAL) update their threshold percentages, resulting kilograms, speed/regen effects and jogging availability live. Only edited threshold numbers turn yellow; derived kilograms turn yellow if their threshold or MAX CARRY WEIGHT changes. Each card supports rationale selection, not threshold editing. 4×1 wide / 2×2 narrow responsive cards, measured 490/604 DIP, maintain no clipped readouts. Thresholds, native effect strengths, strict 2.5-point gaps, mouse/keyboard/reset semantics, linked capacity, preset storage, and 2.1 BPatch writer are unchanged. See `docs/OVERWEIGHT-THRESHOLDS-2.1.md`.
+
 ## CURRENT 2026-11-23 — Overweight Thresholds interactive graph
 
 * STAMINA / OVERWEIGHT THRESHOLDS uses **one Bleeding-style interactive four-stage graph**, not a 2×2 set of four sliders. Four named load-stage nodes share a 0–125% MAX CARRY WEIGHT axis with a live gold connected line, dashed factory reference line/nodes, individual percentage and derived kilogram readouts, and generous separate horizontal drag lanes. No extra source parameter is introduced.

@@ -531,6 +531,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             && target.Kind == HitKind.Horizontal
             && source.Id == "survival.hungerLowThreshold")
             return;
+        // The Overweight Profile draws two curves and two handle positions.
+        // Generic rail glow would appear at the wrong position or twice.
+        if (Family == "OverweightThresholds")
+            return;
         if (Family == "SleepingDashboard"
             && target.Kind == HitKind.Horizontal
             && source.Id == "survival.minimumSleepHours")
@@ -7114,6 +7118,18 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             return;
         }
         _radRingFocus = false;
+        // Read-only Bleeding-style stage cards select the matching rationale.
+        // They must never drag or change the stage threshold.
+        if (Family == "OverweightThresholds"
+            && _cardHover.OwnerAt(point) is { } overweightStage)
+        {
+            _selectedParameter = overweightStage;
+            _selectedHitKind = null;
+            RaiseParameterSelected(overweightStage);
+            InvalidateVisual();
+            e.Handled = true;
+            return;
+        }
         var target = FindTarget(point);
         if (target is null || !target.Parameter.IsControlEnabled
             || IsNpcBonusSliderLocked(target.Parameter))
@@ -8099,6 +8115,33 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             }
         }
 
+        // Two Overweight stage thresholds may be only 2.5 percentage
+        // points apart. Never let the last-painted handle steal an
+        // overlapping hit: pick the nearest actual handle/axis marker.
+        if (Family == "OverweightThresholds")
+        {
+            HitTarget? nearest = null;
+            var distanceSquared = double.PositiveInfinity;
+            foreach (var candidate in _hitTargets)
+            {
+                if (candidate.Kind != HitKind.Horizontal
+                    || !candidate.HitRect.Contains(point))
+                    continue;
+                var handleX = ValueToX(candidate.Parameter.CurrentNumber,
+                    candidate.VisualMinimum, candidate.VisualMaximum,
+                    candidate.MapRect, candidate.Reverse);
+                var handleY = candidate.MapRect.Top + candidate.MapRect.Height / 2.0;
+                var distance = Math.Pow(point.X - handleX, 2.0)
+                    + Math.Pow(point.Y - handleY, 2.0);
+                if (distance < distanceSquared)
+                {
+                    distanceSquared = distance;
+                    nearest = candidate;
+                }
+            }
+            if (nearest is not null)
+                return nearest;
+        }
         // Fatigue rings can overlap because both axes share threshold X.
         // Select the nearest ring center, not whichever was drawn last.
         if (Family == "FatigueCurve")
@@ -8400,7 +8443,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "StashGear" => StashGearHeight(width),
             "StashSmartLoot" => StashSmartLootHeight(width),
             "StaminaCore" => 323.0,
-            "OverweightThresholds" => 365.0,
+            "OverweightThresholds" => OverweightProfileHeight(width),
             "WaterStaminaPressure" => 171.0,
             "FatigueCurve" => CompactFatigueHeight(width),
             "EquipmentWearBalance" => 242.0,

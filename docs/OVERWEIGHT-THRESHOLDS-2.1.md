@@ -105,3 +105,36 @@ response still require the in-game regression test described above.
 ## 2026-11-23 — build fix
 
 The four-node graph calls the shared `ValueToX(value, min, max, rect, reverse)` helper with explicit `reverse: false` for both live and reference points. This preserves the left-to-right percentage axis and fixes the missing-argument CS7036 build failure; no game balance, preset or BPatch semantics change.
+
+## 2026-11-23 — Bleeding-profile graph and four dynamic cards
+
+The Overweight System now uses the same interaction/reading hierarchy as
+BLEEDING DAMAGE PROFILE: a framed X/Y threshold plot with discrete **stepped**
+profiles, draggable gold stage nodes, separate baseline markers, dotted
+projections, neutral dashed factory references and read-only cards beneath.
+
+The X axis is **load as percent of MAX CARRY WEIGHT (0–100%)**. The Y axis is
+the fixed native **stage penalty (0–50%)**. A gold stepped curve shows the
+native movement-speed penalties (15/25/50/50% loss) and a white stepped curve
+shows stamina-regeneration penalties (10/20/35/50% loss). Both use the same
+four source activation thresholds; neither penalty magnitude is editable.
+The heavy and critical speed penalty is equal, but critical raises the stamina
+regen penalty from 35% to 50%, explaining the final horizontal gold step.
+Dashed gray outlines/ticks show reference thresholds. These represent
+stage-associated native effects, not proven cumulative game runtime behavior.
+
+Four cards **LIGHT / MEDIUM / HEAVY / CRITICAL** show live STARTS AT %, derived
+carried kilograms, both fixed effect penalties, and whether jogging is
+blocked. Threshold percentages become yellow only when edited; derived
+kilograms become yellow if either that stage or MAX CARRY WEIGHT is modified.
+All units, stage labels and fixed penalty values stay neutral. Cards select
+their corresponding rationale but are read-only, as in Bleeding; only plot
+nodes/axis markers edit. Stage dragging, 2.5-point snapping, ordering cascade,
+per-stage right-click and R all-stage reset are unchanged. On narrow hosts,
+cards form a 2×2 bank instead of squeezing text into four narrow columns.
+The control measures to 490 DIP wide or 604 DIP narrow so no card is clipped.
+
+Only presentation and source selection are changed. The BPatch output, stage
+ratios, native effect strength and 2.1 CFG paths are unchanged. The visual
+stage curve is not an engine-runtime simulator: validate effect stacking and
+removal in-game, especially when hovering around a boundary.
