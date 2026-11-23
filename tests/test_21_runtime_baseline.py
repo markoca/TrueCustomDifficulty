@@ -20,7 +20,7 @@ class Game21BaselineContract(unittest.TestCase):
         self.assertEqual(CATALOG, len(catalog["parameters"]))
         # 1448 + 1234 roaming-NPC weapon-condition leaves (2026-11-16 scope).
         self.assertEqual(EDIT_POINTS, len(baseline["editPoints"]))
-        self.assertEqual(32, len(baseline["special"]))
+        self.assertEqual(36, len(baseline["special"]))
 
     def test_factory_presets_target_21_and_protect_user_edits(self):
         names = ("Anomaly Runner", "Field Medic", "Hardcore", "Hardcore+",
