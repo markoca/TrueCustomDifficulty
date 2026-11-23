@@ -33,7 +33,7 @@ def grid(number, base, step):
 
 for name, role in sorted(policy["roles"].items()):
     preset = json.loads((APP / "Presets" / (name + ".json")).read_text(encoding="utf-8"))
-    assert preset["name"] == name and len(preset["values"]) == len(catalog) == 452, name
+    assert preset["name"] == name and len(preset["values"]) == len(catalog) == 497, name
     assert set(role["values"]) == ids and len(role["intent"]) >= 35, name
     for key, expected in role["values"].items():
         meta = catalog[key]["slider"]
