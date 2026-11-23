@@ -168,12 +168,13 @@ internal static partial class Program
             "loot.worldWeaponShuffle", "loot.worldWeaponDensity",
             "loot.looseUniqueWeaponShuffle", "loot.worldAttachmentShuffle",
             "loot.worldDetectors", "loot.worldArmorRemoved", "loot.looseArtifactsRemoved",
+            "loot.looseOpticsRemoved",
             "loot.blueprintShuffle"
         };
         var placement = vm.AllParameters.Where(p=>p.VisualAggregateFamily=="WorldLootLayout").ToList();
-        Check(placement.Count==8 &&
+        Check(placement.Count==9 &&
             placementIds.All(id=>placement.Count(p=>p.Id==id)==1),
-            "World Placement must materialize exactly eight live aggregate-backed controls");
+            "World Placement must materialize exactly nine live aggregate-backed controls");
         Check(placement.Count(p=>p.IsVisualAggregateAnchor && p.IsControlVisible)==1 &&
             placement.Single(p=>p.IsVisualAggregateAnchor).Id=="loot.worldWeaponShuffle" &&
             placement.Single(p=>p.Id=="loot.looseUniqueWeaponShuffle").IsToggle,
@@ -185,9 +186,9 @@ internal static partial class Program
         var field=typeof(TrueCustomDifficulty.Controls.AggregateVisualControl).GetField(
             "_parameters",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance);
         var bound=field?.GetValue(board) as Dictionary<string,ParameterViewModel>;
-        Check(bound is not null && bound.Count==8 &&
+        Check(bound is not null && bound.Count==9 &&
             placementIds.All(id=>bound.ContainsKey(id)),
-            "World Placement visual must bind all eight settings and never show data unavailable");
+            "World Placement visual must bind all nine settings and never show data unavailable");
         Check(ids.Where(id=>id!="loot.worldWeaponDensity").All(id=>
             vm.AllParameters.Single(p=>p.Id==id).IsToggle),
             "All world placement toggles must remain booleans");
