@@ -28,6 +28,9 @@ jobs:
       - name: 2.1 added actor scope parser and quest isolation regressions
         run: python -m unittest discover -s tests -p 'test_game_21_new_actor_scope.py'
 
+      - name: 12 role-specific Overweight thresholds and 2.1 CFG mapping
+        run: python tools/audit_factory_overweight_profiles.py
+
       - name: 2.1 special CFG families (inventory only, source archives not in CI)
         run: python tools/audit_21_special_source_families.py --inventory-only
 

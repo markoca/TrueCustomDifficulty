@@ -18,6 +18,7 @@ world_removal = json.loads((ROOT/"tools/factory_preset_world_removal_policy_2026
 human_roles = json.loads((ROOT/"tools/factory_preset_human_roles_2026_11_19.json").read_text(encoding="utf-8"))
 four_domains = json.loads((ROOT/"tools/factory_preset_four_domain_balance_2026_11_19.json").read_text(encoding="utf-8"))
 radiation = json.loads((ROOT/"tools/factory_preset_radiation_lethality_2026_11_19.json").read_text(encoding="utf-8"))
+overweight = json.loads((ROOT/"tools/factory_preset_overweight_2026_11_23.json").read_text(encoding="utf-8"))
 assert radiation["sourceId"] == "survival.radiationDamage" and len(radiation["roles"]) == 12
 assert len(human_roles["roles"]) == 12
 assert len(world_removal["roles"]) == 12
@@ -82,6 +83,8 @@ for index,name in enumerate(names):
                 steps=(value-slider["min"])/slider["step"]
                 assert abs(steps-round(steps))<1e-6,(name,id,value)
     assert get(radiation["sourceId"]) == radiation["roles"][name]["damageMultiplier"], name
+    assert get("stamina.maxCarryWeight") == overweight["roles"][name]["maxCarryKg"], name
+    assert [get(id) for id in overweight["ids"]] == overweight["roles"][name]["ratios"], name
     assert all(get(pid) == v for pid, v in four_domains["roles"][name]["values"].items()), name
     assert d.get("traderSellOdds") == four_domains["roles"][name]["traderSellOdds"], name
     assert get("loot.stashGearEnabled")!=get("loot.worldWeaponShuffle"),name

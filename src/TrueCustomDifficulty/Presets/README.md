@@ -1,3 +1,17 @@
+## 2026-11-23 — Distinct Overweight profiles for all 12 factory roles
+
+The latest STAMINA / OVERWEIGHT SYSTEM graph is now role-tuned: 12 unique
+LIGHT / MEDIUM / HEAVY / CRITICAL threshold ladders, all in 2.5% increments.
+All four source values per profile are stored directly in its canonical
+`values` JSON; no extra knobs, toggles, or runtime settings. MAX CARRY
+WEIGHT is left unchanged (Hardcore+ 50 kg through Smuggler 115 kg) and
+determines the kilogram location of each stage. Hardcore+ / Outcast burden
+starts earlier; Smuggler / Wanderer / Anomaly Runner retain mobility longer;
+Scavenger and Mutant Hunter are taxed for salvage/trophies. Full 12×4 table,
+rationale and CFG regression plan: `docs/FACTORY-PRESETS.md`; exact source
+matrix: `tools/factory_preset_overweight_2026_11_23.json`. Existing
+player-named custom presets are unaffected.
+
 ## 2026-11-19 — Four-domain factory-role rebalance
 
 All twelve canonical profiles now vary alcohol intoxication strength, two bleeding-stage thresholds, seven native breakable-container controls and Trader Stock category offer odds. Former 100% trader entries were neutral: the 31 category switches were ON, while only three roles had authored partial `traderSellOdds` sidecars. The current matrix uses **289 native category odds entries**, 5%-step fractions of original offer Chance, and preserves each profession's signature supplies. All source CFG routes, gameplay thresholds, separate stock amounts, UI controls and custom-named user files remain unchanged. Authoritative policy: `tools/factory_preset_four_domain_balance_2026_11_19.json`; rationale: `docs/FACTORY-PRESETS.md`.

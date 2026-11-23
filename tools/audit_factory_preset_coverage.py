@@ -61,6 +61,7 @@ HUMAN_ROLES = json.loads((ROOT / "tools/factory_preset_human_roles_2026_11_19.js
 FOUR_DOMAINS = json.loads((ROOT / "tools/factory_preset_four_domain_balance_2026_11_19.json").read_text(encoding="utf-8"))
 assert set(FOUR_DOMAINS["roles"]) == set(VIBE["values"]) and len(FOUR_DOMAINS["ids"]) == 11
 RADIATION = json.loads((ROOT / "tools/factory_preset_radiation_lethality_2026_11_19.json").read_text(encoding="utf-8"))
+OVERWEIGHT = json.loads((ROOT / "tools/factory_preset_overweight_2026_11_23.json").read_text(encoding="utf-8"))
 RAD_ID = RADIATION["sourceId"]
 assert RAD_ID == "survival.radiationDamage" and RADIATION["range"]["max"] == 25
 assert set(RADIATION["roles"]) == set(VIBE["values"])
@@ -130,6 +131,7 @@ for path in presets:
     role.update(HUMAN_ROLES["roles"][path.stem]["values"])
     role[RAD_ID] = RADIATION["roles"][path.stem]["damageMultiplier"]
     role.update(FOUR_DOMAINS["roles"][path.stem]["values"])
+    role.update(dict(zip(OVERWEIGHT["ids"], OVERWEIGHT["roles"][path.stem]["ratios"])))
     # 2026-11-18 attack-only pass: role values of removed controls (roars, growls, ...) are gone.
     role = {k: v for k, v in role.items() if k in by_id}
     for pid in NEW_IDS | set(role):
@@ -154,6 +156,8 @@ for path in presets:
     assert amount("combat.npcStormNoise") < amount("combat.npcRainNoise"), path.name
     assert amount("combat.npcSightRange") <= 2.5, path.name
     assert amount(RAD_ID) == RADIATION["roles"][path.stem]["damageMultiplier"], path.name
+    assert amount("stamina.maxCarryWeight") == OVERWEIGHT["roles"][path.stem]["maxCarryKg"], path.name
+    assert [amount(id) for id in OVERWEIGHT["ids"]] == OVERWEIGHT["roles"][path.stem]["ratios"], path.name
     assert all(amount(pid) == target for pid, target in FOUR_DOMAINS["roles"][path.stem]["values"].items()), path.name
     assert 4.5 <= amount(RAD_ID) <= 25, path.name
     assert all(enabled(id) is LOOSE_WORLD["roles"][path.stem]["values"][id] for id in LOOSE_WORLD_IDS), path.name

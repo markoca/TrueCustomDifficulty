@@ -1,0 +1,159 @@
+{
+  "version": 1,
+  "date": "2026-11-23",
+  "gameVersion": "2.1",
+  "board": "Stamina / Overweight System",
+  "source": "Native DefaultWeightParams.WeightEffectParams (four stage thresholds); ratios remain percent of MAX CARRY WEIGHT, CFG output uses carryKg * ratio.",
+  "ids": [
+    "stamina.overweightLightThreshold",
+    "stamina.overweightMediumThreshold",
+    "stamina.overweightHeavyThreshold",
+    "stamina.overweightCriticalThreshold"
+  ],
+  "vanillaRatios": [
+    0.625,
+    0.75,
+    0.875,
+    1
+  ],
+  "invariants": {
+    "minimumRatio": 0.1,
+    "maximumRatio": 1,
+    "step": 0.025,
+    "minimumAdjacentGap": 0.025,
+    "carryRangeKg": [
+      20,
+      160
+    ],
+    "carryStepKg": 5
+  },
+  "stages": [
+    "LIGHT",
+    "MEDIUM",
+    "HEAVY",
+    "CRITICAL"
+  ],
+  "authoring": "Only the four stage thresholds are modified. All other preset values and the source MAX CARRY WEIGHT amounts remain unchanged. Existing effect strengths, gameplay penalties and BPatch output rules are not altered.",
+  "roles": {
+    "Anomaly Runner": {
+      "maxCarryKg": 85,
+      "ratios": [
+        0.725,
+        0.825,
+        0.925,
+        1
+      ],
+      "intent": "Quick anomaly raids: preserve sprint mobility with compact equipment, then pay a steep penalty near the extraction limit."
+    },
+    "Field Medic": {
+      "maxCarryKg": 85,
+      "ratios": [
+        0.6,
+        0.75,
+        0.875,
+        0.975
+      ],
+      "intent": "Medical bags start weighing on the player relatively early, but sufficient capacity remains to evacuate supplies and wounded."
+    },
+    "Hardcore+": {
+      "maxCarryKg": 50,
+      "ratios": [
+        0.45,
+        0.6,
+        0.75,
+        0.9
+      ],
+      "intent": "Severe survival scarcity: even moderate baggage slows travel; jogging locks well before the absolute carry limit."
+    },
+    "Hardcore": {
+      "maxCarryKg": 55,
+      "ratios": [
+        0.5,
+        0.65,
+        0.8,
+        0.95
+      ],
+      "intent": "Strong encumbrance pressure with a small margin compared with Hardcore+."
+    },
+    "Immersive": {
+      "maxCarryKg": 75,
+      "ratios": [
+        0.6,
+        0.725,
+        0.85,
+        0.975
+      ],
+      "intent": "Plausible human carrying fatigue begins below comfortable capacity; gradual, grounded penalties."
+    },
+    "Mercenary": {
+      "maxCarryKg": 80,
+      "ratios": [
+        0.625,
+        0.775,
+        0.9,
+        1
+      ],
+      "intent": "Professional soldier carries a standard combat load effectively but suffers under excess kit."
+    },
+    "Mutant Hunter": {
+      "maxCarryKg": 80,
+      "ratios": [
+        0.575,
+        0.725,
+        0.875,
+        1
+      ],
+      "intent": "Heavy long guns, ammunition, and trophies cost mobility earlier, especially during pursuit."
+    },
+    "Outcast": {
+      "maxCarryKg": 55,
+      "ratios": [
+        0.475,
+        0.625,
+        0.775,
+        0.925
+      ],
+      "intent": "Poor provisions and hostile territory turn extra scavenged weight into an early, dangerous liability."
+    },
+    "Scavenger": {
+      "maxCarryKg": 70,
+      "ratios": [
+        0.55,
+        0.7,
+        0.85,
+        0.975
+      ],
+      "intent": "Hauling salvage is worthwhile but movement is compromised much sooner than for dedicated transport roles."
+    },
+    "Smuggler": {
+      "maxCarryKg": 115,
+      "ratios": [
+        0.7,
+        0.825,
+        0.925,
+        1
+      ],
+      "intent": "Specialized hauler retains useful speed with valuable cargo; severe penalties arrive close to the limit."
+    },
+    "Tactical": {
+      "maxCarryKg": 70,
+      "ratios": [
+        0.65,
+        0.775,
+        0.9,
+        1
+      ],
+      "intent": "Disciplined loadout stays light on the feet; bulky extras degrade tactical maneuverability."
+    },
+    "Wanderer": {
+      "maxCarryKg": 105,
+      "ratios": [
+        0.675,
+        0.8,
+        0.9,
+        1
+      ],
+      "intent": "Long-distance explorer with travel-ready carrying capacity; main mobility loss saved for heavy travel packs."
+    }
+  }
+}

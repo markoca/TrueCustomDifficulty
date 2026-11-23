@@ -1,3 +1,7 @@
+## CURRENT 2026-11-23 — Overweight factory role threshold ladders
+
+* All 12 shipped role JSONs now deliberately tune the four source-native OVERWEIGHT SYSTEM stages, preserving current MAX CARRY WEIGHT, 2.5-percentage-point snapping, ordered thresholds, dynamic kg axis, gold/white fixed-effect graphs, and read-only stage cards. Source-only ratio authoring does not create new UI controls or change the two catalogued GUI components. Full 12-role table: `docs/FACTORY-PRESETS.md`, numeric matrix: `tools/factory_preset_overweight_2026_11_23.json`. Right-click/R reset semantics and the 2.1 BPatch routes remain the same.
+
 ## CURRENT 2026-11-23 — Overweight graph capacity scaling and carry slider
 
 * The **MAX CARRY WEIGHT** source-native 20–160 kg / 5 kg step slider now lives at the top of **OVERWEIGHT SYSTEM** above its Bleeding-style interactive graph; it is removed from CORE STAMINA, leaving MAX STAMINA / STAMINA REGEN and full-width VAULT HEIGHT. The same `stamina.maxCarryWeight` source is moved from StaminaCore to OverweightThresholds in `VisualAggregateFamilyByParameterId` and the family's membership, so no duplicate writes or UI owners exist. Right-click resets the weight slider, and R resets it together with the four threshold sources.

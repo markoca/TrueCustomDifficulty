@@ -58,6 +58,51 @@ Cards select their rationale without editing it. The responsive board is
 612 DIP high at wide widths and 726 DIP when cards form two rows. No source
 effects, writer routes or existing preset values are duplicated.
 
+## 2026-11-23 — Overweight stages tuned across all 12 factory roles
+
+**Current source of truth:** `tools/factory_preset_overweight_2026_11_23.json`.
+All twelve shipped 2.1 profiles previously used identical Vanilla stage ratios
+(62.5 / 75 / 87.5 / 100%); the only difference was MAX CARRY WEIGHT.
+Now **48 existing source ratios** have deliberate, distinct role settings, all
+on the catalog's 2.5-percentage-point grid with strict ordered stage gaps.
+The existing maximum carrying capacities and the other 452 preset values
+stay unchanged. No extra fake parameters or effect magnitude controls are added.
+
+| Profile | Max carry | LIGHT | MEDIUM | HEAVY | CRITICAL | Intent |
+|---|---:|---:|---:|---:|---:|---|
+| Anomaly Runner | 85 kg | 72.5% | 82.5% | 92.5% | 100% | Fast anomaly extraction under valuable cargo; penalties arrive late. |
+| Field Medic | 85 kg | 60% | 75% | 87.5% | 97.5% | Medical kit burden is felt earlier; useful emergency carrying margin remains. |
+| Hardcore+ | 50 kg | 45% | 60% | 75% | 90% | Unforgiving encumbrance: jogging blocked well before the 50 kg ceiling. |
+| Hardcore | 55 kg | 50% | 65% | 80% | 95% | Very demanding but more forgiving than Hardcore+. |
+| Immersive | 75 kg | 60% | 72.5% | 85% | 97.5% | Realistic load fatigue with a slightly earlier heavy stage. |
+| Mercenary | 80 kg | 62.5% | 77.5% | 90% | 100% | Professional kit management; movement falters near heavy loads. |
+| Mutant Hunter | 80 kg | 57.5% | 72.5% | 87.5% | 100% | Weapons, ammo and mutant trophies put strain on the hunt. |
+| Outcast | 55 kg | 47.5% | 62.5% | 77.5% | 92.5% | Early burden and reduced escape capability for the isolated survivor. |
+| Scavenger | 70 kg | 55% | 70% | 85% | 97.5% | Heavy salvage comes at an early mobility price. |
+| Smuggler | 115 kg | 70% | 82.5% | 92.5% | 100% | High-capacity cargo specialist; retains a long mobile load window. |
+| Tactical | 70 kg | 65% | 77.5% | 90% | 100% | Disciplined light loadouts preserve battlefield agility. |
+| Wanderer | 105 kg | 67.5% | 80% | 90% | 100% | Exploration-focused carrying with longer useful travel range. |
+
+**Semantics:** Each percentage is the share of the role's existing MAX CARRY
+WEIGHT at which that load stage begins; the edited parameter is not a sprint
+speed multiplier. The four source 2.1 stage effects remain -15/-25/-50/-50%
+velocity and -10/-20/-35/-50% stamina regeneration, with jogging blocked at
+HEAVY and CRITICAL. Effects and exact runtime stacking/removal still require
+in-game verification. Profiles with earlier thresholds carry equipment less
+comfortably even if their MAX CARRY WEIGHT value is unchanged. In the graph,
+all four kg thresholds are recalculated live from that role's capacity.
+
+**Tests:** `python tools/audit_factory_overweight_profiles.py` checks all
+12 JSONs, 48 ratios, exact 2.5% snapping, ascending minimum gaps, role
+diversification, unchanged carried capacities and writer references.
+The production Windows Health/Stamina contract now imports each actual
+embedded factory profile and writes the five source parameters into two real
+CFG patch files, checking four thresholds, MaxInventoryMass when changed,
+InventoryPenaltyLessWeight and both inventory HUD markers. Both existing
+factory coverage audits also enforce the new role matrix; historical balance
+ledgers remain untouched. A successful local `./publish.sh` refreshes the
+tracked twelve role presets; user-named custom presets are not changed.
+
 ## Production BPatch contract
 
 The four percentage controls are stored as `stamina.overweight*Threshold`

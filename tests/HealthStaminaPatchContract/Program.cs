@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using TrueCustomDifficulty.Models;
 using TrueCustomDifficulty.Services;
@@ -38,6 +39,7 @@ internal static class Program
             MovementLimitsAndExhaustionNamingCase();
             StaminaStatesLayoutContractCase();
             OverweightThresholdsCase();
+            FactoryOverweightProfilesCase();
 
             // A unique concrete edit for every live Health/Stamina catalog
             // parameter. Master-only modifiers use Master because their
@@ -188,6 +190,130 @@ internal static class Program
 
         _passed++;
         Console.WriteLine("PASS overweight 2.1 source order, capacity scaling, HUD sync and stage constraints");
+    }
+
+
+    // The shipping profiles are embedded in the real application assembly.
+    // Import them with the production preset loader, then independently
+    // exercise the real CFG writer for each role's five load parameters.
+    // This tests actual 2.1 CFG stage ordering and current capacity scaling.
+    private static void FactoryOverweightProfilesCase()
+    {
+        var expected = new Dictionary<string, (double Carry, double[] Ratios)>(StringComparer.Ordinal)
+        {
+            ["Anomaly Runner"] = (85, new[] { .725, .825, .925, 1.0 }),
+            ["Field Medic"] = (85, new[] { .6, .75, .875, .975 }),
+            ["Hardcore+"] = (50, new[] { .45, .6, .75, .9 }),
+            ["Hardcore"] = (55, new[] { .5, .65, .8, .95 }),
+            ["Immersive"] = (75, new[] { .6, .725, .85, .975 }),
+            ["Mercenary"] = (80, new[] { .625, .775, .9, 1.0 }),
+            ["Mutant Hunter"] = (80, new[] { .575, .725, .875, 1.0 }),
+            ["Outcast"] = (55, new[] { .475, .625, .775, .925 }),
+            ["Scavenger"] = (70, new[] { .55, .7, .85, .975 }),
+            ["Smuggler"] = (115, new[] { .7, .825, .925, 1.0 }),
+            ["Tactical"] = (70, new[] { .65, .775, .9, 1.0 }),
+            ["Wanderer"] = (105, new[] { .675, .8, .9, 1.0 })
+        };
+        var ids = new[]
+        {
+            "stamina.overweightLightThreshold",
+            "stamina.overweightMediumThreshold",
+            "stamina.overweightHeavyThreshold",
+            "stamina.overweightCriticalThreshold"
+        };
+        var assembly = typeof(MainViewModel).Assembly;
+        var resourceNames = assembly.GetManifestResourceNames()
+            .Where(name => name.StartsWith("TrueCustomDifficulty.Presets.", StringComparison.Ordinal)
+                && name.EndsWith(".json", StringComparison.Ordinal))
+            .OrderBy(name => name, StringComparer.Ordinal).ToArray();
+        Check(resourceNames.Length == 12, "All twelve factory profiles must be embedded");
+
+        var root = Path.Combine(_keepRoot ?? Path.GetTempPath(),
+            "TCD_Health_Stamina", "factory-overweight-roles");
+        Directory.CreateDirectory(root);
+        try
+        {
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var resourceName in resourceNames)
+            {
+                using var stream = assembly.GetManifestResourceStream(resourceName)
+                    ?? throw new InvalidDataException("Missing embedded factory profile: " + resourceName);
+                using var reader = new StreamReader(stream);
+                var profilePath = Path.Combine(root,
+                    resourceName.Replace("TrueCustomDifficulty.Presets.", "", StringComparison.Ordinal));
+                File.WriteAllText(profilePath, reader.ReadToEnd());
+                var preset = new PresetService().Load(profilePath);
+                Check(expected.TryGetValue(preset.Name, out var role)
+                    && seen.Add(preset.Name), "Unexpected/duplicate factory Overweight role " + preset.Name);
+
+                var loaded = new MainViewModel(Catalog);
+                loaded.ApplyPresetFromPath(profilePath);
+                var loadedById = loaded.AllParameters.ToDictionary(p => p.Id, StringComparer.Ordinal);
+                Approx(loadedById["stamina.maxCarryWeight"].CurrentNumber,
+                    role.Carry, preset.Name + " loaded MAX CARRY WEIGHT");
+                for (var i = 0; i < ids.Length; i++)
+                {
+                    Check(preset.Values[ids[i]].Number.HasValue,
+                        preset.Name + " missing saved Overweight ratio " + ids[i]);
+                    Approx(preset.Values[ids[i]].Number!.Value,
+                        role.Ratios[i], preset.Name + " saved ratio " + ids[i]);
+                    Approx(loadedById[ids[i]].CurrentNumber,
+                        role.Ratios[i], preset.Name + " loaded ratio " + ids[i]);
+                    Check(role.Ratios[i] <= 1.0
+                        && Math.Abs((role.Ratios[i] - .1) / .025
+                            - Math.Round((role.Ratios[i] - .1) / .025)) < 0.000001
+                        && (i == 0 || role.Ratios[i] - role.Ratios[i - 1] >= .025 - 0.000001),
+                        preset.Name + " ratio must obey native grid and ordered stages");
+                }
+
+                // Avoid unrelated altered gameplay domains: only carry and
+                // these four native thresholds are set on the fresh writer VM.
+                var isolated = new MainViewModel(Catalog);
+                var isolatedIds = isolated.AllParameters.ToDictionary(p => p.Id, StringComparer.Ordinal);
+                isolatedIds["stamina.maxCarryWeight"].CurrentNumber = role.Carry;
+                // Apply descending so constraint cascades cannot distort any
+                // intended smaller lower stage during import.
+                for (var i = ids.Length - 1; i >= 0; i--)
+                    isolatedIds[ids[i]].CurrentNumber = role.Ratios[i];
+                for (var i = 0; i < ids.Length; i++)
+                    Approx(isolatedIds[ids[i]].CurrentNumber,
+                        role.Ratios[i], preset.Name + " isolated stage " + ids[i]);
+
+                var target = Path.Combine(root,
+                    "writer-" + preset.Name.Replace(' ', '-'));
+                var result = new CfgPatchWriterService().Write(isolated, Catalog, null, target);
+                Check(result.FileCount == 2 && result.EditCount >= 8,
+                    preset.Name + " must emit both CFGs and all eight linked fields");
+                var weight = Parse(File.ReadAllText(ExpectedFile(target,
+                    "GameData/ObjWeightParamsPrototypes.cfg"))).Get("DefaultWeightParams");
+                var effects = weight.Get("WeightEffectParams");
+                for (var i = 0; i < ids.Length; i++)
+                    Approx(effects.Get($"[{3 - i}]").Value("Threshold"),
+                        role.Carry * role.Ratios[i], preset.Name + " CFG " + ids[i]);
+                if (Math.Abs(role.Carry - 80.0) > 0.000001)
+                    Approx(weight.Value("MaxInventoryMass"), role.Carry,
+                        preset.Name + " CFG MAX CARRY WEIGHT");
+                Approx(weight.Value("InventoryPenaltyLessWeight"),
+                    role.Carry * role.Ratios[0] - .01, preset.Name + " WeightParams start");
+                var globals = Parse(File.ReadAllText(ExpectedFile(target,
+                    "GameData/CoreVariables.cfg"))).Get("DefaultConfig");
+                Approx(globals.Value("InventoryPenaltyLessWeight"),
+                    role.Carry * role.Ratios[0], preset.Name + " CoreVariables start");
+                Approx(globals.Value("MediumEffectStartUI"),
+                    role.Carry * role.Ratios[0], preset.Name + " HUD medium marker");
+                Approx(globals.Value("CriticalEffectStartUI"),
+                    role.Carry * role.Ratios[2], preset.Name + " HUD critical marker");
+                _passed++;
+            }
+            Check(seen.SetEquals(expected.Keys),
+                "One or more source-locked Overweight factory roles were not tested");
+        }
+        finally
+        {
+            if (_keepRoot is null && Directory.Exists(root))
+                Directory.Delete(root, recursive: true);
+        }
+        Console.WriteLine("PASS 12 factory Overweight profiles: embedded import, role ratios, 2.5% ladder, produced 2.1 BPatch and HUD markers");
     }
 
     private static void MovementLimitsAndExhaustionNamingCase()
