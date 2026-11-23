@@ -987,7 +987,7 @@
     },
     "loot.foodBoxBranch": {
       "kind": "slider",
-      "number": 0.8
+      "number": 0.7
     },
     "loot.drinkBoxBranch": {
       "kind": "slider",
@@ -1011,11 +1011,11 @@
     },
     "loot.drinkBoxWater": {
       "kind": "slider",
-      "number": 1
+      "number": 1.25
     },
     "loot.drinkBoxBeer": {
       "kind": "slider",
-      "number": 0.75
+      "number": 0.5
     },
     "loot.drinkBoxVodka": {
       "kind": "slider",
@@ -1907,19 +1907,19 @@
     },
     "loot.foodBoxBranchMaster": {
       "kind": "slider",
-      "number": 0.6
+      "number": 0.7
     },
     "loot.drinkBoxBranchExperienced": {
       "kind": "slider",
-      "number": 0.4
+      "number": 0.5
     },
     "loot.drinkBoxBranchVeteran": {
       "kind": "slider",
-      "number": 0.5
+      "number": 0.6
     },
     "loot.drinkBoxBranchMaster": {
       "kind": "slider",
-      "number": 0.6
+      "number": 0.7
     },
     "loot.foodBoxSausageExperienced": {
       "kind": "slider",
@@ -1963,11 +1963,11 @@
     },
     "loot.foodBoxMilkVeteran": {
       "kind": "slider",
-      "number": 0.2
+      "number": 0.3
     },
     "loot.foodBoxMilkMaster": {
       "kind": "slider",
-      "number": 0.3
+      "number": 0.4
     },
     "loot.drinkBoxWaterExperienced": {
       "kind": "slider",
@@ -1983,11 +1983,11 @@
     },
     "loot.drinkBoxBeerExperienced": {
       "kind": "slider",
-      "number": 0.5
+      "number": 0.3
     },
     "loot.drinkBoxBeerVeteran": {
       "kind": "slider",
-      "number": 0.4
+      "number": 0.3
     },
     "loot.drinkBoxBeerMaster": {
       "kind": "slider",
@@ -2003,7 +2003,7 @@
     },
     "loot.drinkBoxVodkaMaster": {
       "kind": "slider",
-      "number": 0.3
+      "number": 0.4
     },
     "loot.drinkBoxEnergyExperienced": {
       "kind": "slider",
@@ -2011,11 +2011,11 @@
     },
     "loot.drinkBoxEnergyVeteran": {
       "kind": "slider",
-      "number": 0.2
+      "number": 0.3
     },
     "loot.drinkBoxEnergyMaster": {
       "kind": "slider",
-      "number": 0.3
+      "number": 0.4
     }
   }
 }

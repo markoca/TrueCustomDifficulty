@@ -1,0 +1,674 @@
+{
+  "version": 1,
+  "date": "2026-11-23",
+  "gameVersion": "2.1",
+  "source": "GameData/ItemGeneratorPrototypes.cfg",
+  "semantics": "Newbie uses literal relative Weight multipliers (scale). Experienced/Veteran/Master edit independent source Chance values (set) on exact 10% steps. No claim of a final drop rate or an exclusive 100%-sum distribution.",
+  "rootIds": [
+    "loot.foodBoxBranch",
+    "loot.drinkBoxBranch",
+    "loot.foodBoxSausage",
+    "loot.foodBoxBread",
+    "loot.foodBoxCanned",
+    "loot.foodBoxMilk",
+    "loot.drinkBoxWater",
+    "loot.drinkBoxBeer",
+    "loot.drinkBoxVodka",
+    "loot.drinkBoxEnergy"
+  ],
+  "rankSuffixes": [
+    "Experienced",
+    "Veteran",
+    "Master"
+  ],
+  "valueOrder": [
+    "Food gate",
+    "Drink gate",
+    "Sausage",
+    "Bread",
+    "Canned",
+    "Milk",
+    "Water",
+    "Beer",
+    "Vodka",
+    "Energy"
+  ],
+  "roles": {
+    "Anomaly Runner": {
+      "intent": "Anomaly raids: water and energy drinks over alcohol, food secondary; advanced ranks favor cans over perishable staples.",
+      "newbieWeights": [
+        0.7,
+        0.8,
+        0.5,
+        0.75,
+        1,
+        0.25,
+        1.5,
+        0.25,
+        0.25,
+        1.75
+      ],
+      "chances": {
+        "Experienced": [
+          0.4,
+          0.5,
+          0.3,
+          0.4,
+          0.4,
+          0.1,
+          0.7,
+          0.1,
+          0.1,
+          0.6
+        ],
+        "Veteran": [
+          0.5,
+          0.6,
+          0.2,
+          0.3,
+          0.5,
+          0.2,
+          0.6,
+          0.1,
+          0.2,
+          0.7
+        ],
+        "Master": [
+          0.6,
+          0.7,
+          0.2,
+          0.2,
+          0.6,
+          0.2,
+          0.5,
+          0.1,
+          0.2,
+          0.9
+        ]
+      }
+    },
+    "Field Medic": {
+      "intent": "Medical relief supplies: water, bread and practical foods, with strongly reduced alcohol and luxury calories.",
+      "newbieWeights": [
+        0.7,
+        0.7,
+        0.75,
+        1,
+        1,
+        0.5,
+        1.5,
+        0.25,
+        0,
+        0.75
+      ],
+      "chances": {
+        "Experienced": [
+          0.4,
+          0.4,
+          0.5,
+          0.6,
+          0.4,
+          0.2,
+          0.7,
+          0.1,
+          0,
+          0.2
+        ],
+        "Veteran": [
+          0.5,
+          0.5,
+          0.4,
+          0.5,
+          0.5,
+          0.3,
+          0.7,
+          0.1,
+          0,
+          0.3
+        ],
+        "Master": [
+          0.6,
+          0.6,
+          0.3,
+          0.4,
+          0.6,
+          0.4,
+          0.6,
+          0.1,
+          0,
+          0.4
+        ]
+      }
+    },
+    "Hardcore+": {
+      "intent": "Extreme scarcity: very low box gates and limited scraps of food or water; no milk, alcohol or energy drinks.",
+      "newbieWeights": [
+        0.2,
+        0.1,
+        0.25,
+        0.25,
+        0.5,
+        0,
+        0.5,
+        0,
+        0,
+        0
+      ],
+      "chances": {
+        "Experienced": [
+          0.1,
+          0.1,
+          0.2,
+          0.2,
+          0.2,
+          0,
+          0.2,
+          0,
+          0,
+          0
+        ],
+        "Veteran": [
+          0.2,
+          0.1,
+          0.2,
+          0.2,
+          0.3,
+          0,
+          0.2,
+          0,
+          0,
+          0
+        ],
+        "Master": [
+          0.2,
+          0.2,
+          0.1,
+          0.1,
+          0.3,
+          0,
+          0.1,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "Hardcore": {
+      "intent": "Harsh but survivable subsistence: limited canned provisions and water with nearly absent drink luxuries.",
+      "newbieWeights": [
+        0.3,
+        0.3,
+        0.5,
+        0.5,
+        0.75,
+        0.25,
+        0.75,
+        0.25,
+        0,
+        0.25
+      ],
+      "chances": {
+        "Experienced": [
+          0.2,
+          0.2,
+          0.3,
+          0.3,
+          0.3,
+          0.1,
+          0.4,
+          0.1,
+          0,
+          0.1
+        ],
+        "Veteran": [
+          0.3,
+          0.3,
+          0.3,
+          0.3,
+          0.4,
+          0.1,
+          0.3,
+          0.1,
+          0,
+          0.1
+        ],
+        "Master": [
+          0.4,
+          0.3,
+          0.2,
+          0.2,
+          0.4,
+          0.1,
+          0.3,
+          0.1,
+          0,
+          0.2
+        ]
+      }
+    },
+    "Immersive": {
+      "intent": "Grounded variety with moderate scarcity; older-rank provisions gradually shift to cans and durable drinks.",
+      "newbieWeights": [
+        0.7,
+        0.7,
+        0.75,
+        1,
+        1,
+        0.5,
+        1.25,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "chances": {
+        "Experienced": [
+          0.5,
+          0.5,
+          0.5,
+          0.6,
+          0.4,
+          0.2,
+          0.6,
+          0.3,
+          0.2,
+          0.2
+        ],
+        "Veteran": [
+          0.6,
+          0.6,
+          0.4,
+          0.5,
+          0.5,
+          0.3,
+          0.5,
+          0.3,
+          0.3,
+          0.3
+        ],
+        "Master": [
+          0.7,
+          0.7,
+          0.3,
+          0.4,
+          0.6,
+          0.4,
+          0.4,
+          0.3,
+          0.4,
+          0.4
+        ]
+      }
+    },
+    "Mercenary": {
+      "intent": "Professional mission rations: canned food, water and energy drinks over casual alcohol or fresh meat.",
+      "newbieWeights": [
+        0.7,
+        0.7,
+        0.5,
+        0.75,
+        1.5,
+        0.5,
+        1.25,
+        0.25,
+        0.25,
+        1.25
+      ],
+      "chances": {
+        "Experienced": [
+          0.4,
+          0.4,
+          0.3,
+          0.4,
+          0.6,
+          0.2,
+          0.7,
+          0.2,
+          0.1,
+          0.4
+        ],
+        "Veteran": [
+          0.5,
+          0.5,
+          0.2,
+          0.3,
+          0.7,
+          0.3,
+          0.6,
+          0.2,
+          0.2,
+          0.5
+        ],
+        "Master": [
+          0.6,
+          0.6,
+          0.1,
+          0.3,
+          0.8,
+          0.4,
+          0.5,
+          0.2,
+          0.3,
+          0.6
+        ]
+      }
+    },
+    "Mutant Hunter": {
+      "intent": "Hunting diet favors sausage and water; higher ranks provide more cans while meat remains the signature find.",
+      "newbieWeights": [
+        0.8,
+        0.6,
+        1.75,
+        0.5,
+        0.75,
+        0.25,
+        1.25,
+        0.25,
+        0,
+        0.75
+      ],
+      "chances": {
+        "Experienced": [
+          0.5,
+          0.4,
+          0.8,
+          0.3,
+          0.3,
+          0.1,
+          0.6,
+          0.1,
+          0,
+          0.3
+        ],
+        "Veteran": [
+          0.6,
+          0.5,
+          0.7,
+          0.2,
+          0.4,
+          0.1,
+          0.5,
+          0.1,
+          0,
+          0.4
+        ],
+        "Master": [
+          0.7,
+          0.6,
+          0.6,
+          0.2,
+          0.5,
+          0.2,
+          0.4,
+          0.1,
+          0.1,
+          0.5
+        ]
+      }
+    },
+    "Outcast": {
+      "intent": "Isolated survivor: rare scraps and water; no alcohol, milk or energy drinks, very sparse gate chances.",
+      "newbieWeights": [
+        0.3,
+        0.2,
+        0.75,
+        0.5,
+        0.25,
+        0,
+        0.5,
+        0,
+        0,
+        0
+      ],
+      "chances": {
+        "Experienced": [
+          0.2,
+          0.1,
+          0.4,
+          0.3,
+          0.1,
+          0,
+          0.3,
+          0,
+          0,
+          0
+        ],
+        "Veteran": [
+          0.2,
+          0.2,
+          0.3,
+          0.2,
+          0.2,
+          0,
+          0.2,
+          0,
+          0,
+          0
+        ],
+        "Master": [
+          0.3,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0,
+          0.2,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "Scavenger": {
+      "intent": "Salvaged staples: sausage, bread and water; expensive provisions and booze are unusual.",
+      "newbieWeights": [
+        0.6,
+        0.5,
+        1.5,
+        1.5,
+        0.5,
+        0,
+        1.5,
+        0.25,
+        0,
+        0.25
+      ],
+      "chances": {
+        "Experienced": [
+          0.4,
+          0.3,
+          0.7,
+          0.7,
+          0.2,
+          0,
+          0.8,
+          0.1,
+          0,
+          0.1
+        ],
+        "Veteran": [
+          0.5,
+          0.4,
+          0.6,
+          0.6,
+          0.3,
+          0,
+          0.7,
+          0.1,
+          0,
+          0.1
+        ],
+        "Master": [
+          0.6,
+          0.4,
+          0.4,
+          0.5,
+          0.4,
+          0.1,
+          0.6,
+          0.1,
+          0.1,
+          0.2
+        ]
+      }
+    },
+    "Smuggler": {
+      "intent": "Contraband-heavy supply: beer, vodka and cans, with a strong drink gate and little ordinary fresh food.",
+      "newbieWeights": [
+        0.7,
+        1,
+        0.5,
+        0.75,
+        1.5,
+        0.75,
+        0.75,
+        1.5,
+        1.75,
+        0.75
+      ],
+      "chances": {
+        "Experienced": [
+          0.5,
+          0.7,
+          0.2,
+          0.4,
+          0.6,
+          0.3,
+          0.4,
+          0.7,
+          0.6,
+          0.2
+        ],
+        "Veteran": [
+          0.6,
+          0.8,
+          0.2,
+          0.3,
+          0.7,
+          0.4,
+          0.4,
+          0.6,
+          0.8,
+          0.3
+        ],
+        "Master": [
+          0.7,
+          0.9,
+          0.1,
+          0.2,
+          0.9,
+          0.5,
+          0.3,
+          0.6,
+          1,
+          0.4
+        ]
+      }
+    },
+    "Tactical": {
+      "intent": "Disciplined field rations: cans, water and energy with alcohol and perishables minimized.",
+      "newbieWeights": [
+        0.6,
+        0.6,
+        0.25,
+        0.75,
+        1.5,
+        0.25,
+        1.5,
+        0.25,
+        0,
+        1.25
+      ],
+      "chances": {
+        "Experienced": [
+          0.4,
+          0.4,
+          0.2,
+          0.4,
+          0.6,
+          0.1,
+          0.7,
+          0.1,
+          0,
+          0.4
+        ],
+        "Veteran": [
+          0.5,
+          0.5,
+          0.2,
+          0.3,
+          0.7,
+          0.2,
+          0.6,
+          0.1,
+          0,
+          0.5
+        ],
+        "Master": [
+          0.6,
+          0.6,
+          0.1,
+          0.2,
+          0.8,
+          0.2,
+          0.5,
+          0.1,
+          0.1,
+          0.6
+        ]
+      }
+    },
+    "Wanderer": {
+      "intent": "Travel provisions: bread, water and mixed food remain useful, with reasonable but not unlimited box access.",
+      "newbieWeights": [
+        0.9,
+        0.8,
+        1,
+        1.25,
+        1,
+        0.5,
+        1.75,
+        0.5,
+        0.25,
+        0.75
+      ],
+      "chances": {
+        "Experienced": [
+          0.5,
+          0.5,
+          0.5,
+          0.7,
+          0.5,
+          0.2,
+          0.8,
+          0.2,
+          0.1,
+          0.3
+        ],
+        "Veteran": [
+          0.6,
+          0.6,
+          0.4,
+          0.6,
+          0.6,
+          0.3,
+          0.7,
+          0.2,
+          0.2,
+          0.4
+        ],
+        "Master": [
+          0.7,
+          0.7,
+          0.3,
+          0.5,
+          0.7,
+          0.4,
+          0.6,
+          0.2,
+          0.2,
+          0.5
+        ]
+      }
+    }
+  }
+}

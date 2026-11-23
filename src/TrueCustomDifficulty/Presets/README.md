@@ -1,36 +1,49 @@
-## 2026-11-23 — Food/Drink Box rank-aware factory settings
+## CURRENT 2026-11-23 — Food / Drink box source balance for all 12 profiles
 
-## 2026-11-23 — Direct 10%-step chances and Ammo-style Food/Drink bars (latest contract)
+**Current source of truth:** `tools/factory_preset_food_drink_boxes_2026_11_23.json`. The earlier ten-multiplier-derived higher-rank values and table are **superseded**. All 12 factory presets now have **40 deliberately authored native settings each**: 10 Newbie relative Weight multipliers and 30 literal Chance values (10 for each of EXP, VET and MASTER). Across the presets, **325 existing numbers** changed in this pass; no gameplay CFG writer or UI code changed.
 
-The previous ten-source multiplier model is **superseded**. The player chooses a rank (NEWBIE / EXP / VET / MASTER) in the existing BREAKABLE BOXES board; selection only changes which **actual backing sources** the two branch tracks and eight item knobs edit:
+- **NEWBIE:** FOOD/DRINK branch and eight item weights remain **relative multipliers** (not absolute drop rates), displayed as a normalized mix. An enabled branch must keep at least one nonzero possible outcome.
+- **EXPERIENCED / VETERAN / MASTER:** ten distinct direct CFG Chances at each rank, expressed in actual **0–100% in exact 10-percentage-point steps** (`0.6` native = `60%` in UI). Independent item Chances do not sum to 100%, and the separate gate Chance is not a measured final item drop rate.
+- **Intent:** Hardcore+ and Outcast are brutally scarce; Hardcore remains limited but survivable; Scavenger and Wanderer emphasize basic food and water; Mutant Hunter prioritizes meat; Smuggler prioritizes alcohol and cans; Anomaly Runner prioritizes water and energy; Field Medic supports practical food and water; Tactical and Mercenary use field rations; Immersive maintains grounded variety.
+- **Protected:** the compact left Food 2×2 / right Drink 2×2 knobs, centered rank buttons, rank-aware horizontal bars, 40 pre-existing 2.1 writer coordinates (10 Weight `scale`, 30 Chance `set`), catalog size 496, and existing saved custom profiles. Separately tuned `STAMINA / OVERWEIGHT SYSTEM` capacities and four whole-percent stage thresholds for all 12 roles are **unchanged**.
 
-- **NEWBIE:** the original ten keys `loot.foodBoxBranch`, `loot.drinkBoxBranch`, `loot.foodBoxSausage`, `loot.foodBoxBread`, `loot.foodBoxCanned`, `loot.foodBoxMilk`, `loot.drinkBoxWater`, `loot.drinkBoxBeer`, `loot.drinkBoxVodka`, `loot.drinkBoxEnergy` remain **relative Weight multipliers** for the confirmed *base/Newbie* generator pools only. The Newbie preview is a single 100%-wide segmented bar of normalized Weight shares, not an invented per-item absolute Chance.
-- **EXP / VET / MASTER:** each rank now has **ten independent literal CFG `Chance` controls**, named `<old root ID>Experienced`, `...Veteran`, `...Master`, i.e. 30 new source IDs. The knobs show **actual 0–100% Chance**, no ×. Native `0.6` is displayed as **60%** and written back as `0.6`; the legal click, drag, wheel and keyboard step is exactly **10 percentage points** (`0.1` CFG fraction). Each rank retains its own native Vanilla Chance as the reset reference (original wrapper 60/70/80%; item-specific native values 30–60%). Choosing a rank never edits the other three.
-- The preview swaps the number grid for **one segmented Newbie composition strip and three rank rows of four independent, horizontal 0–100% mini-bars per family** (Food and Drink). The E/V/M bars deliberately do **not** form a single stacked 100% mix: authored Chance outcomes are independent, so their values can sum above 100%. The outer FOOD/DRINK `BOX GATE` Chance is displayed separately. Bars are read-only; editing remains in the two native branch tracks and eight source knobs.
-- The UI remains compact and uses native hover, selection, right-click reset and R reset. UI family measurement includes the bar-card height (the Food/Drink continuation is 689 DIP after the unchanged medical controls). Modified numbers alone use yellow; rank chips use the native accent.
-- CFG writer mapping remains **40 audited coordinates**: 10 base `Weight` points (`scale`) + 30 higher-rank `Chance` points (`set`). Support count is **496**; no extra physical actor patches, item quantities, quest/test SIDs or unverified `DestructibleStash_Food_Drink_Newbie` definition. No duplicate writer point targets are permitted.
-- Twelve factory presets now persist all **40** values (10 Newbie weights + 30 literal chances, rounded to 10%-grid). Historical player presets carrying the old ten multipliers are migrated **in memory on load**: higher-rank effective chances are scaled from each rank's original source and snapped to the nearest 10%, while the old multiplier retains its base/Newbie Weight meaning. Existing explicit new chances are never overwritten. No automatic disk-file overwrite takes place.
-- Static validation covers CFG point uniqueness, 496 mappings, 10% chance grids and all factory profiles. Local Windows/Wine compilation plus runtime loot checks are still required; do not claim actual in-game RNG proof.
+### NEWBIE — native relative Weight multipliers
 
-
-All 12 roles now configure the **two branch multipliers** and **eight specific item multipliers** for breakable food/drink boxes. The same multiplier scales a proven Newbie *relative Weight* and E/V/M *individual Chance* (clamped to 100%); these are **not** a general 0–100% global box drop rate. The separate physical box-removal control remains independent. A Newbie relative Weight share is normalized inside the selected pool. Undefined `DestructibleStash_Food_Drink_Newbie` is not written, and all other existing player presets retain Vanilla defaults for missing IDs.
-
-| Preset | Food roll | Drink roll | Sausage | Bread | Canned | Milk | Water | Beer | Vodka | Energy |
+| Profile | Food gate | Drink gate | Sausage | Bread | Canned | Milk | Water | Beer | Vodka | Energy |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Anomaly Runner | 0.70× | 0.80× | 0.75× | 0.75× | 1.00× | 0.50× | 1.25× | 0.50× | 0.75× | 1.50× |
-| Field Medic | 0.80× | 0.70× | 1.00× | 1.00× | 1.00× | 0.75× | 1.25× | 0.50× | 0.50× | 1.00× |
-| Hardcore+ | 0.20× | 0.20× | 0.50× | 0.50× | 0.75× | 0.25× | 0.50× | 0.25× | 0.00× | 0.25× |
-| Hardcore | 0.40× | 0.40× | 0.50× | 0.75× | 1.00× | 0.25× | 0.75× | 0.50× | 0.25× | 0.25× |
-| Immersive | 0.80× | 0.70× | 0.75× | 1.00× | 1.00× | 0.50× | 1.00× | 0.75× | 0.50× | 0.50× |
-| Mercenary | 0.80× | 0.80× | 0.50× | 1.00× | 1.25× | 0.75× | 1.00× | 0.75× | 0.75× | 1.25× |
-| Mutant Hunter | 1.00× | 0.70× | 1.50× | 0.75× | 1.00× | 0.50× | 1.00× | 0.50× | 0.25× | 0.75× |
-| Outcast | 0.40× | 0.30× | 1.00× | 0.75× | 0.50× | 0.25× | 0.75× | 0.25× | 0.00× | 0.25× |
-| Scavenger | 0.70× | 0.60× | 1.25× | 1.25× | 0.75× | 0.25× | 1.25× | 0.50× | 0.25× | 0.50× |
-| Smuggler | 0.80× | 1.20× | 0.75× | 1.00× | 1.25× | 1.00× | 1.00× | 1.25× | 1.50× | 1.00× |
-| Tactical | 0.70× | 0.70× | 0.50× | 1.00× | 1.25× | 0.50× | 1.00× | 0.50× | 0.25× | 1.00× |
-| Wanderer | 1.00× | 0.80× | 1.00× | 1.25× | 1.25× | 0.75× | 1.50× | 0.75× | 0.50× | 0.75× |
+| Anomaly Runner | 0.70× | 0.80× | 0.50× | 0.75× | 1.00× | 0.25× | 1.50× | 0.25× | 0.25× | 1.75× |
+| Field Medic | 0.70× | 0.70× | 0.75× | 1.00× | 1.00× | 0.50× | 1.50× | 0.25× | 0.00× | 0.75× |
+| Hardcore+ | 0.20× | 0.10× | 0.25× | 0.25× | 0.50× | 0.00× | 0.50× | 0.00× | 0.00× | 0.00× |
+| Hardcore | 0.30× | 0.30× | 0.50× | 0.50× | 0.75× | 0.25× | 0.75× | 0.25× | 0.00× | 0.25× |
+| Immersive | 0.70× | 0.70× | 0.75× | 1.00× | 1.00× | 0.50× | 1.25× | 0.50× | 0.50× | 0.50× |
+| Mercenary | 0.70× | 0.70× | 0.50× | 0.75× | 1.50× | 0.50× | 1.25× | 0.25× | 0.25× | 1.25× |
+| Mutant Hunter | 0.80× | 0.60× | 1.75× | 0.50× | 0.75× | 0.25× | 1.25× | 0.25× | 0.00× | 0.75× |
+| Outcast | 0.30× | 0.20× | 0.75× | 0.50× | 0.25× | 0.00× | 0.50× | 0.00× | 0.00× | 0.00× |
+| Scavenger | 0.60× | 0.50× | 1.50× | 1.50× | 0.50× | 0.00× | 1.50× | 0.25× | 0.00× | 0.25× |
+| Smuggler | 0.70× | 1.00× | 0.50× | 0.75× | 1.50× | 0.75× | 0.75× | 1.50× | 1.75× | 0.75× |
+| Tactical | 0.60× | 0.60× | 0.25× | 0.75× | 1.50× | 0.25× | 1.50× | 0.25× | 0.00× | 1.25× |
+| Wanderer | 0.90× | 0.80× | 1.00× | 1.25× | 1.00× | 0.50× | 1.75× | 0.50× | 0.25× | 0.75× |
 
-**Rationale:** Hardcore+ and Outcast deliberately suppress supply gates and alcohol; Hardcore reduces both broad sources; Scavenger and Wanderer favor basic food and water; Mutant Hunter favors meat; Smuggler favors alcohol and canned goods; Anomaly Runner favors water and energy drinks; Tactical prioritizes practical rations and water; Field Medic preserves medical-role modest food/drink availability; Mercenary retains better field provisions. These are ten extra role-specific parameters in each canonical preset, not changed physical box counts.
+### EXP / VET / MASTER — real rank-specific FOOD / DRINK gate Chances
+
+These are *gate* Chances only. The eight individually authored item Chances per rank (12 × 3 × 8) are listed exactly in the source-of-truth JSON above.
+
+| Profile | EXP Food / Drink | VET Food / Drink | MASTER Food / Drink | Role intent |
+|---|---:|---:|---:|---|
+| Anomaly Runner | 40% / 50% | 50% / 60% | 60% / 70% | Anomaly raids: water and energy drinks over alcohol, food secondary; advanced ranks favor cans over perishable staples. |
+| Field Medic | 40% / 40% | 50% / 50% | 60% / 60% | Medical relief supplies: water, bread and practical foods, with strongly reduced alcohol and luxury calories. |
+| Hardcore+ | 10% / 10% | 20% / 10% | 20% / 20% | Extreme scarcity: very low box gates and limited scraps of food or water; no milk, alcohol or energy drinks. |
+| Hardcore | 20% / 20% | 30% / 30% | 40% / 30% | Harsh but survivable subsistence: limited canned provisions and water with nearly absent drink luxuries. |
+| Immersive | 50% / 50% | 60% / 60% | 70% / 70% | Grounded variety with moderate scarcity; older-rank provisions gradually shift to cans and durable drinks. |
+| Mercenary | 40% / 40% | 50% / 50% | 60% / 60% | Professional mission rations: canned food, water and energy drinks over casual alcohol or fresh meat. |
+| Mutant Hunter | 50% / 40% | 60% / 50% | 70% / 60% | Hunting diet favors sausage and water; higher ranks provide more cans while meat remains the signature find. |
+| Outcast | 20% / 10% | 20% / 20% | 30% / 20% | Isolated survivor: rare scraps and water; no alcohol, milk or energy drinks, very sparse gate chances. |
+| Scavenger | 40% / 30% | 50% / 40% | 60% / 40% | Salvaged staples: sausage, bread and water; expensive provisions and booze are unusual. |
+| Smuggler | 50% / 70% | 60% / 80% | 70% / 90% | Contraband-heavy supply: beer, vodka and cans, with a strong drink gate and little ordinary fresh food. |
+| Tactical | 40% / 40% | 50% / 50% | 60% / 60% | Disciplined field rations: cans, water and energy with alcohol and perishables minimized. |
+| Wanderer | 50% / 50% | 60% / 60% | 70% / 70% | Travel provisions: bread, water and mixed food remain useful, with reasonable but not unlimited box access. |
+
+**Static checks:** `python3 tests/test_food_drink_boxes_source_contract.py` and `python3 tools/audit_factory_food_drink_boxes.py` enforce exact 480 values, their step grids, 40 unique native 2.1 mappings, twelve unique role mixes, active branch safety and preservation of the overweight matrix. `./publish.sh`, Wine and live game RNG verification are still required for runtime confirmation.
 
 ## CURRENT 2026-11-23 — Whole-percent Overweight editing
 

@@ -83,6 +83,35 @@ class FoodDrinkBoxContract(unittest.TestCase):
                 self.assertGreater(values["loot.foodBoxBranch"]["number"] +
                                    values["loot.drinkBoxBranch"]["number"], 0)
 
+    def test_factory_box_policy_has_independently_authored_ranks(self):
+        policy = json.loads((ROOT / "tools/factory_preset_food_drink_boxes_2026_11_23.json").read_text(encoding="utf-8"))
+        self.assertEqual(policy["rootIds"], ROOT_IDS)
+        self.assertEqual(policy["rankSuffixes"], RANKS)
+        self.assertEqual(set(policy["roles"]), set(ROLES))
+        mixes = set()
+        for name, role in policy["roles"].items():
+            profile = json.loads((SOURCE / "Presets" / (name + ".json")).read_text(encoding="utf-8"))
+            arrays = [role["newbieWeights"]] + [role["chances"][rank] for rank in RANKS]
+            self.assertEqual([len(a) for a in arrays], [10, 10, 10, 10])
+            for rank_index, array in enumerate(arrays):
+                self.assertGreater(array[0] + array[1], 0)
+                if array[0] > 0:
+                    self.assertTrue(any(v > 0 for v in array[2:6]))
+                if array[1] > 0:
+                    self.assertTrue(any(v > 0 for v in array[6:10]))
+                for k, root in enumerate(ROOT_IDS):
+                    key = root + (RANKS[rank_index - 1] if rank_index else "")
+                    self.assertEqual(profile["values"][key], {"kind": "slider", "number": array[k]})
+                    if rank_index:
+                        self.assertTrue(0 <= array[k] <= 1)
+                        self.assertAlmostEqual(array[k] * 10, round(array[k] * 10))
+                if rank_index > 1:
+                    self.assertGreaterEqual(array[0], arrays[rank_index - 1][0])
+                    self.assertGreaterEqual(array[1], arrays[rank_index - 1][1])
+            signature = tuple(tuple(a) for a in arrays)
+            self.assertNotIn(signature, mixes)
+            mixes.add(signature)
+
     def test_compact_food_drink_layout_contract(self):
         ui = (SOURCE / "Controls/AggregateVisualControl.FoodDrinkBoxes.cs").read_text()
         aggregate = (SOURCE / "Controls/AggregateVisualControl.cs").read_text()

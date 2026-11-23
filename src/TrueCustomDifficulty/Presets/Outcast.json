@@ -990,35 +990,35 @@
     },
     "loot.foodBoxBranch": {
       "kind": "slider",
-      "number": 0.4
+      "number": 0.3
     },
     "loot.drinkBoxBranch": {
       "kind": "slider",
-      "number": 0.3
+      "number": 0.2
     },
     "loot.foodBoxSausage": {
       "kind": "slider",
-      "number": 1
+      "number": 0.75
     },
     "loot.foodBoxBread": {
       "kind": "slider",
-      "number": 0.75
+      "number": 0.5
     },
     "loot.foodBoxCanned": {
       "kind": "slider",
-      "number": 0.5
+      "number": 0.25
     },
     "loot.foodBoxMilk": {
       "kind": "slider",
-      "number": 0.25
+      "number": 0
     },
     "loot.drinkBoxWater": {
       "kind": "slider",
-      "number": 0.75
+      "number": 0.5
     },
     "loot.drinkBoxBeer": {
       "kind": "slider",
-      "number": 0.25
+      "number": 0
     },
     "loot.drinkBoxVodka": {
       "kind": "slider",
@@ -1026,7 +1026,7 @@
     },
     "loot.drinkBoxEnergy": {
       "kind": "slider",
-      "number": 0.25
+      "number": 0
     },
     "loot.destructibleGrenadeQuantity": {
       "kind": "slider",
@@ -1906,7 +1906,7 @@
     },
     "loot.foodBoxBranchVeteran": {
       "kind": "slider",
-      "number": 0.3
+      "number": 0.2
     },
     "loot.foodBoxBranchMaster": {
       "kind": "slider",
@@ -1914,7 +1914,7 @@
     },
     "loot.drinkBoxBranchExperienced": {
       "kind": "slider",
-      "number": 0.2
+      "number": 0.1
     },
     "loot.drinkBoxBranchVeteran": {
       "kind": "slider",
@@ -1926,75 +1926,75 @@
     },
     "loot.foodBoxSausageExperienced": {
       "kind": "slider",
-      "number": 0.6
+      "number": 0.4
     },
     "loot.foodBoxSausageVeteran": {
       "kind": "slider",
-      "number": 0.5
+      "number": 0.3
     },
     "loot.foodBoxSausageMaster": {
       "kind": "slider",
-      "number": 0.4
+      "number": 0.2
     },
     "loot.foodBoxBreadExperienced": {
       "kind": "slider",
-      "number": 0.5
+      "number": 0.3
     },
     "loot.foodBoxBreadVeteran": {
       "kind": "slider",
-      "number": 0.4
+      "number": 0.2
     },
     "loot.foodBoxBreadMaster": {
       "kind": "slider",
-      "number": 0.3
+      "number": 0.2
     },
     "loot.foodBoxCannedExperienced": {
       "kind": "slider",
-      "number": 0.2
+      "number": 0.1
     },
     "loot.foodBoxCannedVeteran": {
       "kind": "slider",
-      "number": 0.3
+      "number": 0.2
     },
     "loot.foodBoxCannedMaster": {
       "kind": "slider",
-      "number": 0.3
+      "number": 0.2
     },
     "loot.foodBoxMilkExperienced": {
       "kind": "slider",
-      "number": 0.1
+      "number": 0
     },
     "loot.foodBoxMilkVeteran": {
       "kind": "slider",
-      "number": 0.1
+      "number": 0
     },
     "loot.foodBoxMilkMaster": {
       "kind": "slider",
-      "number": 0.1
+      "number": 0
     },
     "loot.drinkBoxWaterExperienced": {
       "kind": "slider",
-      "number": 0.5
+      "number": 0.3
     },
     "loot.drinkBoxWaterVeteran": {
       "kind": "slider",
-      "number": 0.4
+      "number": 0.2
     },
     "loot.drinkBoxWaterMaster": {
       "kind": "slider",
-      "number": 0.3
+      "number": 0.2
     },
     "loot.drinkBoxBeerExperienced": {
       "kind": "slider",
-      "number": 0.2
+      "number": 0
     },
     "loot.drinkBoxBeerVeteran": {
       "kind": "slider",
-      "number": 0.1
+      "number": 0
     },
     "loot.drinkBoxBeerMaster": {
       "kind": "slider",
-      "number": 0.1
+      "number": 0
     },
     "loot.drinkBoxVodkaExperienced": {
       "kind": "slider",
@@ -2010,15 +2010,15 @@
     },
     "loot.drinkBoxEnergyExperienced": {
       "kind": "slider",
-      "number": 0.1
+      "number": 0
     },
     "loot.drinkBoxEnergyVeteran": {
       "kind": "slider",
-      "number": 0.1
+      "number": 0
     },
     "loot.drinkBoxEnergyMaster": {
       "kind": "slider",
-      "number": 0.1
+      "number": 0
     }
   }
 }
