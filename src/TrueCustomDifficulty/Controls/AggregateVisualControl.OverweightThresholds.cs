@@ -57,9 +57,9 @@ public sealed partial class AggregateVisualControl
                 return;
             var y = rows[i];
             var currentX = ValueToX(parameter.CurrentNumber, scaleMin,
-                scaleMax, plot);
+                scaleMax, plot, reverse: false);
             var referenceX = ValueToX(parameter.ReferenceNumber, scaleMin,
-                scaleMax, plot);
+                scaleMax, plot, reverse: false);
             currentPoints[i] = new Point(currentX, y);
             referencePoints[i] = new Point(referenceX, y);
 

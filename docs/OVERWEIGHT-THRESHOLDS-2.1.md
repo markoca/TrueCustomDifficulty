@@ -101,3 +101,7 @@ compatibility and BPatch mapping are unchanged. This graph represents the
 *activation order* of existing native load effects; the segments are not
 an interpolated velocity or stamina curve. Runtime removal and sprint-speed
 response still require the in-game regression test described above.
+
+## 2026-11-23 — build fix
+
+The four-node graph calls the shared `ValueToX(value, min, max, rect, reverse)` helper with explicit `reverse: false` for both live and reference points. This preserves the left-to-right percentage axis and fixes the missing-argument CS7036 build failure; no game balance, preset or BPatch semantics change.
