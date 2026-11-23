@@ -2263,7 +2263,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var removeRows = new (ParameterViewModel Parameter, string Label)[]
         {
             (detectors, "Loose Detectors"), (armor, "Loose Armor"),
-            (artifacts, "Loose Artifacts"), (optics, "Binoculars / NVG")
+            (artifacts, "Loose Artifacts"), (optics, "Loose Binoculars / NVGs")
         };
         DrawWorldToggleListCard(dc, layout.Shuffle, "SHUFFLE", shuffleRows,
             text, muted, border, accent, panel);
@@ -2303,14 +2303,24 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var available = Math.Max(1.0, hostWidth - 2.0 * margin);
         var content = Math.Min(620.0, available);
         var left = margin + (available - content) / 2.0;
-        // Full item names must fit the REMOVE card; below this width, stack
-        // WEAPONS above SHUFFLE / REMOVE instead of ellipsizing Binoculars.
+        // At extra-narrow widths even half-width REMOVE cannot fit the full caption.
+        // Stack all three cards and keep source hit targets attached to their rows.
+        if (content < 400.0)
+        {
+            var weapons = new Rect(left, top, content, WorldListCardHeight);
+            var shuffle = new Rect(left, weapons.Bottom + gap, content, WorldListCardHeight);
+            var remove = new Rect(left, shuffle.Bottom + gap, content, WorldRemoveCardHeight);
+            return new WorldLootGeometry(weapons, shuffle, remove, remove.Bottom + 14.0);
+        }
+
+        // Full item names must fit REMOVE. Above this breakpoint provide
+        // REMOVE more width, taken from the shorter SHUFFLE item labels.
         if (content >= 560.0)
         {
             var unit = (content - 2.0 * gap) / 3.3;
-            var weapons = new Rect(left, top, unit * 1.3, WorldListCardHeight);
-            var shuffle = new Rect(weapons.Right + gap, top, unit, WorldListCardHeight);
-            var remove = new Rect(shuffle.Right + gap, top, unit, WorldRemoveCardHeight);
+            var weapons = new Rect(left, top, unit * 1.25, WorldListCardHeight);
+            var shuffle = new Rect(weapons.Right + gap, top, unit * 0.8, WorldListCardHeight);
+            var remove = new Rect(shuffle.Right + gap, top, unit * 1.25, WorldRemoveCardHeight);
             return new WorldLootGeometry(weapons, shuffle, remove,
                 Math.Max(weapons.Bottom, remove.Bottom) + 14.0);
         }

@@ -61,9 +61,11 @@ assert "looseOpticsFiles" in writer and "+ looseOpticsFiles;" in writer
 assert "rows.Count != 17" in part and ": removenode" in part
 assert "IsScopeApplicable" in part
 assert "Data\\loose-optics-direct-manifest.csv" in csproj
-assert '(optics, "Binoculars / NVG")' in ui
-assert "if (content >= 560.0)" in ui  # no clipped full-word caption on smaller widths
-assert "Binocs / NVG" not in ui
+assert '(optics, "Loose Binoculars / NVGs")' in ui
+assert "if (content >= 560.0)" in ui
+assert "if (content < 400.0)" in ui  # fully stacked at extra-narrow widths
+assert "unit * 1.25, WorldRemoveCardHeight" in ui  # enough space for the full label
+assert '(optics, "Binoculars / NVG")' not in ui
 assert "WorldRemoveCardHeight" in ui and "4.0 * WorldListRow" in ui
 assert '"loot.looseOpticsRemoved"' in vm and '["loot.looseOpticsRemoved"] = "WorldLootLayout"' in pvm
 
@@ -77,3 +79,7 @@ for path in presets:
 print("PASS: STALKER 2.1 audited 17 unique direct binocular/NVG actors, 15 base + 2 DLC1")
 print("PASS: one independent toggle, 497 catalog sources, correct factory policy and writer/UI invariants")
 print("NOT TESTED: Unreal or existing-save behavior")
+
+# Gamer-facing catalog name and the native hit-row must use the same wording.
+assert row["label"] == "Loose Binoculars / NVGs"
+assert row["display"]["valueLabel"] == "Loose Binoculars / NVGs"

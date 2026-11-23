@@ -8,7 +8,7 @@ These four ranks select **player-rank item-generator sources, NOT item weight or
 
 ## New REMOVE checkbox — direct binocular and NVG world pickups
 
-`loot.looseOpticsRemoved` is an independent Vanilla-OFF toggle in Loot → World Loot → WORLD ITEM SPAWNS → REMOVE, with compact caption **Binoculars / NVG** and rationale **Remove Loose Binoculars / NVG**. Four REMOVE rows now fit a taller card (155 DIP), without changing WEAPONS and SHUFFLE card contents. For less than 560 DIP of card content width, the cards use the stacked layout so the full word **Binoculars** is not cut off. On narrow layouts the lower SHUFFLE/REMOVE pair remains aligned without clipping.
+`loot.looseOpticsRemoved` is an independent Vanilla-OFF toggle in Loot → World Loot → WORLD ITEM SPAWNS → REMOVE, with compact caption **Loose Binoculars / NVGs** and rationale **Loose Binoculars / NVGs**. Four REMOVE rows now fit a taller card (155 DIP), without changing WEAPONS and SHUFFLE card contents. For less than 560 DIP of card content width, the cards use the stacked layout so the full word **Binoculars** is not cut off. On narrow layouts the lower SHUFFLE/REMOVE pair remains aligned without clipping.
 
 **Original source:** user-provided `STALKER2-2.1 cfg dump(3).zip` → base `GameData/SpawnActorPrototypes.cfg` and DLC1 `DLCGameData/DLC1/SpawnActorPrototypes.cfg`. The exhaustive `WorldMap_WP` direct Item scan identifies **17** active direct loot actors:
 
@@ -25,3 +25,7 @@ The exact manifest is `src/TrueCustomDifficulty/Data/loose-optics-direct-manifes
 **Factory role philosophy:** Hardcore, Hardcore+, Outcast = ON, to increase the importance of traders and equipment acquisition. The other nine = OFF, preserving authored world pickups. Older user presets without the ID inherit Vanilla OFF. All twelve factory profiles now persist 497 source values.
 
 **Regression:** `python3 tools/audit_loose_optics.py` checks the source catalog, baseline, manifest, four-row UI and all 12 profile defaults; `tests/LootWorldPlacementContract/LooseOpticsRemoval.cs` exercises the real C# writer and verifies zero edits while OFF, and exactly 15/17 actor-specific removals while ON. Runtime on Windows/Wine and existing-save behavior still require game testing.
+
+### Full-name label (latest)
+
+The 4th REMOVE row and catalog display both read **Loose Binoculars / NVGs**. To preserve the entire name in the normal 620-DIP three-column view, the three card widths are proportional to WEAPONS **1.25**, SHUFFLE **0.8**, REMOVE **1.25** (3.3 units total). Between 400–559 DIP of card content width, WEAPONS is above SHUFFLE and REMOVE. Below 400 DIP, all three cards are stacked to preserve the checkbox label and full-row click target without ellipsis. The underlying 17-source CFG toggle is unchanged.

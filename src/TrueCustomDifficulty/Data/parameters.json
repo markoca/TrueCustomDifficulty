@@ -19514,12 +19514,12 @@
       "id": "loot.looseOpticsRemoved",
       "tab": "loot",
       "group": "World Loot",
-      "label": "Remove Loose Binoculars / NVG",
+      "label": "Loose Binoculars / NVGs",
       "description": "Remove the 17 audited active non-quest WorldMap binocular and night-vision-goggle pickups (15 base, 2 DLC1). Does not touch stashes, trader stock, NPC equipment, quests or modded goggles.",
       "control": "toggle",
       "valueKind": "boolean",
       "display": {
-        "valueLabel": "Remove Loose Binoculars / NVG"
+        "valueLabel": "Loose Binoculars / NVGs"
       },
       "vanilla": {
         "All": false

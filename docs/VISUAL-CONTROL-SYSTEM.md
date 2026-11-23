@@ -2,7 +2,7 @@
 
 The FOOD / DRINK BOXES selector shows **RANK:** followed by four separate, full-word tabs: **NEWBIE, EXPERIENCED, VETERAN, MASTER**. One centered 441-DIP selector group (40 DIP label + 10 DIP gap + four 94-DIP tabs and three 5-DIP gaps) replaces the former 251-DIP abbreviated selector. At widths below 760 DIP, the selector and following tracks use the existing 24-DIP second-row offset to avoid title collision. No change to the four source ranks, weight semantics, chance values, 2×2 knobs, preview bars or native selection behavior.
 
-WORLD ITEM SPAWNS > REMOVE gains a fourth compact checkbox **Binoculars / NVG**, from `loot.looseOpticsRemoved`. REMOVE is now 155 DIP tall and has four 30-DIP rows; WEAPONS / SHUFFLE controls remain unchanged. Below 560 DIP of content width the board uses the stacked card layout so the full caption never has to be abbreviated or ellipsized. The full family remains navigable at wide and narrow widths, with a single native hit target per row. Source-backed ON removes only 15 base + 2 DLC1 direct WorldMap binocular/NVG pickup actors; NPC equipment, quests, stashes, merchants and modded goggles stay intact. Vanilla OFF. See `docs/generators/LOOSE-OPTICS-REMOVAL-2026-11-23.md` for source identities, CFG writer and test contract.
+WORLD ITEM SPAWNS > REMOVE gains a fourth compact checkbox **Loose Binoculars / NVGs**, from `loot.looseOpticsRemoved`. REMOVE is now 155 DIP tall and has four 30-DIP rows; WEAPONS / SHUFFLE controls remain unchanged. Below 560 DIP of content width the board uses the stacked card layout so the full caption never has to be abbreviated or ellipsized. The full family remains navigable at wide and narrow widths, with a single native hit target per row. Source-backed ON removes only 15 base + 2 DLC1 direct WorldMap binocular/NVG pickup actors; NPC equipment, quests, stashes, merchants and modded goggles stay intact. Vanilla OFF. See `docs/generators/LOOSE-OPTICS-REMOVAL-2026-11-23.md` for source identities, CFG writer and test contract.
 
 ## CURRENT 2026-11-23 — Whole Overweight percentages, source-accurate kg
 
@@ -5057,3 +5057,5 @@ Left column title **COMBAT MINUTE** with 0 s / 30 s / 60 s axis labels; five row
 track, readout 112 DIP) replace the slider rails. Right column **ENEMY ACCURACY**: silhouette + dashed
 vanilla ring + tinted current ring with shot dots. Track, window and silhouette are non-card geometry
 (no card hover). Board geometry and heights unchanged. See docs/combat/HUMAN-TACTICS-AND-AWARENESS.md.
+
+Current REMOVE caption spelling: **Loose Binoculars / NVGs** (not the earlier shortened "Binoculars / NVG"). At widths >=560 DIP of card content, WEAPONS/SHUFFLE/REMOVE distribute as 1.25:0.8:1.25. Below 560 DIP the two lower cards share a row; below 400 DIP all three cards stack vertically to retain the full caption without ellipsis. No CFG semantics change.
