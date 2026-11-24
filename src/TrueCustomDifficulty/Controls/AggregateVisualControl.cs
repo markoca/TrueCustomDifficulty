@@ -4381,8 +4381,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 track, source.Minimum, source.Maximum);
         }
 
-        // Five native sources in two drink groups; group frames replace
-        // individual mini-card borders. Equal cell sizes when side by side.
+        // Six native sources in three adjacent drink groups. The shared
+        // hunger knob owns a matching frame and compact live source readouts.
         var effectsWidth = Math.Min(980.0, preview.Width - 24.0);
         var sideBySide = effectsWidth >= ConsumableEffectsInlineMinimumWidth;
         var left = preview.Left + (preview.Width - effectsWidth) / 2.0;
@@ -4405,11 +4405,36 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var hungerTop = sideBySide ? top : waterGroup.Bottom + ConsumableEffectsGroupGap;
         var energyGroup = new Rect(hungerLeft + hungerWidth + ConsumableEffectsGroupGap,
             hungerTop, energyWidth, ConsumableEffectsGroupHeight);
-        DrawMiniConsumableKnob(dc, drinkHunger, "HUNGER PENALTY",
+        var drinkHungerGroup = new Rect(hungerLeft, hungerTop,
+            hungerWidth, ConsumableEffectsGroupHeight);
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .76),
+            new Pen(border, .9), drinkHungerGroup, 4.0, 4.0);
+        DrawText(dc, "DRINKS", new Point(drinkHungerGroup.Left + 10.0,
+            drinkHungerGroup.Top + 7.0), 10.2, text, FontWeights.Bold);
+        DrawMiniConsumableKnob(dc, drinkHunger, "HUNGER GAIN",
             $"{drinkHunger.CurrentNumber:0.0}x", "0x", "4x",
-            new Rect(hungerLeft, hungerTop + ConsumableEffectsHeaderHeight,
-                hungerWidth, ConsumableMiniKnobHeight),
+            new Rect(drinkHungerGroup.Left, drinkHungerGroup.Top + 14.0,
+                drinkHungerGroup.Width, ConsumableMiniKnobHeight),
             text, muted, border, accent, panel, accent);
+
+        // Mirror the existing integer half-up CFG writer, not an estimated
+        // difficulty-adjusted gameplay value. Only changed digits turn gold.
+        void DrawDrinkHungerPreview(string label, int vanillaPoints, double y)
+        {
+            var points = Math.Max(0.0, Math.Floor(vanillaPoints * drinkHunger.CurrentNumber + 0.5));
+            var referencePoints = Math.Max(0.0, Math.Floor(vanillaPoints * drinkHunger.ReferenceNumber + 0.5));
+            var digits = points.ToString("0", System.Globalization.CultureInfo.InvariantCulture);
+            var prefix = label + ": +";
+            var readout = CreateText(prefix + digits + " pts", 8.4, muted,
+                FontWeights.SemiBold, Math.Max(1.0, drinkHungerGroup.Width - 10.0));
+            if (Math.Abs(points - referencePoints) > Epsilon)
+                ReadoutInk.Mark(readout, accent, prefix.Length, digits.Length, 8.4);
+            dc.DrawText(readout, new Point(drinkHungerGroup.Left +
+                (drinkHungerGroup.Width - readout.WidthIncludingTrailingWhitespace) / 2.0,
+                drinkHungerGroup.Top + y));
+        }
+        DrawDrinkHungerPreview("Regular", 10, 133.0);
+        DrawDrinkHungerPreview("Limited / Kettle beer", 5, 145.0);
         dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .76),
             new Pen(border, .9), waterGroup, 4.0, 4.0);
         dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .76),

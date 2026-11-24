@@ -5914,14 +5914,14 @@
       "id": "survival.drinkHungerPenalty",
       "tab": "survival",
       "group": "Consumable Effects",
-      "label": "Drink Hunger Penalty",
-      "description": "Scales hunger added by energy drinks and alcohol, including positive Weird Kettle drink effects. Water and hunger relief stay unchanged.",
+      "label": "Hunger From Drinks",
+      "description": "How much hunger energy drinks, beer and vodka add per drink, including positive Weird Kettle effects. Regular drinks start at +10 points; Limited Energy and Weird Kettle Beer at +5. Water and hunger relief stay unchanged.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.0x",
-        "valueLabel": "Drink Hunger Penalty"
+        "valueLabel": "Hunger From Drinks"
       },
       "vanilla": {
         "All": 1
