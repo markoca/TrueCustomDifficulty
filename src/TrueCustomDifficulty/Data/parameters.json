@@ -5911,6 +5911,92 @@
       "interaction": "ENERGY DRINK STAMINA GAIN and FATIGUE RELIEF are separate controls."
     },
     {
+      "id": "survival.drinkHungerPenalty",
+      "tab": "survival",
+      "group": "Consumable Effects",
+      "label": "Drink Hunger Penalty",
+      "description": "Scales hunger added by energy drinks and alcohol, including positive Weird Kettle drink effects. Water and hunger relief stay unchanged.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.0x",
+        "valueLabel": "Drink Hunger Penalty"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 4,
+        "step": 0.2
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "EnegeticSatiety1",
+          "path": "ValueMin|ValueMax",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "EnegeticSatiety2",
+          "path": "ValueMin|ValueMax",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "BeerSatiety1",
+          "path": "ValueMin|ValueMax",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "VodkaSatiety1",
+          "path": "ValueMin|ValueMax",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "Artifact_WeirdKettle_EnegeticSatiety",
+          "path": "ValueMin|ValueMax",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "Artifact_WeirdKettle_BeerSatiety",
+          "path": "ValueMin|ValueMax",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "Artifact_WeirdKettle_VodkaSatiety",
+          "path": "ValueMin|ValueMax",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "2.1 source-confirmed positive drink hunger effects; 0.2x steps yield integer hunger points. Existing half-up integer writer preserves zero."
+        ]
+      },
+      "rationale": "How hungry energy drinks and alcohol make you. Vanilla: 1x.",
+      "logic": "Higher = more hunger; 0x removes the penalty.",
+      "interaction": "Water, food, passive hunger and other drink effects stay unchanged.",
+      "exposeInUi": true
+    },
+    {
       "id": "survival.waterRegenDuration",
       "tab": "survival",
       "group": "Consumable Effects",

@@ -2020,6 +2020,10 @@
     "loot.looseOpticsRemoved": {
       "kind": "toggle",
       "boolean": false
+    },
+    "survival.drinkHungerPenalty": {
+      "kind": "slider",
+      "number": 1
     }
   }
 }

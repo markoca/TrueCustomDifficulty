@@ -584,6 +584,7 @@ public sealed class ParameterViewModel : ObservableObject
         ["survival.waterRegenDuration"] = "ConsumableMixer",
         ["survival.energyFullCostDuration"] = "ConsumableMixer",
         ["survival.energyPartialCostDuration"] = "ConsumableMixer",
+        ["survival.drinkHungerPenalty"] = "ConsumableMixer",
         ["survival.energyDrinkEffectDuration"] = "ConsumableMixer",
         ["survival.vodkaEffectDuration"] = "ConsumableMixer",
         ["survival.beerEffectDuration"] = "ConsumableMixer",

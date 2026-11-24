@@ -640,6 +640,7 @@ public sealed class MainViewModel : ObservableObject
             "survival.energyDrinkEffectDuration",
             "survival.energyFullCostDuration",
             "survival.energyPartialCostDuration",
+            "survival.drinkHungerPenalty",
             "survival.vodkaEffectDuration",
             "survival.beerEffectDuration",
             "survival.magicVodkaEffectDuration",

@@ -55,3 +55,7 @@ Artifact_WeirdKettle_NegativeEffect_Satiety = +33/+33 is referenced by WeirdKett
 5. No application code, UI, parameter catalog, CFG writer baseline, or 12 factory presets modified by this audit.
 
 Related historical context: [Non-food/non-medicine consumable effects audit](NONFOOD-NONMED-CONSUMABLE-EFFECTS-AUDIT.md), [Survival mapping](SURVIVAL-MAPPING.md).
+
+## 2026-11-24 — Shared Drink Hunger Penalty (current)
+
+In Consumable Effects (`ConsumableMixer`), add one frameless native mini-knob **HUNGER PENALTY** (`survival.drinkHungerPenalty`) between WATER and ENERGY DRINK groups. Use the existing 270-degree compact dial, centered multiplier, hover, reference tick, modified-number gold, keyboard/wheel/right-click reset. On narrow widths keep WATER above the shared knob and ENERGY DRINK together on the next row; shared measurement matches rendering. Range 0–4x in 0.2x steps, vanilla 1x. The existing `scaleIntegerHalfUpPreserveZero` writer scales the seven positive roots (14 fields) documented in the [2.1 audit](NONFOOD-HUNGER-PENALTIES-AUDIT-2.1.md), preserving integer source format and allowing zero. Water, food, medicine, Weird Kettle relief/independent penalty, duration and passive hunger are unchanged. This supersedes the earlier deferred four-knob proposal; all twelve factory profiles start at neutral 1x to avoid unrequested rebalance. Runtime acceptance pending.

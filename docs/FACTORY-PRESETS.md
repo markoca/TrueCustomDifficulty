@@ -697,3 +697,7 @@ The 12 profiles now store the four new controls (422 catalog controls each). The
 ## Save / load contract (2026-11-18)
 
 SAVE writes every editor control, not only the changed ones. LOAD resets every control to the preset's base difficulty, then applies the saved values; older presets that lack a newer control get vanilla for it. `AllControlsPatchContract` checks a full SAVE → LOAD round trip at three difficulties. It also checks that all 12 factory presets load with no silent value change.
+
+## 2026-11-24 — Shared Drink Hunger Penalty (current)
+
+In Consumable Effects (`ConsumableMixer`), add one frameless native mini-knob **HUNGER PENALTY** (`survival.drinkHungerPenalty`) between WATER and ENERGY DRINK groups. Use the existing 270-degree compact dial, centered multiplier, hover, reference tick, modified-number gold, keyboard/wheel/right-click reset. On narrow widths keep WATER above the shared knob and ENERGY DRINK together on the next row; shared measurement matches rendering. Range 0–4x in 0.2x steps, vanilla 1x. The existing `scaleIntegerHalfUpPreserveZero` writer scales the seven positive roots (14 fields) documented in the [2.1 audit](NONFOOD-HUNGER-PENALTIES-AUDIT-2.1.md), preserving integer source format and allowing zero. Water, food, medicine, Weird Kettle relief/independent penalty, duration and passive hunger are unchanged. This supersedes the earlier deferred four-knob proposal; all twelve factory profiles start at neutral 1x to avoid unrequested rebalance. Runtime acceptance pending.

@@ -4125,6 +4125,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var energyStamina = P("survival.energyDrinkStaminaRecoveryStrength");
         var waterTime = P("survival.waterEffectDuration");
         var energyTime = P("survival.energyDrinkEffectDuration");
+        var drinkHunger = P("survival.drinkHungerPenalty");
         var vodkaTime = P("survival.vodkaEffectDuration");
         var beerTime = P("survival.beerEffectDuration");
         var magicTime = P("survival.magicVodkaEffectDuration");
@@ -4143,7 +4144,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         if (burst is null || energyBurst is null || waterStamina is null ||
             waterCostReduction is null || energyStamina is null ||
-            waterTime is null || energyTime is null ||
+            waterTime is null || energyTime is null || drinkHunger is null ||
             vodkaTime is null || beerTime is null || magicTime is null ||
             waterRegenTime is null || energyFullCostTime is null ||
             energyPartialCostTime is null ||
@@ -4382,12 +4383,12 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         // Five native sources in two drink groups; group frames replace
         // individual mini-card borders. Equal cell sizes when side by side.
-        var effectsWidth = Math.Min(850.0, preview.Width - 24.0);
+        var effectsWidth = Math.Min(980.0, preview.Width - 24.0);
         var sideBySide = effectsWidth >= ConsumableEffectsInlineMinimumWidth;
         var left = preview.Left + (preview.Width - effectsWidth) / 2.0;
         var top = preview.Top + ConsumableEffectsGroupTop;
-        var uniformWidth = (effectsWidth - ConsumableEffectsGroupGap -
-            4.0 * ConsumableEffectsGroupPadding - 3.0 * ConsumableEffectsCellGap) / 5.0;
+        var uniformWidth = (effectsWidth - 2.0 * ConsumableEffectsGroupGap -
+            4.0 * ConsumableEffectsGroupPadding - 3.0 * ConsumableEffectsCellGap) / 6.0;
         var waterWidth = sideBySide
             ? uniformWidth * 3.0 + ConsumableEffectsCellGap * 2.0 +
                 ConsumableEffectsGroupPadding * 2.0
@@ -4395,13 +4396,20 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var energyWidth = sideBySide
             ? uniformWidth * 2.0 + ConsumableEffectsCellGap +
                 ConsumableEffectsGroupPadding * 2.0
-            : Math.Min(480.0, effectsWidth);
+            : Math.Min(480.0, (effectsWidth - ConsumableEffectsGroupGap) * 2.0 / 3.0);
         var waterGroup = new Rect(left, top, waterWidth, ConsumableEffectsGroupHeight);
-        var energyGroup = new Rect(
-            sideBySide ? waterGroup.Right + ConsumableEffectsGroupGap :
-                left + (effectsWidth - energyWidth) / 2.0,
-            sideBySide ? top : waterGroup.Bottom + ConsumableEffectsGroupGap,
-            energyWidth, ConsumableEffectsGroupHeight);
+        var hungerWidth = sideBySide ? uniformWidth :
+            Math.Min(180.0, effectsWidth - energyWidth - ConsumableEffectsGroupGap);
+        var hungerLeft = sideBySide ? waterGroup.Right + ConsumableEffectsGroupGap :
+            left + (effectsWidth - hungerWidth - energyWidth - ConsumableEffectsGroupGap) / 2.0;
+        var hungerTop = sideBySide ? top : waterGroup.Bottom + ConsumableEffectsGroupGap;
+        var energyGroup = new Rect(hungerLeft + hungerWidth + ConsumableEffectsGroupGap,
+            hungerTop, energyWidth, ConsumableEffectsGroupHeight);
+        DrawMiniConsumableKnob(dc, drinkHunger, "HUNGER PENALTY",
+            $"{drinkHunger.CurrentNumber:0.0}x", "0x", "4x",
+            new Rect(hungerLeft, hungerTop + ConsumableEffectsHeaderHeight,
+                hungerWidth, ConsumableMiniKnobHeight),
+            text, muted, border, accent, panel, accent);
         dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .76),
             new Pen(border, .9), waterGroup, 4.0, 4.0);
         dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .76),
@@ -6600,13 +6608,13 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private const double ConsumableEffectsGroupPadding = 8.0;
     private const double ConsumableEffectsCellGap = 6.0;
     private const double ConsumableEffectsGroupGap = 12.0;
-    private const double ConsumableEffectsInlineMinimumWidth = 730.0;
+    private const double ConsumableEffectsInlineMinimumWidth = 840.0;
     private const double ConsumableEffectsGroupHeight =
         ConsumableEffectsHeaderHeight + ConsumableMiniKnobHeight + 8.0;
 
     private static double ConsumableTimelineHeight(double width)
     {
-        var bankWidth = Math.Min(850.0, Math.Max(460.0, width - 34.0) - 24.0);
+        var bankWidth = Math.Min(980.0, Math.Max(460.0, width - 34.0) - 24.0);
         return ConsumableEffectsGroupTop +
             (bankWidth >= ConsumableEffectsInlineMinimumWidth
                 ? ConsumableEffectsGroupHeight
@@ -8713,6 +8721,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 "survival.energyDrinkEffectDuration",
                 "survival.energyFullCostDuration",
                 "survival.energyPartialCostDuration",
+                "survival.drinkHungerPenalty",
                 "survival.vodkaEffectDuration",
                 "survival.beerEffectDuration",
                 "survival.magicVodkaEffectDuration",
