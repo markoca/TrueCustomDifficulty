@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.1",
-  "supportedParameterCount": 498,
+  "supportedParameterCount": 499,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -44713,74 +44713,26 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "survival.drinkHungerPenalty",
+      "parameterId": "survival.waterHungerRelief",
       "scope": "baseGame",
       "file": "GameData/EffectPrototypes.cfg",
-      "prototype": "Artifact_WeirdKettle_EnegeticSatiety",
+      "prototype": "WaterSatiety1",
       "nodePath": [],
       "key": "ValueMin",
-      "sourceRaw": "10",
-      "operation": "scaleIntegerHalfUpPreserveZero",
+      "sourceRaw": "-10",
+      "operation": "scale",
       "role": "min",
       "difficultySid": ""
     },
     {
-      "parameterId": "survival.drinkHungerPenalty",
+      "parameterId": "survival.waterHungerRelief",
       "scope": "baseGame",
       "file": "GameData/EffectPrototypes.cfg",
-      "prototype": "Artifact_WeirdKettle_EnegeticSatiety",
+      "prototype": "WaterSatiety1",
       "nodePath": [],
       "key": "ValueMax",
-      "sourceRaw": "10",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "max",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "survival.drinkHungerPenalty",
-      "scope": "baseGame",
-      "file": "GameData/EffectPrototypes.cfg",
-      "prototype": "Artifact_WeirdKettle_BeerSatiety",
-      "nodePath": [],
-      "key": "ValueMin",
-      "sourceRaw": "5",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "min",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "survival.drinkHungerPenalty",
-      "scope": "baseGame",
-      "file": "GameData/EffectPrototypes.cfg",
-      "prototype": "Artifact_WeirdKettle_BeerSatiety",
-      "nodePath": [],
-      "key": "ValueMax",
-      "sourceRaw": "5",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "max",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "survival.drinkHungerPenalty",
-      "scope": "baseGame",
-      "file": "GameData/EffectPrototypes.cfg",
-      "prototype": "Artifact_WeirdKettle_VodkaSatiety",
-      "nodePath": [],
-      "key": "ValueMin",
-      "sourceRaw": "10",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "min",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "survival.drinkHungerPenalty",
-      "scope": "baseGame",
-      "file": "GameData/EffectPrototypes.cfg",
-      "prototype": "Artifact_WeirdKettle_VodkaSatiety",
-      "nodePath": [],
-      "key": "ValueMax",
-      "sourceRaw": "10",
-      "operation": "scaleIntegerHalfUpPreserveZero",
+      "sourceRaw": "-10",
+      "operation": "scale",
       "role": "max",
       "difficultySid": ""
     }

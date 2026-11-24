@@ -701,3 +701,24 @@ SAVE writes every editor control, not only the changed ones. LOAD resets every c
 ## 2026-11-24 — Shared Drink Hunger Penalty (current)
 
 In Consumable Effects (`ConsumableMixer`), place one shared native mini-knob **HUNGER GAIN** (`survival.drinkHungerPenalty`, catalog label Hunger From Drinks) in its own **DRINKS** group between WATER and ENERGY DRINK. The group uses the identical rounded frame, fill, border and height as its neighbors. Keep the existing 270-degree compact dial, centered multiplier, hover, reference tick, modified-number gold, keyboard/wheel/right-click reset. Two small live readout rows below the dial show **Regular: +N pts** (Energy Drink, Beer, Vodka and equivalent positive variants; base 10) and **Limited / Kettle beer: +N pts** (base 5), computed using the same nonnegative integer half-up rule as the writer. Only changed digits turn gold. These are CFG hunger points, not difficulty-adjusted runtime measurements. On narrow widths keep WATER above the shared knob and ENERGY DRINK together on the next row; shared measurement matches rendering. Range 0–4x in 0.2x steps, vanilla 1x. The existing `scaleIntegerHalfUpPreserveZero` writer scales the seven positive roots (14 fields) documented in the [2.1 audit](NONFOOD-HUNGER-PENALTIES-AUDIT-2.1.md), preserving integer source format and allowing zero. Water, food, medicine, Weird Kettle relief/independent penalty, duration and passive hunger are unchanged. This supersedes the earlier deferred four-knob proposal; all twelve factory profiles start at neutral 1x to avoid unrequested rebalance. Runtime acceptance pending.
+
+## 2026-11-24 — Independent water relief and energy/alcohol penalty (current)
+
+Supersedes the previous shared drink hunger control. Consumable Effects uses two independently framed native dials between WATER and ENERGY DRINK: WATER / HUNGER RELIEF (`survival.waterHungerRelief`) and ENERGY / ALCOHOL / HUNGER PENALTY (`survival.drinkHungerPenalty`, retained for saved-profile compatibility). Both use 0–4x, 0.2x steps, 1x Vanilla, native hover/reset, centered multiplier and live signed raw hunger points with only modified digits in gold. Wide layouts use four adjacent frames; compact layouts keep water and relief on row one, penalty and energy on row two. Water scales only WaterSatiety1 ValueMin/ValueMax from -10 using signed `scale`; the exact step yields integral signed CFG output. The penalty scales only EnegeticSatiety1 (+10), EnegeticSatiety2 (+5), BeerSatiety1 (+10), VodkaSatiety1 (+10; shared with DvupalovVodka), using `scaleIntegerHalfUpPreserveZero`. All Weird Kettle alternate and composite effects, food, passive hunger, difficulty modifiers and other drink effects are excluded. 0x removes the selected effect; 1x preserves vanilla. Older user profiles retain their penalty setting; missing water defaults to Vanilla. Unmodified prior factory profiles migrate to the new role-specific settings; custom profiles are not overwritten. Raw CFG behavior is documented; game runtime acceptance remains pending.
+
+| Profile | Water relief | Energy / alcohol penalty |
+|---|---:|---:|
+| Anomaly Runner | 0.8x | 1.6x |
+| Field Medic | 1.4x | 0.8x |
+| Hardcore+ | 0.2x | 3.0x |
+| Hardcore | 0.4x | 2.4x |
+| Immersive | 0.6x | 1.6x |
+| Mercenary | 0.8x | 1.4x |
+| Mutant Hunter | 0.6x | 1.8x |
+| Outcast | 0.4x | 2.6x |
+| Scavenger | 0.8x | 2.0x |
+| Smuggler | 1.2x | 1.2x |
+| Tactical | 0.8x | 1.8x |
+| Wanderer | 1.0x | 1.2x |
+
+Water is less able to substitute for food in restrictive roles; penalties rise in scarcity/survival profiles while Field Medic favors recovery and Wanderer remains moderate. All unrelated profile values are unchanged.

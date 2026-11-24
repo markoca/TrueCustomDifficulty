@@ -1189,6 +1189,24 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "d157e27454941d3d128dfed1504a03432b8ad72e",
     };
 
+    // Factory blobs before splitting drink hunger and rebalancing profiles.
+    private static readonly Dictionary<string, string> PreSplitDrinkHungerFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "09a248dac6beaa7bb857c6ee6d2d9b2a0c9ecb22",
+        ["Field Medic"] = "09f197f74d8a4c48a322315b1e094726d1d4721e",
+        ["Hardcore+"] = "bfb8b4d7bb086b1b13ace8166c88c6a88e9241d3",
+        ["Hardcore"] = "bb4392082fa6031a00cf0350b7f3fcbffb7d3b18",
+        ["Immersive"] = "46a0243e9bb84e16e35fe17432c18141a8b933e1",
+        ["Mercenary"] = "d6fba0de5334b90ead8c977731b181078ee4e674",
+        ["Mutant Hunter"] = "d85660f73969bdd3b44da21250f3950183b9f817",
+        ["Outcast"] = "022b3520b112d7cbcf48ec667cd124853f205ce2",
+        ["Scavenger"] = "efdb83aa78a92a3aa75ca84815e291ef7bbbd2ce",
+        ["Smuggler"] = "7e1dfba36382d3a6e349f73ba476e875bfbbe034",
+        ["Tactical"] = "ba2d06eac94c53f3e0c9095b144987c3e3a6e212",
+        ["Wanderer"] = "9ed9952484859d0cbf52d9742f3eef8ea76eea79",
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -1243,7 +1261,8 @@ public sealed class PresetDirectoryService
             && !PreRoleDiversityFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreWorldRemovalPolicyFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreHumanRolesFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreDrinkHungerFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreDrinkHungerFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreSplitDrinkHungerFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -1361,7 +1380,9 @@ public sealed class PresetDirectoryService
                 || (PreHumanRolesFactoryBlobs.TryGetValue(name, out var preHumanRolesHash)
                     && actual.Equals(preHumanRolesHash, StringComparison.OrdinalIgnoreCase))
                 || (PreDrinkHungerFactoryBlobs.TryGetValue(name, out var preDrinkHungerHash)
-                    && actual.Equals(preDrinkHungerHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preDrinkHungerHash, StringComparison.OrdinalIgnoreCase))
+                || (PreSplitDrinkHungerFactoryBlobs.TryGetValue(name, out var preSplitDrinkHungerHash)
+                    && actual.Equals(preSplitDrinkHungerHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

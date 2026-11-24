@@ -5911,17 +5911,61 @@
       "interaction": "ENERGY DRINK STAMINA GAIN and FATIGUE RELIEF are separate controls."
     },
     {
-      "id": "survival.drinkHungerPenalty",
+      "id": "survival.waterHungerRelief",
       "tab": "survival",
       "group": "Consumable Effects",
-      "label": "Hunger From Drinks",
-      "description": "How much hunger energy drinks, beer and vodka add per drink, including positive Weird Kettle effects. Regular drinks start at +10 points; Limited Energy and Weird Kettle Beer at +5. Water and hunger relief stay unchanged.",
+      "label": "Hunger Relief",
+      "description": "How much hunger water removes per drink. Vanilla water removes 10 hunger points.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.0x",
-        "valueLabel": "Hunger From Drinks"
+        "valueLabel": "Hunger Relief"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 4,
+        "step": 0.2
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "WaterSatiety1",
+          "path": "ValueMin|ValueMax",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "2.1 audit: WaterSatiety1 = -10; signed scale preserves the negative relief direction and integer values at 0.2x steps."
+        ]
+      },
+      "rationale": "How much water takes the edge off hunger.",
+      "logic": "Higher = more hunger relief; 0x removes relief.",
+      "interaction": "Only water hunger relief changes; other drink effects stay unchanged.",
+      "exposeInUi": true
+    },
+    {
+      "id": "survival.drinkHungerPenalty",
+      "tab": "survival",
+      "group": "Consumable Effects",
+      "label": "Hunger Penalty",
+      "description": "How much hunger normal energy drinks, beer and vodka add per drink. Standard drinks add 10 points and Limited Energy adds 5 at 1x. Weird Kettle effects are unchanged.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.0x",
+        "valueLabel": "Hunger Penalty"
       },
       "vanilla": {
         "All": 1
@@ -5962,38 +6006,17 @@
           "prototype": "VodkaSatiety1",
           "path": "ValueMin|ValueMax",
           "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/EffectPrototypes.cfg",
-          "prototype": "Artifact_WeirdKettle_EnegeticSatiety",
-          "path": "ValueMin|ValueMax",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/EffectPrototypes.cfg",
-          "prototype": "Artifact_WeirdKettle_BeerSatiety",
-          "path": "ValueMin|ValueMax",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/EffectPrototypes.cfg",
-          "prototype": "Artifact_WeirdKettle_VodkaSatiety",
-          "path": "ValueMin|ValueMax",
-          "operation": "scaleIntegerHalfUpPreserveZero"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "2.1 source-confirmed positive drink hunger effects; 0.2x steps yield integer hunger points. Existing half-up integer writer preserves zero."
+          "2.1 source-confirmed standard positive drink hunger effects; 0.2x steps yield integer hunger points. Existing half-up integer writer preserves zero."
         ]
       },
       "rationale": "How hungry energy drinks and alcohol make you. Vanilla: 1x.",
-      "logic": "Higher = more hunger; 0x removes the penalty.",
-      "interaction": "Water, food, passive hunger and other drink effects stay unchanged.",
+      "logic": "Higher = more hunger; 0x removes the standard penalty.",
+      "interaction": "Water, Weird Kettle effects, food, passive hunger and other drink effects stay unchanged.",
       "exposeInUi": true
     },
     {

@@ -4126,6 +4126,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var waterTime = P("survival.waterEffectDuration");
         var energyTime = P("survival.energyDrinkEffectDuration");
         var drinkHunger = P("survival.drinkHungerPenalty");
+        var waterHunger = P("survival.waterHungerRelief");
         var vodkaTime = P("survival.vodkaEffectDuration");
         var beerTime = P("survival.beerEffectDuration");
         var magicTime = P("survival.magicVodkaEffectDuration");
@@ -4144,7 +4145,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         if (burst is null || energyBurst is null || waterStamina is null ||
             waterCostReduction is null || energyStamina is null ||
-            waterTime is null || energyTime is null || drinkHunger is null ||
+            waterTime is null || energyTime is null || drinkHunger is null || waterHunger is null ||
             vodkaTime is null || beerTime is null || magicTime is null ||
             waterRegenTime is null || energyFullCostTime is null ||
             energyPartialCostTime is null ||
@@ -4381,60 +4382,71 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 track, source.Minimum, source.Maximum);
         }
 
-        // Six native sources in three adjacent drink groups. The shared
-        // hunger knob owns a matching frame and compact live source readouts.
+        // Seven native sources in four framed groups. At compact widths,
+        // WATER + relief occupy the first row, penalty + ENERGY DRINK the second.
         var effectsWidth = Math.Min(980.0, preview.Width - 24.0);
         var sideBySide = effectsWidth >= ConsumableEffectsInlineMinimumWidth;
         var left = preview.Left + (preview.Width - effectsWidth) / 2.0;
         var top = preview.Top + ConsumableEffectsGroupTop;
-        var uniformWidth = (effectsWidth - 2.0 * ConsumableEffectsGroupGap -
-            4.0 * ConsumableEffectsGroupPadding - 3.0 * ConsumableEffectsCellGap) / 6.0;
+        var uniformWidth = (effectsWidth - 3.0 * ConsumableEffectsGroupGap -
+            4.0 * ConsumableEffectsGroupPadding - 3.0 * ConsumableEffectsCellGap) / 7.0;
+        var compactWidth = effectsWidth - ConsumableEffectsGroupGap;
+        var hungerWidth = sideBySide ? uniformWidth : Math.Min(180.0, compactWidth * 0.30);
         var waterWidth = sideBySide
             ? uniformWidth * 3.0 + ConsumableEffectsCellGap * 2.0 +
                 ConsumableEffectsGroupPadding * 2.0
-            : effectsWidth;
+            : compactWidth - hungerWidth;
         var energyWidth = sideBySide
             ? uniformWidth * 2.0 + ConsumableEffectsCellGap +
                 ConsumableEffectsGroupPadding * 2.0
-            : Math.Min(480.0, (effectsWidth - ConsumableEffectsGroupGap) * 2.0 / 3.0);
+            : compactWidth - hungerWidth;
         var waterGroup = new Rect(left, top, waterWidth, ConsumableEffectsGroupHeight);
-        var hungerWidth = sideBySide ? uniformWidth :
-            Math.Min(180.0, effectsWidth - energyWidth - ConsumableEffectsGroupGap);
-        var hungerLeft = sideBySide ? waterGroup.Right + ConsumableEffectsGroupGap :
-            left + (effectsWidth - hungerWidth - energyWidth - ConsumableEffectsGroupGap) / 2.0;
+        var reliefGroup = new Rect(waterGroup.Right + ConsumableEffectsGroupGap,
+            top, hungerWidth, ConsumableEffectsGroupHeight);
         var hungerTop = sideBySide ? top : waterGroup.Bottom + ConsumableEffectsGroupGap;
-        var energyGroup = new Rect(hungerLeft + hungerWidth + ConsumableEffectsGroupGap,
+        var hungerLeft = sideBySide ? reliefGroup.Right + ConsumableEffectsGroupGap : left;
+        var drinkHungerGroup = new Rect(hungerLeft, hungerTop, hungerWidth, ConsumableEffectsGroupHeight);
+        var energyGroup = new Rect(drinkHungerGroup.Right + ConsumableEffectsGroupGap,
             hungerTop, energyWidth, ConsumableEffectsGroupHeight);
-        var drinkHungerGroup = new Rect(hungerLeft, hungerTop,
-            hungerWidth, ConsumableEffectsGroupHeight);
+
+        void DrawHungerReadout(Rect group, ParameterViewModel source, string label,
+            int vanillaPoints, bool relief, double y)
+        {
+            var points = Math.Max(0.0, Math.Floor(vanillaPoints * source.CurrentNumber + 0.5));
+            var referencePoints = Math.Max(0.0, Math.Floor(vanillaPoints * source.ReferenceNumber + 0.5));
+            var digits = points.ToString("0", System.Globalization.CultureInfo.InvariantCulture);
+            var prefix = label + (relief ? ": -" : ": +");
+            var readout = CreateText(prefix + digits + " pts", 8.4, muted,
+                FontWeights.SemiBold, Math.Max(1.0, group.Width - 10.0));
+            if (Math.Abs(points - referencePoints) > Epsilon)
+                ReadoutInk.Mark(readout, accent, prefix.Length, digits.Length, 8.4);
+            dc.DrawText(readout, new Point(group.Left +
+                (group.Width - readout.WidthIncludingTrailingWhitespace) / 2.0,
+                group.Top + y));
+        }
+
+        dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .76),
+            new Pen(border, .9), reliefGroup, 4.0, 4.0);
+        DrawText(dc, "WATER", new Point(reliefGroup.Left + 10.0,
+            reliefGroup.Top + 7.0), 10.2, text, FontWeights.Bold);
+        DrawMiniConsumableKnob(dc, waterHunger, "HUNGER RELIEF",
+            $"{waterHunger.CurrentNumber:0.0}x", "0x", "4x",
+            new Rect(reliefGroup.Left, reliefGroup.Top + 14.0,
+                reliefGroup.Width, ConsumableMiniKnobHeight),
+            text, muted, border, accent, panel, accent);
+        DrawHungerReadout(reliefGroup, waterHunger, "Water", 10, true, 139.0);
+
         dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .76),
             new Pen(border, .9), drinkHungerGroup, 4.0, 4.0);
-        DrawText(dc, "DRINKS", new Point(drinkHungerGroup.Left + 10.0,
-            drinkHungerGroup.Top + 7.0), 10.2, text, FontWeights.Bold);
-        DrawMiniConsumableKnob(dc, drinkHunger, "HUNGER GAIN",
+        DrawText(dc, "ENERGY / ALCOHOL", new Point(drinkHungerGroup.Left + 8.0,
+            drinkHungerGroup.Top + 7.0), 9.0, text, FontWeights.Bold);
+        DrawMiniConsumableKnob(dc, drinkHunger, "HUNGER PENALTY",
             $"{drinkHunger.CurrentNumber:0.0}x", "0x", "4x",
             new Rect(drinkHungerGroup.Left, drinkHungerGroup.Top + 14.0,
                 drinkHungerGroup.Width, ConsumableMiniKnobHeight),
             text, muted, border, accent, panel, accent);
-
-        // Mirror the existing integer half-up CFG writer, not an estimated
-        // difficulty-adjusted gameplay value. Only changed digits turn gold.
-        void DrawDrinkHungerPreview(string label, int vanillaPoints, double y)
-        {
-            var points = Math.Max(0.0, Math.Floor(vanillaPoints * drinkHunger.CurrentNumber + 0.5));
-            var referencePoints = Math.Max(0.0, Math.Floor(vanillaPoints * drinkHunger.ReferenceNumber + 0.5));
-            var digits = points.ToString("0", System.Globalization.CultureInfo.InvariantCulture);
-            var prefix = label + ": +";
-            var readout = CreateText(prefix + digits + " pts", 8.4, muted,
-                FontWeights.SemiBold, Math.Max(1.0, drinkHungerGroup.Width - 10.0));
-            if (Math.Abs(points - referencePoints) > Epsilon)
-                ReadoutInk.Mark(readout, accent, prefix.Length, digits.Length, 8.4);
-            dc.DrawText(readout, new Point(drinkHungerGroup.Left +
-                (drinkHungerGroup.Width - readout.WidthIncludingTrailingWhitespace) / 2.0,
-                drinkHungerGroup.Top + y));
-        }
-        DrawDrinkHungerPreview("Regular", 10, 133.0);
-        DrawDrinkHungerPreview("Limited / Kettle beer", 5, 145.0);
+        DrawHungerReadout(drinkHungerGroup, drinkHunger, "Energy / Alcohol", 10, false, 133.0);
+        DrawHungerReadout(drinkHungerGroup, drinkHunger, "Limited Energy", 5, false, 145.0);
         dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .76),
             new Pen(border, .9), waterGroup, 4.0, 4.0);
         dc.DrawTrackedRoundedRectangle(CloneWithOpacity(panel, .76),
@@ -6633,7 +6645,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private const double ConsumableEffectsGroupPadding = 8.0;
     private const double ConsumableEffectsCellGap = 6.0;
     private const double ConsumableEffectsGroupGap = 12.0;
-    private const double ConsumableEffectsInlineMinimumWidth = 840.0;
+    private const double ConsumableEffectsInlineMinimumWidth = 940.0;
     private const double ConsumableEffectsGroupHeight =
         ConsumableEffectsHeaderHeight + ConsumableMiniKnobHeight + 8.0;
 
@@ -8746,6 +8758,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 "survival.energyDrinkEffectDuration",
                 "survival.energyFullCostDuration",
                 "survival.energyPartialCostDuration",
+                "survival.waterHungerRelief",
                 "survival.drinkHungerPenalty",
                 "survival.vodkaEffectDuration",
                 "survival.beerEffectDuration",

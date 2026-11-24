@@ -2023,6 +2023,10 @@
     },
     "survival.drinkHungerPenalty": {
       "kind": "slider",
+      "number": 1.2
+    },
+    "survival.waterHungerRelief": {
+      "kind": "slider",
       "number": 1
     }
   }
